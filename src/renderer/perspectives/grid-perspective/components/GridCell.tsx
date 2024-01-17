@@ -72,39 +72,39 @@ import { defaultSettings } from '../index';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { EntrySizes } from '-/components/ZoomComponent';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
 }
 
-export function calculateEntryWitdth(entrySize: EntrySizes) {
+export function calculateEntryWitdth(entrySize: TS.EntrySizes) {
   let entryWidth = 200;
-  if (entrySize === EntrySizes.tiny) {
+  if (entrySize === 'tiny') {
     entryWidth = 100;
-  } else if (entrySize === EntrySizes.small) {
+  } else if (entrySize === 'small') {
     entryWidth = 150;
-  } else if (entrySize === EntrySizes.normal) {
+  } else if (entrySize === 'normal') {
     entryWidth = 200;
-  } else if (entrySize === EntrySizes.big) {
+  } else if (entrySize === 'big') {
     entryWidth = 250;
-  } else if (entrySize === EntrySizes.huge) {
+  } else if (entrySize === 'huge') {
     entryWidth = 300;
   }
   return entryWidth;
 }
 
-export function calculateEntryHeight(entrySize: EntrySizes) {
+export function calculateEntryHeight(entrySize: TS.EntrySizes) {
   let entryHeight = 200;
-  if (entrySize === EntrySizes.tiny) {
+  if (entrySize === 'tiny') {
     entryHeight = 100;
-  } else if (entrySize === EntrySizes.small) {
+  } else if (entrySize === 'small') {
     entryHeight = 150;
-  } else if (entrySize === EntrySizes.normal) {
+  } else if (entrySize === 'normal') {
     entryHeight = 200;
-  } else if (entrySize === EntrySizes.big) {
+  } else if (entrySize === 'big') {
     entryHeight = 250;
-  } else if (entrySize === EntrySizes.huge) {
+  } else if (entrySize === 'huge') {
     entryHeight = 300;
   }
   return entryHeight;
@@ -180,32 +180,24 @@ interface Props {
   selected: boolean;
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
-  entrySize: EntrySizes;
   style?: any;
-  thumbnailMode: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectionMode: boolean;
-  showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
-  showEntriesDescription?: boolean;
 }
 
 function GridCell(props: Props) {
   const {
     selected,
     fsEntry,
-    entrySize,
-    thumbnailMode,
     handleTagMenu,
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
-    showEntriesDescription,
-    showTags,
     selectEntry,
     deselectEntry,
     selectionMode,
@@ -214,6 +206,8 @@ function GridCell(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const { entrySize, showEntriesDescription, showTags } =
+    usePerspectiveSettingsContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
@@ -286,8 +280,7 @@ function GridCell(props: Props) {
   ];
 
   const entryPath = fSystemEntry.path;
-  const isSmall =
-    entrySize === EntrySizes.tiny || entrySize === EntrySizes.small;
+  const isSmall = entrySize === 'tiny' || entrySize === 'small';
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;

@@ -37,7 +37,7 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
-import ZoomSlider, { EntrySizes } from '-/components/ZoomComponent';
+import ZoomComponent from '-/components/ZoomComponent';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
@@ -52,8 +52,6 @@ interface Props {
   openAddRemoveTagsDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   handleSortingMenu: (event: Object) => void;
-  changeEntrySize: (entrySize: EntrySizes) => void;
-  entrySize: EntrySizes;
   handleExportCsvMenu: () => void;
   openSettings: () => void;
   openShareFilesDialog?: () => void;
@@ -69,8 +67,6 @@ function MainToolbar(props: Props) {
     handleExportCsvMenu,
     openSettings,
     openShareFilesDialog,
-    entrySize,
-    changeEntrySize,
   } = props;
 
   const { t } = useTranslation();
@@ -245,7 +241,7 @@ function MainToolbar(props: Props) {
         )}
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-        <ZoomSlider entrySize={entrySize} changeEntrySize={changeEntrySize} />
+        <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
       <Box sx={{ flexGrow: 1 }} />

@@ -43,7 +43,6 @@ import {
 } from './CommonIcons';
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
-import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';

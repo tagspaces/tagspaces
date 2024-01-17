@@ -30,7 +30,6 @@ import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import RowCell from '-/perspectives/list/components/RowCell';
-import { EntrySizes } from '-/components/ZoomComponent';
 import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
@@ -51,6 +50,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -74,12 +74,9 @@ function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const {
-    directoryMeta,
-    openDirectory,
-    currentDirectoryPath,
-    setDirectoryMeta,
-  } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath, setDirectoryMeta } =
+    useDirectoryContentContext();
+  const { showDirectories } = usePerspectiveSettingsContext();
   const { openFileNatively, duplicateFile } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
@@ -96,18 +93,18 @@ function ListPerspective(props: Props) {
 
   // Create functions that dispatch actions
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
-    const selected = showDirectories.current
+    const selected = showDirectories
       ? entries
       : entries.filter((entry) => entry.isFile);
     setSelectedEntries(selected);
   };
 
-  const isLocal =
+  /*const isLocal =
     Pro &&
     directoryMeta &&
     directoryMeta.perspectiveSettings &&
     directoryMeta.perspectiveSettings[PerspectiveIDs.LIST];
-  const settings = getSettings(directoryMeta);
+  const settings = getSettings(directoryMeta);*/
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 
@@ -137,46 +134,6 @@ function ListPerspective(props: Props) {
       ? settings.orderBy
       : defaultSettings.orderBy
   );*/
-  const singleClickAction = useRef<string>(
-    settings && settings.singleClickAction
-      ? settings.singleClickAction
-      : defaultSettings.singleClickAction,
-  );
-  const entrySize = useRef<EntrySizes>(
-    settings && settings.entrySize
-      ? settings.entrySize
-      : defaultSettings.entrySize,
-  );
-  const thumbnailMode = useRef<string>(
-    settings && settings.thumbnailMode
-      ? settings.thumbnailMode
-      : defaultSettings.thumbnailMode,
-  );
-  const showDirectories = useRef<boolean>(
-    settings && typeof settings.showDirectories !== 'undefined'
-      ? settings.showDirectories
-      : defaultSettings.showDirectories,
-  );
-  const showDetails = useRef<boolean>(
-    settings && typeof settings.showDetails !== 'undefined'
-      ? settings.showDetails
-      : defaultSettings.showDetails,
-  );
-  const showDescription = useRef<boolean>(
-    settings && typeof settings.showDescription !== 'undefined'
-      ? settings.showDescription
-      : defaultSettings.showDescription,
-  );
-  const showEntriesDescription = useRef<boolean>(
-    settings && typeof settings.showEntriesDescription !== 'undefined'
-      ? settings.showEntriesDescription
-      : defaultSettings.showEntriesDescription,
-  );
-  const showTags = useRef<boolean>(
-    settings && typeof settings.showTags !== 'undefined'
-      ? settings.showTags
-      : defaultSettings.showTags,
-  );
   const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
     useState<boolean>(false);
   const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
@@ -185,15 +142,10 @@ function ListPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
-  const gridPageLimit = useRef<number>(
-    settings && settings.gridPageLimit
-      ? settings.gridPageLimit
-      : defaultSettings.gridPageLimit,
-  );
   // true: save in default settings; false: save per folder settings; undefined - dont save changes
-  const isDefaultSetting = useRef<boolean>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const firstRender = useFirstRender();
+  //const isDefaultSetting = useRef<boolean>(undefined);
+  //const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  //const firstRender = useFirstRender();
 
   useEffect(() => {
     if (selectedEntries.length === 1) {
@@ -201,7 +153,7 @@ function ListPerspective(props: Props) {
     }
   }, [selectedEntries]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender) {
       const perspectiveSettings = getSettings(directoryMeta);
       showDirectories.current =
@@ -254,9 +206,9 @@ function ListPerspective(props: Props) {
           : defaultSettings.gridPageLimit;
       forceUpdate();
     }
-  }, [directoryMeta]);
+  }, [directoryMeta]);*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender && isDefaultSetting.current !== undefined) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
@@ -301,7 +253,7 @@ function ListPerspective(props: Props) {
     entrySize.current,
     thumbnailMode.current,
     gridPageLimit.current,
-  ]);
+  ]);*/
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -321,10 +273,10 @@ function ListPerspective(props: Props) {
     }
   };
 
-  const handleGridPageLimit = (limit: number) => {
+  /*const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
     // forceUpdate();
-  };
+  };*/
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
@@ -364,7 +316,7 @@ function ListPerspective(props: Props) {
     }
   };
 
-  const toggleShowDirectories = () => {
+  /*const toggleShowDirectories = () => {
     closeOptionsMenu();
     showDirectories.current = !showDirectories.current;
     // forceUpdate();
@@ -397,23 +349,23 @@ function ListPerspective(props: Props) {
     thumbnailMode.current = thumbMode;
     // forceUpdate();
     return thumbMode;
-  };
+  };*/
 
-  const changeEntrySize = (size) => {
+  /*const changeEntrySize = (size) => {
     closeOptionsMenu();
     entrySize.current = size;
     // forceUpdate();
-  };
+  };*/
 
-  const changeSingleClickAction = (singleClick) => {
+  /*const changeSingleClickAction = (singleClick) => {
     closeOptionsMenu();
     singleClickAction.current = singleClick;
     // forceUpdate();
-  };
+  };*/
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
-    openURLExternally(Links.documentationLinks.defaultPerspective);
+    openURLExternally(Links.documentationLinks.defaultPerspective, true);
   };
 
   const openSettings = () => {
@@ -548,15 +500,6 @@ function ListPerspective(props: Props) {
   const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
   const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
 
-  let entryWidth = 200;
-  if (entrySize.current === 'small') {
-    entryWidth = 150;
-  } else if (entrySize.current === 'normal') {
-    entryWidth = 200;
-  } else if (entrySize.current === 'big') {
-    entryWidth = 300;
-  }
-
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -586,6 +529,7 @@ function ListPerspective(props: Props) {
       );
       handleSetSelectedEntries(newSelection);
     };
+
     return (
       <TagDropContainer
         entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
@@ -596,14 +540,10 @@ function ListPerspective(props: Props) {
         <RowCell
           selected={selected}
           fsEntry={fsEntry}
-          showEntriesDescription={showEntriesDescription.current}
-          entrySize={entrySize.current}
           isLast={isLast}
-          thumbnailMode={thumbnailMode.current}
           selectEntry={selectEntry}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
-          showTags={showTags.current}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
             fsEntry: TS.FileSystemEntry,
@@ -633,8 +573,6 @@ function ListPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
-        changeEntrySize={changeEntrySize}
-        entrySize={entrySize.current}
         openSettings={openSettings}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
@@ -646,7 +584,6 @@ function ListPerspective(props: Props) {
         allowChanges={true}
       >
         <GridPagination
-          gridPageLimit={gridPageLimit.current}
           style={{
             marginTop: 5,
             marginBottom: 70,
@@ -655,23 +592,15 @@ function ListPerspective(props: Props) {
             gridTemplateColumns: 'none',
           }}
           directories={sortedDirectories}
-          showDetails={showDetails.current}
-          showDescription={showDescription.current}
-          showDirectories={showDirectories.current}
           desktopMode={desktopMode}
           openRenameEntryDialog={openRenameEntryDialog}
-          showTags={showTags.current}
-          thumbnailMode={thumbnailMode.current}
-          entrySize={entrySize.current}
           files={sortedFiles}
           getCellContent={getCellContent}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          settings={settings}
           selectedEntries={selectedEntries}
           setSelectedEntries={handleSetSelectedEntries}
-          singleClickAction={singleClickAction.current}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
           clearSelection={clearSelection}
@@ -693,31 +622,13 @@ function ListPerspective(props: Props) {
       {isGridSettingsDialogOpened && (
         <GridSettingsDialog
           open={isGridSettingsDialogOpened}
-          onClose={(isDefault) => {
+          onClose={() => {
             setIsGridSettingsDialogOpened(false);
-            isDefaultSetting.current = isDefault;
+            // isDefaultSetting.current = isDefault;
           }}
-          setGridPageLimit={handleGridPageLimit}
-          gridPageLimit={gridPageLimit.current}
-          toggleShowDirectories={toggleShowDirectories}
-          toggleShowTags={toggleShowTags}
-          toggleShowDetails={toggleShowDetails}
-          toggleShowDescription={toggleShowDescription}
-          toggleShowEntriesDescription={toggleShowEntriesDescription}
-          showDetails={showDetails.current}
-          showDescription={showDescription.current}
-          showEntriesDescription={showEntriesDescription.current}
-          showDirectories={showDirectories.current}
-          showTags={showTags.current}
-          toggleThumbnailsMode={toggleThumbnailsMode}
-          thumbnailMode={thumbnailMode.current}
-          changeEntrySize={changeEntrySize}
-          entrySize={entrySize.current}
-          changeSingleClickAction={changeSingleClickAction}
-          singleClickAction={singleClickAction.current}
           openHelpWebPage={openHelpWebPage}
           handleSortingMenu={handleSortingMenu}
-          isLocal={isLocal}
+          // isLocal={isLocal}
           resetLocalSettings={() => {
             Pro.MetaOperations.savePerspectiveSettings(
               currentDirectoryPath,
@@ -762,7 +673,6 @@ function ListPerspective(props: Props) {
           }
         />
       )}
-      {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
       <DirectoryMenu
         open={Boolean(dirContextMenuAnchorEl)}
         onClose={() => {
@@ -800,16 +710,6 @@ function ListPerspective(props: Props) {
           open={Boolean(optionsContextMenuAnchorEl)}
           onClose={closeOptionsMenu}
           anchorEl={optionsContextMenuAnchorEl}
-          toggleShowDirectories={toggleShowDirectories}
-          showDirectories={showDirectories.current}
-          toggleShowTags={toggleShowTags}
-          showTags={showTags.current}
-          toggleThumbnailsMode={toggleThumbnailsMode}
-          thumbnailMode={thumbnailMode.current}
-          entrySize={entrySize.current}
-          changeSingleClickAction={changeSingleClickAction}
-          singleClickAction={singleClickAction.current}
-          changeEntrySize={changeEntrySize}
           openHelpWebPage={openHelpWebPage}
           openSettings={openSettings}
         />

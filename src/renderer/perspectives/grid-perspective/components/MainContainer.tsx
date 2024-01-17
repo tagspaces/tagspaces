@@ -40,7 +40,6 @@ import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
-import { EntrySizes } from '-/components/ZoomComponent';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from 'assets/links';
@@ -54,6 +53,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -77,6 +77,7 @@ function GridPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const { entrySize, showDirectories } = usePerspectiveSettingsContext();
   const {
     directoryMeta,
     openDirectory,
@@ -95,7 +96,7 @@ function GridPerspective(props: Props) {
 
   // Create functions that dispatch actions
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
-    const selected = showDirectories.current
+    const selected = showDirectories
       ? entries
       : entries.filter((entry) => entry.isFile);
     setSelectedEntries(selected);
@@ -128,12 +129,12 @@ function GridPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  const singleClickAction = useRef<string>(
+  /*const singleClickAction = useRef<string>(
     settings && settings.singleClickAction
       ? settings.singleClickAction
       : defaultSettings.singleClickAction,
   );
-  const entrySize = useRef<EntrySizes>(
+  const entrySize = useRef<TS.EntrySizes>(
     settings && settings.entrySize
       ? settings.entrySize
       : defaultSettings.entrySize,
@@ -167,7 +168,7 @@ function GridPerspective(props: Props) {
     settings && typeof settings.showTags !== 'undefined'
       ? settings.showTags
       : defaultSettings.showTags,
-  );
+  );*/
   const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
     useState<boolean>(false);
   const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
@@ -176,11 +177,11 @@ function GridPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
-  const gridPageLimit = useRef<number>(
+  /*const gridPageLimit = useRef<number>(
     settings && settings.gridPageLimit
       ? settings.gridPageLimit
       : defaultSettings.gridPageLimit,
-  );
+  );*/
   // true: save in default settings; false: save per folder settings; undefined - dont save changes
   const isDefaultSetting = useRef<boolean>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -192,7 +193,7 @@ function GridPerspective(props: Props) {
     }
   }, [selectedEntries]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender) {
       const perspectiveSettings = getSettings(directoryMeta);
       showDirectories.current =
@@ -245,9 +246,9 @@ function GridPerspective(props: Props) {
           : defaultSettings.gridPageLimit;
       forceUpdate();
     }
-  }, [directoryMeta]);
+  }, [directoryMeta]);*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender && isDefaultSetting.current !== undefined) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
@@ -292,7 +293,7 @@ function GridPerspective(props: Props) {
     entrySize.current,
     thumbnailMode.current,
     gridPageLimit.current,
-  ]);
+  ]);*/
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -312,10 +313,10 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const handleGridPageLimit = (limit: number) => {
+  /*const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
     // forceUpdate();
-  };
+  };*/
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
@@ -355,7 +356,7 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const toggleShowDirectories = () => {
+  /*const toggleShowDirectories = () => {
     closeOptionsMenu();
     showDirectories.current = !showDirectories.current;
     // forceUpdate();
@@ -388,19 +389,19 @@ function GridPerspective(props: Props) {
     thumbnailMode.current = thumbMode;
     // forceUpdate();
     return thumbMode;
-  };
+  };*/
 
-  const changeEntrySize = (size) => {
+  /*const changeEntrySize = (size) => {
     closeOptionsMenu();
     entrySize.current = size;
     // forceUpdate();
-  };
+  };*/
 
-  const changeSingleClickAction = (singleClick) => {
+  /*const changeSingleClickAction = (singleClick) => {
     closeOptionsMenu();
     singleClickAction.current = singleClick;
     // forceUpdate();
-  };
+  };*/
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
@@ -580,15 +581,11 @@ function GridPerspective(props: Props) {
         <GridCell
           selected={selected}
           fsEntry={fsEntry}
-          showEntriesDescription={showEntriesDescription.current}
-          entrySize={entrySize.current}
           isLast={isLast}
-          thumbnailMode={thumbnailMode.current}
           selectEntry={selectEntry}
           selectionMode={selectionMode}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
-          showTags={showTags.current}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
             fsEntry: TS.FileSystemEntry,
@@ -618,8 +615,6 @@ function GridPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
-        changeEntrySize={changeEntrySize}
-        entrySize={entrySize.current}
         openSettings={openSettings}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
@@ -631,7 +626,6 @@ function GridPerspective(props: Props) {
         allowChanges={true}
       >
         <GridPagination
-          gridPageLimit={gridPageLimit.current}
           style={{
             margin: 0,
             display: 'grid',
@@ -640,31 +634,23 @@ function GridPerspective(props: Props) {
             paddingBottom: 70,
             gridTemplateColumns:
               'repeat(auto-fit,minmax(' +
-              calculateEntryWitdth(entrySize.current) +
+              calculateEntryWitdth(entrySize) +
               'px,1fr))',
             gridTemplateRows:
               'repeat(auto-fit,minmax(' +
-              calculateEntryHeight(entrySize.current) +
+              calculateEntryHeight(entrySize) +
               'px,1fr))',
           }}
           directories={sortedDirectories}
-          showDetails={showDetails.current}
-          showDescription={showDescription.current}
-          showDirectories={showDirectories.current}
           desktopMode={desktopMode}
           openRenameEntryDialog={openRenameEntryDialog}
-          showTags={showTags.current}
-          thumbnailMode={thumbnailMode.current}
-          entrySize={entrySize.current}
           files={sortedFiles}
           getCellContent={getCellContent}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          settings={settings}
           selectedEntries={selectedEntries}
           setSelectedEntries={handleSetSelectedEntries}
-          singleClickAction={singleClickAction.current}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
           clearSelection={clearSelection}
@@ -690,27 +676,8 @@ function GridPerspective(props: Props) {
             setIsGridSettingsDialogOpened(false);
             isDefaultSetting.current = isDefault;
           }}
-          setGridPageLimit={handleGridPageLimit}
-          gridPageLimit={gridPageLimit.current}
-          toggleShowDirectories={toggleShowDirectories}
-          toggleShowTags={toggleShowTags}
-          toggleShowDetails={toggleShowDetails}
-          toggleShowDescription={toggleShowDescription}
-          toggleShowEntriesDescription={toggleShowEntriesDescription}
-          showDetails={showDetails.current}
-          showDescription={showDescription.current}
-          showEntriesDescription={showEntriesDescription.current}
-          showDirectories={showDirectories.current}
-          showTags={showTags.current}
-          toggleThumbnailsMode={toggleThumbnailsMode}
-          thumbnailMode={thumbnailMode.current}
-          changeEntrySize={changeEntrySize}
-          entrySize={entrySize.current}
-          changeSingleClickAction={changeSingleClickAction}
-          singleClickAction={singleClickAction.current}
           openHelpWebPage={openHelpWebPage}
           handleSortingMenu={handleSortingMenu}
-          isLocal={isLocal}
           resetLocalSettings={() => {
             Pro.MetaOperations.savePerspectiveSettings(
               currentDirectoryPath,
@@ -792,16 +759,6 @@ function GridPerspective(props: Props) {
           open={Boolean(optionsContextMenuAnchorEl)}
           onClose={closeOptionsMenu}
           anchorEl={optionsContextMenuAnchorEl}
-          toggleShowDirectories={toggleShowDirectories}
-          showDirectories={showDirectories.current}
-          toggleShowTags={toggleShowTags}
-          showTags={showTags.current}
-          toggleThumbnailsMode={toggleThumbnailsMode}
-          thumbnailMode={thumbnailMode.current}
-          entrySize={entrySize.current}
-          changeSingleClickAction={changeSingleClickAction}
-          singleClickAction={singleClickAction.current}
-          changeEntrySize={changeEntrySize}
           openHelpWebPage={openHelpWebPage}
           openSettings={openSettings}
         />

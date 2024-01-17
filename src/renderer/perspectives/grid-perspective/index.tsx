@@ -1,6 +1,6 @@
 import React from 'react';
+import { TS } from '-/tagspaces.namespace';
 export { default } from './components/MainContainer';
-import { EntrySizes } from '-/components/ZoomComponent';
 
 // interface PerspectiveSettings {
 //   settingsKey: string;
@@ -21,7 +21,7 @@ export const defaultSettings = {
   sortBy: 'byName',
   layoutType: 'grid', // list grid
   singleClickAction: 'openInternal', // openInternal openExternal
-  entrySize: EntrySizes.small,
+  entrySize: 'small',
   thumbnailMode: 'contain', // cover contain
   showDirectories: true,
   showDetails: true,

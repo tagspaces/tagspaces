@@ -31,45 +31,29 @@ import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
 import { useTranslation } from 'react-i18next';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   anchorEl: Element;
-  toggleShowDirectories: () => void;
-  toggleShowTags: () => void;
-  showDirectories: boolean;
-  showTags: boolean;
-  toggleThumbnailsMode: () => string;
-  thumbnailMode: string;
-  singleClickAction: string;
-  entrySize: string;
-  changeEntrySize: (entrySize: string) => void;
-  changeSingleClickAction: (actionType: string) => void;
   openHelpWebPage: () => void;
   openSettings: () => void;
 }
 
 function GridOptionsMenu(props: Props) {
-  const {
-    open,
-    onClose,
-    anchorEl,
-    changeEntrySize,
-    toggleShowDirectories,
-    showDirectories,
-    toggleShowTags,
-    showTags,
-    toggleThumbnailsMode,
-    thumbnailMode,
-    changeSingleClickAction,
-    entrySize,
-    singleClickAction,
-    openHelpWebPage,
-    openSettings,
-  } = props;
+  const { open, onClose, anchorEl, openHelpWebPage, openSettings } = props;
 
   const { t } = useTranslation();
+  const {
+    showDirectories,
+    showTags,
+    thumbnailMode,
+    entrySize,
+    singleClickAction,
+    setSettings,
+    saveSettings,
+  } = usePerspectiveSettingsContext();
 
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
@@ -77,7 +61,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveToggleShowDirectories"
         title={t('core:showHideDirectories')}
         aria-label={t('core:showHideDirectories')}
-        onClick={toggleShowDirectories}
+        onClick={() => {
+          setSettings({ showDirectories: !showDirectories });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {showDirectories ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
@@ -88,7 +75,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveToggleShowTags"
         title={t('core:showTags')}
         aria-label={t('core:showTags')}
-        onClick={toggleShowTags}
+        onClick={() => {
+          setSettings({ showTags: !showTags });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {showTags ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
@@ -100,7 +90,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveToggleThumbnailsMode"
         title={t('core:toggleThumbnailModeTitle')}
         aria-label={t('core:toggleThumbnailMode')}
-        onClick={toggleThumbnailsMode}
+        onClick={() => {
+          setSettings({ thumbnailMode: 'cover' ? 'contain' : 'cover' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {thumbnailMode === 'cover' ? (
@@ -116,7 +109,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveEntrySizeSmall"
         title={t('core:entrySizeSmall')}
         aria-label={t('core:entrySizeSmall')}
-        onClick={() => changeEntrySize('small')}
+        onClick={() => {
+          setSettings({ entrySize: 'small' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {entrySize === 'small' ? (
@@ -131,7 +127,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveEntrySizeNormal"
         title={t('core:entrySizeNormal')}
         aria-label={t('core:entrySizeNormal')}
-        onClick={() => changeEntrySize('normal')}
+        onClick={() => {
+          setSettings({ entrySize: 'normal' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {entrySize === 'normal' ? (
@@ -146,7 +145,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveEntrySizeBig"
         title={t('core:entrySizeBig')}
         aria-label={t('core:entrySizeBig')}
-        onClick={() => changeEntrySize('big')}
+        onClick={() => {
+          setSettings({ entrySize: 'big' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
@@ -158,7 +160,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveSingleClickOpenInternally"
         title={t('core:singleClickOpenInternally')}
         aria-label={t('core:singleClickOpenInternally')}
-        onClick={() => changeSingleClickAction('openInternal')}
+        onClick={() => {
+          setSettings({ singleClickAction: 'openInternal' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {singleClickAction === 'openInternal' ? (
@@ -173,7 +178,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveSingleClickOpenExternally"
         title={t('core:singleClickOpenExternally')}
         aria-label={t('core:singleClickOpenExternally')}
-        onClick={() => changeSingleClickAction('openExternal')}
+        onClick={() => {
+          setSettings({ singleClickAction: 'openExternal' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {singleClickAction === 'openExternal' ? (
@@ -188,7 +196,10 @@ function GridOptionsMenu(props: Props) {
         data-tid="gridPerspectiveSingleClickSelects"
         title={t('core:singleClickSelects')}
         aria-label={t('core:singleClickSelects')}
-        onClick={() => changeSingleClickAction('selects')}
+        onClick={() => {
+          setSettings({ singleClickAction: 'selects' });
+          saveSettings(false);
+        }}
       >
         <ListItemIcon>
           {singleClickAction === 'selects' ? (

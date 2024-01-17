@@ -186,6 +186,20 @@ export namespace TS {
     | 'createFile'
     | 'createDir';
 
+  type EntrySizes =
+    | 'huge'
+    |  'big'
+    |  'normal'
+    | 'small'
+    |  'tiny';
+
+  type ThumbnailMode =
+    | 'contain'
+    |  'cover'
+    |  'fill'
+    | 'none'
+    |  'scale-down';
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;
@@ -234,7 +248,7 @@ export namespace TS {
     sortBy?: string;
     singleClickAction?: string;
     entrySize?: EntrySizes;
-    thumbnailMode?: string;
+    thumbnailMode?: ThumbnailMode;
     gridPageLimit?: number;
     // isLocal?: boolean;
   }
