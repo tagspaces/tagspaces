@@ -411,9 +411,7 @@ function RowCell(props: Props) {
               >
                 <span>{entryLMDTFormatted}</span>
               </Tooltip>
-              {/* <Tooltip title={t('core:entryDescription')}> */}
               <span>{description}</span>
-              {/* </Tooltip> */}
             </Typography>
           </Grid>
         )}
