@@ -30,7 +30,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Tooltip from '-/components/Tooltip';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import { FolderOutlineIcon } from '-/components/CommonIcons';
 import IconButton from '@mui/material/IconButton';
 import {
   SelectedIcon,
@@ -109,72 +109,6 @@ export function calculateEntryHeight(entrySize: TS.EntrySizes) {
   }
   return entryHeight;
 }
-
-const PREFIX = 'GridStyles';
-export const classes = {
-  gridCell: `${PREFIX}-gridCell`,
-  selectedGridCell: `${PREFIX}-selectedGridCell`,
-  gridCellTitle: `${PREFIX}-gridCellTitle`,
-  // gridCellTags: `${PREFIX}-gridCellTags`,
-  gridCellDescription: `${PREFIX}-gridCellDescription`,
-  gridFileExtension: `${PREFIX}-gridFileExtension`,
-  gridSizeDate: `${PREFIX}-gridSizeDate`,
-  gridDetails: `${PREFIX}-gridDetails`,
-  gridFolder: `${PREFIX}-gridFolder`,
-};
-
-export const GridPaper = styled(Card)(({ theme }) => ({
-  [`& .${classes.gridCell}`]: {
-    border: '2px solid transparent',
-    marginTop: 1,
-    marginLeft: 2,
-    marginBottom: 1,
-    marginRight: 1,
-  },
-  [`& .${classes.selectedGridCell}`]: {
-    border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light + ' !important',
-  },
-  [`& .${classes.gridCellTitle}`]: {
-    padding: '0px 5px 0 5px',
-    minHeight: 45,
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-  },
-  // [`& .${classes.gridCellTags}`]: {
-  //   padding: 0,
-  //   paddingTop: 2,
-  //   height: 100,
-  //   overflowY: 'auto',
-  //   overflowX: 'hidden',
-  //   position: 'relative',
-  // },
-  [`& .${classes.gridCellDescription}`]: {
-    padding: 2,
-    margin: 2,
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: 5,
-    opacity: 0.6,
-    wordBreak: 'break-word',
-    display: 'block',
-  },
-  [`& .${classes.gridFileExtension}`]: {
-    paddingTop: 1,
-    paddingBottom: 7,
-    paddingLeft: 3,
-    paddingRight: 3,
-    fontSize: 13,
-    marginRight: 5,
-    minWidth: 35,
-    height: 16,
-    color: 'white',
-    borderRadius: 3,
-    textAlign: 'center',
-  },
-}));
 
 interface Props {
   selected: boolean;
@@ -340,22 +274,23 @@ function GridCell(props: Props) {
     );
   }
 
-  function generateAvatar() {
+  function generateExtension() {
     return selectionMode ? (
       <IconButton
         style={{
-          opacity: selected ? 1 : 0.5,
-          padding: desktopMode ? 5 : 8,
+          minWidth: 35,
+          padding: 4,
+          paddingBottom: 2,
         }}
         size="small"
-        onMouseLeave={(e) => {
-          //@ts-ignore
-          e.target.style.opacity = selected ? 1 : 0.5;
-        }}
-        onMouseOver={(e) => {
-          //@ts-ignore
-          e.target.style.opacity = 1;
-        }}
+        // onMouseLeave={(e) => {
+        //   //@ts-ignore
+        //   e.target.style.opacity = selected ? 1 : 0.5;
+        // }}
+        // onMouseOver={(e) => {
+        //   //@ts-ignore
+        //   e.target.style.opacity = 1;
+        // }}
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
@@ -368,17 +303,15 @@ function GridCell(props: Props) {
         {selected ? (
           <SelectedIcon
             style={{
-              opacity: 1,
               borderRadius: 15,
-              backgroundColor: '#d7d7d7',
+              // backgroundColor: '#d7d7d7',
             }}
           />
         ) : (
           <UnSelectedIcon
             style={{
-              opacity: 0.7,
               borderRadius: 15,
-              backgroundColor: 'd7d7d7',
+              // backgroundColor: 'd7d7d7',
             }}
           />
         )}
@@ -386,15 +319,21 @@ function GridCell(props: Props) {
     ) : (
       <Tooltip title={fSystemEntry.path}>
         <Typography
-          className={classes.gridFileExtension}
           style={{
+            paddingTop: 1,
+            paddingBottom: 9,
+            paddingLeft: 3,
+            paddingRight: 3,
+            fontSize: 13,
+            minWidth: 35,
+            color: 'white',
+            borderRadius: 3,
+            textAlign: 'center',
             display: 'inline',
             backgroundColor: fileSystemEntryColor,
             textShadow: '1px 1px #8f8f8f',
             textOverflow: 'unset',
-            height: 18,
-            marginTop: 4,
-            marginBottom: 4,
+            height: 15,
             maxWidth: fSystemEntry.isFile ? 50 : 100,
           }}
           noWrap={true}
@@ -404,11 +343,7 @@ function GridCell(props: Props) {
             selectEntry(fSystemEntry);
           }}
         >
-          {fSystemEntry.isFile ? (
-            fSystemEntry.extension
-          ) : (
-            <FolderOpenIcon style={{}} />
-          )}
+          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOutlineIcon />}
         </Typography>
       </Tooltip>
     );
@@ -424,19 +359,18 @@ function GridCell(props: Props) {
       : '');
 
   return (
-    <GridPaper
+    <Card
       data-entry-id={fSystemEntry.uuid}
       data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
-      // className={classNames(
-      //   classes.gridCell,
-      //   selected && classes.selectedGridCell,
-      // )}
+      raised={selected}
       style={{
         height: maxHeight,
         minHeight: maxHeight,
         maxHeight: maxHeight,
         marginBottom: isLast ? 40 : 'auto',
-        background: fileSystemEntryBgColor && theme.palette.background.default,
+        border:
+          '2px solid ' +
+          (selected ? theme.palette.primary.main : 'transparent'),
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -454,7 +388,13 @@ function GridCell(props: Props) {
         handleGridCellClick(event, fSystemEntry);
       }}
     >
-      <Box style={{ height: maxHeight - 70, position: 'relative' }}>
+      <Box
+        style={{
+          height: maxHeight - 70,
+          position: 'relative',
+          backgroundColor: fileSystemEntryBgColor || 'transparent',
+        }}
+      >
         <Box style={{ position: 'absolute' }}>
           {showTags && entryTags ? (
             renderTags
@@ -471,9 +411,18 @@ function GridCell(props: Props) {
             alt="green iguana"
             height="auto"
             src={tmbImgSrc}
+            style={{
+              height: maxHeight - 70,
+            }}
           />
         ) : (
-          <Box style={{ width: '50%', height: 'auto', margin: '0 auto' }}>
+          <Box
+            style={{
+              width: '50%',
+              height: 'auto',
+              margin: '0 auto',
+            }}
+          >
             <EntryIcon
               isFile={fSystemEntry.isFile}
               fileExtension={fSystemEntry.extension}
@@ -482,28 +431,41 @@ function GridCell(props: Props) {
         )}
       </Box>
 
-      <CardContent sx={{ padding: '5px', flexGrow: 1 }}>
-        {/* <img
-            alt="thumbnail"
-            style={{
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              objectFit: thumbnailMode,
-              width: '100%',
-              height: '100%',
-            }}
-            src={tmbDataURL}
-            // @ts-ignore
-            onError={(i) => (i.target.style.display = 'none')}
-            loading="lazy"
-          /> */}
-        <Box style={{ textWrap: isSmall ? 'nowrap' : 'unset' }}>
+      <CardContent sx={{ padding: '1px 5px 0px 5px', flexGrow: 1 }}>
+        <Typography
+          title={fSystemEntry.name}
+          style={{
+            paddingRight: 4,
+            overflowX: 'clip',
+            textWrap: 'nowrap', // isSmall ? 'nowrap' : 'unset',
+            //   display: '-webkit-box',
+            //   WebkitLineClamp: 2,
+            //   WebkitBoxOrient: 'vertical',
+            //   textOverflow: 'ellipsis',
+            //   overflow: 'hidden',
+          }}
+        >
           {entryTitle}
-        </Box>
-        {/* <Box>{generateCardHeader()}</Box> */}
+        </Typography>
+        <Typography
+          title={description}
+          variant="caption"
+          display="block"
+          gutterBottom
+          style={{
+            lineHeight: '12px',
+            paddingRight: 4,
+            overflowX: 'clip',
+            textWrap: 'nowrap',
+            color: 'gray',
+            // wordBreak: 'break-word',
+          }}
+        >
+          {description}
+        </Typography>
       </CardContent>
       <CardHeader
-        style={{ padding: 5 }}
+        style={{ padding: 2 }}
         sx={{
           '.MuiCardHeader-avatar': {
             margin: 0,
@@ -511,6 +473,7 @@ function GridCell(props: Props) {
           },
           '.MuiCardHeader-subheader': {
             fontSize: 12,
+            marginLeft: '5px',
           },
         }}
         action={
@@ -524,9 +487,9 @@ function GridCell(props: Props) {
           </IconButton>
         }
         subheader={generateCardHeader()}
-        avatar={generateAvatar()}
+        avatar={generateExtension()}
       ></CardHeader>
-    </GridPaper>
+    </Card>
   );
 }
 

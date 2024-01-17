@@ -24,7 +24,12 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
-import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
+import IconButton from '@mui/material/IconButton';
+import {
+  SelectedIcon,
+  UnSelectedIcon,
+  FolderOutlineIcon,
+} from '-/components/CommonIcons';
 import {
   formatFileSize,
   formatDateTime,
@@ -93,6 +98,7 @@ interface Props {
   style?: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
+  selectionMode: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -127,6 +133,7 @@ function RowCell(props: Props) {
     showEntriesDescription,
     selectEntry,
     deselectEntry,
+    selectionMode,
     isLast,
   } = props;
 
@@ -265,6 +272,129 @@ function RowCell(props: Props) {
     });
   }, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
+  function generateExtension() {
+    //   <div
+    //   data-tid="rowCellTID"
+    //   style={{
+    //     display: 'flex',
+    //     flexDirection: isSmall ? 'row' : 'column',
+    //     flex: 1,
+    //     padding: 4,
+    //     borderWidth: 1,
+    //     color: 'white',
+    //     textTransform: 'uppercase',
+    //     fontSize: 12,
+    //     fontWeight: 'bold',
+    //     borderRadius: 4,
+    //     textAlign: 'center',
+    //     overflow: 'hidden',
+    //     textOverflow: 'ellipsis',
+    //     backgroundColor: fileSystemEntryColor,
+    //     alignItems: 'center',
+    //   }}
+    //   role="button"
+    //   onClick={(e) => {
+    //     e.stopPropagation();
+    //     if (selected) {
+    //       deselectEntry(fSystemEntry);
+    //     } else {
+    //       selectEntry(fSystemEntry);
+    //     }
+    //   }}
+    // >
+    //   {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+    //   {fSystemEntry.isFile ? (
+    //     <span
+    //       style={{
+    //         width: '100%',
+    //         marginTop: isSmall ? 0 : 10,
+    //         textShadow: '1px 1px #8f8f8f',
+    //         overflowWrap: 'anywhere',
+    //       }}
+    //     >
+    //       {fSystemEntry.extension}
+    //     </span>
+    //   ) : (
+    //     <FolderOutlineIcon style={{ margin: '0 auto' }} />
+    //   )}
+    // </div>
+
+    return selectionMode ? (
+      <IconButton
+        style={{
+          minWidth: 35,
+          height: 40,
+          padding: 4,
+          paddingBottom: 2,
+        }}
+        size="small"
+        // onMouseLeave={(e) => {
+        //   //@ts-ignore
+        //   e.target.style.opacity = selected ? 1 : 0.5;
+        // }}
+        // onMouseOver={(e) => {
+        //   //@ts-ignore
+        //   e.target.style.opacity = 1;
+        // }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selected) {
+            deselectEntry(fSystemEntry);
+          } else {
+            selectEntry(fSystemEntry);
+          }
+        }}
+      >
+        {selected ? (
+          <SelectedIcon
+            style={{
+              borderRadius: 15,
+              backgroundColor: '#d7d7d7',
+            }}
+          />
+        ) : (
+          <UnSelectedIcon
+            style={{
+              borderRadius: 15,
+              backgroundColor: 'd7d7d7',
+            }}
+          />
+        )}
+      </IconButton>
+    ) : (
+      <Tooltip title={fSystemEntry.path}>
+        <Typography
+          style={{
+            paddingTop: 1,
+            paddingBottom: 9,
+            paddingLeft: 3,
+            paddingRight: 3,
+            fontSize: 13,
+            minWidth: 35,
+            color: 'white',
+            borderRadius: 3,
+            textAlign: 'center',
+            display: 'inline',
+            backgroundColor: fileSystemEntryColor,
+            textShadow: '1px 1px #8f8f8f',
+            textOverflow: 'unset',
+            height: 15,
+            maxWidth: fSystemEntry.isFile ? 50 : 100,
+            alignSelf: 'center',
+          }}
+          noWrap={true}
+          variant="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            selectEntry(fSystemEntry);
+          }}
+        >
+          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOutlineIcon />}
+        </Typography>
+      </Tooltip>
+    );
+  }
+
   const entryHeight = calculateEntryHeight(entrySize);
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
 
@@ -303,64 +433,21 @@ function RowCell(props: Props) {
         container
         wrap="nowrap"
         className={classes.rowHover}
-        sx={{ backgroundColor }}
+        sx={{ backgroundColor, borderRadius: '4px' }}
       >
         <Grid
           item
           style={{
             minHeight: entryHeight,
-            width: isSmall ? 80 : 60,
+            width: 45,
+            height: 30,
             padding: 3,
             marginRight: 5,
             textAlign: 'left',
             display: 'flex',
           }}
         >
-          <div
-            data-tid="rowCellTID"
-            style={{
-              display: 'flex',
-              flexDirection: isSmall ? 'row' : 'column',
-              flex: 1,
-              padding: 4,
-              borderWidth: 1,
-              color: 'white',
-              textTransform: 'uppercase',
-              fontSize: 12,
-              fontWeight: 'bold',
-              borderRadius: 4,
-              textAlign: 'center',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              backgroundColor: fileSystemEntryColor,
-              alignItems: 'center',
-            }}
-            role="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (selected) {
-                deselectEntry(fSystemEntry);
-              } else {
-                selectEntry(fSystemEntry);
-              }
-            }}
-          >
-            {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-            {fSystemEntry.isFile ? (
-              <span
-                style={{
-                  width: '100%',
-                  marginTop: isSmall ? 0 : 10,
-                  textShadow: '1px 1px #8f8f8f',
-                  overflowWrap: 'anywhere',
-                }}
-              >
-                {fSystemEntry.extension}
-              </span>
-            ) : (
-              <FolderIcon style={{ margin: '0 auto' }} />
-            )}
-          </div>
+          {generateExtension()}
         </Grid>
         {isSmall ? (
           <Grid
@@ -371,22 +458,29 @@ function RowCell(props: Props) {
               display: 'flex',
             }}
           >
-            <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
-              <Tooltip title={fSystemEntry.path}>
-                <>{entryTitle}</>
-              </Tooltip>
+            <Typography
+              variant="body2"
+              style={{
+                overflowX: 'clip',
+                textWrap: 'nowrap',
+                alignSelf: 'center',
+              }}
+              title={fSystemEntry.name}
+            >
+              <>{entryTitle}</>
               &nbsp;
               {showTags && entryTags ? renderTags : tagPlaceholder}
             </Typography>
           </Grid>
         ) : (
-          <Grid item xs zeroMinWidth>
-            <Tooltip title={fSystemEntry.path}>
-              <Typography style={{ wordBreak: 'break-all' }}>
-                {entryTitle}
-              </Typography>
-            </Tooltip>
-            {showTags && entryTags ? renderTags : tagPlaceholder}
+          <Grid item xs zeroMinWidth style={{ alignSelf: 'center' }}>
+            <Typography
+              variant="body1"
+              title={fSystemEntry.name}
+              style={{ wordBreak: 'break-all' }}
+            >
+              {entryTitle}
+            </Typography>
             <Typography
               style={{
                 color: 'gray',
@@ -405,10 +499,9 @@ function RowCell(props: Props) {
               >
                 <span>{entryLMDTFormatted}</span>
               </Tooltip>
-              {/* <Tooltip title={t('core:entryDescription')}> */}
               <span>{description}</span>
-              {/* </Tooltip> */}
             </Typography>
+            {showTags && entryTags ? renderTags : tagPlaceholder}
           </Grid>
         )}
         {fSystemEntry.thumbPath && (

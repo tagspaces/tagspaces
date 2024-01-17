@@ -28,7 +28,9 @@ export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as FolderIcon } from '@mui/icons-material/Folder'; // FolderOpen
+export { default as FolderIcon } from '@mui/icons-material/Folder';
+
+export { default as FolderOutlineIcon } from '@mui/icons-material/FolderOpen';
 
 export { default as FileIcon } from '@mui/icons-material/InsertDriveFile';
 
