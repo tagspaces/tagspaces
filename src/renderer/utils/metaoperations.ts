@@ -54,3 +54,52 @@ export function savePerspective(
       });
   });
 }
+
+export function removeFolderCustomSettings(
+  path: string,
+  perspective: string,
+): Promise<TS.FileSystemEntryMeta> {
+  return new Promise((resolve, reject) => {
+    loadMetaDataPromise(path, true)
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        let updatedFsEntryMeta: TS.FileSystemEntryMeta = {
+          ...fsEntryMeta,
+          perspectiveSettings: {
+            ...fsEntryMeta.perspectiveSettings,
+            [perspective]: undefined,
+          },
+        };
+
+        saveMetaDataPromise(path, updatedFsEntryMeta)
+          .then(() => {
+            resolve(updatedFsEntryMeta);
+            return true;
+          })
+          .catch((err) => {
+            console.warn(
+              'Error adding perspective for ' + path + ' with ' + err,
+            );
+            reject();
+          });
+        return true;
+      })
+      .catch(() => {
+        const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
+          perspectiveSettings: {
+            [perspective]: undefined,
+          },
+        });
+        saveMetaDataPromise(path, newFsEntryMeta)
+          .then(() => {
+            resolve(newFsEntryMeta);
+            return true;
+          })
+          .catch((error) => {
+            console.warn(
+              'Error adding perspective for ' + path + ' with ' + error,
+            );
+            reject();
+          });
+      });
+  });
+}

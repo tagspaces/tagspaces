@@ -178,13 +178,16 @@ export namespace TS {
     files?: Array<OrderVisibilitySettings>;
   }
   // editTag1Tag2 - prevent edit action react component cache and not reload component if add/remove tags
-  // todo fix prettier SyntaxError: Type expected and remove file from .prettierignore
   type EditedEntryAction =
     | `edit${string}`
     | 'delete'
     | 'rename'
     | 'createFile'
     | 'createDir';
+
+  type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
+
+  type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
   interface EditedEntryPath {
     action: EditedEntryAction;
@@ -209,6 +212,14 @@ export namespace TS {
     creationTimeStamp: number;
   }
 
+  type PerspectiveType =
+    | 'grid'
+    | 'list'
+    | 'gallery'
+    | 'mapique'
+    | 'kanban'
+    | 'unspecified';
+
   interface PerspectiveSettings {
     grid?: FolderSettings;
     list?: FolderSettings;
@@ -219,6 +230,7 @@ export namespace TS {
   }
 
   interface FolderSettings {
+    settingsKey: string;
     showDirectories?: boolean;
     showTags?: boolean;
     showDetails?: boolean;
@@ -234,7 +246,7 @@ export namespace TS {
     sortBy?: string;
     singleClickAction?: string;
     entrySize?: EntrySizes;
-    thumbnailMode?: string;
+    thumbnailMode?: ThumbnailMode;
     gridPageLimit?: number;
     // isLocal?: boolean;
   }

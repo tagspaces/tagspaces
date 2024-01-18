@@ -52,20 +52,13 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import GridCellsContainer from './GridCellsContainer';
 
 interface Props {
-  style?: any;
-  // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
-  showDirectories: boolean;
-  showDetails: boolean;
-  showDescription: boolean;
-  showTags: boolean;
   desktopMode: boolean;
-  thumbnailMode: string;
-  entrySize: string;
   files: Array<TS.FileSystemEntry>;
-  // pageEntries: Array<TS.FileSystemEntry>;
   getCellContent: (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -75,20 +68,15 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean,
   ) => void;
-  gridPageLimit: number;
   currentDirectoryPath: string;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   // eslint-disable-next-line react/no-unused-prop-types
-  settings; // cache only
-  // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
-  // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
   lastBackgroundImageChange: any;
   lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
-  singleClickAction: string;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
   clearSelection: () => void;
@@ -98,12 +86,6 @@ function GridPagination(props: Props) {
   let { directories } = props;
   const { t } = useTranslation();
   const {
-    style,
-    showDirectories,
-    showDetails,
-    showDescription,
-    showTags,
-    singleClickAction,
     getCellContent,
     desktopMode,
     currentDirectoryPath,
@@ -112,12 +94,19 @@ function GridPagination(props: Props) {
     lastBackgroundImageChange,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
-    gridPageLimit,
     selectedEntries,
     setSelectedEntries,
     clearSelection,
     files,
   } = props;
+  const {
+    showDetails,
+    showDescription,
+    showDirectories,
+    showTags,
+    gridPageLimit,
+    singleClickAction,
+  } = usePerspectiveSettingsContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
   const { moveFiles } = useIOActionsContext();
@@ -352,7 +341,7 @@ function GridPagination(props: Props) {
             </Grid>
           )}
         </Grid>
-        <div style={style} data-tid="perspectiveGridFileTable">
+        <GridCellsContainer>
           {page === 1 &&
             directories.map((entry, index) =>
               renderCell(
@@ -447,7 +436,7 @@ function GridPagination(props: Props) {
                 )}
               </div>
             )}
-        </div>
+        </GridCellsContainer>
         {showPagination && (
           <Tooltip title={folderSummary}>
             <Pagination
@@ -500,17 +489,15 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
     JSON.stringify(prevProp.lastThumbnailImageChange) &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  nextProp.showDirectories === prevProp.showDirectories &&
-  nextProp.showDetails === prevProp.showDetails &&
-  nextProp.showDescription === prevProp.showDescription &&
-  nextProp.showTags === prevProp.showTags &&
-  nextProp.thumbnailMode === prevProp.thumbnailMode &&
-  nextProp.entrySize === prevProp.entrySize &&
-  nextProp.gridPageLimit === prevProp.gridPageLimit &&
+  //nextProp.showDirectories === prevProp.showDirectories &&
+  //nextProp.showDetails === prevProp.showDetails &&
+  //nextProp.showDescription === prevProp.showDescription &&
+  //nextProp.showTags === prevProp.showTags &&
+  //nextProp.gridPageLimit === prevProp.gridPageLimit &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&
-  JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
+  // JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries);
 

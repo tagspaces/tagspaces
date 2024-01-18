@@ -54,13 +54,14 @@ import {
   AppDispatch,
   getLastThumbnailImageChange,
 } from '-/reducers/app';
-import { EntrySizes } from '-/components/ZoomComponent';
+import { FolderIcon } from '-/components/CommonIcons';
 import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
 import { defaultSettings } from '../index';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 const PREFIX = 'RowStyles';
 export const classes = {
@@ -94,13 +95,10 @@ interface Props {
   selected: boolean;
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
-  entrySize: EntrySizes;
   style?: any;
-  thumbnailMode: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectionMode: boolean;
-  showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -108,17 +106,17 @@ interface Props {
   showEntriesDescription?: boolean;
 }
 
-export function calculateEntryHeight(entrySize: EntrySizes) {
+export function calculateEntryHeight(entrySize: TS.EntrySizes) {
   let entryHeight = 200;
-  if (entrySize === EntrySizes.tiny) {
+  if (entrySize === 'tiny') {
     entryHeight = 30;
-  } else if (entrySize === EntrySizes.small) {
+  } else if (entrySize === 'small') {
     entryHeight = 70;
-  } else if (entrySize === EntrySizes.normal) {
+  } else if (entrySize === 'normal') {
     entryHeight = 90;
-  } else if (entrySize === EntrySizes.big) {
+  } else if (entrySize === 'big') {
     entryHeight = 120;
-  } else if (entrySize === EntrySizes.huge) {
+  } else if (entrySize === 'huge') {
     entryHeight = 150;
   }
   return entryHeight;
@@ -128,14 +126,11 @@ function RowCell(props: Props) {
   const {
     selected,
     fsEntry,
-    entrySize,
-    thumbnailMode,
     handleTagMenu,
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
     showEntriesDescription,
-    showTags,
     selectEntry,
     deselectEntry,
     selectionMode,
@@ -145,6 +140,8 @@ function RowCell(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { entrySize, showTags, thumbnailMode } =
+    usePerspectiveSettingsContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -208,7 +205,6 @@ function RowCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fSystemEntry.name,
       AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator(),
       PlatformIO.getDirSeparator(),
     );
   }
@@ -357,7 +353,7 @@ function RowCell(props: Props) {
   }
 
   const entryHeight = calculateEntryHeight(entrySize);
-  const isSmall = entrySize === EntrySizes.tiny; // || entrySize === EntrySizes.small;
+  const isSmall = entrySize === 'tiny'; // || entrySize === 'small';
 
   const backgroundColor = selected
     ? theme.palette.primary.light

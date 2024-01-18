@@ -58,11 +58,19 @@ interface Props {
   toggleFullScreen: () => void;
   reloadDocument: () => void;
   startClosingEntry: (event) => void;
+  isEntryInFullWidth: boolean;
+  desktopMode: boolean;
 }
 
 function EntryContainerTitle(props: Props) {
-  const { isFileChanged, reloadDocument, toggleFullScreen, startClosingEntry } =
-    props;
+  const {
+    isFileChanged,
+    reloadDocument,
+    toggleFullScreen,
+    startClosingEntry,
+    isEntryInFullWidth,
+    desktopMode,
+  } = props;
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries, sharingLink, sharingParentFolderLink } =
@@ -122,7 +130,7 @@ function EntryContainerTitle(props: Props) {
   }
 
   return (
-    <Box
+    <div
       style={{
         paddingLeft: 5,
         display: 'flex',
@@ -132,6 +140,10 @@ function EntryContainerTitle(props: Props) {
         flex: '1 1',
         overflowX: 'auto',
         overflowY: 'hidden',
+        marginLeft:
+          AppConfig.isMacLike && desktopMode && isEntryInFullWidth ? 60 : 0,
+        // @ts-ignore
+        WebkitAppRegion: 'drag',
       }}
     >
       {openedFile.isFile ? (
@@ -166,6 +178,8 @@ function EntryContainerTitle(props: Props) {
               alignItems: 'center',
               textTransform: 'uppercase',
               paddingLeft: 10,
+              // @ts-ignore
+              WebkitAppRegion: 'no-drag',
             }}
           >
             {
@@ -194,6 +208,8 @@ function EntryContainerTitle(props: Props) {
             display: 'flex',
             alignItems: 'center',
             paddingLeft: 10,
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
           }}
         >
           <FolderIcon style={{ fontSize: 20 }} />
@@ -222,6 +238,10 @@ function EntryContainerTitle(props: Props) {
           aria-label="bookmark"
           size="small"
           onClick={bookmarkClick}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
         >
           {haveBookmark ? (
             <BookmarkIcon
@@ -247,7 +267,7 @@ function EntryContainerTitle(props: Props) {
         reloadDocument={reloadDocument}
         toggleFullScreen={toggleFullScreen}
       />
-    </Box>
+    </div>
   );
 }
 

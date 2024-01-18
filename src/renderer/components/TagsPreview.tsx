@@ -90,6 +90,8 @@ function TagsPreview(props: Props) {
           lineHeight: '16px',
           color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
           textAlign: 'center',
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
         }}
       >
         {moreThanOne ? tags.length : '1'}

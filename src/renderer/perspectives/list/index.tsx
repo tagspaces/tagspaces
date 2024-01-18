@@ -21,7 +21,7 @@ export const defaultSettings = {
   sortBy: 'byName',
   layoutType: 'row', // row grid
   singleClickAction: 'openInternal', // openInternal openExternal
-  entrySize: 'small', // small, normal, big
+  entrySize: 'small',
   thumbnailMode: 'contain', // cover contain
   showDirectories: true,
   showDetails: true,

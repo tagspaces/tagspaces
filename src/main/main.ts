@@ -109,7 +109,6 @@ const browserWindowOptions: BrowserWindowConstructorOptions = {
   center: true,
   autoHideMenuBar: true,
   titleBarStyle: isMacLike ? 'hidden' : 'default',
-  trafficLightPosition: { x: 3, y: 3 },
   webPreferences: {
     spellcheck: true,
     preload:

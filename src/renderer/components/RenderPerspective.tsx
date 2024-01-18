@@ -29,6 +29,7 @@ import LoadingLazy from '-/components/LoadingLazy';
 import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
+import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 
 const GridPerspective = React.lazy(
   () =>
@@ -42,7 +43,9 @@ function GridPerspectiveAsync(props) {
       <SortedDirContextProvider>
         <PaginationContextProvider>
           <ThumbGenerationContextProvider>
-            <GridPerspective {...props} />
+            <PerspectiveSettingsContextProvider>
+              <GridPerspective {...props} />
+            </PerspectiveSettingsContextProvider>
           </ThumbGenerationContextProvider>
         </PaginationContextProvider>
       </SortedDirContextProvider>
@@ -60,7 +63,9 @@ function ListPerspectiveAsync(props) {
       <SortedDirContextProvider>
         <PaginationContextProvider>
           <ThumbGenerationContextProvider>
-            <ListPerspective {...props} />
+            <PerspectiveSettingsContextProvider>
+              <ListPerspective {...props} />
+            </PerspectiveSettingsContextProvider>
           </ThumbGenerationContextProvider>
         </PaginationContextProvider>
       </SortedDirContextProvider>
@@ -107,7 +112,9 @@ function KanBanPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <ThumbGenerationContextProvider>
-        <KanBanPerspective {...props} />
+        <PerspectiveSettingsContextProvider>
+          <KanBanPerspective {...props} />
+        </PerspectiveSettingsContextProvider>
       </ThumbGenerationContextProvider>
     </React.Suspense>
   );

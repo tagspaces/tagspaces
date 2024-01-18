@@ -47,65 +47,37 @@ import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
-import ZoomComponent, { EntrySizes } from '-/components/ZoomComponent';
+import ZoomComponent from '-/components/ZoomComponent';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   open: boolean;
-  gridPageLimit: number;
-  onClose: (isDefault?: boolean) => void;
-  setGridPageLimit: (number) => void;
-  toggleShowDescription?: () => void;
-  toggleShowEntriesDescription?: () => void;
-  toggleShowDetails: () => void;
-  showDetails: boolean;
-  showDescription: boolean;
-  showEntriesDescription?: boolean;
-  toggleShowDirectories: () => void;
-  toggleShowTags: () => void;
-  showDirectories: boolean;
-  showTags: boolean;
-  toggleThumbnailsMode: () => string;
-  thumbnailMode: string;
-  changeEntrySize: (entrySize: string) => void;
-  entrySize: EntrySizes;
-  changeSingleClickAction: (actionType: string) => void;
-  singleClickAction: string;
+  onClose: () => void;
   openHelpWebPage: () => void;
   handleSortingMenu: (event) => void;
-  isLocal: boolean;
-  resetLocalSettings: () => void;
 }
 
 function GridSettingsDialog(props: Props) {
   const { t } = useTranslation();
-  const { sortBy, orderBy } = useSortedDirContext();
-  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
-  const thumbnailMode = useRef<string>(props.thumbnailMode);
-  const entrySize = useRef<EntrySizes>(props.entrySize);
-  const singleClickAction = useRef<string>(props.singleClickAction);
-
-  const theme = useTheme();
   const {
-    open,
-    onClose,
-    gridPageLimit,
+    showDirectories,
+    showTags,
     showDetails,
-    toggleShowDetails,
     showDescription,
     showEntriesDescription,
-    toggleShowEntriesDescription,
-    toggleShowDescription,
-    toggleShowDirectories,
-    showDirectories,
-    toggleShowTags,
-    showTags,
-    toggleThumbnailsMode,
-    changeEntrySize,
-    changeSingleClickAction,
-    openHelpWebPage,
-  } = props;
+    thumbnailMode,
+    singleClickAction,
+    gridPageLimit,
+    haveLocalSetting,
+    resetLocalSetting,
+    setSettings,
+    saveSettings,
+  } = usePerspectiveSettingsContext();
+  const { sortBy, orderBy } = useSortedDirContext();
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
-  let newGridPageLimit = gridPageLimit;
+  const theme = useTheme();
+  const { open, onClose, openHelpWebPage } = props;
 
   const handleGridPaginationLimit = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -114,9 +86,9 @@ function GridSettingsDialog(props: Props) {
     const { value, name } = target;
 
     if (name === 'limit') {
-      newGridPageLimit = roughScale(value);
+      const newGridPageLimit = roughScale(value);
+      setSettings({ gridPageLimit: newGridPageLimit });
     }
-    props.setGridPageLimit(newGridPageLimit);
   };
 
   function roughScale(x) {
@@ -137,7 +109,7 @@ function GridSettingsDialog(props: Props) {
         />
       </DialogTitle>
       <DialogContent>
-        {props.isLocal && (
+        {haveLocalSetting() && (
           <>
             <Typography
               style={{ color: theme.palette.text.primary }}
@@ -150,7 +122,8 @@ function GridSettingsDialog(props: Props) {
               data-tid="resetLocalSettingsTID"
               title={t('core:resetLocalSettings')}
               onClick={() => {
-                props.resetLocalSettings();
+                resetLocalSetting();
+                onClose();
                 // forceUpdate();
               }}
             >
@@ -160,14 +133,7 @@ function GridSettingsDialog(props: Props) {
         )}
         <Divider />
         <Box style={{ display: 'flex' }}>
-          <ZoomComponent
-            entrySize={entrySize.current}
-            changeEntrySize={(eSize: EntrySizes) => {
-              changeEntrySize(eSize);
-              entrySize.current = eSize;
-              forceUpdate();
-            }}
-          />
+          <ZoomComponent preview={true} />
           <Typography
             style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
@@ -183,7 +149,9 @@ function GridSettingsDialog(props: Props) {
               <Switch
                 data-tid="gridPerspectiveToggleShowDirectories"
                 defaultChecked={showDirectories}
-                onChange={toggleShowDirectories}
+                onChange={() => {
+                  setSettings({ showDirectories: !showDirectories });
+                }}
                 name="checkedD"
                 color="primary"
               />
@@ -196,7 +164,9 @@ function GridSettingsDialog(props: Props) {
               <Switch
                 data-tid="gridPerspectiveToggleShowTags"
                 defaultChecked={showTags}
-                onChange={toggleShowTags}
+                onChange={() => {
+                  setSettings({ showTags: !showTags });
+                }}
                 name="checkedT"
                 color="primary"
               />
@@ -209,7 +179,11 @@ function GridSettingsDialog(props: Props) {
               <Switch
                 data-tid="gridPerspectiveToggleShowEntriesDescription"
                 defaultChecked={showEntriesDescription}
-                onChange={toggleShowEntriesDescription}
+                onChange={() => {
+                  setSettings({
+                    showEntriesDescription: !showEntriesDescription,
+                  });
+                }}
                 name={t('core:showHideEntriesDescription')}
                 color="primary"
               />
@@ -222,20 +196,24 @@ function GridSettingsDialog(props: Props) {
               <Switch
                 data-tid="gridPerspectiveToggleShowDetails"
                 defaultChecked={showDetails}
-                onChange={toggleShowDetails}
+                onChange={() => {
+                  setSettings({ showDetails: !showDetails });
+                }}
                 name={t('core:showHideDetails')}
                 color="primary"
               />
             }
             label={t('core:showHideDetails')}
           />
-          {toggleShowDescription && (
+          {showDescription != undefined && (
             <FormControlLabel
               control={
                 <Switch
                   data-tid="gridPerspectiveToggleShowDescription"
                   defaultChecked={showDescription}
-                  onChange={toggleShowDescription}
+                  onChange={() => {
+                    setSettings({ showDescription: !showDescription });
+                  }}
                   name={t('core:showHideDescription')}
                   color="primary"
                 />
@@ -250,12 +228,14 @@ function GridSettingsDialog(props: Props) {
           title={t('core:toggleThumbnailModeTitle')}
           aria-label={t('core:toggleThumbnailMode')}
           onClick={() => {
-            thumbnailMode.current = toggleThumbnailsMode();
+            setSettings({
+              thumbnailMode: thumbnailMode === 'cover' ? 'contain' : 'cover',
+            });
             forceUpdate();
           }}
         >
           <ListItemIcon>
-            {thumbnailMode.current === 'cover' ? (
+            {thumbnailMode === 'cover' ? (
               <ThumbnailCoverIcon />
             ) : (
               <ThumbnailContainIcon />
@@ -345,13 +325,12 @@ function GridSettingsDialog(props: Props) {
           title={t('core:singleClickOpenInternally')}
           aria-label={t('core:singleClickOpenInternally')}
           onClick={() => {
-            changeSingleClickAction('openInternal');
-            singleClickAction.current = 'openInternal';
+            setSettings({ singleClickAction: 'openInternal' });
             forceUpdate();
           }}
         >
           <ListItemIcon>
-            {singleClickAction.current === 'openInternal' ? (
+            {singleClickAction === 'openInternal' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -364,13 +343,12 @@ function GridSettingsDialog(props: Props) {
           title={t('core:singleClickOpenExternally')}
           aria-label={t('core:singleClickOpenExternally')}
           onClick={() => {
-            changeSingleClickAction('openExternal');
-            singleClickAction.current = 'openExternal';
+            setSettings({ singleClickAction: 'openExternal' });
             forceUpdate();
           }}
         >
           <ListItemIcon>
-            {singleClickAction.current === 'openExternal' ? (
+            {singleClickAction === 'openExternal' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -383,13 +361,12 @@ function GridSettingsDialog(props: Props) {
           title={t('core:singleClickSelects')}
           aria-label={t('core:singleClickSelects')}
           onClick={() => {
-            changeSingleClickAction('selects');
-            singleClickAction.current = 'selects';
+            setSettings({ singleClickAction: 'selects' });
             forceUpdate();
           }}
         >
           <ListItemIcon>
-            {singleClickAction.current === 'selects' ? (
+            {singleClickAction === 'selects' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -425,7 +402,8 @@ function GridSettingsDialog(props: Props) {
         <Button
           data-tid="defaultSettings"
           onClick={() => {
-            onClose(true);
+            saveSettings(true);
+            onClose();
           }}
           color="primary"
         >
@@ -435,7 +413,8 @@ function GridSettingsDialog(props: Props) {
           <Button
             data-tid="directorySettings"
             onClick={() => {
-              onClose(false);
+              saveSettings(false);
+              onClose();
             }}
             color="primary"
           >

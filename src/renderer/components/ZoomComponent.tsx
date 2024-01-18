@@ -23,64 +23,68 @@ import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
 import ZoomInIcon from '@mui/icons-material/ControlPoint';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useReducer } from 'react';
 
 interface Props {
-  entrySize: EntrySizes;
-  changeEntrySize: (entrySize: EntrySizes) => void;
-}
-
-export enum EntrySizes {
-  huge = 'huge',
-  big = 'big',
-  normal = 'normal',
-  small = 'small',
-  tiny = 'tiny',
-}
-
-function mapEntrySizeToPercent(entrySize: EntrySizes) {
-  if (entrySize === EntrySizes.huge) {
-    return '120%';
-  } else if (entrySize === EntrySizes.big) {
-    return '110%';
-  } else if (entrySize === EntrySizes.normal) {
-    return '100%';
-  } else if (entrySize === EntrySizes.small) {
-    return '90%';
-  } else if (entrySize === EntrySizes.tiny) {
-    return '80%';
-  }
+  preview: boolean;
 }
 
 export default function ZoomComponent(props: Props) {
-  const { changeEntrySize, entrySize } = props;
+  const { preview } = props;
+  const { entrySize, setSettings, saveSettings } =
+    usePerspectiveSettingsContext();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
-  const entrySizePercent = mapEntrySizeToPercent(entrySize);
+  const entrySizePercent = mapEntrySizeToPercent();
+
+  function mapEntrySizeToPercent() {
+    if (entrySize === 'huge') {
+      return '120%';
+    } else if (entrySize === 'big') {
+      return '110%';
+    } else if (entrySize === 'normal') {
+      return '100%';
+    } else if (entrySize === 'small') {
+      return '90%';
+    } else if (entrySize === 'tiny') {
+      return '80%';
+    }
+  }
+
+  function changeEntrySize(size) {
+    setSettings({ entrySize: size });
+    if (!preview) {
+      saveSettings(); //isDefaultSetting);
+    }
+    forceUpdate();
+  }
 
   function zoomIn() {
-    if (entrySize === EntrySizes.huge) {
-      // changeEntrySize(EntrySizes.tiny);
-    } else if (entrySize === EntrySizes.big) {
-      changeEntrySize(EntrySizes.huge);
-    } else if (entrySize === EntrySizes.normal) {
-      changeEntrySize(EntrySizes.big);
-    } else if (entrySize === EntrySizes.small) {
-      changeEntrySize(EntrySizes.normal);
-    } else if (entrySize === EntrySizes.tiny) {
-      changeEntrySize(EntrySizes.small);
+    if (entrySize === 'huge') {
+      // changeEntrySize(TS.EntrySizes.tiny);
+    } else if (entrySize === 'big') {
+      changeEntrySize('huge');
+    } else if (entrySize === 'normal') {
+      changeEntrySize('big');
+    } else if (entrySize === 'small') {
+      changeEntrySize('normal');
+    } else if (entrySize === 'tiny') {
+      changeEntrySize('small');
     }
   }
 
   function zoomOut() {
-    if (entrySize === EntrySizes.huge) {
-      changeEntrySize(EntrySizes.big);
-    } else if (entrySize === EntrySizes.big) {
-      changeEntrySize(EntrySizes.normal);
-    } else if (entrySize === EntrySizes.normal) {
-      changeEntrySize(EntrySizes.small);
-    } else if (entrySize === EntrySizes.small) {
-      changeEntrySize(EntrySizes.tiny);
-    } else if (entrySize === EntrySizes.tiny) {
-      // changeEntrySize(EntrySizes.small);
+    if (entrySize === 'huge') {
+      changeEntrySize('big');
+    } else if (entrySize === 'big') {
+      changeEntrySize('normal');
+    } else if (entrySize === 'normal') {
+      changeEntrySize('small');
+    } else if (entrySize === 'small') {
+      changeEntrySize('tiny');
+    } else if (entrySize === 'tiny') {
+      // changeEntrySize(TS.EntrySizes.small);
     }
   }
 
