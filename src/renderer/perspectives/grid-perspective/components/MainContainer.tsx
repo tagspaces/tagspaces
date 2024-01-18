@@ -31,7 +31,7 @@ import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import GridCell, {
   calculateEntryHeight,
-  calculateEntryWitdth,
+  calculateEntryWidth,
 } from './GridCell';
 import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
@@ -52,6 +52,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { GridCellsStyleContextProvider } from '-/perspectives/grid-perspective/hooks/GridCellsStyleProvider';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -394,36 +395,23 @@ function GridPerspective(props: Props) {
         handlers={keyBindingHandlers}
         allowChanges={true}
       >
-        <GridPagination
-          style={{
-            margin: 0,
-            display: 'grid',
-            gridGap: '5px 5px',
-            padding: 5,
-            paddingBottom: 70,
-            gridTemplateColumns:
-              'repeat(auto-fit,minmax(' +
-              calculateEntryWitdth(entrySize) +
-              'px,1fr))',
-            gridTemplateRows:
-              'repeat(auto-fit,minmax(' +
-              calculateEntryHeight(entrySize) +
-              'px,1fr))',
-          }}
-          directories={sortedDirectories}
-          desktopMode={desktopMode}
-          openRenameEntryDialog={openRenameEntryDialog}
-          files={sortedFiles}
-          getCellContent={getCellContent}
-          currentDirectoryPath={currentDirectoryPath}
-          onClick={onClick}
-          onContextMenu={onContextMenu}
-          selectedEntries={selectedEntries}
-          setSelectedEntries={handleSetSelectedEntries}
-          setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-          setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-          clearSelection={clearSelection}
-        />
+        <GridCellsStyleContextProvider>
+          <GridPagination
+            directories={sortedDirectories}
+            desktopMode={desktopMode}
+            openRenameEntryDialog={openRenameEntryDialog}
+            files={sortedFiles}
+            getCellContent={getCellContent}
+            currentDirectoryPath={currentDirectoryPath}
+            onClick={onClick}
+            onContextMenu={onContextMenu}
+            selectedEntries={selectedEntries}
+            setSelectedEntries={handleSetSelectedEntries}
+            setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
+            setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
+            clearSelection={clearSelection}
+          />
+        </GridCellsStyleContextProvider>
       </GlobalHotKeys>
       {isAddRemoveTagsDialogOpened && (
         <AddRemoveTagsDialog

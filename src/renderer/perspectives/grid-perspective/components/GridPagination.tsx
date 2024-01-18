@@ -53,14 +53,12 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import GridCellsContainer from './GridCellsContainer';
 
 interface Props {
-  style?: any;
-  // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   desktopMode: boolean;
   files: Array<TS.FileSystemEntry>;
-  // pageEntries: Array<TS.FileSystemEntry>;
   getCellContent: (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -75,10 +73,7 @@ interface Props {
   openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   // eslint-disable-next-line react/no-unused-prop-types
-  // settings; // cache only
-  // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
-  // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
   lastBackgroundImageChange: any;
   lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
@@ -91,7 +86,6 @@ function GridPagination(props: Props) {
   let { directories } = props;
   const { t } = useTranslation();
   const {
-    style,
     getCellContent,
     desktopMode,
     currentDirectoryPath,
@@ -347,7 +341,7 @@ function GridPagination(props: Props) {
             </Grid>
           )}
         </Grid>
-        <div style={style} data-tid="perspectiveGridFileTable">
+        <GridCellsContainer>
           {page === 1 &&
             directories.map((entry, index) =>
               renderCell(
@@ -442,7 +436,7 @@ function GridPagination(props: Props) {
                 )}
               </div>
             )}
-        </div>
+        </GridCellsContainer>
         {showPagination && (
           <Tooltip title={folderSummary}>
             <Pagination

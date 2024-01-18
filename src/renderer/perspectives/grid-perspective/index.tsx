@@ -1,5 +1,4 @@
 import React from 'react';
-import { TS } from '-/tagspaces.namespace';
 export { default } from './components/MainContainer';
 
 // interface PerspectiveSettings {

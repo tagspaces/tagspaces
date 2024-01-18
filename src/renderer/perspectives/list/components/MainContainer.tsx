@@ -49,6 +49,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -391,28 +392,23 @@ function ListPerspective(props: Props) {
         handlers={keyBindingHandlers}
         allowChanges={true}
       >
-        <GridPagination
-          style={{
-            marginTop: 5,
-            marginBottom: 70,
-            paddingRight: 4,
-            paddingLeft: 4,
-            gridTemplateColumns: 'none',
-          }}
-          directories={sortedDirectories}
-          desktopMode={desktopMode}
-          openRenameEntryDialog={openRenameEntryDialog}
-          files={sortedFiles}
-          getCellContent={getCellContent}
-          currentDirectoryPath={currentDirectoryPath}
-          onClick={onClick}
-          onContextMenu={onContextMenu}
-          selectedEntries={selectedEntries}
-          setSelectedEntries={handleSetSelectedEntries}
-          setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-          setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-          clearSelection={clearSelection}
-        />
+        <ListCellsStyleContextProvider>
+          <GridPagination
+            directories={sortedDirectories}
+            desktopMode={desktopMode}
+            openRenameEntryDialog={openRenameEntryDialog}
+            files={sortedFiles}
+            getCellContent={getCellContent}
+            currentDirectoryPath={currentDirectoryPath}
+            onClick={onClick}
+            onContextMenu={onContextMenu}
+            selectedEntries={selectedEntries}
+            setSelectedEntries={handleSetSelectedEntries}
+            setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
+            setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
+            clearSelection={clearSelection}
+          />
+        </ListCellsStyleContextProvider>
       </GlobalHotKeys>
       {isAddRemoveTagsDialogOpened && (
         <AddRemoveTagsDialog
