@@ -89,6 +89,7 @@ function EntryContainer() {
     updateOpenedFile,
     reloadOpenedFile,
     toggleEntryFullWidth,
+    isEntryInFullWidth,
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
@@ -890,6 +891,8 @@ function EntryContainer() {
               reloadDocument={reloadDocument}
               toggleFullScreen={toggleFullScreen}
               startClosingEntry={startClosingEntry}
+              isEntryInFullWidth={isEntryInFullWidth}
+              desktopMode={desktopMode}
             />
             <EntryContainerNav
               isFile={openedFile.isFile}

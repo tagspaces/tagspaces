@@ -75,6 +75,9 @@ function FolderContainer(props: Props) {
     defaultPerspective,
     goBack,
     goForward,
+    drawerOpened,
+    progress,
+    toggleUploadDialog,
   } = props;
 
   const { t } = useTranslation();
@@ -90,26 +93,6 @@ function FolderContainer(props: Props) {
     isSearchMode,
   } = useDirectoryContentContext();
 
-  /**
-   * reflect update openedFile from perspective
-   */
-  /*useEffect(() => {
-    const { editedEntryPaths, openedFiles, openEntry } = props;
-
-    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
-      editedEntryPaths.forEach(editedEntryPath => {
-        const { action, path } = editedEntryPath;
-        // update opened file after delete sidecar tags
-        if (path && action.startsWith('edit')) {
-          const openedFile = openedFiles[0];
-          if (openedFile.path === path) {
-            openEntry(path);
-          }
-        }
-      });
-    }
-  }, [props.editedEntryPaths]);*/
-
   const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] =
     useState<boolean>(false);
 
@@ -122,7 +105,6 @@ function FolderContainer(props: Props) {
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
-  // && !(isSearchMode && props.lastSearchTimestamp);
 
   const openRenameEntryDialog = useCallback(
     () => setRenameEntryDialogOpened(true),
@@ -156,7 +138,7 @@ function FolderContainer(props: Props) {
   }
 
   const getProgressValue = () => {
-    const objProgress = props.progress.find(
+    const objProgress = progress.find(
       (fileProgress) =>
         fileProgress.progress < 100 && fileProgress.progress > -1,
     );
@@ -241,6 +223,8 @@ function FolderContainer(props: Props) {
           minHeight: 50,
           // @ts-ignore
           WebkitAppRegion: 'drag',
+          marginLeft:
+            AppConfig.isMacLike && isDesktopMode && !drawerOpened ? 60 : 0,
         }}
       >
         <IconButton
@@ -310,12 +294,12 @@ function FolderContainer(props: Props) {
                 <SearchIcon />
               </IconButton>
             </Tooltip>
-            {props.progress && props.progress.length > 0 && (
+            {progress?.length > 0 && (
               <IconButton
                 id="progressButton"
                 title={t('core:progress')}
                 data-tid="uploadProgress"
-                onClick={() => props.toggleUploadDialog()}
+                onClick={() => toggleUploadDialog()}
                 style={{
                   position: 'relative',
                   padding: '8px 12px 6px 8px',
@@ -350,7 +334,7 @@ function FolderContainer(props: Props) {
           />
         )}
       </div>
-      {props.isDesktopMode && (
+      {isDesktopMode && (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
