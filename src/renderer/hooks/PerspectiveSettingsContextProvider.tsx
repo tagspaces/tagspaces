@@ -27,11 +27,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import {
-  defaultSettings,
-  defaultSettings as defaultGridSettings,
-} from '-/perspectives/grid-perspective';
-import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { removeFolderCustomSettings } from '-/utils/metaoperations';
 
 type PerspectiveSettingsContextData = {
@@ -91,6 +86,7 @@ export const PerspectiveSettingsContextProvider = ({
     currentDirectoryPerspective,
     directoryMeta,
     setDirectoryMeta,
+    getDefaultPerspectiveSettings,
   } = useDirectoryContentContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
@@ -102,22 +98,11 @@ export const PerspectiveSettingsContextProvider = ({
     forceUpdate();
   }, [currentDirectoryPerspective, directoryMeta]);
 
-  function getDefaultSettings(perspective: string) {
-    if (perspective === PerspectiveIDs.GRID) {
-      return defaultGridSettings;
-    } else if (perspective === PerspectiveIDs.LIST) {
-      return defaultListSettings;
-    } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
-      return Pro.Perspectives.KanBanPerspectiveSettings;
-    }
-    return defaultGridSettings;
-  }
-
   function getSettings(
     perspective: string,
     directoryMeta: TS.FileSystemEntryMeta,
   ): TS.FolderSettings {
-    const defaultSettings = getDefaultSettings(perspective);
+    const defaultSettings = getDefaultPerspectiveSettings(perspective);
     let s: TS.FolderSettings = defaultSettings;
     if (
       Pro &&
@@ -189,6 +174,7 @@ export const PerspectiveSettingsContextProvider = ({
         setDirectoryMeta(fsEntryMeta);
       });
     } else {
+      const defaultSettings = getDefaultPerspectiveSettings(getPerspective());
       localStorage.setItem(
         defaultSettings.settingsKey,
         JSON.stringify(settings.current),

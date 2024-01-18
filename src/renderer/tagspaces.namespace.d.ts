@@ -212,6 +212,14 @@ export namespace TS {
     creationTimeStamp: number;
   }
 
+  type PerspectiveType =
+    | 'grid'
+    | 'list'
+    | 'gallery'
+    | 'mapique'
+    | 'kanban'
+    | 'unspecified';
+
   interface PerspectiveSettings {
     grid?: FolderSettings;
     list?: FolderSettings;
@@ -222,6 +230,7 @@ export namespace TS {
   }
 
   interface FolderSettings {
+    settingsKey: string;
     showDirectories?: boolean;
     showTags?: boolean;
     showDetails?: boolean;
