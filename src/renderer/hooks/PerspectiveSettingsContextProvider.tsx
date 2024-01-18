@@ -108,7 +108,7 @@ export const PerspectiveSettingsContextProvider = ({
     } else if (perspective === PerspectiveIDs.LIST) {
       return defaultListSettings;
     } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
-      return Pro.Perspectives.KanBanPerspective.defaultSettings;
+      return Pro.Perspectives.KanBanPerspectiveSettings;
     }
     return defaultGridSettings;
   }
