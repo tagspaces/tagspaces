@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { isObj } from '@tagspaces/tagspaces-common/misc';
@@ -44,9 +44,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from 'assets/links';
 import { defaultSettings } from '../index';
-import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
-import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -59,31 +57,12 @@ interface Props {
   openRenameEntryDialog: () => void;
 }
 
-function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
-  if (
-    Pro &&
-    directoryMeta &&
-    directoryMeta.perspectiveSettings &&
-    directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
-  ) {
-    return directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
-  } else {
-    // loading settings for not Pro
-    return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
-  }
-}
-
 function GridPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const { entrySize, showDirectories } = usePerspectiveSettingsContext();
-  const {
-    directoryMeta,
-    openDirectory,
-    currentDirectoryPath,
-    setDirectoryMeta,
-  } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
@@ -101,13 +80,6 @@ function GridPerspective(props: Props) {
       : entries.filter((entry) => entry.isFile);
     setSelectedEntries(selected);
   };
-
-  const isLocal =
-    Pro &&
-    directoryMeta &&
-    directoryMeta.perspectiveSettings &&
-    directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
-  const settings = getSettings(directoryMeta);
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 
@@ -129,46 +101,6 @@ function GridPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  /*const singleClickAction = useRef<string>(
-    settings && settings.singleClickAction
-      ? settings.singleClickAction
-      : defaultSettings.singleClickAction,
-  );
-  const entrySize = useRef<TS.EntrySizes>(
-    settings && settings.entrySize
-      ? settings.entrySize
-      : defaultSettings.entrySize,
-  );
-  const thumbnailMode = useRef<string>(
-    settings && settings.thumbnailMode
-      ? settings.thumbnailMode
-      : defaultSettings.thumbnailMode,
-  );
-  const showDirectories = useRef<boolean>(
-    settings && typeof settings.showDirectories !== 'undefined'
-      ? settings.showDirectories
-      : defaultSettings.showDirectories,
-  );
-  const showDetails = useRef<boolean>(
-    settings && typeof settings.showDetails !== 'undefined'
-      ? settings.showDetails
-      : defaultSettings.showDetails,
-  );
-  const showDescription = useRef<boolean>(
-    settings && typeof settings.showDescription !== 'undefined'
-      ? settings.showDescription
-      : defaultSettings.showDescription,
-  );
-  const showEntriesDescription = useRef<boolean>(
-    settings && typeof settings.showEntriesDescription !== 'undefined'
-      ? settings.showEntriesDescription
-      : defaultSettings.showEntriesDescription,
-  );
-  const showTags = useRef<boolean>(
-    settings && typeof settings.showTags !== 'undefined'
-      ? settings.showTags
-      : defaultSettings.showTags,
-  );*/
   const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
     useState<boolean>(false);
   const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
@@ -177,123 +109,12 @@ function GridPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
-  /*const gridPageLimit = useRef<number>(
-    settings && settings.gridPageLimit
-      ? settings.gridPageLimit
-      : defaultSettings.gridPageLimit,
-  );*/
-  // true: save in default settings; false: save per folder settings; undefined - dont save changes
-  const isDefaultSetting = useRef<boolean>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (selectedEntries.length === 1) {
       makeFirstSelectedEntryVisible();
     }
   }, [selectedEntries]);
-
-  /*useEffect(() => {
-    if (!firstRender) {
-      const perspectiveSettings = getSettings(directoryMeta);
-      showDirectories.current =
-        perspectiveSettings && perspectiveSettings.showDirectories !== undefined
-          ? perspectiveSettings.showDirectories
-          : defaultSettings.showDirectories;
-      showDescription.current =
-        perspectiveSettings && perspectiveSettings.showDescription !== undefined
-          ? perspectiveSettings.showDescription
-          : defaultSettings.showDescription;
-      showEntriesDescription.current =
-        perspectiveSettings &&
-        perspectiveSettings.showEntriesDescription !== undefined
-          ? perspectiveSettings.showEntriesDescription
-          : defaultSettings.showEntriesDescription;
-      showDetails.current =
-        perspectiveSettings && perspectiveSettings.showDetails !== undefined
-          ? perspectiveSettings.showDetails
-          : defaultSettings.showDetails;
-      showTags.current =
-        perspectiveSettings && perspectiveSettings.showTags !== undefined
-          ? perspectiveSettings.showTags
-          : defaultSettings.showTags;
-      setOrderBy(
-        perspectiveSettings && perspectiveSettings.orderBy !== undefined
-          ? perspectiveSettings.orderBy
-          : defaultSettings.orderBy,
-      );
-      setSortBy(
-        perspectiveSettings && perspectiveSettings.sortBy !== undefined
-          ? perspectiveSettings.sortBy
-          : defaultSettings.sortBy,
-      );
-      singleClickAction.current =
-        perspectiveSettings &&
-        perspectiveSettings.singleClickAction !== undefined
-          ? perspectiveSettings.singleClickAction
-          : defaultSettings.singleClickAction;
-      entrySize.current =
-        perspectiveSettings && perspectiveSettings.entrySize !== undefined
-          ? perspectiveSettings.entrySize
-          : defaultSettings.entrySize;
-      thumbnailMode.current =
-        perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
-          ? perspectiveSettings.thumbnailMode
-          : defaultSettings.thumbnailMode;
-      gridPageLimit.current =
-        perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
-          ? perspectiveSettings.gridPageLimit
-          : defaultSettings.gridPageLimit;
-      forceUpdate();
-    }
-  }, [directoryMeta]);*/
-
-  /*useEffect(() => {
-    if (!firstRender && isDefaultSetting.current !== undefined) {
-      const perspectiveSettings = {
-        showDirectories: showDirectories.current,
-        showDescription: showDescription.current,
-        showEntriesDescription: showEntriesDescription.current,
-        showDetails: showDetails.current,
-        showTags: showTags.current,
-        orderBy: orderBy,
-        sortBy: sortBy,
-        singleClickAction: singleClickAction.current,
-        entrySize: entrySize.current,
-        thumbnailMode: thumbnailMode.current,
-        gridPageLimit: gridPageLimit.current,
-      };
-      if (Pro && !isDefaultSetting.current) {
-        Pro.MetaOperations.savePerspectiveSettings(
-          currentDirectoryPath,
-          PerspectiveIDs.GRID,
-          perspectiveSettings,
-        ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          setDirectoryMeta(fsEntryMeta);
-        });
-      } else {
-        localStorage.setItem(
-          defaultSettings.settingsKey,
-          JSON.stringify(perspectiveSettings),
-        );
-        forceUpdate();
-      }
-      isDefaultSetting.current = undefined;
-    }
-  }, [
-    isDefaultSetting.current,
-    showDirectories.current,
-    showDescription.current,
-    showEntriesDescription.current,
-    showDetails.current,
-    showTags.current,
-    orderBy,
-    sortBy,
-    singleClickAction.current,
-    entrySize.current,
-    thumbnailMode.current,
-    gridPageLimit.current,
-  ]);*/
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -312,11 +133,6 @@ function GridPerspective(props: Props) {
       }
     }
   };
-
-  /*const handleGridPageLimit = (limit: number) => {
-    gridPageLimit.current = limit;
-    // forceUpdate();
-  };*/
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
@@ -355,53 +171,6 @@ function GridPerspective(props: Props) {
       handleSetSelectedEntries(sortedDirContent);
     }
   };
-
-  /*const toggleShowDirectories = () => {
-    closeOptionsMenu();
-    showDirectories.current = !showDirectories.current;
-    // forceUpdate();
-  };
-
-  const toggleShowDetails = () => {
-    closeOptionsMenu();
-    showDetails.current = !showDetails.current;
-  };
-
-  const toggleShowDescription = () => {
-    closeOptionsMenu();
-    showDescription.current = !showDescription.current;
-  };
-
-  const toggleShowEntriesDescription = () => {
-    closeOptionsMenu();
-    showEntriesDescription.current = !showEntriesDescription.current;
-  };
-
-  const toggleShowTags = () => {
-    closeOptionsMenu();
-    showTags.current = !showTags.current;
-    // forceUpdate();
-  };
-
-  const toggleThumbnailsMode = () => {
-    closeOptionsMenu();
-    const thumbMode = thumbnailMode.current === 'cover' ? 'contain' : 'cover';
-    thumbnailMode.current = thumbMode;
-    // forceUpdate();
-    return thumbMode;
-  };*/
-
-  /*const changeEntrySize = (size) => {
-    closeOptionsMenu();
-    entrySize.current = size;
-    // forceUpdate();
-  };*/
-
-  /*const changeSingleClickAction = (singleClick) => {
-    closeOptionsMenu();
-    singleClickAction.current = singleClick;
-    // forceUpdate();
-  };*/
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
@@ -672,21 +441,11 @@ function GridPerspective(props: Props) {
       {isGridSettingsDialogOpened && (
         <GridSettingsDialog
           open={isGridSettingsDialogOpened}
-          onClose={(isDefault) => {
+          onClose={() => {
             setIsGridSettingsDialogOpened(false);
-            isDefaultSetting.current = isDefault;
           }}
           openHelpWebPage={openHelpWebPage}
           handleSortingMenu={handleSortingMenu}
-          resetLocalSettings={() => {
-            Pro.MetaOperations.savePerspectiveSettings(
-              currentDirectoryPath,
-              PerspectiveIDs.GRID,
-            ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-              setDirectoryMeta(fsEntryMeta);
-              setIsGridSettingsDialogOpened(false);
-            });
-          }}
         />
       )}
       {isMoveCopyFilesDialogOpened && (

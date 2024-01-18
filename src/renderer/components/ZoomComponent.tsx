@@ -55,7 +55,7 @@ export default function ZoomComponent(props: Props) {
   function changeEntrySize(size) {
     setSettings({ entrySize: size });
     if (!preview) {
-      saveSettings(false); //isDefaultSetting);
+      saveSettings(); //isDefaultSetting);
     }
     forceUpdate();
   }

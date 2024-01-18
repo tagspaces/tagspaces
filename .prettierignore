@@ -9,7 +9,6 @@ release/app/node_modules
 release/app/dist
 src/node_modules
 src/renderer/version.json
-src/renderer/tagspaces.namespace.d.ts
 flow-typed
 extensions/extensions/*
 extensions/tagspacespro/libs/*

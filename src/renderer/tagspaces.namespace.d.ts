@@ -178,7 +178,6 @@ export namespace TS {
     files?: Array<OrderVisibilitySettings>;
   }
   // editTag1Tag2 - prevent edit action react component cache and not reload component if add/remove tags
-  // todo fix prettier SyntaxError: Type expected and remove file from .prettierignore
   type EditedEntryAction =
     | `edit${string}`
     | 'delete'
@@ -186,19 +185,9 @@ export namespace TS {
     | 'createFile'
     | 'createDir';
 
-  type EntrySizes =
-    | 'huge'
-    |  'big'
-    |  'normal'
-    | 'small'
-    |  'tiny';
+  type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
 
-  type ThumbnailMode =
-    | 'contain'
-    |  'cover'
-    |  'fill'
-    | 'none'
-    |  'scale-down';
+  type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
   interface EditedEntryPath {
     action: EditedEntryAction;

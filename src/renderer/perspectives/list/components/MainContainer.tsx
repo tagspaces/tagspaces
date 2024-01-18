@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { isObj } from '@tagspaces/tagspaces-common/misc';
@@ -41,9 +41,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from 'assets/links';
 import { defaultSettings } from '../index';
-import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
-import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -56,27 +54,12 @@ interface Props {
   openRenameEntryDialog: () => void;
 }
 
-function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
-  if (
-    Pro &&
-    directoryMeta &&
-    directoryMeta.perspectiveSettings &&
-    directoryMeta.perspectiveSettings[PerspectiveIDs.LIST]
-  ) {
-    return directoryMeta.perspectiveSettings[PerspectiveIDs.LIST];
-  } else {
-    // loading settings for not Pro
-    return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
-  }
-}
-
 function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const { openDirectory, currentDirectoryPath, setDirectoryMeta } =
-    useDirectoryContentContext();
-  const { showDirectories } = usePerspectiveSettingsContext();
+  const { entrySize, showDirectories } = usePerspectiveSettingsContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
@@ -86,10 +69,6 @@ function ListPerspective(props: Props) {
   const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
     useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  //const searchFilter: string = useSelector(getSearchFilter);
-  /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
-    getEditedEntryPaths
-  );*/
 
   // Create functions that dispatch actions
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
@@ -98,13 +77,6 @@ function ListPerspective(props: Props) {
       : entries.filter((entry) => entry.isFile);
     setSelectedEntries(selected);
   };
-
-  /*const isLocal =
-    Pro &&
-    directoryMeta &&
-    directoryMeta.perspectiveSettings &&
-    directoryMeta.perspectiveSettings[PerspectiveIDs.LIST];
-  const settings = getSettings(directoryMeta);*/
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 
@@ -126,14 +98,6 @@ function ListPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  /*const sortBy = useRef<string>(
-    settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
-  );
-  const orderBy = useRef<null | boolean>(
-    settings && typeof settings.orderBy !== 'undefined'
-      ? settings.orderBy
-      : defaultSettings.orderBy
-  );*/
   const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
     useState<boolean>(false);
   const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
@@ -142,118 +106,12 @@ function ListPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
-  // true: save in default settings; false: save per folder settings; undefined - dont save changes
-  //const isDefaultSetting = useRef<boolean>(undefined);
-  //const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  //const firstRender = useFirstRender();
 
   useEffect(() => {
     if (selectedEntries.length === 1) {
       makeFirstSelectedEntryVisible();
     }
   }, [selectedEntries]);
-
-  /*useEffect(() => {
-    if (!firstRender) {
-      const perspectiveSettings = getSettings(directoryMeta);
-      showDirectories.current =
-        perspectiveSettings && perspectiveSettings.showDirectories !== undefined
-          ? perspectiveSettings.showDirectories
-          : defaultSettings.showDirectories;
-      showDescription.current =
-        perspectiveSettings && perspectiveSettings.showDescription !== undefined
-          ? perspectiveSettings.showDescription
-          : defaultSettings.showDescription;
-      showEntriesDescription.current =
-        perspectiveSettings &&
-        perspectiveSettings.showEntriesDescription !== undefined
-          ? perspectiveSettings.showEntriesDescription
-          : defaultSettings.showEntriesDescription;
-      showDetails.current =
-        perspectiveSettings && perspectiveSettings.showDetails !== undefined
-          ? perspectiveSettings.showDetails
-          : defaultSettings.showDetails;
-      showTags.current =
-        perspectiveSettings && perspectiveSettings.showTags !== undefined
-          ? perspectiveSettings.showTags
-          : defaultSettings.showTags;
-      setOrderBy(
-        perspectiveSettings && perspectiveSettings.orderBy !== undefined
-          ? perspectiveSettings.orderBy
-          : defaultSettings.orderBy,
-      );
-      setSortBy(
-        perspectiveSettings && perspectiveSettings.sortBy !== undefined
-          ? perspectiveSettings.sortBy
-          : defaultSettings.sortBy,
-      );
-      singleClickAction.current =
-        perspectiveSettings &&
-        perspectiveSettings.singleClickAction !== undefined
-          ? perspectiveSettings.singleClickAction
-          : defaultSettings.singleClickAction;
-      entrySize.current =
-        perspectiveSettings && perspectiveSettings.entrySize !== undefined
-          ? perspectiveSettings.entrySize
-          : defaultSettings.entrySize;
-      thumbnailMode.current =
-        perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
-          ? perspectiveSettings.thumbnailMode
-          : defaultSettings.thumbnailMode;
-      gridPageLimit.current =
-        perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
-          ? perspectiveSettings.gridPageLimit
-          : defaultSettings.gridPageLimit;
-      forceUpdate();
-    }
-  }, [directoryMeta]);*/
-
-  /*useEffect(() => {
-    if (!firstRender && isDefaultSetting.current !== undefined) {
-      const perspectiveSettings = {
-        showDirectories: showDirectories.current,
-        showDescription: showDescription.current,
-        showEntriesDescription: showEntriesDescription.current,
-        showDetails: showDetails.current,
-        showTags: showTags.current,
-        orderBy: orderBy,
-        sortBy: sortBy,
-        singleClickAction: singleClickAction.current,
-        entrySize: entrySize.current,
-        thumbnailMode: thumbnailMode.current,
-        gridPageLimit: gridPageLimit.current,
-      };
-      if (Pro && !isDefaultSetting.current) {
-        Pro.MetaOperations.savePerspectiveSettings(
-          currentDirectoryPath,
-          PerspectiveIDs.LIST,
-          perspectiveSettings,
-        ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          setDirectoryMeta(fsEntryMeta);
-        });
-      } else {
-        localStorage.setItem(
-          defaultSettings.settingsKey,
-          JSON.stringify(perspectiveSettings),
-        );
-        forceUpdate();
-      }
-      isDefaultSetting.current = undefined;
-    }
-  }, [
-    isDefaultSetting.current,
-    showDirectories.current,
-    showDescription.current,
-    showEntriesDescription.current,
-    showDetails.current,
-    showTags.current,
-    orderBy,
-    sortBy,
-    singleClickAction.current,
-    entrySize.current,
-    thumbnailMode.current,
-    gridPageLimit.current,
-  ]);*/
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -272,11 +130,6 @@ function ListPerspective(props: Props) {
       }
     }
   };
-
-  /*const handleGridPageLimit = (limit: number) => {
-    gridPageLimit.current = limit;
-    // forceUpdate();
-  };*/
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
@@ -315,53 +168,6 @@ function ListPerspective(props: Props) {
       handleSetSelectedEntries(sortedDirContent);
     }
   };
-
-  /*const toggleShowDirectories = () => {
-    closeOptionsMenu();
-    showDirectories.current = !showDirectories.current;
-    // forceUpdate();
-  };
-
-  const toggleShowDetails = () => {
-    closeOptionsMenu();
-    showDetails.current = !showDetails.current;
-  };
-
-  const toggleShowDescription = () => {
-    closeOptionsMenu();
-    showDescription.current = !showDescription.current;
-  };
-
-  const toggleShowEntriesDescription = () => {
-    closeOptionsMenu();
-    showEntriesDescription.current = !showEntriesDescription.current;
-  };
-
-  const toggleShowTags = () => {
-    closeOptionsMenu();
-    showTags.current = !showTags.current;
-    // forceUpdate();
-  };
-
-  const toggleThumbnailsMode = () => {
-    closeOptionsMenu();
-    const thumbMode = thumbnailMode.current === 'cover' ? 'contain' : 'cover';
-    thumbnailMode.current = thumbMode;
-    // forceUpdate();
-    return thumbMode;
-  };*/
-
-  /*const changeEntrySize = (size) => {
-    closeOptionsMenu();
-    entrySize.current = size;
-    // forceUpdate();
-  };*/
-
-  /*const changeSingleClickAction = (singleClick) => {
-    closeOptionsMenu();
-    singleClickAction.current = singleClick;
-    // forceUpdate();
-  };*/
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
@@ -500,15 +306,6 @@ function ListPerspective(props: Props) {
   const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
   const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
 
-  /*let entryWidth = 200;
-  if (entrySize === 'small') {
-    entryWidth = 150;
-  } else if (entrySize === 'normal') {
-    entryWidth = 200;
-  } else if (entrySize === 'big') {
-    entryWidth = 300;
-  }*/
-
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -540,7 +337,6 @@ function ListPerspective(props: Props) {
     };
 
     const selectionMode = selectedEntries.length > 0;
-
     return (
       <TagDropContainer
         entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
@@ -552,8 +348,8 @@ function ListPerspective(props: Props) {
           selected={selected}
           fsEntry={fsEntry}
           isLast={isLast}
-          selectionMode={selectionMode}
           selectEntry={selectEntry}
+          selectionMode={selectionMode}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
           handleGridContextMenu={(
@@ -636,20 +432,9 @@ function ListPerspective(props: Props) {
           open={isGridSettingsDialogOpened}
           onClose={() => {
             setIsGridSettingsDialogOpened(false);
-            // isDefaultSetting.current = isDefault;
           }}
           openHelpWebPage={openHelpWebPage}
           handleSortingMenu={handleSortingMenu}
-          // isLocal={isLocal}
-          resetLocalSettings={() => {
-            Pro.MetaOperations.savePerspectiveSettings(
-              currentDirectoryPath,
-              PerspectiveIDs.LIST,
-            ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-              setDirectoryMeta(fsEntryMeta);
-              setIsGridSettingsDialogOpened(false);
-            });
-          }}
         />
       )}
       {isMoveCopyFilesDialogOpened && (

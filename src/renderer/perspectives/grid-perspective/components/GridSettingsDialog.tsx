@@ -48,15 +48,13 @@ import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import ZoomComponent from '-/components/ZoomComponent';
-import { TS } from '-/tagspaces.namespace';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   open: boolean;
-  onClose: (isDefault?: boolean) => void;
+  onClose: () => void;
   openHelpWebPage: () => void;
   handleSortingMenu: (event) => void;
-  resetLocalSettings: () => void;
 }
 
 function GridSettingsDialog(props: Props) {
@@ -71,6 +69,7 @@ function GridSettingsDialog(props: Props) {
     singleClickAction,
     gridPageLimit,
     haveLocalSetting,
+    resetLocalSetting,
     setSettings,
     saveSettings,
   } = usePerspectiveSettingsContext();
@@ -123,7 +122,8 @@ function GridSettingsDialog(props: Props) {
               data-tid="resetLocalSettingsTID"
               title={t('core:resetLocalSettings')}
               onClick={() => {
-                props.resetLocalSettings();
+                resetLocalSetting();
+                onClose();
                 // forceUpdate();
               }}
             >
@@ -402,7 +402,8 @@ function GridSettingsDialog(props: Props) {
         <Button
           data-tid="defaultSettings"
           onClick={() => {
-            onClose(true);
+            saveSettings(true);
+            onClose();
           }}
           color="primary"
         >
@@ -412,7 +413,8 @@ function GridSettingsDialog(props: Props) {
           <Button
             data-tid="directorySettings"
             onClick={() => {
-              onClose(false);
+              saveSettings(false);
+              onClose();
             }}
             color="primary"
           >

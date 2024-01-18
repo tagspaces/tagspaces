@@ -32,6 +32,7 @@ import {
   defaultSettings as defaultGridSettings,
 } from '-/perspectives/grid-perspective';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
+import { removeFolderCustomSettings } from '-/utils/metaoperations';
 
 type PerspectiveSettingsContextData = {
   orderBy: boolean;
@@ -50,6 +51,7 @@ type PerspectiveSettingsContextData = {
   showSubFolderDetails: boolean; // KanBan
   filesLimit: number; // KanBan
   haveLocalSetting: () => boolean;
+  resetLocalSetting: () => void;
   setSettings: (set: any) => void;
   saveSettings: (isDefaultSetting?: boolean) => void;
 };
@@ -72,6 +74,7 @@ export const PerspectiveSettingsContext =
     showSubFolderDetails: false,
     filesLimit: 15,
     haveLocalSetting: undefined,
+    resetLocalSetting: undefined,
     setSettings: undefined,
     saveSettings: undefined,
   });
@@ -91,11 +94,12 @@ export const PerspectiveSettingsContextProvider = ({
   } = useDirectoryContentContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
-    getSettings(currentDirectoryPerspective, directoryMeta),
+    getSettings(getPerspective(), directoryMeta),
   );
 
   useEffect(() => {
-    settings.current = getSettings(currentDirectoryPerspective, directoryMeta);
+    settings.current = getSettings(getPerspective(), directoryMeta);
+    forceUpdate();
   }, [currentDirectoryPerspective, directoryMeta]);
 
   function getDefaultSettings(perspective: string) {
@@ -114,7 +118,7 @@ export const PerspectiveSettingsContextProvider = ({
     directoryMeta: TS.FileSystemEntryMeta,
   ): TS.FolderSettings {
     const defaultSettings = getDefaultSettings(perspective);
-    let settings: TS.FolderSettings = defaultSettings;
+    let s: TS.FolderSettings = defaultSettings;
     if (
       Pro &&
       directoryMeta &&
@@ -124,7 +128,7 @@ export const PerspectiveSettingsContextProvider = ({
       const proSettings: TS.FolderSettings =
         directoryMeta.perspectiveSettings[perspective];
       if (proSettings) {
-        settings = { ...settings, ...proSettings };
+        s = { ...s, ...proSettings };
       }
     } else if (defaultSettings.settingsKey) {
       // loading settings for not Pro
@@ -132,15 +136,15 @@ export const PerspectiveSettingsContextProvider = ({
         localStorage.getItem(defaultSettings.settingsKey),
       );
       if (localStorageSettings) {
-        settings = { ...settings, ...localStorageSettings };
+        s = { ...s, ...localStorageSettings };
       }
     }
 
-    return settings;
+    return s;
   }
 
   function setSettings(newSettings) {
-    settings.current = { ...settings, ...newSettings };
+    settings.current = { ...settings.current, ...newSettings };
     forceUpdate();
   }
 
@@ -148,8 +152,25 @@ export const PerspectiveSettingsContextProvider = ({
     return (
       directoryMeta &&
       directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[currentDirectoryPerspective]
+      directoryMeta.perspectiveSettings[getPerspective()]
     );
+  }
+
+  /**
+   * remove custom folder settings
+   */
+  function resetLocalSetting() {
+    removeFolderCustomSettings(currentDirectoryPath, getPerspective()).then(
+      (fsEntryMeta: TS.FileSystemEntryMeta) => {
+        setDirectoryMeta(fsEntryMeta);
+      },
+    );
+  }
+
+  function getPerspective() {
+    return currentDirectoryPerspective === PerspectiveIDs.UNSPECIFIED
+      ? PerspectiveIDs.GRID
+      : currentDirectoryPerspective;
   }
 
   /**
@@ -162,7 +183,7 @@ export const PerspectiveSettingsContextProvider = ({
     if (Pro && !isDefaultSetting) {
       Pro.MetaOperations.savePerspectiveSettings(
         currentDirectoryPath,
-        PerspectiveIDs.GRID,
+        getPerspective(),
         settings.current,
       ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         setDirectoryMeta(fsEntryMeta);
@@ -192,6 +213,7 @@ export const PerspectiveSettingsContextProvider = ({
       layoutType: settings.current.layoutType,
       showSubFolderDetails: settings.current.showSubFolderDetails,
       filesLimit: settings.current.filesLimit,
+      resetLocalSetting: resetLocalSetting,
       haveLocalSetting: haveLocalSetting,
       setSettings: setSettings,
       saveSettings: saveSettings,
