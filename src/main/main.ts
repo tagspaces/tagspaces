@@ -136,177 +136,147 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+function getSpellcheckLanguage(i18n) {
+  const supportedLanguages =
+    mainWindow?.webContents.session.availableSpellCheckerLanguages;
+  if (!supportedLanguages) {
+    return 'en';
+  }
+  if (supportedLanguages.includes(i18n)) {
+    return i18n;
+  }
+  if (i18n.length > 2) {
+    const shortI18n = i18n.substring(0, 2);
+    if (supportedLanguages.includes(shortI18n)) {
+      return shortI18n;
+    }
+  }
+  return 'en';
+}
+
 function showApp() {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
     }
-    mainWindow.show();
+    mainWindow?.show();
   }
 }
 
 function openLocationManagerPanel() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'open-location-manager-panel');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'open-location-manager-panel');
 }
 
 function openTagLibraryPanel() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'open-tag-library-panel');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'open-tag-library-panel');
 }
 
 function goBack() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'go-back');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'go-back');
 }
 
 function goForward() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'go-forward');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'go-forward');
 }
 
 function setZoomResetApp() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'set-zoom-reset-app');
 }
 
 function setZoomInApp() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'set-zoom-in-app');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'set-zoom-in-app');
 }
 
 function setZoomOutApp() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'set-zoom-out-app');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'set-zoom-out-app');
 }
 
 function exitFullscreen() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'exit-fullscreen');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'exit-fullscreen');
 }
 
 function toggleSettingsDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-settings-dialog');
 }
 
 function openHelpFeedbackPanel() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'open-help-feedback-panel');
 }
 
 function toggleKeysDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-keys-dialog');
 }
 
 function toggleOnboardingDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
 }
 
 function openURLExternally(data) {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('open-url-externally', data);
-  }
+  showApp();
+  mainWindow?.webContents.send('open-url-externally', data);
 }
 
 function toggleLicenseDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-license-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-license-dialog');
 }
 
 function toggleThirdPartyLibsDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
 }
 
 function toggleAboutDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-about-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-about-dialog');
 }
 
 function showSearch() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'open-search');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'open-search');
 }
 
 function newTextFile() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'new-text-file');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'new-text-file');
 }
 
 function getNextFile() {
-  if (mainWindow) {
-    mainWindow.webContents.send('cmd', 'next-file');
-  }
+  mainWindow?.webContents.send('cmd', 'next-file');
 }
 
 function getPreviousFile() {
-  if (mainWindow) {
-    mainWindow.webContents.send('cmd', 'previous-file');
-  }
+  mainWindow?.webContents.send('cmd', 'previous-file');
 }
 
 function showCreateDirectoryDialog() {
-  if (mainWindow) {
-    mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
-  }
+  mainWindow?.webContents.send('cmd', 'show-create-directory-dialog');
 }
 
 function toggleOpenLinkDialog() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
-  }
+  showApp();
+  mainWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
 }
 
 function resumePlayback() {
-  if (mainWindow) {
-    mainWindow.webContents.send('play-pause', true);
-  }
+  mainWindow?.webContents.send('play-pause', true);
 }
 
 function reloadApp() {
-  if (mainWindow) {
-    showApp();
-    mainWindow.loadURL(resolveHtmlPath('index.html'));
-  }
+  showApp();
+  mainWindow?.loadURL(resolveHtmlPath('index.html'));
 }
 
 function createNewWindowInstance(url?) {
@@ -438,13 +408,10 @@ function startWS() {
                   reject(err);
                 } else {
                   settings.setUsedWsPort(freePort);
-                  // usedWsPort = freePort;
-                  if (mainWindow) {
-                    mainWindow.webContents.send('start_ws', {
-                      port: freePort,
-                    });
-                    console.debug('start_ws:' + freePort);
-                  }
+                  mainWindow?.webContents.send('start_ws', {
+                    port: freePort,
+                  });
+                  console.debug('start_ws:' + freePort);
                   resolve(
                     `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
                   );
@@ -635,18 +602,17 @@ app
           console.log('languageChanged:' + lng);
           buildAppMenu(i18n);
           buildTrayMenu(i18n);
+          const spellCheckLanguage = getSpellcheckLanguage(lng);
+          mainWindow?.webContents.session.setSpellCheckerLanguages([
+            spellCheckLanguage,
+          ]);
         } catch (ex) {
           console.log('languageChanged', ex);
         }
       });
 
       ipcMain.on('show-main-window', () => {
-        if (mainWindow) {
-          if (mainWindow.isMinimized()) {
-            mainWindow.restore();
-          }
-          mainWindow.show();
-        }
+        showApp();
       });
 
       ipcMain.on('create-new-window', (e, url) => {
@@ -658,22 +624,18 @@ app
       ipcMain.on('load-extensions', () => {
         getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
           .then(({ extensions, supportedFileTypes }) => {
-            if (mainWindow) {
-              const setExtensions: Extensions = {
-                extensions,
-                supportedFileTypes,
-              };
-              mainWindow.webContents.send('set_extensions', setExtensions);
-              // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
-            }
+            const setExtensions: Extensions = {
+              extensions,
+              supportedFileTypes,
+            };
+            mainWindow?.webContents.send('set_extensions', setExtensions);
+            // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
           })
           .catch((err) => console.error('load-extensions', err));
       });
 
       ipcMain.on('focus-window', () => {
-        if (mainWindow) {
-          mainWindow.focus();
-        }
+        mainWindow?.focus();
       });
 
       ipcMain.on('get-user-home-path', (event) => {
@@ -681,9 +643,7 @@ app
       });
 
       ipcMain.on('worker-response', (event, arg) => {
-        if (mainWindow) {
-          mainWindow.webContents.send(arg.id, arg);
-        }
+        mainWindow?.webContents.send(arg.id, arg);
       });
 
       ipcMain.on('app-data-path-request', (event) => {
@@ -699,10 +659,7 @@ app
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
-        if (!mainWindow) {
-          throw new Error('"mainWindow" is not defined');
-        }
-        mainWindow.webContents.setZoomFactor(zoomLevel);
+        mainWindow?.webContents.setZoomFactor(zoomLevel);
       });
 
       ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
