@@ -260,7 +260,11 @@ function MainToolbar(props: Props) {
             onClick={openSettings}
             // size="large"
           >
-            <Badge color="primary" variant="dot" invisible={!haveLocalSetting}>
+            <Badge
+              color="primary"
+              variant="dot"
+              invisible={!haveLocalSetting()}
+            >
               <PerspectiveSettingsIcon />
             </Badge>
           </IconButton>
