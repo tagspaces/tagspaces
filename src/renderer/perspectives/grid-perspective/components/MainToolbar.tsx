@@ -263,6 +263,10 @@ function MainToolbar(props: Props) {
             <Badge
               color="primary"
               variant="dot"
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
               invisible={!haveLocalSetting()}
             >
               <PerspectiveSettingsIcon />
