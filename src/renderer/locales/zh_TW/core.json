@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "選擇目標位置和路徑",
   "moveEntriesButton": "移動",
   "copyEntriesButton": "複製",
-  "sortByName": "名稱",
+  "sortByName": "名称",
   "addTagsToGroupTitle": "添加標籤到標籤組",
   "addTagsToGroupTags": "標籤",
   "addTagsToGroupTagsPlaceholder": "逗號分隔的標籤列表",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "描述",
   "directoryPropertiesTitle": "資料夾詳細資訊",
   "filePropertiesTitle": "檔案詳細訊息",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "新的位置",
   "createLocation": "新位置",
   "exportLocationTitle": "匯出位置配置",
@@ -814,5 +815,7 @@
   "stopRecording": "停止並保存錄製",
   "createNewFile": "創建新檔案",
   "confirmDialogClosing": "是否關閉此對話？",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

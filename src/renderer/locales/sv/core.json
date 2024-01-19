@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Kopiera",
-  "sortByName": "Namn",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Lägg till taggar till taggrupp",
   "addTagsToGroupTags": "Taggar",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "Anslut till en plats",
   "createLocation": "New location",
   "exportLocationTitle": "Export Location Configuration",
@@ -814,5 +815,7 @@
   "stopRecording": "Stop and save recording",
   "createNewFile": "Create New File",
   "confirmDialogClosing": "Do you want to close this dialog?",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

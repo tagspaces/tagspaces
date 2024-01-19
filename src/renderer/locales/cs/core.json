@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Copy",
-  "sortByName": "Název",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Přidat štítky do skupiny",
   "addTagsToGroupTags": "Štítky",
   "addTagsToGroupTagsPlaceholder": "Čárkou oddělený seznam štítků",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "Připojit umístění",
   "createLocation": "New location",
   "exportLocationTitle": "Export Location Configuration",
@@ -814,5 +815,7 @@
   "stopRecording": "Stop and save recording",
   "createNewFile": "Create New File",
   "confirmDialogClosing": "Do you want to close this dialog?",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

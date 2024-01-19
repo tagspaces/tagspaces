@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "복사",
-  "sortByName": "이름",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "태그를 태그 그룹에 추가하기",
   "addTagsToGroupTags": "태그",
   "addTagsToGroupTagsPlaceholder": "쉼표로 구분된 태그 리스트",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "위치 연결",
   "createLocation": "New location",
   "exportLocationTitle": "위치 설정 내보내기",
@@ -814,5 +815,7 @@
   "stopRecording": "Stop and save recording",
   "createNewFile": "Create New File",
   "confirmDialogClosing": "Do you want to close this dialog?",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

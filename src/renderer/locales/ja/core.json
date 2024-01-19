@@ -44,6 +44,7 @@
   "filePropertiesDescription": "説明",
   "directoryPropertiesTitle": "フォルダの詳細",
   "filePropertiesTitle": "ファイルの詳細",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "ロケーションの接続",
   "createLocation": "新規のロケーション",
   "exportLocationTitle": "ロケーション構成のエクスポート",
@@ -814,5 +815,7 @@
   "stopRecording": "録音を停止して保存",
   "createNewFile": "新しいファイルを作成する",
   "confirmDialogClosing": "このダイアログを閉じますか？",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

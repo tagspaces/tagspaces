@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Flytt",
   "copyEntriesButton": "Copy",
-  "sortByName": "Navn",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Legg til stikkord til stikkordsgruppe",
   "addTagsToGroupTags": "Stikkord",
   "addTagsToGroupTagsPlaceholder": "Kommaseparerte lister av stikkord",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "Koble til en lokasjon",
   "createLocation": "New location",
   "exportLocationTitle": "Eksporter lokasjonskonfigurasjon",
@@ -814,5 +815,7 @@
   "stopRecording": "Stop and save recording",
   "createNewFile": "Create New File",
   "confirmDialogClosing": "Do you want to close this dialog?",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

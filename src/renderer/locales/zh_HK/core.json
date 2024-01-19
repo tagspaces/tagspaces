@@ -44,6 +44,7 @@
   "filePropertiesDescription": "描述",
   "directoryPropertiesTitle": "資料夾詳細資訊",
   "filePropertiesTitle": "檔案詳細訊息",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "关联新的位置",
   "createLocation": "新位置",
   "exportLocationTitle": "导出路径配置",
@@ -814,5 +815,7 @@
   "stopRecording": "停止並保存錄製",
   "createNewFile": "創建新檔案",
   "confirmDialogClosing": "是否關閉此對話？",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }

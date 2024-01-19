@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Տեղափոխել",
   "copyEntriesButton": "Copy",
-  "sortByName": "Անուն",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Պիտակախմբում ավելացնել պիտակներ",
   "addTagsToGroupTags": "Պիտակներ",
   "addTagsToGroupTagsPlaceholder": "Ստորակետով զատված պիտակների ցանկ",
@@ -44,6 +44,7 @@
   "filePropertiesDescription": "Նկարագրություն",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
+  "openEntryDetails": "Open Entry Details",
   "createLocationTitle": "Ավելացրու պանակ",
   "createLocation": "New location",
   "exportLocationTitle": "Արտահանել պանակի կարգավորումները",
@@ -814,5 +815,7 @@
   "stopRecording": "Stop and save recording",
   "createNewFile": "Create New File",
   "confirmDialogClosing": "Do you want to close this dialog?",
+  "clickToSelect": "Click to select",
+  "newVersionAvailable": "New version available",
   "-": "-"
 }
