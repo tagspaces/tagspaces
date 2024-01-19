@@ -25,7 +25,7 @@ import { actions as AppActions } from '../reducers/app';
 import App from '-/containers/App';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
-import init from '-/services/i18nInit';
+import i18nInit from '-/services/i18nInit';
 import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
 import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
 import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
@@ -48,7 +48,9 @@ export default function Root({ store, persistor }: RootType) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    init().then(() => setInitialized(true));
+    // @ts-ignore
+    const language: string = store.getState().settings.interfaceLanguage;
+    i18nInit(language).then(() => setInitialized(true));
   }, []);
 
   if (!initialized) {
