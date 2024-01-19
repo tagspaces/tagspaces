@@ -17,7 +17,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
@@ -26,13 +26,14 @@ import { Pro } from '../pro';
 import TextLogoIcon from '-/assets/images/text-logo.svg';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 import versionMeta from '../version.json';
-import { actions } from '-/reducers/app';
+import { actions, isUpdateAvailable } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@mui/material';
+import { Badge, Typography } from '@mui/material';
 
 function CustomLogo() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const updateAvailable = useSelector(isUpdateAvailable);
   const tsType = Pro ? 'PRO' : 'LITE';
 
   const logo = useMemo(() => {
@@ -72,7 +73,7 @@ function CustomLogo() {
       </Tooltip>
       <Tooltip title={t('core:aboutTitle')}>
         <IconButton
-          style={{ height: 40, padding: 0 }}
+          style={{ height: 47, padding: 0 }}
           data-tid="aboutTagSpaces"
         >
           <img
@@ -88,18 +89,32 @@ function CustomLogo() {
         </IconButton>
       </Tooltip>
       <sup>
-        <Typography
-          style={{
-            display: 'inline',
-            fontSize: '10px',
-            marginLeft: 3,
-            lineHeight: '40px',
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
-        >
-          {'v' + versionMeta.version}
-        </Typography>
+        <Tooltip title={updateAvailable ? t('core:newVersionAvailable') : ''}>
+          <Badge
+            color="secondary"
+            variant="dot"
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            invisible={!updateAvailable}
+            style={{
+              // @ts-ignore
+              WebkitAppRegion: 'no-drag',
+            }}
+          >
+            <Typography
+              style={{
+                display: 'inline',
+                fontSize: '10px',
+                marginLeft: 3,
+                lineHeight: '16px',
+              }}
+            >
+              {'v' + versionMeta.version}
+            </Typography>
+          </Badge>
+        </Tooltip>
       </sup>
       <sub>
         <Typography

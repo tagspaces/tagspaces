@@ -54,7 +54,6 @@ import {
   AppDispatch,
   getLastThumbnailImageChange,
 } from '-/reducers/app';
-import { FolderIcon } from '-/components/CommonIcons';
 import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
 import { defaultSettings } from '../index';
 import { useTranslation } from 'react-i18next';
