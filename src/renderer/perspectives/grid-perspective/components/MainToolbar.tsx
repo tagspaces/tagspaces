@@ -19,7 +19,7 @@
 import React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Toolbar, Box, Divider } from '@mui/material/';
+import { Toolbar, Box, Divider, Badge } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
@@ -45,6 +45,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -68,6 +69,8 @@ function MainToolbar(props: Props) {
     openSettings,
     openShareFilesDialog,
   } = props;
+
+  const { haveLocalSetting } = usePerspectiveSettingsContext();
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -246,13 +249,20 @@ function MainToolbar(props: Props) {
       </Box>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: 'flex' }}>
-        <Tooltip title={t('core:perspectiveSettingsTitle')}>
+        <Tooltip
+          title={
+            t('core:perspectiveSettingsTitle') +
+            (haveLocalSetting && ' - folder specific')
+          }
+        >
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
             // size="large"
           >
-            <PerspectiveSettingsIcon />
+            <Badge color="primary" variant="dot" invisible={!haveLocalSetting}>
+              <PerspectiveSettingsIcon />
+            </Badge>
           </IconButton>
         </Tooltip>
       </Box>

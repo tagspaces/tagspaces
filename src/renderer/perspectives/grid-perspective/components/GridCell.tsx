@@ -70,6 +70,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import i18n from '-/services/i18n';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -314,7 +315,7 @@ function GridCell(props: Props) {
         )}
       </IconButton>
     ) : (
-      <Tooltip title={fSystemEntry.path}>
+      <Tooltip title={i18n.t('clickToSelect') + ' ' + fSystemEntry.path}>
         <Typography
           style={{
             paddingTop: 1,
