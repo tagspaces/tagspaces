@@ -224,7 +224,12 @@ function FolderContainer(props: Props) {
           // @ts-ignore
           WebkitAppRegion: 'drag',
           marginLeft:
-            AppConfig.isMacLike && isDesktopMode && !drawerOpened ? 60 : 0,
+            AppConfig.isMacLike &&
+            isDesktopMode &&
+            !AppConfig.isWeb &&
+            !drawerOpened
+              ? 60
+              : 0,
         }}
       >
         <IconButton
