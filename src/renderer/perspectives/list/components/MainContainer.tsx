@@ -337,7 +337,7 @@ function ListPerspective(props: Props) {
       handleSetSelectedEntries(newSelection);
     };
 
-    const selectionMode = selectedEntries.length > 0;
+    const selectionMode = selectedEntries.length > 1;
     return (
       <TagDropContainer
         entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
