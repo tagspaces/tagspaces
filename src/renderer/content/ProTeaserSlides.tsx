@@ -14,8 +14,9 @@ import React from 'react';
 export const slidesNames = [
   'general',
   PerspectiveIDs.KANBAN,
-  PerspectiveIDs.GALLERY,
+  PerspectiveIDs.FOLDERVIZ,
   PerspectiveIDs.MAPIQUE,
+  PerspectiveIDs.GALLERY,
   'annotation',
   'revisions',
   'search',
@@ -32,7 +33,7 @@ export function getProTeaserSlideIndex(slideName: string): number {
 
 export function getProTeaserSlides(t) {
   const slidesEN = [];
-  slidesEN[slidesNames[0]] = {
+  slidesEN[slidesNames['general']] = {
     title: 'Why TagSpaces Pro ?',
     description: (
       <>
@@ -74,19 +75,15 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[2]] = {
-    title: 'TagSpaces Pro - Gallery Perspectives',
+    title: 'TagSpaces Pro - FolderViz Perspective',
     description: (
       <>
-        This perspective is designed to best display folders containing photos
-        and other images. It includes a presentation mode, so you can simply
-        click the play button and the images will change sequentially. The
-        presentation can be started in full screen mode, for an undisturbed
-        viewing experience.
+        <p>FolderViz is still in development and has a preview status</p>
       </>
     ),
-    ctaURL: Links.documentationLinks.galleryPerspective,
+    ctaURL: Links.documentationLinks.foldervizPerspective,
     ctaTitle: t('showMeMore'),
-    pictureURL: GalleryImage,
+    pictureURL: MapImage,
     pictureShadow: true,
     pictureHeight: 300,
   };
@@ -115,6 +112,23 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[4]] = {
+    title: 'TagSpaces Pro - Gallery Perspectives',
+    description: (
+      <>
+        This perspective is designed to best display folders containing photos
+        and other images. It includes a presentation mode, so you can simply
+        click the play button and the images will change sequentially. The
+        presentation can be started in full screen mode, for an undisturbed
+        viewing experience.
+      </>
+    ),
+    ctaURL: Links.documentationLinks.galleryPerspective,
+    ctaTitle: t('showMeMore'),
+    pictureURL: GalleryImage,
+    pictureShadow: true,
+    pictureHeight: 300,
+  };
+  slidesEN[slidesNames[5]] = {
     title: 'Annotate and link your files and folders',
     description: (
       <>
@@ -147,7 +161,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[5]] = {
+  slidesEN[slidesNames[6]] = {
     title: 'Revisions and auto-save for editable files',
     description: (
       <>
@@ -172,7 +186,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 400,
   };
-  slidesEN[slidesNames[6]] = {
+  slidesEN[slidesNames[7]] = {
     title: 'Extended Search',
     description: (
       <>
@@ -203,7 +217,7 @@ export function getProTeaserSlides(t) {
     pictureURL: SearchImage,
     pictureHeight: 150,
   };
-  slidesEN[slidesNames[7]] = {
+  slidesEN[slidesNames[8]] = {
     title: 'Folders with custom backgrounds',
     description: (
       <>
@@ -221,7 +235,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[8]] = {
+  slidesEN[slidesNames[9]] = {
     title: 'TagSpaces Web Pro & Enterprise',
     description: (
       <>

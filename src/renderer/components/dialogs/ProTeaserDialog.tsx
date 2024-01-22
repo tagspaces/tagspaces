@@ -128,8 +128,9 @@ function Slide(props: SlideProps) {
             onClick={() => {
               openURLExternally(Links.links.productsOverview, true);
             }}
-            variant="contained"
+            // variant="contained"
             color="primary"
+            size="small"
           >
             Compare TagSpaces Products
           </Button>
@@ -139,8 +140,9 @@ function Slide(props: SlideProps) {
                 openURLExternally(ctaURL, true);
               }}
               style={{ marginLeft: 10 }}
-              variant="contained"
+              // variant="contained"
               color="primary"
+              size="small"
             >
               {ctaTitle}
             </Button>
