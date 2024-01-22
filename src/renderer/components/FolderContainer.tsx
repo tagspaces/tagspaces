@@ -18,8 +18,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -28,13 +27,12 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-// import LocationMenu from './menus/LocationMenu';
+import { getDesktopMode } from '-/reducers/settings';
 import {
-  getMaxSearchResults,
-  getDesktopMode,
-  getDefaultPerspective,
-} from '-/reducers/settings';
-import { actions as AppActions, getProgress } from '../reducers/app';
+  actions as AppActions,
+  AppDispatch,
+  getProgress,
+} from '../reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -51,44 +49,30 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
-  isDesktopMode: boolean;
   toggleDrawer?: () => void;
   toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
-  maxSearchResults: number;
-  defaultPerspective: string;
-  toggleUploadDialog: () => void;
-  progress?: Array<any>;
   goBack: () => void;
   goForward: () => void;
 }
 
 function FolderContainer(props: Props) {
-  const {
-    toggleDrawer,
-    toggleProTeaser,
-    isDesktopMode,
-    defaultPerspective,
-    goBack,
-    goForward,
-    drawerOpened,
-    progress,
-    toggleUploadDialog,
-  } = props;
+  const { toggleDrawer, toggleProTeaser, goBack, goForward, drawerOpened } =
+    props;
 
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
   const { openedEntries } = useOpenedEntryContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
     currentDirectoryPath,
-    currentDirectoryPerspective,
-    setCurrentDirectoryPerspective,
+    perspective,
+    setDirectoryPerspective,
     enterSearchMode,
     isSearchMode,
   } = useDirectoryContentContext();
@@ -96,12 +80,15 @@ function FolderContainer(props: Props) {
   const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] =
     useState<boolean>(false);
 
-  let currentPerspective =
-    currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
+  const isDesktopMode = useSelector(getDesktopMode);
+  const progress = useSelector(getProgress);
 
-  if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
+  //let currentPerspective = getPerspective();
+  // currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
+
+  /*if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
     currentPerspective = defaultPerspective;
-  }
+  }*/
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -154,7 +141,7 @@ function FolderContainer(props: Props) {
       perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
-      setCurrentDirectoryPerspective(perspectiveId);
+      setDirectoryPerspective(perspectiveId, undefined, true);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
@@ -304,7 +291,7 @@ function FolderContainer(props: Props) {
                 id="progressButton"
                 title={t('core:progress')}
                 data-tid="uploadProgress"
-                onClick={() => toggleUploadDialog()}
+                onClick={() => dispatch(AppActions.toggleUploadDialog())}
                 style={{
                   position: 'relative',
                   padding: '8px 12px 6px 8px',
@@ -341,7 +328,7 @@ function FolderContainer(props: Props) {
       </div>
       {isDesktopMode && (
         <ToggleButtonGroup
-          value={currentPerspective}
+          value={perspective}
           size="small"
           data-tid="floatingPerspectiveSwitcher"
           disabled={showWelcomePanel}
@@ -363,34 +350,4 @@ function FolderContainer(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    maxSearchResults: getMaxSearchResults(state),
-    isDesktopMode: getDesktopMode(state),
-    progress: getProgress(state),
-    defaultPerspective: getDefaultPerspective(state),
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-    },
-    dispatch,
-  );
-}
-
-const areEqual = (prevProp: Props, nextProp: Props) =>
-  nextProp.drawerOpened === prevProp.drawerOpened &&
-  nextProp.isDesktopMode === prevProp.isDesktopMode &&
-  /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
-  JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress);
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps,
-)(
-  // @ts-ignore
-  React.memo(FolderContainer, areEqual),
-);
+export default FolderContainer;

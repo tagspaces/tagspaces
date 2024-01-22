@@ -144,7 +144,7 @@ export namespace TS {
     extension?: string;
     thumbPath?: string;
     color?: string;
-    perspective?: string;
+    perspective?: TS.PerspectiveType;
     textContent?: string;
     description?: string;
     tags: Array<TS.Tag>;
@@ -166,7 +166,7 @@ export namespace TS {
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;
-    perspective?: string;
+    perspective?: TS.PerspectiveType;
     appName?: string;
     appVersion?: string;
     lastUpdated?: number;

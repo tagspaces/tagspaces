@@ -52,6 +52,7 @@ import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
 import {
+  getDefaultPerspective,
   getShowUnixHiddenEntries,
   getTagColor,
   getTagTextColor,
@@ -67,12 +68,13 @@ import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid-perspective';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
+import { savePerspective } from '-/utils/metaoperations';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
   currentDirectoryEntries: TS.FileSystemEntry[];
   directoryMeta: TS.FileSystemEntryMeta;
-  currentDirectoryPerspective: string;
+  currentDirectoryPerspective: TS.PerspectiveType;
   currentDirectoryPath: string;
   /**
    * used for reorder files in KanBan
@@ -110,7 +112,13 @@ type DirectoryContentContextData = {
   ) => Promise<boolean>;
   openCurrentDirectory: (showHiddenEntries?: boolean) => Promise<boolean>;
   clearDirectoryContent: () => void;
-  setCurrentDirectoryPerspective: (perspective: string) => void;
+  perspective: TS.PerspectiveType;
+  setDirectoryPerspective: (
+    perspective: string,
+    dir?: string,
+    isManual?: boolean,
+    reload?: boolean,
+  ) => Promise<TS.FileSystemEntryMeta | null>;
   setCurrentDirectoryColor: (color: string) => void;
   setCurrentDirectoryDirs: (dirs: TS.OrderVisibilitySettings[]) => void;
   setCurrentDirectoryFiles: (files: TS.OrderVisibilitySettings[]) => void;
@@ -149,7 +157,8 @@ export const DirectoryContentContext =
     openDirectory: undefined,
     openCurrentDirectory: undefined,
     clearDirectoryContent: () => {},
-    setCurrentDirectoryPerspective: () => {},
+    perspective: undefined,
+    setDirectoryPerspective: undefined,
     setCurrentDirectoryColor: () => {},
     setCurrentDirectoryDirs: () => {},
     setCurrentDirectoryFiles: () => {},
@@ -188,7 +197,8 @@ export const DirectoryContentContextProvider = ({
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const editedEntryPaths = useSelector(getEditedEntryPaths);
+  const defaultPerspective = useSelector(getDefaultPerspective);
+  //const editedEntryPaths = useSelector(getEditedEntryPaths);
   const searches = useSelector(getSearches);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -202,6 +212,7 @@ export const DirectoryContentContextProvider = ({
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
   const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
+  const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
   const directoryMeta = useRef<TS.FileSystemEntryMeta>(getDefaultDirMeta());
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
@@ -281,12 +292,6 @@ export const DirectoryContentContextProvider = ({
       }
     }
   }, [editedEntryPaths]);*/
-
-  function getPerspective(): TS.PerspectiveType {
-    return currentPerspective.current === 'unspecified'
-      ? 'grid'
-      : currentPerspective.current;
-  }
 
   function getDefaultDirMeta(): TS.FileSystemEntryMeta {
     const perspective = getPerspective();
@@ -763,21 +768,49 @@ export const DirectoryContentContextProvider = ({
     };
   }, [showUnixHiddenEntries]);
 
-  function setCurrentDirectoryPerspective(
-    perspective: TS.PerspectiveType,
-    reload: boolean = true,
-  ) {
-    currentPerspective.current = perspective;
-    setSelectedEntries([]);
-    /*if (PerspectiveIDs.KANBAN === perspective) {
-      // many items can't be selected in KanBan
-      if (selectedEntries.length > 1) {
-        setSelectedEntries([selectedEntries[selectedEntries.length - 1]]);
+  const perspective = useMemo(
+    () => getPerspective(),
+    [currentPerspective.current, manualPerspective.current],
+  );
+
+  function getPerspective(): TS.PerspectiveType {
+    if (currentPerspective.current === 'unspecified') {
+      if (manualPerspective.current === 'unspecified') {
+        return defaultPerspective;
       }
-    }*/
-    if (reload) {
-      forceUpdate();
+      return manualPerspective.current;
     }
+    return currentPerspective.current;
+  }
+
+  function setDirectoryPerspective(
+    perspective: TS.PerspectiveType,
+    directory: string = undefined,
+    isManual: boolean = false,
+    reload: boolean = true,
+  ): Promise<TS.FileSystemEntryMeta | null> {
+    return new Promise((resolve) => {
+      if (isManual && currentPerspective.current === 'unspecified') {
+        manualPerspective.current = perspective;
+        resolve(null);
+      } else {
+        if (
+          directory === undefined ||
+          directory === currentDirectoryPath.current
+        ) {
+          currentPerspective.current = perspective;
+          manualPerspective.current = 'unspecified';
+        }
+        savePerspective(
+          directory ? directory : currentDirectoryPath.current,
+          perspective,
+        ).then((entryMeta: TS.FileSystemEntryMeta) => resolve(entryMeta));
+      }
+      setSelectedEntries([]);
+      if (reload) {
+        forceUpdate();
+      }
+    });
   }
 
   /*const currentDirectoryPerspective: string = useMemo(
@@ -918,7 +951,8 @@ export const DirectoryContentContextProvider = ({
       openDirectory,
       openCurrentDirectory,
       clearDirectoryContent,
-      setCurrentDirectoryPerspective,
+      setDirectoryPerspective,
+      perspective,
       setCurrentDirectoryColor,
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
@@ -942,6 +976,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryPath.current,
     directoryMeta.current,
     currentPerspective.current,
+    perspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     isSearchMode.current,

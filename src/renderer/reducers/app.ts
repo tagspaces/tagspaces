@@ -129,7 +129,7 @@ export type OpenedEntry = {
   isAutoSaveEnabled?: boolean;
   color?: string;
   description?: string;
-  perspective?: string;
+  perspective?: TS.PerspectiveType;
   editMode?: boolean;
   // changed?: boolean;
   /**
