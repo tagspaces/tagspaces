@@ -2806,7 +2806,7 @@ The following NPM packages may be included in this product:
  - @babel/preset-flow@7.23.3
  - @babel/preset-typescript@7.23.3
  - @babel/register@7.22.15
- - @babel/runtime@7.23.6
+ - @babel/runtime@7.23.8
  - @babel/template@7.22.15
  - @babel/traverse@7.23.6
  - @babel/types@7.23.6
@@ -3069,10 +3069,10 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @floating-ui/core@1.5.2
- - @floating-ui/dom@1.5.3
- - @floating-ui/react-dom@2.0.4
- - @floating-ui/utils@0.1.6
+ - @floating-ui/core@1.5.3
+ - @floating-ui/dom@1.5.4
+ - @floating-ui/react-dom@2.0.5
+ - @floating-ui/utils@0.2.1
 
 These packages each contain the following license and notice below:
 
@@ -5704,16 +5704,16 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @mui/base@5.0.0-beta.26
- - @mui/core-downloads-tracker@5.14.20
- - @mui/icons-material@5.14.19
- - @mui/lab@5.0.0-alpha.155
- - @mui/material@5.14.20
- - @mui/private-theming@5.14.20
- - @mui/styled-engine@5.14.20
- - @mui/system@5.14.20
- - @mui/types@7.2.10
- - @mui/utils@5.14.20
+ - @mui/base@5.0.0-beta.31
+ - @mui/core-downloads-tracker@5.15.4
+ - @mui/icons-material@5.15.4
+ - @mui/lab@5.0.0-alpha.160
+ - @mui/material@5.15.4
+ - @mui/private-theming@5.15.4
+ - @mui/styled-engine@5.15.4
+ - @mui/system@5.15.4
+ - @mui/types@7.2.13
+ - @mui/utils@5.15.4
 
 These packages each contain the following license and notice below:
 
@@ -6723,10 +6723,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The following NPM packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws@4.0.9
- - @tagspaces/tagspaces-common-cordova@4.0.9
- - @tagspaces/tagspaces-common@4.0.9
- - @tagspaces/tagspaces-indexer@4.0.9
+ - @tagspaces/tagspaces-common-aws@4.1.2
+ - @tagspaces/tagspaces-common-cordova@4.1.2
+ - @tagspaces/tagspaces-common@4.1.2
+ - @tagspaces/tagspaces-indexer@4.1.2
  - @tagspaces/tagspaces-md@4.0.3
 
 These packages each contain the following license and notice below:
@@ -9963,7 +9963,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - clsx@1.2.1
- - clsx@2.0.0
+ - clsx@2.1.0
  - escalade@3.1.1
 
 These packages each contain the following license and notice below:
