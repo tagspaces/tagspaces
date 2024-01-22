@@ -365,6 +365,7 @@ function GridCell(props: Props) {
         height: maxHeight,
         minHeight: maxHeight,
         maxHeight: maxHeight,
+        maxWidth: 400,
         marginBottom: isLast ? 40 : 'auto',
         border:
           '2px solid ' +
