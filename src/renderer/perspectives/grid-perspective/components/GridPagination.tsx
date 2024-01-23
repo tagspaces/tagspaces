@@ -126,7 +126,7 @@ function GridPagination(props: Props) {
     ? Math.ceil(allFilesCount / gridPageLimit)
     : 10;
 
-  const containerEl = useRef(null);
+  const containerEl = useRef<HTMLDivElement>(null);
   const folderTmbPath = useRef<string>(
     getFolderThumbPath(currentDirectoryPath, lastThumbnailImageChange),
   );
@@ -134,7 +134,7 @@ function GridPagination(props: Props) {
     getFolderBgndPath(currentDirectoryPath, lastBackgroundImageChange),
   );
 
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   // TODO move in DirectoryContentContextProvider
   useEffect(() => {
@@ -153,11 +153,11 @@ function GridPagination(props: Props) {
     forceUpdate();
   }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries]);*/
 
   const handleChange = (event, value) => {
     setCurrentPage(value);

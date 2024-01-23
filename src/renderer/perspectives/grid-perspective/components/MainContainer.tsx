@@ -111,7 +111,7 @@ function GridPerspective(props: Props) {
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (selectedEntries.length === 1) {
       makeFirstSelectedEntryVisible();
     }
@@ -133,7 +133,7 @@ function GridPerspective(props: Props) {
         console.debug('makeFirstSelectedEntryVisible:', ex);
       }
     }
-  };
+  };*/
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
