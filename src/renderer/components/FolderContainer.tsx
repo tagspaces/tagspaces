@@ -148,6 +148,8 @@ function FolderContainer(props: Props) {
       toggleProTeaser(PerspectiveIDs.MAPIQUE);
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
       toggleProTeaser(PerspectiveIDs.KANBAN);
+    } else if (perspectiveId === PerspectiveIDs.FOLDERVIZ) {
+      toggleProTeaser(PerspectiveIDs.FOLDERVIZ);
     }
   };
 
