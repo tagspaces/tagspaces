@@ -50,6 +50,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
+import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -58,7 +59,8 @@ interface Props {
 function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
-  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const { openEntry } = useOpenedEntryContext();
+  const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { showDirectories } = usePerspectiveSettingsContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useFsActionsContext();

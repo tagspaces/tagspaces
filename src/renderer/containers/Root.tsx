@@ -70,9 +70,7 @@ export default function Root({ store, persistor }: RootType) {
                       <FsActionsContextProvider>
                         <TaggingActionsContextProvider>
                           <IOActionsContextProvider>
-                            <RendererListenerContextProvider>
-                              <MainPage />
-                            </RendererListenerContextProvider>
+                            <MainPage />
                           </IOActionsContextProvider>
                         </TaggingActionsContextProvider>
                       </FsActionsContextProvider>

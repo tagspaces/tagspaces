@@ -69,6 +69,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
+import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -84,13 +85,12 @@ function EntryContainer() {
   const {
     openedEntries,
     closeAllFiles,
-    openNextFile,
-    openPrevFile,
     updateOpenedFile,
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
   } = useOpenedEntryContext();
+  const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { saveDescription } = useDescriptionContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
