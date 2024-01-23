@@ -96,8 +96,6 @@ interface Props {
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
   style?: any;
-  selectEntry: (fsEntry: TS.FileSystemEntry) => void;
-  deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectionMode: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -131,15 +129,13 @@ function RowCell(props: Props) {
     handleGridCellDblClick,
     handleGridCellClick,
     showEntriesDescription,
-    selectEntry,
-    deselectEntry,
     selectionMode,
     isLast,
   } = props;
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
@@ -296,7 +292,7 @@ function RowCell(props: Props) {
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
-            deselectEntry(fSystemEntry);
+            selectEntry(fSystemEntry, false);
           } else {
             selectEntry(fSystemEntry);
           }

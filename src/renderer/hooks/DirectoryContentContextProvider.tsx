@@ -843,15 +843,24 @@ export const DirectoryContentContextProvider = ({
         ),
       );
     } else {
-      const index = currentDirectoryEntries.current.findIndex((entry) =>
-        entryPaths.includes(entry.path),
-      );
-      if (index > -1) {
+      const indexes = entryPaths
+        .map(function (path) {
+          return currentDirectoryEntries.current.findIndex(
+            (entry) => entry.path === path,
+          );
+        })
+        .sort((a, b) => b - a);
+      /*const uniqueIndexes = indexes
+        .filter(function (item, index) {
+          return indexes.indexOf(item) === index;
+        })*/
+
+      if (indexes.length > 0) {
         // delete in place (for fs watcher events unlink/add in 20ms)
-        currentDirectoryEntries.current.splice(index, 1);
-        /*const entries = currentDirectoryEntries.filter(
-            (entry) => !entryPaths.includes(entry.path),
-          );*/
+        for (const index of indexes) {
+          currentDirectoryEntries.current.splice(index, 1);
+        }
+
         setCurrentDirectoryEntries([...currentDirectoryEntries.current]); //entries);
       }
     }

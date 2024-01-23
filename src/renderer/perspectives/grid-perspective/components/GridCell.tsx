@@ -113,8 +113,6 @@ interface Props {
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
   style?: any;
-  selectEntry: (fsEntry: TS.FileSystemEntry) => void;
-  deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectionMode: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -130,8 +128,6 @@ function GridCell(props: Props) {
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
-    selectEntry,
-    deselectEntry,
     selectionMode,
     isLast,
   } = props;
@@ -140,7 +136,7 @@ function GridCell(props: Props) {
   const theme = useTheme();
   const { entrySize, showEntriesDescription, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -292,7 +288,7 @@ function GridCell(props: Props) {
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
-            deselectEntry(fSystemEntry);
+            selectEntry(fSystemEntry, false);
           } else {
             selectEntry(fSystemEntry);
           }

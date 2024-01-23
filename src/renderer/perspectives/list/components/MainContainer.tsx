@@ -59,7 +59,7 @@ function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const { entrySize, showDirectories } = usePerspectiveSettingsContext();
+  const { showDirectories } = usePerspectiveSettingsContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
@@ -158,7 +158,7 @@ function ListPerspective(props: Props) {
   };
 
   const clearSelection = () => {
-    handleSetSelectedEntries([]);
+    setSelectedEntries([]);
     selectedEntryPath.current = undefined;
   };
 
@@ -233,7 +233,7 @@ function ListPerspective(props: Props) {
     setMouseX(event.clientX);
     setMouseY(event.clientY);
     if (selectedEntries.length > 0) {
-      handleSetSelectedEntries([]);
+      setSelectedEntries([]);
     }
     perspectiveMode.current = false;
     setDirContextMenuAnchorEl(event.currentTarget);
@@ -242,7 +242,7 @@ function ListPerspective(props: Props) {
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (selectedEntries.length > 0) {
-      handleSetSelectedEntries([]);
+      setSelectedEntries([]);
     }
   };
 
@@ -326,16 +326,6 @@ function ListPerspective(props: Props) {
     ) {
       selected = true;
     }
-    const selectEntry = (fsEntry: TS.FileSystemEntry) => {
-      handleSetSelectedEntries([...selectedEntries, fsEntry]);
-    };
-
-    const deselectEntry = (fsEntry: TS.FileSystemEntry) => {
-      const newSelection = selectedEntries.filter(
-        (data) => data.path !== fsEntry.path,
-      );
-      handleSetSelectedEntries(newSelection);
-    };
 
     const selectionMode = selectedEntries.length > 1;
     return (
@@ -349,9 +339,7 @@ function ListPerspective(props: Props) {
           selected={selected}
           fsEntry={fsEntry}
           isLast={isLast}
-          selectEntry={selectEntry}
           selectionMode={selectionMode}
-          deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
@@ -510,5 +498,4 @@ function ListPerspective(props: Props) {
     </div>
   );
 }
-
 export default ListPerspective;
