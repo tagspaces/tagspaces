@@ -138,7 +138,7 @@ function GridCell(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { entrySize, showEntriesDescription, showTags } =
+  const { entrySize, showEntriesDescription, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
@@ -365,6 +365,7 @@ function GridCell(props: Props) {
         height: maxHeight,
         minHeight: maxHeight,
         maxHeight: maxHeight,
+        maxWidth: 400,
         marginBottom: isLast ? 40 : 'auto',
         border:
           '2px solid ' +
@@ -406,11 +407,12 @@ function GridCell(props: Props) {
             loading="lazy"
             // @ts-ignore
             onError={(i) => (i.target.style.display = 'none')}
-            alt="green iguana"
+            alt="thumbnail image"
             height="auto"
             src={tmbImgSrc}
             style={{
               height: maxHeight - 70,
+              objectFit: thumbnailMode,
             }}
           />
         ) : (

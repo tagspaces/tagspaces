@@ -11,8 +11,10 @@ src/node_modules
 src/renderer/version.json
 flow-typed
 extensions/extensions/*
+extensions/extensions-link/*
 extensions/extensions-pro/*
 extensions/tagspacespro/libs/*
+extensions/tagspaces-pro-link/libs/*
 .erb/dll
 .erb/img
 .erb/mocks

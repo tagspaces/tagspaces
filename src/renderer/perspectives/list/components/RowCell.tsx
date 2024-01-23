@@ -402,6 +402,7 @@ function RowCell(props: Props) {
             marginRight: 5,
             textAlign: 'left',
             display: 'flex',
+            alignSelf: 'center',
           }}
         >
           {generateExtension()}
@@ -450,7 +451,7 @@ function RowCell(props: Props) {
               variant="body2"
             >
               <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
-                <span>{entrySizeFormatted}</span>
+                {entrySizeFormatted}
               </Tooltip>
               <Tooltip
                 title={
@@ -467,7 +468,14 @@ function RowCell(props: Props) {
           </Grid>
         )}
         {fSystemEntry.thumbPath && (
-          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
+          <Grid
+            item
+            style={{
+              display: 'flex',
+              width: entryHeight,
+              alignItems: 'center',
+            }}
+          >
             <img
               alt="thumbnail"
               src={
@@ -486,13 +494,11 @@ function RowCell(props: Props) {
               style={{
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
-                borderRadius: 5,
-                marginBottom: 5,
+                // borderRadius: 5,
+                // backgroundColor: 'red',
                 objectFit: thumbnailMode,
-                paddingRight: 4,
-                paddingTop: 4,
-                height: entryHeight,
-                width: entryHeight,
+                height: entryHeight - 5,
+                width: entryHeight - 5,
               }}
             />
           </Grid>
