@@ -799,7 +799,7 @@ export const DirectoryContentContextProvider = ({
           directory === currentDirectoryPath.current
         ) {
           currentPerspective.current = perspective;
-          manualPerspective.current = 'unspecified';
+          manualPerspective.current = isManual ? perspective : 'unspecified';
         }
         savePerspective(
           directory ? directory : currentDirectoryPath.current,
