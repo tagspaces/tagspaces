@@ -20,6 +20,7 @@ import React, {
   createContext,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
 } from 'react';
@@ -34,6 +35,7 @@ import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import {
+  enhanceOpenedEntry,
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getNextFile,
@@ -47,6 +49,7 @@ import {
   actions as SettingsActions,
   getNewHTMLFileContent,
   getSupportedFileTypes,
+  getTagDelimiter,
 } from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
@@ -77,6 +80,8 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
+  currentEntry: OpenedEntry;
+  dirProps: TS.DirProp;
   isEntryInFullWidth: boolean;
   sharingLink: string;
   sharingParentFolderLink: string;
@@ -115,6 +120,8 @@ type OpenedEntryContextData = {
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openedEntries: [],
+  currentEntry: undefined,
+  dirProps: undefined,
   isEntryInFullWidth: false,
   sharingLink: undefined,
   sharingParentFolderLink: undefined,
@@ -154,6 +161,7 @@ export const OpenedEntryContextProvider = ({
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
+    currentDirectoryPerspective,
     currentLocationPath,
     openDirectory,
     addDirectoryEntries,
@@ -176,15 +184,19 @@ export const OpenedEntryContextProvider = ({
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   //const initOpenLink = useSelector(getOpenLink);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
+  const tagDelimiter = useSelector(getTagDelimiter);
   /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
   const firstRun = useSelector(isFirstRun);
   const enableGlobalKeyboardShortcuts = useSelector(isGlobalKeyBindingEnabled);*/
-  const [openedEntries, setOpenedEntries] = useState([]);
-  const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
+  const [openedEntries, setOpenedEntries] = useState<OpenedEntry[]>([]);
+  const currentEntry = useRef<OpenedEntry>(openedEntries[0]); //enhanceOpenedEntry(openedEntries[0], tagDelimiter));
+  const dirProps = useRef<TS.DirProp>();
+  const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
   //const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   /**
    * Handle openLink from initApp
@@ -210,14 +222,31 @@ export const OpenedEntryContextProvider = ({
           );
         }, 1000);
       }
+    } else if (
+      currentEntry.current &&
+      !currentEntry.current.isFile &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport()
+    ) {
+      PlatformIO.getDirProperties(currentEntry.current.path)
+        .then((dProps: TS.DirProp) => {
+          dirProps.current = dProps;
+          currentEntry.current.size = dProps.totalSize;
+          forceUpdate();
+        })
+        .catch((ex) => console.debug('getDirProperties:', ex.message));
     }
     /*if (initOpenLink && initOpenLink.url) {
       openLink(initOpenLink.url, initOpenLink.options);
     }*/
   }, []);
 
-  /*useEffect(() => {
-    if (
+  useEffect(() => {
+    currentEntry.current = openedEntries[0];
+    if (currentEntry.current) {
+      forceUpdate();
+    }
+    /*if (
       !firstRender &&
       havePrevOpenedFile.current
       // && selectedEntries.length < 2
@@ -243,8 +272,22 @@ export const OpenedEntryContextProvider = ({
         }
       }
     }
-    havePrevOpenedFile.current = openedEntries.length > 0;
-  }, [openedEntries]);*/
+    havePrevOpenedFile.current = openedEntries.length > 0;*/
+  }, [openedEntries]);
+
+  useEffect(() => {
+    if (
+      currentEntry.current &&
+      currentEntry.current.path === currentDirectoryPath
+    ) {
+      currentEntry.current = {
+        ...currentEntry.current,
+        perspective: currentDirectoryPerspective,
+      };
+      setOpenedEntries([currentEntry.current]);
+      // forceUpdate();
+    }
+  }, [currentDirectoryPerspective]);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -444,8 +487,9 @@ export const OpenedEntryContextProvider = ({
     }
     clearURLParam('tsepath');
     closeOpenedEntries(); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
-    if (isEntryInFullWidth) {
-      setEntryInFullWidth(false);
+    if (isEntryInFullWidth.current) {
+      isEntryInFullWidth.current = false;
+      forceUpdate();
     }
   }
 
@@ -482,19 +526,23 @@ export const OpenedEntryContextProvider = ({
               shouldReload: !openedFile.shouldReload,
             });
           })
-          .catch(() =>
-            updateOpenedFile(openedFile.path, {
+          .catch(() => {
+            // @ts-ignore
+            const entryMeta: TS.FileSystemEntryMeta = {
               ...openedFile,
               editMode: false,
               shouldReload: !openedFile.shouldReload,
-            }),
-          );
+            };
+            return updateOpenedFile(openedFile.path, entryMeta);
+          });
       } catch (e) {
-        return updateOpenedFile(openedFile.path, {
+        // @ts-ignore
+        const entryMeta: TS.FileSystemEntryMeta = {
           ...openedFile,
           editMode: false,
           shouldReload: !openedFile.shouldReload,
-        });
+        };
+        return updateOpenedFile(openedFile.path, entryMeta);
       }
     }
     return Promise.resolve(false);
@@ -547,6 +595,8 @@ export const OpenedEntryContextProvider = ({
             }
             if (fsEntryMeta.perspective) {
               entryForOpening.perspective = fsEntryMeta.perspective;
+            } else {
+              entryForOpening.perspective = 'unspecified';
             }
             if (fsEntryMeta.tags) {
               entryForOpening.tags = fsEntryMeta.tags;
@@ -741,7 +791,13 @@ export const OpenedEntryContextProvider = ({
   }
 
   function toggleEntryFullWidth() {
-    setEntryInFullWidth(!isEntryInFullWidth);
+    isEntryInFullWidth.current = !isEntryInFullWidth.current;
+    forceUpdate();
+  }
+
+  function setEntryInFullWidth(fullWidth) {
+    isEntryInFullWidth.current = fullWidth;
+    forceUpdate();
   }
 
   function goForward() {
@@ -1032,7 +1088,7 @@ export const OpenedEntryContextProvider = ({
         closeAllFiles();
       }
     };
-  }, [openedEntries, isEntryInFullWidth]);
+  }, [openedEntries, isEntryInFullWidth.current]);
 
   const reflectDeleteFile = useMemo(() => {
     return (filePath: string) => {
@@ -1044,12 +1100,14 @@ export const OpenedEntryContextProvider = ({
         closeAllFiles();
       }
     };
-  }, [openedEntries, isEntryInFullWidth]);
+  }, [openedEntries, isEntryInFullWidth.current]);
 
   const context = useMemo(() => {
     return {
       openedEntries,
-      isEntryInFullWidth,
+      currentEntry: currentEntry.current,
+      dirProps: dirProps.current,
+      isEntryInFullWidth: isEntryInFullWidth.current,
       sharingLink: sharingLink.current,
       sharingParentFolderLink: sharingParentFolderLink.current,
       setEntryInFullWidth,
@@ -1074,7 +1132,9 @@ export const OpenedEntryContextProvider = ({
     };
   }, [
     openedEntries,
-    isEntryInFullWidth,
+    currentEntry.current,
+    isEntryInFullWidth.current,
+    dirProps.current,
     currentLocation,
     currentDirectoryPath,
     fileOpenHistory,

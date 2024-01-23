@@ -8,7 +8,7 @@ import { TS } from '-/tagspaces.namespace';
 // eslint-disable-next-line import/prefer-default-export
 export function savePerspective(
   path: string,
-  perspective: string,
+  perspective: TS.PerspectiveType,
 ): Promise<TS.FileSystemEntryMeta> {
   return new Promise((resolve, reject) => {
     loadMetaDataPromise(path)

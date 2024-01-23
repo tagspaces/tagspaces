@@ -76,7 +76,7 @@ function DirectoryMenu(props: Props) {
   const {
     openDirectory,
     currentDirectoryPath,
-    setCurrentDirectoryPerspective,
+    setDirectoryPerspective,
     openCurrentDirectory,
   } = useDirectoryContentContext();
   const { reflectCreateEntry } = useLocationIndexContext();
@@ -171,7 +171,7 @@ function DirectoryMenu(props: Props) {
       if (switchPerspective) {
         switchPerspective(perspectiveId);
       } else {
-        setCurrentDirectoryPerspective(perspectiveId);
+        setDirectoryPerspective(perspectiveId, undefined, true);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);

@@ -23,8 +23,6 @@ import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useSelector } from 'react-redux';
-import { getDefaultPerspective } from '-/reducers/settings';
 import LoadingLazy from '-/components/LoadingLazy';
 import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
@@ -151,20 +149,17 @@ interface Props {
 
 function RenderPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
-  const {
-    currentDirectoryEntries,
-    currentDirectoryPath,
-    currentDirectoryPerspective,
-  } = useDirectoryContentContext();
+  const { currentDirectoryEntries, currentDirectoryPath, perspective } =
+    useDirectoryContentContext();
 
-  const defaultPerspective = useSelector(getDefaultPerspective);
+  /*const defaultPerspective = useSelector(getDefaultPerspective);
 
   let currentPerspective =
     currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
 
   if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
     currentPerspective = defaultPerspective;
-  }
+  }*/
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -172,23 +167,23 @@ function RenderPerspective(props: Props) {
   if (showWelcomePanel) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
   }
-  if (currentPerspective === PerspectiveIDs.LIST) {
+  if (perspective === PerspectiveIDs.LIST) {
     return (
       <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
   }
-  if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
+  if (Pro && perspective === PerspectiveIDs.GALLERY) {
     return <GalleryPerspectiveAsync />;
   }
-  if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
+  if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
     return <MapiquePerspectiveAsync />;
   }
-  if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
+  if (Pro && perspective === PerspectiveIDs.KANBAN) {
     return (
       <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
   }
-  if (Pro && currentPerspective === PerspectiveIDs.FOLDERVIZ) {
+  if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
     return <FolderVizPerspectiveAsync />;
   }
 
