@@ -25,21 +25,17 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getEditedEntryPaths,
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
   extractContainingDirectoryPath,
-  extractFileName,
   extractFileExtension,
-  extractTagsAsObjects,
+  extractFileName,
   extractParentDirectoryPath,
-  getMetaFileLocationForDir,
+  extractTagsAsObjects,
   getMetaDirectoryPath,
+  getMetaFileLocationForDir,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -49,7 +45,6 @@ import {
   updateFsEntries,
 } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
-import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
 import {
   getDefaultPerspective,
@@ -69,6 +64,7 @@ import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid-perspective';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
+import { GRID_ID, KANBAN_ID, LIST_ID, UNSPECIFIED_ID } from '-/const';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -211,8 +207,8 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
-  const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
-  const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
+  const currentPerspective = useRef<TS.PerspectiveType>(UNSPECIFIED_ID);
+  const manualPerspective = useRef<TS.PerspectiveType>(UNSPECIFIED_ID);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>(getDefaultDirMeta());
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
@@ -305,11 +301,11 @@ export const DirectoryContentContextProvider = ({
   }
 
   function getDefaultPerspectiveSettings(perspective: string) {
-    if (perspective === PerspectiveIDs.GRID) {
+    if (perspective === GRID_ID) {
       return defaultGridSettings;
-    } else if (perspective === PerspectiveIDs.LIST) {
+    } else if (perspective === LIST_ID) {
       return defaultListSettings;
-    } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
+    } else if (perspective === KANBAN_ID && Pro) {
       return Pro.Perspectives.KanBanPerspectiveSettings;
     }
     return defaultGridSettings;
@@ -663,10 +659,9 @@ export const DirectoryContentContextProvider = ({
 
     if (directoryMeta.current) {
       if (directoryMeta.current.perspective) {
-        currentPerspective.current = directoryMeta.current
-          .perspective as TS.PerspectiveType;
+        currentPerspective.current = directoryMeta.current.perspective;
       } else {
-        currentPerspective.current = 'unspecified';
+        currentPerspective.current = UNSPECIFIED_ID;
       }
       if (directoryMeta.current.customOrder) {
         if (directoryMeta.current.customOrder.files) {
@@ -679,7 +674,7 @@ export const DirectoryContentContextProvider = ({
         }
       }
     } else {
-      currentPerspective.current = 'unspecified';
+      currentPerspective.current = UNSPECIFIED_ID;
     }
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
@@ -774,8 +769,8 @@ export const DirectoryContentContextProvider = ({
   );
 
   function getPerspective(): TS.PerspectiveType {
-    if (currentPerspective.current === 'unspecified') {
-      if (manualPerspective.current === 'unspecified') {
+    if (currentPerspective.current === UNSPECIFIED_ID) {
+      if (manualPerspective.current === UNSPECIFIED_ID) {
         return defaultPerspective;
       }
       return manualPerspective.current;
@@ -790,7 +785,7 @@ export const DirectoryContentContextProvider = ({
     reload: boolean = true,
   ): Promise<TS.FileSystemEntryMeta | null> {
     return new Promise((resolve) => {
-      if (isManual && currentPerspective.current === 'unspecified') {
+      if (isManual && currentPerspective.current === UNSPECIFIED_ID) {
         manualPerspective.current = perspective;
         resolve(null);
       } else {
@@ -799,7 +794,7 @@ export const DirectoryContentContextProvider = ({
           directory === currentDirectoryPath.current
         ) {
           currentPerspective.current = perspective;
-          manualPerspective.current = isManual ? perspective : 'unspecified';
+          manualPerspective.current = isManual ? perspective : UNSPECIFIED_ID;
         }
         savePerspective(
           directory ? directory : currentDirectoryPath.current,

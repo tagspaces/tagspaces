@@ -77,6 +77,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { UNSPECIFIED_ID } from '-/const';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -596,7 +597,7 @@ export const OpenedEntryContextProvider = ({
             if (fsEntryMeta.perspective) {
               entryForOpening.perspective = fsEntryMeta.perspective;
             } else {
-              entryForOpening.perspective = 'unspecified';
+              entryForOpening.perspective = UNSPECIFIED_ID;
             }
             if (fsEntryMeta.tags) {
               entryForOpening.tags = fsEntryMeta.tags;

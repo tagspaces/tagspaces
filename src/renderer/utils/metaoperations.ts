@@ -4,6 +4,7 @@ import {
   saveMetaDataPromise,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { UNSPECIFIED_ID } from '-/const';
 
 // eslint-disable-next-line import/prefer-default-export
 export function savePerspective(
@@ -14,7 +15,7 @@ export function savePerspective(
     loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         let updatedFsEntryMeta: TS.FileSystemEntryMeta;
-        if (perspective && perspective !== 'unspecified') {
+        if (perspective && perspective !== UNSPECIFIED_ID) {
           updatedFsEntryMeta = {
             ...fsEntryMeta,
             perspective,

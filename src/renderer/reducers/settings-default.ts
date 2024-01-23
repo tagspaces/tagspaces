@@ -18,9 +18,9 @@
 
 import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
-import { PerspectiveIDs } from '-/perspectives';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { supportedFileTypes } from '-/extension-config';
+import { GRID_ID } from '-/const';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -81,7 +81,7 @@ export default {
   currentLightTheme: 'legacy',
   currentDarkTheme: 'darklegacy',
   geoTaggingFormat: 'pluscodes',
-  defaultPerspective: PerspectiveIDs.GRID,
+  defaultPerspective: GRID_ID,
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',

@@ -19,9 +19,9 @@
 import React, { createContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getFirstRWLocation } from '-/reducers/locations';
-import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { KANBAN_ID } from '-/const';
 
 type TargetPathContextData = {
   targetDirectoryPath: string;
@@ -47,7 +47,7 @@ export const TargetPathContextProvider = ({
   const context = useMemo(() => {
     let targetDirectoryPath = currentDirectoryPath;
     if (
-      currentDirectoryPerspective === PerspectiveIDs.KANBAN &&
+      currentDirectoryPerspective === KANBAN_ID &&
       selectedEntries &&
       selectedEntries.length === 1 &&
       !selectedEntries[0].isFile

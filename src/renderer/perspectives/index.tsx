@@ -22,20 +22,17 @@ import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
 import FolderVizPerspectiveIcon from '@mui/icons-material/Hub';
-
-export const PerspectiveIDs = {
-  UNSPECIFIED: 'unspecified',
-  GRID: 'grid',
-  LIST: 'list',
-  GALLERY: 'gallery',
-  FOLDERVIZ: 'folderviz',
-  MAPIQUE: 'mapique',
-  KANBAN: 'kanban',
-  // WIKI: 'wiki'
-};
+import {
+  FOLDERVIZ_ID,
+  GALLERY_ID,
+  GRID_ID,
+  KANBAN_ID,
+  LIST_ID,
+  MAPIQUE_ID,
+} from '-/const';
 
 export const GridPerspectiveMeta = {
-  id: PerspectiveIDs.GRID,
+  id: GRID_ID,
   key: 'openDefaultPerspective',
   pro: false,
   beta: false,
@@ -44,7 +41,7 @@ export const GridPerspectiveMeta = {
 };
 
 export const ListPerspectiveMeta = {
-  id: PerspectiveIDs.LIST,
+  id: LIST_ID,
   key: 'openListPerspective',
   pro: false,
   beta: false,
@@ -53,7 +50,7 @@ export const ListPerspectiveMeta = {
 };
 
 export const MapiquePerspectiveMeta = {
-  id: PerspectiveIDs.MAPIQUE,
+  id: MAPIQUE_ID,
   key: 'openMapiquePerspective',
   pro: true,
   beta: false,
@@ -62,7 +59,7 @@ export const MapiquePerspectiveMeta = {
 };
 
 export const KanbanPerspectiveMeta = {
-  id: PerspectiveIDs.KANBAN,
+  id: KANBAN_ID,
   key: 'openKanbanPerspective',
   pro: true,
   beta: true,
@@ -73,7 +70,7 @@ export const KanbanPerspectiveMeta = {
 export { KanbanPerspectiveIcon };
 
 export const GalleryPerspectiveMeta = {
-  id: PerspectiveIDs.GALLERY,
+  id: GALLERY_ID,
   key: 'openGalleryPerspective',
   pro: true,
   beta: false,
@@ -82,7 +79,7 @@ export const GalleryPerspectiveMeta = {
 };
 
 export const FolderVizPerspectiveMeta = {
-  id: PerspectiveIDs.FOLDERVIZ,
+  id: FOLDERVIZ_ID,
   key: 'openFolderVizPerspective',
   pro: true,
   beta: true,

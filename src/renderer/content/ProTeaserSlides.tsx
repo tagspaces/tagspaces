@@ -8,15 +8,15 @@ import SearchImage from '-/assets/images/search-undraw.svg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
-import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
+import { FOLDERVIZ_ID, GALLERY_ID, KANBAN_ID, MAPIQUE_ID } from '-/const';
 
 export const slidesNames = [
   'general',
-  PerspectiveIDs.KANBAN,
-  PerspectiveIDs.FOLDERVIZ,
-  PerspectiveIDs.MAPIQUE,
-  PerspectiveIDs.GALLERY,
+  KANBAN_ID,
+  FOLDERVIZ_ID,
+  MAPIQUE_ID,
+  GALLERY_ID,
   'annotation',
   'revisions',
   'search',

@@ -25,9 +25,9 @@ import React, {
 } from 'react';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { TS } from '-/tagspaces.namespace';
-import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
 import { removeFolderCustomSettings } from '-/utils/metaoperations';
+import { GRID_ID, UNSPECIFIED_ID } from '-/const';
 
 type PerspectiveSettingsContextData = {
   orderBy: boolean;
@@ -153,8 +153,8 @@ export const PerspectiveSettingsContextProvider = ({
   }
 
   function getPerspective() {
-    return currentDirectoryPerspective === PerspectiveIDs.UNSPECIFIED
-      ? PerspectiveIDs.GRID
+    return currentDirectoryPerspective === UNSPECIFIED_ID
+      ? GRID_ID
       : currentDirectoryPerspective;
   }
 

@@ -15,6 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import {
+  FOLDERVIZ_ID,
+  GALLERY_ID,
+  GRID_ID,
+  KANBAN_ID,
+  LIST_ID,
+  MAPIQUE_ID,
+  UNSPECIFIED_ID,
+} from '-/const';
 
 export namespace TS {
   interface Location {
@@ -213,12 +222,13 @@ export namespace TS {
   }
 
   type PerspectiveType =
-    | 'grid'
-    | 'list'
-    | 'gallery'
-    | 'mapique'
-    | 'kanban'
-    | 'unspecified';
+    | typeof GRID_ID
+    | typeof LIST_ID
+    | typeof GALLERY_ID
+    | typeof MAPIQUE_ID
+    | typeof KANBAN_ID
+    | typeof FOLDERVIZ_ID
+    | typeof UNSPECIFIED_ID;
 
   interface PerspectiveSettings {
     grid?: FolderSettings;

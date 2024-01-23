@@ -42,7 +42,7 @@ import {
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
+import { AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import { useTranslation } from 'react-i18next';
@@ -50,6 +50,14 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import {
+  FOLDERVIZ_ID,
+  GALLERY_ID,
+  GRID_ID,
+  KANBAN_ID,
+  LIST_ID,
+  MAPIQUE_ID,
+} from '-/const';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -82,13 +90,6 @@ function FolderContainer(props: Props) {
 
   const isDesktopMode = useSelector(getDesktopMode);
   const progress = useSelector(getProgress);
-
-  //let currentPerspective = getPerspective();
-  // currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
-
-  /*if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
-    currentPerspective = defaultPerspective;
-  }*/
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -136,20 +137,16 @@ function FolderContainer(props: Props) {
   };
 
   const switchPerspective = (perspectiveId: string) => {
-    if (
-      Pro ||
-      perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST
-    ) {
+    if (Pro || perspectiveId === GRID_ID || perspectiveId === LIST_ID) {
       setDirectoryPerspective(perspectiveId, undefined, true);
-    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      toggleProTeaser(PerspectiveIDs.GALLERY);
-    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      toggleProTeaser(PerspectiveIDs.MAPIQUE);
-    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      toggleProTeaser(PerspectiveIDs.KANBAN);
-    } else if (perspectiveId === PerspectiveIDs.FOLDERVIZ) {
-      toggleProTeaser(PerspectiveIDs.FOLDERVIZ);
+    } else if (perspectiveId === GALLERY_ID) {
+      toggleProTeaser(GALLERY_ID);
+    } else if (perspectiveId === MAPIQUE_ID) {
+      toggleProTeaser(MAPIQUE_ID);
+    } else if (perspectiveId === KANBAN_ID) {
+      toggleProTeaser(KANBAN_ID);
+    } else if (perspectiveId === FOLDERVIZ_ID) {
+      toggleProTeaser(FOLDERVIZ_ID);
     }
   };
 
