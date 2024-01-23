@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
@@ -25,12 +31,14 @@ type SelectedEntryContextData = {
   selectedEntries: TS.FileSystemEntry[];
   lastSelectedEntryPath: string;
   setSelectedEntries(entries: TS.FileSystemEntry[]);
+  selectEntry(entry: TS.FileSystemEntry, select?: boolean);
 };
 
 export const SelectedEntryContext = createContext<SelectedEntryContextData>({
   selectedEntries: undefined,
   lastSelectedEntryPath: undefined,
   setSelectedEntries: undefined,
+  selectEntry: undefined,
 });
 
 export type SelectedEntryContextProviderProps = {
@@ -41,10 +49,9 @@ export const SelectedEntryContextProvider = ({
   children,
 }: SelectedEntryContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
-  const [selectedEntries, setSelectedEntries] = useState<TS.FileSystemEntry[]>(
-    [],
-  );
+  const selectedEntries = useRef<TS.FileSystemEntry[]>([]);
   const firstRender = useFirstRender();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (!firstRender && !currentLocation) {
@@ -59,18 +66,31 @@ export const SelectedEntryContextProvider = ({
     }
     return undefined;
   }*/
-  /*const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
-    if (JSON.stringify(selectedEntries) !== JSON.stringify(entries)) {
-      setSelectedEntriesInt(entries);
+  const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
+    selectedEntries.current = entries;
+    forceUpdate();
+  };
+
+  const selectEntry = (entry: TS.FileSystemEntry, select: boolean = true) => {
+    if (select) {
+      if (!selectedEntries.current.some((e) => e.path === entry.path)) {
+        selectedEntries.current = [...selectedEntries.current, entry];
+      }
+    } else {
+      //deselect
+      selectedEntries.current = selectedEntries.current.filter(
+        (data) => data.path !== entry.path,
+      );
     }
-  };*/
+    forceUpdate();
+  };
 
   const lastSelectedEntryPath = useMemo(() => {
-    if (selectedEntries && selectedEntries.length > 0) {
-      return selectedEntries[selectedEntries.length - 1].path;
+    if (selectedEntries.current.length > 0) {
+      return selectedEntries.current[selectedEntries.current.length - 1].path;
     }
     return undefined;
-  }, [selectedEntries]);
+  }, [selectedEntries.current]);
 
   /*function getSelectedEntriesLength() {
     return selectedEntries ? selectedEntries.length : 0;
@@ -78,12 +98,12 @@ export const SelectedEntryContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      selectedEntries,
-      //lastSelectedEntry: lastSelectedEntry.current,
+      selectedEntries: selectedEntries.current,
       lastSelectedEntryPath,
       setSelectedEntries,
+      selectEntry,
     };
-  }, [selectedEntries]);
+  }, [selectedEntries.current]);
 
   return (
     <SelectedEntryContext.Provider value={context}>
