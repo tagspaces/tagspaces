@@ -24,11 +24,20 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
 import { actions as SettingsActions } from '-/reducers/settings';
 import { Extensions } from '../../main/types';
+import { getNextFile, getPrevFile } from '-/services/utils-io';
+import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
-type RendererListenerContextData = {};
+type RendererListenerContextData = {
+  openNextFile: (path?: string) => void;
+  openPrevFile: (path?: string) => void;
+};
 
 export const RendererListenerContext =
-  createContext<RendererListenerContextData>({});
+  createContext<RendererListenerContextData>({
+    openNextFile: undefined,
+    openPrevFile: undefined,
+  });
 
 export type RendererListenerContextProviderProps = {
   children: React.ReactNode;
@@ -43,9 +52,10 @@ export const RendererListenerContextProvider = ({
   children,
 }: RendererListenerContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { setSearchQuery } = useDirectoryContentContext();
-  const { goForward, goBack, openNextFile, openPrevFile } =
-    useOpenedEntryContext();
+  const { goForward, goBack, openFsEntry } = useOpenedEntryContext();
+  const { sortedDirContent } = useSortedDirContext();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -183,7 +193,7 @@ export const RendererListenerContextProvider = ({
         destroy();
       };
     }
-  }, [openNextFile, openPrevFile]);
+  }, [sortedDirContent, selectedEntries]);
 
   function destroy() {
     if (window.electronIO.ipcRenderer) {
@@ -194,9 +204,43 @@ export const RendererListenerContextProvider = ({
     }
   }
 
+  function openNextFile(path?: string) {
+    const nextFile = getNextFile(
+      path,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
+      sortedDirContent,
+    );
+    if (nextFile !== undefined) {
+      openFsEntry(nextFile);
+      // dispatch(actions.setLastSelectedEntry(nextFile.path));
+      setSelectedEntries([nextFile]);
+      return nextFile;
+    }
+  }
+
+  function openPrevFile(path?: string) {
+    const prevFile = getPrevFile(
+      path,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
+      sortedDirContent,
+    );
+    if (prevFile !== undefined) {
+      openFsEntry(prevFile);
+      // dispatch(actions.setLastSelectedEntry(prevFile.path));
+      setSelectedEntries([prevFile]);
+    }
+  }
+
   const context = useMemo(() => {
-    return {};
-  }, []);
+    return {
+      openNextFile,
+      openPrevFile,
+    };
+  }, [sortedDirContent, selectedEntries]);
 
   return (
     <RendererListenerContext.Provider value={context}>

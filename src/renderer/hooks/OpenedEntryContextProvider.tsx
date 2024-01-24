@@ -96,8 +96,6 @@ type OpenedEntryContextData = {
   ) => Promise<boolean>;
   openEntry: (path?: string, showDetails?) => void;
   openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => void;
-  openNextFile: (path?: string) => void;
-  openPrevFile: (path?: string) => void;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
   goForward: () => void;
@@ -133,8 +131,6 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   updateOpenedFile: () => Promise.resolve(false),
   openEntry: () => {},
   openFsEntry: () => {},
-  openNextFile: () => {},
-  openPrevFile: () => {},
   toggleEntryFullWidth: () => {},
   openLink: () => {},
   goForward: () => {},
@@ -159,7 +155,6 @@ export const OpenedEntryContextProvider = ({
   const { openLocation, currentLocation, getLocationPath } =
     useCurrentLocationContext();
   const {
-    currentDirectoryEntries,
     currentDirectoryPath,
     currentDirectoryPerspective,
     currentLocationPath,
@@ -759,37 +754,6 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  function openNextFile(path?: string) {
-    const nextFile = getNextFile(
-      path,
-      selectedEntries && selectedEntries.length > 0
-        ? selectedEntries[selectedEntries.length - 1].path
-        : undefined,
-      currentDirectoryEntries,
-    );
-    if (nextFile !== undefined) {
-      openFsEntry(nextFile);
-      // dispatch(actions.setLastSelectedEntry(nextFile.path));
-      setSelectedEntries([nextFile]);
-      return nextFile;
-    }
-  }
-
-  function openPrevFile(path?: string) {
-    const prevFile = getPrevFile(
-      path,
-      selectedEntries && selectedEntries.length > 0
-        ? selectedEntries[selectedEntries.length - 1].path
-        : undefined,
-      currentDirectoryEntries,
-    );
-    if (prevFile !== undefined) {
-      openFsEntry(prevFile);
-      // dispatch(actions.setLastSelectedEntry(prevFile.path));
-      setSelectedEntries([prevFile]);
-    }
-  }
-
   function toggleEntryFullWidth() {
     isEntryInFullWidth.current = !isEntryInFullWidth.current;
     forceUpdate();
@@ -1118,8 +1082,6 @@ export const OpenedEntryContextProvider = ({
       updateOpenedFile,
       openEntry,
       openFsEntry,
-      openNextFile,
-      openPrevFile,
       toggleEntryFullWidth,
       goForward,
       goBack,
