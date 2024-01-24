@@ -23,7 +23,7 @@ import { TS } from '-/tagspaces.namespace';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
-import { defaultSettings } from '-/perspectives/grid-perspective';
+import { defaultSettings } from '-/perspectives/grid';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SortedDirContextData = {

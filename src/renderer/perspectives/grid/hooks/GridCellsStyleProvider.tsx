@@ -20,7 +20,7 @@ import React, { createContext, CSSProperties, useMemo } from 'react';
 import {
   calculateEntryHeight,
   calculateEntryWidth,
-} from '-/perspectives/grid-perspective/components/GridCell';
+} from '-/perspectives/grid/components/GridCell';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 type GridCellsStyleData = {

@@ -33,12 +33,12 @@ import GridCell, {
   calculateEntryHeight,
   calculateEntryWidth,
 } from './GridCell';
-import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
-import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
-import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
+import MainToolbar from '-/perspectives/grid/components/MainToolbar';
+import SortingMenu from '-/perspectives/grid/components/SortingMenu';
+import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
 import PlatformIO from '-/services/platform-facade';
-import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
-import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
+import GridPagination from '-/perspectives/grid/components/GridPagination';
+import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
@@ -46,13 +46,13 @@ import Links from 'assets/links';
 import { defaultSettings } from '../index';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import { openURLExternally } from '-/services/utils-io';
-import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import { GridCellsStyleContextProvider } from '-/perspectives/grid-perspective/hooks/GridCellsStyleProvider';
+import { GridCellsStyleContextProvider } from '-/perspectives/grid/hooks/GridCellsStyleProvider';
 import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 interface Props {

@@ -18,8 +18,8 @@
 
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { defaultSettings } from '-/perspectives/grid-perspective';
-import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { defaultSettings } from '-/perspectives/grid';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
 
 type PaginationContextData = {

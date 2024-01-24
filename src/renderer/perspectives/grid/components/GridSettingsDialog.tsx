@@ -46,7 +46,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import ZoomComponent from '-/components/ZoomComponent';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 

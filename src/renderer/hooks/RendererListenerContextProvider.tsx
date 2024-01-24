@@ -25,7 +25,7 @@ import AppConfig from '-/AppConfig';
 import { actions as SettingsActions } from '-/reducers/settings';
 import { Extensions } from '../../main/types';
 import { getNextFile, getPrevFile } from '-/services/utils-io';
-import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type RendererListenerContextData = {

@@ -66,7 +66,7 @@ import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
 import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
-import { defaultSettings as defaultGridSettings } from '-/perspectives/grid-perspective';
+import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 

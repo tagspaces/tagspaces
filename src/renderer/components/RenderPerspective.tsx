@@ -24,7 +24,7 @@ import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import LoadingLazy from '-/components/LoadingLazy';
-import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
+import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirContextProvider';
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
@@ -32,9 +32,7 @@ import { RendererListenerContextProvider } from '-/hooks/RendererListenerContext
 
 const GridPerspective = React.lazy(
   () =>
-    import(
-      /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
-    ),
+    import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid'),
 );
 function GridPerspectiveAsync(props) {
   return (

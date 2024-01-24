@@ -24,7 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
-import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
