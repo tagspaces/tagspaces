@@ -7,9 +7,8 @@ import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 interface Props {
   isFile: boolean;
@@ -20,7 +19,7 @@ function EntryContainerNav(props: Props) {
   const { isFile, startClosingEntry } = props;
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
-  const { openNextFile, openPrevFile } = useOpenedEntryContext();
+  const { openNextFile, openPrevFile } = useRendererListenerContext();
   const theme = useTheme();
 
   return (
