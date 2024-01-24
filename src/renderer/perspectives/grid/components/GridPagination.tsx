@@ -237,7 +237,6 @@ function GridPagination(props: Props) {
                       padding: 10,
                       marginRight: 160,
                       width: 'fit-content',
-                      background: theme.palette.background.default,
                       borderRadius: 8,
                       color: theme.palette.text.primary,
                     }}
@@ -268,7 +267,6 @@ function GridPagination(props: Props) {
                 <Box
                   style={{
                     paddingBottom: 5,
-                    background: theme.palette.background.default,
                     marginTop: 10,
                     marginRight: 160,
                     padding: 10,
