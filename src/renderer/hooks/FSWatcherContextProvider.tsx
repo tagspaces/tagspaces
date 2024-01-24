@@ -25,13 +25,13 @@ import {
   getFileLocationFromMetaFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { toFsEntry } from '-/services/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDispatch } from 'react-redux';
 import { Changed } from '../../main/chokidarWatcher';
+import { KANBAN_ID } from '-/const';
 
 type FSWatcherContextData = {
   // watcher: FSWatcher;
@@ -85,8 +85,7 @@ export const FSWatcherContextProvider = ({
       currentLocation.type !== locationType.TYPE_CLOUD
     ) {
       if (currentLocationPath.length > 0) {
-        const depth =
-          currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
+        const depth = currentDirectoryPerspective === KANBAN_ID ? 3 : 1;
 
         watchFolder(currentLocationPath, depth);
       }

@@ -36,7 +36,6 @@ import FileUploadContainer, {
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
 import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
-import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 import { getLocations } from '-/reducers/locations';
@@ -49,6 +48,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { GALLERY_ID, GRID_ID, KANBAN_ID, LIST_ID, MAPIQUE_ID } from '-/const';
 
 interface Props {
   open: boolean;
@@ -163,18 +163,14 @@ function DirectoryMenu(props: Props) {
   }
 
   function perspectiveSwitch(perspectiveId) {
-    if (
-      Pro ||
-      perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST
-    ) {
+    if (Pro || perspectiveId === GRID_ID || perspectiveId === LIST_ID) {
       if (switchPerspective) {
         switchPerspective(perspectiveId);
       } else {
         setDirectoryPerspective(perspectiveId, undefined, true);
       }
-    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      toggleProTeaser(PerspectiveIDs.GALLERY);
+    } else if (perspectiveId === GALLERY_ID) {
+      toggleProTeaser(GALLERY_ID);
       // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(
@@ -182,8 +178,8 @@ function DirectoryMenu(props: Props) {
       //     true
       //   );
       // }
-    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+    } else if (perspectiveId === MAPIQUE_ID) {
+      toggleProTeaser(MAPIQUE_ID);
       // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(
@@ -191,8 +187,8 @@ function DirectoryMenu(props: Props) {
       //     true
       //   );
       // }
-    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      toggleProTeaser(PerspectiveIDs.KANBAN);
+    } else if (perspectiveId === KANBAN_ID) {
+      toggleProTeaser(KANBAN_ID);
       // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(

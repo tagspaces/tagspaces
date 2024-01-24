@@ -22,9 +22,9 @@ import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { Pro } from '-/pro';
-import { PerspectiveIDs } from '-/perspectives';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { GRID_ID, UNSPECIFIED_ID } from '-/const';
 
 type SortedDirContextData = {
   sortedDirContent: TS.FileSystemEntry[];
@@ -71,12 +71,9 @@ export const SortedDirContextProvider = ({
       : defaultSettings.orderBy,
   );
 
-  function getSettings(
-    meta,
-    perspective = PerspectiveIDs.GRID,
-  ): TS.FolderSettings {
-    if (perspective === PerspectiveIDs.UNSPECIFIED) {
-      perspective = PerspectiveIDs.GRID;
+  function getSettings(meta, perspective): TS.FolderSettings {
+    if (perspective === UNSPECIFIED_ID) {
+      perspective = GRID_ID;
     }
     if (
       Pro &&

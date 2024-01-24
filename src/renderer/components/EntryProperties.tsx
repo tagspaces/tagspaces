@@ -99,6 +99,7 @@ import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { UNSPECIFIED_ID } from '-/const';
 
 const PREFIX = 'EntryProperties';
 
@@ -601,7 +602,7 @@ function EntryProperties(props: Props) {
   if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective; // props.perspective;
   } else {
-    perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
+    perspectiveDefault = UNSPECIFIED_ID; // perspectives.DEFAULT;
   }
 
   // https://github.com/Leaflet/Leaflet/blob/main/src/layer/marker/Icon.Default.js#L22

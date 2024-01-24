@@ -38,11 +38,11 @@ import {
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { PerspectiveIDs } from '-/perspectives';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
+import { GRID_ID } from '-/const';
 
 interface Props {
   open: boolean;
@@ -256,7 +256,7 @@ function FileUploadDialog(props: Props) {
             onClick={() => {
               onClose();
               dispatch(AppActions.clearUploadDialog());
-              if (currentDirectoryPerspective === PerspectiveIDs.GRID) {
+              if (currentDirectoryPerspective === GRID_ID) {
                 loadDirectoryContent(currentDirectoryPath, false);
               }
             }}

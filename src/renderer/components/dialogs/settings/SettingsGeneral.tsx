@@ -45,11 +45,11 @@ import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
 import PlatformIO from '-/services/platform-facade';
-import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { UNSPECIFIED_ID } from '-/const';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -112,7 +112,7 @@ function SettingsGeneral() {
     dispatch(SettingsActions.setDefaultPerspective(perspective));
   };
 
-  let defaultPerspective = PerspectiveIDs.UNSPECIFIED;
+  let defaultPerspective = UNSPECIFIED_ID;
   if (settings.defaultPerspective) {
     defaultPerspective = settings.defaultPerspective;
   }

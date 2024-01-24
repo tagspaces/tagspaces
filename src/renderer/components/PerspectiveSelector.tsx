@@ -22,10 +22,11 @@ import LayersClearIcon from '@mui/icons-material/LayersClear';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { AvailablePerspectives } from '-/perspectives';
 import { Pro } from '-/pro';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { useTranslation } from 'react-i18next';
+import { UNSPECIFIED_ID } from '-/const';
 
 interface Props {
   //language: string;
@@ -44,8 +45,8 @@ function PerspectiveSelector(props: Props) {
   perspectiveSelectorMenuItems.push(
     <MenuItem
       style={{ display: 'flex' }}
-      key={PerspectiveIDs.UNSPECIFIED}
-      value={PerspectiveIDs.UNSPECIFIED}
+      key={UNSPECIFIED_ID}
+      value={UNSPECIFIED_ID}
     >
       <div style={{ display: 'flex' }}>
         <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
