@@ -87,6 +87,7 @@ export const PerspectiveSettingsContextProvider = ({
     directoryMeta,
     setDirectoryMeta,
     getDefaultPerspectiveSettings,
+    getPerspective,
   } = useDirectoryContentContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
@@ -150,12 +151,6 @@ export const PerspectiveSettingsContextProvider = ({
         setDirectoryMeta(fsEntryMeta);
       },
     );
-  }
-
-  function getPerspective() {
-    return currentDirectoryPerspective === PerspectiveIDs.UNSPECIFIED
-      ? PerspectiveIDs.GRID
-      : currentDirectoryPerspective;
   }
 
   /**

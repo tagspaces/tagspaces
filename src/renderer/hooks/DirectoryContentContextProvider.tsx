@@ -133,6 +133,7 @@ type DirectoryContentContextData = {
   exitSearchMode: () => void;
   findFromSavedSearch: (uuid: string) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
+  getPerspective: () => TS.PerspectiveType;
 };
 
 export const DirectoryContentContext =
@@ -173,6 +174,7 @@ export const DirectoryContentContext =
     exitSearchMode: () => {},
     findFromSavedSearch: () => {},
     getDefaultPerspectiveSettings: undefined,
+    getPerspective: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -957,6 +959,7 @@ export const DirectoryContentContextProvider = ({
       //isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      getPerspective,
       setCurrentDirectoryEntries,
       updateCurrentDirEntry,
       setSearchQuery,
