@@ -52,7 +52,7 @@ export { default as HistoryIcon } from '@mui/icons-material/History';
 
 export { default as SettingsIcon } from '@mui/icons-material/Settings';
 
-export { default as PerspectiveSettingsIcon } from '@mui/icons-material/Tune';
+export { default as PerspectiveSettingsIcon } from '@mui/icons-material/DisplaySettings';
 
 export { default as CreateFileIcon } from '@mui/icons-material/Add';
 
