@@ -23,7 +23,10 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import {
+  formatDateTime4Tag,
+  locationType,
+} from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { getFirstRWLocation } from '-/reducers/locations';
 import Tooltip from '-/components/Tooltip';
@@ -61,7 +64,7 @@ function CreateFile(props: Props) {
   const { t } = useTranslation();
 
   //const dispatch: AppDispatch = useDispatch();
-  const { openLocation } = useCurrentLocationContext();
+  const { currentLocation, openLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
 
@@ -89,7 +92,10 @@ function CreateFile(props: Props) {
   }
 
   function loadLocation() {
-    if (!currentDirectoryPath && firstRWLocation) {
+    const isCloudLocation =
+      currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
+    // no currentDirectoryPath in root cloud location
+    if (!isCloudLocation && !currentDirectoryPath && firstRWLocation) {
       openLocation(firstRWLocation);
     }
   }

@@ -18,10 +18,12 @@
 
 import React, { createContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getFirstRWLocation } from '-/reducers/locations';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type TargetPathContextData = {
   targetDirectoryPath: string;
@@ -38,6 +40,7 @@ export type TargetPathContextProviderProps = {
 export const TargetPathContextProvider = ({
   children,
 }: TargetPathContextProviderProps) => {
+  const { currentLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentDirectoryPerspective, currentDirectoryPath } =
     useDirectoryContentContext();
@@ -55,8 +58,14 @@ export const TargetPathContextProvider = ({
       targetDirectoryPath = selectedEntries[0].path;
     }
 
-    if (!targetDirectoryPath && firstRWLocation) {
-      targetDirectoryPath = firstRWLocation.path;
+    if (!targetDirectoryPath) {
+      const isCloudLocation =
+        currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
+      if (isCloudLocation) {
+        targetDirectoryPath = '/';
+      } else if (firstRWLocation) {
+        targetDirectoryPath = firstRWLocation.path;
+      }
     }
     return {
       targetDirectoryPath,
