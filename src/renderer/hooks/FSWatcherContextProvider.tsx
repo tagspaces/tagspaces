@@ -67,7 +67,6 @@ export const FSWatcherContextProvider = ({
     currentDirectoryEntries,
     loadDirectoryContent,
     currentDirectoryPath,
-    currentLocationPath,
     currentDirectoryPerspective,
     addDirectoryEntries,
     removeDirectoryEntries,
@@ -76,7 +75,7 @@ export const FSWatcherContextProvider = ({
   //const [watcher, setWatcher] = useState<FSWatcher>(undefined);
   const ignored = useRef<string[]>([]);
   const watchingFolderPath = useRef<string>(undefined);
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (
@@ -84,16 +83,16 @@ export const FSWatcherContextProvider = ({
       currentLocation.watchForChanges &&
       currentLocation.type !== locationType.TYPE_CLOUD
     ) {
-      if (currentLocationPath.length > 0) {
+      if (currentDirectoryPath && currentDirectoryPath.length > 0) {
         const depth =
           currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
 
-        watchFolder(currentLocationPath, depth);
+        watchFolder(currentDirectoryPath, depth);
       }
     } else {
       stopWatching();
     }
-  }, [currentLocation, currentLocationPath]);
+  }, [currentLocation, currentDirectoryPath]);
 
   /*useEffect(() => {
     // watchForEvents(listener);

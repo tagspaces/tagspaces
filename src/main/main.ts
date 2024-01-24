@@ -110,6 +110,7 @@ const browserWindowOptions: BrowserWindowConstructorOptions = {
   autoHideMenuBar: true,
   titleBarStyle: isMacLike ? 'hidden' : 'default',
   webPreferences: {
+    // webSecurity: !isDebug,
     spellcheck: true,
     preload:
       app.isPackaged || !isDebug

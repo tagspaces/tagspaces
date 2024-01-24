@@ -33,6 +33,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractFileName,
   extractFileExtension,
@@ -440,7 +441,11 @@ export const DirectoryContentContextProvider = ({
           ' - currentLocationPath: ' +
           currentLocationPath.current,
       );
-      if (parentDirectory.includes(currentLocationPath.current)) {
+      if (
+        parentDirectory.includes(
+          cleanTrailingDirSeparator(currentLocationPath.current),
+        )
+      ) {
         openDirectory(parentDirectory);
       } else {
         showNotification(t('core:parentDirNotInLocation'), 'warning', true);
@@ -849,6 +854,7 @@ export const DirectoryContentContextProvider = ({
             (entry) => entry.path === path,
           );
         })
+        .filter((i) => i > -1)
         .sort((a, b) => b - a);
       /*const uniqueIndexes = indexes
         .filter(function (item, index) {
