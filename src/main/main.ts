@@ -659,6 +659,14 @@ app
         i18n.changeLanguage(language);
       });
 
+      ipcMain.on('cmd', (e, cmd) => {
+        if (cmd === 'previous-file') {
+          getPreviousFile();
+        } else if (cmd === 'next-file') {
+          getNextFile();
+        }
+      });
+
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
         mainWindow?.webContents.setZoomFactor(zoomLevel);
       });

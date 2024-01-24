@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
@@ -49,7 +49,7 @@ import {
   isRevisionsEnabled,
   getEntryContainerTab,
 } from '-/reducers/settings';
-import { OpenedEntry, AppDispatch } from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
@@ -69,7 +69,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
-import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -81,7 +80,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function EntryContainer() {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  // const dispatch: AppDispatch = useDispatch();
   const {
     openedEntries,
     closeAllFiles,
@@ -90,7 +89,6 @@ function EntryContainer() {
     toggleEntryFullWidth,
     isEntryInFullWidth,
   } = useOpenedEntryContext();
-  const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { saveDescription } = useDescriptionContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
@@ -655,11 +653,13 @@ function EntryContainer() {
     setPanelOpened(!isPanelOpened);
   };
   const openNextFileAction = () => {
-    openNextFile(openedFile.path);
+    window.electronIO.ipcRenderer.sendMessage('cmd', 'next-file');
+    //openNextFile(openedFile.path);
   };
 
   const openPrevFileAction = () => {
-    openPrevFile(openedFile.path);
+    window.electronIO.ipcRenderer.sendMessage('cmd', 'previous-file');
+    //openPrevFile(openedFile.path);
   };
 
   const fileExtension = extractFileExtension(

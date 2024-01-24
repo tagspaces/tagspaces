@@ -177,16 +177,18 @@ export async function getGridFileName(fileIndex) {
           ? filesList[filesList.length + fileIndex]
           : filesList[fileIndex];
       // await file.waitForDisplayed({ timeout: 5000 });
-      file = await file.$('div');
-      file = await file.$('div');
-      file = await file.$('div');
-      const fileNameElem = await file.$('p');
-      const fileName = await getElementText(fileNameElem);
+      //file = await file.$('div');
+      //file = await file.$('div');
+      //file = await file.$('div');
+      const fileNameElem = await file.$('div div div:nth-child(2) p');
+      const fileName = await fileNameElem.getAttribute('title');
+      return fileName;
+      /*const fileName = await getElementText(fileNameElem);
       const divs = await file.$$('div');
       const lastDiv = await divs[divs.length - 1];
       const fileExtElem = await lastDiv.$('span');
       const fileExt = await getElementText(fileExtElem);
-      return fileName + '.' + fileExt.toLowerCase();
+      return fileName + '.' + fileExt.toLowerCase();*/
     }
     console.log(
       "Can't find getGridFileName:" + fileIndex + ' filesList is empty',

@@ -93,6 +93,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
 
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);

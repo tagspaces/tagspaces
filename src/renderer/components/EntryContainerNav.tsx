@@ -8,7 +8,6 @@ import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 
 interface Props {
   isFile: boolean;
@@ -19,7 +18,6 @@ function EntryContainerNav(props: Props) {
   const { isFile, startClosingEntry } = props;
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
-  const { openNextFile, openPrevFile } = useRendererListenerContext();
   const theme = useTheme();
 
   return (
@@ -43,7 +41,13 @@ function EntryContainerNav(props: Props) {
             <IconButton
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
-              onClick={() => openPrevFile()}
+              onClick={() => {
+                window.electronIO.ipcRenderer.sendMessage(
+                  'cmd',
+                  'previous-file',
+                );
+                //openPrevFile()
+              }}
               // size="large"
             >
               <PrevDocumentIcon />
@@ -56,7 +60,10 @@ function EntryContainerNav(props: Props) {
             <IconButton
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
-              onClick={() => openNextFile()}
+              onClick={() => {
+                window.electronIO.ipcRenderer.sendMessage('cmd', 'next-file');
+                // openNextFile()
+              }}
               // size="large"
             >
               <NextDocumentIcon />
