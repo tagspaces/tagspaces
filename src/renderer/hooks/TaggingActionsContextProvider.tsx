@@ -96,8 +96,12 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { openedEntries, updateOpenedFile, reflectRenameOpenedEntry } =
-    useOpenedEntryContext();
+  const {
+    openedEntries,
+    updateOpenedFile,
+    reflectSidecarTagsUpdate,
+    reflectRenameOpenedEntry,
+  } = useOpenedEntryContext();
   const { updateCurrentDirEntry, reflectRenameEntries } =
     useDirectoryContentContext();
   const { persistTagsInSidecarFile } = useCurrentLocationContext();
@@ -303,10 +307,10 @@ export const TaggingActionsContextProvider = ({
             .then(() => {
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               reflectUpdateSidecarTags(path, newTags, updateIndex);
-              updateOpenedFile(path, {
+              /* updateOpenedFile(path, {
                 id: 'opened_entry_id',
                 tags: newTags,
-              });
+              });*/
               return [path, path];
             })
             .catch((err) => {
@@ -325,10 +329,11 @@ export const TaggingActionsContextProvider = ({
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             reflectUpdateSidecarTags(path, tags, updateIndex);
-            return updateOpenedFile(path, { id: '', tags }).then(() => [
+            /*return updateOpenedFile(path, { id: '', tags }).then(() => [
               path,
               path,
-            ]);
+            ]);*/
+            return [path, path];
           })
           .catch((error) => {
             console.warn('Error adding tags for ' + path + ' with ' + error);
@@ -548,10 +553,10 @@ export const TaggingActionsContextProvider = ({
             tags: newTagsArray,
           })
             .then(() => {
-              updateOpenedFile(path, {
+              /*updateOpenedFile(path, {
                 id: '',
                 tags: newTagsArray,
-              });
+              });*/
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               reflectUpdateSidecarTags(path, newTagsArray, true);
               return true;
@@ -577,10 +582,10 @@ export const TaggingActionsContextProvider = ({
           const fsEntryMeta = { tags: [tag] };
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
-              updateOpenedFile(path, {
+              /*updateOpenedFile(path, {
                 id: '',
                 tags: fsEntryMeta.tags,
-              });
+              });*/
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               reflectUpdateSidecarTags(path, fsEntryMeta.tags);
               return true;
@@ -772,7 +777,7 @@ export const TaggingActionsContextProvider = ({
               reject(new Error('Error renaming file'));
               return;
             }
-            reflectRenameOpenedEntry(path, newFilePath, true);
+            // reflectRenameOpenedEntry(path, newFilePath, true);
           }
           resolve(newFilePath);
         } else {
@@ -841,6 +846,7 @@ export const TaggingActionsContextProvider = ({
       dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
       // @ts-ignore
       updateCurrentDirEntry(path, { tags });
+      reflectSidecarTagsUpdate(path, tags);
 
       if (updateIndex) {
         indexUpdateSidecarTags(path, tags);

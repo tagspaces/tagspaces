@@ -68,6 +68,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
     // const firstFileName = await getGridFileName(0);
     await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     await clickOn('[data-tid=detailsTabTID]');
     // Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
@@ -176,6 +177,7 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5008 - Copy file [web,minio,electron]', async () => {
     const fileName = 'sample.svg';
     await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     //Toggle Properties
     await clickOn('[data-tid=detailsTabTID]');
     // add meta json to file
@@ -211,6 +213,7 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5010 - Move file [web,minio,electron]', async () => {
     const fileName = 'sample.svg';
     await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     //Toggle Properties
     await clickOn('[data-tid=detailsTabTID]');
     // add meta json to file

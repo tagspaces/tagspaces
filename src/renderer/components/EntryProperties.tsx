@@ -24,7 +24,10 @@ import React, {
   useState,
 } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
+import {
+  getBgndFileLocationForDirectory,
+  getMetaFileLocationForFile,
+} from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
   Grid,
@@ -99,6 +102,7 @@ import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -209,6 +213,7 @@ function EntryProperties(props: Props) {
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
+  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const dispatch: AppDispatch = useDispatch();
 
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -467,43 +472,42 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    switchLocationTypeByID(currentEntry.locationId).then(
-      (currentLocationId) => {
+    const metaFilePath = getMetaFileLocationForFile(
+      currentEntry.path,
+      PlatformIO.getDirSeparator(),
+    );
+    // tmp fix; saving meta sidecar file is not ignored by watcher
+    ignoreByWatcher(metaFilePath);
+    switchLocationTypeByID(currentEntry.locationId)
+      .then((currentLocationId) => {
         if (action === 'remove-value') {
           if (!value) {
             // no tags left in the select element
-            removeAllTags([currentEntry.path]).then(() => {
+            return removeAllTags([currentEntry.path]).then(() =>
               updateOpenedFile(currentEntry.path, {
                 id: '',
                 tags: [],
-              }).then(() => {
-                switchCurrentLocationType();
-              });
-            });
-          } else {
-            removeTags([currentEntry.path], value).then(() =>
-              switchCurrentLocationType(),
+              }),
             );
+          } else {
+            return removeTags([currentEntry.path], value);
           }
         } else if (action === 'clear') {
-          removeAllTags([currentEntry.path]).then(() =>
-            switchCurrentLocationType(),
-          );
-        } else {
-          // create-option or select-option
-          const tags =
-            currentEntry.tags === undefined
-              ? value
-              : value.filter(
-                  (tag) =>
-                    !currentEntry.tags.some((obj) => obj.title === tag.title),
-                );
-          return addTags([currentEntry.path], tags).then(() =>
-            switchCurrentLocationType(),
-          );
+          return removeAllTags([currentEntry.path]);
         }
-      },
-    );
+        // create-option or select-option
+        const tags =
+          currentEntry.tags === undefined
+            ? value
+            : value.filter(
+                (tag) =>
+                  !currentEntry.tags.some((obj) => obj.title === tag.title),
+              );
+        return addTags([currentEntry.path], tags);
+      })
+      .then(() => {
+        switchCurrentLocationType().then(() => deignoreByWatcher(metaFilePath));
+      });
   };
 
   if (!currentEntry || !currentEntry.path || currentEntry.path === '') {

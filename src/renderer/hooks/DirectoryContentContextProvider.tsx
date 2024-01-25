@@ -25,11 +25,7 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getEditedEntryPaths,
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {

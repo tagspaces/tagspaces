@@ -112,6 +112,7 @@ type OpenedEntryContextData = {
     newEntryPath: string,
     reload?: boolean,
   ) => void;
+  reflectSidecarTagsUpdate: (entryPath: string, tags: TS.Tag[]) => void;
   reflectDeleteDirectory: (directoryPath: string) => void;
   reflectDeleteFile: (filePath: string) => void;
 };
@@ -138,6 +139,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   createFile: () => {},
   createFileAdvanced: () => {},
   reflectRenameOpenedEntry: () => {},
+  reflectSidecarTagsUpdate: undefined,
   reflectDeleteDirectory: undefined,
   reflectDeleteFile: undefined,
 });
@@ -287,7 +289,7 @@ export const OpenedEntryContextProvider = ({
   /**
    * HANDLE REFLECT_RENAME_ENTRY
    */
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
       let action;
       for (const editedEntryPath of editedEntryPaths) {
@@ -298,36 +300,11 @@ export const OpenedEntryContextProvider = ({
         const newFilePath = editedEntryPaths[1].path;
 
         if (openedEntries.some((entry) => entry.path === oldFilePath)) {
-          const extractedTags = extractTagsAsObjects(
-            newFilePath,
-            AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator(),
-          );
-
-          const newEntries = openedEntries.map((entry) => {
-            if (entry.path !== oldFilePath) {
-              return entry;
-            }
-            const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
-            // const { url, ...rest } = entry;
-            const sidecarTags =
-              entry.tags && entry.tags.length > 0
-                ? entry.tags.filter((tag) => tag.type !== 'plain')
-                : [];
-            return {
-              ...entry,
-              path: newFilePath, // TODO handle change extension case
-              tags: [
-                ...sidecarTags, // add only sidecar tags
-                ...fileNameTags,
-              ],
-              // shouldReload: true
-            };
-          });
+          const newEntries = getRenamedEntries(oldFilePath, newFilePath);
           setSharedLinks(newEntries[0]);
           setOpenedEntries(newEntries);
         }
-      } /*else if (action === 'delete') {
+      } /!*else if (action === 'delete') {
         const filePath = editedEntryPaths[0].path;
         if (
           openedEntries &&
@@ -336,9 +313,47 @@ export const OpenedEntryContextProvider = ({
         ) {
           closeAllFiles();
         }
-      }*/
+      }*!/
     }
-  }, [editedEntryPaths]);
+  }, [editedEntryPaths]);*/
+
+  function getRenamedEntry(oldFilePath, newFilePath, scarTags?) {
+    const extractedTags = extractTagsAsObjects(
+      newFilePath,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator(),
+    );
+    if (currentEntry.current) {
+      if (currentEntry.current.path !== oldFilePath) {
+        return currentEntry.current;
+      }
+      const fileNameTags = currentEntry.current.isFile ? extractedTags : []; // dirs dont have tags in filename
+
+      let sidecarTags;
+      if (scarTags !== undefined) {
+        sidecarTags = scarTags;
+      } else if (
+        currentEntry.current.tags &&
+        currentEntry.current.tags.length > 0
+      ) {
+        sidecarTags = currentEntry.current.tags.filter(
+          (tag) => tag.type !== 'plain',
+        );
+      } else {
+        sidecarTags = [];
+      }
+      return {
+        ...currentEntry.current,
+        path: newFilePath, // TODO handle change extension case
+        tags: [
+          ...sidecarTags, // add only sidecar tags
+          ...fileNameTags,
+        ],
+        // shouldReload: true
+      };
+    }
+    return undefined;
+  }
 
   function setSharedLinks(openedFile?) {
     if (openedFile) {
@@ -1019,7 +1034,7 @@ export const OpenedEntryContextProvider = ({
 
   function reflectRenameOpenedEntry(entryPath, newEntryPath, reload = false) {
     if (openedEntries && openedEntries.length > 0) {
-      if (openedEntries[0].path === entryPath) {
+      if (openedEntries.some((entry) => entry.path === entryPath)) {
         if (currentLocation) {
           updateHistory(
             { ...currentLocation, path: currentLocationPath },
@@ -1030,10 +1045,19 @@ export const OpenedEntryContextProvider = ({
         if (reload) {
           openEntry(newEntryPath);
         } else {
-          addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
+          const newEntry = getRenamedEntry(entryPath, newEntryPath);
+          setSharedLinks(newEntry);
+          setOpenedEntries([newEntry]);
+          //addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
         }
       }
     }
+  }
+
+  function reflectSidecarTagsUpdate(entryPath, tags) {
+    const newEntry = getRenamedEntry(entryPath, entryPath, tags);
+    setSharedLinks(newEntry);
+    setOpenedEntries([newEntry]);
   }
 
   const reflectDeleteDirectory = useMemo(() => {
@@ -1089,6 +1113,7 @@ export const OpenedEntryContextProvider = ({
       createFile,
       createFileAdvanced,
       reflectRenameOpenedEntry,
+      reflectSidecarTagsUpdate,
       reflectDeleteDirectory,
       reflectDeleteFile,
     };

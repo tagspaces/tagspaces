@@ -182,7 +182,7 @@ export async function getGridFileName(fileIndex) {
       //file = await file.$('div');
       const fileNameElem = await file.$('div div div:nth-child(2) p');
       const fileName = await fileNameElem.getAttribute('title');
-      return fileName;
+      return fileName.replace(/ *\[[^\]]*]/, '');
       /*const fileName = await getElementText(fileNameElem);
       const divs = await file.$$('div');
       const lastDiv = await divs[divs.length - 1];

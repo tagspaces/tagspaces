@@ -34,6 +34,7 @@ import TagsSelect from '../TagsSelect';
 import {
   extractFileName,
   extractDirectoryName,
+  getMetaFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
@@ -43,6 +44,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 interface Props {
   open: boolean;
@@ -56,6 +58,7 @@ function AddRemoveTagsDialog(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const selected = props.selected ? props.selected : selectedEntries;
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
+  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -80,9 +83,14 @@ function AddRemoveTagsDialog(props: Props) {
 
   const addTagsAction = () => {
     if (selected && selected.length > 0) {
-      addTags(
-        selected.map((entry) => entry.path),
-        newlyAddedTags,
+      const paths = selected.map((entry) => entry.path);
+      const metaFilePaths: string[] = paths.map((p) =>
+        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
+      );
+      // tmp fix; saving meta sidecar file is not ignored by watcher
+      ignoreByWatcher(...metaFilePaths);
+      addTags(paths, newlyAddedTags).then(() =>
+        deignoreByWatcher(...metaFilePaths),
       );
     }
     onCloseDialog(true);
@@ -90,9 +98,14 @@ function AddRemoveTagsDialog(props: Props) {
 
   const removeTagsAction = () => {
     if (selected && selected.length > 0) {
-      removeTags(
-        selected.map((entry) => entry.path),
-        newlyAddedTags,
+      const paths = selected.map((entry) => entry.path);
+      const metaFilePaths: string[] = paths.map((p) =>
+        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
+      );
+      // tmp fix; saving meta sidecar file is not ignored by watcher
+      ignoreByWatcher(...metaFilePaths);
+      removeTags(paths, newlyAddedTags).then(() =>
+        deignoreByWatcher(...metaFilePaths),
       );
     }
     onCloseDialog(true);
@@ -100,7 +113,13 @@ function AddRemoveTagsDialog(props: Props) {
 
   const removeAllTagsAction = () => {
     if (selected && selected.length > 0) {
-      removeAllTags(selected.map((entry) => entry.path));
+      const paths = selected.map((entry) => entry.path);
+      const metaFilePaths: string[] = paths.map((p) =>
+        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
+      );
+      // tmp fix; saving meta sidecar file is not ignored by watcher
+      ignoreByWatcher(...metaFilePaths);
+      removeAllTags(paths).then(() => deignoreByWatcher(...metaFilePaths));
     }
     onCloseDialog(true);
   };

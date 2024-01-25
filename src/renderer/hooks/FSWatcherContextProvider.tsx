@@ -27,10 +27,8 @@ import {
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { toFsEntry } from '-/services/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useDispatch } from 'react-redux';
 import { Changed } from '../../main/chokidarWatcher';
 
 type FSWatcherContextData = {
@@ -119,10 +117,14 @@ export const FSWatcherContextProvider = ({
   const folderChanged = useMemo(() => {
     return (event, path): void => {
       console.log(`File ${path} has been ${event}`);
+      if (watchingFolderPath.current === undefined) {
+        return;
+      }
       if (path.endsWith(AppConfig.metaFolder)) {
         // .ts dir created
         return;
       }
+      // console.log(`ignored list:` + JSON.stringify(ignored.current));
       const pathParts = path.split(PlatformIO.getDirSeparator());
       for (let i = 0; i < ignored.current.length; i++) {
         if (
@@ -184,6 +186,7 @@ export const FSWatcherContextProvider = ({
 
           // watching for changed sidecar files .ts/file.jpg.json
           if (path.includes(AppConfig.metaFolder)) {
+            // todo reload meta for changed file only
             if (path.endsWith(AppConfig.metaFileExt)) {
               const directoryPath = getFileLocationFromMetaFile(
                 path,

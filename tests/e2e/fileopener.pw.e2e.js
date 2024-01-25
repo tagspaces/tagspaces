@@ -71,7 +71,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
-
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
@@ -111,7 +111,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
-
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
@@ -419,6 +419,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0827 - Link for internal sharing + copy [web,minio,electron]', async () => {
     const fileName = 'sample.jpg';
     await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     await clickOn('[data-tid=detailsTabTID]');
 
     const sharingLink = await global.client.$(
