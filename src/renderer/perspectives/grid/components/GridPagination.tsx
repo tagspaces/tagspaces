@@ -244,7 +244,10 @@ function GridPagination(props: Props) {
                     <Tooltip title={t('core:renameDirectory')}>
                       <ButtonBase
                         data-tid={'currentDir_' + folderName}
-                        style={{ fontSize: '1.5rem' }}
+                        style={{
+                          fontSize: '1.5rem',
+                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                        }}
                         onClick={() => {
                           setSelectedEntries([]);
                           openRenameEntryDialog();
@@ -278,6 +281,7 @@ function GridPagination(props: Props) {
                   <Typography
                     style={{
                       fontSize: '0.9rem',
+                      filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
                     }}
                   >
                     {folderSummary}
@@ -289,6 +293,7 @@ function GridPagination(props: Props) {
                         style={{
                           fontSize: '0.8rem',
                           wordBreak: 'break-all',
+                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
                           height: 45,
                           overflowY: 'auto',
                         }}
@@ -303,7 +308,7 @@ function GridPagination(props: Props) {
                     borderRadius: 10,
                     height: 100,
                     width: 140,
-                    backgroundImage: 'url("' + folderTmbPath.current + '")',
+                    backgroundImage: `url("${folderTmbPath.current}")`,
                     backgroundSize: 'cover', // cover contain
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center center',
