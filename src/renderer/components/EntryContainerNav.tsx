@@ -42,10 +42,7 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
               onClick={() => {
-                window.electronIO.ipcRenderer.sendMessage(
-                  'cmd',
-                  'previous-file',
-                );
+                window.dispatchEvent(new Event('previous-file'));
                 //openPrevFile()
               }}
               // size="large"
@@ -61,7 +58,7 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
               onClick={() => {
-                window.electronIO.ipcRenderer.sendMessage('cmd', 'next-file');
+                window.dispatchEvent(new Event('next-file'));
                 // openNextFile()
               }}
               // size="large"

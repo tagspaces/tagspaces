@@ -27,6 +27,7 @@ import { Extensions } from '../../main/types';
 import { getNextFile, getPrevFile } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import useEventListener from '-/utils/useEventListener';
 
 type RendererListenerContextData = {
   openNextFile: (path?: string) => void;
@@ -194,6 +195,13 @@ export const RendererListenerContextProvider = ({
       };
     }
   }, [sortedDirContent, selectedEntries]);
+
+  useEventListener('previous-file', (e) => {
+    openPrevFile();
+  });
+  useEventListener('next-file', (e) => {
+    openNextFile();
+  });
 
   function destroy() {
     if (window.electronIO.ipcRenderer) {

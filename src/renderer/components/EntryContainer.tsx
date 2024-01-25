@@ -653,12 +653,12 @@ function EntryContainer() {
     setPanelOpened(!isPanelOpened);
   };
   const openNextFileAction = () => {
-    window.electronIO.ipcRenderer.sendMessage('cmd', 'next-file');
+    window.dispatchEvent(new Event('next-file'));
     //openNextFile(openedFile.path);
   };
 
   const openPrevFileAction = () => {
-    window.electronIO.ipcRenderer.sendMessage('cmd', 'previous-file');
+    window.dispatchEvent(new Event('previous-file'));
     //openPrevFile(openedFile.path);
   };
 
