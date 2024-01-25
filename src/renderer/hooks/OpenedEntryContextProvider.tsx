@@ -1033,23 +1033,23 @@ export const OpenedEntryContextProvider = ({
   }
 
   function reflectRenameOpenedEntry(entryPath, newEntryPath, reload = false) {
-    if (openedEntries && openedEntries.length > 0) {
-      if (openedEntries.some((entry) => entry.path === entryPath)) {
-        if (currentLocation) {
-          updateHistory(
-            { ...currentLocation, path: currentLocationPath },
-            currentDirectoryPath,
-            newEntryPath,
-          );
-        }
-        if (reload) {
-          openEntry(newEntryPath);
-        } else {
-          const newEntry = getRenamedEntry(entryPath, newEntryPath);
-          setSharedLinks(newEntry);
-          setOpenedEntries([newEntry]);
-          //addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
-        }
+    //if (openedEntries && openedEntries.length > 0) {
+    if (currentEntry.current.path === entryPath) {
+      //if (openedEntries.some((entry) => entry.path === entryPath)) {
+      if (currentLocation) {
+        updateHistory(
+          { ...currentLocation, path: currentLocationPath },
+          currentDirectoryPath,
+          newEntryPath,
+        );
+      }
+      if (reload) {
+        openEntry(newEntryPath);
+      } else {
+        const newEntry = getRenamedEntry(entryPath, newEntryPath);
+        setSharedLinks(newEntry);
+        setOpenedEntries([newEntry]);
+        //addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
       }
     }
   }
