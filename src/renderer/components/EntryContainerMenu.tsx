@@ -45,7 +45,6 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 interface Props {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
-  openedEntry: OpenedEntry;
   startClosingEntry: (event) => void;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
@@ -55,11 +54,11 @@ function EntryContainerMenu(props: Props) {
   const {
     anchorEl,
     handleClose,
-    openedEntry,
     toggleFullScreen,
     reloadDocument,
     startClosingEntry,
   } = props;
+  const { openedEntry } = useOpenedEntryContext();
   const { t } = useTranslation();
   // const theme = useTheme();
   const {

@@ -63,7 +63,7 @@ export const DescriptionContextProvider = ({
   const { t } = useTranslation();
   const { setSelectedEntries } = useSelectedEntriesContext();
   const {
-    openedEntries,
+    openedEntry,
     addToEntryContainer,
     updateOpenedFile,
     reloadOpenedFile,
@@ -72,30 +72,30 @@ export const DescriptionContextProvider = ({
     useCurrentLocationContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
-  const openedFile = useRef<OpenedEntry>(openedEntries[0]);
+  const openedFile = useRef<OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
 
   useEffect(() => {
-    if (openedEntries && openedEntries.length > 0) {
+    if (openedEntry) {
       if (
         openedFile.current !== undefined &&
         isChanged.current &&
-        openedFile.current.path !== openedEntries[0].path &&
-        openedFile.current.description !== openedEntries[0].description
+        openedFile.current.path !== openedEntry.path &&
+        openedFile.current.description !== openedEntry.description
       ) {
         // handle not saved changes
         addToEntryContainer({ ...openedFile.current, editMode: false });
         setSelectedEntries([]);
         saveDescriptionConfirmOpened(true);
       } else {
-        openedFile.current = openedEntries[0];
+        openedFile.current = openedEntry;
       }
     } else {
       openedFile.current = undefined;
     }
-  }, [openedEntries]);
+  }, [openedEntry]);
 
   const saveDescription = () => {
     if (readOnlyMode) {
@@ -165,7 +165,7 @@ export const DescriptionContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      description: openedFile.current.description,
+      description: openedFile.current?.description,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,

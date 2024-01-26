@@ -28,18 +28,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getEditedEntryPaths,
   OpenedEntry,
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import {
-  enhanceOpenedEntry,
   findExtensionsForEntry,
   getAllPropertiesPromise,
-  getNextFile,
-  getPrevFile,
   getRelativeEntryPath,
   loadJSONFile,
   openURLExternally,
@@ -49,7 +45,6 @@ import {
   actions as SettingsActions,
   getNewHTMLFileContent,
   getSupportedFileTypes,
-  getTagDelimiter,
 } from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
@@ -79,8 +74,8 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type OpenedEntryContextData = {
-  openedEntries: OpenedEntry[];
-  currentEntry: OpenedEntry;
+  //openedEntries: OpenedEntry[];
+  openedEntry: OpenedEntry;
   dirProps: TS.DirProp;
   isEntryInFullWidth: boolean;
   sharingLink: string;
@@ -118,8 +113,8 @@ type OpenedEntryContextData = {
 };
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
-  openedEntries: [],
-  currentEntry: undefined,
+  //openedEntries: [],
+  openedEntry: undefined,
   dirProps: undefined,
   isEntryInFullWidth: false,
   sharingLink: undefined,
@@ -180,8 +175,8 @@ export const OpenedEntryContextProvider = ({
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   //const initOpenLink = useSelector(getOpenLink);
-  const editedEntryPaths = useSelector(getEditedEntryPaths);
-  const tagDelimiter = useSelector(getTagDelimiter);
+  //const editedEntryPaths = useSelector(getEditedEntryPaths);
+  //const tagDelimiter = useSelector(getTagDelimiter);
   /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
   const firstRun = useSelector(isFirstRun);
   const enableGlobalKeyboardShortcuts = useSelector(isGlobalKeyBindingEnabled);*/
@@ -1034,7 +1029,7 @@ export const OpenedEntryContextProvider = ({
 
   function reflectRenameOpenedEntry(entryPath, newEntryPath, reload = false) {
     //if (openedEntries && openedEntries.length > 0) {
-    if (currentEntry.current.path === entryPath) {
+    if (currentEntry.current && currentEntry.current.path === entryPath) {
       //if (openedEntries.some((entry) => entry.path === entryPath)) {
       if (currentLocation) {
         updateHistory(
@@ -1092,8 +1087,8 @@ export const OpenedEntryContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      openedEntries,
-      currentEntry: currentEntry.current,
+      //openedEntries,
+      openedEntry: currentEntry.current,
       dirProps: dirProps.current,
       isEntryInFullWidth: isEntryInFullWidth.current,
       sharingLink: sharingLink.current,
@@ -1118,7 +1113,7 @@ export const OpenedEntryContextProvider = ({
       reflectDeleteFile,
     };
   }, [
-    openedEntries,
+    //openedEntries,
     currentEntry.current,
     isEntryInFullWidth.current,
     dirProps.current,

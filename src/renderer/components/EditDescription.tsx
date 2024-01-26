@@ -28,11 +28,10 @@ const EditDescriptionRoot = styled('div')(({ theme }) => ({
 function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntries } = useOpenedEntryContext();
+  const { openedEntry } = useOpenedEntryContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { description, setDescription } = useDescriptionContext();
 
-  const openedFile: OpenedEntry = openedEntries[0];
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
@@ -67,7 +66,7 @@ function EditDescription() {
   const noDescription = !description || description.length < 1;
   return (
     <EditDescriptionRoot>
-      {!openedFile.editMode && (
+      {!openedEntry.editMode && (
         <EditDescriptionButtons
           buttonsRef={descriptionButtonsRef}
           editMode={editMode}
@@ -77,7 +76,7 @@ function EditDescription() {
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (!editMode && !openedFile.editMode) {
+          if (!editMode && !openedEntry.editMode) {
             setEditMode(true);
           }
         }}
@@ -99,7 +98,7 @@ function EditDescription() {
             }}
           >
             {t(
-              openedFile.editMode
+              openedEntry.editMode
                 ? 'core:editDisabled'
                 : 'core:addMarkdownDescription',
             )}

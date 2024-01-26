@@ -73,23 +73,22 @@ function EntryContainerTitle(props: Props) {
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntries, sharingLink, sharingParentFolderLink } =
+  const { openedEntry, sharingLink, sharingParentFolderLink } =
     useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
-  const openedFile = openedEntries[0];
   const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const haveBookmark =
-    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
+    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedEntry.path);
 
   const bookmarkClick = () => {
     if (Pro) {
       if (haveBookmark) {
-        Pro.bookmarks.delBookmark(openedFile.path);
+        Pro.bookmarks.delBookmark(openedEntry.path);
       } else {
-        Pro.bookmarks.setBookmark(openedFile.path, sharingLink);
+        Pro.bookmarks.setBookmark(openedEntry.path, sharingLink);
       }
       forceUpdate();
     } else {
@@ -101,28 +100,31 @@ function EntryContainerTitle(props: Props) {
     }
   };
 
-  let fileTitle: string = openedFile.path
+  let fileTitle: string = openedEntry.path
     ? extractTitle(
-        openedFile.path,
-        !openedFile.isFile,
+        openedEntry.path,
+        !openedEntry.isFile,
         PlatformIO.getDirSeparator(),
       )
     : '';
 
   let fileName: string;
-  if (openedFile.path) {
-    if (openedFile.isFile) {
-      fileName = extractFileName(openedFile.path, PlatformIO.getDirSeparator());
+  if (openedEntry.path) {
+    if (openedEntry.isFile) {
+      fileName = extractFileName(
+        openedEntry.path,
+        PlatformIO.getDirSeparator(),
+      );
     } else {
       fileName = extractDirectoryName(
-        openedFile.path,
+        openedEntry.path,
         PlatformIO.getDirSeparator(),
       );
     }
   }
   if (!fileName) {
     const currentLocation = locations.find(
-      (location) => location.uuid === openedFile.locationId,
+      (location) => location.uuid === openedEntry.locationId,
     );
     if (currentLocation) {
       fileName = currentLocation.name;
@@ -135,7 +137,7 @@ function EntryContainerTitle(props: Props) {
         paddingLeft: 5,
         display: 'flex',
         alignItems: 'center',
-        marginRight: openedFile.isFile ? 100 : 0,
+        marginRight: openedEntry.isFile ? 100 : 0,
         flexDirection: 'row',
         flex: '1 1',
         overflowX: 'auto',
@@ -146,7 +148,7 @@ function EntryContainerTitle(props: Props) {
         WebkitAppRegion: 'drag',
       }}
     >
-      {openedFile.isFile ? (
+      {openedEntry.isFile ? (
         <>
           {isFileChanged ? (
             <Tooltip title={t('core:fileChanged')}>
@@ -173,7 +175,7 @@ function EntryContainerTitle(props: Props) {
               setAnchorEl(event.currentTarget);
             }}
             style={{
-              backgroundColor: openedFile.color,
+              backgroundColor: openedEntry.color,
               display: 'flex',
               alignItems: 'center',
               textTransform: 'uppercase',
@@ -185,7 +187,7 @@ function EntryContainerTitle(props: Props) {
             {
               //'.' +
               extractFileExtension(
-                openedFile.path,
+                openedEntry.path,
                 PlatformIO.getDirSeparator(),
               )
             }
@@ -216,7 +218,7 @@ function EntryContainerTitle(props: Props) {
           <MoreMenuIcon style={{ fontSize: 20 }} />
         </FileBadge>
       )}
-      <Tooltip title={openedFile.isFile && fileName}>
+      <Tooltip title={openedEntry.isFile && fileName}>
         <Box
           data-tid={'OpenedTID' + dataTidFormat(fileName)}
           style={{
@@ -258,12 +260,11 @@ function EntryContainerTitle(props: Props) {
           )}
         </IconButton>
       </ProTooltip>
-      <TagsPreview tags={openedFile.tags} />
+      <TagsPreview tags={openedEntry.tags} />
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}
         handleClose={() => setAnchorEl(null)}
-        openedEntry={openedFile}
         reloadDocument={reloadDocument}
         toggleFullScreen={toggleFullScreen}
       />

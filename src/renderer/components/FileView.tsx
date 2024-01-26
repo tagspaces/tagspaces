@@ -19,13 +19,12 @@
 import React, { MutableRefObject } from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
-  openedFile: OpenedEntry;
   isFullscreen?: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
@@ -37,15 +36,15 @@ interface Props {
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
+  const { openedEntry } = useOpenedEntryContext();
   const {
-    openedFile,
     fileViewer,
     isFullscreen,
     fileViewerContainer,
     toggleFullScreen,
     height,
     eventID,
-  } = props; // .openedFiles[0];
+  } = props;
 
   const { searchQuery } = useDirectoryContentContext();
 
@@ -64,7 +63,7 @@ function FileView(props: Props) {
 
   let fileOpenerURL: string;
 
-  if (openedFile.path) {
+  if (openedEntry.path) {
     // if (fileTitle.length > maxCharactersTitleLength) {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
@@ -101,29 +100,33 @@ function FileView(props: Props) {
       extTextColor +
       extBgndColor;
 
-    if (openedFile.editMode && openedFile.editingExtensionPath) {
+    if (openedEntry.editMode && openedEntry.editingExtensionPath) {
       fileOpenerURL =
-        openedFile.editingExtensionPath +
+        openedEntry.editingExtensionPath +
         '/index.html?file=' +
-        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+        encodeURIComponent(
+          openedEntry.url ? openedEntry.url : openedEntry.path,
+        ) +
         locale +
         theming +
         extQuery +
         event +
         '&edit=true' +
-        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
+        (openedEntry.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
       //   fileOpenerURL = 'node_modules/@tagspaces/html-viewer/index.html?locale=' + i18n.language;
     } else {
       fileOpenerURL =
-        openedFile.viewingExtensionPath +
+        openedEntry.viewingExtensionPath +
         '/index.html?file=' +
-        encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
+        encodeURIComponent(
+          openedEntry.url ? openedEntry.url : openedEntry.path,
+        ) +
         locale +
         theming +
         extQuery +
         event +
-        (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
+        (openedEntry.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
     fileOpenerURL = 'about:blank';
@@ -158,7 +161,7 @@ function FileView(props: Props) {
           <span>ESC</span>
         </div>
       )}
-      {openedFile.isFile && (
+      {openedEntry.isFile && (
         <iframe
           ref={fileViewer}
           style={{
@@ -177,12 +180,12 @@ function FileView(props: Props) {
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
+/*const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.path === prevProp.openedFile.path &&
   nextProp.openedFile.url === prevProp.openedFile.url &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
   nextProp.openedFile.shouldReload === prevProp.openedFile.shouldReload &&
   nextProp.isFullscreen === prevProp.isFullscreen &&
-  nextProp.height === prevProp.height;
+  nextProp.height === prevProp.height;*/
 
-export default React.memo(FileView, areEqual);
+export default FileView;

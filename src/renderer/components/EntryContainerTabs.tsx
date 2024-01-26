@@ -38,6 +38,7 @@ import {
 } from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -91,7 +92,6 @@ function a11yProps(index: number) {
 }
 
 interface EntryContainerTabsProps {
-  openedFile: OpenedEntry;
   openPanel: () => void;
   toggleProperties: () => void;
   isEditable: boolean;
@@ -107,7 +107,6 @@ interface TabPanelProps {
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
   const {
-    openedFile,
     openPanel,
     toggleProperties,
     marginRight,
@@ -116,6 +115,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   } = props;
 
   const { t } = useTranslation();
+  const { openedEntry } = useOpenedEntryContext();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
@@ -154,7 +154,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (
-      openedFile.isFile &&
+      openedEntry.isFile &&
       tabIndex === parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
@@ -166,7 +166,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   // directories must be always opened
   const selectedTabIndex =
-    !openedFile.isFile && tabIndex === undefined ? 0 : tabIndex;
+    !openedEntry.isFile && tabIndex === undefined ? 0 : tabIndex;
 
   return (
     <div
@@ -177,7 +177,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         flexDirection: 'column',
         overflow: 'hidden',
         borderBottom:
-          openedFile.isFile && !isPanelOpened
+          openedEntry.isFile && !isPanelOpened
             ? '1px solid ' + theme.palette.divider
             : 'none',
       }}
@@ -214,7 +214,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         </StyledTabs>
       </Box>
       <TsTabPanel value={selectedTabIndex} index={0}>
-        <EntryProperties key={openedFile.path} tileServer={tileServer} />
+        <EntryProperties key={openedEntry.path} tileServer={tileServer} />
       </TsTabPanel>
       <TsTabPanel value={selectedTabIndex} index={1}>
         <EditDescription />

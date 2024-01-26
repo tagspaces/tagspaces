@@ -326,7 +326,7 @@ function MainPage(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const {
     openLink,
-    openedEntries,
+    openedEntry,
     isEntryInFullWidth,
     goForward,
     goBack,
@@ -398,7 +398,7 @@ function MainPage(props: Props) {
 
   useEffect(() => {
     updateDimensions();
-  }, [openedEntries]);
+  }, [openedEntry]);
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -419,7 +419,7 @@ function MainPage(props: Props) {
     // console.log('Width: ' + width + ' Height: ' + height);
     setDimensions({ width: w, height: h });
 
-    if (openedEntries.length > 0 && !isEntryInFullWidth) {
+    if (openedEntry && !isEntryInFullWidth) {
       const isFillWidth = h > w;
       if (isFillWidth !== isEntryInFullWidth) {
         setEntryInFullWidth(isFillWidth);
@@ -484,8 +484,6 @@ function MainPage(props: Props) {
 
   const { FILE } = NativeTypes;
 
-  const isFileOpened = openedEntries.length > 0;
-
   const setPercent = (p: number | undefined) => {
     percent.current = p;
     if (p !== undefined) {
@@ -504,7 +502,7 @@ function MainPage(props: Props) {
     let minSecondarySize = '250px';
     let renderSplitter;
 
-    if (!isFileOpened) {
+    if (!openedEntry) {
       percent.current = undefined;
       initialPrimarySize = '100%';
       minSecondarySize = '0%';
@@ -539,7 +537,7 @@ function MainPage(props: Props) {
             setMoveCopyDialogOpened(props.selectedEntries)
           }*/
         />
-        {isFileOpened && (
+        {openedEntry && (
           <DescriptionContextProvider>
             <EntryContainer key="EntryContainerID" />
           </DescriptionContextProvider>
@@ -734,7 +732,7 @@ function MainPage(props: Props) {
 
               .react-split .split-container {
                 --react-split-splitter: ${
-                  openedEntries.length < 1 || isEntryInFullWidth ? '0' : '3px'
+                  !openedEntry || isEntryInFullWidth ? '0' : '3px'
                 } !important;
               }
               .react-split .secondary .full-content {

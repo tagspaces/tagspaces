@@ -55,7 +55,7 @@ function Revisions() {
   // const dispatch: AppDispatch = useDispatch();
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const { openedEntry, updateOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
@@ -68,11 +68,10 @@ function Revisions() {
 
   useEffect(() => {
     // if no history item path - not loadHistoryItems for items in metaFolder
-    const openedFile = openedEntries[0];
-    if (openedFile && openedFile.path.indexOf(AppConfig.metaFolder) === -1) {
-      loadHistoryItems(openedFile);
+    if (openedEntry && openedEntry.path.indexOf(AppConfig.metaFolder) === -1) {
+      loadHistoryItems(openedEntry);
     }
-  }, [openedEntries]);
+  }, [openedEntry]);
 
   function loadHistoryItems(openedFile: OpenedEntry) {
     if (Pro) {
@@ -116,7 +115,7 @@ function Revisions() {
 
   function deleteRevision(path) {
     PlatformIO.deleteFilePromise(path, true).then(() =>
-      loadHistoryItems(openedEntries[0]),
+      loadHistoryItems(openedEntry),
     );
   }
 
@@ -125,26 +124,26 @@ function Revisions() {
       const promises = rows.map((row) =>
         PlatformIO.deleteFilePromise(row.path, true),
       );
-      Promise.all(promises).then(() => loadHistoryItems(openedEntries[0]));
+      Promise.all(promises).then(() => loadHistoryItems(openedEntry));
     }
   }
 
   function restoreRevision(revisionPath) {
-    const openedFile = openedEntries[0];
     const targetPath = getBackupFileLocation(
-      openedFile.path,
-      openedFile.uuid,
+      openedEntry.path,
+      openedEntry.uuid,
       PlatformIO.getDirSeparator(),
     );
-    return copyFilePromiseOverwrite(openedFile.path, targetPath).then(() =>
-      copyFilePromiseOverwrite(revisionPath, openedFile.path).then(() =>
-        updateOpenedFile(openedFile.path, {
+    return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
+      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() => {
+        const fsMeta = {
           id: '',
-          ...openedFile,
+          ...openedEntry,
           editMode: false,
-          shouldReload: !openedFile.shouldReload,
-        }),
-      ),
+          shouldReload: !openedEntry.shouldReload,
+        };
+        updateOpenedFile(openedEntry.path, fsMeta);
+      }),
     );
   }
   function titleFormat(lmdt) {
@@ -221,7 +220,7 @@ function Revisions() {
           <TableBody>
             {paginatedRows.map((row) => (
               <TableRow
-                data-tid={openedEntries[0].uuid}
+                data-tid={openedEntry.uuid}
                 key={row.path}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >

@@ -96,12 +96,8 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const {
-    openedEntries,
-    updateOpenedFile,
-    reflectSidecarTagsUpdate,
-    reflectRenameOpenedEntry,
-  } = useOpenedEntryContext();
+  const { openedEntry, reflectSidecarTagsUpdate, reflectRenameOpenedEntry } =
+    useOpenedEntryContext();
   const { updateCurrentDirEntry, reflectRenameEntries } =
     useDirectoryContentContext();
   const { persistTagsInSidecarFile } = useCurrentLocationContext();
@@ -865,7 +861,7 @@ export const TaggingActionsContextProvider = ({
       collectTagsFromLocation,
     };
   }, [
-    openedEntries,
+    openedEntry,
     persistTagsInSidecarFile,
     addTagsToLibrary,
     reflectUpdateSidecarTags,

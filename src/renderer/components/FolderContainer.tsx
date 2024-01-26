@@ -46,7 +46,6 @@ import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
@@ -66,7 +65,6 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
-  const { openedEntries } = useOpenedEntryContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -188,8 +186,6 @@ function FolderContainer(props: Props) {
       ')'
     : '';
   // keyBindings['openSearch'].toUpperCase()
-
-  const isEntryOpened = openedEntries.length > 0;
 
   return (
     <div

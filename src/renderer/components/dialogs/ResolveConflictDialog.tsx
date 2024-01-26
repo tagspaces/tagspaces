@@ -35,11 +35,11 @@ import {
 import PlatformFacade from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  file: OpenedEntry;
   saveAs: (newFilePath: string) => Promise<boolean>;
   override: () => Promise<boolean>;
 }
@@ -47,6 +47,7 @@ interface Props {
 function ResolveConflictDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
+  const { openedEntry } = useOpenedEntryContext();
   const copyFileName = React.useRef<string>(getFileName());
   const [isSaveAs, setSaveAs] = React.useState<boolean>(false);
 
@@ -54,8 +55,8 @@ function ResolveConflictDialog(props: Props) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function getFileName() {
-    const fileName = extractFileName(props.file.path);
-    const ext = extractFileExtension(props.file.path);
+    const fileName = extractFileName(openedEntry.path);
+    const ext = extractFileExtension(openedEntry.path);
     return fileName.slice(0, -(ext.length + 1)) + '-copy.' + ext;
   }
 
@@ -116,7 +117,7 @@ function ResolveConflictDialog(props: Props) {
               onClick={() => {
                 props
                   .saveAs(
-                    extractContainingDirectoryPath(props.file.path) +
+                    extractContainingDirectoryPath(openedEntry.path) +
                       PlatformFacade.getDirSeparator() +
                       copyFileName.current,
                   )

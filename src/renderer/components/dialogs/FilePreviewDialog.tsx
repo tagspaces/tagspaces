@@ -46,7 +46,7 @@ function FilePreviewDialog(props: Props) {
   //const dispatch: AppDispatch = useDispatch();
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const { openedEntries } = useOpenedEntryContext();
+  const { openedEntry } = useOpenedEntryContext();
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -55,7 +55,6 @@ function FilePreviewDialog(props: Props) {
     useRef<HTMLDivElement>(null);
   const eventID = useRef<string>(getUuid());
 
-  const openedEntry: OpenedEntry = openedEntries[0];
   const openedFile: OpenedEntry =
     fsEntry && openedEntry
       ? {
@@ -193,7 +192,6 @@ function FilePreviewDialog(props: Props) {
         <p>{fsEntry.path}</p>
         <FileView
           key="FileViewPreviewID"
-          openedFile={openedFile}
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           height={'90%'}

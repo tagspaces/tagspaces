@@ -200,7 +200,7 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { currentEntry, dirProps, updateOpenedFile, sharingLink } =
+  const { openedEntry, dirProps, updateOpenedFile, sharingLink } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
@@ -225,15 +225,12 @@ function EntryProperties(props: Props) {
   const lastBackgroundImageChange = useSelector(getLastBackgroundImageChange);
   const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
 
-  const entryName = currentEntry
-    ? currentEntry.isFile
-      ? extractFileName(currentEntry.path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(currentEntry.path, PlatformIO.getDirSeparator())
+  const entryName = openedEntry
+    ? openedEntry.isFile
+      ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())
+      : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator())
     : '';
 
-  /*const currentEntry = useRef<OpenedEntry>(
-    enhanceOpenedEntry(openedEntry, props.tagDelimiter),
-  );*/
   const [editName, setEditName] = useState<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] =
     useState<boolean>(false);
@@ -275,22 +272,22 @@ function EntryProperties(props: Props) {
   const renameEntry = () => {
     if (editName !== undefined) {
       const path = extractContainingDirectoryPath(
-        currentEntry.path,
+        openedEntry.path,
         PlatformIO.getDirSeparator(),
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      switchLocationTypeByID(currentEntry.locationId).then(
+      switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
-          if (currentEntry.isFile) {
-            renameFile(currentEntry.path, nextPath)
+          if (openedEntry.isFile) {
+            renameFile(openedEntry.path, nextPath)
               .then(() => switchCurrentLocationType())
               .catch(() => {
                 switchCurrentLocationType();
                 fileNameRef.current.value = entryName;
               });
           } else {
-            renameDirectory(currentEntry.path, editName)
+            renameDirectory(openedEntry.path, editName)
               .then((newDirPath) => switchCurrentLocationType())
               .catch(() => {
                 switchCurrentLocationType();
@@ -322,7 +319,7 @@ function EntryProperties(props: Props) {
 
   const toggleMoveCopyFilesDialog = () => {
     /*props.setSelectedEntries([
-      { name: '', isFile: true, tags: [], ...currentEntry.current }
+      { name: '', isFile: true, tags: [], ...openedEntry.current }
     ]);*/
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
@@ -332,7 +329,7 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!currentEntry.editMode && editName === undefined) {
+    if (!openedEntry.editMode && editName === undefined) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
   };
@@ -342,21 +339,21 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!currentEntry.editMode && editName === undefined) {
+    if (!openedEntry.editMode && editName === undefined) {
       setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
   };
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      return switchLocationTypeByID(currentEntry.locationId).then(
+      return switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
           if (
             PlatformIO.haveObjectStoreSupport() ||
             PlatformIO.haveWebDavSupport()
           ) {
             updateThumbnailUrl(
-              currentEntry.path,
+              openedEntry.path,
               PlatformIO.getURLforPath(thumbFilePath),
             );
             return true;
@@ -364,7 +361,7 @@ function EntryProperties(props: Props) {
           /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
           .then(objUrl => {*/
           updateThumbnailUrl(
-            currentEntry.path,
+            openedEntry.path,
             thumbFilePath,
             // objUrl.tmbPath
             /*(props.lastThumbnailImageChange
@@ -376,9 +373,9 @@ function EntryProperties(props: Props) {
       );
     } else {
       // reset Thumbnail
-      return getThumbnailURLPromise(currentEntry.path)
+      return getThumbnailURLPromise(openedEntry.path)
         .then((objUrl) => {
-          updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
+          updateThumbnailUrl(openedEntry.path, objUrl.tmbPath);
           return true;
         })
         .catch((err) => {
@@ -408,38 +405,36 @@ function EntryProperties(props: Props) {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
-    currentEntry.color = color;
-    switchLocationTypeByID(currentEntry.locationId).then(
-      (currentLocationId) => {
-        Pro.MetaOperations.saveFsEntryMeta(currentEntry.path, { color })
-          .then((entryMeta) => {
-            if (currentEntry.path === currentDirectoryPath) {
-              setDirectoryMeta(entryMeta);
-            }
-            // for KanBan
-            dispatch(
-              AppActions.setLastBackgroundColorChange(
-                currentEntry.path,
-                new Date().getTime(),
-              ),
-            );
-            // todo handle LastBackgroundColorChange and skip updateOpenedFile
-            updateOpenedFile(currentEntry.path, entryMeta).then(() =>
-              switchCurrentLocationType(),
-            );
+    openedEntry.color = color;
+    switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
+      Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, { color })
+        .then((entryMeta) => {
+          if (openedEntry.path === currentDirectoryPath) {
+            setDirectoryMeta(entryMeta);
+          }
+          // for KanBan
+          dispatch(
+            AppActions.setLastBackgroundColorChange(
+              openedEntry.path,
+              new Date().getTime(),
+            ),
+          );
+          // todo handle LastBackgroundColorChange and skip updateOpenedFile
+          updateOpenedFile(openedEntry.path, entryMeta).then(() =>
+            switchCurrentLocationType(),
+          );
 
-            /* } else {
-            setCurrentEntry({ ...currentEntry, color });
+          /* } else {
+            setCurrentEntry({ ...openedEntry, color });
           } */
-            return true;
-          })
-          .catch((error) => {
-            switchCurrentLocationType();
-            console.warn('Error saving color for folder ' + error);
-            showNotification(t('Error saving color for folder'));
-          });
-      },
-    );
+          return true;
+        })
+        .catch((error) => {
+          switchCurrentLocationType();
+          console.warn('Error saving color for folder ' + error);
+          showNotification(t('Error saving color for folder'));
+        });
+    });
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -449,7 +444,7 @@ function EntryProperties(props: Props) {
     if (name === 'name') {
       const initValid = disableConfirmButton.current;
       let noValid;
-      if (currentEntry.isFile) {
+      if (openedEntry.isFile) {
         noValid = fileNameValidation(value);
       } else {
         noValid = dirNameValidation(value);
@@ -473,51 +468,51 @@ function EntryProperties(props: Props) {
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     const metaFilePath = getMetaFileLocationForFile(
-      currentEntry.path,
+      openedEntry.path,
       PlatformIO.getDirSeparator(),
     );
     // tmp fix; saving meta sidecar file is not ignored by watcher
     ignoreByWatcher(metaFilePath);
-    switchLocationTypeByID(currentEntry.locationId)
+    switchLocationTypeByID(openedEntry.locationId)
       .then((currentLocationId) => {
         if (action === 'remove-value') {
           if (!value) {
             // no tags left in the select element
-            return removeAllTags([currentEntry.path]).then(() =>
-              updateOpenedFile(currentEntry.path, {
+            return removeAllTags([openedEntry.path]).then(() =>
+              updateOpenedFile(openedEntry.path, {
                 id: '',
                 tags: [],
               }),
             );
           } else {
-            return removeTags([currentEntry.path], value);
+            return removeTags([openedEntry.path], value);
           }
         } else if (action === 'clear') {
-          return removeAllTags([currentEntry.path]);
+          return removeAllTags([openedEntry.path]);
         }
         // create-option or select-option
         const tags =
-          currentEntry.tags === undefined
+          openedEntry.tags === undefined
             ? value
             : value.filter(
                 (tag) =>
-                  !currentEntry.tags.some((obj) => obj.title === tag.title),
+                  !openedEntry.tags.some((obj) => obj.title === tag.title),
               );
-        return addTags([currentEntry.path], tags);
+        return addTags([openedEntry.path], tags);
       })
       .then(() => {
         switchCurrentLocationType().then(() => deignoreByWatcher(metaFilePath));
       });
   };
 
-  if (!currentEntry || !currentEntry.path || currentEntry.path === '') {
+  if (!openedEntry || !openedEntry.path || openedEntry.path === '') {
     return <div />;
   }
 
   function getBgndUrl() {
-    if (currentEntry && !currentEntry.isFile) {
+    if (openedEntry && !openedEntry.isFile) {
       const bgndPath = getBgndFileLocationForDirectory(
-        currentEntry.path,
+        openedEntry.path,
         PlatformIO.getDirSeparator(),
       );
       if (bgndPath !== undefined) {
@@ -541,18 +536,18 @@ function EntryProperties(props: Props) {
   }
 
   function getThumbPath() {
-    if (!currentEntry) {
+    if (!openedEntry) {
       return undefined;
     }
-    if (currentEntry.isFile) {
+    if (openedEntry.isFile) {
       return getThumbFileLocationForFile(
-        currentEntry.path,
+        openedEntry.path,
         PlatformIO.getDirSeparator(),
         false,
       );
     }
     return getThumbFileLocationForDirectory(
-      currentEntry.path,
+      openedEntry.path,
       PlatformIO.getDirSeparator(),
     );
   }
@@ -579,8 +574,8 @@ function EntryProperties(props: Props) {
     return undefined;
   }
 
-  const ldtm = currentEntry.lmdt
-    ? new Date(currentEntry.lmdt)
+  const ldtm = openedEntry.lmdt
+    ? new Date(openedEntry.lmdt)
         .toISOString()
         .substring(0, 19)
         .split('T')
@@ -589,10 +584,10 @@ function EntryProperties(props: Props) {
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
-    setDirectoryPerspective(perspective, currentEntry.path, false)
+    setDirectoryPerspective(perspective, openedEntry.path, false)
       .then((entryMeta: TS.FileSystemEntryMeta) => {
-        // currentEntry = {...currentEntry, perspective: perspective}
-        return updateOpenedFile(currentEntry.path, entryMeta);
+        // openedEntry = {...openedEntry, perspective: perspective}
+        return updateOpenedFile(openedEntry.path, entryMeta);
         // return true;
       })
       .catch((error) => {
@@ -602,8 +597,8 @@ function EntryProperties(props: Props) {
   };
 
   let perspectiveDefault;
-  if (currentEntry.perspective) {
-    perspectiveDefault = currentEntry.perspective; // props.perspective;
+  if (openedEntry.perspective) {
+    perspectiveDefault = openedEntry.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
@@ -635,11 +630,11 @@ function EntryProperties(props: Props) {
     }
   }
 
-  const geoLocation: any = getGeoLocation(currentEntry.tags);
+  const geoLocation: any = getGeoLocation(openedEntry.tags);
 
-  const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;
+  const isCloudLocation = openedEntry.url && openedEntry.url.length > 5;
 
-  const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
+  const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
 
   return (
     <Root>
@@ -648,13 +643,13 @@ function EntryProperties(props: Props) {
           <TextField
             error={fileNameError.current}
             label={
-              currentEntry.isFile ? t('core:fileName') : t('core:folderName')
+              openedEntry.isFile ? t('core:fileName') : t('core:folderName')
             }
             InputProps={{
               readOnly: editName === undefined,
               endAdornment: (
                 <InputAdornment position="end">
-                  {!readOnlyMode && !currentEntry.editMode && (
+                  {!readOnlyMode && !openedEntry.editMode && (
                     <div style={{ textAlign: 'right' }}>
                       {editName !== undefined ? (
                         <div>
@@ -691,10 +686,10 @@ function EntryProperties(props: Props) {
             name="name"
             fullWidth={true}
             data-tid="fileNameProperties"
-            defaultValue={entryName} // currentEntry.current.name}
+            defaultValue={entryName} // openedEntry.current.name}
             inputRef={fileNameRef}
             onClick={() => {
-              if (!currentEntry.editMode && editName === undefined) {
+              if (!openedEntry.editMode && editName === undefined) {
                 activateEditNameField();
               }
             }}
@@ -709,26 +704,26 @@ function EntryProperties(props: Props) {
             <FormHelperText>
               {t(
                 'core:' +
-                  (currentEntry.isFile ? 'fileNameHelp' : 'directoryNameHelp'),
+                  (openedEntry.isFile ? 'fileNameHelp' : 'directoryNameHelp'),
               )}
             </FormHelperText>
           )}
         </Grid>
         <Grid item xs={12} style={{ marginTop: 10 }}>
-          <TagDropContainer entryPath={currentEntry.path}>
+          <TagDropContainer entryPath={openedEntry.path}>
             <TagsSelect
               label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
               placeholderText={t('core:dropHere')}
               /*isReadOnlyMode={
                 isReadOnlyMode ||
-                currentEntry.current.editMode ||
+                openedEntry.current.editMode ||
                 editName !== undefined
               }*/
-              tags={currentEntry.tags}
+              tags={openedEntry.tags}
               tagMode="default"
               handleChange={handleChange}
-              selectedEntryPath={currentEntry.path}
+              selectedEntryPath={openedEntry.path}
             />
           </TagDropContainer>
         </Grid>
@@ -847,7 +842,7 @@ function EntryProperties(props: Props) {
               title={
                 !PlatformIO.haveObjectStoreSupport() &&
                 dirProps &&
-                !currentEntry.isFile &&
+                !openedEntry.isFile &&
                 dirProps.dirsCount +
                   ' ' +
                   t('core:directories') +
@@ -861,8 +856,8 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 fullWidth={true}
                 value={
-                  currentEntry.size
-                    ? formatBytes(currentEntry.size)
+                  openedEntry.size
+                    ? formatBytes(openedEntry.size)
                     : t(
                         PlatformIO.haveObjectStoreSupport()
                           ? 'core:notAvailable'
@@ -883,11 +878,11 @@ function EntryProperties(props: Props) {
             <TextField
               margin="dense"
               name="path"
-              title={currentEntry.url || currentEntry.path}
+              title={openedEntry.url || openedEntry.path}
               fullWidth={true}
               label={t('core:filePath')}
               data-tid="filePathProperties"
-              value={currentEntry.path || ''}
+              value={openedEntry.path || ''}
               InputProps={{
                 readOnly: true,
                 startAdornment: (
@@ -906,7 +901,7 @@ function EntryProperties(props: Props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     {!readOnlyMode &&
-                      !currentEntry.editMode &&
+                      !openedEntry.editMode &&
                       editName === undefined && (
                         <Button
                           data-tid="moveCopyEntryTID"
@@ -1017,7 +1012,7 @@ function EntryProperties(props: Props) {
           )}
         </Grid>
 
-        {!currentEntry.isFile && (
+        {!openedEntry.isFile && (
           <Grid item xs={12} style={{ marginTop: 10 }}>
             <PerspectiveSelector
               onChange={changePerspective}
@@ -1028,7 +1023,7 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
 
-        {!currentEntry.isFile && (
+        {!openedEntry.isFile && (
           <Grid item xs={12} style={{ marginTop: 5 }}>
             <TextField
               margin="dense"
@@ -1054,7 +1049,7 @@ function EntryProperties(props: Props) {
                         fullWidth
                         style={{
                           width: 100,
-                          background: currentEntry.color,
+                          background: openedEntry.color,
                         }}
                         onClick={toggleBackgroundColorPicker}
                       >
@@ -1081,7 +1076,7 @@ function EntryProperties(props: Props) {
                           </IconButton>
                         </ProTooltip>
                       ))}
-                      {currentEntry.color && (
+                      {openedEntry.color && (
                         <>
                           <ProTooltip tooltip={t('clearFolderColor')}>
                             <span>
@@ -1108,7 +1103,7 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={currentEntry.isFile ? 12 : 6}>
+          <Grid item xs={openedEntry.isFile ? 12 : 6}>
             <ThumbnailTextField
               margin="dense"
               label={t('core:thumbnail')}
@@ -1123,7 +1118,7 @@ function EntryProperties(props: Props) {
                       style={{ alignItems: 'center' }}
                     >
                       {!readOnlyMode &&
-                        !currentEntry.editMode &&
+                        !openedEntry.editMode &&
                         editName === undefined && (
                           <ProTooltip tooltip={t('changeThumbnail')}>
                             <Button fullWidth onClick={toggleThumbFilesDialog}>
@@ -1165,7 +1160,7 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-          {!currentEntry.isFile && (
+          {!openedEntry.isFile && (
             <Grid item xs={6}>
               <ThumbnailTextField
                 margin="dense"
@@ -1181,7 +1176,7 @@ function EntryProperties(props: Props) {
                         style={{ alignItems: 'center' }}
                       >
                         {!readOnlyMode &&
-                          !currentEntry.editMode &&
+                          !openedEntry.editMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeBackgroundImage')}>
                               <Button fullWidth onClick={toggleBgndImgDialog}>
@@ -1254,8 +1249,8 @@ function EntryProperties(props: Props) {
           onClose={toggleMoveCopyFilesDialog}
           entries={[
             {
-              ...currentEntry,
-              isFile: currentEntry.isFile,
+              ...openedEntry,
+              isFile: openedEntry.isFile,
               name: entryName,
               tags: [],
             },
@@ -1266,7 +1261,7 @@ function EntryProperties(props: Props) {
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
-          selectedFile={currentEntry.path}
+          selectedFile={openedEntry.path}
           thumbPath={getThumbPath()}
           setThumb={setThumb}
         />
@@ -1275,24 +1270,24 @@ function EntryProperties(props: Props) {
         <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
-          path={currentEntry.path}
-          locationId={currentEntry.locationId}
+          path={openedEntry.path}
+          locationId={openedEntry.locationId}
         />
       )}
       {BgndImgChooserDialog && (
         <BgndImgChooserDialog
           open={isBgndImgChooseDialogOpened}
           onClose={toggleBgndImgDialog}
-          currentDirectoryPath={currentEntry.path}
+          currentDirectoryPath={openedEntry.path}
         />
       )}
       {CustomBackgroundDialog && (
         <CustomBackgroundDialog
-          color={currentEntry.color}
+          color={openedEntry.color}
           open={displayColorPicker}
           setColor={handleChangeColor}
           onClose={toggleBackgroundColorPicker}
-          currentDirectoryPath={currentEntry.path}
+          currentDirectoryPath={openedEntry.path}
           /*presetColors={[
           'transparent',
           '#FFFFFF44',
