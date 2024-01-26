@@ -823,10 +823,12 @@ export const DirectoryContentContextProvider = ({
 
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
     currentDirectoryDirs.current = dirs;
+    forceUpdate();
   }
 
   function setCurrentDirectoryFiles(files: TS.OrderVisibilitySettings[]) {
     currentDirectoryFiles.current = files;
+    forceUpdate();
   }
 
   function addDirectoryEntries(entries: TS.FileSystemEntry[]) {

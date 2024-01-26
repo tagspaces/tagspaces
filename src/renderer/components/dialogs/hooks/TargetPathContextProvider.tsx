@@ -42,7 +42,7 @@ export const TargetPathContextProvider = ({
 }: TargetPathContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { currentDirectoryPerspective, currentDirectoryPath } =
+  const { currentDirectoryPerspective, currentDirectoryPath, getPerspective } =
     useDirectoryContentContext();
 
   const firstRWLocation = useSelector(getFirstRWLocation);
@@ -50,7 +50,7 @@ export const TargetPathContextProvider = ({
   const context = useMemo(() => {
     let targetDirectoryPath = currentDirectoryPath;
     if (
-      currentDirectoryPerspective === PerspectiveIDs.KANBAN &&
+      getPerspective() === PerspectiveIDs.KANBAN &&
       selectedEntries &&
       selectedEntries.length === 1 &&
       !selectedEntries[0].isFile
