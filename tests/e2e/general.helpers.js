@@ -353,15 +353,14 @@ export async function expectElementSelected(
   isSelected = true,
   timeout = 2000,
 ) {
-  await expectElementExist(
-    '[data-tid="fsEntryName_' +
-      dataTidFormat(selector) +
-      '"] [data-testid="' +
-      (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') +
-      '"]',
-    true,
-    timeout,
-  );
+  // [data-testid="' + (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') + '"]
+  const sel = '[data-tid="fsEntryName_' + dataTidFormat(selector) + '"]';
+  await expectElementExist(sel, true, timeout);
+  const item = await global.client.$(sel);
+  const style = await item.getAttribute('style');
+  const selected =
+    style.indexOf('rgb(29') !== -1 && style.indexOf('transparent') === -1;
+  expect(selected).toBe(isSelected);
 }
 
 export async function expectElementExist(
@@ -427,7 +426,7 @@ export async function createLocation(
 export async function setGridOptions(
   perspective = 'list',
   showDirectories = true,
-  entrySize = undefined,
+  // entrySize = undefined,
 ) {
   // open Option menu
   await clickOn('[data-tid=' + perspective + 'PerspectiveOptionsMenu]');
@@ -441,9 +440,9 @@ export async function setGridOptions(
     );
   }
 
-  if (entrySize) {
+  /*if (entrySize) {
     await clickOn('[data-tid=' + entrySize + ']');
-  }
+  }*/
   await clickOn('[data-tid=defaultSettings]');
 }
 /**
@@ -469,10 +468,10 @@ export async function selectAllFiles() {
 }
 
 export async function selectFilesByID(arrEntryIds = []) {
-  await clickOn('[data-tid=openListPerspective]');
+  //await clickOn('[data-tid=openListPerspective]');
   for (let i = 0; i < arrEntryIds.length; i++) {
     await clickOn(
-      'div[data-entry-id="' + arrEntryIds[i] + '"] div[data-tid=rowCellTID]',
+      'div[data-entry-id="' + arrEntryIds[i] + '"] div:nth-child(3) div button',
     );
     /* let entry = await global.client.$(
       '[data-entry-id="' + arrEntryIds[i] + '"]'
@@ -483,15 +482,37 @@ export async function selectFilesByID(arrEntryIds = []) {
   // await clickOn('[data-tid=gridPerspectiveContainer]');
 }
 
+export async function selectRowFiles(arrIndex = []) {
+  await setGridOptions('grid', false);
+  const filesList = await global.client.$$(
+    '[data-tid=perspectiveGridFileTable] > span',
+  );
+  const arrElements = [];
+  if (filesList.length > 0) {
+    for (let i = 0; i < arrIndex.length; i++) {
+      const index =
+        arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
+      if (filesList[index]) {
+        const divEl = await filesList[index].$('div div');
+        const id = await divEl.getAttribute('data-entry-id');
+        arrElements.push(id);
+        const spanEl = await divEl.$('div:nth-child(3) div span');
+        await spanEl.click();
+      }
+    }
+  }
+  expect(arrElements.length).toBe(arrIndex.length);
+  return arrElements;
+}
 /**
  * TODO element 0 is not clickable
  * @param arrIndex
  * @returns {Promise<*>}
  */
-export async function selectRowFiles(arrIndex = []) {
+/*export async function selectRowFiles(arrIndex = []) {
   await global.client.waitForSelector('[data-tid=openListPerspective]');
   await clickOn('[data-tid=openListPerspective]');
-  await setGridOptions('list', false, 'gridPerspectiveEntrySizeNormal');
+  await setGridOptions('list', false); //, 'gridPerspectiveEntrySizeNormal');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
   const filesList = await global.client.$$('[data-tid=rowCellTID]');
   const arrElements = [];
@@ -506,19 +527,10 @@ export async function selectRowFiles(arrIndex = []) {
         const id = await parent.getAttribute('data-entry-id');
         arrElements.push(id);
         // const classNotSelected = await parent.getAttribute('class');
-        // const elNotSelected = await parent.$('//*[@class="' + classNotSelected + '"]');
+        // const elNotSelected = await parent.$('//!*[@class="' + classNotSelected + '"]');
         await clickOn(
           'div[data-entry-id="' + id + '"] div[data-tid=rowCellTID]',
         );
-        // filesList[index].click();
-        // const selector = '//*[@class="' + classNotSelected + '"]';
-        /* const selector =
-          'div[data-entry-id=' + id + '].' + classNotSelected.replace(/ /g, '.');
-        await isDisplayed(selector, false); */
-        /* await global.client.waitForFunction(selector => {
-          const el = document.querySelector(selector);
-          return el === null;
-        }, selector); */
       } else {
         console.debug(
           'selectRowFiles filesList.length:' +
@@ -533,7 +545,7 @@ export async function selectRowFiles(arrIndex = []) {
   expect(arrElements.length).toBe(arrIndex.length);
   // await clickOn('[data-tid=gridPerspectiveContainer]');
   return arrElements;
-}
+}*/
 
 /**
  * TODO holdDownKey + click not work:

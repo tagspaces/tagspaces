@@ -109,7 +109,7 @@ test.describe('TST50 - Perspective Grid', () => {
     let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
-    await AddRemoveTagsToSelectedFiles('list', tags);
+    await AddRemoveTagsToSelectedFiles('grid', tags);
 
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
@@ -125,10 +125,10 @@ test.describe('TST50 - Perspective Grid', () => {
       ); */
     }
 
-    selectedIds = await selectRowFiles([0, 1, 2]);
+    // selectedIds = await selectRowFiles([0, 1, 2]);
 
     // tags = ['test-tag1', 'test-tag2'];
-    await AddRemoveTagsToSelectedFiles('list', tags, false);
+    await AddRemoveTagsToSelectedFiles('grid', tags, false);
 
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
@@ -150,11 +150,11 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
-    await AddRemoveTagsToSelectedFiles('list', tags, true);
+    await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
-    await selectFilesByID(selectedIds);
+    //await selectFilesByID(selectedIds);
 
-    await clickOn('[data-tid=listPerspectiveAddRemoveTags]');
+    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
     await clickOn('[data-tid=cleanTagsMultipleEntries]');
 
     for (let i = 0; i < tags.length; i++) {
@@ -164,14 +164,6 @@ test.describe('TST50 - Perspective Grid', () => {
         5000,
       );
     }
-    /* for (let i = 0; i < selectedIds.length; i++) {
-      const gridElement = await global.client.$(
-        '[data-entry-id="' + selectedIds[i] + '"]'
-      );
-      await isElementDisplayed(gridElement);
-      const tags = await extractTags(gridElement);
-      expect(tags.length).toBe(0);
-    } */
   });
 
   test('TST5008 - Copy file [web,minio,electron]', async () => {
@@ -250,7 +242,7 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
-    await clickOn('[data-tid=listPerspectiveDeleteMultipleFiles]');
+    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
 
     await clickOn('[data-tid=openDefaultPerspective]');
