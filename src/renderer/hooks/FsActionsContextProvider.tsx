@@ -104,9 +104,9 @@ export const FsActionsContextProvider = ({
             reflectRenameEntries([[directoryPath, newDirPath]]).then(() => {
               reflectRenameOpenedEntry(directoryPath, newDirPath);
               reflectRenameEntry(directoryPath, newDirPath);
-              /*dispatch(
+              dispatch(
                 AppActions.reflectRenameEntry(directoryPath, newDirPath),
-              );*/
+              );
             });
           }
           setSelectedEntries([]);
@@ -177,12 +177,12 @@ export const FsActionsContextProvider = ({
                   () => {
                     reflectRenameOpenedEntry(filePath, newFilePathFromPromise);
                     reflectRenameEntry(filePath, newFilePathFromPromise);
-                    /*dispatch(
+                    dispatch(
                       AppActions.reflectRenameEntry(
                         filePath,
                         newFilePathFromPromise,
                       ),
-                    );*/
+                    );
                   },
                 );
               }
@@ -201,12 +201,12 @@ export const FsActionsContextProvider = ({
                   () => {
                     reflectRenameOpenedEntry(filePath, newFilePathFromPromise);
                     reflectRenameEntry(filePath, newFilePathFromPromise);
-                    /*dispatch(
+                    dispatch(
                       AppActions.reflectRenameEntry(
                         filePath,
                         newFilePathFromPromise,
                       ),
-                    );*/
+                    );
                   },
                 );
               }

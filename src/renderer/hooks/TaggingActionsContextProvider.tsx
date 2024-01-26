@@ -374,7 +374,10 @@ export const TaggingActionsContextProvider = ({
             prefixTagContainer,
           );
         return renameFile(path, newFilePath, reflect).then(() => {
-          reflectRenameOpenedEntry(path, newFilePath);
+          if (!reflect) {
+            reflectRenameOpenedEntry(path, newFilePath);
+            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
+          }
           return [path, newFilePath];
         });
       }
@@ -409,7 +412,10 @@ export const TaggingActionsContextProvider = ({
         );
       if (path !== newFilePath) {
         return renameFile(path, newFilePath, reflect).then(() => {
-          reflectRenameOpenedEntry(path, newFilePath);
+          if (!reflect) {
+            reflectRenameOpenedEntry(path, newFilePath);
+            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
+          }
           return [path, newFilePath];
         });
       }
@@ -688,7 +694,10 @@ export const TaggingActionsContextProvider = ({
         console.warn('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
         return removeTagsFromFilename().then((newFilePath) => {
-          reflectRenameOpenedEntry(path, newFilePath);
+          if (!reflect) {
+            reflectRenameOpenedEntry(path, newFilePath);
+            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
+          }
           return [path, newFilePath];
         });
       });
@@ -772,6 +781,9 @@ export const TaggingActionsContextProvider = ({
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
+            }
+            if (!reflect) {
+              dispatch(AppActions.reflectRenameEntry(path, newFilePath));
             }
             // reflectRenameOpenedEntry(path, newFilePath, true);
           }
