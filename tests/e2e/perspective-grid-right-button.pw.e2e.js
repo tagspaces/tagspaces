@@ -233,7 +233,7 @@ test.describe('TST50** - Right button on a file', () => {
    */
   test('TST5024 - Show files with a given tag (tag menu)', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles('list', [testTagName], true);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await showFilesWithTag(testTagName);
     await clickOn('[data-tid=openDefaultPerspective]');
 
@@ -248,7 +248,7 @@ test.describe('TST50** - Right button on a file', () => {
     // cleanup
     await clickOn('#clearSearchID');
     await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles('list', [testTagName], false);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], false);
     await expectElementExist(
       '[data-tid=tagMoreButton_' + testTagName + ']',
       false,

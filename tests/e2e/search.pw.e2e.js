@@ -138,14 +138,13 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
     const searchQuery = 'jpg'; //'sample_exif.jpg';
     await addSearchCommand(searchQuery, true);
-    await global.client.waitForSelector('img[alt=thumbnail]', {
+    await global.client.waitForSelector('img[alt="thumbnail image"]', {
       visible: true,
     });
-    const imageLocator = global.client.locator('img[alt=thumbnail]');
+    const imageLocator = global.client.locator('img[alt="thumbnail image"]');
     const imageCount = await imageLocator.count();
     expect(imageCount).toBeGreaterThan(0);
     const images = await imageLocator; //.elements();
-    //const images = await global.client.$$('img[alt=thumbnail]');
     for (let i = 0; i < images.length; i++) {
       await expect(images[i]).toBeVisible();
       /*const src = await images[i].getAttribute('src');

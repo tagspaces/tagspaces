@@ -123,7 +123,7 @@ export async function addRemoveTagsInSearchResults(
 
   let selectedIds = await selectRowFiles([0]);
 
-  await AddRemoveTagsToSelectedFiles('list', tags);
+  await AddRemoveTagsToSelectedFiles('grid', tags);
 
   for (let i = 0; i < tags.length; i++) {
     await expectElementExist(
@@ -132,11 +132,11 @@ export async function addRemoveTagsInSearchResults(
       5000,
     );
   }
-  if (await isDisabled('[data-tid=listPerspectiveAddRemoveTags]')) {
+  /*if (await isDisabled('[data-tid=listPerspectiveAddRemoveTags]')) {
     //select rows to enable button
     selectedIds = await selectRowFiles([0]);
-  }
-  await AddRemoveTagsToSelectedFiles('list', tags, false);
+  }*/
+  await AddRemoveTagsToSelectedFiles('grid', tags, false);
 
   for (let i = 0; i < tags.length; i++) {
     await expectElementExist(
