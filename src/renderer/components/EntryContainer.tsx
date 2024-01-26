@@ -873,6 +873,7 @@ function EntryContainer() {
             display: 'flex',
             backgroundColor: theme.palette.background.default,
             overflow: 'hidden',
+            marginBottom: 1,
           }}
         >
           <Box
