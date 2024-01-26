@@ -2,6 +2,7 @@ import Links from 'assets/links';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import KanbanImage from '-/assets/images/kanban-perspective.jpg';
 import GalleryImage from '-/assets/images/gallery-perspective.jpg';
+import FolderVizImage from '-/assets/images/folderviz-perspective.jpg';
 import MapImage from '-/assets/images/mapique-perspective.jpg';
 import EntryDescription from '-/assets/images/entry-description.jpg';
 import SearchImage from '-/assets/images/search-undraw.svg';
@@ -83,7 +84,7 @@ export function getProTeaserSlides(t) {
     ),
     ctaURL: Links.documentationLinks.foldervizPerspective,
     ctaTitle: t('showMeMore'),
-    pictureURL: MapImage,
+    pictureURL: FolderVizImage,
     pictureShadow: true,
     pictureHeight: 300,
   };
