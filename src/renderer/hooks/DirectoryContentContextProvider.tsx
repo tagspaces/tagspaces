@@ -228,12 +228,14 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
+      // check for relative path for Location
       getLocationPath(currentLocation).then((locationPath) => {
         currentLocationPath.current = locationPath;
         if (!skipInitialDirList) {
           return openDirectory(locationPath);
         }
       });
+      manualPerspective.current = 'unspecified';
     } else {
       currentLocationPath.current = '';
       clearDirectoryContent();
@@ -777,13 +779,13 @@ export const DirectoryContentContextProvider = ({
   );
 
   function getPerspective(): TS.PerspectiveType {
-    if (currentPerspective.current === 'unspecified') {
-      if (manualPerspective.current === 'unspecified') {
+    if (manualPerspective.current === 'unspecified') {
+      if (currentPerspective.current === 'unspecified') {
         return defaultPerspective;
       }
-      return manualPerspective.current;
+      return currentPerspective.current;
     }
-    return currentPerspective.current;
+    return manualPerspective.current;
   }
 
   function setDirectoryPerspective(
@@ -793,7 +795,8 @@ export const DirectoryContentContextProvider = ({
     reload: boolean = true,
   ): Promise<TS.FileSystemEntryMeta | null> {
     return new Promise((resolve) => {
-      if (isManual && currentPerspective.current === 'unspecified') {
+      if (isManual) {
+        //&& currentPerspective.current === 'unspecified') {
         manualPerspective.current = perspective;
         resolve(null);
       } else {
