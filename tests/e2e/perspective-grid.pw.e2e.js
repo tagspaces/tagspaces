@@ -11,7 +11,9 @@ import {
 } from './location.helpers';
 import {
   clickOn,
+  expectAllFileSelected,
   expectElementExist,
+  expectElementSelected,
   expectMetaFilesExist,
   getGridCellClass,
   getGridFileName,
@@ -78,30 +80,10 @@ test.describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5004 - Select-deselect all files [web,minio,electron]', async () => {
-    const classNotSelected = await getGridCellClass(0);
-    await selectAllFiles(); // classNotSelected);
-    const classSelected = await getGridCellClass(0);
-
-    expect(classNotSelected).not.toBe(classSelected);
-
-    let filesList = await global.client.$$(selectorFile);
-    for (let i = 0; i < filesList.length; i++) {
-      let file = await filesList[i].$('div');
-      file = await file.$('div');
-      file = await file.$('div');
-      const style = await file.getAttribute('class');
-      expect(style).toBe(classSelected);
-    }
-    //deselect
-    /*await selectAllFiles();
-    filesList = await global.client.$$(selectorFile);
-    for (let i = 0; i < filesList.length; i++) {
-      let file = await filesList[i].$('div');
-      file = await file.$('div');
-      file = await file.$('div');
-      const style = await file.getAttribute('class');
-      expect(style).toBe(classNotSelected);
-    }*/
+    await selectAllFiles();
+    await expectAllFileSelected(true);
+    await selectAllFiles();
+    await expectAllFileSelected(false);
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled

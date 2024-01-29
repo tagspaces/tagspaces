@@ -445,6 +445,7 @@ function GridCell(props: Props) {
         </Typography>
         <Typography
           title={description}
+          data-tid="gridCellDescription"
           variant="caption"
           display="block"
           gutterBottom

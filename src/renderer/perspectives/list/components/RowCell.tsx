@@ -441,6 +441,7 @@ function RowCell(props: Props) {
               {entryTitle}
             </Typography>
             <Typography
+              data-tid="gridCellDescription"
               style={{
                 color: 'gray',
               }}

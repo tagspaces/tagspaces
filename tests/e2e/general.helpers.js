@@ -348,6 +348,18 @@ export async function expectAudioPlay() {
     .toBe(true);
 }
 
+export async function expectAllFileSelected(isSelected = true) {
+  let filesList = await global.client.$$(selectorFile);
+  for (let i = 0; i < filesList.length; i++) {
+    let file = await filesList[i].$('div');
+    file = await file.$('div');
+    const style = await file.getAttribute('style');
+    const selected =
+      style.indexOf('rgb(29') !== -1 && style.indexOf('transparent') === -1;
+    expect(selected).toBe(isSelected);
+  }
+}
+
 export async function expectElementSelected(
   selector,
   isSelected = true,
