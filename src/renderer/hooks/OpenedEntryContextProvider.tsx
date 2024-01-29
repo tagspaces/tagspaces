@@ -1009,6 +1009,11 @@ export const OpenedEntryContextProvider = ({
     }
     saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
+        fsEntry.tags = extractTagsAsObjects(
+          fileName,
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator(),
+        );
         addDirectoryEntries([fsEntry]);
         reflectCreateEntry(fsEntry); // toFsEntry(filePath, true);
         dispatch(AppActions.reflectCreateEntry(filePath, true));
