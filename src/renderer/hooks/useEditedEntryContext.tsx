@@ -18,6 +18,6 @@
 
 import { useContext } from 'react';
 
-import { FsActionsContext } from '-/hooks/FsActionsContextProvider';
+import { EditedEntryContext } from '-/hooks/EditedEntryContextProvider';
 
-export const useFsActionsContext = () => useContext(FsActionsContext);
+export const useEditedEntryContext = () => useContext(EditedEntryContext);

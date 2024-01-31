@@ -50,10 +50,10 @@ import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirConte
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { GridCellsStyleContextProvider } from '-/perspectives/grid/hooks/GridCellsStyleProvider';
 import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -66,7 +66,7 @@ function GridPerspective(props: Props) {
   const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { showDirectories } = usePerspectiveSettingsContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
-  const { openFileNatively, duplicateFile } = useFsActionsContext();
+  const { openFileNatively, duplicateFile } = useIOActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =

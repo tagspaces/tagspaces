@@ -31,6 +31,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch } from 'react-redux';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { getAllPropertiesPromise, toFsEntry } from '-/services/utils-io';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
@@ -52,10 +54,12 @@ type PlatformFacadeContextData = {
     filePath: string,
     newFilePath: string,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   renameFilesPromise: (
     renameJobs: Array<Array<string>>,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
   copyDirectoryPromise: (
@@ -119,6 +123,8 @@ export type PlatformFacadeContextProviderProps = {
 export const PlatformFacadeContextProvider = ({
   children,
 }: PlatformFacadeContextProviderProps) => {
+  const { reflectAddEntry, reflectDeleteEntries, setReflectActions } =
+    useEditedEntryContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
@@ -128,6 +134,7 @@ export const PlatformFacadeContextProvider = ({
     ignoreByWatcher(path);
 
     return PlatformFacade.createDirectoryPromise(path).then((result) => {
+      reflectAddEntry(toFsEntry(path, false));
       deignoreByWatcher(path);
       return result;
     });
@@ -275,6 +282,9 @@ export const PlatformFacadeContextProvider = ({
       sourceFilePath,
       targetFilePath,
     ).then((result) => {
+      getAllPropertiesPromise(targetFilePath).then(
+        (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+      );
       deignoreByWatcher(targetFilePath);
       return result;
     });
@@ -284,6 +294,7 @@ export const PlatformFacadeContextProvider = ({
     filePath: string,
     newFilePath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
     ignoreByWatcher(filePath, newFilePath);
     return PlatformFacade.renameFilePromise(
@@ -291,6 +302,17 @@ export const PlatformFacadeContextProvider = ({
       newFilePath,
       onProgress,
     ).then((result) => {
+      getAllPropertiesPromise(newFilePath).then(
+        (fsEntry: TS.FileSystemEntry) => {
+          if (reflect) {
+            setReflectActions({
+              action: 'update',
+              entry: fsEntry,
+              oldEntryPath: filePath,
+            });
+          }
+        },
+      );
       deignoreByWatcher(filePath, newFilePath);
       return result;
     });
@@ -299,7 +321,10 @@ export const PlatformFacadeContextProvider = ({
   function renameFilesPromise(
     renameJobs: Array<Array<string>>,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
+    const flatArray = renameJobs.flat();
+    ignoreByWatcher(...flatArray);
     return Promise.all(
       renameJobs.map(async (renameJob) => {
         try {
@@ -313,7 +338,18 @@ export const PlatformFacadeContextProvider = ({
           return false;
         }
       }),
-    );
+    ).then((ret) => {
+      if (reflect) {
+        const actions: TS.EditAction[] = renameJobs.map((job) => ({
+          action: 'update',
+          entry: toFsEntry(job[1], true),
+          oldEntryPath: job[0],
+        }));
+        setReflectActions(...actions);
+      }
+      deignoreByWatcher(...flatArray);
+      return ret;
+    });
   }
 
   function renameDirectoryPromise(
@@ -322,9 +358,17 @@ export const PlatformFacadeContextProvider = ({
   ): Promise<any> {
     ignoreByWatcher(dirPath, newDirName);
     return PlatformFacade.renameDirectoryPromise(dirPath, newDirName).then(
-      (result) => {
+      (newDirPath) => {
+        getAllPropertiesPromise(newDirPath).then(
+          (fsEntry: TS.FileSystemEntry) =>
+            setReflectActions({
+              action: 'update',
+              entry: fsEntry,
+              oldEntryPath: dirPath,
+            }),
+        );
         deignoreByWatcher(dirPath, newDirName);
-        return result;
+        return newDirPath;
       },
     );
   }
@@ -340,6 +384,9 @@ export const PlatformFacadeContextProvider = ({
       newDirPath,
       onProgress,
     ).then((result) => {
+      getAllPropertiesPromise(param.path).then((fsEntry: TS.FileSystemEntry) =>
+        reflectAddEntry(fsEntry),
+      );
       deignoreByWatcher(param.path, newDirPath);
       return result;
     });
@@ -356,20 +403,29 @@ export const PlatformFacadeContextProvider = ({
       newDirPath,
       onProgress,
     ).then((result) => {
+      getAllPropertiesPromise(newDirPath).then((fsEntry: TS.FileSystemEntry) =>
+        setReflectActions(
+          { action: 'delete', entry: toFsEntry(param.path, false) },
+          { action: 'add', entry: fsEntry },
+        ),
+      );
+
       deignoreByWatcher(param.path, newDirPath);
       return result;
     });
   }
+
   function saveFilePromise(
     param: any,
     content: any,
     overwrite: boolean,
-  ): Promise<any> {
+  ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveFilePromise(param, content, overwrite).then(
-      (result) => {
+      (fsEntry) => {
+        reflectAddEntry(fsEntry);
         deignoreByWatcher(param.path);
-        return result;
+        return fsEntry;
       },
     );
   }
@@ -378,12 +434,13 @@ export const PlatformFacadeContextProvider = ({
     param: any,
     content: string,
     overwrite: boolean,
-  ): Promise<any> {
+  ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveTextFilePromise(param, content, overwrite).then(
-      (result) => {
+      (fsEntry) => {
+        reflectAddEntry(fsEntry);
         deignoreByWatcher(param.path);
-        return result;
+        return fsEntry;
       },
     );
   }
@@ -403,27 +460,36 @@ export const PlatformFacadeContextProvider = ({
       content,
       overwrite,
       onUploadProgress,
-    ).then((result) => {
+    ).then((fsEntry) => {
+      reflectAddEntry(fsEntry);
       deignoreByWatcher(param.path);
-      return result;
+      return fsEntry;
     });
   }
 
-  function deleteFilePromise(path: string, useTrash?: boolean): Promise<any> {
+  function deleteFilePromise(
+    path: string,
+    useTrash?: boolean,
+  ): Promise<string> {
     ignoreByWatcher(path);
 
     return PlatformFacade.deleteFilePromise(path, useTrash).then((result) => {
+      reflectDeleteEntries(toFsEntry(path, true));
       deignoreByWatcher(path);
       return result;
     });
   }
 
   function deleteFilesPromise(filePathList: Array<string>) {
+    ignoreByWatcher(...filePathList);
     const fileDeletionPromises = [];
     filePathList.forEach((filePath) => {
-      fileDeletionPromises.push(deleteFilePromise(filePath));
+      fileDeletionPromises.push(PlatformFacade.deleteFilePromise(filePath));
     });
-    return Promise.all(fileDeletionPromises);
+    return Promise.all(fileDeletionPromises).then(() => {
+      reflectDeleteEntries(...filePathList.map((p) => toFsEntry(p, true)));
+      deignoreByWatcher(...filePathList);
+    });
   }
 
   function deleteDirectoryPromise(
@@ -434,6 +500,7 @@ export const PlatformFacadeContextProvider = ({
 
     return PlatformFacade.deleteDirectoryPromise(path, useTrash).then(
       (result) => {
+        reflectDeleteEntries(toFsEntry(path, false));
         deignoreByWatcher(path);
         return result;
       },

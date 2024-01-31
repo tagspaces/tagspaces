@@ -71,7 +71,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 
 interface Props {
@@ -119,11 +119,11 @@ function FileMenu(props: Props) {
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
-  const { openFileNatively, duplicateFile } = useFsActionsContext();
-  const prefixTagContainer = useSelector(getPrefixTagContainer);
+  const { openFileNatively, duplicateFile } = useIOActionsContext();
+  /*const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
-  );
+  );*/
 
   function generateFileLink() {
     /*const entryFromIndex = selectedEntries[0].locationID;

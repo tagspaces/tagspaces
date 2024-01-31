@@ -647,7 +647,6 @@ function MainPage(props: Props) {
             onClose={toggleCreateDirectoryDialog}
             selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
             callback={props.isCreateDirectoryOpened?.callback}
-            reflect={props.isCreateDirectoryOpened?.reflect}
           />
         )}
         <NewEntryDialog

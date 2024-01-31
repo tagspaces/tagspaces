@@ -17,8 +17,7 @@
  */
 
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
 import { createDirectoryIndex, toFsEntry } from '-/services/utils-io';
@@ -38,6 +37,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -51,10 +51,10 @@ type LocationIndexContextData = {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   setIndex: (i: TS.FileSystemEntry[]) => void;
-  reflectDeleteEntry: (path: string) => void;
-  reflectDeleteEntries: (paths: string[]) => void;
-  reflectCreateEntry: (newEntry: TS.FileSystemEntry) => void;
-  reflectRenameEntry: (path: string, newPath: string) => void;
+  //reflectDeleteEntry: (path: string) => void;
+  //reflectDeleteEntries: (paths: string[]) => void;
+  //reflectCreateEntry: (newEntry: TS.FileSystemEntry) => void;
+  //reflectRenameEntry: (path: string, newPath: string) => void;
   indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
 };
@@ -71,10 +71,10 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   searchLocationIndex: () => {},
   searchAllLocations: () => {},
   setIndex: () => {},
-  reflectDeleteEntry: () => {},
-  reflectDeleteEntries: () => {},
-  reflectCreateEntry: () => {},
-  reflectRenameEntry: () => {},
+  //reflectDeleteEntry: () => {},
+  //reflectDeleteEntries: () => {},
+  //reflectCreateEntry: () => {},
+  //reflectRenameEntry: () => {},
   indexUpdateSidecarTags: () => {},
   reflectUpdateSidecarMeta: () => {},
 });
@@ -87,15 +87,12 @@ export const LocationIndexContextProvider = ({
   children,
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  // const dispatch: AppDispatch = useDispatch();
 
   const { currentLocation, getLocationPath } = useCurrentLocationContext();
-  const {
-    setSearchResults,
-    appendSearchResults,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-  } = useDirectoryContentContext();
+  const { setSearchResults, appendSearchResults } =
+    useDirectoryContentContext();
+  const { actions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
@@ -110,6 +107,25 @@ export const LocationIndexContextProvider = ({
     clearDirectoryIndex();
   }, [currentLocation]);
 
+  useEffect(() => {
+    if (actions && actions.length > 0) {
+      for (const action of actions) {
+        if (action.action === 'add') {
+          reflectCreateEntry(action.entry);
+        } else if (action.action === 'delete') {
+          reflectDeleteEntry(action.entry.path);
+        } else if (action.action === 'update') {
+          let i = index.current.findIndex(
+            (e) => e.path === action.oldEntryPath,
+          );
+          if (i !== -1) {
+            index.current[i] = action.entry;
+          }
+        }
+      }
+    }
+  }, [actions]);
+
   function setIndex(i) {
     index.current = i;
     if (index.current && index.current.length > 0) {
@@ -123,7 +139,7 @@ export const LocationIndexContextProvider = ({
     return index.current;
   }
 
-  function deleteEntry(path: string) {
+  /*function deleteEntry(path: string) {
     removeDirectoryEntries([path]);
     reflectDeleteEntry(path);
     dispatch(AppActions.reflectDeleteEntry(path));
@@ -133,7 +149,7 @@ export const LocationIndexContextProvider = ({
     addDirectoryEntries([entry]);
     reflectCreateEntry(entry);
     dispatch(AppActions.reflectCreateEntry(path, isFile));
-  }
+  }*/
 
   function reflectDeleteEntry(path: string) {
     if (!index.current || index.current.length < 1) {
@@ -147,7 +163,7 @@ export const LocationIndexContextProvider = ({
     }
   }
 
-  function reflectDeleteEntries(paths: string[]) {
+  /*function reflectDeleteEntries(paths: string[]) {
     if (!index.current || index.current.length < 1) {
       return;
     }
@@ -157,7 +173,7 @@ export const LocationIndexContextProvider = ({
         i -= 1;
       }
     }
-  }
+  }*/
 
   function reflectCreateEntry(newEntry: TS.FileSystemEntry) {
     if (!index.current || index.current.length < 1) {
@@ -167,12 +183,12 @@ export const LocationIndexContextProvider = ({
       (entry) => entry.path === newEntry.path,
     );
     if (!entryFound) {
-      index.current = [...index.current, newEntry];
+      index.current.push(newEntry);
     }
     // else todo update index entry ?
   }
 
-  function reflectRenameEntry(path: string, newPath: string) {
+  /*function reflectRenameEntry(path: string, newPath: string) {
     if (!index.current || index.current.length < 1) {
       return;
     }
@@ -197,7 +213,7 @@ export const LocationIndexContextProvider = ({
         ];
       }
     }
-  }
+  }*/
 
   function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
     if (!index.current || index.current.length < 1) {
@@ -624,20 +640,14 @@ export const LocationIndexContextProvider = ({
       searchAllLocations,
       setIndex,
       getIndex,
-      reflectDeleteEntry,
-      reflectDeleteEntries,
-      reflectCreateEntry,
-      reflectRenameEntry,
+      //reflectDeleteEntry,
+      //reflectDeleteEntries,
+      //reflectCreateEntry,
+      //reflectRenameEntry,
       indexUpdateSidecarTags,
       reflectUpdateSidecarMeta,
     };
-  }, [
-    currentLocation,
-    index,
-    isIndexing.current,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-  ]);
+  }, [currentLocation, index, isIndexing.current]);
 
   return (
     <LocationIndexContext.Provider value={context}>

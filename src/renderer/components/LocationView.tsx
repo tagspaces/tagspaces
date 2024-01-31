@@ -65,12 +65,7 @@ function LocationView(props: Props) {
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const {
-    currentDirectoryPath,
-    currentLocationPath,
-    addDirectoryEntries,
-    openDirectory,
-  } = useDirectoryContentContext();
+  const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
 
@@ -100,7 +95,7 @@ function LocationView(props: Props) {
       openDirectory(currentLocationPath); //PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      setSelectedEntries([]);
+      // setSelectedEntries([]);
       openLocation(location);
       if (hideDrawer) {
         hideDrawer();
@@ -169,11 +164,11 @@ function LocationView(props: Props) {
               dispatch(AppActions.toggleUploadDialog());
               uploadFiles(arrPath, targetPath, onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
-                  if (targetPath === currentDirectoryPath) {
+                  /*if (targetPath === currentDirectoryPath) {
                     addDirectoryEntries(fsEntries);
                     dispatch(AppActions.reflectCreateEntries(fsEntries));
                     setSelectedEntries(fsEntries);
-                  }
+                  }*/
                   return true;
                 })
                 .catch((error) => {

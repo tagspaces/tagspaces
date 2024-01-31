@@ -28,8 +28,8 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { toFsEntry } from '-/services/utils-io';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { Changed } from '../../main/chokidarWatcher';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type FSWatcherContextData = {
   // watcher: FSWatcher;
@@ -66,14 +66,11 @@ export const FSWatcherContextProvider = ({
     loadDirectoryContent,
     currentDirectoryPath,
     currentDirectoryPerspective,
-    addDirectoryEntries,
-    removeDirectoryEntries,
   } = useDirectoryContentContext();
-  const { reflectDeleteEntry, reflectCreateEntry } = useLocationIndexContext();
-  //const [watcher, setWatcher] = useState<FSWatcher>(undefined);
+  const { reflectDeleteEntries, reflectAddEntry, reflectUpdateMeta } =
+    useEditedEntryContext();
   const ignored = useRef<string[]>([]);
   const watchingFolderPath = useRef<string>(undefined);
-  //const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (
@@ -148,37 +145,17 @@ export const FSWatcherContextProvider = ({
             //currentDirectoryEntries.some((entry) => path === entry.path) &&
             !path.includes(AppConfig.metaFolder)
           ) {
-            removeDirectoryEntries([path]);
-            reflectDeleteEntry(path);
-            //dispatch(AppActions.reflectDeleteEntry(path));
+            reflectDeleteEntries(toFsEntry(path, false));
           }
           break;
         case 'add':
           if (!path.includes(AppConfig.metaFolder)) {
-            const entry = toFsEntry(path, true);
-            const dirPath = extractContainingDirectoryPath(
-              path,
-              PlatformIO.getDirSeparator(),
-            );
-            if (currentDirectoryPath === dirPath) {
-              addDirectoryEntries([entry]);
-            }
-            reflectCreateEntry(entry);
-            //dispatch(AppActions.reflectCreateEntry(path, true));
+            reflectAddEntry(toFsEntry(path, true));
           }
           break;
         case 'addDir':
           if (!path.includes(AppConfig.metaFolder)) {
-            const entry = toFsEntry(path, false);
-            const dirPath = extractContainingDirectoryPath(
-              path,
-              PlatformIO.getDirSeparator(),
-            );
-            if (currentDirectoryPath === dirPath) {
-              addDirectoryEntries([entry]);
-            }
-            reflectCreateEntry(entry);
-            //dispatch(AppActions.reflectCreateEntry(path, false));
+            reflectAddEntry(toFsEntry(path, false));
           }
           break;
         case 'change':
@@ -188,20 +165,15 @@ export const FSWatcherContextProvider = ({
           if (path.includes(AppConfig.metaFolder)) {
             // todo reload meta for changed file only
             if (path.endsWith(AppConfig.metaFileExt)) {
-              const directoryPath = getFileLocationFromMetaFile(
+              // endsWith json
+              const filePath = getFileLocationFromMetaFile(
                 path,
                 PlatformIO.getDirSeparator(),
               );
-              loadDirectoryContent(
-                extractContainingDirectoryPath(
-                  directoryPath,
-                  PlatformIO.getDirSeparator(),
-                ),
-                false,
-                true,
-              );
+              reflectUpdateMeta(filePath);
             }
             if (path.endsWith(AppConfig.metaFolderFile)) {
+              // endsWith tsm.json
               const directoryPath = getFileLocationFromMetaFile(
                 path,
                 PlatformIO.getDirSeparator(),
@@ -226,12 +198,7 @@ export const FSWatcherContextProvider = ({
           break;
       }
     };
-  }, [
-    currentDirectoryEntries,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-    ignored.current,
-  ]);
+  }, [currentDirectoryEntries, ignored.current]);
 
   useEffect(() => {
     if (AppConfig.isElectron) {

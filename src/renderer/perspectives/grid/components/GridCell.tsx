@@ -148,12 +148,8 @@ function GridCell(props: Props) {
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
     editTagForEntry(path, tag, newTagTitle);
   };
-  const handleAddTags = (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex?,
-  ) => {
-    addTags(paths, tags, updateIndex);
+  const handleAddTags = (paths: Array<string>, tags: Array<TS.Tag>) => {
+    addTags(paths, tags);
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {

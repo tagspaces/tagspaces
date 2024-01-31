@@ -66,6 +66,7 @@ import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -86,8 +87,8 @@ type DirectoryContentContextData = {
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
-  removeDirectoryEntries: (entryPaths: string[]) => void;
-  reflectRenameEntries: (paths: Array<string[]>) => Promise<boolean>;
+  //removeDirectoryEntries: (entryPaths: string[]) => void;
+  //reflectRenameEntries: (paths: Array<string[]>) => Promise<boolean>;
   setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
@@ -146,8 +147,8 @@ export const DirectoryContentContext =
     searchQuery: {},
     isSearchMode: false,
     addDirectoryEntries: undefined,
-    removeDirectoryEntries: undefined,
-    reflectRenameEntries: undefined,
+    //removeDirectoryEntries: undefined,
+    //reflectRenameEntries: undefined,
     setSearchQuery: () => {},
     loadParentDirectoryContent: () => {},
     loadDirectoryContent: undefined,
@@ -188,12 +189,11 @@ export const DirectoryContentContextProvider = ({
     skipInitialDirList,
     getLocationPath,
   } = useCurrentLocationContext();
+  const { actions } = useEditedEntryContext();
+  const { showNotification, hideNotifications } = useNotificationContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
 
   const currentLocationPath = useRef<string>('');
-
-  const { showNotification, hideNotifications } = useNotificationContext();
-
-  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const defaultPerspective = useSelector(getDefaultPerspective);
@@ -242,6 +242,60 @@ export const DirectoryContentContextProvider = ({
       exitSearchMode();
     }
   }, [currentLocation]);
+
+  useEffect(() => {
+    if (actions && actions.length > 0) {
+      for (const action of actions) {
+        /// ADD
+        if (action.action === 'add') {
+          const entryExist = currentDirectoryEntries.current.some(
+            (e) => e.path === action.entry.path,
+          );
+          if (entryExist) {
+            currentDirectoryEntries.current =
+              currentDirectoryEntries.current.map((e) =>
+                e.path === action.entry.path ? action.entry : e,
+              );
+          } else {
+            const dirPath = extractContainingDirectoryPath(
+              action.entry.path,
+              PlatformIO.getDirSeparator(),
+            );
+            if (currentDirectoryPath === dirPath) {
+              currentDirectoryEntries.current.push(action.entry);
+            }
+          }
+          /// DELETE
+        } else if (action.action === 'delete') {
+          let index = currentDirectoryEntries.current.findIndex(
+            (e) => e.path === action.entry.path,
+          );
+          if (index !== -1) {
+            currentDirectoryEntries.current.splice(index, 1);
+          }
+          /// RENAME
+        } else if (action.action === 'update') {
+          let index = currentDirectoryEntries.current.findIndex(
+            (e) => e.path === action.oldEntryPath,
+          );
+          if (index !== -1) {
+            currentDirectoryEntries.current[index] = action.entry;
+          }
+          /*currentDirectoryEntries.current = currentDirectoryEntries.current.map(
+            (e) => {
+              if (e.path === action.oldEntry.path) {
+                return action.entry;
+              }
+              return e;
+            },
+          );*/
+        }
+      }
+      // create a shallow copy to publish changes
+      currentDirectoryEntries.current = [...currentDirectoryEntries.current];
+      forceUpdate();
+    }
+  }, [actions]);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -323,7 +377,7 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function reflectRenameEntries(paths: Array<string[]>): Promise<boolean> {
+  /*function reflectRenameEntries(paths: Array<string[]>): Promise<boolean> {
     const metaChanged = [];
     const newEntries = paths
       .map((path) => {
@@ -363,12 +417,12 @@ export const DirectoryContentContextProvider = ({
           .map((p) => (p as PromiseFulfilledResult<TS.FileSystemEntry>).value);
         updateCurrentDirEntries(entries);
       });
-      /* Promise.all(enhancedEntriesPromises).then((entries) => {
+      /!* Promise.all(enhancedEntriesPromises).then((entries) => {
           updateCurrentDirEntries(entries);
-        });*/
+        });*!/
     }
     return Promise.resolve(true);
-  }
+  }*/
 
   function getNewEntry(entry: TS.FileSystemEntry, newPath): TS.FileSystemEntry {
     if (entry) {
@@ -546,18 +600,15 @@ export const DirectoryContentContextProvider = ({
             directoryPath,
             PlatformIO.getDirSeparator(),
           );
-          return loadJSONFile(metaFilePath)
-            .then((fsEntryMeta) => {
+          return loadJSONFile(metaFilePath).then((fsEntryMeta) => {
+            isMetaLoaded.current = true;
+            if (fsEntryMeta) {
               directoryMeta.current = fsEntryMeta;
-              isMetaLoaded.current = true;
-              return loadDirectoryContentInt(directoryPath, showHiddenEntries);
-            })
-            .catch((err) => {
-              console.log('Error loading meta of:' + directoryPath, err);
-              isMetaLoaded.current = true;
+            } else {
               directoryMeta.current = getDefaultDirMeta();
-              return loadDirectoryContentInt(directoryPath, showHiddenEntries);
-            });
+            }
+            return loadDirectoryContentInt(directoryPath, showHiddenEntries);
+          });
         } else {
           directoryMeta.current = getDefaultDirMeta();
           return loadDirectoryContentInt(directoryPath, showHiddenEntries);
@@ -841,7 +892,7 @@ export const DirectoryContentContextProvider = ({
     ]);
   }
 
-  function removeDirectoryEntries(entryPaths: string[]) {
+  /*function removeDirectoryEntries(entryPaths: string[]) {
     if (entryPaths.some((ePath) => ePath === currentDirectoryPath.current)) {
       //handle currentDirectoryPath deleted
       return openDirectory(
@@ -859,10 +910,10 @@ export const DirectoryContentContextProvider = ({
         })
         .filter((i) => i > -1)
         .sort((a, b) => b - a);
-      /*const uniqueIndexes = indexes
+      /!*const uniqueIndexes = indexes
         .filter(function (item, index) {
           return indexes.indexOf(item) === index;
-        })*/
+        })*!/
 
       if (indexes.length > 0) {
         // delete in place (for fs watcher events unlink/add in 20ms)
@@ -873,7 +924,7 @@ export const DirectoryContentContextProvider = ({
         setCurrentDirectoryEntries([...currentDirectoryEntries.current]); //entries);
       }
     }
-  }
+  }*/
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
@@ -976,8 +1027,8 @@ export const DirectoryContentContextProvider = ({
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
       addDirectoryEntries,
-      removeDirectoryEntries,
-      reflectRenameEntries,
+      //removeDirectoryEntries,
+      //reflectRenameEntries,
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,

@@ -562,7 +562,7 @@ export default class PlatformFacade {
   static loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean,
-  ): Promise<any> => {
+  ): Promise<string> => {
     let path = filePath;
     try {
       path = decodeURIComponent(filePath);
