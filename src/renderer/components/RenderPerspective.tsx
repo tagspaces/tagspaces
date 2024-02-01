@@ -113,15 +113,15 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
 function KanBanPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <KanBanSortedDirContextProvider>
-        <RendererListenerContextProvider>
-          <ThumbGenerationContextProvider>
-            <PerspectiveSettingsContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <KanBanSortedDirContextProvider>
+          <RendererListenerContextProvider>
+            <ThumbGenerationContextProvider>
               <KanBanPerspective {...props} />
-            </PerspectiveSettingsContextProvider>
-          </ThumbGenerationContextProvider>
-        </RendererListenerContextProvider>
-      </KanBanSortedDirContextProvider>
+            </ThumbGenerationContextProvider>
+          </RendererListenerContextProvider>
+        </KanBanSortedDirContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
