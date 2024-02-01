@@ -243,15 +243,20 @@ export function enhanceOpenedEntry(
   );
 }*/
 
+/**
+ * sort in place
+ * @param directories
+ * @param metaArray
+ */
 export function orderDirectories(
-  directories,
-  metaArray: Array<TS.OrderVisibilitySettings>,
+  directories: TS.FileSystemEntry[],
+  metaArray: TS.OrderVisibilitySettings[],
 ) {
   // if (sortBy === 'custom') {
   try {
     if (metaArray && metaArray.length > 0) {
       const arrLength = directories.length;
-      return directories.sort((a, b) => {
+      directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
           (meta) => meta.name === a.name,
           // meta => meta.path === Object.keys(a)[0]
@@ -273,8 +278,6 @@ export function orderDirectories(
   } catch (e) {
     console.log('error orderDirectories:', e);
   }
-  // }
-  return directories;
 }
 
 export function orderByMetaArray(

@@ -67,6 +67,10 @@ import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import {
+  reflectOrderEntryRenamed,
+  toggleDirectoryVisibility,
+} from '../../../extensions/tagspacespro/modules/metaoperations';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -131,6 +135,11 @@ type DirectoryContentContextData = {
   findFromSavedSearch: (uuid: string) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   getPerspective: () => TS.PerspectiveType;
+  toggleDirVisibility: (
+    dir: TS.OrderVisibilitySettings,
+    parentDirPath?: string,
+    update?: boolean,
+  ) => Promise<TS.FileSystemEntryMeta>;
 };
 
 export const DirectoryContentContext =
@@ -172,6 +181,7 @@ export const DirectoryContentContext =
     findFromSavedSearch: () => {},
     getDefaultPerspectiveSettings: undefined,
     getPerspective: undefined,
+    toggleDirVisibility: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -244,6 +254,10 @@ export const DirectoryContentContextProvider = ({
   }, [currentLocation]);
 
   useEffect(() => {
+    reflectActions(actions).catch(console.error);
+  }, [actions]);
+
+  const reflectActions = async (actions) => {
     if (actions && actions.length > 0) {
       for (const action of actions) {
         /// ADD
@@ -261,8 +275,17 @@ export const DirectoryContentContextProvider = ({
               action.entry.path,
               PlatformIO.getDirSeparator(),
             );
-            if (currentDirectoryPath === dirPath) {
+            if (
+              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+              cleanTrailingDirSeparator(dirPath)
+            ) {
               currentDirectoryEntries.current.push(action.entry);
+              // reflect add KanBan folders visibility
+              await toggleDirVisibility(
+                { name: action.entry.name, uuid: action.entry.uuid },
+                dirPath,
+                false,
+              );
             }
           }
           /// DELETE
@@ -281,6 +304,40 @@ export const DirectoryContentContextProvider = ({
           if (index !== -1) {
             currentDirectoryEntries.current[index] = action.entry;
           }
+          // update ordered entries (KanBan)
+          const dirPath = extractContainingDirectoryPath(
+            action.entry.path,
+            PlatformIO.getDirSeparator(),
+          );
+          if (
+            cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+            cleanTrailingDirSeparator(dirPath)
+          ) {
+            const oldName = extractFileName(
+              action.oldEntryPath,
+              PlatformIO.getDirSeparator(),
+            );
+            const dirMeta = await reflectOrderEntryRenamed(
+              dirPath,
+              oldName,
+              action.entry.name,
+            );
+            if (dirMeta) {
+              directoryMeta.current = { ...dirMeta };
+              if (directoryMeta.current.customOrder) {
+                if (directoryMeta.current.customOrder.files) {
+                  currentDirectoryFiles.current = [
+                    ...directoryMeta.current.customOrder.files,
+                  ];
+                }
+                if (directoryMeta.current.customOrder.folders) {
+                  currentDirectoryDirs.current = [
+                    ...directoryMeta.current.customOrder.folders,
+                  ];
+                }
+              }
+            }
+          }
           /*currentDirectoryEntries.current = currentDirectoryEntries.current.map(
             (e) => {
               if (e.path === action.oldEntry.path) {
@@ -295,7 +352,7 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryEntries.current = [...currentDirectoryEntries.current];
       forceUpdate();
     }
-  }, [actions]);
+  };
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -999,6 +1056,31 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
+  function toggleDirVisibility(
+    dir: TS.OrderVisibilitySettings,
+    parentDirPath: string = undefined,
+    update: boolean = true,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return toggleDirectoryVisibility(
+      parentDirPath ? parentDirPath : currentDirectoryPath.current,
+      {
+        name: dir.name,
+        uuid: dir.uuid,
+      },
+    ).then((meta: TS.FileSystemEntryMeta) => {
+      if (meta) {
+        directoryMeta.current = meta;
+        currentDirectoryDirs.current = [
+          ...directoryMeta.current.customOrder.folders,
+        ];
+        if (update) {
+          forceUpdate();
+        }
+      }
+      return meta;
+    });
+  }
+
   const context = useMemo(() => {
     return {
       currentLocationPath: currentLocationPath.current,
@@ -1038,6 +1120,7 @@ export const DirectoryContentContextProvider = ({
       exitSearchMode,
       findFromSavedSearch,
       getDefaultPerspectiveSettings,
+      toggleDirVisibility,
     };
   }, [
     // currentLocation,

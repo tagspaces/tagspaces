@@ -29,6 +29,7 @@ import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
+import { KanBanSortedDirContextProvider } from '../../../extensions/tagspacespro/modules/perspectives/kanban/hooks/KanBanSortedDirContextProvider';
 
 const GridPerspective = React.lazy(
   () =>
@@ -112,13 +113,15 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
 function KanBanPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <RendererListenerContextProvider>
-        <ThumbGenerationContextProvider>
-          <PerspectiveSettingsContextProvider>
-            <KanBanPerspective {...props} />
-          </PerspectiveSettingsContextProvider>
-        </ThumbGenerationContextProvider>
-      </RendererListenerContextProvider>
+      <KanBanSortedDirContextProvider>
+        <RendererListenerContextProvider>
+          <ThumbGenerationContextProvider>
+            <PerspectiveSettingsContextProvider>
+              <KanBanPerspective {...props} />
+            </PerspectiveSettingsContextProvider>
+          </ThumbGenerationContextProvider>
+        </RendererListenerContextProvider>
+      </KanBanSortedDirContextProvider>
     </React.Suspense>
   );
 }
