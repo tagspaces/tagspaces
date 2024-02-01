@@ -23,8 +23,5 @@
     "@tagspaces/tagspaces-ws": "4.1.3",
     "sharp": "0.32.6",
     "ws": "8.16.0"
-  },
-  "optionalDependencies": {
-    "@tagspacespro/extensions": "^1.0.0"
   }
 }
