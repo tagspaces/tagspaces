@@ -63,7 +63,9 @@ extensions
 
 test/file-structure
 
-public/modules
+public/modules/@tagspaces/extensions
+public/modules/@tagspacespro/extensions
+
 src/renderer/version.json
 src/renderer/third-party.txt
 
