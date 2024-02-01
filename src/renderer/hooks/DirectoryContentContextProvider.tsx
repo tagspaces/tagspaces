@@ -39,12 +39,7 @@ import {
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import {
-  getMetaForEntry,
-  loadJSONFile,
-  merge,
-  updateFsEntries,
-} from '-/services/utils-io';
+import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
@@ -67,10 +62,6 @@ import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import {
-  reflectOrderEntryRenamed,
-  toggleDirectoryVisibility,
-} from '../../../extensions/tagspacespro/modules/metaoperations';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -305,47 +296,42 @@ export const DirectoryContentContextProvider = ({
             currentDirectoryEntries.current[index] = action.entry;
           }
           // update ordered entries (KanBan)
-          const dirPath = extractContainingDirectoryPath(
-            action.entry.path,
-            PlatformIO.getDirSeparator(),
-          );
-          if (
-            cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-            cleanTrailingDirSeparator(dirPath)
-          ) {
-            const oldName = extractFileName(
-              action.oldEntryPath,
+          if (Pro && Pro.MetaOperations) {
+            const dirPath = extractContainingDirectoryPath(
+              action.entry.path,
               PlatformIO.getDirSeparator(),
             );
-            const dirMeta = await reflectOrderEntryRenamed(
-              dirPath,
-              oldName,
-              action.entry.name,
-            );
-            if (dirMeta) {
-              directoryMeta.current = { ...dirMeta };
-              if (directoryMeta.current.customOrder) {
-                if (directoryMeta.current.customOrder.files) {
-                  currentDirectoryFiles.current = [
-                    ...directoryMeta.current.customOrder.files,
-                  ];
-                }
-                if (directoryMeta.current.customOrder.folders) {
-                  currentDirectoryDirs.current = [
-                    ...directoryMeta.current.customOrder.folders,
-                  ];
+            if (
+              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+              cleanTrailingDirSeparator(dirPath)
+            ) {
+              const oldName = extractFileName(
+                action.oldEntryPath,
+                PlatformIO.getDirSeparator(),
+              );
+              const dirMeta: TS.FileSystemEntryMeta =
+                await Pro.MetaOperations.reflectOrderEntryRenamed(
+                  dirPath,
+                  oldName,
+                  action.entry.name,
+                );
+              if (dirMeta) {
+                directoryMeta.current = { ...dirMeta };
+                if (directoryMeta.current.customOrder) {
+                  if (directoryMeta.current.customOrder.files) {
+                    currentDirectoryFiles.current = [
+                      ...directoryMeta.current.customOrder.files,
+                    ];
+                  }
+                  if (directoryMeta.current.customOrder.folders) {
+                    currentDirectoryDirs.current = [
+                      ...directoryMeta.current.customOrder.folders,
+                    ];
+                  }
                 }
               }
             }
           }
-          /*currentDirectoryEntries.current = currentDirectoryEntries.current.map(
-            (e) => {
-              if (e.path === action.oldEntry.path) {
-                return action.entry;
-              }
-              return e;
-            },
-          );*/
         }
       }
       // create a shallow copy to publish changes
@@ -1061,24 +1047,26 @@ export const DirectoryContentContextProvider = ({
     parentDirPath: string = undefined,
     update: boolean = true,
   ): Promise<TS.FileSystemEntryMeta> {
-    return toggleDirectoryVisibility(
-      parentDirPath ? parentDirPath : currentDirectoryPath.current,
-      {
-        name: dir.name,
-        uuid: dir.uuid,
-      },
-    ).then((meta: TS.FileSystemEntryMeta) => {
-      if (meta) {
-        directoryMeta.current = meta;
-        currentDirectoryDirs.current = [
-          ...directoryMeta.current.customOrder.folders,
-        ];
-        if (update) {
-          forceUpdate();
+    if (Pro && Pro.MetaOperations) {
+      return Pro.MetaOperations.toggleDirectoryVisibility(
+        parentDirPath ? parentDirPath : currentDirectoryPath.current,
+        {
+          name: dir.name,
+          uuid: dir.uuid,
+        },
+      ).then((meta: TS.FileSystemEntryMeta) => {
+        if (meta) {
+          directoryMeta.current = meta;
+          currentDirectoryDirs.current = [
+            ...directoryMeta.current.customOrder.folders,
+          ];
+          if (update) {
+            forceUpdate();
+          }
         }
-      }
-      return meta;
-    });
+        return meta;
+      });
+    }
   }
 
   const context = useMemo(() => {
