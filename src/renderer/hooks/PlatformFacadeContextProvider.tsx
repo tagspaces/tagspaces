@@ -62,6 +62,17 @@ type PlatformFacadeContextData = {
     onProgress?,
     reflect?,
   ) => Promise<any>;
+  moveFilePromise: (
+    filePath: string,
+    newFilePath: string,
+    onProgress?,
+    reflect?,
+  ) => Promise<any>;
+  moveFilesPromise: (
+    renameJobs: Array<Array<string>>,
+    onProgress?,
+    reflect?,
+  ) => Promise<any>;
   renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
   copyDirectoryPromise: (
     param: any,
@@ -103,6 +114,8 @@ export const PlatformFacadeContext = createContext<PlatformFacadeContextData>({
   copyFilePromiseOverwrite: undefined,
   renameFilePromise: undefined,
   renameFilesPromise: undefined,
+  moveFilePromise: undefined,
+  moveFilesPromise: undefined,
   renameDirectoryPromise: undefined,
   copyDirectoryPromise: undefined,
   moveDirectoryPromise: undefined,
@@ -350,6 +363,79 @@ export const PlatformFacadeContextProvider = ({
     });
   }
 
+  function moveFilePromise(
+    filePath: string,
+    newFilePath: string,
+    onProgress = undefined,
+    reflect = true,
+  ): Promise<any> {
+    ignoreByWatcher(filePath, newFilePath);
+    return PlatformFacade.renameFilePromise(
+      filePath,
+      newFilePath,
+      onProgress,
+    ).then((result) => {
+      getAllPropertiesPromise(newFilePath).then(
+        (fsEntry: TS.FileSystemEntry) => {
+          if (reflect) {
+            setReflectActions(
+              {
+                action: 'delete',
+                entry: toFsEntry(filePath, true),
+              },
+              {
+                action: 'add',
+                entry: fsEntry,
+              },
+            );
+          }
+        },
+      );
+      deignoreByWatcher(filePath, newFilePath);
+      return result;
+    });
+  }
+
+  function moveFilesPromise(
+    renameJobs: Array<Array<string>>,
+    onProgress = undefined,
+    reflect = true,
+  ): Promise<any> {
+    const flatArray = renameJobs.flat();
+    ignoreByWatcher(...flatArray);
+    return Promise.all(
+      renameJobs.map(async (renameJob) => {
+        try {
+          return await PlatformFacade.renameFilePromise(
+            renameJob[0],
+            renameJob[1],
+            onProgress,
+          );
+        } catch (err) {
+          console.warn('Error rename file:', err);
+          return false;
+        }
+      }),
+    ).then((ret) => {
+      if (reflect) {
+        const actions: TS.EditAction[] = [];
+        renameJobs.map((job) => {
+          actions.push({
+            action: 'delete',
+            entry: toFsEntry(job[0], true),
+          });
+          actions.push({
+            action: 'add',
+            entry: toFsEntry(job[1], true),
+          });
+        });
+        setReflectActions(...actions);
+      }
+      deignoreByWatcher(...flatArray);
+      return ret;
+    });
+  }
+
   function renameDirectoryPromise(
     dirPath: string,
     newDirName: string,
@@ -494,6 +580,8 @@ export const PlatformFacadeContextProvider = ({
       copyFilePromiseOverwrite,
       renameFilePromise,
       renameFilesPromise,
+      moveFilePromise,
+      moveFilesPromise,
       renameDirectoryPromise,
       copyDirectoryPromise,
       moveDirectoryPromise,

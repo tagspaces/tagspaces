@@ -145,6 +145,7 @@ export const IOActionsContextProvider = ({
     createDirectoryPromise,
     renameFilePromise,
     renameFilesPromise,
+    moveFilesPromise,
     renameDirectoryPromise,
     copyFilePromise,
     copyFilesWithProgress,
@@ -356,7 +357,7 @@ export const IOActionsContextProvider = ({
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator()),
     ]);
-    return renameFilesPromise(moveJobs, onProgress)
+    return moveFilesPromise(moveJobs, onProgress)
       .then(() => {
         // removeDirectoryEntries(paths);
         /*for (let i = 0; i < moveJobs.length; i++) {
@@ -425,7 +426,7 @@ export const IOActionsContextProvider = ({
           ]);
           return true;
         });
-        renameFilesPromise(moveMetaJobs)
+        moveFilesPromise(moveMetaJobs, undefined, false)
           .then(() => {
             console.log('Moving meta and thumbs successful');
             return true;
