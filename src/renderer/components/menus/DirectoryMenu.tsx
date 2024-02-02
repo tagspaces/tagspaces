@@ -147,11 +147,6 @@ function DirectoryMenu(props: Props) {
     );
   }
 
-  /*  const [
-    isCreateDirectoryDialogOpened,
-    setIsCreateDirectoryDialogOpened
-  ] = useState(false);*/
-
   function openDir() {
     return openDirectory(directoryPath);
   }
@@ -216,10 +211,6 @@ function DirectoryMenu(props: Props) {
     }
     toggleDeleteMultipleEntriesDialog();
   }
-
-  /*function showCreateDirectoryDialog() {
-    setIsCreateDirectoryDialogOpened(true);
-  }*/
 
   function createNewFile() {
     toggleNewFileDialog();
@@ -326,8 +317,6 @@ Do you want to continue?`)
           'default',
           true,
         );
-        /*reflectCreateEntry(toFsEntry(newFilePath, true));
-        dispatch(AppActions.reflectCreateEntry(newFilePath, true));*/
         return true;
       })
       .catch((error) => {

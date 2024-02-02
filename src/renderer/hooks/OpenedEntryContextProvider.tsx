@@ -22,14 +22,9 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  OpenedEntry,
-} from '-/reducers/app';
+import { AppDispatch, OpenedEntry } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
@@ -39,7 +34,6 @@ import {
   getRelativeEntryPath,
   loadJSONFile,
   openURLExternally,
-  toFsEntry,
 } from '-/services/utils-io';
 import {
   actions as SettingsActions,
@@ -52,7 +46,6 @@ import {
   cleanRootPath,
   cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
-  extractTagsAsObjects,
   generateSharingLink,
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
@@ -74,7 +67,6 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type OpenedEntryContextData = {
-  //openedEntries: OpenedEntry[];
   openedEntry: OpenedEntry;
   dirProps: TS.DirProp;
   isEntryInFullWidth: boolean;
@@ -102,18 +94,9 @@ type OpenedEntryContextData = {
     fileType: 'md' | 'txt' | 'html',
   ) => void;
   createFile: () => void;
-  /*reflectRenameOpenedEntry: (
-    entryPath: string,
-    newEntryPath: string,
-    reload?: boolean,
-  ) => void;*/
-  //reflectSidecarTagsUpdate: (entryPath: string, tags: TS.Tag[]) => void;
-  //reflectDeleteDirectory: (directoryPath: string) => void;
-  //reflectDeleteFile: (filePath: string) => void;
 };
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
-  //openedEntries: [],
   openedEntry: undefined,
   dirProps: undefined,
   isEntryInFullWidth: false,
@@ -133,10 +116,6 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   goBack: () => {},
   createFile: () => {},
   createFileAdvanced: () => {},
-  // reflectRenameOpenedEntry: () => {},
-  //reflectSidecarTagsUpdate: undefined,
-  //reflectDeleteDirectory: undefined,
-  //reflectDeleteFile: undefined,
 });
 
 export type OpenedEntryContextProviderProps = {
@@ -173,19 +152,11 @@ export const OpenedEntryContextProvider = ({
     (state: any) => state.settings[historyKeys.folderOpenKey],
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
-  //const initOpenLink = useSelector(getOpenLink);
-  //const editedEntryPaths = useSelector(getEditedEntryPaths);
-  //const tagDelimiter = useSelector(getTagDelimiter);
-  /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
-  const firstRun = useSelector(isFirstRun);
-  const enableGlobalKeyboardShortcuts = useSelector(isGlobalKeyBindingEnabled);*/
-  // const [openedEntries, setOpenedEntries] = useState<OpenedEntry[]>([]);
-  const currentEntry = useRef<OpenedEntry>(undefined); //openedEntries[0]); //enhanceOpenedEntry(openedEntries[0], tagDelimiter));
+  const currentEntry = useRef<OpenedEntry>(undefined);
   const dirProps = useRef<TS.DirProp>();
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
-  //const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -194,24 +165,17 @@ export const OpenedEntryContextProvider = ({
    */
   useEffect(() => {
     if (firstRender && currentEntry.current === undefined) {
-      //openedEntries.length === 0) {
       const lid = getURLParameter('tslid');
       const dPath = getURLParameter('tsdpath');
       const ePath = getURLParameter('tsepath');
       const cmdOpen = getURLParameter('cmdopen');
       if (lid || dPath || ePath) {
-        // openDefaultLocation = false;
         setTimeout(() => {
           openLink(window.location.href);
         }, 1000);
       } else if (cmdOpen) {
-        // openDefaultLocation = false;
         setTimeout(() => {
-          openLink(
-            // window.location.href.split('?')[0] +
-            'ts://?cmdopen=' + cmdOpen,
-            { fullWidth: true },
-          );
+          openLink('ts://?cmdopen=' + cmdOpen, { fullWidth: true });
         }, 1000);
       }
     } else if (
@@ -228,9 +192,6 @@ export const OpenedEntryContextProvider = ({
         })
         .catch((ex) => console.debug('getDirProperties:', ex.message));
     }
-    /*if (initOpenLink && initOpenLink.url) {
-      openLink(initOpenLink.url, initOpenLink.options);
-    }*/
   }, []);
 
   useEffect(() => {
@@ -260,13 +221,6 @@ export const OpenedEntryContextProvider = ({
     }
   }, [actions]);
 
-  /*useEffect(() => {
-    currentEntry.current = openedEntries[0];
-    if (currentEntry.current) {
-      forceUpdate();
-    }
-  }, [openedEntries]);*/
-
   useEffect(() => {
     if (
       currentEntry.current &&
@@ -277,79 +231,8 @@ export const OpenedEntryContextProvider = ({
         perspective: currentDirectoryPerspective,
       };
       forceUpdate();
-      // setOpenedEntries([currentEntry.current]);
-      // forceUpdate();
     }
   }, [currentDirectoryPerspective]);
-
-  /**
-   * HANDLE REFLECT_RENAME_ENTRY
-   */
-  /*useEffect(() => {
-    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
-      let action;
-      for (const editedEntryPath of editedEntryPaths) {
-        action = editedEntryPath.action;
-      }
-      if (action === 'rename') {
-        const oldFilePath = editedEntryPaths[0].path;
-        const newFilePath = editedEntryPaths[1].path;
-
-        if (openedEntries.some((entry) => entry.path === oldFilePath)) {
-          const newEntries = getRenamedEntries(oldFilePath, newFilePath);
-          setSharedLinks(newEntries[0]);
-          setOpenedEntries(newEntries);
-        }
-      } /!*else if (action === 'delete') {
-        const filePath = editedEntryPaths[0].path;
-        if (
-          openedEntries &&
-          openedEntries.length > 0 &&
-          openedEntries.some(file => file.path === filePath)
-        ) {
-          closeAllFiles();
-        }
-      }*!/
-    }
-  }, [editedEntryPaths]);*/
-
-  /*function getRenamedEntry(oldFilePath, newFilePath, scarTags?) {
-    const extractedTags = extractTagsAsObjects(
-      newFilePath,
-      AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator(),
-    );
-    if (currentEntry.current) {
-      if (currentEntry.current.path !== oldFilePath) {
-        return currentEntry.current;
-      }
-      const fileNameTags = currentEntry.current.isFile ? extractedTags : []; // dirs dont have tags in filename
-
-      let sidecarTags;
-      if (scarTags !== undefined) {
-        sidecarTags = scarTags;
-      } else if (
-        currentEntry.current.tags &&
-        currentEntry.current.tags.length > 0
-      ) {
-        sidecarTags = currentEntry.current.tags.filter(
-          (tag) => tag.type !== 'plain',
-        );
-      } else {
-        sidecarTags = [];
-      }
-      return {
-        ...currentEntry.current,
-        path: newFilePath, // TODO handle change extension case
-        tags: [
-          ...sidecarTags, // add only sidecar tags
-          ...fileNameTags,
-        ],
-        // shouldReload: true
-      };
-    }
-    return undefined;
-  }*/
 
   function setSharedLinks(openedFile?) {
     if (openedFile) {
@@ -415,65 +298,6 @@ export const OpenedEntryContextProvider = ({
       sharingParentFolderLink.current = undefined;
     }
   }
-  /*function initApp() {
-    disableBackGestureMac();
-    // migrate TagLibrary from redux state
-
-    dispatch(SettingsActions.setZoomRestoreApp());
-    dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
-    if (checkForUpdates) {
-      dispatch(SettingsActions.checkForUpdate());
-    }
-    if (firstRun) {
-      dispatch(AppActions.toggleOnboardingDialog());
-      dispatch(AppActions.toggleLicenseDialog());
-    }
-    setTimeout(() => {
-      PlatformIO.setGlobalShortcuts(enableGlobalKeyboardShortcuts);
-      PlatformIO.loadExtensions();
-    }, 1000);
-    const langURLParam = getURLParameter('locale');
-    if (
-      langURLParam &&
-      langURLParam.length > 1 &&
-      /^[a-zA-Z\-_]+$/.test('langURLParam')
-    ) {
-      i18n.changeLanguage(langURLParam).then(() => {
-        dispatch(SettingsActions.setLanguage(langURLParam));
-        PlatformIO.setLanguage(langURLParam);
-        return true;
-      });
-    }
-
-    let openDefaultLocation = true;
-    const lid = getURLParameter('tslid');
-    const dPath = getURLParameter('tsdpath');
-    const ePath = getURLParameter('tsepath');
-    const cmdOpen = getURLParameter('cmdopen');
-    if (lid || dPath || ePath) {
-      openDefaultLocation = false;
-      setTimeout(() => {
-        openLink(window.location.href);
-      }, 1000);
-    } else if (cmdOpen) {
-      openDefaultLocation = false;
-      setTimeout(() => {
-        openLink(
-            // window.location.href.split('?')[0] +
-            'ts://?cmdopen=' + cmdOpen,
-            { fullWidth: true }
-          );
-      }, 1000);
-    }
-    const defaultLocationId = getDefaultLocationId(state);
-    if (
-      openDefaultLocation &&
-      defaultLocationId &&
-      defaultLocationId.length > 0
-    ) {
-      dispatch(actions.openLocationById(defaultLocationId));
-    }
-  }*/
 
   function addToEntryContainer(fsEntry: OpenedEntry) {
     setSharedLinks(fsEntry);
@@ -509,12 +333,7 @@ export const OpenedEntryContextProvider = ({
    */
   function reflectUpdateOpenedFileContent(entryPath: string) {
     if (currentEntry.current) {
-      // openedEntries && openedEntries.length > 0) {
-      /*const openedFile: OpenedEntry = openedEntries.find(
-        (obj) => obj.path === entryPath,
-      );*/
       if (currentEntry.current.path === entryPath) {
-        //openedFile) {
         currentEntry.current.shouldReload = true;
         addToEntryContainer(currentEntry.current);
       }
@@ -568,34 +387,14 @@ export const OpenedEntryContextProvider = ({
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
   ): Promise<boolean> {
-    if (
-      currentEntry.current &&
-      currentEntry.current.path === entryPath
-      /*openedEntries &&
-      openedEntries.length > 0 &&
-      openedEntries.some((obj) => obj.path === entryPath)*/
-    ) {
+    if (currentEntry.current && currentEntry.current.path === entryPath) {
       return PlatformIO.getPropertiesPromise(entryPath)
         .then((entryProps) => {
           if (entryProps) {
             let entryForOpening: OpenedEntry;
-            /*const entryExist = openedEntries.find(
-              (obj) => obj.path === entryPath,
-            );
 
-            if (!entryExist) {
-              entryForOpening = findExtensionsForEntry(
-                fsEntryMeta.id, //|| fsEntryMeta.uuid,
-                supportedFileTypes,
-                entryPath,
-                entryProps.isFile,
-              );
-            } else {*/
             entryForOpening = { ...currentEntry.current }; //entryExist };
 
-            /* if (fsEntryMeta.changed !== undefined) {
-              entryForOpening.changed = fsEntryMeta.changed;
-            } */
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
@@ -972,11 +771,7 @@ export const OpenedEntryContextProvider = ({
         '.txt';
       saveFilePromise({ path: filePath }, '', true)
         .then((fsEntry: TS.FileSystemEntry) => {
-          //reflectAddEntry(fsEntry)
-          /*reflectCreateEntry(toFsEntry(filePath, true));
-          dispatch(AppActions.reflectCreateEntry(filePath, true));*/
           showNotification(t('core:fileCreateSuccessfully'), 'info', true);
-          // openEntry(filePath);
           return true;
         })
         .catch((err) => {
@@ -1039,70 +834,8 @@ export const OpenedEntryContextProvider = ({
       });
   }
 
-  /*function reflectRenameOpenedEntry(entryPath, newEntryPath, reload = false) {
-    //if (openedEntries && openedEntries.length > 0) {
-    if (currentEntry.current && currentEntry.current.path === entryPath) {
-      //if (openedEntries.some((entry) => entry.path === entryPath)) {
-      if (currentLocation) {
-        updateHistory(
-          { ...currentLocation, path: currentLocationPath },
-          currentDirectoryPath,
-          newEntryPath,
-        );
-      }
-      if (reload) {
-        openEntry(newEntryPath);
-      } else {
-        const newEntry = getRenamedEntry(entryPath, newEntryPath);
-        setSharedLinks(newEntry);
-        currentEntry.current = newEntry;
-        forceUpdate();
-        //setOpenedEntries([newEntry]);
-        //addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
-      }
-    }
-  }*/
-
-  /*function reflectSidecarTagsUpdate(entryPath, tags) {
-    const newEntry = getRenamedEntry(entryPath, entryPath, tags);
-    setSharedLinks(newEntry);
-    currentEntry.current = newEntry;
-    forceUpdate();
-    //setOpenedEntries([newEntry]);
-  }*/
-
-  /*const reflectDeleteDirectory = useMemo(() => {
-    return (directoryPath: string) => {
-      if (
-        currentEntry.current &&
-        currentEntry.current.path.startsWith(directoryPath)
-        /!*openedEntries &&
-        openedEntries.length > 0 &&
-        openedEntries.some(
-          (file) => file.path.startsWith(directoryPath),*!/
-      ) {
-        closeAllFiles();
-      }
-    };
-  }, [currentEntry.current, isEntryInFullWidth.current]);
-
-  const reflectDeleteFile = useMemo(() => {
-    return (filePath: string) => {
-      if (
-        currentEntry.current &&
-        currentEntry.current.path === filePath
-        /!*openedEntries &&
-        openedEntries.length > 0 &&
-        openedEntries.some((file) => file.path === filePath)*!/
-      ) {
-        closeAllFiles();
-      }
-    };
-  }, [currentEntry.current, isEntryInFullWidth.current]);*/
-
   const context = useMemo(() => {
     return {
-      //openedEntries,
       openedEntry: currentEntry.current,
       dirProps: dirProps.current,
       isEntryInFullWidth: isEntryInFullWidth.current,
@@ -1122,13 +855,8 @@ export const OpenedEntryContextProvider = ({
       openLink,
       createFile,
       createFileAdvanced,
-      //reflectRenameOpenedEntry,
-      //reflectSidecarTagsUpdate,
-      //reflectDeleteDirectory,
-      //reflectDeleteFile,
     };
   }, [
-    //openedEntries,
     currentEntry.current,
     isEntryInFullWidth.current,
     dirProps.current,

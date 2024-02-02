@@ -331,11 +331,7 @@ export const IOActionsContextProvider = ({
         onProgress,
       )
         .then((newDirPath) => {
-          /*removeDirectoryEntries([path]);
-          reflectRenameOpenedEntry(path, newDirPath);*/
           console.log('Moving dir from ' + path + ' to ' + targetPath);
-          /*reflectDeleteEntry(path);
-          dispatch(AppActions.reflectDeleteEntry(path));*/
           return true;
         })
         .catch((err) => {
@@ -359,16 +355,7 @@ export const IOActionsContextProvider = ({
     ]);
     return moveFilesPromise(moveJobs, onProgress)
       .then(() => {
-        // removeDirectoryEntries(paths);
-        /*for (let i = 0; i < moveJobs.length; i++) {
-          const [srcPath, destPath] = moveJobs[i];
-          reflectRenameOpenedEntry(srcPath, destPath);
-        }*/
         showNotification(t('core:filesMovedSuccessful'));
-        // moved files should be added to the index, if the target dir in index
-        /*reflectDeleteEntries(paths);
-        dispatch(AppActions.reflectDeleteEntries(paths));*/
-
         const moveMetaJobs = [];
         moveJobs.map((job) => {
           // Move revisions
@@ -558,15 +545,6 @@ export const IOActionsContextProvider = ({
           return fsEntry;
         });
       });
-    /*.then((fsEntry: TS.FileSystemEntry) => {
-        reflectCreateEntry(fsEntry);
-        addDirectoryEntries([fsEntry]);
-        dispatch(AppActions.reflectCreateEntries([fsEntry]));
-        setSelectedEntries([fsEntry]);
-
-        return fsEntry;
-      });*/
-    //.catch(e => console.log(e));
   }
 
   /**
@@ -614,14 +592,7 @@ export const IOActionsContextProvider = ({
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        // if (AppConfig.isWeb && PlatformIO.isMinio()) {
-        //   reader.readAsBinaryString(file);
-        // } else {
         reader.readAsArrayBuffer(file);
-        // }
-        /* else if (AppConfig.isCordova) {
-          reader.readAsDataURL(file);
-        } */
       }
 
       async function readerLoaded(event, index, fileTargetPath) {
@@ -993,20 +964,6 @@ export const IOActionsContextProvider = ({
           false,
         )
           .then(() => {
-            /*if (reflect) {
-                reflectRenameEntries([[filePath, newFilePathFromPromise]]).then(
-                  () => {
-                    reflectRenameOpenedEntry(filePath, newFilePathFromPromise);
-                    reflectRenameEntry(filePath, newFilePathFromPromise);
-                    dispatch(
-                      AppActions.reflectRenameEntry(
-                        filePath,
-                        newFilePathFromPromise,
-                      ),
-                    );
-                  },
-                );
-              }*/
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
@@ -1016,20 +973,6 @@ export const IOActionsContextProvider = ({
             return true;
           })
           .catch((err) => {
-            /*if (reflect) {
-                reflectRenameEntries([[filePath, newFilePathFromPromise]]).then(
-                  () => {
-                    reflectRenameOpenedEntry(filePath, newFilePathFromPromise);
-                    reflectRenameEntry(filePath, newFilePathFromPromise);
-                    dispatch(
-                      AppActions.reflectRenameEntry(
-                        filePath,
-                        newFilePathFromPromise,
-                      ),
-                    );
-                  },
-                );
-              }*/
             console.warn(
               'Renaming meta file and thumb failed from ' +
                 filePath +

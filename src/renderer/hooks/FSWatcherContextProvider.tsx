@@ -32,7 +32,6 @@ import { Changed } from '../../main/chokidarWatcher';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type FSWatcherContextData = {
-  // watcher: FSWatcher;
   ignored: string[];
   stopWatching: () => void;
   folderChanged: (event: string, path: string) => void;
@@ -43,7 +42,6 @@ type FSWatcherContextData = {
 };
 
 export const FSWatcherContext = createContext<FSWatcherContextData>({
-  // watcher: undefined,
   ignored: undefined,
   folderChanged: undefined,
   stopWatching: undefined,
@@ -89,21 +87,6 @@ export const FSWatcherContextProvider = ({
     }
   }, [currentLocation, currentDirectoryPath]);
 
-  /*useEffect(() => {
-    // watchForEvents(listener);
-  }, [addDirectoryEntries, removeDirectoryEntries, ignored.current]);*/
-
-  /* todo impl in main
-  function watchForEvents(listener) {
-    if (watcher !== undefined) {
-      // To remove the listener
-      watcher.removeAllListeners();
-      watcher.on('all', listener);
-    } /!*else {
-      console.log('Indexing not supported on this platform');
-    }*!/
-  }*/
-
   function watchFolder(locationPath, depth) {
     console.log('Start watching: ' + locationPath);
     stopWatching();
@@ -132,11 +115,6 @@ export const FSWatcherContextProvider = ({
           return;
         }
       }
-      /*const index = ignored.current.indexOf(path);
-      if (index > -1) {
-        ignored.current.splice(index, 1);
-        return;
-      }*/
 
       switch (event) {
         case 'unlink':
@@ -215,10 +193,6 @@ export const FSWatcherContextProvider = ({
 
   function stopWatching() {
     watchingFolderPath.current = undefined;
-    /*if (watcher && watcher.close) {
-      watcher.close();
-      setWatcher(undefined);
-    }*/
   }
 
   function isWatching() {
@@ -242,10 +216,6 @@ export const FSWatcherContextProvider = ({
           ignored.current.splice(i, 1);
         }
       }
-      /* const index = ignored.current.indexOf(path);
-      if (index > -1) {
-        ignored.current.splice(index, 1);
-      }*/
     }, 2000);
   }
 

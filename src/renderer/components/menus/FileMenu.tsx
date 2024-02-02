@@ -34,18 +34,14 @@ import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import DuplicateFile from '@mui/icons-material/PostAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
-  extractFileName,
   extractParentDirectoryPath,
-  extractTags,
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
-  generateFileName,
   setFolderBackgroundPromise,
   getRelativeEntryPath,
 } from '-/services/utils-io';
@@ -54,10 +50,6 @@ import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
-import {
-  getPrefixTagContainer,
-  getWarningOpeningFilesExternally,
-} from '-/reducers/settings';
 import {
   OpenNewWindowIcon,
   DeleteIcon,
@@ -118,21 +110,10 @@ function FileMenu(props: Props) {
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
-  //const locations: Array<TS.Location> = useSelector(getLocations);
   const { openFileNatively, duplicateFile } = useIOActionsContext();
-  /*const prefixTagContainer = useSelector(getPrefixTagContainer);
-  const warningOpeningFilesExternally = useSelector(
-    getWarningOpeningFilesExternally,
-  );*/
 
   function generateFileLink() {
-    /*const entryFromIndex = selectedEntries[0].locationID;
-    const locationID = entryFromIndex
-      ? selectedEntries[0].locationID
-      : currentLocation.uuid;*/
     const entryPath = selectedEntries[0].path;
-    /*const tmpLoc = locations.find(
-      location => location.uuid === locationID);*/
     const relativePath = getRelativeEntryPath(currentLocationPath, entryPath);
     return generateSharingLink(currentLocation.uuid, relativePath);
   }

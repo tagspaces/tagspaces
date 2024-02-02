@@ -388,10 +388,6 @@ export const TaggingActionsContextProvider = ({
             prefixTagContainer,
           );
         return renameFile(path, newFilePath).then(() => {
-          /*if (!reflect) {
-            reflectRenameOpenedEntry(path, newFilePath);
-            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-          }*/
           return newFilePath;
         });
       }
@@ -426,10 +422,6 @@ export const TaggingActionsContextProvider = ({
         );
       if (path !== newFilePath) {
         return renameFile(path, newFilePath).then(() => {
-          /*if (!reflect) {
-            reflectRenameOpenedEntry(path, newFilePath);
-            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-          }*/
           return newFilePath;
         });
       }
@@ -836,24 +828,6 @@ export const TaggingActionsContextProvider = ({
     });
     return uniqueTags;
   }
-
-  /*const reflectUpdateSidecarTags = useMemo(() => {
-    return (path: string, tags: Array<TS.Tag>, updateIndex = true) => {
-      // to reload cell in KanBan if add/remove sidecar tags
-      // @ts-ignore
-      const action: TS.EditedEntryAction = `edit${tags
-        .map((tag) => tag.title)
-        .join()}`;
-      dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
-      // @ts-ignore
-      updateCurrentDirEntry(path, { tags });
-      reflectSidecarTagsUpdate(path, tags);
-
-      if (updateIndex) {
-        indexUpdateSidecarTags(path, tags);
-      }
-    };
-  }, [updateCurrentDirEntry]);*/
 
   const context = useMemo(() => {
     return {

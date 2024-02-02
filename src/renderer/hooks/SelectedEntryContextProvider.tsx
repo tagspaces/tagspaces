@@ -124,10 +124,6 @@ export const SelectedEntryContextProvider = ({
     return undefined;
   }, [selectedEntries.current]);
 
-  /*function getSelectedEntriesLength() {
-    return selectedEntries ? selectedEntries.length : 0;
-  }*/
-
   const context = useMemo(() => {
     return {
       selectedEntries: selectedEntries.current,

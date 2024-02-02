@@ -113,37 +113,12 @@ function GridPerspective(props: Props) {
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
 
-  /*useEffect(() => {
-    if (selectedEntries.length === 1) {
-      makeFirstSelectedEntryVisible();
-    }
-  }, [selectedEntries]);
-
-  const makeFirstSelectedEntryVisible = () => {
-    if (selectedEntries && selectedEntries.length > 0) {
-      try {
-        const firstSelectedElement = document.querySelector(
-          '[data-entry-id="' + selectedEntries[0].uuid + '"]',
-        );
-        if (
-          isObj(firstSelectedElement) &&
-          !isVisibleOnScreen(firstSelectedElement)
-        ) {
-          firstSelectedElement.scrollIntoView(false);
-        }
-      } catch (ex) {
-        console.debug('makeFirstSelectedEntryVisible:', ex);
-      }
-    }
-  };*/
-
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
       setSortBy(handleSort);
     } else {
       setOrderBy(!orderBy);
     }
-    // forceUpdate();
     setSortingContextMenuAnchorEl(null);
   };
 

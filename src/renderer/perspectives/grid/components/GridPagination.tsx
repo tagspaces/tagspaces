@@ -151,12 +151,6 @@ function GridPagination(props: Props) {
     forceUpdate();
   }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);
 
-  /*useEffect(() => {
-    if (containerEl && containerEl.current) {
-      containerEl.current.scrollTop = 0;
-    }
-  }, [currentDirectoryEntries]);*/
-
   const handleChange = (event, value) => {
     setCurrentPage(value);
     if (containerEl && containerEl.current) {
