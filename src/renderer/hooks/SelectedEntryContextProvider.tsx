@@ -65,7 +65,10 @@ export const SelectedEntryContextProvider = ({
     if (actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          selectedEntries.current = [action.entry];
+          if (selectedEntries.current.length === 0) {
+            // don't change selection if copy dialog with selected entry is opened
+            selectedEntries.current = [action.entry];
+          }
         } else if (action.action === 'delete') {
           let index = selectedEntries.current.findIndex(
             (e) => e.path === action.entry.path,
@@ -82,6 +85,7 @@ export const SelectedEntryContextProvider = ({
           }
         }
       }
+      selectedEntries.current = [...selectedEntries.current];
       forceUpdate();
     }
   }, [actions]);

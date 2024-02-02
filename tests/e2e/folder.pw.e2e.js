@@ -154,7 +154,7 @@ test.describe('TST01 - Folder management', () => {
     const folderToMove = 'folder_to_move';
     await setInputKeys('directoryName', folderToMove);
     await clickOn('[data-tid=confirmCreateNewDirectory]');
-    // await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
+    await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');

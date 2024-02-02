@@ -345,57 +345,6 @@ export const DirectoryContentContextProvider = ({
     }
   };
 
-  /**
-   * HANDLE REFLECT_RENAME_ENTRY
-   */
-  /*useEffect(() => {
-    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
-      let action;
-      for (const editedEntryPath of editedEntryPaths) {
-        action = editedEntryPath.action;
-      }
-      if (action === 'rename') {
-        const oldFilePath = editedEntryPaths[0].path;
-        const newFilePath = editedEntryPaths[1].path;
-        const entry = currentDirectoryEntries.find(
-          (e) => e.path === oldFilePath,
-        );
-        if (entry) {
-          const fileNameTags = entry.isFile
-            ? extractTagsAsObjects(
-                newFilePath,
-                AppConfig.tagDelimiter,
-                PlatformIO.getDirSeparator(),
-              )
-            : []; // dirs dont have tags in filename
-          const newEntry = {
-            ...entry,
-            path: newFilePath,
-            name: extractFileName(newFilePath, PlatformIO.getDirSeparator()),
-            extension: extractFileExtension(
-              newFilePath,
-              PlatformIO.getDirSeparator(),
-            ),
-            tags: [
-              ...entry.tags.filter((tag) => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
-              ...fileNameTags,
-            ],
-          };
-          const newDirectoryEntries = currentDirectoryEntries.map((entry) =>
-            entry.path === oldFilePath ? newEntry : entry,
-          );
-          /!*if (searchMode.current) {
-            GlobalSearch.getInstance().setResults(newDirectoryEntries);
-          } else {*!/
-          setCurrentDirectoryEntries(newDirectoryEntries);
-          // setSelectedEntries newEntry to scroll into it
-          setSelectedEntries([newEntry]);
-          //}
-        }
-      }
-    }
-  }, [editedEntryPaths]);*/
-
   function getDefaultDirMeta(): TS.FileSystemEntryMeta {
     const perspective = getPerspective();
     const settings: TS.PerspectiveSettings = {
@@ -423,76 +372,6 @@ export const DirectoryContentContextProvider = ({
     if (reflect) {
       forceUpdate();
     }
-  }
-
-  /*function reflectRenameEntries(paths: Array<string[]>): Promise<boolean> {
-    const metaChanged = [];
-    const newEntries = paths
-      .map((path) => {
-        const entry = currentDirectoryEntries.current.find(
-          (e) => e.path === path[0],
-        );
-        if (path[0] === path[1]) {
-          metaChanged.push(entry);
-          return undefined;
-        }
-        return getNewEntry(entry, path[1]);
-      })
-      .filter((item) => item !== undefined);
-    if (newEntries.length > 0) {
-      const newDirectoryEntries = currentDirectoryEntries.current.map(
-        (entry) => {
-          const newEntry = newEntries.find(
-            (nEntry) => nEntry && nEntry.uuid === entry.uuid,
-          );
-          if (newEntry) {
-            return newEntry;
-          }
-          return entry;
-        },
-      );
-      setCurrentDirectoryEntries(newDirectoryEntries);
-      setSelectedEntries(newEntries);
-    }
-
-    if (metaChanged.length > 0) {
-      const enhancedEntriesPromises = metaChanged.map((entry) =>
-        getMetaForEntry(entry),
-      );
-      Promise.allSettled(enhancedEntriesPromises).then((results) => {
-        const entries = results
-          .filter(({ status }) => status === 'fulfilled')
-          .map((p) => (p as PromiseFulfilledResult<TS.FileSystemEntry>).value);
-        updateCurrentDirEntries(entries);
-      });
-      /!* Promise.all(enhancedEntriesPromises).then((entries) => {
-          updateCurrentDirEntries(entries);
-        });*!/
-    }
-    return Promise.resolve(true);
-  }*/
-
-  function getNewEntry(entry: TS.FileSystemEntry, newPath): TS.FileSystemEntry {
-    if (entry) {
-      const fileNameTags = entry.isFile
-        ? extractTagsAsObjects(
-            newPath,
-            AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator(),
-          )
-        : []; // dirs dont have tags in filename
-      return {
-        ...entry,
-        path: newPath,
-        name: extractFileName(newPath, PlatformIO.getDirSeparator()),
-        extension: extractFileExtension(newPath, PlatformIO.getDirSeparator()),
-        tags: [
-          ...entry.tags.filter((tag) => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
-          ...fileNameTags,
-        ],
-      };
-    }
-    return undefined;
   }
 
   function exitSearchMode() {
@@ -684,12 +563,6 @@ export const DirectoryContentContextProvider = ({
     return PlatformIO.listDirectoryPromise(
       directoryPath,
       [],
-      /*fsEntryMeta &&
-        fsEntryMeta.perspective &&
-        (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
-          fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
-        ? [] //'extractThumbPath']
-        : [], // mode,*/
       currentLocation ? currentLocation.ignorePatternPaths : [],
       resultsLimit,
     )
@@ -706,21 +579,11 @@ export const DirectoryContentContextProvider = ({
             showHiddenEntries,
           );
         }
-        /*dispatch(
-          AppActions.updateCurrentDirectoryPerspective(
-            fsEntryMeta ? fsEntryMeta.perspective : undefined
-          )
-        );*/
         return [];
       })
       .catch((error) => {
         // console.timeEnd('listDirectoryPromise');
         return loadDirectoryFailure(error);
-        /*dispatch(
-          AppActions.updateCurrentDirectoryPerspective(
-            fsEntryMeta ? fsEntryMeta.perspective : undefined
-          )
-        );*/
       });
   }
 
@@ -795,16 +658,6 @@ export const DirectoryContentContextProvider = ({
 
     isSearchMode.current = false;
 
-    /*if (
-      currentDirectoryPath.current &&
-      currentDirectoryPath.current.startsWith('./')
-    ) {
-      // relative paths
-      currentDirectoryPath.current = PlatformIO.resolveFilePath(
-        currentDirectoryPath.current
-      );
-    } else {*/
-    //}
     setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = directoryPath;
     updateHistory(
@@ -918,11 +771,6 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
-  /*const currentDirectoryPerspective: string = useMemo(
-    () => currentPerspective.current,
-    [currentDirectoryPath.current, currentPerspective.current]
-  );*/
-
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
     currentDirectoryDirs.current = dirs;
     forceUpdate();
@@ -939,40 +787,6 @@ export const DirectoryContentContextProvider = ({
       ...entries,
     ]);
   }
-
-  /*function removeDirectoryEntries(entryPaths: string[]) {
-    if (entryPaths.some((ePath) => ePath === currentDirectoryPath.current)) {
-      //handle currentDirectoryPath deleted
-      return openDirectory(
-        extractContainingDirectoryPath(
-          currentDirectoryPath.current,
-          PlatformIO.getDirSeparator(),
-        ),
-      );
-    } else {
-      const indexes = entryPaths
-        .map(function (path) {
-          return currentDirectoryEntries.current.findIndex(
-            (entry) => entry.path === path,
-          );
-        })
-        .filter((i) => i > -1)
-        .sort((a, b) => b - a);
-      /!*const uniqueIndexes = indexes
-        .filter(function (item, index) {
-          return indexes.indexOf(item) === index;
-        })*!/
-
-      if (indexes.length > 0) {
-        // delete in place (for fs watcher events unlink/add in 20ms)
-        for (const index of indexes) {
-          currentDirectoryEntries.current.splice(index, 1);
-        }
-
-        setCurrentDirectoryEntries([...currentDirectoryEntries.current]); //entries);
-      }
-    }
-  }*/
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
