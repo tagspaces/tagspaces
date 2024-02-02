@@ -21,7 +21,7 @@ getExtensions(directoryPath)
   });
 
 function writeExtensions(extensions, supportedFileTypes) {
-  extensions.push({
+  /*extensions.push({
     extensionId: '@tagspacespro/extensions/font-viewer',
     extensionName: 'Font Viewer',
     extensionTypes: ['viewer'],
@@ -32,7 +32,7 @@ function writeExtensions(extensions, supportedFileTypes) {
     type: 'ttf',
     color: '#ac21f3',
     viewer: '@tagspacespro/extensions/font-viewer',
-  });
+  });*/
   const generated =
     '/** GENERATED CODE - DO NOT MODIFY: This source file was generated automatically and any changes made to it may be overwritten */\n' +
     'export const extensionsFound = ' +
