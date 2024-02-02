@@ -146,6 +146,7 @@ export const IOActionsContextProvider = ({
     renameFilePromise,
     renameFilesPromise,
     moveFilesPromise,
+    reflectMoveFiles,
     renameDirectoryPromise,
     copyFilePromise,
     copyFilesWithProgress,
@@ -353,7 +354,7 @@ export const IOActionsContextProvider = ({
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator()),
     ]);
-    return moveFilesPromise(moveJobs, onProgress)
+    return moveFilesPromise(moveJobs, onProgress, false)
       .then(() => {
         showNotification(t('core:filesMovedSuccessful'));
         const moveMetaJobs = [];
@@ -413,15 +414,15 @@ export const IOActionsContextProvider = ({
           ]);
           return true;
         });
-        moveFilesPromise(moveMetaJobs, undefined, false)
+        return moveFilesPromise(moveMetaJobs, undefined, false)
           .then(() => {
             console.log('Moving meta and thumbs successful');
-            return true;
+            return reflectMoveFiles(moveJobs);
           })
           .catch((err) => {
             console.warn('At least one meta or thumb was not moved ' + err);
+            return reflectMoveFiles(moveJobs);
           });
-        return true;
       })
       .catch((err) => {
         console.warn('Moving files failed with ' + err);
