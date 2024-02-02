@@ -7,22 +7,4 @@ source_file = src/renderer/locales/en/core.json
 source_lang = en
 type        = KEYVALUEJSON
 
-[o:tagspaces:p:tagspaces:r:nsviewerimagejson]
-file_filter = extensions/extensions/image-viewer/locales/<lang>/ns.viewerImage.json
-source_file = extensions/extensions/image-viewer/locales/en/ns.viewerImage.json
-source_lang = en
-type        = KEYVALUEJSON
-
-[o:tagspaces:p:tagspaces:r:nsextensionjson]
-file_filter = extensions/extensions/md-editor/src/locales/<lang>/ns.extension.json
-source_file = extensions/extensions/md-editor/src/locales/en/ns.extension.json
-source_lang = en
-type        = KEYVALUEJSON
-
-[o:tagspaces:p:tagspaces:r:nsextensionjson]
-file_filter = extensions/extensions/common/locales/<lang>/ns.extension.json
-source_file = extensions/extensions/common/locales/en/ns.extension.json
-source_lang = en
-type        = KEYVALUEJSON
-
 
