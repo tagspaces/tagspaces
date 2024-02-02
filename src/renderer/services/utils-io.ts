@@ -243,15 +243,20 @@ export function enhanceOpenedEntry(
   );
 }*/
 
+/**
+ * sort in place
+ * @param directories
+ * @param metaArray
+ */
 export function orderDirectories(
-  directories,
-  metaArray: Array<TS.OrderVisibilitySettings>,
+  directories: TS.FileSystemEntry[],
+  metaArray: TS.OrderVisibilitySettings[],
 ) {
   // if (sortBy === 'custom') {
   try {
     if (metaArray && metaArray.length > 0) {
       const arrLength = directories.length;
-      return directories.sort((a, b) => {
+      directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
           (meta) => meta.name === a.name,
           // meta => meta.path === Object.keys(a)[0]
@@ -273,8 +278,6 @@ export function orderDirectories(
   } catch (e) {
     console.log('error orderDirectories:', e);
   }
-  // }
-  return directories;
 }
 
 export function orderByMetaArray(
@@ -565,34 +568,60 @@ export function createDirectoryIndex(
 /**
  *  get full entry properties - with full description
  */
-export async function getAllPropertiesPromise(
+export function getAllPropertiesPromise(
   entryPath: string,
 ): Promise<TS.FileSystemEntry> {
-  const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
-  let metaFilePath;
-  const dirSep = PlatformIO.getDirSeparator();
-  if (entryProps) {
-    metaFilePath = entryProps.isFile
-      ? getMetaFileLocationForFile(entryPath, dirSep)
-      : getMetaFileLocationForDir(entryPath, dirSep);
-    const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
-    if (metaFileProps.isFile) {
-      entryProps.meta = await loadJSONFile(metaFilePath);
-    }
-    return enhanceEntry(
-      entryProps,
-      AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator(),
-    );
-  }
-  console.warn('Error getting props for ' + entryPath);
-  return entryProps;
+  return PlatformIO.getPropertiesPromise(entryPath).then(
+    (entryProps: TS.FileSystemEntry) => {
+      if (entryProps) {
+        const metaFilePath = entryProps.isFile
+          ? getMetaFileLocationForFile(entryPath, PlatformIO.getDirSeparator())
+          : getMetaFileLocationForDir(entryPath, PlatformIO.getDirSeparator());
+        //const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
+        //if (metaFileProps.isFile) {
+        try {
+          return loadJSONFile(metaFilePath).then(
+            (meta: TS.FileSystemEntryMeta) => {
+              if (meta) {
+                return enhanceEntry(
+                  { ...entryProps, meta },
+                  AppConfig.tagDelimiter,
+                  PlatformIO.getDirSeparator(),
+                );
+              }
+              return enhanceEntry(
+                entryProps,
+                AppConfig.tagDelimiter,
+                PlatformIO.getDirSeparator(),
+              );
+            },
+          );
+        } catch (e) {
+          return enhanceEntry(
+            entryProps,
+            AppConfig.tagDelimiter,
+            PlatformIO.getDirSeparator(),
+          );
+        }
+      }
+      console.log('Error getting props for ' + entryPath);
+      return entryProps;
+    },
+  );
 }
 
-export async function loadJSONFile(filePath: string) {
+export function loadJSONFile(
+  filePath: string,
+): Promise<TS.FileSystemEntryMeta> {
   // console.debug('loadJSONFile:' + filePath);
-  const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
-  return loadJSONString(jsonContent);
+  return PlatformIO.loadTextFilePromise(filePath)
+    .then(
+      (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntryMeta,
+    )
+    .catch((e) => {
+      console.log('cannot load json:' + filePath, e);
+      return undefined;
+    });
 }
 
 export function saveAsTextFile(blob: any, filename: string) {
@@ -843,17 +872,13 @@ export async function loadLocationDataPromise(
       PlatformIO.getDirSeparator(),
       metaFile,
     );
-    let metaData;
-    try {
-      metaData = await loadJSONFile(metaFilePath);
-      metaData = {
+    const metaData = await loadJSONFile(metaFilePath);
+    if (metaData) {
+      return {
         ...metaData,
         description: getDescriptionPreview(metaData.description, 200),
       };
-    } catch (e) {
-      console.debug('cannot load json:' + metaFilePath, e);
     }
-    return metaData;
   }
   return undefined;
 }
@@ -891,16 +916,17 @@ export function loadFileMetaDataPromise(
       throw new Error('loadFileMetaDataPromise ' + metaFilePath + ' not exist');
     }
     return {
-      ...metaData,
+      id: getUuid(),
       isFile: true,
+      color: '',
+      tags: [],
+      appName: '',
+      appVersion: '',
+      // lastUpdated: 0,
+      ...metaData,
       description: fullDescription
         ? metaData.description
         : getDescriptionPreview(metaData.description, 200),
-      color: metaData.color || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || '',
     };
   });
 }
@@ -918,18 +944,18 @@ export function loadDirMetaDataPromise(
       throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
     }
     return {
-      ...metaData,
-      id: metaData.id || getUuid(),
+      id: getUuid(),
       isFile: false,
+      color: '',
+      perspective: 'grid',
+      tags: [],
+      appName: '',
+      appVersion: '',
+      // lastUpdated: 0,
+      ...metaData,
       description: fullDescription
         ? metaData.description
         : getDescriptionPreview(metaData.description, 200),
-      color: metaData.color || '',
-      perspective: metaData.perspective || '',
-      tags: metaData.tags || [],
-      appName: metaData.appName || '',
-      appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || '',
     };
   });
 }

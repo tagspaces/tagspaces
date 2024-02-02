@@ -17,11 +17,10 @@
  */
 
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
-import { createDirectoryIndex, toFsEntry } from '-/services/utils-io';
+import { createDirectoryIndex } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
@@ -30,14 +29,10 @@ import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
 import { hasIndex, loadIndex } from '@tagspaces/tagspaces-indexer';
 import Search from '-/services/search';
-import {
-  extractFileExtension,
-  extractFileName,
-  extractTagsAsObjects,
-  getThumbFileLocationForFile,
-} from '@tagspaces/tagspaces-common/paths';
+import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -51,10 +46,6 @@ type LocationIndexContextData = {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   setIndex: (i: TS.FileSystemEntry[]) => void;
-  reflectDeleteEntry: (path: string) => void;
-  reflectDeleteEntries: (paths: string[]) => void;
-  reflectCreateEntry: (newEntry: TS.FileSystemEntry) => void;
-  reflectRenameEntry: (path: string, newPath: string) => void;
   indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
 };
@@ -71,10 +62,6 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   searchLocationIndex: () => {},
   searchAllLocations: () => {},
   setIndex: () => {},
-  reflectDeleteEntry: () => {},
-  reflectDeleteEntries: () => {},
-  reflectCreateEntry: () => {},
-  reflectRenameEntry: () => {},
   indexUpdateSidecarTags: () => {},
   reflectUpdateSidecarMeta: () => {},
 });
@@ -87,15 +74,11 @@ export const LocationIndexContextProvider = ({
   children,
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
 
   const { currentLocation, getLocationPath } = useCurrentLocationContext();
-  const {
-    setSearchResults,
-    appendSearchResults,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-  } = useDirectoryContentContext();
+  const { setSearchResults, appendSearchResults } =
+    useDirectoryContentContext();
+  const { actions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
@@ -110,6 +93,25 @@ export const LocationIndexContextProvider = ({
     clearDirectoryIndex();
   }, [currentLocation]);
 
+  useEffect(() => {
+    if (actions && actions.length > 0) {
+      for (const action of actions) {
+        if (action.action === 'add') {
+          reflectCreateEntry(action.entry);
+        } else if (action.action === 'delete') {
+          reflectDeleteEntry(action.entry.path);
+        } else if (action.action === 'update') {
+          let i = index.current.findIndex(
+            (e) => e.path === action.oldEntryPath,
+          );
+          if (i !== -1) {
+            index.current[i] = action.entry;
+          }
+        }
+      }
+    }
+  }, [actions]);
+
   function setIndex(i) {
     index.current = i;
     if (index.current && index.current.length > 0) {
@@ -121,18 +123,6 @@ export const LocationIndexContextProvider = ({
 
   function getIndex() {
     return index.current;
-  }
-
-  function deleteEntry(path: string) {
-    removeDirectoryEntries([path]);
-    reflectDeleteEntry(path);
-    dispatch(AppActions.reflectDeleteEntry(path));
-  }
-  function createEntry(path: string, isFile: boolean) {
-    const entry = toFsEntry(path, isFile);
-    addDirectoryEntries([entry]);
-    reflectCreateEntry(entry);
-    dispatch(AppActions.reflectCreateEntry(path, isFile));
   }
 
   function reflectDeleteEntry(path: string) {
@@ -147,18 +137,6 @@ export const LocationIndexContextProvider = ({
     }
   }
 
-  function reflectDeleteEntries(paths: string[]) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    for (let i = 0; i < index.current.length; i += 1) {
-      if (paths.some((path) => index.current[i].path === path)) {
-        index.current = index.current.splice(i, 1);
-        i -= 1;
-      }
-    }
-  }
-
   function reflectCreateEntry(newEntry: TS.FileSystemEntry) {
     if (!index.current || index.current.length < 1) {
       return;
@@ -167,36 +145,9 @@ export const LocationIndexContextProvider = ({
       (entry) => entry.path === newEntry.path,
     );
     if (!entryFound) {
-      index.current = [...index.current, newEntry];
+      index.current.push(newEntry);
     }
     // else todo update index entry ?
-  }
-
-  function reflectRenameEntry(path: string, newPath: string) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    for (let i = 0; i < index.current.length; i += 1) {
-      if (index.current[i].path === path) {
-        index.current[i].path = newPath;
-        index.current[i].name = extractFileName(
-          newPath,
-          PlatformIO.getDirSeparator(),
-        );
-        index.current[i].extension = extractFileExtension(
-          newPath,
-          PlatformIO.getDirSeparator(),
-        );
-        index.current[i].tags = [
-          ...index.current[i].tags.filter((tag) => tag.type === 'sidecar'), // add only sidecar tags
-          ...extractTagsAsObjects(
-            newPath,
-            AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator(),
-          ),
-        ];
-      }
-    }
   }
 
   function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
@@ -252,13 +203,6 @@ export const LocationIndexContextProvider = ({
           setIndex(directoryIndex);
         }
         isIndexing.current = false;
-        /* if (Pro && Pro.Indexer) {
-          Pro.Indexer.persistIndex(
-            directoryPath,
-            directoryIndex,
-            PlatformIO.getDirSeparator()
-          );
-        } */
         return true;
       })
       .catch((err) => {
@@ -324,16 +268,6 @@ export const LocationIndexContextProvider = ({
         }),
       ),
     );
-    /* .then(directoryIndex => {
-          if (Pro && Pro.Indexer) {
-            Pro.Indexer.persistIndex(
-              nextPath,
-              directoryIndex,
-              PlatformIO.getDirSeparator()
-            );
-          }
-          return true;
-        }) */
 
     return Promise.all(promises)
       .then((e) => {
@@ -354,14 +288,6 @@ export const LocationIndexContextProvider = ({
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
     window.walkCanceled = false;
-    /*if (!currentLocation) {
-      if (searchQuery.currentDirectory) {
-        currentLocation = getLocationByPath(
-          state,
-          searchQuery.currentDirectory
-        );
-      }
-    }*/
     if (!currentLocation) {
       showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       return;
@@ -505,15 +431,7 @@ export const LocationIndexContextProvider = ({
               location.ignorePatternPaths,
               enableWS,
             );
-            /* if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
-              Pro.Indexer.persistIndex(
-                nextPath,
-                directoryIndex,
-                PlatformIO.getDirSeparator()
-              );
-            } */
           } else {
-            // if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await loadIndex(
               {
@@ -624,20 +542,14 @@ export const LocationIndexContextProvider = ({
       searchAllLocations,
       setIndex,
       getIndex,
-      reflectDeleteEntry,
-      reflectDeleteEntries,
-      reflectCreateEntry,
-      reflectRenameEntry,
+      //reflectDeleteEntry,
+      //reflectDeleteEntries,
+      //reflectCreateEntry,
+      //reflectRenameEntry,
       indexUpdateSidecarTags,
       reflectUpdateSidecarMeta,
     };
-  }, [
-    currentLocation,
-    index,
-    isIndexing.current,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-  ]);
+  }, [currentLocation, index, isIndexing.current]);
 
   return (
     <LocationIndexContext.Provider value={context}>

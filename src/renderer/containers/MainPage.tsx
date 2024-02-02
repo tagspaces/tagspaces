@@ -647,7 +647,6 @@ function MainPage(props: Props) {
             onClose={toggleCreateDirectoryDialog}
             selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
             callback={props.isCreateDirectoryOpened?.callback}
-            reflect={props.isCreateDirectoryOpened?.reflect}
           />
         )}
         <NewEntryDialog
@@ -685,7 +684,7 @@ function MainPage(props: Props) {
             list={selectedEntries.map((fsEntry) => fsEntry.name)}
             confirmCallback={(result) => {
               if (result && selectedEntries) {
-                deleteEntries(selectedEntries).then(
+                deleteEntries(...selectedEntries).then(
                   (success) =>
                     success &&
                     selectedEntries.length > 1 &&

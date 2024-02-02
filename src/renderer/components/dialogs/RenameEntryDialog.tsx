@@ -37,7 +37,7 @@ import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
@@ -49,7 +49,7 @@ interface Props {
 function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
-  const { renameDirectory, renameFile } = useFsActionsContext();
+  const { renameDirectory, renameFile } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];

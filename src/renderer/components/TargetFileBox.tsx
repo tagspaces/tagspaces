@@ -30,7 +30,6 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -47,9 +46,7 @@ function TargetFileBox(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
-  const { setSelectedEntries } = useSelectedEntriesContext();
-  const { currentDirectoryPath, addDirectoryEntries } =
-    useDirectoryContentContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const ref = useRef<HTMLDivElement>(null);
   const { setMoveCopyDialogOpened } = props;
 
@@ -80,9 +77,9 @@ function TargetFileBox(props: Props) {
       dispatch(AppActions.toggleUploadDialog());
       return uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
-          addDirectoryEntries(fsEntries);
+          /*addDirectoryEntries(fsEntries);
           dispatch(AppActions.reflectCreateEntries(fsEntries));
-          setSelectedEntries(fsEntries);
+          setSelectedEntries(fsEntries);*/
           return true;
         })
         .catch((error) => {

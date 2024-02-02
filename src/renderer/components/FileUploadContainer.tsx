@@ -21,8 +21,6 @@ import { useDispatch } from 'react-redux';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   id: string;
@@ -39,9 +37,6 @@ const FileUploadContainer = forwardRef(
     const dispatch: AppDispatch = useDispatch();
     const { id, directoryPath } = props;
     const { uploadFilesAPI } = useIOActionsContext();
-    const { setSelectedEntries } = useSelectedEntriesContext();
-    const { currentDirectoryPath, addDirectoryEntries } =
-      useDirectoryContentContext();
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -98,11 +93,11 @@ const FileUploadContainer = forwardRef(
         onUploadProgress,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
-          if (directoryPath === currentDirectoryPath) {
+          /*if (directoryPath === currentDirectoryPath) {
             addDirectoryEntries(fsEntries);
             dispatch(AppActions.reflectCreateEntries(fsEntries));
             setSelectedEntries(fsEntries);
-          }
+          }*/
           return true;
         })
         .catch((error) => {

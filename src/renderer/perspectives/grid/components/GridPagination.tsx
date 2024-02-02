@@ -50,7 +50,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
@@ -109,8 +108,7 @@ function GridPagination(props: Props) {
   } = usePerspectiveSettingsContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
-  const { moveFiles } = useIOActionsContext();
-  const { openFileNatively } = useFsActionsContext();
+  const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const { currentDirectoryEntries, openDirectory, directoryMeta } =
@@ -152,12 +150,6 @@ function GridPagination(props: Props) {
     );
     forceUpdate();
   }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);
-
-  /*useEffect(() => {
-    if (containerEl && containerEl.current) {
-      containerEl.current.scrollTop = 0;
-    }
-  }, [currentDirectoryEntries]);*/
 
   const handleChange = (event, value) => {
     setCurrentPage(value);

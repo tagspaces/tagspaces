@@ -98,7 +98,7 @@ import { LinkIcon } from '-/components/CommonIcons';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -202,7 +202,7 @@ function EntryProperties(props: Props) {
   const theme = useTheme();
   const { openedEntry, dirProps, updateOpenedFile, sharingLink } =
     useOpenedEntryContext();
-  const { renameDirectory, renameFile } = useFsActionsContext();
+  const { renameDirectory, renameFile } = useIOActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const {
     currentDirectoryPath,
