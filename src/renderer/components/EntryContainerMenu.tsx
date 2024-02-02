@@ -24,11 +24,11 @@ import {
   ParentFolderIcon,
   ReloadIcon,
   CloseIcon,
+  DownloadIcon,
 } from '-/components/CommonIcons';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
-import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import {
@@ -215,7 +215,7 @@ function EntryContainerMenu(props: Props) {
         onClick={() => downloadFile()}
       >
         <ListItemIcon>
-          <FileDownloadIcon />
+          <DownloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>,

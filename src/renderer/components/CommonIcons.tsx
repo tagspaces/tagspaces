@@ -131,3 +131,5 @@ export { default as StopIcon } from '@mui/icons-material/Stop';
 export { default as PauseIcon } from '@mui/icons-material/Pause';
 
 export { default as SaveIcon } from '@mui/icons-material/Save';
+
+export { default as DownloadIcon } from '@mui/icons-material/DownloadForOffline';
