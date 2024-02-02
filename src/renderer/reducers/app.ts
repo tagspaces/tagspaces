@@ -98,16 +98,16 @@ export const types = {
   OPEN_SEARCH_PANEL: 'APP/OPEN_SEARCH_PANEL',
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
-  REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
-  REFLECT_DELETE_ENTRIES: 'APP/REFLECT_DELETE_ENTRIES',
-  REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
-  REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
-  REFLECT_CREATE_ENTRIES: 'APP/REFLECT_CREATE_ENTRIES',
+  //REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
+  //REFLECT_DELETE_ENTRIES: 'APP/REFLECT_DELETE_ENTRIES',
+  //REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
+  //REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
+  //REFLECT_CREATE_ENTRIES: 'APP/REFLECT_CREATE_ENTRIES',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   //UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   //UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
-  REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
+  //REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   // SET_ISLOADING: 'APP/SET_ISLOADING',
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
   REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
@@ -447,57 +447,25 @@ export default (state: any = initialState, action: any) => {
         searchFilter: action.searchFilter,
       };
     }
-    case types.REFLECT_DELETE_ENTRY: {
-      /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
-        entry => entry.path !== action.path
-      );*/
+    /*case types.REFLECT_DELETE_ENTRY: {
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
-      // check if currentDirectoryEntries or openedFiles changed
-      /*if (
-        state.currentDirectoryEntries.length > newDirectoryEntries.length
-      ) {
-        return {
-          ...state,
-          editedEntryPaths,
-          currentDirectoryEntries: newDirectoryEntries
-        };
-      }*/
       return {
         ...state,
         editedEntryPaths,
       };
     }
     case types.REFLECT_DELETE_ENTRIES: {
-      /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
-        entry => !action.paths.some(path => path === entry.path)
-      );*/
       const editedEntryPaths = action.paths.map((path) => ({
         action: 'delete',
         path: path,
       }));
-      // check if currentDirectoryEntries or openedFiles changed
-      /*if (state.currentDirectoryEntries.length > newDirectoryEntries.length) {
-        return {
-          ...state,
-          editedEntryPaths,
-          currentDirectoryEntries: newDirectoryEntries
-        };
-      }*/
       return {
         ...state,
         editedEntryPaths,
       };
-    }
-    case types.REFLECT_CREATE_ENTRY: {
+    }*/
+    /*case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
-      // Prevent adding entry twice e.g. by entry rename in the watcher
-      /*if (
-        state.currentDirectoryEntries.some(
-          entry => entry.path === newEntry.path
-        )
-      ) {
-        return state;
-      }*/
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -505,38 +473,12 @@ export default (state: any = initialState, action: any) => {
           uuid: newEntry.uuid,
         },
       ];
-      // clean all dir separators to have platform independent path match
-      /*if (
-        // entryIndex < 0 &&
-        extractParentDirectoryPath(
-          action.newEntry.path,
-          PlatformIO.getDirSeparator()
-        ).replace(/[/\\]/g, '') ===
-        state.currentDirectoryPath.replace(/[/\\]/g, '')
-      ) {
-        return {
-          ...state,
-          editedEntryPaths,
-          currentDirectoryEntries: [
-            ...state.currentDirectoryEntries,
-            action.newEntry
-          ]
-        };
-      }*/
       return {
         ...state,
         editedEntryPaths,
       };
-    }
-    case types.REFLECT_CREATE_ENTRIES: {
-      /*if (
-        action.fsEntries.length > 0 &&
-        extractParentDirectoryPath(
-          action.fsEntries[0].path,
-          PlatformIO.getDirSeparator()
-        ).replace(/[/\\]/g, '') ===
-          state.currentDirectoryPath.replace(/[/\\]/g, '')
-      ) {*/
+    }*/
+    /*case types.REFLECT_CREATE_ENTRIES: {
       const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
         (newEntry) => ({
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -547,21 +489,9 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         editedEntryPaths,
-        /*currentDirectoryEntries: [
-            ...state.currentDirectoryEntries,
-            ...action.fsEntries
-          ]*/
       };
-      /*}
-      return state;*/
-    }
-    case types.REFLECT_RENAME_ENTRY: {
-      /*const extractedTags = extractTagsAsObjects(
-        action.newPath,
-        AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );*/
-
+    }*/
+    /*case types.REFLECT_RENAME_ENTRY: {
       const editedEntryPaths = [
         { action: 'rename', path: action.path },
         { action: 'rename', path: action.newPath },
@@ -570,75 +500,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         editedEntryPaths,
-        /*currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
-          return {
-            ...entry,
-            path: action.newPath,
-            // thumbPath: getThumbFileLocationForFile(action.newPath, PlatformIO.getDirSeparator()), // not needed due timing issue
-            name: extractFileName(action.newPath, PlatformIO.getDirSeparator()),
-            extension: extractFileExtension(
-              action.newPath,
-              PlatformIO.getDirSeparator()
-            ),
-            tags: [
-              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
-              ...fileNameTags
-            ]
-          };
-        })*/
-      };
-    }
-    /*case types.UPDATE_CURRENTDIR_ENTRIES: {
-      if (
-        state.currentDirectoryEntries &&
-        state.currentDirectoryEntries.length > 0
-      ) {
-        const newDirEntries = state.currentDirectoryEntries.map(
-          currentEntry => {
-            const updatedEntries = action.dirEntries.filter(
-              newEntry => newEntry.path === currentEntry.path
-            );
-            if (updatedEntries && updatedEntries.length > 0) {
-              const updatedEntry = updatedEntries.reduce(
-                (prevValue, currentValue) => {
-                  return merge(currentValue, prevValue);
-                }
-              );
-              return merge(updatedEntry, currentEntry);
-            }
-            return currentEntry;
-          }
-        );
-
-        return {
-          ...state,
-          currentDirectoryEntries: newDirEntries
-        };
-      }
-      return {
-        ...state,
-        currentDirectoryEntries: action.dirEntries
       };
     }*/
-    case types.REFLECT_EDITED_ENTRY_PATHS: {
+    /*case types.REFLECT_EDITED_ENTRY_PATHS: {
       return {
         ...state,
         editedEntryPaths: action.editedEntryPaths, // .map(path => ({ action: 'edit', path }))
-      };
-    }
-    /*case types.UPDATE_CURRENTDIR_ENTRY: {
-      return {
-        ...state,
-        // warning: edit action is handled in FolderContainer; to reload column in KanBan if properties is changed (dir color)
-        // editedEntryPaths: [{ action: 'edit', path: action.path }],
-        currentDirectoryEntries: updateFsEntries(
-          state.currentDirectoryEntries,
-          [action.entry]
-        )
       };
     }*/
     case types.OPEN_LOCATIONMANAGER_PANEL: {
@@ -998,7 +865,7 @@ export const actions = {
     type: types.SET_SEARCH_FILTER,
     searchFilter,
   }),
-  reflectDeleteEntry: (path: string) => ({
+  /*reflectDeleteEntry: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path,
   }),
@@ -1013,17 +880,17 @@ export const actions = {
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => ({
     type: types.REFLECT_CREATE_ENTRIES,
     fsEntries,
-  }),
+  }),*/
   /*reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
     dispatch(actions.reflectCreateEntriesInt(fsEntries));
     dispatch(actions.setSelectedEntries(fsEntries));
   },*/
-  reflectCreateEntry:
+  /*reflectCreateEntry:
     (path: string, isFile: boolean) => (dispatch: (action) => void) => {
       dispatch(actions.reflectCreateEntries([toFsEntry(path, isFile)]));
-    },
+    },*/
   /*reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
     dispatch: (action) => void
   ) => {
@@ -1031,11 +898,11 @@ export const actions = {
     dispatch(actions.reflectCreateEntryInt(newEntry));
     //GlobalSearch.getInstance().reflectCreateEntry(newEntry);
   },*/
-  reflectRenameEntry: (path: string, newPath: string) => ({
+  /*reflectRenameEntry: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
     path,
     newPath,
-  }),
+  }),*/
   /*reflectRenameEntry: (path: string, newPath: string) => (
     dispatch: (action) => void
   ) => {
@@ -1043,10 +910,10 @@ export const actions = {
     // GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
   },*/
-  reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
+  /*reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
     editedEntryPaths,
-  }),
+  }),*/
   /*openFileNatively: (selectedFile: string) => (
     dispatch: (action) => void,
     getState: () => any
@@ -1078,7 +945,7 @@ export const getLastBackgroundColorChange = (state: any) =>
 export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
-export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
+//export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
 /*export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryDescription = (state: any) =>

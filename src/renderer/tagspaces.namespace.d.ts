@@ -99,6 +99,12 @@ export namespace TS {
 
   type Uuid = string;
 
+  interface EditAction {
+    action: 'add' | 'delete' | 'update';
+    entry: TS.FileSystemEntry;
+    oldEntryPath?: string;
+  }
+
   interface Tag {
     title?: string;
     /**

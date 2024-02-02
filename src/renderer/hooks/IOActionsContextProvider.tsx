@@ -17,7 +17,7 @@
  */
 
 import React, { createContext, useMemo } from 'react';
-import { Pro } from '-/pro';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -32,11 +32,13 @@ import {
   getThumbFileLocationForFile,
   joinPaths,
   normalizePath,
+  extractTags,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  generateFileName,
   getThumbPath,
   loadFileMetaDataPromise,
   toFsEntry,
@@ -52,23 +54,18 @@ import {
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { getUseTrashCan } from '-/reducers/settings';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import {
+  getPrefixTagContainer,
+  getUseTrashCan,
+  getWarningOpeningFilesExternally,
+} from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
-type extractOptions = {
-  EXIFGeo?: boolean;
-  EXIFDateTime?: boolean;
-  IPTCDescription?: boolean;
-  IPTCTags?: boolean;
-};
 type IOActionsContextData = {
-  extractContent: (options?: extractOptions) => Promise<boolean>;
-  createDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
-  deleteEntries: (entries: TS.FileSystemEntry[]) => Promise<boolean>;
-  deleteDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
-  deleteFile: (filePath: string, uuid: string, reflect?) => Promise<boolean>;
+  createDirectory: (directoryPath: string) => Promise<boolean>;
+  deleteEntries: (...entries: TS.FileSystemEntry[]) => Promise<boolean>;
+  deleteDirectory: (directoryPath: string) => Promise<boolean>;
+  deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
   moveDirs: (
     dirPaths: Array<string>,
     targetPath: string,
@@ -106,21 +103,31 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
+  renameDirectory: (
+    directoryPath: string,
+    newDirectoryName: string,
+  ) => Promise<string>;
+  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  openFileNatively: (selectedFile?: string) => void;
+  duplicateFile: (selectedFilePath: string) => void;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
-  extractContent: undefined,
   createDirectory: undefined,
   deleteEntries: undefined,
   deleteDirectory: undefined,
   deleteFile: undefined,
   moveDirs: undefined,
-  moveFiles: () => Promise.resolve(false),
-  copyDirs: () => Promise.resolve(false),
-  copyFiles: () => Promise.resolve(false),
-  downloadFile: () => Promise.resolve(undefined),
-  uploadFilesAPI: () => Promise.resolve([]),
-  uploadFiles: () => Promise.resolve([]),
+  moveFiles: undefined,
+  copyDirs: undefined,
+  copyFiles: undefined,
+  downloadFile: undefined,
+  uploadFilesAPI: undefined,
+  uploadFiles: undefined,
+  renameDirectory: undefined,
+  renameFile: undefined,
+  openFileNatively: undefined,
+  duplicateFile: undefined,
 });
 
 export type IOActionsContextProviderProps = {
@@ -132,259 +139,184 @@ export const IOActionsContextProvider = ({
 }: IOActionsContextProviderProps) => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { showNotification, hideNotifications } = useNotificationContext();
-  const { addTags } = useTaggingActionsContext();
-  const { copyFilesWithProgress, deleteFilesPromise } =
-    usePlatformFacadeContext();
+  const { showNotification } = useNotificationContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const {
     createDirectoryPromise,
+    renameFilePromise,
     renameFilesPromise,
+    moveFilesPromise,
+    renameDirectoryPromise,
+    copyFilePromise,
+    copyFilesWithProgress,
     copyDirectoryPromise,
     moveDirectoryPromise,
     saveFilePromise,
     saveBinaryFilePromise,
-    deleteFilePromise,
-    deleteDirectoryPromise,
+    deleteEntriesPromise,
   } = usePlatformFacadeContext();
-  const {
-    reflectDeleteDirectory,
-    reflectDeleteFile,
-    reflectRenameOpenedEntry,
-  } = useOpenedEntryContext();
-  const {
-    currentDirectoryEntries,
-    currentDirectoryPath,
-    loadParentDirectoryContent,
-    addDirectoryEntries,
-    removeDirectoryEntries,
-  } = useDirectoryContentContext();
-  const { setSelectedEntries } = useSelectedEntriesContext();
-  const { reflectDeleteEntry, reflectCreateEntry, reflectDeleteEntries } =
-    useLocationIndexContext();
-  const useTrashCan = useSelector(getUseTrashCan);
+  const { currentDirectoryPath, openDirectory } = useDirectoryContentContext();
+  const warningOpeningFilesExternally = useSelector(
+    getWarningOpeningFilesExternally,
+  );
+  const prefixTagContainer = useSelector(getPrefixTagContainer);
 
-  function extractContent(
-    options: extractOptions = {
-      EXIFGeo: true,
-      EXIFDateTime: true,
-      IPTCDescription: true,
-      IPTCTags: true,
-    },
-  ): Promise<boolean> {
-    if (!Pro || !Pro.ContentExtractor) {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-      return Promise.resolve(false);
-    }
-    showNotification('Extracting content...', 'info', false);
-    Pro.ContentExtractor.extractContent(
-      currentDirectoryEntries,
-      addTags,
-      options,
-    ).then((success) => {
-      hideNotifications();
-      return success;
-    });
+  function createDirectory(directoryPath: string) {
+    return createDirectoryPromise(directoryPath)
+      .then((result) => {
+        if (result !== undefined && result.dirPath !== undefined) {
+          // eslint-disable-next-line no-param-reassign
+          directoryPath = result.dirPath;
+        }
+        console.log(`Creating directory ${directoryPath} successful.`);
+        showNotification(
+          `Creating directory ${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator(),
+          )} successful.`,
+          'default',
+          true,
+        );
+        return true;
+      })
+      .catch((error) => {
+        console.warn('Error creating directory: ' + error);
+        showNotification(
+          `Error creating directory '${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator(),
+          )}'`,
+          'error',
+          true,
+        );
+        return false;
+        // dispatch stopLoadingAnimation
+      });
   }
 
-  const createDirectory = useMemo(() => {
-    return (directoryPath: string, reflect = true) =>
-      createDirectoryPromise(directoryPath)
-        .then((result) => {
-          if (result !== undefined && result.dirPath !== undefined) {
-            // eslint-disable-next-line no-param-reassign
-            directoryPath = result.dirPath;
+  function deleteEntries(...entries: TS.FileSystemEntry[]): Promise<boolean> {
+    if (entries && entries.length > 0) {
+      return deleteEntriesPromise(...entries)
+        .then((success) => {
+          if (success) {
+            showNotification(
+              t('deletingEntriesSuccessful', {
+                dirPath: entries.map((e) => e.path).join(),
+              }),
+              'default',
+              true,
+            );
           }
-          console.log(`Creating directory ${directoryPath} successful.`);
-          if (reflect) {
-            const entry = toFsEntry(directoryPath, false);
-            setSelectedEntries([entry]);
-            addDirectoryEntries([entry]);
-            reflectCreateEntry(entry);
-            dispatch(AppActions.reflectCreateEntry(directoryPath, false));
-          }
-          showNotification(
-            `Creating directory ${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator(),
-            )} successful.`,
-            'default',
-            true,
-          );
-          return true;
-        })
-        .catch((error) => {
-          console.warn('Error creating directory: ' + error);
-          showNotification(
-            `Error creating directory '${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator(),
-            )}'`,
-            'error',
-            true,
-          );
-          return false;
-          // dispatch stopLoadingAnimation
-        });
-  }, [currentDirectoryEntries]);
 
-  const deleteEntries = useMemo(() => {
-    return (entries: TS.FileSystemEntry[]) => {
-      const deletePromises = entries.map((fsEntry) => {
-        if (fsEntry.isFile) {
-          return deleteFile(fsEntry.path, fsEntry.uuid, false);
-        }
-        return deleteDirectory(fsEntry.path, false);
-      });
-      return Promise.all(deletePromises)
-        .then((delResult) => {
-          const notDeletedEntries = [];
-          const deletedEntries = [];
-          for (let i = 0; i < delResult.length; i++) {
-            const entry = entries[i];
-            if (delResult[i]) {
-              deletedEntries.push(entry.path);
-              // reflect opened entry
-              if (entry.isFile) {
-                reflectDeleteFile(entry.path);
-              } else {
-                reflectDeleteDirectory(entry.path);
-              }
-            } else {
-              notDeletedEntries.push(entry);
-            }
-          }
-          dispatch(AppActions.reflectDeleteEntries(deletedEntries));
-          removeDirectoryEntries(
-            entries
-              .filter((e) => !notDeletedEntries.some((n) => n.path === e.path))
-              .map((e) => e.path),
-          );
-          setSelectedEntries(notDeletedEntries);
-          return true;
+          return success;
         })
         .catch((err) => {
-          console.warn('Deleting file failed', err);
+          console.log('Deleting failed', err);
           return false;
         });
-    };
-  }, [currentDirectoryEntries, reflectDeleteFile, reflectDeleteDirectory]);
+    }
+  }
 
-  const deleteDirectory = useMemo(() => {
-    return (directoryPath: string, reflect = true) =>
-      deleteDirectoryPromise(directoryPath, useTrashCan)
-        .then(() => {
-          if (reflect) {
-            if (directoryPath === currentDirectoryPath) {
-              loadParentDirectoryContent();
-              // close opened entries in deleted dir
-              reflectDeleteDirectory(directoryPath);
-            } else {
-              removeDirectoryEntries([directoryPath]);
-              dispatch(AppActions.reflectDeleteEntry(directoryPath));
-            }
-          }
-          // change index
-          reflectDeleteEntry(directoryPath);
-          showNotification(
-            t(
-              'deletingDirectorySuccessfull' as any,
-              {
-                dirPath: extractDirectoryName(
-                  directoryPath,
-                  PlatformIO.getDirSeparator(),
-                ),
-              } as any,
-            ) as string,
-            'default',
-            true,
-          );
-          return true;
-        })
-        .catch((error) => {
-          console.warn('Error while deleting directory: ' + error);
-          showNotification(
-            t(
-              'errorDeletingDirectoryAlert' as any,
-              {
-                dirPath: extractDirectoryName(
-                  directoryPath,
-                  PlatformIO.getDirSeparator(),
-                ),
-              } as any,
-            ) as string,
-            'error',
-            true,
-          );
-          return false;
-          // dispatch stopLoadingAnimation
-        });
-  }, [currentDirectoryEntries, useTrashCan, reflectDeleteDirectory]);
+  function deleteDirectory(directoryPath: string) {
+    return deleteEntriesPromise(toFsEntry(directoryPath, false))
+      .then(() => {
+        showNotification(
+          t(
+            'deletingDirectorySuccessfull' as any,
+            {
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.getDirSeparator(),
+              ),
+            } as any,
+          ) as string,
+          'default',
+          true,
+        );
+        return true;
+      })
+      .catch((error) => {
+        console.warn('Error while deleting directory: ' + error);
+        showNotification(
+          t(
+            'errorDeletingDirectoryAlert' as any,
+            {
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.getDirSeparator(),
+              ),
+            } as any,
+          ) as string,
+          'error',
+          true,
+        );
+        return false;
+        // dispatch stopLoadingAnimation
+      });
+  }
 
-  const deleteFile = useMemo(() => {
-    return (filePath: string, uuid: string, reflect = true) =>
-      deleteFilePromise(filePath, useTrashCan)
-        .then(() => {
-          if (reflect) {
-            // close file opener if this file is opened
-            reflectDeleteFile(filePath);
-            removeDirectoryEntries([filePath]);
-            dispatch(AppActions.reflectDeleteEntry(filePath));
-          }
-          // change index
-          reflectDeleteEntry(filePath);
-          showNotification(
-            `Deleting file ${filePath} successful.`,
-            'default',
-            true,
-          );
-          // Delete revisions
-          const backupFilePath = getBackupFileLocation(
-            filePath,
-            uuid,
-            PlatformIO.getDirSeparator(),
-          );
-          const backupPath = extractContainingDirectoryPath(
-            backupFilePath,
-            PlatformIO.getDirSeparator(),
-          );
-          PlatformIO.deleteDirectoryPromise(backupPath)
-            .then(() => {
-              console.log('Cleaning revisions successful for ' + filePath);
-              return true;
-            })
-            .catch((err) => {
-              console.warn('Cleaning revisions failed ', err);
-            });
-          // Delete sidecar file and thumb
-          deleteFilesPromise([
+  function deleteFile(filePath: string, uuid: string) {
+    return deleteEntriesPromise(toFsEntry(filePath, true))
+      .then(() => {
+        showNotification(
+          `Deleting file ${filePath} successful.`,
+          'default',
+          true,
+        );
+        // Delete revisions
+        const backupFilePath = getBackupFileLocation(
+          filePath,
+          uuid,
+          PlatformIO.getDirSeparator(),
+        );
+        const backupPath = extractContainingDirectoryPath(
+          backupFilePath,
+          PlatformIO.getDirSeparator(),
+        );
+        PlatformIO.deleteDirectoryPromise(backupPath)
+          .then(() => {
+            console.log('Cleaning revisions successful for ' + filePath);
+            return true;
+          })
+          .catch((err) => {
+            console.warn('Cleaning revisions failed ', err);
+          });
+        // Delete sidecar file and thumb
+        deleteEntriesPromise(
+          toFsEntry(
             getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+            true,
+          ),
+          toFsEntry(
             getThumbFileLocationForFile(
               filePath,
               PlatformIO.getDirSeparator(),
               false,
             ),
-          ])
-            .then(() => {
-              console.log(
-                'Cleaning meta file and thumb successful for ' + filePath,
-              );
-              return true;
-            })
-            .catch((err) => {
-              console.warn('Cleaning meta file and thumb failed with ' + err);
-            });
-          return true;
-        })
-        .catch((error) => {
-          console.warn('Error while deleting file: ' + error);
-          showNotification(
-            `Error while deleting file ${filePath}`,
-            'error',
             true,
-          );
-          return false;
-        });
-  }, [currentDirectoryEntries, useTrashCan, reflectDeleteFile]);
+          ),
+        )
+          .then(() => {
+            console.log(
+              'Cleaning meta file and thumb successful for ' + filePath,
+            );
+            return true;
+          })
+          .catch((err) => {
+            console.warn('Cleaning meta file and thumb failed with ' + err);
+          });
+        return true;
+      })
+      .catch((error) => {
+        console.warn('Error while deleting file: ' + error);
+        showNotification(
+          `Error while deleting file ${filePath}`,
+          'error',
+          true,
+        );
+        return false;
+      });
+  }
 
   function moveDirs(
     dirPaths: Array<any>,
@@ -399,11 +331,7 @@ export const IOActionsContextProvider = ({
         onProgress,
       )
         .then((newDirPath) => {
-          removeDirectoryEntries([path]);
-          reflectRenameOpenedEntry(path, newDirPath);
           console.log('Moving dir from ' + path + ' to ' + targetPath);
-          reflectDeleteEntry(path);
-          dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
         .catch((err) => {
@@ -425,18 +353,9 @@ export const IOActionsContextProvider = ({
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator()),
     ]);
-    return renameFilesPromise(moveJobs, onProgress)
+    return moveFilesPromise(moveJobs, onProgress)
       .then(() => {
-        removeDirectoryEntries(paths);
-        for (let i = 0; i < moveJobs.length; i++) {
-          const [srcPath, destPath] = moveJobs[i];
-          reflectRenameOpenedEntry(srcPath, destPath);
-        }
         showNotification(t('core:filesMovedSuccessful'));
-        // moved files should be added to the index, if the target dir in index
-        reflectDeleteEntries(paths);
-        dispatch(AppActions.reflectDeleteEntries(paths));
-
         const moveMetaJobs = [];
         moveJobs.map((job) => {
           // Move revisions
@@ -494,7 +413,7 @@ export const IOActionsContextProvider = ({
           ]);
           return true;
         });
-        renameFilesPromise(moveMetaJobs)
+        moveFilesPromise(moveMetaJobs, undefined, false)
           .then(() => {
             console.log('Moving meta and thumbs successful');
             return true;
@@ -625,16 +544,7 @@ export const IOActionsContextProvider = ({
           }
           return fsEntry;
         });
-      })
-      .then((fsEntry: TS.FileSystemEntry) => {
-        reflectCreateEntry(fsEntry);
-        addDirectoryEntries([fsEntry]);
-        dispatch(AppActions.reflectCreateEntries([fsEntry]));
-        setSelectedEntries([fsEntry]);
-
-        return fsEntry;
       });
-    //.catch(e => console.log(e));
   }
 
   /**
@@ -682,14 +592,7 @@ export const IOActionsContextProvider = ({
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        // if (AppConfig.isWeb && PlatformIO.isMinio()) {
-        //   reader.readAsBinaryString(file);
-        // } else {
         reader.readAsArrayBuffer(file);
-        // }
-        /* else if (AppConfig.isCordova) {
-          reader.readAsDataURL(file);
-        } */
       }
 
       async function readerLoaded(event, index, fileTargetPath) {
@@ -991,9 +894,169 @@ export const IOActionsContextProvider = ({
     });
   }
 
+  function renameDirectory(
+    directoryPath: string,
+    newDirectoryName: string,
+  ): Promise<string> {
+    return renameDirectoryPromise(directoryPath, newDirectoryName)
+      .then((newDirPath) => {
+        if (currentDirectoryPath === directoryPath) {
+          openDirectory(newDirPath);
+        }
+
+        showNotification(
+          `Renaming directory ${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator(),
+          )} successful.`,
+          'default',
+          true,
+        );
+        return newDirPath;
+      })
+      .catch((error) => {
+        console.warn('Error while renaming directory: ' + error);
+        showNotification(
+          `Error renaming directory '${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator(),
+          )}'`,
+          'error',
+          true,
+        );
+        throw error;
+      });
+  }
+
+  function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
+    return renameFilePromise(filePath, newFilePath)
+      .then((result) => {
+        // const newFilePathFromPromise = result[1];
+        console.info('File renamed ' + filePath + ' to ' + newFilePath);
+        showNotification(t('core:renamingSuccessfully'), 'default', true);
+        // Update sidecar file and thumb
+        return renameFilesPromise(
+          [
+            [
+              getMetaFileLocationForFile(
+                filePath,
+                PlatformIO.getDirSeparator(),
+              ),
+              getMetaFileLocationForFile(
+                newFilePath,
+                PlatformIO.getDirSeparator(),
+              ),
+            ],
+            [
+              getThumbFileLocationForFile(
+                filePath,
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+              getThumbFileLocationForFile(
+                newFilePath,
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+            ],
+          ],
+          undefined,
+          false,
+        )
+          .then(() => {
+            console.info(
+              'Renaming meta file and thumb successful from ' +
+                filePath +
+                ' to:' +
+                newFilePath,
+            );
+            return true;
+          })
+          .catch((err) => {
+            console.warn(
+              'Renaming meta file and thumb failed from ' +
+                filePath +
+                ' to:' +
+                newFilePath,
+              err,
+            );
+            return false;
+          });
+      })
+      .catch((error) => {
+        console.log(`Error while renaming file ${filePath}`, error);
+        showNotification(
+          `Error while renaming file ${filePath}`,
+          'error',
+          true,
+        );
+        return false;
+      });
+  }
+
+  function openFileNatively(selectedFile?: string) {
+    // todo reload selectedEntries or find better place for this function
+    if (selectedFile === undefined) {
+      if (selectedEntries && selectedEntries.length > 0) {
+        const fsEntry = selectedEntries[selectedEntries.length - 1];
+        if (fsEntry.isFile) {
+          PlatformIO.openFile(fsEntry.path, warningOpeningFilesExternally);
+        } else {
+          PlatformIO.openDirectory(fsEntry.path);
+        }
+      }
+    } else {
+      PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
+    }
+  }
+
+  function duplicateFile(selectedFilePath: string) {
+    if (selectedFilePath) {
+      const dirPath = extractContainingDirectoryPath(
+        selectedFilePath,
+        PlatformIO.getDirSeparator(),
+      );
+
+      const fileName = extractFileName(
+        selectedFilePath,
+        PlatformIO.getDirSeparator(),
+      );
+
+      const extractedTags = extractTags(
+        selectedFilePath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator(),
+      );
+      extractedTags.push('copy');
+      extractedTags.push(formatDateTime4Tag(new Date(), true));
+
+      const newFilePath =
+        (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
+        generateFileName(
+          fileName,
+          extractedTags,
+          AppConfig.tagDelimiter,
+          prefixTagContainer,
+        );
+
+      copyFilePromise(selectedFilePath, newFilePath)
+        .then(() => {
+          // if (onDuplicateFile) {
+          //  onDuplicateFile(dirPath);
+          // } else {
+          return openDirectory(dirPath);
+          // }
+          // return true;
+        })
+        .catch((error) => {
+          showNotification('Error creating duplicate: ', error);
+        });
+    }
+    showNotification('Unanble to duplicate, no file selected');
+  }
+
   const context = useMemo(() => {
     return {
-      extractContent,
       createDirectory,
       deleteEntries,
       deleteDirectory,
@@ -1005,8 +1068,12 @@ export const IOActionsContextProvider = ({
       downloadFile,
       uploadFilesAPI,
       uploadFiles,
+      renameDirectory,
+      renameFile,
+      openFileNatively,
+      duplicateFile,
     };
-  }, [createDirectory, deleteEntries, deleteDirectory, deleteFile]);
+  }, []);
 
   return (
     <IOActionsContext.Provider value={context}>

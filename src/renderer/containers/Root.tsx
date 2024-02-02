@@ -26,7 +26,6 @@ import App from '-/containers/App';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
 import i18nInit from '-/services/i18nInit';
-import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
 import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
 import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
 import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
@@ -37,7 +36,7 @@ import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvid
 import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
-import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
+import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -61,25 +60,25 @@ export default function Root({ store, persistor }: RootType) {
     <App>
       <NotificationContextProvider>
         <CurrentLocationContextProvider>
-          <SelectedEntryContextProvider>
-            <DirectoryContentContextProvider>
-              <FSWatcherContextProvider>
-                <PlatformFacadeContextProvider>
-                  <LocationIndexContextProvider>
-                    <OpenedEntryContextProvider>
-                      <FsActionsContextProvider>
-                        <TaggingActionsContextProvider>
-                          <IOActionsContextProvider>
+          <EditedEntryContextProvider>
+            <SelectedEntryContextProvider>
+              <DirectoryContentContextProvider>
+                <FSWatcherContextProvider>
+                  <PlatformFacadeContextProvider>
+                    <LocationIndexContextProvider>
+                      <OpenedEntryContextProvider>
+                        <IOActionsContextProvider>
+                          <TaggingActionsContextProvider>
                             <MainPage />
-                          </IOActionsContextProvider>
-                        </TaggingActionsContextProvider>
-                      </FsActionsContextProvider>
-                    </OpenedEntryContextProvider>
-                  </LocationIndexContextProvider>
-                </PlatformFacadeContextProvider>
-              </FSWatcherContextProvider>
-            </DirectoryContentContextProvider>
-          </SelectedEntryContextProvider>
+                          </TaggingActionsContextProvider>
+                        </IOActionsContextProvider>
+                      </OpenedEntryContextProvider>
+                    </LocationIndexContextProvider>
+                  </PlatformFacadeContextProvider>
+                </FSWatcherContextProvider>
+              </DirectoryContentContextProvider>
+            </SelectedEntryContextProvider>
+          </EditedEntryContextProvider>
         </CurrentLocationContextProvider>
       </NotificationContextProvider>
     </App>

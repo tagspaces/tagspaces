@@ -30,7 +30,6 @@ import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
   getGeoTaggingFormat,
-  getPersistTagsInSidecarFile,
   getPrefixTagContainer,
   getTagColor,
   getTagDelimiter,
@@ -49,43 +48,41 @@ import {
   extractFileName,
   extractTags,
 } from '@tagspaces/tagspaces-common/paths';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getLocations } from '-/reducers/locations';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+
+type extractOptions = {
+  EXIFGeo?: boolean;
+  EXIFDateTime?: boolean;
+  IPTCDescription?: boolean;
+  IPTCTags?: boolean;
+};
 
 type TaggingActionsContextData = {
-  addTags: (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex?: boolean,
-  ) => Promise<boolean>;
-  addTagsToEntry: (
-    path: string,
-    tags: Array<TS.Tag>,
-    updateIndex?: boolean,
-  ) => Promise<string[]>;
+  extractContent: (options?: extractOptions) => Promise<boolean>;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
+  addTagsToEntry: (path: string, tags: Array<TS.Tag>) => Promise<string>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
   removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
-  removeTagsFromEntry: (
-    path: string,
-    tags?: Array<TS.Tag>,
-  ) => Promise<string[]>;
+  removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
   removeAllTags: (paths: Array<string>) => Promise<boolean>;
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
+  extractContent: undefined,
   addTags: undefined,
   addTagsToEntry: undefined,
-  editTagForEntry: () => {},
-  removeTags: () => Promise.resolve(false),
+  editTagForEntry: undefined,
+  removeTags: undefined,
   removeTagsFromEntry: undefined,
-  removeAllTags: () => Promise.resolve(false),
-  collectTagsFromLocation: () => {},
+  removeAllTags: undefined,
+  collectTagsFromLocation: undefined,
 });
 
 export type TaggingActionsContextProviderProps = {
@@ -96,14 +93,12 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { openedEntry, reflectSidecarTagsUpdate, reflectRenameOpenedEntry } =
-    useOpenedEntryContext();
-  const { updateCurrentDirEntry, reflectRenameEntries } =
-    useDirectoryContentContext();
   const { persistTagsInSidecarFile } = useCurrentLocationContext();
-  const { getIndex, indexUpdateSidecarTags } = useLocationIndexContext();
-  const { renameFile } = useFsActionsContext();
-  const { showNotification } = useNotificationContext();
+  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { getIndex } = useLocationIndexContext();
+  const { renameFile } = useIOActionsContext();
+  const { reflectUpdateMeta } = useEditedEntryContext();
+  const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -113,10 +108,32 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   const locations: TS.Location[] = useSelector(getLocations);
 
+  function extractContent(
+    options: extractOptions = {
+      EXIFGeo: true,
+      EXIFDateTime: true,
+      IPTCDescription: true,
+      IPTCTags: true,
+    },
+  ): Promise<boolean> {
+    if (!Pro || !Pro.ContentExtractor) {
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      return Promise.resolve(false);
+    }
+    showNotification('Extracting content...', 'info', false);
+    Pro.ContentExtractor.extractContent(
+      currentDirectoryEntries,
+      addTags,
+      options,
+    ).then((success) => {
+      hideNotifications();
+      return success;
+    });
+  }
+
   function addTags(
     paths: Array<string>,
     tags: Array<TS.Tag>,
-    updateIndex = true,
   ): Promise<boolean> {
     let defaultTagLocation;
     if (geoTaggingFormat.toLowerCase() === 'mgrs') {
@@ -172,7 +189,7 @@ export const TaggingActionsContextProvider = ({
 
     if (processedTags.length > 0) {
       const promises = paths.map((path) =>
-        addTagsToEntry(path, processedTags, updateIndex, false),
+        addTagsToEntry(path, processedTags, false),
       );
 
       if (addTagsToLibrary) {
@@ -213,7 +230,12 @@ export const TaggingActionsContextProvider = ({
         }
       }
       return Promise.all(promises).then((editedPaths) => {
-        return reflectRenameEntries(editedPaths);
+        let sideCarChanges = editedPaths.filter((item) => paths.includes(item));
+        if (sideCarChanges.length > 0) {
+          reflectUpdateMeta(...sideCarChanges);
+        }
+        return true;
+        //return reflectRenameEntries(editedPaths);
         //return openCurrentDirectory();
       });
     }
@@ -265,16 +287,14 @@ export const TaggingActionsContextProvider = ({
   /**
    * @param path
    * @param tags
-   * @param updateIndex
    * @param reflect
-   * return [oldPath, newPath]
+   * return newPath
    */
   async function addTagsToEntry(
     path: string,
     tags: Array<TS.Tag>,
-    updateIndex = true,
     reflect: boolean = true,
-  ): Promise<string[]> {
+  ): Promise<string> {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
     try {
@@ -301,13 +321,10 @@ export const TaggingActionsContextProvider = ({
           };
           return saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
-              // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              reflectUpdateSidecarTags(path, newTags, updateIndex);
-              /* updateOpenedFile(path, {
-                id: 'opened_entry_id',
-                tags: newTags,
-              });*/
-              return [path, path];
+              if (reflect) {
+                reflectUpdateMeta(path);
+              }
+              return path;
             })
             .catch((err) => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
@@ -316,20 +333,17 @@ export const TaggingActionsContextProvider = ({
                 'error',
                 true,
               );
-              return [path, path];
+              return path;
             });
         }
       } else {
         const newFsEntryMeta = { tags };
         return saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
-            // TODO rethink this updateCurrentDirEntry and not need for KanBan
-            reflectUpdateSidecarTags(path, tags, updateIndex);
-            /*return updateOpenedFile(path, { id: '', tags }).then(() => [
-              path,
-              path,
-            ]);*/
-            return [path, path];
+            if (reflect) {
+              reflectUpdateMeta(path);
+            }
+            return path;
           })
           .catch((error) => {
             console.warn('Error adding tags for ' + path + ' with ' + error);
@@ -338,7 +352,7 @@ export const TaggingActionsContextProvider = ({
               'error',
               true,
             );
-            return [path, path];
+            return path;
           });
       }
     } else if (fsEntryMeta) {
@@ -373,12 +387,8 @@ export const TaggingActionsContextProvider = ({
             tagDelimiter,
             prefixTagContainer,
           );
-        return renameFile(path, newFilePath, reflect).then(() => {
-          if (!reflect) {
-            reflectRenameOpenedEntry(path, newFilePath);
-            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-          }
-          return [path, newFilePath];
+        return renameFile(path, newFilePath).then(() => {
+          return newFilePath;
         });
       }
     } else {
@@ -411,16 +421,12 @@ export const TaggingActionsContextProvider = ({
           prefixTagContainer,
         );
       if (path !== newFilePath) {
-        return renameFile(path, newFilePath, reflect).then(() => {
-          if (!reflect) {
-            reflectRenameOpenedEntry(path, newFilePath);
-            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-          }
-          return [path, newFilePath];
+        return renameFile(path, newFilePath).then(() => {
+          return newFilePath;
         });
       }
     }
-    return Promise.resolve([path, path]);
+    return Promise.resolve(path);
 
     function getNonExistingTags(
       newTagsArray: Array<TS.Tag>,
@@ -555,12 +561,7 @@ export const TaggingActionsContextProvider = ({
             tags: newTagsArray,
           })
             .then(() => {
-              /*updateOpenedFile(path, {
-                id: '',
-                tags: newTagsArray,
-              });*/
-              // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              reflectUpdateSidecarTags(path, newTagsArray, true);
+              reflectUpdateMeta(path);
               return true;
             })
             .catch((err) => {
@@ -584,12 +585,7 @@ export const TaggingActionsContextProvider = ({
           const fsEntryMeta = { tags: [tag] };
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
-              /*updateOpenedFile(path, {
-                id: '',
-                tags: fsEntryMeta.tags,
-              });*/
-              // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              reflectUpdateSidecarTags(path, fsEntryMeta.tags);
+              reflectUpdateMeta(path);
               return true;
             })
             .catch((err) => {
@@ -639,7 +635,7 @@ export const TaggingActionsContextProvider = ({
     }
   }
 
-  async function removeTags(
+  function removeTags(
     paths: Array<string>,
     tags?: Array<TS.Tag>,
   ): Promise<boolean> {
@@ -647,7 +643,8 @@ export const TaggingActionsContextProvider = ({
       removeTagsFromEntry(path, tags, false),
     );
     return Promise.all(promises).then((editedPaths) => {
-      return reflectRenameEntries(editedPaths);
+      reflectUpdateMeta(...editedPaths);
+      return true;
     });
   }
 
@@ -655,12 +652,13 @@ export const TaggingActionsContextProvider = ({
    * @param path
    * @param tags? if undefined will remove all tags
    * @param reflect
+   * return newPath
    */
   function removeTagsFromEntry(
     path: string,
     tags?: Array<TS.Tag>,
     reflect: boolean = true,
-  ): Promise<string[]> {
+  ): Promise<string> {
     const tagTitlesForRemoving = tags
       ? tags.map((tag) => tag.title)
       : undefined;
@@ -679,13 +677,10 @@ export const TaggingActionsContextProvider = ({
               newTags,
               newFilePath,
             ).then(() => {
-              // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
-              reflectRenameOpenedEntry(path, newFilePath, true);
-              /*return updateOpenedFile(newFilePath, {
-                id: '',
-                tags: newTags,
-              }).then(() => [path, newFilePath]);*/
-              return [path, newFilePath];
+              if (reflect) {
+                reflectUpdateMeta(newFilePath);
+              }
+              return newFilePath;
             });
           },
         );
@@ -693,13 +688,7 @@ export const TaggingActionsContextProvider = ({
       .catch((error) => {
         console.warn('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
-        return removeTagsFromFilename().then((newFilePath) => {
-          if (!reflect) {
-            reflectRenameOpenedEntry(path, newFilePath);
-            dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-          }
-          return [path, newFilePath];
-        });
+        return removeTagsFromFilename();
       });
 
     function removeTagsFromSideCar(
@@ -715,7 +704,7 @@ export const TaggingActionsContextProvider = ({
         };
         return saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            reflectUpdateSidecarTags(newFilePath, newTags);
+            reflectUpdateMeta(newFilePath);
             return true;
           })
           .catch((err) => {
@@ -777,15 +766,11 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer,
             );
           if (path !== newFilePath) {
-            const success = await renameFile(path, newFilePath, reflect);
+            const success = await renameFile(path, newFilePath);
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
             }
-            if (!reflect) {
-              dispatch(AppActions.reflectRenameEntry(path, newFilePath));
-            }
-            // reflectRenameOpenedEntry(path, newFilePath, true);
           }
           resolve(newFilePath);
         } else {
@@ -844,26 +829,9 @@ export const TaggingActionsContextProvider = ({
     return uniqueTags;
   }
 
-  const reflectUpdateSidecarTags = useMemo(() => {
-    return (path: string, tags: Array<TS.Tag>, updateIndex = true) => {
-      // to reload cell in KanBan if add/remove sidecar tags
-      // @ts-ignore
-      const action: TS.EditedEntryAction = `edit${tags
-        .map((tag) => tag.title)
-        .join()}`;
-      dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
-      // @ts-ignore
-      updateCurrentDirEntry(path, { tags });
-      reflectSidecarTagsUpdate(path, tags);
-
-      if (updateIndex) {
-        indexUpdateSidecarTags(path, tags);
-      }
-    };
-  }, [updateCurrentDirEntry]);
-
   const context = useMemo(() => {
     return {
+      extractContent,
       addTags,
       addTagsToEntry,
       editTagForEntry,
@@ -873,10 +841,9 @@ export const TaggingActionsContextProvider = ({
       collectTagsFromLocation,
     };
   }, [
-    openedEntry,
     persistTagsInSidecarFile,
     addTagsToLibrary,
-    reflectUpdateSidecarTags,
+    //reflectUpdateSidecarTags,
   ]);
 
   return (

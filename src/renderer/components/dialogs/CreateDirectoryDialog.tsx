@@ -37,7 +37,6 @@ interface Props {
   onClose: () => void;
   selectedDirectoryPath?: string;
   callback?: (newDirPath: string) => void;
-  reflect?: boolean;
 }
 
 function CreateDirectoryDialog(props: Props) {
@@ -49,7 +48,7 @@ function CreateDirectoryDialog(props: Props) {
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
-  const { open, onClose, selectedDirectoryPath, reflect } = props;
+  const { open, onClose, selectedDirectoryPath } = props;
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -80,13 +79,11 @@ function CreateDirectoryDialog(props: Props) {
           : currentDirectoryPath,
         name,
       );
-      createDirectory(dirPath, reflect !== undefined ? reflect : true).then(
-        () => {
-          if (props.callback) {
-            props.callback(dirPath);
-          }
-        },
-      );
+      createDirectory(dirPath).then(() => {
+        if (props.callback) {
+          props.callback(dirPath);
+        }
+      });
       resetState();
       props.onClose();
     }

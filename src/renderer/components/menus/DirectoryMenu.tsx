@@ -46,7 +46,6 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
@@ -79,7 +78,6 @@ function DirectoryMenu(props: Props) {
     setDirectoryPerspective,
     openCurrentDirectory,
   } = useDirectoryContentContext();
-  const { reflectCreateEntry } = useLocationIndexContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
@@ -149,11 +147,6 @@ function DirectoryMenu(props: Props) {
     );
   }
 
-  /*  const [
-    isCreateDirectoryDialogOpened,
-    setIsCreateDirectoryDialogOpened
-  ] = useState(false);*/
-
   function openDir() {
     return openDirectory(directoryPath);
   }
@@ -219,10 +212,6 @@ function DirectoryMenu(props: Props) {
     toggleDeleteMultipleEntriesDialog();
   }
 
-  /*function showCreateDirectoryDialog() {
-    setIsCreateDirectoryDialogOpened(true);
-  }*/
-
   function createNewFile() {
     toggleNewFileDialog();
   }
@@ -262,7 +251,7 @@ Do you want to continue?`)
         PlatformFacade.readMacOSTags(entry.path)
           .then((tags) => {
             if (tags.length > 0) {
-              addTags([entry.path], tags, true);
+              addTags([entry.path], tags);
             }
             return tags;
           })
@@ -328,8 +317,6 @@ Do you want to continue?`)
           'default',
           true,
         );
-        reflectCreateEntry(toFsEntry(newFilePath, true));
-        dispatch(AppActions.reflectCreateEntry(newFilePath, true));
         return true;
       })
       .catch((error) => {
