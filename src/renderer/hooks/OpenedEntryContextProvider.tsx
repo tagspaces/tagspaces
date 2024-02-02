@@ -237,7 +237,9 @@ export const OpenedEntryContextProvider = ({
     if (actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          openFsEntry(action.entry, true);
+          if (action.entry.isFile) {
+            openFsEntry(action.entry, true);
+          }
         } else if (action.action === 'delete') {
           if (
             currentEntry.current &&

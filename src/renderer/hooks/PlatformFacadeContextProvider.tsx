@@ -30,9 +30,10 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { getAllPropertiesPromise, toFsEntry } from '-/services/utils-io';
+import { getUseTrashCan } from '-/reducers/settings';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
@@ -91,9 +92,7 @@ type PlatformFacadeContextData = {
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
   ) => Promise<TS.FileSystemEntry>;
-  deleteFilePromise: (path: string, useTrash?: boolean) => Promise<any>;
-  deleteFilesPromise: (filePathList: Array<string>) => Promise<any>;
-  deleteDirectoryPromise: (path: string, useTrash?: boolean) => Promise<any>;
+  deleteEntriesPromise: (...paths: TS.FileSystemEntry[]) => Promise<boolean>;
   setFolderThumbnailPromise: (filePath: string) => Promise<string>;
 };
 
@@ -110,9 +109,7 @@ export const PlatformFacadeContext = createContext<PlatformFacadeContextData>({
   saveFilePromise: undefined,
   saveTextFilePromise: undefined,
   saveBinaryFilePromise: undefined,
-  deleteFilePromise: undefined,
-  deleteFilesPromise: undefined,
-  deleteDirectoryPromise: undefined,
+  deleteEntriesPromise: undefined,
   setFolderThumbnailPromise: undefined,
 });
 
@@ -129,6 +126,7 @@ export const PlatformFacadeContextProvider = ({
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const useTrashCan = useSelector(getUseTrashCan);
 
   function createDirectoryPromise(path: string): Promise<any> {
     ignoreByWatcher(path);
@@ -467,44 +465,25 @@ export const PlatformFacadeContextProvider = ({
     });
   }
 
-  function deleteFilePromise(
-    path: string,
-    useTrash?: boolean,
-  ): Promise<string> {
-    ignoreByWatcher(path);
-
-    return PlatformFacade.deleteFilePromise(path, useTrash).then((result) => {
-      reflectDeleteEntries(toFsEntry(path, true));
-      deignoreByWatcher(path);
-      return result;
-    });
-  }
-
-  function deleteFilesPromise(filePathList: Array<string>) {
-    ignoreByWatcher(...filePathList);
-    const fileDeletionPromises = [];
-    filePathList.forEach((filePath) => {
-      fileDeletionPromises.push(PlatformFacade.deleteFilePromise(filePath));
-    });
-    return Promise.all(fileDeletionPromises).then(() => {
-      reflectDeleteEntries(...filePathList.map((p) => toFsEntry(p, true)));
-      deignoreByWatcher(...filePathList);
-    });
-  }
-
-  function deleteDirectoryPromise(
-    path: string,
-    useTrash?: boolean,
-  ): Promise<any> {
-    ignoreByWatcher(path);
-
-    return PlatformFacade.deleteDirectoryPromise(path, useTrash).then(
-      (result) => {
-        reflectDeleteEntries(toFsEntry(path, false));
-        deignoreByWatcher(path);
-        return result;
-      },
-    );
+  function deleteEntriesPromise(
+    ...entries: TS.FileSystemEntry[]
+  ): Promise<boolean> {
+    if (entries.length > 0) {
+      const entriesPaths = entries.map((e) => e.path);
+      ignoreByWatcher(...entriesPaths);
+      const promises = entries.map((e) => {
+        if (e.isFile) {
+          return PlatformFacade.deleteFilePromise(e.path, useTrashCan);
+        }
+        return PlatformFacade.deleteDirectoryPromise(e.path, useTrashCan);
+      });
+      return Promise.all(promises).then(() => {
+        reflectDeleteEntries(...entries);
+        deignoreByWatcher(...entriesPaths);
+        return true;
+      });
+    }
+    return Promise.resolve(false);
   }
 
   const context = useMemo(() => {
@@ -521,9 +500,7 @@ export const PlatformFacadeContextProvider = ({
       saveFilePromise,
       saveTextFilePromise,
       saveBinaryFilePromise,
-      deleteFilePromise,
-      deleteFilesPromise,
-      deleteDirectoryPromise,
+      deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
   }, [ignored]); //watcher

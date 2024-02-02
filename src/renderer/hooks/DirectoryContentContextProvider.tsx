@@ -285,6 +285,11 @@ export const DirectoryContentContextProvider = ({
             (e) => e.path === action.entry.path,
           );
           if (index !== -1) {
+            if (!action.entry.isFile) {
+              if (action.entry.path === currentDirectoryPath) {
+                loadParentDirectoryContent();
+              }
+            }
             currentDirectoryEntries.current.splice(index, 1);
           }
           /// RENAME

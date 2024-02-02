@@ -63,7 +63,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type IOActionsContextData = {
   createDirectory: (directoryPath: string) => Promise<boolean>;
-  deleteEntries: (entries: TS.FileSystemEntry[]) => Promise<boolean>;
+  deleteEntries: (...entries: TS.FileSystemEntry[]) => Promise<boolean>;
   deleteDirectory: (directoryPath: string) => Promise<boolean>;
   deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
   moveDirs: (
@@ -118,12 +118,12 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   deleteDirectory: undefined,
   deleteFile: undefined,
   moveDirs: undefined,
-  moveFiles: () => Promise.resolve(false),
-  copyDirs: () => Promise.resolve(false),
-  copyFiles: () => Promise.resolve(false),
-  downloadFile: () => Promise.resolve(undefined),
-  uploadFilesAPI: () => Promise.resolve([]),
-  uploadFiles: () => Promise.resolve([]),
+  moveFiles: undefined,
+  copyDirs: undefined,
+  copyFiles: undefined,
+  downloadFile: undefined,
+  uploadFilesAPI: undefined,
+  uploadFiles: undefined,
   renameDirectory: undefined,
   renameFile: undefined,
   openFileNatively: undefined,
@@ -142,25 +142,19 @@ export const IOActionsContextProvider = ({
   const { showNotification } = useNotificationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const {
-    copyFilesWithProgress,
-    deleteFilesPromise,
-    copyFilePromise,
-    renameFilePromise,
-    renameDirectoryPromise,
-  } = usePlatformFacadeContext();
-  const {
     createDirectoryPromise,
+    renameFilePromise,
     renameFilesPromise,
+    renameDirectoryPromise,
+    copyFilePromise,
+    copyFilesWithProgress,
     copyDirectoryPromise,
     moveDirectoryPromise,
     saveFilePromise,
     saveBinaryFilePromise,
-    deleteFilePromise,
-    deleteDirectoryPromise,
+    deleteEntriesPromise,
   } = usePlatformFacadeContext();
-  const { currentDirectoryPath, openDirectory, loadParentDirectoryContent } =
-    useDirectoryContentContext();
-  const useTrashCan = useSelector(getUseTrashCan);
+  const { currentDirectoryPath, openDirectory } = useDirectoryContentContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
@@ -199,29 +193,32 @@ export const IOActionsContextProvider = ({
       });
   }
 
-  function deleteEntries(entries: TS.FileSystemEntry[]) {
-    const deletePromises = entries.map((fsEntry) => {
-      if (fsEntry.isFile) {
-        return deleteFile(fsEntry.path, fsEntry.uuid);
-      }
-      return deleteDirectory(fsEntry.path);
-    });
-    return Promise.all(deletePromises)
-      .then((delResult) => {
-        return true;
-      })
-      .catch((err) => {
-        console.warn('Deleting file failed', err);
-        return false;
-      });
+  function deleteEntries(...entries: TS.FileSystemEntry[]): Promise<boolean> {
+    if (entries && entries.length > 0) {
+      return deleteEntriesPromise(...entries)
+        .then((success) => {
+          if (success) {
+            showNotification(
+              t('deletingEntriesSuccessful', {
+                dirPath: entries.map((e) => e.path).join(),
+              }),
+              'default',
+              true,
+            );
+          }
+
+          return success;
+        })
+        .catch((err) => {
+          console.log('Deleting failed', err);
+          return false;
+        });
+    }
   }
 
   function deleteDirectory(directoryPath: string) {
-    return deleteDirectoryPromise(directoryPath, useTrashCan)
+    return deleteEntriesPromise(toFsEntry(directoryPath, false))
       .then(() => {
-        if (directoryPath === currentDirectoryPath) {
-          loadParentDirectoryContent();
-        }
         showNotification(
           t(
             'deletingDirectorySuccessfull' as any,
@@ -258,7 +255,7 @@ export const IOActionsContextProvider = ({
   }
 
   function deleteFile(filePath: string, uuid: string) {
-    return deleteFilePromise(filePath, useTrashCan)
+    return deleteEntriesPromise(toFsEntry(filePath, true))
       .then(() => {
         showNotification(
           `Deleting file ${filePath} successful.`,
@@ -284,14 +281,20 @@ export const IOActionsContextProvider = ({
             console.warn('Cleaning revisions failed ', err);
           });
         // Delete sidecar file and thumb
-        deleteFilesPromise([
-          getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(
-            filePath,
-            PlatformIO.getDirSeparator(),
-            false,
+        deleteEntriesPromise(
+          toFsEntry(
+            getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+            true,
           ),
-        ])
+          toFsEntry(
+            getThumbFileLocationForFile(
+              filePath,
+              PlatformIO.getDirSeparator(),
+              false,
+            ),
+            true,
+          ),
+        )
           .then(() => {
             console.log(
               'Cleaning meta file and thumb successful for ' + filePath,

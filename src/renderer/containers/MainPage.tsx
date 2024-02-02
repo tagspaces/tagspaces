@@ -684,7 +684,7 @@ function MainPage(props: Props) {
             list={selectedEntries.map((fsEntry) => fsEntry.name)}
             confirmCallback={(result) => {
               if (result && selectedEntries) {
-                deleteEntries(selectedEntries).then(
+                deleteEntries(...selectedEntries).then(
                   (success) =>
                     success &&
                     selectedEntries.length > 1 &&
