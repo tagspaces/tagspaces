@@ -224,6 +224,9 @@
     "utif": "github:photopea/UTIF.js",
     "uuid": "^9.0.0"
   },
+  "optionalDependencies": {
+    "@tagspacespro/tagspacespro": "5.0.3"
+  },
   "devDependencies": {
     "@electron/notarize": "^2.2.0",
     "@electron/rebuild": "^3.3.0",

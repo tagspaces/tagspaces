@@ -21,7 +21,7 @@ import AppConfig from '-/AppConfig';
 let tsPro;
 
 try {
-  tsPro = require('../../../extensions/tagspacespro');
+  tsPro = require('node_modules/@tagspacespro/tagspacespro');
 } catch (e) {
   if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
     console.log('PRO functionality not available');
