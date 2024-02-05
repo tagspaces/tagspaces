@@ -39,7 +39,12 @@ import {
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
+import {
+  loadJSONFile,
+  merge,
+  toFsEntry,
+  updateFsEntries,
+} from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
@@ -251,47 +256,10 @@ export const DirectoryContentContextProvider = ({
   const reflectActions = async (actions) => {
     if (actions && actions.length > 0) {
       for (const action of actions) {
-        /// ADD
         if (action.action === 'add') {
-          const entryExist = currentDirectoryEntries.current.some(
-            (e) => e.path === action.entry.path,
-          );
-          if (entryExist) {
-            currentDirectoryEntries.current =
-              currentDirectoryEntries.current.map((e) =>
-                e.path === action.entry.path ? action.entry : e,
-              );
-          } else {
-            const dirPath = extractContainingDirectoryPath(
-              action.entry.path,
-              PlatformIO.getDirSeparator(),
-            );
-            if (
-              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-              cleanTrailingDirSeparator(dirPath)
-            ) {
-              currentDirectoryEntries.current.push(action.entry);
-              // reflect add KanBan folders visibility
-              await toggleDirVisibility(
-                { name: action.entry.name, uuid: action.entry.uuid },
-                dirPath,
-                false,
-              );
-            }
-          }
-          /// DELETE
+          await reflectAddAction(action.entry);
         } else if (action.action === 'delete') {
-          let index = currentDirectoryEntries.current.findIndex(
-            (e) => e.path === action.entry.path,
-          );
-          if (index !== -1) {
-            if (!action.entry.isFile) {
-              if (action.entry.path === currentDirectoryPath) {
-                loadParentDirectoryContent();
-              }
-            }
-            currentDirectoryEntries.current.splice(index, 1);
-          }
+          reflectDeleteAction(action.entry);
           /// RENAME
         } else if (action.action === 'update') {
           let index = currentDirectoryEntries.current.findIndex(
@@ -337,6 +305,11 @@ export const DirectoryContentContextProvider = ({
               }
             }
           }
+        } else if (action.action === 'move') {
+          await reflectAddAction(action.entry);
+          reflectDeleteAction(
+            toFsEntry(action.oldEntryPath, action.entry.isFile),
+          );
         }
       }
       // create a shallow copy to publish changes
@@ -344,6 +317,49 @@ export const DirectoryContentContextProvider = ({
       forceUpdate();
     }
   };
+
+  async function reflectAddAction(entry: TS.FileSystemEntry) {
+    const entryExist = currentDirectoryEntries.current.some(
+      (e) => e.path === entry.path,
+    );
+    if (entryExist) {
+      currentDirectoryEntries.current = currentDirectoryEntries.current.map(
+        (e) => (e.path === entry.path ? entry : e),
+      );
+    } else {
+      const dirPath = extractContainingDirectoryPath(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+      if (
+        cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+        cleanTrailingDirSeparator(dirPath)
+      ) {
+        currentDirectoryEntries.current.push(entry);
+        // reflect add KanBan folders visibility
+        await toggleDirVisibility(
+          { name: entry.name, uuid: entry.uuid },
+          dirPath,
+          false,
+        );
+      }
+    }
+  }
+
+  function reflectDeleteAction(entry: TS.FileSystemEntry) {
+    let index = currentDirectoryEntries.current.findIndex(
+      (e) => e.path === entry.path,
+    );
+    if (index !== -1) {
+      if (!entry.isFile) {
+        if (entry.path === currentDirectoryPath.current) {
+          loadParentDirectoryContent();
+          return;
+        }
+      }
+      currentDirectoryEntries.current.splice(index, 1);
+    }
+  }
 
   function getDefaultDirMeta(): TS.FileSystemEntryMeta {
     const perspective = getPerspective();

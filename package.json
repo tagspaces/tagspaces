@@ -61,7 +61,7 @@
     "install-ext-node-win": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=win32 --arch=x64 && npm run generate-extensions",
     "install-ext-web": "rimraf release/app/node_modules && npm install --prefix ./release/app && npm run generate-extensions",
     "install-ext-web-check": "npx cross-env PD_PLATFORM=web node scripts/checkWSinstalled.js",
-    "link-ext": "export CDIR=$PWD && ln -sf $CDIR/release/app/node_modules/@tagspaces/extensions $CDIR/public/modules/@tagspaces/extensions && ln -sf $CDIR/release/app/node_modules/@tagspacespro/extensions $CDIR/public/modules/@tagspacespro/extensions",
+    "link-ext": "node -r ts-node/register scripts/link-ext.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "npm run --silent lint --fix; exit 0",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",

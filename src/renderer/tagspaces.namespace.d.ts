@@ -100,7 +100,7 @@ export namespace TS {
   type Uuid = string;
 
   interface EditAction {
-    action: 'add' | 'delete' | 'update';
+    action: 'add' | 'delete' | 'update' | 'move';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
   }

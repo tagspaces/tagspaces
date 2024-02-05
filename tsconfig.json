@@ -21,16 +21,16 @@
     "baseUrl": "./",
     "paths": {
       "-/*": ["src/renderer/*"],
-      "assets/*": ["assets/*"],
-    },
+      "assets/*": ["assets/*"]
+    }
   },
   "include": [
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
     "extensions/tagspacespro/**/*.ts",
-    "extensions/tagspacespro/**/*.tsx",
+    "extensions/tagspacespro/**/*.tsx"
   ],
-  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"],
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
   // "exclude": [
   //  "node_modules",
   //  "**/node_modules/*",

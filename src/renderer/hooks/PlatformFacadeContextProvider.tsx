@@ -380,22 +380,6 @@ export const PlatformFacadeContextProvider = ({
       if (reflect) {
         reflectMoveFiles([[filePath, newFilePath]]);
       }
-      /*getAllPropertiesPromise(newFilePath).then(
-        (fsEntry: TS.FileSystemEntry) => {
-          if (reflect) {
-            setReflectActions(
-              {
-                action: 'delete',
-                entry: toFsEntry(filePath, true),
-              },
-              {
-                action: 'add',
-                entry: fsEntry,
-              },
-            );
-          }
-        },
-      );*/
       deignoreByWatcher(filePath, newFilePath);
       return result;
     });
@@ -436,12 +420,9 @@ export const PlatformFacadeContextProvider = ({
         (newFsEntry: TS.FileSystemEntry) => {
           const actions: TS.EditAction[] = [
             {
-              action: 'delete',
-              entry: toFsEntry(job[0], true),
-            },
-            {
-              action: 'add',
+              action: 'move',
               entry: newFsEntry,
+              oldEntryPath: job[0],
             },
           ];
           return actions;
@@ -506,10 +487,11 @@ export const PlatformFacadeContextProvider = ({
       onProgress,
     ).then((result) => {
       getAllPropertiesPromise(newDirPath).then((fsEntry: TS.FileSystemEntry) =>
-        setReflectActions(
-          { action: 'delete', entry: toFsEntry(param.path, false) },
-          { action: 'add', entry: fsEntry },
-        ),
+        setReflectActions({
+          action: 'move',
+          entry: fsEntry,
+          oldEntryPath: param.path,
+        }),
       );
 
       deignoreByWatcher(param.path, newDirPath);
