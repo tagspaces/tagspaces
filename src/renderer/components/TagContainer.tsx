@@ -196,6 +196,7 @@ function TagContainer(props: Props) {
             fontSize: 13,
             textTransform: 'none',
             textWrap: 'nowrap',
+            whiteSpace: 'nowrap',
             color: textColor,
             backgroundColor,
             minHeight: 0,

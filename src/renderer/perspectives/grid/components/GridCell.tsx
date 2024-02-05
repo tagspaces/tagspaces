@@ -429,7 +429,8 @@ function GridCell(props: Props) {
           style={{
             paddingRight: 4,
             overflowX: 'clip',
-            textWrap: 'nowrap', // isSmall ? 'nowrap' : 'unset',
+            textWrap: 'nowrap',
+            whiteSpace: 'nowrap',
             //   display: '-webkit-box',
             //   WebkitLineClamp: 2,
             //   WebkitBoxOrient: 'vertical',
@@ -450,6 +451,7 @@ function GridCell(props: Props) {
             paddingRight: 4,
             overflowX: 'clip',
             textWrap: 'nowrap',
+            whiteSpace: 'nowrap',
             color: 'gray',
             // wordBreak: 'break-word',
           }}
