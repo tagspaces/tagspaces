@@ -73,6 +73,7 @@ type PlatformFacadeContextData = {
     onProgress?,
     reflect?,
   ) => Promise<any>;
+  reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
   renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
   copyDirectoryPromise: (
     param: any,
@@ -116,6 +117,7 @@ export const PlatformFacadeContext = createContext<PlatformFacadeContextData>({
   renameFilesPromise: undefined,
   moveFilePromise: undefined,
   moveFilesPromise: undefined,
+  reflectMoveFiles: undefined,
   renameDirectoryPromise: undefined,
   copyDirectoryPromise: undefined,
   moveDirectoryPromise: undefined,
@@ -375,7 +377,10 @@ export const PlatformFacadeContextProvider = ({
       newFilePath,
       onProgress,
     ).then((result) => {
-      getAllPropertiesPromise(newFilePath).then(
+      if (reflect) {
+        reflectMoveFiles([[filePath, newFilePath]]);
+      }
+      /*getAllPropertiesPromise(newFilePath).then(
         (fsEntry: TS.FileSystemEntry) => {
           if (reflect) {
             setReflectActions(
@@ -390,7 +395,7 @@ export const PlatformFacadeContextProvider = ({
             );
           }
         },
-      );
+      );*/
       deignoreByWatcher(filePath, newFilePath);
       return result;
     });
@@ -418,21 +423,34 @@ export const PlatformFacadeContextProvider = ({
       }),
     ).then((ret) => {
       if (reflect) {
-        const actions: TS.EditAction[] = [];
-        renameJobs.map((job) => {
-          actions.push({
-            action: 'delete',
-            entry: toFsEntry(job[0], true),
-          });
-          actions.push({
-            action: 'add',
-            entry: toFsEntry(job[1], true),
-          });
-        });
-        setReflectActions(...actions);
+        reflectMoveFiles(renameJobs);
       }
       deignoreByWatcher(...flatArray);
       return ret;
+    });
+  }
+
+  function reflectMoveFiles(moveJobs: Array<Array<string>>): Promise<boolean> {
+    const promises = moveJobs.map((job) => {
+      return getAllPropertiesPromise(job[1]).then(
+        (newFsEntry: TS.FileSystemEntry) => {
+          const actions: TS.EditAction[] = [
+            {
+              action: 'delete',
+              entry: toFsEntry(job[0], true),
+            },
+            {
+              action: 'add',
+              entry: newFsEntry,
+            },
+          ];
+          return actions;
+        },
+      );
+    });
+    return Promise.all(promises).then((actionsArray) => {
+      setReflectActions(...actionsArray.flat());
+      return true;
     });
   }
 
@@ -582,6 +600,7 @@ export const PlatformFacadeContextProvider = ({
       renameFilesPromise,
       moveFilePromise,
       moveFilesPromise,
+      reflectMoveFiles,
       renameDirectoryPromise,
       copyDirectoryPromise,
       moveDirectoryPromise,
