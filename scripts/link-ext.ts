@@ -19,7 +19,7 @@ if (fs.existsSync(srcExt)) {
   fs.symlinkSync(srcExt, targetExt, 'junction');
 }
 
-// link Pro
+// link Pro extensions
 const srcProExt = path.join(
   releasePath,
   'app/node_modules/@tagspacespro/extensions',
