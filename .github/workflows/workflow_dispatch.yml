@@ -9,7 +9,7 @@ on:
 
 jobs:
   e2eTests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v4
@@ -32,7 +32,6 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
-          npm run prepare-node
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
