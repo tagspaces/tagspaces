@@ -25,6 +25,6 @@
     "ws": "8.16.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/extensions": "^1.0.0"
+    "@tagspacespro/extensions": "1.0.0"
   }
 }
