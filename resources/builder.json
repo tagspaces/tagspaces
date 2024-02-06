@@ -8,7 +8,7 @@
   ],
   "includeSubNodeModules": true,
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
-  "copyright": "Copyright © 2023 TagSpaces UG (haftungsbeschraenkt)",
+  "copyright": "Copyright © 2024 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "dmg": {
     "sign": false

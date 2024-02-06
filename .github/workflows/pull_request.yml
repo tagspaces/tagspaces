@@ -2,32 +2,6 @@ on: pull_request
 name: PR
 
 jobs:
-  #  gitHubActionForNpm:
-  #    name: Validating Ubuntu
-  #    runs-on: ubuntu-latest
-
-  #    steps:
-  #      - name: Checking out default branch
-  #        uses: actions/checkout@v2
-  #        with:
-  #          submodules: true
-  #      - uses: actions/setup-node@v2
-  #        with:
-  #          node-version: '10.x'
-  #      - name: Install display server dependencies
-  #        run: |
-  #          sudo apt-get install xvfb libxtst6 libxss1 libgtk2.0-0 -y
-  #      - name: Install core libraries for chromium driver
-  #        run: |
-  #          sudo apt-get install libnss3 libasound2 libgconf-2-4 libgbm1 -y
-  #      - name: Running yarn install, prettier and type checks
-  #        run: |
-  #          yarn install --force --check-files --cache-folder .ycache
-  #          yarn prettier-check
-  #          yarn type-check
-  #      - name: Run Unit tests
-  #        run: yarn test-unit
-
   e2eTestsWin:
     name: Test Desktop App Windows
     runs-on: windows-latest
@@ -35,17 +9,17 @@ jobs:
       PD_PLATFORM: node
     steps:
       - name: Checking out default branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Checkout TestData
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20.x'
       - name: Running npm install, prettier and type checks
         run: |
           npm install
@@ -71,24 +45,24 @@ jobs:
       PD_PLATFORM: web
     steps:
       - name: Checking out default branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Checkout TagspacesPro
-        uses: actions/checkout@v2
-        with:
-          ref: Create-EditedEntryContextProvider
-          repository: tagspaces/tagspacespro
-          token: ${{ secrets.CHECKOUT_TSPRO  }}
-          path: extensions/tagspacespro
+      # - name: Checkout TagspacesPro
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: Create-EditedEntryContextProvider
+      #     repository: tagspaces/tagspacespro
+      #     token: ${{ secrets.CHECKOUT_TSPRO  }}
+      #     path: extensions/tagspacespro
       - name: Checkout TestData
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20.x'
       - name: Running npm install, prettier and type checks
         run: |
           npm install
