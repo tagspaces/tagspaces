@@ -138,7 +138,7 @@
     "test-watch": "npm run test --watch",
     "third-party": "npx generate-license-file --input package.json --output src/renderer/third-party.txt --overwrite",
     "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd ../../..",
-    "type-check": "npm run generate-extensions && npm run typescript-clean && tsc --noEmit",
+    "type-check": "npm run typescript-clean && tsc --noEmit",
     "typescript-clean": "tsc --build --clean",
     "update-changelog": "git log v5.6.2..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd extensions/tagspacespro && git log v5.6.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",

@@ -32,6 +32,7 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
+          npm run generate-extensions
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
