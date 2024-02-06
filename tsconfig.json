@@ -27,16 +27,8 @@
   "include": [
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
-    "node_modules/@tagspacespro/tagspacespro/**/*.ts",
-    "node_modules/@tagspacespro/tagspacespro/**/*.tsx",
+    "tagspacespro/**/*.ts",
+    "tagspacespro/**/*.tsx",
   ],
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"],
-  // "exclude": [
-  //  "node_modules",
-  //  "**/node_modules/*",
-  //  "extensions",
-  //  "cordova",
-  //  "web",
-  //  "tests"
-  //]
 }
