@@ -1041,19 +1041,14 @@ export const IOActionsContextProvider = ({
         );
 
       copyFilePromise(selectedFilePath, newFilePath)
-        .then(() => {
-          // if (onDuplicateFile) {
-          //  onDuplicateFile(dirPath);
-          // } else {
+        /*.then(() => {
           return openDirectory(dirPath);
-          // }
-          // return true;
-        })
+        })*/
         .catch((error) => {
           showNotification('Error creating duplicate: ', error);
         });
     }
-    showNotification('Unanble to duplicate, no file selected');
+    showNotification('Unable to duplicate, no file selected');
   }
 
   const context = useMemo(() => {

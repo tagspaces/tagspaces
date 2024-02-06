@@ -137,7 +137,7 @@ export const OpenedEntryContextProvider = ({
     openDirectory,
   } = useDirectoryContentContext();
 
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
   const { saveFilePromise } = usePlatformFacadeContext();
@@ -201,6 +201,7 @@ export const OpenedEntryContextProvider = ({
           if (action.entry.isFile) {
             openFsEntry(action.entry, true);
           }
+          setSelectedEntries([action.entry]);
         } else if (action.action === 'delete') {
           if (
             currentEntry.current &&

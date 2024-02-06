@@ -90,7 +90,6 @@ function FileMenu(props: Props) {
     openMoveCopyFilesDialog,
     openShareFilesDialog,
     openAddRemoveTagsDialog,
-    onDuplicateFile,
     reorderTop,
     reorderBottom,
     anchorEl,
