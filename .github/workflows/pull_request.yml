@@ -1,5 +1,5 @@
+name: Pull Request Workflow Dispatch Trigger
 on: pull_request
-name: PR
 
 jobs:
   e2eTestsWin:
@@ -31,7 +31,7 @@ jobs:
         run: |
           npm run build-e2e
           npm run test-playwright
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-artifacts
@@ -82,7 +82,7 @@ jobs:
         run: |
           npm run build-e2e-web
           npm run test-playwright-web-headless
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-artifacts-pr

@@ -1,4 +1,4 @@
-name: manual workflow dispatch trigger
+name: Manual Workflow Dispatch Trigger
 on:
   workflow_dispatch:
     inputs:
@@ -37,22 +37,23 @@ jobs:
           npm run type-check
       - name: Run Unit tests
         run: npm run test-unit
-      - uses: suisei-cn/actions-download-file@v1
+      - uses: suisei-cn/actions-download-file@v1.6.0
         id: minio
-        name: Download the Minio.exe
+        name: Download Minio executable
         with:
-          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          # url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
+          url: 'https://dl.min.io/server/minio/release/linux-amd64/minio'
           target: tests/bin/
       - name: Run Electron tests
         run: |
           npm run build-e2e
           npm run ${{ github.event.inputs.command }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-pages
           path: tests/test-pages/
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-artifacts
