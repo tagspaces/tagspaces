@@ -39,11 +39,13 @@ jobs:
         run: npm run test-unit
       - uses: suisei-cn/actions-download-file@v1.6.0
         id: minio
-        name: Download Minio executable
+        name: Download Minio program
         with:
           # url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
           url: 'https://dl.min.io/server/minio/release/linux-amd64/minio'
           target: tests/bin/
+      - name: Make Minio executable
+        run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
           npm run build-e2e
