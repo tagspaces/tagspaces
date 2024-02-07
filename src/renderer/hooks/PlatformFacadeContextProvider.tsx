@@ -50,6 +50,7 @@ type PlatformFacadeContextData = {
   copyFilePromiseOverwrite: (
     sourceFilePath: string,
     targetFilePath: string,
+    reflect?,
   ) => Promise<any>;
   renameFilePromise: (
     filePath: string,
@@ -289,15 +290,18 @@ export const PlatformFacadeContextProvider = ({
   function copyFilePromiseOverwrite(
     sourceFilePath: string,
     targetFilePath: string,
+    reflect: boolean = true,
   ): Promise<any> {
     ignoreByWatcher(targetFilePath);
     return PlatformFacade.copyFilePromiseOverwrite(
       sourceFilePath,
       targetFilePath,
     ).then((result) => {
-      getAllPropertiesPromise(targetFilePath).then(
-        (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
-      );
+      if (reflect) {
+        getAllPropertiesPromise(targetFilePath).then(
+          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+        );
+      }
       deignoreByWatcher(targetFilePath);
       return result;
     });
@@ -517,12 +521,19 @@ export const PlatformFacadeContextProvider = ({
   function saveTextFilePromise(
     param: any,
     content: string,
-    overwrite: boolean,
+    isUpdated: boolean,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return PlatformFacade.saveTextFilePromise(param, content, overwrite).then(
+    return PlatformFacade.saveTextFilePromise(param, content, isUpdated).then(
       (fsEntry) => {
-        reflectAddEntry(fsEntry);
+        if (isUpdated) {
+          setReflectActions({
+            action: 'update',
+            entry: fsEntry,
+          });
+        } else {
+          reflectAddEntry(fsEntry);
+        }
         deignoreByWatcher(param.path);
         return fsEntry;
       },

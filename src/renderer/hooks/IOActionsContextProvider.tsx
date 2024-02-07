@@ -52,11 +52,9 @@ import {
   enhanceEntry,
   loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
   getPrefixTagContainer,
-  getUseTrashCan,
   getWarningOpeningFilesExternally,
 } from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';

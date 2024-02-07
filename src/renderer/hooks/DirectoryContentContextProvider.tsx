@@ -57,7 +57,6 @@ import {
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
@@ -266,7 +265,10 @@ export const DirectoryContentContextProvider = ({
             (e) => e.path === action.oldEntryPath,
           );
           if (index !== -1) {
-            currentDirectoryEntries.current[index] = action.entry;
+            currentDirectoryEntries.current[index] = {
+              ...currentDirectoryEntries.current[index],
+              ...action.entry,
+            };
           }
           // update ordered entries (KanBan)
           if (Pro && Pro.MetaOperations) {
@@ -347,16 +349,16 @@ export const DirectoryContentContextProvider = ({
   }
 
   function reflectDeleteAction(entry: TS.FileSystemEntry) {
+    if (!entry.isFile) {
+      if (entry.path === currentDirectoryPath.current) {
+        loadParentDirectoryContent();
+        return;
+      }
+    }
     let index = currentDirectoryEntries.current.findIndex(
       (e) => e.path === entry.path,
     );
     if (index !== -1) {
-      if (!entry.isFile) {
-        if (entry.path === currentDirectoryPath.current) {
-          loadParentDirectoryContent();
-          return;
-        }
-      }
       currentDirectoryEntries.current.splice(index, 1);
     }
   }
@@ -624,13 +626,14 @@ export const DirectoryContentContextProvider = ({
     if (dirPath !== undefined) {
       return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
         (dirEntries) => {
-          if (dirEntries) {
-            setCurrentDirectoryEntries(dirEntries, false);
+          return true;
+          /*if (dirEntries) {
+            // setCurrentDirectoryEntries(dirEntries, false);
             return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
               updateCurrentDirEntries(entries);
               return true;
             });
-          }
+          }*/
         },
       );
     }
