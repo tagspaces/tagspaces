@@ -209,7 +209,7 @@ export const OpenedEntryContextProvider = ({
           ) {
             closeAllFiles();
           }
-        } else if (action.action === 'update') {
+        } else if (action.action === 'update' || action.action === 'move') {
           if (
             currentEntry.current &&
             action.oldEntryPath &&
