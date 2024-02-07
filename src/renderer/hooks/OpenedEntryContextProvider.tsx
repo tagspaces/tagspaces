@@ -518,7 +518,10 @@ export const OpenedEntryContextProvider = ({
     if (fsEntry.size) {
       entryForOpening.size = fsEntry.size;
     }
-    if (fsEntry.isNewFile) {
+    if (
+      fsEntry.isNewFile &&
+      AppConfig.editableFiles.includes(fsEntry.extension)
+    ) {
       entryForOpening.editMode = true;
     }
     if (fsEntry.isAutoSaveEnabled !== undefined) {

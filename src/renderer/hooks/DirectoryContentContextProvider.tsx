@@ -32,8 +32,6 @@ import {
   cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractFileName,
-  extractFileExtension,
-  extractTagsAsObjects,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
   getMetaDirectoryPath,
