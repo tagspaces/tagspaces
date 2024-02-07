@@ -10,16 +10,16 @@ jobs:
 
     steps:
       - name: Checking out default branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: develop
           submodules: true
       - name: Checkout TestData
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: '16.x'
       - name: Running npm install, prettier and type checks
@@ -54,16 +54,16 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - name: Checking out default branch
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          ref: develop
 #          submodules: true
 #      - name: Checkout TestData
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2
+#      - uses: actions/setup-node@v4
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks
@@ -90,22 +90,22 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - name: Checking out default branch
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          ref: develop
 #          submodules: true
 #      - name: Checkout TagspacesPro
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          repository: tagspaces/tagspacespro
 #          token: ${{ secrets.CHECKOUT_TSPRO  }}
 #          path: extensions/tagspacespro
 #      - name: Checkout TestData
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2
+#      - uses: actions/setup-node@v4
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks
@@ -140,22 +140,22 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - name: Checking out default branch
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          ref: develop
 #          submodules: true
 #      - name: Checkout TagspacesPro
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          repository: tagspaces/tagspacespro
 #          token: ${{ secrets.CHECKOUT_TSPRO  }}
 #          path: extensions/tagspacespro
 #      - name: Checkout TestData
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v4
 #        with:
 #          repository: tagspaces/testdata
 #          path: tests/testdata
-#      - uses: actions/setup-node@v2
+#      - uses: actions/setup-node@v4
 #        with:
 #          node-version: '12.x'
 #      - name: Running yarn install, prettier and type checks
