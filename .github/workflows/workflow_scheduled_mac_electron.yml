@@ -6,7 +6,7 @@ on:
 
 jobs:
   e2eTestsElectronMac:
-    name: Test Desktop App Mac
+    name: Test TagSpaces Desktop on Mac
     runs-on: macos-latest
     steps:
       - name: Checking out default branch
