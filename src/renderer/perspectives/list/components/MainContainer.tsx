@@ -16,11 +16,9 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
-import { isObj } from '@tagspaces/tagspaces-common/misc';
-import { isVisibleOnScreen } from '-/utils/dom';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
