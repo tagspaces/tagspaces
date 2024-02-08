@@ -30,6 +30,7 @@ import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
   cleanTrailingDirSeparator,
+  cleanFrontDirSeparator,
   extractContainingDirectoryPath,
   extractFileName,
   extractParentDirectoryPath,
@@ -276,8 +277,9 @@ export const DirectoryContentContextProvider = ({
               PlatformIO.getDirSeparator(),
             );
             if (
-              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-              cleanTrailingDirSeparator(dirPath)
+              cleanTrailingDirSeparator(
+                cleanFrontDirSeparator(currentDirectoryPath.current),
+              ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
             ) {
               const oldName = extractFileName(
                 action.oldEntryPath,
@@ -333,8 +335,9 @@ export const DirectoryContentContextProvider = ({
         PlatformIO.getDirSeparator(),
       );
       if (
-        cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-        cleanTrailingDirSeparator(dirPath)
+        cleanTrailingDirSeparator(
+          cleanFrontDirSeparator(currentDirectoryPath.current),
+        ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
       ) {
         currentDirectoryEntries.current.push(entry);
         // reflect add KanBan folders visibility
