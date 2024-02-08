@@ -20,6 +20,7 @@ import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
+import { openUrlForWeb } from '-/services/utils-io';
 
 let objectStoreAPI, webDavAPI;
 
@@ -811,7 +812,8 @@ export default class PlatformFacade {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('openUrl', url);
     } else {
-      console.error('Is supported only in Electron');
+      // web or cordova
+      openUrlForWeb(url);
     }
   };
 

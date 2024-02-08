@@ -1633,3 +1633,19 @@ export function openURLExternally(url: string, skipConfirmation = false) {
     PlatformIO.openUrl(url);
   }
 }
+
+export function openUrlForWeb(url) {
+  const tmpLink = document.createElement('a');
+  tmpLink.target = '_blank';
+  tmpLink.href = url;
+  tmpLink.rel = 'noopener noreferrer';
+  document.body.appendChild(tmpLink);
+  tmpLink.click();
+  tmpLink.parentNode.removeChild(tmpLink);
+  // window.open(url, '_blank').opener = null;
+  // Object.assign(anchor, {
+  //   target: '_blank',
+  //   href: url,
+  //   rel: 'noopener noreferrer'
+  // }).click();
+}
