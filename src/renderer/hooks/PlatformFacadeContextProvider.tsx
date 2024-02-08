@@ -46,10 +46,12 @@ type PlatformFacadeContextData = {
     paths: Array<string>,
     targetPath: string,
     onProgress?,
-  ) => Promise<any>;
+    reflect?: boolean,
+  ) => Promise<boolean>;
   copyFilePromiseOverwrite: (
     sourceFilePath: string,
     targetFilePath: string,
+    reflect?,
   ) => Promise<any>;
   renameFilePromise: (
     filePath: string,
@@ -89,6 +91,7 @@ type PlatformFacadeContextData = {
     param: any,
     content: any,
     overwrite: boolean,
+    open?: boolean,
   ) => Promise<any>;
   saveTextFilePromise: (
     param: any,
@@ -103,6 +106,7 @@ type PlatformFacadeContextData = {
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
+    reflect?,
   ) => Promise<TS.FileSystemEntry>;
   deleteEntriesPromise: (...paths: TS.FileSystemEntry[]) => Promise<boolean>;
   setFolderThumbnailPromise: (filePath: string) => Promise<string>;
@@ -135,8 +139,12 @@ export type PlatformFacadeContextProviderProps = {
 export const PlatformFacadeContextProvider = ({
   children,
 }: PlatformFacadeContextProviderProps) => {
-  const { reflectAddEntry, reflectDeleteEntries, setReflectActions } =
-    useEditedEntryContext();
+  const {
+    reflectAddEntry,
+    reflectAddEntryPath,
+    reflectDeleteEntries,
+    setReflectActions,
+  } = useEditedEntryContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
@@ -213,10 +221,11 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function copyFilesWithProgress(
-    paths: Array<string>,
+    paths: string[],
     targetPath: string,
     onProgress = undefined,
-  ) {
+    reflect = true,
+  ): Promise<boolean> {
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -226,25 +235,38 @@ export const PlatformFacadeContextProvider = ({
         PlatformFacade.getDirSeparator() +
         extractFileName(path, PlatformFacade.getDirSeparator());
       return {
-        promise: copyFilePromiseOverwrite(path, targetFile),
+        promise: copyFilePromiseOverwrite(path, targetFile, false),
         path: path,
       };
     });
     const progress = (completed, path) => {
-      const progress = {
-        loaded: completed, //processedSize,
-        total: ioJobPromises.length,
-        key: targetPath,
-      };
-      onProgress(
-        progress,
-        () => {
-          controller.abort();
-        },
-        path,
-      );
+      if (onProgress) {
+        const progress = {
+          loaded: completed, //processedSize,
+          total: ioJobPromises.length,
+          key: targetPath,
+        };
+        onProgress(
+          progress,
+          () => {
+            controller.abort();
+          },
+          path,
+        );
+      }
     };
-    return trackProgress(ioJobPromises, signal, progress);
+    return trackProgress(ioJobPromises, signal, progress).then(() => {
+      if (reflect) {
+        const targetPaths = paths.map(
+          (path) =>
+            normalizePath(targetPath) +
+            PlatformFacade.getDirSeparator() +
+            extractFileName(path, PlatformFacade.getDirSeparator()),
+        );
+        return reflectAddEntryPath(...targetPaths);
+      }
+      return true;
+    });
   }
 
   function trackProgress(promises, abortSignal, progress) {
@@ -289,15 +311,18 @@ export const PlatformFacadeContextProvider = ({
   function copyFilePromiseOverwrite(
     sourceFilePath: string,
     targetFilePath: string,
+    reflect: boolean = true,
   ): Promise<any> {
     ignoreByWatcher(targetFilePath);
     return PlatformFacade.copyFilePromiseOverwrite(
       sourceFilePath,
       targetFilePath,
     ).then((result) => {
-      getAllPropertiesPromise(targetFilePath).then(
-        (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
-      );
+      if (reflect) {
+        getAllPropertiesPromise(targetFilePath).then(
+          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+        );
+      }
       deignoreByWatcher(targetFilePath);
       return result;
     });
@@ -503,11 +528,12 @@ export const PlatformFacadeContextProvider = ({
     param: any,
     content: any,
     overwrite: boolean,
+    open: boolean = false,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveFilePromise(param, content, overwrite).then(
       (fsEntry) => {
-        reflectAddEntry(fsEntry);
+        reflectAddEntry(fsEntry, open);
         deignoreByWatcher(param.path);
         return fsEntry;
       },
@@ -517,12 +543,19 @@ export const PlatformFacadeContextProvider = ({
   function saveTextFilePromise(
     param: any,
     content: string,
-    overwrite: boolean,
+    isUpdated: boolean,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return PlatformFacade.saveTextFilePromise(param, content, overwrite).then(
+    return PlatformFacade.saveTextFilePromise(param, content, isUpdated).then(
       (fsEntry) => {
-        reflectAddEntry(fsEntry);
+        if (isUpdated) {
+          setReflectActions({
+            action: 'update',
+            entry: fsEntry,
+          });
+        } else {
+          reflectAddEntry(fsEntry);
+        }
         deignoreByWatcher(param.path);
         return fsEntry;
       },
@@ -537,6 +570,7 @@ export const PlatformFacadeContextProvider = ({
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
+    reflect: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveBinaryFilePromise(
@@ -545,7 +579,9 @@ export const PlatformFacadeContextProvider = ({
       overwrite,
       onUploadProgress,
     ).then((fsEntry) => {
-      reflectAddEntry(fsEntry);
+      if (reflect) {
+        reflectAddEntry(fsEntry);
+      }
       deignoreByWatcher(param.path);
       return fsEntry;
     });

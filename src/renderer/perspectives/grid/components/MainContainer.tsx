@@ -16,11 +16,9 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
-import { isObj } from '@tagspaces/tagspaces-common/misc';
-import { isVisibleOnScreen } from '-/utils/dom';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -29,10 +27,7 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import GridCell, {
-  calculateEntryHeight,
-  calculateEntryWidth,
-} from './GridCell';
+import GridCell from './GridCell';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';

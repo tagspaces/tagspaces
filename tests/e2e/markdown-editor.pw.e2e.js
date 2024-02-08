@@ -75,7 +75,7 @@ test.describe('TST69 - Markdown editor', () => {
       getGridFileSelector('sample.md'),
       'fileMenuOpenFile',
     );
-
+    await clickOn('[data-tid=fileContainerEditFile]');
     // Access the iframe
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();

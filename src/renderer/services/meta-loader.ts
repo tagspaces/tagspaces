@@ -16,9 +16,6 @@ export function loadCurrentDirMeta(
 ): Promise<TS.FileSystemEntry[]> {
   return PlatformIO.listMetaDirectoryPromise(directoryPath)
     .then((meta) => {
-      //metaLoadedLock.current = false;
-      //props.setIsMetaLoaded(true);
-      // props.setMetaForCurrentDir(meta);
       const dirEntriesPromises = dirEntries
         .filter((entry) => !entry.isFile)
         .map((entry) => getEnhancedDir(entry));
@@ -72,7 +69,7 @@ function getFileEntriesPromises(
           [entry.path]: getMetaForEntry(entry, metaFilePath)
         });*/
     }
-    return Promise.resolve(undefined); //Promise.resolve({ [entry.path]: undefined });
+    return Promise.resolve(entry); //Promise.resolve({ [entry.path]: undefined });
   });
 }
 

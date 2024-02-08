@@ -63,18 +63,22 @@ export const SelectedEntryContextProvider = ({
 
   useEffect(() => {
     if (actions && actions.length > 0) {
+      let selected = [...selectedEntries.current];
       for (const action of actions) {
         if (action.action === 'add') {
-          if (selectedEntries.current.length === 0) {
-            // don't change selection if copy dialog with selected entry is opened
-            selectedEntries.current = [action.entry];
-          }
+          if (action.entry.isFile) {
+            selected.push(action.entry);
+          } /*else if (selectedEntries.current.length === 0) {
+            //todo tmp fix don't change selection if copy dialog with selected entry is opened
+            selected.push(action.entry);
+          }*/
         } else if (action.action === 'delete') {
           let index = selectedEntries.current.findIndex(
             (e) => e.path === action.entry.path,
           );
           if (index !== -1) {
             selectedEntries.current.splice(index, 1);
+            selected = [...selectedEntries.current];
           }
         } else if (action.action === 'update') {
           let index = selectedEntries.current.findIndex(
@@ -82,10 +86,11 @@ export const SelectedEntryContextProvider = ({
           );
           if (index !== -1) {
             selectedEntries.current[index] = action.entry;
+            selected = [...selectedEntries.current];
           }
         }
       }
-      selectedEntries.current = [...selectedEntries.current];
+      selectedEntries.current = selected;
       forceUpdate();
     }
   }, [actions]);
@@ -118,7 +123,7 @@ export const SelectedEntryContextProvider = ({
   };
 
   const lastSelectedEntryPath = useMemo(() => {
-    if (selectedEntries.current.length > 0) {
+    if (selectedEntries.current && selectedEntries.current.length > 0) {
       return selectedEntries.current[selectedEntries.current.length - 1].path;
     }
     return undefined;

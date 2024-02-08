@@ -573,7 +573,7 @@ function EntryContainer() {
         PlatformIO.getDirSeparator(),
       );
       try {
-        await copyFilePromiseOverwrite(fileOpen.path, targetPath); // todo test what happened if remove await?
+        await copyFilePromiseOverwrite(fileOpen.path, targetPath, false); // todo test what happened if remove await?
       } catch (error) {
         console.log('copyFilePromiseOverwrite', error);
       }
@@ -595,14 +595,14 @@ function EntryContainer() {
             fileEditHistoryKey,
           );
         }
-
-        return updateOpenedFile(fileOpen.path, {
+        return true;
+        /*return updateOpenedFile(fileOpen.path, {
           id: '',
           ...fileOpen,
           editMode: true,
           //changed: false,
           shouldReload: undefined,
-        }).then(() => true);
+        }).then(() => true);*/
       })
       .catch((error) => {
         setConflictDialogOpen(true);

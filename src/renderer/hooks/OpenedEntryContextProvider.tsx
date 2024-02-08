@@ -137,7 +137,7 @@ export const OpenedEntryContextProvider = ({
     openDirectory,
   } = useDirectoryContentContext();
 
-  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
   const { saveFilePromise } = usePlatformFacadeContext();
@@ -198,10 +198,10 @@ export const OpenedEntryContextProvider = ({
     if (actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.entry.isFile) {
+          if (action.open) {
+            //action.entry.isFile && action.entry.isNewFile) {
             openFsEntry(action.entry, true);
           }
-          setSelectedEntries([action.entry]);
         } else if (action.action === 'delete') {
           if (
             currentEntry.current &&
@@ -209,7 +209,7 @@ export const OpenedEntryContextProvider = ({
           ) {
             closeAllFiles();
           }
-        } else if (action.action === 'update') {
+        } else if (action.action === 'update' || action.action === 'move') {
           if (
             currentEntry.current &&
             action.oldEntryPath &&
@@ -518,7 +518,10 @@ export const OpenedEntryContextProvider = ({
     if (fsEntry.size) {
       entryForOpening.size = fsEntry.size;
     }
-    if (fsEntry.isNewFile) {
+    if (
+      fsEntry.isNewFile &&
+      AppConfig.editableFiles.includes(fsEntry.extension)
+    ) {
       entryForOpening.editMode = true;
     }
     if (fsEntry.isAutoSaveEnabled !== undefined) {
@@ -817,11 +820,8 @@ export const OpenedEntryContextProvider = ({
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    saveFilePromise({ path: filePath }, fileContent, false)
+    saveFilePromise({ path: filePath }, fileContent, false, true)
       .then((fsEntry: TS.FileSystemEntry) => {
-        //reflectAddEntry(fsEntry);
-        // openFsEntry(fsEntry);
-        // setSelectedEntries([fsEntry]);
         showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })

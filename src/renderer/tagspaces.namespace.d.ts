@@ -103,6 +103,7 @@ export namespace TS {
     action: 'add' | 'delete' | 'update' | 'move';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
+    open?: boolean;
   }
 
   interface Tag {

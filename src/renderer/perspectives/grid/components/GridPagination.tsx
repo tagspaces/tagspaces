@@ -53,6 +53,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -111,8 +112,8 @@ function GridPagination(props: Props) {
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
-  const { currentDirectoryEntries, openDirectory, directoryMeta } =
-    useDirectoryContentContext();
+  const { openDirectory, directoryMeta } = useDirectoryContentContext();
+  const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   if (!showDirectories) {
     directories = [];
@@ -351,7 +352,7 @@ function GridPagination(props: Props) {
                 selectedEntries,
                 setSelectedEntries,
                 lastSelectedEntryPath,
-                currentDirectoryEntries,
+                sortedDirContent,
                 openEntry,
                 openFileNatively,
                 openDirectory,
@@ -375,7 +376,7 @@ function GridPagination(props: Props) {
               selectedEntries,
               setSelectedEntries,
               lastSelectedEntryPath,
-              currentDirectoryEntries,
+              sortedDirContent,
               openEntry,
               openFileNatively,
               openDirectory,

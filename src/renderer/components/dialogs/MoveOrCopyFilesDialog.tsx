@@ -37,10 +37,9 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   open: boolean;
@@ -54,11 +53,11 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
-  const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
-  // const dispatch: AppDispatch = useDispatch();
+  const { moveFiles, copyFiles } = useIOActionsContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  /*
   const handleMoveCopyFiles = (files: Array<any>, move = false) => {
     const promises = [];
     for (const file of files) {
@@ -66,7 +65,9 @@ function MoveOrCopyFilesDialog(props: Props) {
         promises.push(
           renameFilePromise(
             file.path,
-            currentDirectoryPath + AppConfig.dirSeparator + file.name,
+            cleanTrailingDirSeparator(currentDirectoryPath) +
+              AppConfig.dirSeparator +
+              file.name,
           )
             .then(() => true)
             .catch((error) => {
@@ -77,7 +78,9 @@ function MoveOrCopyFilesDialog(props: Props) {
         promises.push(
           copyFilePromise(
             file.path,
-            currentDirectoryPath + AppConfig.dirSeparator + file.name,
+            cleanTrailingDirSeparator(currentDirectoryPath) +
+              AppConfig.dirSeparator +
+              file.name,
           )
             .then(() => true)
             .catch((error) => {
@@ -91,7 +94,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       .catch((error) => {
         console.log('promises', error);
       });
-  };
+  };  */
 
   return (
     <Dialog
@@ -143,7 +146,12 @@ function MoveOrCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => {
-            handleMoveCopyFiles(props.selectedFiles, true);
+            if (props.selectedFiles) {
+              moveFiles(
+                props.selectedFiles.map((file) => file.path),
+                currentDirectoryPath,
+              );
+            }
             props.onClose();
           }}
           data-tid="confirmMoveFilesTID"
@@ -154,7 +162,12 @@ function MoveOrCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => {
-            handleMoveCopyFiles(props.selectedFiles);
+            if (props.selectedFiles) {
+              copyFiles(
+                props.selectedFiles.map((file) => file.path),
+                currentDirectoryPath,
+              );
+            }
             props.onClose();
           }}
           data-tid="confirmCopyFilesTID"

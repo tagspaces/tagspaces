@@ -30,10 +30,9 @@ import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
   cleanTrailingDirSeparator,
+  cleanFrontDirSeparator,
   extractContainingDirectoryPath,
   extractFileName,
-  extractFileExtension,
-  extractTagsAsObjects,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
   getMetaDirectoryPath,
@@ -57,7 +56,6 @@ import {
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
@@ -67,6 +65,7 @@ import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -266,7 +265,10 @@ export const DirectoryContentContextProvider = ({
             (e) => e.path === action.oldEntryPath,
           );
           if (index !== -1) {
-            currentDirectoryEntries.current[index] = action.entry;
+            currentDirectoryEntries.current[index] = {
+              ...currentDirectoryEntries.current[index],
+              ...action.entry,
+            };
           }
           // update ordered entries (KanBan)
           if (Pro && Pro.MetaOperations) {
@@ -275,8 +277,9 @@ export const DirectoryContentContextProvider = ({
               PlatformIO.getDirSeparator(),
             );
             if (
-              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-              cleanTrailingDirSeparator(dirPath)
+              cleanTrailingDirSeparator(
+                cleanFrontDirSeparator(currentDirectoryPath.current),
+              ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
             ) {
               const oldName = extractFileName(
                 action.oldEntryPath,
@@ -332,31 +335,34 @@ export const DirectoryContentContextProvider = ({
         PlatformIO.getDirSeparator(),
       );
       if (
-        cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-        cleanTrailingDirSeparator(dirPath)
+        cleanTrailingDirSeparator(
+          cleanFrontDirSeparator(currentDirectoryPath.current),
+        ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
       ) {
         currentDirectoryEntries.current.push(entry);
         // reflect add KanBan folders visibility
-        await toggleDirVisibility(
-          { name: entry.name, uuid: entry.uuid },
-          dirPath,
-          false,
-        );
+        if (!entry.isFile) {
+          await toggleDirVisibility(
+            { name: entry.name, uuid: entry.uuid },
+            dirPath,
+            false,
+          );
+        }
       }
     }
   }
 
   function reflectDeleteAction(entry: TS.FileSystemEntry) {
+    if (!entry.isFile) {
+      if (entry.path === currentDirectoryPath.current) {
+        loadParentDirectoryContent();
+        return;
+      }
+    }
     let index = currentDirectoryEntries.current.findIndex(
       (e) => e.path === entry.path,
     );
     if (index !== -1) {
-      if (!entry.isFile) {
-        if (entry.path === currentDirectoryPath.current) {
-          loadParentDirectoryContent();
-          return;
-        }
-      }
       currentDirectoryEntries.current.splice(index, 1);
     }
   }
@@ -622,15 +628,17 @@ export const DirectoryContentContextProvider = ({
     showHiddenEntries = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
+      const reloadMeta = currentDirectoryPath.current === dirPath;
       return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
         (dirEntries) => {
-          if (dirEntries) {
-            setCurrentDirectoryEntries(dirEntries, false);
+          if (dirEntries && reloadMeta) {
+            // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
             return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
               updateCurrentDirEntries(entries);
               return true;
             });
           }
+          return true;
         },
       );
     }

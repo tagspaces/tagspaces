@@ -52,14 +52,13 @@ import {
   enhanceEntry,
   loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
   getPrefixTagContainer,
-  getUseTrashCan,
   getWarningOpeningFilesExternally,
 } from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type IOActionsContextData = {
   createDirectory: (directoryPath: string) => Promise<boolean>;
@@ -96,12 +95,14 @@ type IOActionsContextData = {
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
+    open?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
   uploadFiles: (
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
+    open?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
   renameDirectory: (
     directoryPath: string,
@@ -156,6 +157,7 @@ export const IOActionsContextProvider = ({
     saveBinaryFilePromise,
     deleteEntriesPromise,
   } = usePlatformFacadeContext();
+  const { setReflectActions } = useEditedEntryContext();
   const { currentDirectoryPath, openDirectory } = useDirectoryContentContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -461,31 +463,34 @@ export const IOActionsContextProvider = ({
     onProgress,
   ): Promise<boolean> {
     return copyFilesWithProgress(paths, targetPath, onProgress)
-      .then(() => {
-        // todo return only copied paths
-        showNotification(t('core:filesCopiedSuccessful'));
-        const metaPaths = paths.flatMap((path) => [
-          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(
-            path,
-            PlatformIO.getDirSeparator(),
-            false,
-          ),
-        ]);
+      .then((success) => {
+        if (success) {
+          showNotification(t('core:filesCopiedSuccessful'));
+          const metaPaths = paths.flatMap((path) => [
+            getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+            getThumbFileLocationForFile(
+              path,
+              PlatformIO.getDirSeparator(),
+              false,
+            ),
+          ]);
 
-        return copyFilesWithProgress(
-          metaPaths,
-          getMetaDirectoryPath(targetPath),
-          onProgress,
-        )
-          .then(() => {
-            console.log('Copy meta and thumbs successful');
-            return true;
-          })
-          .catch((err) => {
-            console.warn('At least one meta or thumb was not copied ' + err);
-            return true;
-          });
+          return copyFilesWithProgress(
+            metaPaths,
+            getMetaDirectoryPath(targetPath),
+            onProgress,
+            false,
+          )
+            .then(() => {
+              console.log('Copy meta and thumbs successful');
+              return true;
+            })
+            .catch((err) => {
+              console.warn('At least one meta or thumb was not copied ' + err);
+              return true;
+            });
+        }
+        return false;
       })
       .catch((err) => {
         console.warn('Moving files failed with ' + err);
@@ -555,19 +560,27 @@ export const IOActionsContextProvider = ({
    * @param onUploadProgress
    * @param uploadMeta - try to upload meta and thumbs if available
    * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
+   * @param open
    */
   function uploadFilesAPI(
     files: Array<any>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta = true,
+    open = true,
   ): Promise<TS.FileSystemEntry[]> {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
       for (let i = 0; i < files.length; i += 1) {
         arrFiles.push(files[i].path);
       }
-      return uploadFiles(arrFiles, targetPath, onUploadProgress, uploadMeta);
+      return uploadFiles(
+        arrFiles,
+        targetPath,
+        onUploadProgress,
+        uploadMeta,
+        open,
+      );
     }
 
     return new Promise(async (resolve) => {
@@ -676,75 +689,80 @@ export const IOActionsContextProvider = ({
     });
   }
 
+  function uploadFile(
+    filePath: string,
+    fileType: string,
+    fileContent: any,
+    onUploadProgress?: (progress: Progress, response: any) => void,
+    reflect: boolean = true,
+  ) {
+    return PlatformIO.getPropertiesPromise(filePath)
+      .then((entryProps) => {
+        if (entryProps) {
+          showNotification(
+            'File with the same name already exist, importing skipped!',
+            'warning',
+            true,
+          );
+          dispatch(AppActions.setProgress(filePath, -1, undefined));
+        } else {
+          // dispatch(AppActions.setProgress(filePath, progress));
+          return saveBinaryFilePromise(
+            { path: filePath },
+            fileContent,
+            true,
+            onUploadProgress,
+            reflect,
+          )
+            .then((fsEntry: TS.FileSystemEntry) => {
+              // handle meta files
+              if (fileType === 'meta') {
+                try {
+                  // eslint-disable-next-line no-param-reassign
+                  fsEntry.meta = loadJSONString(fileContent.toString());
+                } catch (e) {
+                  console.debug('cannot parse entry meta');
+                }
+              } else if (fileType === 'thumb') {
+                // eslint-disable-next-line no-param-reassign
+                fsEntry.thumbPath = fsEntry.path;
+              }
+
+              return fsEntry;
+            })
+            .catch((err) => {
+              console.log('Importing file ' + filePath + ' failed ', err);
+              showNotification(
+                'Importing file ' + filePath + ' failed.',
+                'error',
+                true,
+              );
+              return undefined;
+            });
+        }
+        return undefined;
+      })
+      .catch((err) => {
+        console.log('Error getting properties', err);
+      });
+  }
+
   /**
    * use with Electron only!
    * @param paths
    * @param targetPath
    * @param onUploadProgress
    * @param uploadMeta
+   * @param open -> open files after upload
    */
   function uploadFiles(
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void,
     uploadMeta = true,
+    open = true,
   ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
-      function uploadFile(
-        filePath: string,
-        fileType: string,
-        fileContent: any,
-      ) {
-        return PlatformIO.getPropertiesPromise(filePath)
-          .then((entryProps) => {
-            if (entryProps) {
-              showNotification(
-                'File with the same name already exist, importing skipped!',
-                'warning',
-                true,
-              );
-              dispatch(AppActions.setProgress(filePath, -1, undefined));
-            } else {
-              // dispatch(AppActions.setProgress(filePath, progress));
-              return saveBinaryFilePromise(
-                { path: filePath },
-                fileContent,
-                true,
-                onUploadProgress,
-              )
-                .then((fsEntry: TS.FileSystemEntry) => {
-                  // handle meta files
-                  if (fileType === 'meta') {
-                    try {
-                      // eslint-disable-next-line no-param-reassign
-                      fsEntry.meta = loadJSONString(fileContent.toString());
-                    } catch (e) {
-                      console.debug('cannot parse entry meta');
-                    }
-                  } else if (fileType === 'thumb') {
-                    // eslint-disable-next-line no-param-reassign
-                    fsEntry.thumbPath = fsEntry.path;
-                  }
-
-                  return fsEntry;
-                })
-                .catch((err) => {
-                  console.log('Importing file ' + filePath + ' failed ', err);
-                  showNotification(
-                    'Importing file ' + filePath + ' failed.',
-                    'error',
-                    true,
-                  );
-                  return undefined;
-                });
-            }
-            return undefined;
-          })
-          .catch((err) => {
-            console.log('Error getting properties', err);
-          });
-      }
-
       const uploadJobs = [];
       paths.map((path) => {
         let target =
@@ -785,7 +803,15 @@ export const IOActionsContextProvider = ({
         if (AppConfig.isElectron) {
           // for AWS location getFileContentPromise cannot load with io-objectore
           return PlatformIO.getLocalFileContentPromise(job[0])
-            .then((fileContent) => uploadFile(filePath, fileType, fileContent))
+            .then((fileContent) =>
+              uploadFile(
+                filePath,
+                fileType,
+                fileContent,
+                onUploadProgress,
+                false,
+              ),
+            )
             .catch((err) => {
               // console.log('Error getting file:' + job[0] + ' ' + err);
               if (fileType === 'thumb' && job[3]) {
@@ -793,7 +819,13 @@ export const IOActionsContextProvider = ({
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
                     const fileContent = base64ToArrayBuffer(baseString);
-                    return uploadFile(filePath, fileType, fileContent);
+                    return uploadFile(
+                      filePath,
+                      fileType,
+                      fileContent,
+                      onUploadProgress,
+                      false,
+                    );
                   }
                   return undefined;
                 });
@@ -836,52 +868,59 @@ export const IOActionsContextProvider = ({
             );
 
             // Enhance entries
-            resolve(
-              arrFiles.map((file: TS.FileSystemEntry) => {
-                const metaFilePath = getMetaFileLocationForFile(
-                  file.path,
-                  AppConfig.dirSeparator,
-                );
-                if (metaFilePath !== undefined) {
-                  for (let i = 0; i < arrMeta.length; i += 1) {
-                    const metaFile = arrMeta[i];
-                    if (
-                      metaFile.path.replace(/[/\\]/g, '') ===
-                      metaFilePath.replace(/[/\\]/g, '')
-                    ) {
-                      // eslint-disable-next-line no-param-reassign
-                      file.meta = metaFile.meta;
-                    }
+            const entriesEnhanced = arrFiles.map((file: TS.FileSystemEntry) => {
+              const metaFilePath = getMetaFileLocationForFile(
+                file.path,
+                AppConfig.dirSeparator,
+              );
+              if (metaFilePath !== undefined) {
+                for (let i = 0; i < arrMeta.length; i += 1) {
+                  const metaFile = arrMeta[i];
+                  if (
+                    metaFile.path.replace(/[/\\]/g, '') ===
+                    metaFilePath.replace(/[/\\]/g, '')
+                  ) {
+                    // eslint-disable-next-line no-param-reassign
+                    file.meta = metaFile.meta;
                   }
                 }
-                const thumbFilePath = getThumbFileLocationForFile(
-                  file.path,
-                  AppConfig.dirSeparator,
-                );
-                if (thumbFilePath !== undefined) {
-                  for (let i = 0; i < arrThumb.length; i += 1) {
-                    const thumbFile = arrThumb[i];
-                    if (
-                      thumbFile.path.replace(/[/\\]/g, '') ===
-                      thumbFilePath.replace(/[/\\]/g, '')
-                    ) {
-                      // eslint-disable-next-line no-param-reassign
-                      file.thumbPath = PlatformIO.getURLforPath(
-                        thumbFile.thumbPath,
-                      );
-                    }
+              }
+              const thumbFilePath = getThumbFileLocationForFile(
+                file.path,
+                AppConfig.dirSeparator,
+              );
+              if (thumbFilePath !== undefined) {
+                for (let i = 0; i < arrThumb.length; i += 1) {
+                  const thumbFile = arrThumb[i];
+                  if (
+                    thumbFile.path.replace(/[/\\]/g, '') ===
+                    thumbFilePath.replace(/[/\\]/g, '')
+                  ) {
+                    // eslint-disable-next-line no-param-reassign
+                    file.thumbPath = PlatformIO.getURLforPath(
+                      thumbFile.thumbPath,
+                    );
                   }
                 }
-                if (file.meta) {
-                  return enhanceEntry(
-                    file,
-                    AppConfig.tagDelimiter,
-                    PlatformIO.getDirSeparator(),
-                  );
-                }
-                return file;
+              }
+              if (file.meta) {
+                return enhanceEntry(
+                  file,
+                  AppConfig.tagDelimiter,
+                  PlatformIO.getDirSeparator(),
+                );
+              }
+              return file;
+            });
+            const reflectActions: TS.EditAction[] = entriesEnhanced.map(
+              (entry) => ({
+                action: 'add',
+                entry: entry,
+                open: open,
               }),
             );
+            setReflectActions(...reflectActions);
+            resolve(entriesEnhanced);
           } else {
             // eslint-disable-next-line prefer-promise-reject-errors
             reject('Upload failed');

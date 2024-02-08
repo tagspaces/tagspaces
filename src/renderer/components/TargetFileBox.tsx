@@ -75,7 +75,13 @@ function TargetFileBox(props: Props) {
       }
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
-      return uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
+      return uploadFilesAPI(
+        files,
+        currentDirectoryPath,
+        onUploadProgress,
+        true,
+        false,
+      )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           /*addDirectoryEntries(fsEntries);
           dispatch(AppActions.reflectCreateEntries(fsEntries));
