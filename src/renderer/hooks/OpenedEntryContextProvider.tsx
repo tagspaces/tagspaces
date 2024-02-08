@@ -137,7 +137,7 @@ export const OpenedEntryContextProvider = ({
     openDirectory,
   } = useDirectoryContentContext();
 
-  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
   const { saveFilePromise } = usePlatformFacadeContext();
@@ -201,7 +201,6 @@ export const OpenedEntryContextProvider = ({
           if (action.entry.isFile) {
             openFsEntry(action.entry, true);
           }
-          setSelectedEntries([action.entry]);
         } else if (action.action === 'delete') {
           if (
             currentEntry.current &&
@@ -822,9 +821,6 @@ export const OpenedEntryContextProvider = ({
     }
     saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
-        //reflectAddEntry(fsEntry);
-        // openFsEntry(fsEntry);
-        // setSelectedEntries([fsEntry]);
         showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })
