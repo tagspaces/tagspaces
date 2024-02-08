@@ -64,6 +64,7 @@ import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -622,16 +623,17 @@ export const DirectoryContentContextProvider = ({
     showHiddenEntries = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
+      const reloadMeta = currentDirectoryPath.current === dirPath;
       return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
         (dirEntries) => {
-          return true;
-          /*if (dirEntries) {
-            // setCurrentDirectoryEntries(dirEntries, false);
+          if (dirEntries && reloadMeta) {
+            // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
             return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
               updateCurrentDirEntries(entries);
               return true;
             });
-          }*/
+          }
+          return true;
         },
       );
     }
