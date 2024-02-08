@@ -118,7 +118,7 @@ export const SelectedEntryContextProvider = ({
   };
 
   const lastSelectedEntryPath = useMemo(() => {
-    if (selectedEntries.current.length > 0) {
+    if (selectedEntries.current && selectedEntries.current.length > 0) {
       return selectedEntries.current[selectedEntries.current.length - 1].path;
     }
     return undefined;
