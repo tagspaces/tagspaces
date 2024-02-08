@@ -128,7 +128,7 @@ function AboutDialog(props: Props) {
         {productName}
         <DialogCloseButton testId="closeAboutDialogTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowY: 'auto' }}>
         <img
           alt="TagSpaces logo"
           src={LogoIcon}
