@@ -146,10 +146,12 @@ function MoveOrCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => {
-            moveFiles(
-              props.selectedFiles.map((file) => file.path),
-              currentDirectoryPath,
-            );
+            if (props.selectedFiles) {
+              moveFiles(
+                props.selectedFiles.map((file) => file.path),
+                currentDirectoryPath,
+              );
+            }
             props.onClose();
           }}
           data-tid="confirmMoveFilesTID"
@@ -160,10 +162,12 @@ function MoveOrCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => {
-            copyFiles(
-              props.selectedFiles.map((file) => file.path),
-              currentDirectoryPath,
-            );
+            if (props.selectedFiles) {
+              copyFiles(
+                props.selectedFiles.map((file) => file.path),
+                currentDirectoryPath,
+              );
+            }
             props.onClose();
           }}
           data-tid="confirmCopyFilesTID"

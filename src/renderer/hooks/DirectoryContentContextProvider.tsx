@@ -338,11 +338,13 @@ export const DirectoryContentContextProvider = ({
       ) {
         currentDirectoryEntries.current.push(entry);
         // reflect add KanBan folders visibility
-        await toggleDirVisibility(
-          { name: entry.name, uuid: entry.uuid },
-          dirPath,
-          false,
-        );
+        if (!entry.isFile) {
+          await toggleDirVisibility(
+            { name: entry.name, uuid: entry.uuid },
+            dirPath,
+            false,
+          );
+        }
       }
     }
   }

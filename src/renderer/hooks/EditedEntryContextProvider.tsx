@@ -28,8 +28,8 @@ type EditedEntryContextData = {
   reflectUpdateMeta: (...path: string[]) => void;
   setReflectActions: (...actionsArray: TS.EditAction[]) => void;
   reflectDeleteEntries: (...entries: TS.FileSystemEntry[]) => void;
-  reflectAddEntryPath: (path: string) => void;
-  reflectAddEntry: (entry: TS.FileSystemEntry) => void;
+  reflectAddEntryPath: (...paths: string[]) => Promise<boolean>;
+  reflectAddEntry: (entry: TS.FileSystemEntry, open?: boolean) => void;
 };
 
 export const EditedEntryContext = createContext<EditedEntryContextData>({
@@ -90,17 +90,27 @@ export const EditedEntryContextProvider = ({
     });
   }
 
-  function reflectAddEntryPath(path: string) {
-    getAllPropertiesPromise(path).then((fsEntry: TS.FileSystemEntry) =>
+  function reflectAddEntryPath(...paths: string[]): Promise<boolean> {
+    const entriesPromises = paths.map((path) => getAllPropertiesPromise(path));
+    return Promise.all(entriesPromises).then((entries) => {
+      const actions: TS.EditAction[] = entries.map((entry) => ({
+        action: 'add',
+        entry: entry,
+      }));
+      setReflectActions(...actions);
+      return true;
+    });
+    /*getAllPropertiesPromise(path).then((fsEntry: TS.FileSystemEntry) =>
       reflectAddEntry(fsEntry),
-    );
+    );*/
   }
 
   /**
    * warning: no entry.meta will be added in reflectAddEntry. To add meta use reflectAddEntryPath
    * @param entry
+   * @param open
    */
-  function reflectAddEntry(entry: TS.FileSystemEntry) {
+  function reflectAddEntry(entry: TS.FileSystemEntry, open = true) {
     if (!entry.tags || entry.tags.length === 0) {
       entry.tags = extractTagsAsObjects(
         entry.name,
@@ -111,6 +121,7 @@ export const EditedEntryContextProvider = ({
     const currentAction: TS.EditAction = {
       action: 'add',
       entry: entry,
+      open: open,
     };
     actions.current = [currentAction];
     forceUpdate();

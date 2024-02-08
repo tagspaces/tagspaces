@@ -198,7 +198,8 @@ export const OpenedEntryContextProvider = ({
     if (actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.entry.isFile) {
+          if (action.open) {
+            //action.entry.isFile && action.entry.isNewFile) {
             openFsEntry(action.entry, true);
           }
         } else if (action.action === 'delete') {
@@ -819,7 +820,7 @@ export const OpenedEntryContextProvider = ({
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    saveFilePromise({ path: filePath }, fileContent, false)
+    saveFilePromise({ path: filePath }, fileContent, false, true)
       .then((fsEntry: TS.FileSystemEntry) => {
         showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
