@@ -107,15 +107,15 @@ interface Props {
 export function calculateEntryHeight(entrySize: TS.EntrySizes) {
   let entryHeight = 200;
   if (entrySize === 'tiny') {
-    entryHeight = 30;
+    entryHeight = 35;
   } else if (entrySize === 'small') {
-    entryHeight = 70;
+    entryHeight = 55;
   } else if (entrySize === 'normal') {
-    entryHeight = 90;
+    entryHeight = 75;
   } else if (entrySize === 'big') {
-    entryHeight = 120;
+    entryHeight = 95;
   } else if (entrySize === 'huge') {
-    entryHeight = 150;
+    entryHeight = 115;
   }
   return entryHeight;
 }
