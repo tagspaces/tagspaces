@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const { getExtensions } = require('../src/main/extension-utils');
+import fs from 'fs';
+import path from 'path';
+import { getExtensions } from '../src/main/extension-utils';
 // const os = require('os');
 
 let directoryPath = path.join(
@@ -11,7 +11,10 @@ let directoryPath = path.join(
   'node_modules',
 );
 
-getExtensions(directoryPath)
+getExtensions(directoryPath, [
+  '@tagspaces/extensions',
+  '@tagspacespro/extensions',
+])
   .then(({ extensions, supportedFileTypes }) => {
     writeExtensions(extensions, supportedFileTypes);
   })

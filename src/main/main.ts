@@ -21,7 +21,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
-import { resolveHtmlPath, stringifyMaxDepth } from './util';
+import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import settings from './settings';
@@ -623,7 +623,11 @@ app
       loadMainEvents();
 
       ipcMain.on('load-extensions', () => {
-        getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
+        getExtensions(
+          path.join(app.getPath('userData'), 'tsplugins'),
+          ['@tagspaces/extensions', '@tagspacespro/extensions'],
+          true,
+        )
           .then(({ extensions, supportedFileTypes }) => {
             const setExtensions: Extensions = {
               extensions,

@@ -50,7 +50,7 @@
     "cordova-remove-ios": "cd cordova && cordova platform remove ios && cd ..",
     "dev": "npm run prepare-node && npm run generate-extensions && npm run link-ext && npm run start",
     "dev-open-file": "git apply run-with-args.patch && npm run dev",
-    "generate-extensions": "node scripts/generateExtensionsConfig.js",
+    "generate-extensions": "node -r ts-node/register scripts/generateExtensionsConfig.ts",
     "generate-jwt": "node scripts/jwt_generate.js",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "install-ext-node": "rimraf release/app/node_modules && npm install --prefix ./release/app && npm run generate-extensions",
