@@ -170,6 +170,8 @@ function ProTeaserDialog(props: Props) {
     slides.push(<Slide key={index} {...slidesEN[index]} />);
   }
 
+  const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
+
   return (
     <Dialog
       open={open}
@@ -202,7 +204,7 @@ function ProTeaserDialog(props: Props) {
         </style>
         <swiper-container
           ref={swiperElRef}
-          initialSlide={slideIndex && slideIndex > -1 ? Number(slideIndex) : 0}
+          initialSlide={initialSlide}
           slidesPerView={1}
           navigation={true}
           /*scrollbar={true}*/
