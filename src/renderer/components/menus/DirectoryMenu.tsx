@@ -168,31 +168,10 @@ function DirectoryMenu(props: Props) {
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
-      // const openPersDocs = window.confirm(t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   openURLExternally(
-      //     Links.documentationLinks.galleryPerspective,
-      //     true
-      //   );
-      // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
       toggleProTeaser(PerspectiveIDs.MAPIQUE);
-      // const openPersDocs = window.confirm(t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   openURLExternally(
-      //     Links.documentationLinks.mapiquePerspective,
-      //     true
-      //   );
-      // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
       toggleProTeaser(PerspectiveIDs.KANBAN);
-      // const openPersDocs = window.confirm(t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   openURLExternally(
-      //     Links.documentationLinks.kanbanPerspective,
-      //     true
-      //   );
-      // }
     }
   }
 

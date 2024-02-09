@@ -1108,7 +1108,7 @@ export const IOActionsContextProvider = ({
       openFileNatively,
       duplicateFile,
     };
-  }, []);
+  }, [warningOpeningFilesExternally]);
 
   return (
     <IOActionsContext.Provider value={context}>
