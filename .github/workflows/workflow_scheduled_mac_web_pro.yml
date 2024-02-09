@@ -1,14 +1,13 @@
-name: Nightly E2E Tests Web Minio Windows
+name: Nightly E2E Tests Web Pro Minio macOS
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:
-  e2eTestsWebWin:
-    name: Test TagSpaces Pro Web on Windows
-    runs-on: windows-latest
-
+  e2eTestsWebMac:
+    name: Test TagSpaces Pro Web on Mac
+    runs-on: macos-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v4
@@ -33,15 +32,23 @@ jobs:
           npm run prepare-web-pro
           npm run prettier-check
           npm run type-check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
       - name: Run Unit tests
         run: npm run test-unit
       - uses: carlosperate/download-file-action@v2
         id: minio
         name: Download the Minio
         with:
-          file-url: 'https://dl.min.io/server/minio/release/windows-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
-          file-name: 'minio.exe'
+          file-url: 'https://dl.min.io/server/minio/release/darwin-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
+          file-name: 'minio'
           location: './tests/bin/'
+      - name: Check if Minio exists
+        run: |
+          ls ./tests/bin/
+          test -f ./tests/bin/minio
+      - name: Make the Minio executable
+        run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
           npm run build-e2e-web

@@ -1,4 +1,4 @@
-name: Nightly E2E Tests Electron Windows Pro
+name: Nightly E2E Tests Electron Pro Windows
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -8,7 +8,6 @@ jobs:
   e2eTestsElectronWin:
     name: Test TagSpaces Pro on Windows
     runs-on: windows-latest
-
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v4
@@ -32,6 +31,8 @@ jobs:
           npm install
           npm run prettier-check
           npm run type-check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
       - name: Run Unit tests
         run: npm run test-unit
       - name: Run Electron tests

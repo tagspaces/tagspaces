@@ -3,7 +3,7 @@ on: pull_request
 
 jobs:
   e2eTestsWin:
-    name: Test desktop app on Windows
+    name: Test desktop pro app on Windows
     runs-on: windows-latest
     env:
       PD_PLATFORM: node
@@ -17,7 +17,8 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v4
+      - name: Configure NPM for TagSpaces Pro
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           always-auth: true
@@ -44,7 +45,7 @@ jobs:
             tests/test-pages/
             tests/test-reports/
   e2eTestsWebWin:
-    name: Test web app on Windows
+    name: Test web pro app on Windows
     runs-on: windows-latest
     env:
       PD_PLATFORM: web
@@ -58,7 +59,8 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - uses: actions/setup-node@v4
+      - name: Configure NPM for TagSpaces Pro
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           always-auth: true
