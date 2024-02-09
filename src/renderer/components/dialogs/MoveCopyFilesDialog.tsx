@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -53,24 +54,28 @@ function MoveCopyFilesDialog(props: Props) {
   const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, entries, onClose } = props;
 
-  let allEntries = entries && entries.length > 0 ? entries : selectedEntries;
+  const allEntries = useRef<TS.FileSystemEntry[]>(
+    entries && entries.length > 0 ? entries : selectedEntries,
+  );
 
-  const selectedFiles = allEntries
-    ? allEntries
+  const selectedFiles = allEntries.current
+    ? allEntries.current
         .filter((fsEntry) => fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
 
-  const selectedDirs = allEntries
-    ? allEntries
+  const selectedDirs = allEntries.current
+    ? allEntries.current
         .filter((fsEntry) => !fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
 
   useEffect(() => {
+    allEntries.current =
+      entries && entries.length > 0 ? entries : selectedEntries;
     // getDirProperties have Electron impl only
     if (
       selectedDirs.length > 0 &&
@@ -217,12 +222,10 @@ function MoveCopyFilesDialog(props: Props) {
             overflowY: 'auto',
             width: 550,
             maxHeight: 200,
-            marginLeft: -15,
-            marginBottom: 20,
           }}
         >
-          {allEntries.length > 0 &&
-            allEntries.map((entry) => (
+          {allEntries.current.length > 0 &&
+            allEntries.current.map((entry) => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -239,19 +242,21 @@ function MoveCopyFilesDialog(props: Props) {
               </ListItem>
             ))}
         </List>
-        {targetPath ? (
-          <Typography variant="subtitle2">
-            {t('moveCopyToPath') + ': ' + targetPath}
-          </Typography>
-        ) : (
-          <Typography variant="subtitle2">
-            {t('chooseTargetLocationAndPath')}
-          </Typography>
-        )}
         <DirectoryListView
           setTargetDir={setTargetPath}
           currentDirectoryPath={currentDirectoryPath}
         />
+        <Box style={{ marginTop: 10 }}>
+          {targetPath ? (
+            <Typography variant="subtitle2">
+              {t('moveCopyToPath') + ': ' + targetPath}
+            </Typography>
+          ) : (
+            <Typography variant="subtitle2">
+              {t('chooseTargetLocationAndPath')}
+            </Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}

@@ -79,7 +79,19 @@ export function getProTeaserSlides(t) {
     title: 'TagSpaces Pro - FolderViz Perspective',
     description: (
       <>
-        <p>FolderViz is still in development and has a preview status</p>
+        <p>
+          FolderViz represent the structure of the current folder as a tree.
+          Currently it supports the following views:
+        </p>
+        <ul>
+          <li>Horizontal Tree</li>
+          <li>Radial Tree</li>
+          <li>Treemap</li>
+        </ul>
+        <small>
+          <b>Note:</b> This perspective is still in development and has a
+          preview status.
+        </small>
       </>
     ),
     ctaURL: Links.documentationLinks.foldervizPerspective,

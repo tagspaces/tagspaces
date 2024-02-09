@@ -48,7 +48,7 @@ interface Props {
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
-  const { open, onClose } = props;
+  const { open, onClose, selectedFiles } = props;
   const { t } = useTranslation();
 
   const theme = useTheme();
@@ -56,45 +56,6 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { moveFiles, copyFiles } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-  /*
-  const handleMoveCopyFiles = (files: Array<any>, move = false) => {
-    const promises = [];
-    for (const file of files) {
-      if (move) {
-        promises.push(
-          renameFilePromise(
-            file.path,
-            cleanTrailingDirSeparator(currentDirectoryPath) +
-              AppConfig.dirSeparator +
-              file.name,
-          )
-            .then(() => true)
-            .catch((error) => {
-              console.log('renameFilePromise', error);
-            }),
-        );
-      } else {
-        promises.push(
-          copyFilePromise(
-            file.path,
-            cleanTrailingDirSeparator(currentDirectoryPath) +
-              AppConfig.dirSeparator +
-              file.name,
-          )
-            .then(() => true)
-            .catch((error) => {
-              console.log('copyFilePromise', error);
-            }),
-        );
-      }
-    }
-    Promise.all(promises)
-      .then(() => openDirectory(currentDirectoryPath))
-      .catch((error) => {
-        console.log('promises', error);
-      });
-  };  */
 
   return (
     <Dialog
@@ -121,9 +82,9 @@ function MoveOrCopyFilesDialog(props: Props) {
       >
         <Typography variant="subtitle2">{t('selectedFiles')}</Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
-          {props.selectedFiles &&
-            props.selectedFiles.length > 0 &&
-            props.selectedFiles.map((file) => (
+          {selectedFiles &&
+            selectedFiles.length > 0 &&
+            selectedFiles.map((file) => (
               <ListItem title={file.path} key={file.path}>
                 <ListItemIcon>
                   <FileIcon />
@@ -138,21 +99,18 @@ function MoveOrCopyFilesDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button
-          data-tid="closeMoveOrCopyDialog"
-          onClick={() => props.onClose()}
-        >
+        <Button data-tid="closeMoveOrCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
         </Button>
         <Button
           onClick={() => {
-            if (props.selectedFiles) {
+            if (selectedFiles) {
               moveFiles(
-                props.selectedFiles.map((file) => file.path),
+                selectedFiles.map((file) => file.path),
                 currentDirectoryPath,
               );
             }
-            props.onClose();
+            onClose();
           }}
           data-tid="confirmMoveFilesTID"
           color="primary"
@@ -162,13 +120,13 @@ function MoveOrCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => {
-            if (props.selectedFiles) {
+            if (selectedFiles) {
               copyFiles(
-                props.selectedFiles.map((file) => file.path),
+                selectedFiles.map((file) => file.path),
                 currentDirectoryPath,
               );
             }
-            props.onClose();
+            onClose();
           }}
           data-tid="confirmCopyFilesTID"
           color="primary"
