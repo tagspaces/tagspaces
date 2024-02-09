@@ -66,12 +66,7 @@ export const SelectedEntryContextProvider = ({
       let selected = [...selectedEntries.current];
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.entry.isFile) {
-            selected.push(action.entry);
-          } /*else if (selectedEntries.current.length === 0) {
-            //todo tmp fix don't change selection if copy dialog with selected entry is opened
-            selected.push(action.entry);
-          }*/
+          selected.push(action.entry);
         } else if (action.action === 'delete') {
           let index = selectedEntries.current.findIndex(
             (e) => e.path === action.entry.path,

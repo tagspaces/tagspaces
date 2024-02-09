@@ -53,24 +53,28 @@ function MoveCopyFilesDialog(props: Props) {
   const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, entries, onClose } = props;
 
-  let allEntries = entries && entries.length > 0 ? entries : selectedEntries;
+  const allEntries = useRef<TS.FileSystemEntry[]>(
+    entries && entries.length > 0 ? entries : selectedEntries,
+  );
 
-  const selectedFiles = allEntries
-    ? allEntries
+  const selectedFiles = allEntries.current
+    ? allEntries.current
         .filter((fsEntry) => fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
 
-  const selectedDirs = allEntries
-    ? allEntries
+  const selectedDirs = allEntries.current
+    ? allEntries.current
         .filter((fsEntry) => !fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
 
   useEffect(() => {
+    allEntries.current =
+      entries && entries.length > 0 ? entries : selectedEntries;
     // getDirProperties have Electron impl only
     if (
       selectedDirs.length > 0 &&
@@ -221,8 +225,8 @@ function MoveCopyFilesDialog(props: Props) {
             marginBottom: 20,
           }}
         >
-          {allEntries.length > 0 &&
-            allEntries.map((entry) => (
+          {allEntries.current.length > 0 &&
+            allEntries.current.map((entry) => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
