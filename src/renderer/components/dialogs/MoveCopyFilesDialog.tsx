@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -221,8 +222,6 @@ function MoveCopyFilesDialog(props: Props) {
             overflowY: 'auto',
             width: 550,
             maxHeight: 200,
-            marginLeft: -15,
-            marginBottom: 20,
           }}
         >
           {allEntries.current.length > 0 &&
@@ -243,19 +242,21 @@ function MoveCopyFilesDialog(props: Props) {
               </ListItem>
             ))}
         </List>
-        {targetPath ? (
-          <Typography variant="subtitle2">
-            {t('moveCopyToPath') + ': ' + targetPath}
-          </Typography>
-        ) : (
-          <Typography variant="subtitle2">
-            {t('chooseTargetLocationAndPath')}
-          </Typography>
-        )}
         <DirectoryListView
           setTargetDir={setTargetPath}
           currentDirectoryPath={currentDirectoryPath}
         />
+        <Box style={{ marginTop: 10 }}>
+          {targetPath ? (
+            <Typography variant="subtitle2">
+              {t('moveCopyToPath') + ': ' + targetPath}
+            </Typography>
+          ) : (
+            <Typography variant="subtitle2">
+              {t('chooseTargetLocationAndPath')}
+            </Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}

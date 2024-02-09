@@ -1,27 +1,32 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
-import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import {
+  ParentFolderIcon,
+  NewFolderIcon,
+  FolderOutlineIcon as FolderIcon,
+} from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import i18n from '-/services/i18n';
+import Typography from '@mui/material/Typography';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -77,19 +82,32 @@ function DirectoryListView(props: Props) {
       return null;
     }
     return (
-      <Select
-        onChange={handleLocationChange}
+      <FormControl
         fullWidth
-        value={chosenLocationId.current}
+        variant="standard"
+        style={{
+          flexFlow: 'nowrap',
+          alignItems: 'center',
+        }}
       >
-        {locations
-          .filter((loc) => loc.type === locationType.TYPE_LOCAL)
-          .map((location: TS.Location) => (
-            <MenuItem key={location.uuid} value={location.uuid}>
-              <span style={{ width: '100%' }}>{location.name}</span>
-            </MenuItem>
-          ))}
-      </Select>
+        <Typography style={{ display: 'inline' }} variant="subtitle2">
+          {t('location')}:&nbsp;
+        </Typography>
+        <Select
+          fullWidth
+          style={{ display: 'inline' }}
+          onChange={handleLocationChange}
+          value={chosenLocationId.current}
+        >
+          {locations
+            .filter((loc) => loc.type === locationType.TYPE_LOCAL)
+            .map((location: TS.Location) => (
+              <MenuItem key={location.uuid} value={location.uuid}>
+                <span style={{ width: '100%' }}>{location.name}</span>
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
     );
   }
 
@@ -194,6 +212,7 @@ function DirectoryListView(props: Props) {
         dense
         style={{
           borderRadius: 5,
+          border: '1px solid gray',
           maxHeight: 300,
           overflowY: 'auto',
         }}
