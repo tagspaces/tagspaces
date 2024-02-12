@@ -86,7 +86,7 @@
     "package-web": "npm run prepare-web && zip -r ../builds/tagspaces-web.zip web",
     "package-web-pro": "npm run prepare-web-pro && zip -r ../builds/tagspaces-pro-web.zip web",
     "package-win": "npm run install-ext-node-win && electron-builder --win --x64 --config resources/builder.json",
-    "package-win-pro": "npm run install-ext-node-win && electron-builder --win --x64 --config node_modules/@tagspacespro/resources/builder-pro.json",
+    "package-win-pro": "npm run install-ext-node-win && electron-builder --win --x64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
     "paste-android-linux": "adb shell input text '$(xclip -selection c -o)'",
     "paste-android-macos": "adb shell input text \"'$(pbpaste)'\"",
     "playwright-show-trace": "npx playwright show-trace \"test-results/folder.pw.e2e.js-TST01---Folder-management-TST0102---Reload-folder-web-minio-electron-/trace.zip\"",
