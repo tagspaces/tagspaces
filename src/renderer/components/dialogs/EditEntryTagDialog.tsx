@@ -23,9 +23,6 @@ import React, {
   ChangeEvent,
   useRef,
 } from 'react';
-import { styled } from '@mui/material/styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -41,19 +38,16 @@ import { getSelectedTag } from '-/reducers/app';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
-import { getMapTileServer } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  selectedTag: TS.Tag;
-  tileServer: TS.MapTileServer;
-  geoTaggingFormat: string;
 }
 
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
@@ -62,11 +56,11 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
 
-  const { editTagForEntry } = useTaggingActionsContext();
+  const { addTagsToEntry, editTagForEntry } = useTaggingActionsContext();
+  const selectedTag: TS.Tag = useSelector(getSelectedTag);
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
-  const [title, setTitle] = useState(
-    props.selectedTag && props.selectedTag.title,
-  );
+  const [title, setTitle] = useState(selectedTag && selectedTag.title);
+
   const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
@@ -111,12 +105,12 @@ function EditEntryTagDialog(props: Props) {
 
   function onConfirm() {
     if (handleValidation() && !haveError()) {
-      /* if (props.selectedEntries.length > 0) {
-        props.selectedEntries.forEach(entry =>
-          props.editTagForEntry(entry.path, props.selectedTag, title)
-        );
-      } else { */
-      editTagForEntry(props.selectedTag.path, props.selectedTag, title);
+      const isNew = selectedTag.functionality === 'geoTagging'; //path.includes(props.selectedTag.title);
+      if (isNew) {
+        addTagsToEntry(selectedTag.path, [{ ...selectedTag, title }]);
+      } else {
+        editTagForEntry(selectedTag.path, selectedTag, title);
+      }
       props.onClose();
     }
   }
@@ -172,15 +166,13 @@ function EditEntryTagDialog(props: Props) {
             onChange={setTitle}
             // zoom={title === defaultTagLocation ? 2 : undefined} TODO defaultTagLocation can be in MGRS format
             showAdvancedMode={showAdvancedMode}
-            geoTaggingFormat={props.geoTaggingFormat}
             haveError={haveError}
             setError={setError}
-            tileServer={props.tileServer}
           />
         )}
         {editDisabled && isShowDatePeriodEditor && (
           <DateTagEditor
-            datePeriodTag={props.selectedTag && props.selectedTag.title}
+            datePeriodTag={selectedTag && selectedTag.title}
             onChange={setTitle}
           />
         )}
@@ -254,17 +246,4 @@ function EditEntryTagDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    selectedTag: getSelectedTag(state),
-    tileServer: getMapTileServer(state),
-    geoTaggingFormat: state.settings.geoTaggingFormat,
-  };
-}
-
-const areEqual = (prevProp, nextProp) =>
-  JSON.stringify(nextProp.selectedTag) === JSON.stringify(prevProp.selectedTag);
-
-export default connect(mapStateToProps)(
-  React.memo(EditEntryTagDialog, areEqual),
-);
+export default EditEntryTagDialog;

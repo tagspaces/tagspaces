@@ -66,7 +66,11 @@ type extractOptions = {
 type TaggingActionsContextData = {
   extractContent: (options?: extractOptions) => Promise<boolean>;
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
-  addTagsToEntry: (path: string, tags: Array<TS.Tag>) => Promise<string>;
+  addTagsToEntry: (
+    path: string,
+    tags: Array<TS.Tag>,
+    reflect?: boolean,
+  ) => Promise<string>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
   removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
   removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
@@ -131,6 +135,37 @@ export const TaggingActionsContextProvider = ({
     });
   }
 
+  function addTagsToFilePath(path: string, tags: string[]) {
+    if (tags && tags.length > 0) {
+      const extractedTags: string[] = extractTags(
+        path,
+        tagDelimiter,
+        PlatformIO.getDirSeparator(),
+      );
+      const uniqueTags = tags.filter(
+        (tag) => !extractedTags.some((tagName) => tagName === tag),
+      );
+      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const containingDirectoryPath = extractContainingDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator(),
+      );
+
+      return (
+        (containingDirectoryPath
+          ? containingDirectoryPath + PlatformIO.getDirSeparator()
+          : '') +
+        generateFileName(
+          fileName,
+          [...extractedTags, ...uniqueTags],
+          tagDelimiter,
+          prefixTagContainer,
+        )
+      );
+    }
+    return path;
+  }
+
   function addTags(
     paths: Array<string>,
     tags: Array<TS.Tag>,
@@ -145,7 +180,7 @@ export const TaggingActionsContextProvider = ({
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
-      tag.type = 'sidecar';
+      tag.type = persistTagsInSidecarFile ? 'sidecar' : 'plain';
       if (tag.id) {
         delete tag.id;
       }
@@ -157,7 +192,6 @@ export const TaggingActionsContextProvider = ({
         if (tag.functionality === 'geoTagging') {
           if (Pro) {
             tag.path = paths[0]; // todo rethink and remove this!
-            // delete tag.functionality;
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
@@ -368,7 +402,7 @@ export const TaggingActionsContextProvider = ({
         fsEntryMeta.tags,
       );
       if (uniqueTags.length > 0) {
-        const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+        /*const fileName = extractFileName(path, PlatformIO.getDirSeparator());
         const containingDirectoryPath = extractContainingDirectoryPath(
           path,
           PlatformIO.getDirSeparator(),
@@ -386,14 +420,24 @@ export const TaggingActionsContextProvider = ({
             extractedTags,
             tagDelimiter,
             prefixTagContainer,
-          );
-        return renameFile(path, newFilePath).then(() => {
-          return newFilePath;
-        });
+          );*/
+        const newFilePath = addTagsToFilePath(
+          path,
+          uniqueTags.map((tag) => tag.title),
+        );
+        if (path !== newFilePath) {
+          return renameFile(path, newFilePath).then(() => {
+            return newFilePath;
+          });
+        }
       }
     } else {
       // Handling tags in filename by no sidecar
-      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const newFilePath = addTagsToFilePath(
+        path,
+        tags.map((tag) => tag.title),
+      );
+      /*const fileName = extractFileName(path, PlatformIO.getDirSeparator());
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
         PlatformIO.getDirSeparator(),
@@ -419,7 +463,7 @@ export const TaggingActionsContextProvider = ({
           extractedTags,
           tagDelimiter,
           prefixTagContainer,
-        );
+        );*/
       if (path !== newFilePath) {
         return renameFile(path, newFilePath).then(() => {
           return newFilePath;
@@ -432,7 +476,7 @@ export const TaggingActionsContextProvider = ({
       newTagsArray: Array<TS.Tag>,
       fileTagsArray: string[],
       sideCarTagsArray: Array<TS.Tag>,
-    ) {
+    ): TS.Tag[] {
       const newTags = [];
       for (let i = 0; i < newTagsArray.length; i += 1) {
         // check if tag is already in the fileTagsArray
