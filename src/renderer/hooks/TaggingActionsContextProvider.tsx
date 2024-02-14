@@ -125,7 +125,7 @@ export const TaggingActionsContextProvider = ({
       return Promise.resolve(false);
     }
     showNotification('Extracting content...', 'info', false);
-    Pro.ContentExtractor.extractContent(
+    return Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
       addTags,
       options,
