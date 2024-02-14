@@ -17,11 +17,11 @@
  */
 
 import React from 'react';
-import { DropTarget } from 'react-dnd';
+import { useDrop } from 'react-dnd';
 import { TS } from '-/tagspaces.namespace';
 import { classes, DnD } from '-/components/DnD.css';
 
-const styles: any = () => ({
+/*const styles: any = () => ({
   dropzone: {
     margin: 5,
     position: 'absolute',
@@ -34,45 +34,46 @@ const styles: any = () => ({
     border: '3px dashed white',
     display: 'flex',
   },
-});
-
-const boxTarget = {
-  drop(props, monitor) {
-    return props.onDrop(props, monitor);
-  },
-};
+});*/
 
 interface Props {
-  accepts: Array<string>;
+  accepts: string[];
   onDrop: (item: any, monitor: any) => void;
-  canDrop: boolean;
-  isOver: boolean;
-  connectDropTarget: any;
   children: any;
-  path?: string;
-  location?: TS.Location;
+  targetPath?: string;
+  targetLocation?: TS.Location;
 }
 
 const TargetMoveFileBox = (props: Props) => {
-  const { canDrop, isOver, connectDropTarget, children } = props;
-  const dragContent =
+  const { accepts, onDrop, targetLocation, targetPath, children } = props;
+  /*const dragContent =
     canDrop && isOver ? (
-      <DnD className={classes.dropzone} /> /* {t('core:releaseToMoveDrop')} */
-    ) : undefined;
-  return connectDropTarget(
-    <div>
-      {dragContent}
+      <DnD className={classes.dropzone} /> /!* {t('core:releaseToMoveDrop')} *!/
+    ) : undefined;*/
+
+  const [{ isOver, canDrop }, drop] = useDrop({
+    accept: accepts,
+    drop: (item: any, monitor) => {
+      onDrop(
+        {
+          ...item,
+          ...(targetPath && { targetPath }),
+          ...(targetLocation && { targetLocation }),
+        },
+        monitor,
+      );
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
+  return (
+    <div ref={drop}>
+      {canDrop && isOver && <DnD className={classes.dropzone} />}
       {children}
-    </div>,
+    </div>
   );
 };
 
-export default DropTarget(
-  (props) => props.accepts,
-  boxTarget,
-  (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop(),
-  }),
-)(TargetMoveFileBox);
+export default TargetMoveFileBox;

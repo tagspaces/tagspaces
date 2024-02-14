@@ -97,7 +97,7 @@ function TagLibrary(props: Props) {
   const [tagGroups, setTagGroups] =
     useState<Array<TS.TagGroup>>(getTagLibrary());
   // const tagLibrary: Array<TS.TagGroup> = getTagLibrary();
-  const tagContainerRef = useRef<HTMLSpanElement>(null);
+  //const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [tagGroupMenuAnchorEl, setTagGroupMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
@@ -297,7 +297,7 @@ function TagLibrary(props: Props) {
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
-                    tagContainerRef={tagContainerRef}
+                    // tagContainerRef={tagContainerRef}
                     index={idx}
                     tag={tag}
                     tagGroup={tagGroup}
