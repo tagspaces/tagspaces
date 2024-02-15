@@ -26,6 +26,7 @@ import {
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { openContextEntryMenu } from './test-utils';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -205,5 +206,28 @@ test.describe('TST51 - Perspective Grid', () => {
   test('TST0524 - Generate thumbnail from TXT,MD [electron,_pro]', async () => {
     // MD thumbs generation is stopped
     await expectMetaFilesExist(['sample.txt.jpg']);
+  });
+
+  test('TST0529 - Import EXIF information as Tags [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      getGridFileSelector('sample_exif[iptc].jpg'),
+      'showPropertiesTID',
+    );
+
+    await clickOn('[data-tid=openGalleryPerspective]');
+    await expectElementExist(
+      '[data-tid=perspectiveGalleryToolbar]',
+      true,
+      5000,
+    );
+    await clickOn('[data-tid=perspectiveGalleryImportEXIF]');
+    await global.client.check('input[value=exifGeo]');
+    await clickOn('[data-tid=confirmImportExif]');
+
+    await expectElementExist(
+      '[data-tid="tagContainer_8FWH4HVG+3V"]',
+      true,
+      5000,
+    );
   });
 });
