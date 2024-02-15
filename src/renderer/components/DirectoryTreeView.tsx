@@ -91,7 +91,6 @@ const DirectoryTreeView = forwardRef(
           <TargetTableMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            location={location}
             {...props}
           />
         );

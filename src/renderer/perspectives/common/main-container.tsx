@@ -243,25 +243,25 @@ export const renderCell = (
       ); //i18n.t('core:dndDisabledReadOnlyMode')
       return;
     }
-    if (monitor) {
-      const mItem = monitor.getItem();
+    if (item) {
+      // const mItem = monitor.getItem();
       let arrPath;
-      if (mItem.selectedEntries && mItem.selectedEntries.length > 0) {
-        const arrSelected = mItem.selectedEntries
+      if (item.selectedEntries && item.selectedEntries.length > 0) {
+        const arrSelected = item.selectedEntries
           .map((entry) => entry.path)
           // remove target folder selection
-          .filter((epath) => epath !== item.path);
+          .filter((epath) => epath !== item.targetPath);
         if (arrSelected.length > 0) {
           arrPath = arrSelected;
         } else {
-          arrPath = [mItem.path];
+          arrPath = [item.path];
         }
       } else {
-        arrPath = [mItem.path];
+        arrPath = [item.path];
       }
       console.log('Dropped files: ' + item.path);
-      moveFiles(arrPath, item.path);
-      clearSelection();
+      moveFiles(arrPath, item.targetPath);
+      //clearSelection();
     }
   };
 
@@ -292,7 +292,7 @@ export const renderCell = (
     >
       <TargetMoveFileBox
         accepts={[DragItemTypes.FILE]}
-        path={fsEntry.path}
+        targetPath={fsEntry.path}
         onDrop={handleFileMoveDrop}
       >
         {cellContent(

@@ -17,38 +17,40 @@
  */
 
 import React from 'react';
-import { DropTarget } from 'react-dnd';
-
-const boxTarget = {
-  drop(props, monitor) {
-    return props.onDrop(props, monitor);
-  },
-};
+import { useDrop } from 'react-dnd';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
-  accepts: Array<string>;
+  accepts: string[];
   onDrop: (item: any, monitor: any) => void;
-  canDrop: boolean;
-  isOver: boolean;
-  connectDropTarget: any;
+  location: TS.Location;
   className: string;
 }
 
 const TargetTableMoveFileBox = (props: Props) => {
-  const { canDrop, isOver, connectDropTarget, ...restProps } = props;
+  const { accepts, onDrop, ...restProps } = props;
+
+  const [{ isOver, canDrop }, drop] = useDrop({
+    accept: accepts,
+    drop: (item: any, monitor) => {
+      onDrop(
+        {
+          ...item,
+          ...(restProps.location && { targetLocation: restProps.location }),
+        },
+        monitor,
+      );
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
+
   if (canDrop && isOver) {
     restProps.className += ' dropzone'; // TODO set props.location type and add dropzonecopy based on this type
   }
-  // @ts-ignore
-  return connectDropTarget(<tr {...restProps} />);
+  return <tr ref={drop} {...restProps} />;
 };
 
-export default DropTarget(
-  (props) => props.accepts,
-  boxTarget,
-  (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop(),
-  }),
-)(TargetTableMoveFileBox);
+export default TargetTableMoveFileBox;

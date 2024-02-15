@@ -70,7 +70,6 @@ import {
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import LoadingLazy from '../components/LoadingLazy';
-import withDnDContext from '-/containers/withDnDContext';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
@@ -132,7 +131,7 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 interface Props {
-  isFirstRun: boolean;
+  //isFirstRun: boolean;
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
   isSettingsDialogOpened: boolean;
@@ -177,7 +176,7 @@ interface Props {
   // openSearchPanel: () => void;
   openHelpFeedbackPanel: () => void;
   // closeAllVerticalPanels: () => void;
-  leftSplitSize: number;
+  //leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
   toggleTruncatedConfirmDialog: () => void;
@@ -887,6 +886,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
   nextProp.mainSplitSize === prevProp.mainSplitSize;
 
-export default withDnDContext(
-  connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)), //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(React.memo(MainPage, areEqual));
