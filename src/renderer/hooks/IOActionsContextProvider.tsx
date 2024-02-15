@@ -108,7 +108,11 @@ type IOActionsContextData = {
     directoryPath: string,
     newDirectoryName: string,
   ) => Promise<string>;
-  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  renameFile: (
+    filePath: string,
+    newFilePath: string,
+    reflect?: boolean,
+  ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
   duplicateFile: (selectedFilePath: string) => void;
 };
@@ -968,8 +972,12 @@ export const IOActionsContextProvider = ({
       });
   }
 
-  function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
-    return renameFilePromise(filePath, newFilePath)
+  function renameFile(
+    filePath: string,
+    newFilePath: string,
+    reflect = true,
+  ): Promise<boolean> {
+    return renameFilePromise(filePath, newFilePath, undefined, reflect)
       .then((result) => {
         // const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
