@@ -124,8 +124,8 @@ function LocationView(props: Props) {
    * @param monitor
    */
   const handleFileMoveDrop = (item, monitor) => {
-    if (monitor) {
-      const { path, selectedEntries } = monitor.getItem();
+    if (item) {
+      const { path, selectedEntries } = item; //monitor.getItem();
       const arrPath = [];
       if (selectedEntries && selectedEntries.length > 0) {
         selectedEntries.map((entry) => {
@@ -147,13 +147,13 @@ function LocationView(props: Props) {
         showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
-      const targetLocation = item.location;
+      const targetLocation = item.targetLocation;
       let targetPath = targetLocation ? targetLocation.path : undefined;
       if (targetPath === undefined) {
-        targetPath = item.path;
+        targetPath = item.targetPath;
       }
 
-      if (monitor && targetPath !== undefined && targetLocation !== undefined) {
+      if (targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
@@ -162,19 +162,11 @@ function LocationView(props: Props) {
             .then(() => {
               dispatch(AppActions.resetProgress());
               dispatch(AppActions.toggleUploadDialog());
-              uploadFiles(arrPath, targetPath, onUploadProgress)
-                .then((fsEntries: Array<TS.FileSystemEntry>) => {
-                  /*if (targetPath === currentDirectoryPath) {
-                    addDirectoryEntries(fsEntries);
-                    dispatch(AppActions.reflectCreateEntries(fsEntries));
-                    setSelectedEntries(fsEntries);
-                  }*/
-                  return true;
-                })
-                .catch((error) => {
+              return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
+                (error) => {
                   console.log('uploadFiles', error);
-                });
-              return true;
+                },
+              );
             })
             .catch((error) => {
               console.log('enableObjectStoreSupport', error);
@@ -280,8 +272,8 @@ function LocationView(props: Props) {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={currentLocationPath} //PlatformIO.getLocationPath(location)}
-            location={location}
+            targetPath={currentLocationPath} //PlatformIO.getLocationPath(location)}
+            targetLocation={location}
           >
             {LocationTitle}
           </TargetMoveFileBox>

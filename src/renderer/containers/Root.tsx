@@ -37,6 +37,8 @@ import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvid
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
 import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
 type RootType = {
   store: Store<{}>;
@@ -69,7 +71,9 @@ export default function Root({ store, persistor }: RootType) {
                       <OpenedEntryContextProvider>
                         <IOActionsContextProvider>
                           <TaggingActionsContextProvider>
-                            <MainPage />
+                            <DndProvider backend={HTML5Backend}>
+                              <MainPage />
+                            </DndProvider>
                           </TaggingActionsContextProvider>
                         </IOActionsContextProvider>
                       </OpenedEntryContextProvider>
