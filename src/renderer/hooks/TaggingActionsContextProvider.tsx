@@ -260,10 +260,6 @@ export const TaggingActionsContextProvider = ({
     });
 
     if (processedTags.length > 0) {
-      const promises = paths.map((path) =>
-        addTagsToEntry(path, processedTags, false),
-      );
-
       if (addTagsToLibrary) {
         // collecting tags
         // filter existed in tagLibrary
@@ -301,15 +297,20 @@ export const TaggingActionsContextProvider = ({
           dispatch(AppActions.tagLibraryChanged());
         }
       }
-      return Promise.all(promises).then((editedPaths) => {
+
+      const files = {};
+      paths.map((path) => {
+        files[path] = processedTags;
+      });
+      return addFilesTags(files);
+
+      /*return Promise.all(promises).then((editedPaths) => {
         let sideCarChanges = editedPaths.filter((item) => paths.includes(item));
         if (sideCarChanges.length > 0) {
           reflectUpdateMeta(...sideCarChanges);
         }
         return true;
-        //return reflectRenameEntries(editedPaths);
-        //return openCurrentDirectory();
-      });
+      });*/
     }
     return Promise.resolve(false);
   }
