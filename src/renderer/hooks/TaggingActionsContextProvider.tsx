@@ -38,6 +38,7 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
+  getAllPropertiesPromise,
   loadDirMetaDataPromise,
   loadFileMetaDataPromise,
   loadMetaDataPromise,
@@ -65,6 +66,7 @@ type extractOptions = {
 
 type TaggingActionsContextData = {
   extractContent: (options?: extractOptions) => Promise<boolean>;
+  addFilesTags: (files: { [filePath: string]: TS.Tag[] }) => Promise<boolean>;
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
   addTagsToEntry: (
     path: string,
@@ -80,6 +82,7 @@ type TaggingActionsContextData = {
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   extractContent: undefined,
+  addFilesTags: undefined,
   addTags: undefined,
   addTagsToEntry: undefined,
   editTagForEntry: undefined,
@@ -101,7 +104,7 @@ export const TaggingActionsContextProvider = ({
   const { currentDirectoryEntries } = useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
   const { renameFile } = useIOActionsContext();
-  const { reflectUpdateMeta } = useEditedEntryContext();
+  const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
@@ -127,11 +130,10 @@ export const TaggingActionsContextProvider = ({
     showNotification('Extracting content...', 'info', false);
     return Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
-      addTags,
       options,
-    ).then((success) => {
+    ).then((extracted: { [filePath: string]: TS.Tag[] }) => {
       hideNotifications();
-      return success;
+      return addFilesTags(extracted);
     });
   }
 
@@ -164,6 +166,42 @@ export const TaggingActionsContextProvider = ({
       );
     }
     return path;
+  }
+
+  function addFilesTags(files: {
+    [filePath: string]: TS.Tag[];
+  }): Promise<boolean> {
+    if (files) {
+      const promises = Object.entries(files).map(([filePath, tags]) =>
+        addTagsToEntry(filePath, tags, false).then((newPath) => ({
+          filePath,
+          newPath,
+        })),
+      );
+      return Promise.all(promises).then((editedPaths) => {
+        const promiseReflect: Promise<TS.EditAction>[] = [];
+        for (let i = 0; i < editedPaths.length; i++) {
+          const { filePath, newPath } = editedPaths[i];
+          promiseReflect.push(
+            getAllPropertiesPromise(newPath).then(
+              (fsEntry: TS.FileSystemEntry) => {
+                const currentAction: TS.EditAction = {
+                  action: 'update',
+                  entry: fsEntry,
+                  oldEntryPath: filePath,
+                };
+                return currentAction;
+              },
+            ),
+          );
+        }
+        return Promise.all(promiseReflect).then((actionsArray) => {
+          setReflectActions(...actionsArray);
+          return true;
+        });
+      });
+    }
+    return Promise.resolve(true);
   }
 
   function addTags(
@@ -222,10 +260,6 @@ export const TaggingActionsContextProvider = ({
     });
 
     if (processedTags.length > 0) {
-      const promises = paths.map((path) =>
-        addTagsToEntry(path, processedTags, false),
-      );
-
       if (addTagsToLibrary) {
         // collecting tags
         // filter existed in tagLibrary
@@ -263,15 +297,20 @@ export const TaggingActionsContextProvider = ({
           dispatch(AppActions.tagLibraryChanged());
         }
       }
-      return Promise.all(promises).then((editedPaths) => {
+
+      const files = {};
+      paths.map((path) => {
+        files[path] = processedTags;
+      });
+      return addFilesTags(files);
+
+      /*return Promise.all(promises).then((editedPaths) => {
         let sideCarChanges = editedPaths.filter((item) => paths.includes(item));
         if (sideCarChanges.length > 0) {
           reflectUpdateMeta(...sideCarChanges);
         }
         return true;
-        //return reflectRenameEntries(editedPaths);
-        //return openCurrentDirectory();
-      });
+      });*/
     }
     return Promise.resolve(false);
   }
@@ -402,31 +441,12 @@ export const TaggingActionsContextProvider = ({
         fsEntryMeta.tags,
       );
       if (uniqueTags.length > 0) {
-        /*const fileName = extractFileName(path, PlatformIO.getDirSeparator());
-        const containingDirectoryPath = extractContainingDirectoryPath(
-          path,
-          PlatformIO.getDirSeparator(),
-        );
-
-        for (let i = 0; i < uniqueTags.length; i += 1) {
-          extractedTags.push(uniqueTags[i].title);
-        }
-        const newFilePath =
-          (containingDirectoryPath
-            ? containingDirectoryPath + PlatformIO.getDirSeparator()
-            : '') +
-          generateFileName(
-            fileName,
-            extractedTags,
-            tagDelimiter,
-            prefixTagContainer,
-          );*/
         const newFilePath = addTagsToFilePath(
           path,
           uniqueTags.map((tag) => tag.title),
         );
         if (path !== newFilePath) {
-          return renameFile(path, newFilePath).then(() => {
+          return renameFile(path, newFilePath, reflect).then(() => {
             return newFilePath;
           });
         }
@@ -437,35 +457,8 @@ export const TaggingActionsContextProvider = ({
         path,
         tags.map((tag) => tag.title),
       );
-      /*const fileName = extractFileName(path, PlatformIO.getDirSeparator());
-      const containingDirectoryPath = extractContainingDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const extractedTags = extractTags(
-        path,
-        tagDelimiter,
-        PlatformIO.getDirSeparator(),
-      );
-      for (let i = 0; i < tags.length; i += 1) {
-        // check if tag is already in the tag array
-        if (extractedTags.indexOf(tags[i].title) < 0) {
-          // Adding the new tag
-          extractedTags.push(tags[i].title);
-        }
-      }
-      const newFilePath =
-        (containingDirectoryPath
-          ? containingDirectoryPath + PlatformIO.getDirSeparator()
-          : '') +
-        generateFileName(
-          fileName,
-          extractedTags,
-          tagDelimiter,
-          prefixTagContainer,
-        );*/
       if (path !== newFilePath) {
-        return renameFile(path, newFilePath).then(() => {
+        return renameFile(path, newFilePath, reflect).then(() => {
           return newFilePath;
         });
       }
@@ -687,8 +680,25 @@ export const TaggingActionsContextProvider = ({
       removeTagsFromEntry(path, tags, false),
     );
     return Promise.all(promises).then((editedPaths) => {
-      reflectUpdateMeta(...editedPaths);
-      return true;
+      const promiseReflect: Promise<TS.EditAction>[] = [];
+      for (let i = 0; i < editedPaths.length; i++) {
+        promiseReflect.push(
+          getAllPropertiesPromise(editedPaths[i]).then(
+            (fsEntry: TS.FileSystemEntry) => {
+              const currentAction: TS.EditAction = {
+                action: 'update',
+                entry: fsEntry,
+                oldEntryPath: paths[i],
+              };
+              return currentAction;
+            },
+          ),
+        );
+      }
+      return Promise.all(promiseReflect).then((actionsArray) => {
+        setReflectActions(...actionsArray);
+        return true;
+      });
     });
   }
 
@@ -714,7 +724,7 @@ export const TaggingActionsContextProvider = ({
             )
           : [];
 
-        return removeTagsFromFilename(fsEntryMeta.isFile).then(
+        return removeTagsFromFilename(fsEntryMeta.isFile, reflect).then(
           (newFilePath) => {
             return removeTagsFromSideCar(
               fsEntryMeta,
@@ -732,7 +742,7 @@ export const TaggingActionsContextProvider = ({
       .catch((error) => {
         console.warn('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
-        return removeTagsFromFilename();
+        return removeTagsFromFilename(true, reflect);
       });
 
     function removeTagsFromSideCar(
@@ -768,8 +778,12 @@ export const TaggingActionsContextProvider = ({
     /**
      * return new file path
      * @param isFile
+     * @param reflect
      */
-    function removeTagsFromFilename(isFile: boolean = true): Promise<string> {
+    function removeTagsFromFilename(
+      isFile: boolean = true,
+      reflect = true,
+    ): Promise<string> {
       if (!isFile) {
         return Promise.resolve(path);
       }
@@ -810,7 +824,7 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer,
             );
           if (path !== newFilePath) {
-            const success = await renameFile(path, newFilePath);
+            const success = await renameFile(path, newFilePath, reflect);
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
@@ -876,6 +890,7 @@ export const TaggingActionsContextProvider = ({
   const context = useMemo(() => {
     return {
       extractContent,
+      addFilesTags,
       addTags,
       addTagsToEntry,
       editTagForEntry,
@@ -884,11 +899,7 @@ export const TaggingActionsContextProvider = ({
       removeAllTags,
       collectTagsFromLocation,
     };
-  }, [
-    persistTagsInSidecarFile,
-    addTagsToLibrary,
-    //reflectUpdateSidecarTags,
-  ]);
+  }, [persistTagsInSidecarFile, addTagsToLibrary, currentDirectoryEntries]);
 
   return (
     <TaggingActionsContext.Provider value={context}>
