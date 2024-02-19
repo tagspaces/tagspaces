@@ -16,11 +16,12 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import { TS } from '-/tagspaces.namespace';
+//import useEventListener from "-/utils/useEventListener";
 
 interface Props {
   children: React.ReactNode;
@@ -31,6 +32,8 @@ interface ChildProps {
 }
 
 const FileSourceDnd: React.FC<Props> = ({ children }) => {
+  // const htmlElementRef = useRef(document.documentElement);
+  const fileSourceRef = useRef<HTMLSpanElement>(null);
   const childProps = children as React.ReactElement<ChildProps>;
   const entryPath = childProps.props.entryPath;
   const selectedEntries = childProps.props.selectedEntries;
@@ -44,7 +47,39 @@ const FileSourceDnd: React.FC<Props> = ({ children }) => {
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    /*end: (item, monitor) => {
+      const didDrop = monitor.didDrop()
+      if (!didDrop) {
+        window.electronIO.ipcRenderer.startDrag(entryPath);
+      }
+    },*/
   });
+  /*const mouseLeaveEventListener = (e) => {
+    if(collected.isDragging) {
+      let rect = document.documentElement.getBoundingClientRect();
+      if(e.clientY < rect.top || e.clientY >= rect.bottom || e.clientX < rect.left || e.clientX >= rect.right) {
+        //if (e.currentTarget.contains(e.relatedTarget)) {
+        window.electronIO.ipcRenderer.startDrag(entryPath);
+      }
+    }
+  }*/
+
+  useEffect(() => {
+    if (collected.isDragging) {
+      window.electronIO.ipcRenderer.startDrag(entryPath);
+    }
+    /* document.documentElement.addEventListener('dragenter', mouseLeaveEventListener);
+    // Remove event listener on cleanup
+    return () => {
+      document.documentElement.removeEventListener('dragenter', mouseLeaveEventListener);
+    }; */
+  }, [collected.isDragging]);
+
+  /*useEventListener('mouseleave', (e) => {
+    if(collected.isDragging) {
+      window.electronIO.ipcRenderer.startDrag(entryPath);
+    }
+  }, htmlElementRef);*/
 
   // Use empty image as a drag preview so browsers don't draw it
   // and we can draw whatever we want on the custom drag layer instead.
@@ -54,8 +89,9 @@ const FileSourceDnd: React.FC<Props> = ({ children }) => {
     captureDraggingState: true,
   });
 
+  drag(fileSourceRef);
   return (
-    <span ref={drag} {...collected}>
+    <span ref={fileSourceRef} {...collected}>
       {children}
     </span>
   );
