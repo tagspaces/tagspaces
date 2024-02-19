@@ -208,7 +208,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist(['sample.txt.jpg']);
   });
 
-  test('TST0529 - Import EXIF information as Tags [web,minio,electron]', async () => {
+  test('TST0529 - Import EXIF information as Tags [web,minio,electron,_pro]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample_exif[iptc].jpg'),
       'showPropertiesTID',
