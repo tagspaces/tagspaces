@@ -47,6 +47,7 @@ export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
   PROGRESS: 'APP/PROGRESS',
+  PROGRESS_FINISH: 'APP/PROGRESS_FINISH',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
   LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
   LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
@@ -277,6 +278,9 @@ export default (state: any = initialState, action: any) => {
         return true;
       });
       return { ...state, progress: arrProgress };
+    }
+    case types.PROGRESS_FINISH: {
+      return { ...state, progress: action.progresses };
     }
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };
@@ -736,6 +740,10 @@ export const actions = {
     filePath,
     progress,
     abort,
+  }),
+  setProgresses: (progresses: { path: string; progress: number }[]) => ({
+    type: types.PROGRESS_FINISH,
+    progresses,
   }),
   resetProgress: () => ({ type: types.RESET_PROGRESS }),
   onUploadProgress:

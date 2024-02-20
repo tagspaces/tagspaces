@@ -256,9 +256,6 @@ function FileUploadDialog(props: Props) {
             onClick={() => {
               onClose();
               dispatch(AppActions.clearUploadDialog());
-              if (currentDirectoryPerspective === PerspectiveIDs.GRID) {
-                loadDirectoryContent(currentDirectoryPath, false);
-              }
             }}
             color="primary"
           >

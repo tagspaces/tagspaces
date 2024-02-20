@@ -32,7 +32,11 @@ import { useTranslation } from 'react-i18next';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { getAllPropertiesPromise, toFsEntry } from '-/services/utils-io';
+import {
+  executePromisesInBatches,
+  getAllPropertiesPromise,
+  toFsEntry,
+} from '-/services/utils-io';
 import { getUseTrashCan } from '-/reducers/settings';
 
 type PlatformFacadeContextData = {
@@ -81,6 +85,7 @@ type PlatformFacadeContextData = {
     param: any,
     newDirPath: string,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   moveDirectoryPromise: (
     param: any,
@@ -364,7 +369,7 @@ export const PlatformFacadeContextProvider = ({
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
-    return Promise.all(
+    return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
           return await PlatformFacade.renameFilePromise(
@@ -418,7 +423,7 @@ export const PlatformFacadeContextProvider = ({
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
-    return Promise.all(
+    return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
           return await PlatformFacade.renameFilePromise(
@@ -428,15 +433,17 @@ export const PlatformFacadeContextProvider = ({
           );
         } catch (err) {
           console.warn('Error rename file:', err);
-          return false;
+          return undefined;
         }
       }),
     ).then((ret) => {
-      if (reflect) {
-        reflectMoveFiles(renameJobs);
-      }
       deignoreByWatcher(...flatArray);
-      return ret;
+      const r = ret.filter((r) => r !== undefined);
+      if (reflect && r.length > 0) {
+        reflectMoveFiles(renameJobs);
+        return r;
+      }
+      return undefined;
     });
   }
 
@@ -444,19 +451,25 @@ export const PlatformFacadeContextProvider = ({
     const promises = moveJobs.map((job) => {
       return getAllPropertiesPromise(job[1]).then(
         (newFsEntry: TS.FileSystemEntry) => {
-          const actions: TS.EditAction[] = [
-            {
-              action: 'move',
-              entry: newFsEntry,
-              oldEntryPath: job[0],
-            },
-          ];
-          return actions;
+          if (newFsEntry) {
+            const actions: TS.EditAction[] = [
+              {
+                action: 'move',
+                entry: newFsEntry,
+                oldEntryPath: job[0],
+              },
+            ];
+            return actions;
+          }
+          return undefined;
         },
       );
     });
     return Promise.all(promises).then((actionsArray) => {
-      setReflectActions(...actionsArray.flat());
+      const actions = actionsArray.filter((a) => a !== undefined);
+      if (actions.length > 0) {
+        setReflectActions(...actions.flat());
+      }
       return true;
     });
   }
@@ -486,6 +499,7 @@ export const PlatformFacadeContextProvider = ({
     param: any,
     newDirPath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
     return PlatformFacade.copyDirectoryPromise(
@@ -493,9 +507,11 @@ export const PlatformFacadeContextProvider = ({
       newDirPath,
       onProgress,
     ).then((result) => {
-      getAllPropertiesPromise(param.path).then((fsEntry: TS.FileSystemEntry) =>
-        reflectAddEntry(fsEntry),
-      );
+      if (reflect) {
+        getAllPropertiesPromise(param.path).then(
+          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+        );
+      }
       deignoreByWatcher(param.path, newDirPath);
       return result;
     });
@@ -604,7 +620,7 @@ export const PlatformFacadeContextProvider = ({
         }
         return PlatformFacade.deleteDirectoryPromise(e.path, useTrashCan);
       });
-      return Promise.all(promises).then(() => {
+      return executePromisesInBatches(promises).then(() => {
         reflectDeleteEntries(...entries);
         deignoreByWatcher(...entriesPaths);
         return true;

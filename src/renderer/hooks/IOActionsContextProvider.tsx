@@ -38,7 +38,9 @@ import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  executePromisesInBatches,
   generateFileName,
+  getAllPropertiesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
   toFsEntry,
@@ -330,26 +332,23 @@ export const IOActionsContextProvider = ({
     targetPath: string,
     onProgress = undefined,
   ): Promise<boolean> {
+    const progress = dirPaths.length > 10 ? undefined : onProgress;
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return moveDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        dirPaths.length > 10 ? undefined : onProgress,
+        progress,
         false,
       )
         .then((newDirPath) => {
           // console.log('Moving dir from ' + path + ' to ' + targetPath);
-          //return getAllPropertiesPromise(newDirPath).then(
-          //   (fsEntry: TS.FileSystemEntry) => {
           const action: TS.EditAction = {
             action: 'move',
             entry: toFsEntry(newDirPath, false),
             oldEntryPath: path,
           };
           return action;
-          //   },
-          //);
         })
         .catch((err) => {
           console.warn('Moving dirs failed ', err);
@@ -358,33 +357,23 @@ export const IOActionsContextProvider = ({
         });
     });
     return executePromisesInBatches(promises).then((actions) => {
+      if (!progress) {
+        const progresses = actions.map((action) =>
+          action
+            ? {
+                path: action.entry.path,
+                progress: 100,
+              }
+            : {
+                path: action.entry.path,
+                progress: 0,
+              },
+        );
+        dispatch(AppActions.setProgresses(progresses));
+      }
       setReflectActions(...actions.filter((value) => value !== undefined));
       return true;
     });
-  }
-
-  async function executePromisesInBatches<T>(
-    promises: Promise<T>[],
-    batchSize = 5,
-  ): Promise<T[]> {
-    const results: T[] = [];
-
-    for (let i = 0; i < promises.length; i += batchSize) {
-      const batch = promises.slice(i, i + batchSize);
-      const batchResults = await Promise.allSettled(batch);
-      results.push(
-        ...batchResults.map((result) => {
-          if (result.status === 'fulfilled') {
-            return result.value as T;
-          } else {
-            // Handle rejected promise here
-            return undefined;
-          }
-        }),
-      );
-    }
-
-    return results;
   }
 
   function moveFiles(
@@ -403,74 +392,79 @@ export const IOActionsContextProvider = ({
       paths.length > 10 ? undefined : onProgress,
       false,
     )
-      .then(() => {
-        showNotification(t('core:filesMovedSuccessful'));
-        const moveMetaJobs = [];
-        moveJobs.map((job) => {
-          // Move revisions
-          loadFileMetaDataPromise(job[0])
-            .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-              if (fsEntryMeta.id) {
-                const backupDir = getBackupFileDir(
-                  job[0],
-                  fsEntryMeta.id,
-                  PlatformIO.getDirSeparator(),
-                );
-                const newBackupDir = getBackupFileDir(
-                  job[1],
-                  fsEntryMeta.id,
-                  PlatformIO.getDirSeparator(),
-                );
-                return PlatformIO.moveDirectoryPromise(
-                  { path: backupDir },
-                  newBackupDir,
-                )
-                  .then(() => {
-                    console.log(
-                      'Moving revisions successful from ' +
-                        backupDir +
-                        ' to ' +
-                        newBackupDir,
-                    );
-                    return true;
-                  })
-                  .catch((err) => {
-                    console.warn('Moving revisions failed ', err);
-                  });
-              }
+      .then((moveArray) => {
+        if (moveArray !== undefined) {
+          showNotification(t('core:filesMovedSuccessful'));
+          const moveMetaJobs = [];
+          moveJobs.map((job) => {
+            // Move revisions
+            loadFileMetaDataPromise(job[0])
+              .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+                if (fsEntryMeta.id) {
+                  const backupDir = getBackupFileDir(
+                    job[0],
+                    fsEntryMeta.id,
+                    PlatformIO.getDirSeparator(),
+                  );
+                  const newBackupDir = getBackupFileDir(
+                    job[1],
+                    fsEntryMeta.id,
+                    PlatformIO.getDirSeparator(),
+                  );
+                  return PlatformIO.moveDirectoryPromise(
+                    { path: backupDir },
+                    newBackupDir,
+                  )
+                    .then(() => {
+                      console.log(
+                        'Moving revisions successful from ' +
+                          backupDir +
+                          ' to ' +
+                          newBackupDir,
+                      );
+                      return true;
+                    })
+                    .catch((err) => {
+                      console.warn('Moving revisions failed ', err);
+                    });
+                }
+              })
+              .catch((err) => {
+                console.warn('loadFileMetaDataPromise', err);
+              });
+
+            // move meta
+            moveMetaJobs.push([
+              getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
+              getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator()),
+            ]);
+            moveMetaJobs.push([
+              getThumbFileLocationForFile(
+                job[0],
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+              getThumbFileLocationForFile(
+                job[1],
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+            ]);
+            return true;
+          });
+          return moveFilesPromise(moveMetaJobs, undefined, false)
+            .then(() => {
+              console.log('Moving meta and thumbs successful');
+              return reflectMoveFiles(moveJobs);
             })
             .catch((err) => {
-              console.warn('loadFileMetaDataPromise', err);
+              console.warn('At least one meta or thumb was not moved ' + err);
+              return reflectMoveFiles(moveJobs);
             });
-
-          // move meta
-          moveMetaJobs.push([
-            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator()),
-          ]);
-          moveMetaJobs.push([
-            getThumbFileLocationForFile(
-              job[0],
-              PlatformIO.getDirSeparator(),
-              false,
-            ),
-            getThumbFileLocationForFile(
-              job[1],
-              PlatformIO.getDirSeparator(),
-              false,
-            ),
-          ]);
-          return true;
-        });
-        return moveFilesPromise(moveMetaJobs, undefined, false)
-          .then(() => {
-            console.log('Moving meta and thumbs successful');
-            return reflectMoveFiles(moveJobs);
-          })
-          .catch((err) => {
-            console.warn('At least one meta or thumb was not moved ' + err);
-            return reflectMoveFiles(moveJobs);
-          });
+        } else {
+          showNotification(t('core:copyingFilesFailed'));
+          return false;
+        }
       })
       .catch((err) => {
         console.warn('Moving files failed with ' + err);
@@ -484,23 +478,51 @@ export const IOActionsContextProvider = ({
     targetPath: string,
     onProgress = undefined,
   ): Promise<boolean> {
+    const progress = dirPaths.length > 10 ? undefined : onProgress;
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return copyDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        onProgress,
+        progress,
+        false,
       )
-        .then(() => {
-          console.log('Copy dir from ' + path + ' to ' + targetPath);
-          return true;
+        .then((newDirPath) => {
+          // console.log('Copy dir from ' + path + ' to ' + targetPath);
+          return getAllPropertiesPromise(newDirPath).then(
+            (fsEntry: TS.FileSystemEntry) => {
+              const action: TS.EditAction = {
+                action: 'add',
+                entry: fsEntry, //toFsEntry(newDirPath, false),
+              };
+              return action;
+            },
+          );
         })
         .catch((err) => {
           console.warn('Copy dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
+          return undefined;
         });
     });
-    return Promise.all(promises).then(() => true);
+    return executePromisesInBatches(promises).then((actions) => {
+      if (!progress) {
+        const progresses = actions.map((action) =>
+          action
+            ? {
+                path: action.entry.path,
+                progress: 100,
+              }
+            : {
+                path: action.entry.path,
+                progress: 0,
+              },
+        );
+        dispatch(AppActions.setProgresses(progresses));
+      }
+      setReflectActions(...actions.filter((value) => value !== undefined));
+      return true;
+    });
   }
 
   function copyFiles(
@@ -508,7 +530,11 @@ export const IOActionsContextProvider = ({
     targetPath: string,
     onProgress,
   ): Promise<boolean> {
-    return copyFilesWithProgress(paths, targetPath, onProgress)
+    return copyFilesWithProgress(
+      paths,
+      targetPath,
+      paths.length > 10 ? undefined : onProgress,
+    )
       .then((success) => {
         if (success) {
           showNotification(t('core:filesCopiedSuccessful'));
@@ -524,7 +550,7 @@ export const IOActionsContextProvider = ({
           return copyFilesWithProgress(
             metaPaths,
             getMetaDirectoryPath(targetPath),
-            onProgress,
+            undefined, //metaPaths.length > 10 ? undefined : onProgress,
             false,
           )
             .then(() => {
