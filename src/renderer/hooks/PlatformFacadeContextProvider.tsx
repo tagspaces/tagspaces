@@ -86,6 +86,7 @@ type PlatformFacadeContextData = {
     param: any,
     newDirPath: string,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   saveFilePromise: (
     param: any,
@@ -504,6 +505,7 @@ export const PlatformFacadeContextProvider = ({
     param: any,
     newDirPath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
     return PlatformFacade.moveDirectoryPromise(
@@ -511,13 +513,16 @@ export const PlatformFacadeContextProvider = ({
       newDirPath,
       onProgress,
     ).then((result) => {
-      getAllPropertiesPromise(newDirPath).then((fsEntry: TS.FileSystemEntry) =>
-        setReflectActions({
-          action: 'move',
-          entry: fsEntry,
-          oldEntryPath: param.path,
-        }),
-      );
+      if (reflect) {
+        getAllPropertiesPromise(newDirPath).then(
+          (fsEntry: TS.FileSystemEntry) =>
+            setReflectActions({
+              action: 'move',
+              entry: fsEntry,
+              oldEntryPath: param.path,
+            }),
+        );
+      }
 
       deignoreByWatcher(param.path, newDirPath);
       return result;

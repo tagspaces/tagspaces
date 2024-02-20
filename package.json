@@ -59,7 +59,7 @@
     "install-ext-node-mac": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=darwin --arch=x64 && npm run generate-extensions",
     "install-ext-node-mac-arm64": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=darwin --arch=arm64 && npm run generate-extensions",
     "install-ext-node-win": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=win32 --arch=x64 && npm run generate-extensions",
-    "install-ext-web": "rimraf release/app/node_modules && npm install --prefix ./release/app && npm run generate-extensions",
+    "install-ext-web": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../.. && npm run generate-extensions",
     "install-ext-web-check": "npx cross-env PD_PLATFORM=web node scripts/checkWSinstalled.js",
     "link-ext": "node -r ts-node/register scripts/link-ext.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",

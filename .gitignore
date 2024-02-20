@@ -109,6 +109,7 @@ tests/*
 !tests/test-data-refresh.js
 !tests/create-1000files-nothumbs.sh
 !tests/create-1000files.js
+!tests/create-1000folders.js
 
 builds/*
 web/sw-con

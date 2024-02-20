@@ -335,18 +335,56 @@ export const IOActionsContextProvider = ({
       return moveDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        onProgress,
+        dirPaths.length > 10 ? undefined : onProgress,
+        false,
       )
         .then((newDirPath) => {
-          console.log('Moving dir from ' + path + ' to ' + targetPath);
-          return true;
+          // console.log('Moving dir from ' + path + ' to ' + targetPath);
+          //return getAllPropertiesPromise(newDirPath).then(
+          //   (fsEntry: TS.FileSystemEntry) => {
+          const action: TS.EditAction = {
+            action: 'move',
+            entry: toFsEntry(newDirPath, false),
+            oldEntryPath: path,
+          };
+          return action;
+          //   },
+          //);
         })
         .catch((err) => {
           console.warn('Moving dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
+          return undefined;
         });
     });
-    return Promise.all(promises).then(() => true);
+    return executePromisesInBatches(promises).then((actions) => {
+      setReflectActions(...actions.filter((value) => value !== undefined));
+      return true;
+    });
+  }
+
+  async function executePromisesInBatches<T>(
+    promises: Promise<T>[],
+    batchSize = 5,
+  ): Promise<T[]> {
+    const results: T[] = [];
+
+    for (let i = 0; i < promises.length; i += batchSize) {
+      const batch = promises.slice(i, i + batchSize);
+      const batchResults = await Promise.allSettled(batch);
+      results.push(
+        ...batchResults.map((result) => {
+          if (result.status === 'fulfilled') {
+            return result.value as T;
+          } else {
+            // Handle rejected promise here
+            return undefined;
+          }
+        }),
+      );
+    }
+
+    return results;
   }
 
   function moveFiles(
@@ -360,7 +398,11 @@ export const IOActionsContextProvider = ({
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator()),
     ]);
-    return moveFilesPromise(moveJobs, onProgress, false)
+    return moveFilesPromise(
+      moveJobs,
+      paths.length > 10 ? undefined : onProgress,
+      false,
+    )
       .then(() => {
         showNotification(t('core:filesMovedSuccessful'));
         const moveMetaJobs = [];

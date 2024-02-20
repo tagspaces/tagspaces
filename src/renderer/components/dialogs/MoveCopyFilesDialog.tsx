@@ -167,7 +167,7 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleMoveFiles() {
     if (selectedFiles.length > 0) {
-      moveFiles(selectedFiles, targetPath);
+      moveFiles(selectedFiles, targetPath, onUploadProgress);
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
