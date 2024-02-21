@@ -352,11 +352,7 @@ function EntryProperties(props: Props) {
     } else if (dirProps.current) {
       return formatBytes(dirProps.current.totalSize);
     }
-    return t(
-      PlatformIO.haveObjectStoreSupport()
-        ? 'core:notAvailable'
-        : 'core:counting',
-    );
+    return t(PlatformIO.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
   };
 
   const setThumb = (filePath, thumbFilePath) => {
