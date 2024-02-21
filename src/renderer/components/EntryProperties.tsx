@@ -841,7 +841,7 @@ function EntryProperties(props: Props) {
             <Tooltip
               title={
                 !PlatformIO.haveObjectStoreSupport() &&
-                dirProps &&
+                (dirProps.dirsCount || dirProps.filesCount) &&
                 !openedEntry.isFile &&
                 dirProps.dirsCount +
                   ' ' +

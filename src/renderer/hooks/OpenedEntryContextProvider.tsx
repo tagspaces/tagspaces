@@ -153,7 +153,11 @@ export const OpenedEntryContextProvider = ({
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const currentEntry = useRef<OpenedEntry>(undefined);
-  const dirProps = useRef<TS.DirProp>();
+  const dirProps = useRef<TS.DirProp>({
+    totalSize: undefined,
+    filesCount: undefined,
+    dirsCount: undefined,
+  });
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
@@ -178,7 +182,11 @@ export const OpenedEntryContextProvider = ({
           openLink('ts://?cmdopen=' + cmdOpen, { fullWidth: true });
         }, 1000);
       }
-    } else if (
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
       currentEntry.current &&
       !currentEntry.current.isFile &&
       !PlatformIO.haveObjectStoreSupport() &&
@@ -186,13 +194,17 @@ export const OpenedEntryContextProvider = ({
     ) {
       PlatformIO.getDirProperties(currentEntry.current.path)
         .then((dProps: TS.DirProp) => {
-          dirProps.current = dProps;
+          if (dProps) {
+            dirProps.current.dirsCount = dProps.dirsCount;
+            dirProps.current.filesCount = dProps.filesCount;
+            dirProps.current.totalSize = dProps.totalSize;
+          }
           currentEntry.current.size = dProps.totalSize;
-          forceUpdate();
+          //forceUpdate();
         })
         .catch((ex) => console.debug('getDirProperties:', ex.message));
     }
-  }, []);
+  }, [currentEntry.current]);
 
   useEffect(() => {
     if (actions && actions.length > 0) {
@@ -859,7 +871,7 @@ export const OpenedEntryContextProvider = ({
   }, [
     currentEntry.current,
     isEntryInFullWidth.current,
-    dirProps.current,
+    // dirProps.current,
     currentLocation,
     currentDirectoryPath,
     fileOpenHistory,
