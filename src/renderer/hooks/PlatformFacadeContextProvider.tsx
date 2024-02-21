@@ -441,9 +441,8 @@ export const PlatformFacadeContextProvider = ({
       const r = ret.filter((r) => r !== undefined);
       if (reflect && r.length > 0) {
         reflectMoveFiles(renameJobs);
-        return r;
       }
-      return undefined;
+      return r;
     });
   }
 

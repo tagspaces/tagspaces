@@ -462,7 +462,7 @@ export default class PlatformFacade {
         'renameFilePromise',
         filePath,
         newFilePath,
-        onProgress,
+        onProgress !== undefined,
       );
     } else if (AppConfig.isCordova) {
       return cordovaIO.renameFilePromise(filePath, newFilePath, onProgress);
