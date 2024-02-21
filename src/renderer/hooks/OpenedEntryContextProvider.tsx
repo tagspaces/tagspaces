@@ -163,6 +163,9 @@ export const OpenedEntryContextProvider = ({
   const sharingParentFolderLink = useRef<string>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const openedEntryPath = currentEntry.current
+    ? currentEntry.current.path
+    : undefined;
 
   /**
    * Handle openLink from initApp
@@ -199,12 +202,15 @@ export const OpenedEntryContextProvider = ({
             dirProps.current.filesCount = dProps.filesCount;
             dirProps.current.totalSize = dProps.totalSize;
           }
-          currentEntry.current.size = dProps.totalSize;
-          //forceUpdate();
+          currentEntry.current = {
+            ...currentEntry.current,
+            size: dProps.totalSize,
+          };
+          forceUpdate();
         })
         .catch((ex) => console.debug('getDirProperties:', ex.message));
     }
-  }, [currentEntry.current]);
+  }, [openedEntryPath]);
 
   useEffect(() => {
     if (actions && actions.length > 0) {
@@ -871,7 +877,7 @@ export const OpenedEntryContextProvider = ({
   }, [
     currentEntry.current,
     isEntryInFullWidth.current,
-    // dirProps.current,
+    dirProps.current,
     currentLocation,
     currentDirectoryPath,
     fileOpenHistory,
