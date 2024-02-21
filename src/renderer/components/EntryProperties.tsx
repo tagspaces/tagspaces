@@ -103,6 +103,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const PREFIX = 'EntryProperties';
 
@@ -200,7 +201,7 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, dirProps, updateOpenedFile, sharingLink } =
+  const { openedEntry, updateOpenedFile, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useIOActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
@@ -216,6 +217,7 @@ function EntryProperties(props: Props) {
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const dispatch: AppDispatch = useDispatch();
 
+  const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   // const fileDescriptionRef = useRef<MilkdownRef>(null);
@@ -246,7 +248,7 @@ function EntryProperties(props: Props) {
   const bgndUrl = useRef<string>(getBgndUrl());
   const thumbUrl = useRef<string>(getThumbUrl());
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
   useEffect(() => {
@@ -342,6 +344,19 @@ function EntryProperties(props: Props) {
     if (!openedEntry.editMode && editName === undefined) {
       setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
+  };
+
+  const fileSize = () => {
+    if (openedEntry.isFile) {
+      return formatBytes(openedEntry.size);
+    } else if (dirProps.current) {
+      return formatBytes(dirProps.current.totalSize);
+    }
+    return t(
+      PlatformIO.haveObjectStoreSupport()
+        ? 'core:notAvailable'
+        : 'core:counting',
+    );
   };
 
   const setThumb = (filePath, thumbFilePath) => {
@@ -841,13 +856,13 @@ function EntryProperties(props: Props) {
             <Tooltip
               title={
                 !PlatformIO.haveObjectStoreSupport() &&
-                (dirProps.dirsCount || dirProps.filesCount) &&
+                dirProps.current &&
                 !openedEntry.isFile &&
-                dirProps.dirsCount +
+                dirProps.current.dirsCount +
                   ' ' +
                   t('core:directories') +
                   ', ' +
-                  dirProps.filesCount +
+                  dirProps.current.filesCount +
                   ' ' +
                   t('core:files')
               }
@@ -855,18 +870,22 @@ function EntryProperties(props: Props) {
               <TextField
                 margin="dense"
                 fullWidth={true}
-                value={
-                  openedEntry.size
-                    ? formatBytes(openedEntry.size)
-                    : t(
-                        PlatformIO.haveObjectStoreSupport()
-                          ? 'core:notAvailable'
-                          : 'core:counting',
-                      )
-                }
+                value={fileSize()}
                 label={t('core:fileSize')}
                 InputProps={{
                   readOnly: true,
+                  ...(!openedEntry.isFile && {
+                    endAdornment: (
+                      <RefreshIcon
+                        onClick={() =>
+                          getOpenedDirProps().then((props) => {
+                            dirProps.current = props;
+                            forceUpdate();
+                          })
+                        }
+                      />
+                    ),
+                  }),
                 }}
               />
             </Tooltip>

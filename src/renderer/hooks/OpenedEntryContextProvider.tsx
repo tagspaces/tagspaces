@@ -68,7 +68,6 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type OpenedEntryContextData = {
   openedEntry: OpenedEntry;
-  dirProps: TS.DirProp;
   isEntryInFullWidth: boolean;
   sharingLink: string;
   sharingParentFolderLink: string;
@@ -94,11 +93,11 @@ type OpenedEntryContextData = {
     fileType: 'md' | 'txt' | 'html',
   ) => void;
   createFile: () => void;
+  getOpenedDirProps: () => Promise<TS.DirProp>;
 };
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openedEntry: undefined,
-  dirProps: undefined,
   isEntryInFullWidth: false,
   sharingLink: undefined,
   sharingParentFolderLink: undefined,
@@ -116,6 +115,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   goBack: () => {},
   createFile: () => {},
   createFileAdvanced: () => {},
+  getOpenedDirProps: undefined,
 });
 
 export type OpenedEntryContextProviderProps = {
@@ -153,19 +153,16 @@ export const OpenedEntryContextProvider = ({
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const currentEntry = useRef<OpenedEntry>(undefined);
-  const dirProps = useRef<TS.DirProp>({
+  /* const dirProps = useRef<TS.DirProp>({
     totalSize: undefined,
     filesCount: undefined,
     dirsCount: undefined,
-  });
+  });*/
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const openedEntryPath = currentEntry.current
-    ? currentEntry.current.path
-    : undefined;
 
   /**
    * Handle openLink from initApp
@@ -187,30 +184,6 @@ export const OpenedEntryContextProvider = ({
       }
     }
   }, []);
-
-  useEffect(() => {
-    if (
-      currentEntry.current &&
-      !currentEntry.current.isFile &&
-      !PlatformIO.haveObjectStoreSupport() &&
-      !PlatformIO.haveWebDavSupport()
-    ) {
-      PlatformIO.getDirProperties(currentEntry.current.path)
-        .then((dProps: TS.DirProp) => {
-          if (dProps) {
-            dirProps.current.dirsCount = dProps.dirsCount;
-            dirProps.current.filesCount = dProps.filesCount;
-            dirProps.current.totalSize = dProps.totalSize;
-          }
-          currentEntry.current = {
-            ...currentEntry.current,
-            size: dProps.totalSize,
-          };
-          forceUpdate();
-        })
-        .catch((ex) => console.debug('getDirProperties:', ex.message));
-    }
-  }, [openedEntryPath]);
 
   useEffect(() => {
     if (actions && actions.length > 0) {
@@ -251,6 +224,23 @@ export const OpenedEntryContextProvider = ({
       forceUpdate();
     }
   }, [currentDirectoryPerspective]);
+
+  function getOpenedDirProps(): Promise<TS.DirProp> {
+    if (
+      currentEntry.current &&
+      !currentEntry.current.isFile &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport()
+    ) {
+      return PlatformIO.getDirProperties(currentEntry.current.path).catch(
+        (ex) => {
+          console.debug('getDirProperties:', ex.message);
+          return Promise.resolve(undefined);
+        },
+      );
+    }
+    return Promise.resolve(undefined);
+  }
 
   function setSharedLinks(openedFile?) {
     if (openedFile) {
@@ -855,7 +845,6 @@ export const OpenedEntryContextProvider = ({
   const context = useMemo(() => {
     return {
       openedEntry: currentEntry.current,
-      dirProps: dirProps.current,
       isEntryInFullWidth: isEntryInFullWidth.current,
       sharingLink: sharingLink.current,
       sharingParentFolderLink: sharingParentFolderLink.current,
@@ -873,11 +862,11 @@ export const OpenedEntryContextProvider = ({
       openLink,
       createFile,
       createFileAdvanced,
+      getOpenedDirProps,
     };
   }, [
     currentEntry.current,
     isEntryInFullWidth.current,
-    dirProps.current,
     currentLocation,
     currentDirectoryPath,
     fileOpenHistory,
