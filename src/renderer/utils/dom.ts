@@ -116,6 +116,10 @@ export function dataURLtoBlob(dataURI) {
   return new window.Blob([arrBuff], { type: mime });
 }
 
+/**
+ * @deprecated use base64ToBlob instead
+ * @param base64
+ */
 export function base64ToArrayBuffer(base64) {
   const bstr = window.atob(base64);
   const bytes = new Uint8Array(bstr.length);
@@ -123,4 +127,16 @@ export function base64ToArrayBuffer(base64) {
     bytes[i] = bstr.charCodeAt(i);
   }
   return bytes.buffer;
+}
+
+/**
+ * @param base64
+ */
+export function base64ToBlob(base64) {
+  const bstr = window.atob(base64);
+  const bytes = new Uint8Array(bstr.length);
+  for (let i = 0; i < bstr.length; i += 1) {
+    bytes[i] = bstr.charCodeAt(i);
+  }
+  return bytes;
 }

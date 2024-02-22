@@ -120,7 +120,7 @@ export const ThumbGenerationContextProvider = ({
 
   function genThumbnailsEnabled(): boolean {
     if (
-      !currentDirectoryPath ||
+      currentDirectoryPath === undefined ||
       currentDirectoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder,
       ) ||
@@ -130,9 +130,9 @@ export const ThumbGenerationContextProvider = ({
     ) {
       return false; // dont generate thumbnails in meta folder
     }
-    if (currentLocation.type === locationType.TYPE_CLOUD) {
+    /*if (currentLocation.type === locationType.TYPE_CLOUD) {
       return false; // dont generate thumbnails for cloud location
-    }
+    }*/
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }
@@ -143,9 +143,9 @@ export const ThumbGenerationContextProvider = ({
     dirEntries: TS.FileSystemEntry[],
   ): Promise<boolean> {
     if (
-      AppConfig.isWeb || // not in web mode
-      PlatformIO.haveObjectStoreSupport() || // not in object store mode
-      PlatformIO.haveWebDavSupport() || // not in webdav mode
+      //AppConfig.isWeb || // not in web mode
+      //PlatformIO.haveObjectStoreSupport() || // not in object store mode
+      //PlatformIO.haveWebDavSupport() || // not in webdav mode
       !genThumbnailsEnabled() // enabled in the settings
     ) {
       return Promise.resolve(false);
