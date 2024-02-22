@@ -67,7 +67,7 @@ export const FileTypeGroups = {
     'dotx',
   ],
   audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc'],
-  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2'],
+  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],

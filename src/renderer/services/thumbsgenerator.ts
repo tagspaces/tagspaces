@@ -95,6 +95,7 @@ export const supportedVideos = [
   'mkv',
   'lrv',
   '3gp',
+  'mov',
   // '3g2'
 ];
 const maxFileSize = 30 * 1024 * 1024; // 30 MB
