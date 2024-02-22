@@ -74,7 +74,7 @@ type OpenedEntryContextData = {
   setEntryInFullWidth: (fullWidth: boolean) => void;
   addToEntryContainer: (fsEntry: OpenedEntry) => void;
   closeAllFiles: () => void;
-  reflectUpdateOpenedFileContent: (entryPath: string) => void;
+  reflectUpdateOpenedFileContent: (entry: TS.FileSystemEntry) => void;
   reloadOpenedFile: () => void;
   updateOpenedFile: (
     entryPath: string,
@@ -336,14 +336,14 @@ export const OpenedEntryContextProvider = ({
   }
 
   /**
-   * @deprecated dont use shouldReload
-   * @param entryPath
+   * update openedEntry lmdt after save file
+   * @param entry
    */
-  function reflectUpdateOpenedFileContent(entryPath: string) {
+  function reflectUpdateOpenedFileContent(entry: TS.FileSystemEntry) {
     if (currentEntry.current) {
-      if (currentEntry.current.path === entryPath) {
-        currentEntry.current.shouldReload = true;
-        addToEntryContainer(currentEntry.current);
+      if (currentEntry.current.path === entry.path) {
+        currentEntry.current.lmdt = entry.lmdt;
+        forceUpdate();
       }
     }
   }

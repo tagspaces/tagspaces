@@ -88,6 +88,7 @@ function EntryContainer() {
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
+    reflectUpdateOpenedFileContent,
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
@@ -583,7 +584,8 @@ function EntryContainer() {
       textContent,
       true,
     )
-      .then(() => {
+      .then((entry) => {
+        reflectUpdateOpenedFileContent(entry);
         if (Pro) {
           Pro.history.saveHistory(
             historyKeys.fileEditKey,
