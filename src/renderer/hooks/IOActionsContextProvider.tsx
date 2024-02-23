@@ -208,9 +208,10 @@ export const IOActionsContextProvider = ({
       return deleteEntriesPromise(...entries)
         .then((success) => {
           if (success) {
+            const fileNames = entries.map((e) => e.name).join(' ');
             showNotification(
               t('deletingEntriesSuccessful', {
-                dirPath: entries.map((e) => e.path).join(),
+                dirPath: fileNames,
               }),
               'default',
               true,
