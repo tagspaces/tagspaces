@@ -129,8 +129,7 @@ export const ThumbGenerationContextProvider = ({
     ) {
       return false; // dont generate thumbnails in meta folder
     }
-    if (currentLocation.disableThumbnailGeneration) {
-      // === locationType.TYPE_CLOUD) {
+    if (currentLocation?.disableThumbnailGeneration === true) {
       return false; // dont generate thumbnails if it's not enabled in location settings
     }
     if (AppConfig.useGenerateThumbnails !== undefined) {
