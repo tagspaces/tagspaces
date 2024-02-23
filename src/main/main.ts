@@ -27,7 +27,8 @@ import findFreePorts from 'find-free-ports';
 import settings from './settings';
 import { getExtensions } from './extension-utils';
 import i18nInit from '../renderer/services/i18nInit';
-import buildTrayIconMenu from './electron-tray-menu';
+import buildTrayMenu from './electron-tray-menu';
+import buildDockMenu from './electron-dock-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
 import { Extensions } from './types';
@@ -307,8 +308,8 @@ function createNewWindowInstance(url?) {
   }
 }
 
-function buildTrayMenu(i18n) {
-  buildTrayIconMenu(
+function bindTrayMenu(i18n) {
+  buildTrayMenu(
     {
       showTagSpaces: showApp,
       resumePlayback,
@@ -324,7 +325,7 @@ function buildTrayMenu(i18n) {
   );
 }
 
-function buildAppMenu(i18n) {
+function bindAppMenu(i18n) {
   buildDesktopMenu(
     {
       showTagSpaces: showApp,
@@ -526,8 +527,8 @@ const createWindow = async (i18n) => {
   );
 
   try {
-    buildAppMenu(i18n);
-    buildTrayMenu(i18n);
+    bindAppMenu(i18n);
+    bindTrayMenu(i18n);
   } catch (ex) {
     console.log('buildMenus', ex);
   }
@@ -591,6 +592,22 @@ app
   .then(() => {
     return i18nInit().then((i18n) => {
       appI18N = i18n;
+      if (process.platform === 'darwin') {
+        app.dock.setMenu(
+          buildDockMenu(
+            {
+              showTagSpaces: showApp,
+              resumePlayback,
+              createNewWindowInstance,
+              openSearch: showSearch,
+              toggleNewFileDialog: newTextFile,
+              openNextFile: getNextFile,
+              openPrevFile: getPreviousFile,
+            },
+            i18n,
+          ),
+        );
+      }
       createWindow(i18n);
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
@@ -601,7 +618,7 @@ app
       i18n.on('languageChanged', (lng) => {
         try {
           console.log('languageChanged:' + lng);
-          buildAppMenu(i18n);
+          bindAppMenu(i18n);
           buildTrayMenu(i18n);
           const spellCheckLanguage = getSpellcheckLanguage(lng);
           mainWindow?.webContents.session.setSpellCheckerLanguages([
