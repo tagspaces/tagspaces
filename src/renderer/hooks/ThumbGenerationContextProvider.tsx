@@ -37,8 +37,6 @@ import {
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type ThumbGenerationContextData = {
@@ -63,7 +61,7 @@ export const ThumbGenerationContextProvider = ({
     currentDirectoryEntries,
     updateCurrentDirEntries,
   } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  //const { currentLocation } = useCurrentLocationContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);

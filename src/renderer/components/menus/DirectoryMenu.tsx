@@ -48,6 +48,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 
 interface Props {
   open: boolean;
@@ -75,9 +76,11 @@ function DirectoryMenu(props: Props) {
   const {
     openDirectory,
     currentDirectoryPath,
+    currentDirectoryEntries,
     setDirectoryPerspective,
     openCurrentDirectory,
   } = useDirectoryContentContext();
+  const { generateThumbnails } = useThumbGenerationContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
@@ -366,6 +369,16 @@ Do you want to continue?`)
       });
   }
 
+  function reloadDirectory() {
+    if (generateThumbnails) {
+      return generateThumbnails(currentDirectoryEntries).then(() =>
+        openCurrentDirectory(),
+      );
+    } else {
+      return openCurrentDirectory();
+    }
+  }
+
   const menuItems = getDirectoryMenuItems(
     currentLocation,
     selectedEntries.length,
@@ -374,7 +387,7 @@ Do you want to continue?`)
     onClose,
     t,
     openDir,
-    openCurrentDirectory,
+    reloadDirectory,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
     showDeleteDirectoryDialog,
