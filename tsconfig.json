@@ -25,6 +25,7 @@
     }
   },
   "include": [
+    "src/main/**/*.ts",
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
     "tagspacespro/**/*.ts",
