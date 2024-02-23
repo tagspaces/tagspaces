@@ -222,7 +222,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           },
         },
         {
-          label: '&' + i18n.t('followOnTwitter'),
+          label: '&' + i18n.t('followOnX'),
           click: () => {
             shell.openExternal(Links.links.twitter);
           },

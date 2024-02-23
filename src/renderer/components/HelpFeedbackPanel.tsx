@@ -33,7 +33,7 @@ import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import XIcon from '@mui/icons-material/X';
 import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
@@ -220,10 +220,10 @@ function HelpFeedbackPanel(props: Props) {
         )}
         <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
-            <TwitterIcon />
+            <XIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {t('core:followOnTwitter')}
+            {t('core:followOnX')}
           </Typography>
         </ListItem>
         <Divider />

@@ -32,7 +32,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import XIcon from '@mui/icons-material/X';
 import WelcomeBackground from '-/assets/images/background.png';
 import WelcomeLogo from '-/assets/images/welcome-logo.png';
 import {
@@ -64,12 +64,11 @@ const classes = {
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.listItem}`]: {
     color: theme.palette.text.primary,
-    textTransform: 'uppercase',
-    marginTop: 10,
+    marginTop: 5,
+    fontSize: '1rem',
   },
   [`& .${classes.recentTitle}`]: {
     color: theme.palette.text.primary,
-    textTransform: 'uppercase',
     textAlign: 'center',
   },
   [`& .${classes.noRecentItems}`]: {
@@ -333,10 +332,10 @@ function WelcomePanel() {
         </ListItem>
         <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
-            <TwitterIcon />
+            <XIcon />
           </ListItemIcon>
           <ListItemText
-            primary={t('core:followOnTwitter')}
+            primary={t('core:followOnX')}
             className={classes.listItem}
           />
         </ListItem>
