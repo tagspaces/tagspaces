@@ -38,6 +38,7 @@ import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -61,7 +62,7 @@ export const ThumbGenerationContextProvider = ({
     currentDirectoryEntries,
     updateCurrentDirEntries,
   } = useDirectoryContentContext();
-  //const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -128,9 +129,10 @@ export const ThumbGenerationContextProvider = ({
     ) {
       return false; // dont generate thumbnails in meta folder
     }
-    /*if (currentLocation.type === locationType.TYPE_CLOUD) {
-      return false; // dont generate thumbnails for cloud location
-    }*/
+    if (currentLocation.disableThumbnailGeneration) {
+      // === locationType.TYPE_CLOUD) {
+      return false; // dont generate thumbnails if it's not enabled in location settings
+    }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }
@@ -254,7 +256,7 @@ export const ThumbGenerationContextProvider = ({
     return {
       generateThumbnails,
     };
-  }, []);
+  }, [currentLocation]);
 
   return (
     <ThumbGenerationContext.Provider value={context}>
