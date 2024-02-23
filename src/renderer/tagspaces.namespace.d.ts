@@ -41,6 +41,7 @@ export namespace TS {
     isNotEditable?: boolean;
     watchForChanges?: boolean;
     disableIndexing?: boolean;
+    disableThumbnailGeneration?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     maxLoops?: number;

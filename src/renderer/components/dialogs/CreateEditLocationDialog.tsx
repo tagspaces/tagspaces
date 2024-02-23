@@ -177,6 +177,10 @@ function CreateEditLocationDialog(props: Props) {
   const [disableIndexing, setIndexDisable] = useState<boolean>(
     selectedLocation ? selectedLocation.disableIndexing : false,
   );
+  const [disableThumbnailGeneration, setDisableThumbnailGeneration] =
+    useState<boolean>(
+      selectedLocation ? selectedLocation.disableThumbnailGeneration : false,
+    );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
     selectedLocation ? selectedLocation.fullTextIndex : false,
   );
@@ -376,6 +380,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
@@ -394,6 +399,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
@@ -415,6 +421,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
@@ -744,6 +751,22 @@ function CreateEditLocationDialog(props: Props) {
                     <ProLabel />
                   </>
                 }
+              />
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    data-tid="locationSettingsGenThumbsTID"
+                    name="locationSettingsGenThumbs"
+                    checked={disableThumbnailGeneration}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setDisableThumbnailGeneration(event.target.checked)
+                    }
+                  />
+                }
+                label={<>{t('core:disableThumbnailGeneration')}</>}
               />
               <FormControlLabel
                 className={classes.formControl}
