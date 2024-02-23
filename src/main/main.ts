@@ -619,7 +619,7 @@ app
         try {
           console.log('languageChanged:' + lng);
           bindAppMenu(i18n);
-          buildTrayMenu(i18n);
+          bindTrayMenu(i18n);
           const spellCheckLanguage = getSpellcheckLanguage(lng);
           mainWindow?.webContents.session.setSpellCheckerLanguages([
             spellCheckLanguage,
