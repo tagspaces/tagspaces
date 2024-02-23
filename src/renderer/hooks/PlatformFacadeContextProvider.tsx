@@ -326,7 +326,7 @@ export const PlatformFacadeContextProvider = ({
     ).then((result) => {
       if (reflect) {
         getAllPropertiesPromise(targetFilePath).then(
-          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry, false),
         );
       }
       deignoreByWatcher(targetFilePath);
@@ -600,7 +600,7 @@ export const PlatformFacadeContextProvider = ({
       onUploadProgress,
     ).then((fsEntry) => {
       if (reflect) {
-        reflectAddEntry(fsEntry);
+        reflectAddEntry(fsEntry, false);
       }
       deignoreByWatcher(param.path);
       return fsEntry;
