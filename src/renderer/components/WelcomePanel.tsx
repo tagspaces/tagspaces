@@ -65,6 +65,8 @@ const Root = styled('div')(({ theme }) => ({
   [`& .${classes.listItem}`]: {
     color: theme.palette.text.primary,
     marginTop: 5,
+  },
+  [`& .${classes.listItem} .MuiListItemText-primary`]: {
     fontSize: '1rem',
   },
   [`& .${classes.recentTitle}`]: {

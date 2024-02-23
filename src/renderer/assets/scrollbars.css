@@ -5,7 +5,7 @@
 
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
+  height: 10px;
   -webkit-transform: scaleX(10);
   background-color: transparent;
 }
@@ -16,7 +16,7 @@
 }
 
 :hover::-webkit-scrollbar-thumb {
-  background-color: #787f8b;
+  background-color: #4e4f50;
 }
 
 ::-webkit-scrollbar-thumb {
