@@ -34,6 +34,7 @@ import {
 } from './file.properties.helpers';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { openContextEntryMenu } from './test-utils';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -186,10 +187,14 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test('TST5010 - Move file [web,minio,electron]', async () => {
     const fileName = 'sample.svg';
-    await clickOn(getGridFileSelector(fileName));
-    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     //Toggle Properties
-    await clickOn('[data-tid=detailsTabTID]');
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID',
+    );
+    /*await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
+    await clickOn('[data-tid=detailsTabTID]');*/
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
