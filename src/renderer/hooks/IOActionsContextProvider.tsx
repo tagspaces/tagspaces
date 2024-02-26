@@ -76,6 +76,7 @@ type IOActionsContextData = {
     paths: Array<string>,
     targetPath: string,
     onProgress?,
+    reflect?: boolean,
   ) => Promise<boolean>;
   copyDirs: (
     dirPaths: Array<any>,
@@ -381,6 +382,7 @@ export const IOActionsContextProvider = ({
     paths: Array<string>,
     targetPath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<boolean> {
     const moveJobs = paths.map((path) => [
       path,
@@ -456,11 +458,11 @@ export const IOActionsContextProvider = ({
           return moveFilesPromise(moveMetaJobs, undefined, false)
             .then(() => {
               console.log('Moving meta and thumbs successful');
-              return reflectMoveFiles(moveJobs);
+              return reflect && reflectMoveFiles(moveJobs);
             })
             .catch((err) => {
               console.warn('At least one meta or thumb was not moved ' + err);
-              return reflectMoveFiles(moveJobs);
+              return reflect && reflectMoveFiles(moveJobs);
             });
         } else {
           showNotification(t('core:copyingFilesFailed'));
