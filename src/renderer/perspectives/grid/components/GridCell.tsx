@@ -169,7 +169,7 @@ function GridCell(props: Props) {
 
   let description;
   if (showEntriesDescription) {
-    description = fSystemEntry.description;
+    description = fSystemEntry.meta?.description;
     if (
       description &&
       description.length > defaultSettings.maxDescriptionPreviewLength
@@ -340,12 +340,12 @@ function GridCell(props: Props) {
   }
 
   const tmbImgSrc =
-    fSystemEntry.thumbPath +
-    (lastThumbnailImageChange &&
-    lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
+    fSystemEntry.meta?.thumbPath +
+    (fSystemEntry.meta &&
+    fSystemEntry.meta.thumbPath &&
     !PlatformIO.haveObjectStoreSupport() &&
     !PlatformIO.haveWebDavSupport()
-      ? urlGetDelim(fSystemEntry.thumbPath) + lastThumbnailImageChange.dt
+      ? urlGetDelim(fSystemEntry.meta.thumbPath) + fSystemEntry.meta.lastUpdated
       : '');
 
   return (
@@ -393,7 +393,7 @@ function GridCell(props: Props) {
             <TagsPreview tags={entryTags} />
           )}
         </Box>
-        {fSystemEntry.thumbPath ? (
+        {fSystemEntry.meta && fSystemEntry.meta.thumbPath ? (
           <CardMedia
             component="img"
             loading="lazy"

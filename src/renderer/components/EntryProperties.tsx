@@ -27,6 +27,8 @@ import { styled, useTheme } from '@mui/material/styles';
 import {
   getBgndFileLocationForDirectory,
   getMetaFileLocationForFile,
+  getThumbFileLocationForFile,
+  getThumbFileLocationForDirectory,
 } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
@@ -56,8 +58,6 @@ import { ButtonGroup, IconButton } from '@mui/material';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
-  getThumbFileLocationForFile,
-  getThumbFileLocationForDirectory,
   extractFileName,
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
@@ -104,6 +104,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -201,16 +202,13 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, updateOpenedFile, sharingLink, getOpenedDirProps } =
+  const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useIOActionsContext();
+  const { setBackgroundColorChange } = useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const {
-    currentDirectoryPath,
-    updateThumbnailUrl,
-    setDirectoryMeta,
-    setDirectoryPerspective,
-  } = useDirectoryContentContext();
+  const { updateThumbnailUrl, setDirectoryPerspective } =
+    useDirectoryContentContext();
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
@@ -416,8 +414,9 @@ function EntryProperties(props: Props) {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
-    openedEntry.color = color;
-    switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
+    //openedEntry.color = color;
+    setBackgroundColorChange(openedEntry, color);
+    /*switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
       Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, { color })
         .then((entryMeta) => {
           if (openedEntry.path === currentDirectoryPath) {
@@ -435,9 +434,9 @@ function EntryProperties(props: Props) {
             switchCurrentLocationType(),
           );
 
-          /* } else {
+          /!* } else {
             setCurrentEntry({ ...openedEntry, color });
-          } */
+          } *!/
           return true;
         })
         .catch((error) => {
@@ -445,7 +444,7 @@ function EntryProperties(props: Props) {
           console.warn('Error saving color for folder ' + error);
           showNotification(t('Error saving color for folder'));
         });
-    });
+    });*/
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -489,12 +488,12 @@ function EntryProperties(props: Props) {
         if (action === 'remove-value') {
           if (!value) {
             // no tags left in the select element
-            return removeAllTags([openedEntry.path]).then(() =>
+            return removeAllTags([openedEntry.path]); /*.then(() =>
               updateOpenedFile(openedEntry.path, {
                 id: '',
                 tags: [],
               }),
-            );
+            );*/
           } else {
             return removeTags([openedEntry.path], value);
           }
@@ -596,11 +595,9 @@ function EntryProperties(props: Props) {
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
     setDirectoryPerspective(perspective, openedEntry.path, false)
-      .then((entryMeta: TS.FileSystemEntryMeta) => {
-        // openedEntry = {...openedEntry, perspective: perspective}
+      /*.then((entryMeta: TS.FileSystemEntryMeta) => {
         return updateOpenedFile(openedEntry.path, entryMeta);
-        // return true;
-      })
+      })*/
       .catch((error) => {
         console.warn('Error saving perspective for folder ' + error);
         showNotification(t('Error saving perspective for folder'));
@@ -608,8 +605,8 @@ function EntryProperties(props: Props) {
   };
 
   let perspectiveDefault;
-  if (openedEntry.perspective) {
-    perspectiveDefault = openedEntry.perspective; // props.perspective;
+  if (openedEntry.meta && openedEntry.meta.perspective) {
+    perspectiveDefault = openedEntry.meta.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
@@ -1064,7 +1061,7 @@ function EntryProperties(props: Props) {
                         fullWidth
                         style={{
                           width: 100,
-                          background: openedEntry.color,
+                          background: openedEntry.meta?.color,
                         }}
                         onClick={toggleBackgroundColorPicker}
                       >
@@ -1091,7 +1088,7 @@ function EntryProperties(props: Props) {
                           </IconButton>
                         </ProTooltip>
                       ))}
-                      {openedEntry.color && (
+                      {openedEntry.meta && openedEntry.meta.color && (
                         <>
                           <ProTooltip tooltip={t('clearFolderColor')}>
                             <span>
@@ -1276,9 +1273,10 @@ function EntryProperties(props: Props) {
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
-          selectedFile={openedEntry.path}
+          entry={openedEntry as TS.FileSystemEntry}
+          /*selectedFile={openedEntry.path}
           thumbPath={getThumbPath()}
-          setThumb={setThumb}
+          setThumb={setThumb}*/
         />
       )}
       {showSharingLinkDialog && (
@@ -1293,12 +1291,12 @@ function EntryProperties(props: Props) {
         <BgndImgChooserDialog
           open={isBgndImgChooseDialogOpened}
           onClose={toggleBgndImgDialog}
-          currentDirectoryPath={openedEntry.path}
+          entry={openedEntry as TS.FileSystemEntry}
         />
       )}
       {CustomBackgroundDialog && (
         <CustomBackgroundDialog
-          color={openedEntry.color}
+          color={openedEntry.meta?.color}
           open={displayColorPicker}
           setColor={handleChangeColor}
           onClose={toggleBackgroundColorPicker}

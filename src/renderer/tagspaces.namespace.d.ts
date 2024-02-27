@@ -107,6 +107,16 @@ export namespace TS {
     open?: boolean;
   }
 
+  interface EditMetaAction {
+    action:
+      | 'autoSaveChange'
+      | 'descriptionChange'
+      | 'thumbChange'
+      | 'bgdImgChange'
+      | 'bgdColorChange';
+    entry: TS.FileSystemEntry;
+  }
+
   interface Tag {
     title?: string;
     /**
@@ -148,20 +158,15 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
-    isAutoSaveEnabled?: boolean; // common with OpenedEntry
+    //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
-    thumbPath?: string;
-    color?: string;
-    perspective?: TS.PerspectiveType;
     textContent?: string;
-    description?: string;
-    tags: Array<TS.Tag>;
+    tags?: TS.Tag[];
     size: number;
     lmdt: number;
     path: string;
     url?: string;
     meta?: FileSystemEntryMeta;
-    // isIgnored?: boolean;
   }
 
   interface FileSystemEntryMeta {
@@ -169,10 +174,10 @@ export namespace TS {
     description?: string;
     isFile?: boolean;
     autoSave?: boolean;
-    editMode?: boolean;
-    shouldReload?: boolean;
+    //shouldReload?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
+    thumbPath?: string;
     color?: string;
     perspective?: TS.PerspectiveType;
     appName?: string;
@@ -181,6 +186,17 @@ export namespace TS {
     customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
   }
+
+  interface OpenedEntry extends FileSystemEntry {
+    locationId?: string;
+    viewingExtensionPath: string;
+    viewingExtensionId: string;
+    editingExtensionPath?: string;
+    editingExtensionId?: string;
+    editMode?: boolean;
+    focused?: boolean; // TODO make it mandatory once support for multiple files is added
+  }
+
   interface CustomOrder {
     folders?: Array<OrderVisibilitySettings>;
     files?: Array<OrderVisibilitySettings>;

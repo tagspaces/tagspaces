@@ -49,7 +49,6 @@ import {
   isRevisionsEnabled,
   getEntryContainerTab,
 } from '-/reducers/settings';
-import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
@@ -69,6 +68,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -84,13 +84,14 @@ function EntryContainer() {
   const {
     openedEntry,
     closeAllFiles,
-    updateOpenedFile,
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
     reflectUpdateOpenedFileContent,
+    addToEntryContainer,
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
+  const { setAutoSave } = useEditedEntryMetaContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
@@ -237,10 +238,10 @@ function EntryContainer() {
   });
 
   useEffect(() => {
-    if (openedEntry && openedEntry.isAutoSaveEnabled) {
+    if (openedEntry && openedEntry.meta && openedEntry.meta.autoSave) {
       if (fileChanged.current) {
         timer.current = setInterval(() => {
-          if (openedEntry.isAutoSaveEnabled && fileChanged.current) {
+          if (openedEntry.meta.autoSave && fileChanged.current) {
             startSavingFile();
             console.debug('autosave');
           }
@@ -452,7 +453,7 @@ function EntryContainer() {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        reloadOpenedFile();
+        // reloadOpenedFile();
       }
     }
   };
@@ -560,7 +561,7 @@ function EntryContainer() {
     );
   };
 
-  async function save(fileOpen: OpenedEntry): Promise<boolean> {
+  async function save(fileOpen: TS.OpenedEntry): Promise<boolean> {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
     if (Pro && revisionsEnabled) {
@@ -614,14 +615,15 @@ function EntryContainer() {
   }
 
   const editOpenedFile = () => {
-    switchLocationTypeByID(openedEntry.locationId).then(() => {
+    addToEntryContainer({ ...openedEntry, editMode: true });
+    /* switchLocationTypeByID(openedEntry.locationId).then(() => {
       updateOpenedFile(openedEntry.path, {
         id: '',
         ...openedEntry,
         editMode: true,
         shouldReload: undefined,
       }).then(() => switchCurrentLocationType());
-    });
+    });*/
   };
 
   /*const setPercent = (p: number | undefined) => {
@@ -674,7 +676,8 @@ function EntryContainer() {
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
     if (Pro && Pro.MetaOperations) {
-      switchLocationTypeByID(openedEntry.locationId).then(
+      setAutoSave(openedEntry, autoSave, openedEntry.locationId);
+      /*switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
           Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, {
             autoSave,
@@ -684,7 +687,7 @@ function EntryContainer() {
             );
           });
         },
-      );
+      );*/
     } else {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
     }
@@ -710,10 +713,7 @@ function EntryContainer() {
       >
         <Switch
           data-tid="autoSaveTID"
-          checked={
-            openedEntry.isAutoSaveEnabled !== undefined &&
-            openedEntry.isAutoSaveEnabled
-          }
+          checked={openedEntry.meta && openedEntry.meta.autoSave}
           onChange={toggleAutoSave}
           name="autoSave"
           color="primary"
@@ -972,13 +972,13 @@ function EntryContainer() {
               startSavingFile();
             } else {
               setSaveBeforeReloadConfirmDialogOpened(false);
-              updateOpenedFile(openedEntry.path, {
+              /*updateOpenedFile(openedEntry.path, {
                 id: '',
                 ...openedEntry,
                 editMode: false,
                 // changed: false,
                 shouldReload: true,
-              });
+              });*/
               fileChanged.current = false;
             }
           }}

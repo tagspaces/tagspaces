@@ -51,7 +51,6 @@ import {
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import versionMeta from '../version.json';
-import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { generateImageThumbnail } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
@@ -99,9 +98,9 @@ export function getMetaForEntry(
 }
 
 export function enhanceOpenedEntry(
-  entry: OpenedEntry,
+  entry: TS.OpenedEntry,
   tagDelimiter,
-): OpenedEntry {
+): TS.OpenedEntry {
   if (entry.isFile) {
     const fineNameTags = extractTagsAsObjects(
       entry.path,
@@ -318,9 +317,9 @@ export function findExtensionPathForId(
 }
 
 export function addExtensionsForEntry(
-  openedEntry: OpenedEntry,
+  openedEntry: TS.OpenedEntry,
   supportedFileTypes: Array<TS.FileTypes>,
-): OpenedEntry {
+): TS.OpenedEntry {
   const fileExtension = extractFileExtension(
     openedEntry.path,
     PlatformIO.getDirSeparator(),
@@ -334,7 +333,9 @@ export function addExtensionsForEntry(
   if (fileType) {
     fileForOpening.viewingExtensionId = fileType.viewer;
     if (fileType.color) {
-      fileForOpening.color = fileType.color;
+      fileForOpening.meta = fileForOpening.meta
+        ? { ...fileForOpening.meta, color: fileType.color }
+        : { id: openedEntry.uuid, color: fileType.color };
     }
     fileForOpening.viewingExtensionPath = findExtensionPathForId(
       fileType.viewer,
@@ -360,7 +361,7 @@ export function findExtensionsForEntry(
   supportedFileTypes: Array<any>,
   entryPath: string,
   isFile = true,
-): OpenedEntry {
+): TS.OpenedEntry {
   return addExtensionsForEntry(
     {
       ...(uuid && { uuid: uuid }),
@@ -372,6 +373,8 @@ export function findExtensionsForEntry(
       // locationId: undefined,
       lmdt: 0,
       size: 0,
+      name: '',
+      tags: [],
     },
     supportedFileTypes,
   );
@@ -985,6 +988,9 @@ export function cleanMetaData(
   if (metaData.autoSave) {
     cleanedMeta.autoSave = metaData.autoSave;
   }
+  if (metaData.thumbPath) {
+    cleanedMeta.thumbPath = metaData.thumbPath;
+  }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
       if (!cleanedMeta.perspectiveSettings) {
@@ -1192,8 +1198,8 @@ export function setFolderBackgroundPromise(
 
 export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
   if (!fsEntry.isFile) {
-    if (fsEntry.color) {
-      return fsEntry.color;
+    if (fsEntry.meta && fsEntry.meta.color) {
+      return fsEntry.meta.color;
     }
   }
   return 'transparent';
@@ -1565,7 +1571,6 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
       : extractDirectoryName(path, PlatformIO.getDirSeparator()),
     isFile,
     extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-    description: '',
     tags: [],
     size: 0,
     lmdt: new Date().getTime(),
@@ -1573,7 +1578,7 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
   };
 }
 
-export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
+/*export function openedToFsEntry(openedEntry: TS.OpenedEntry): TS.FileSystemEntry {
   return {
     uuid: getUuid(),
     name: openedEntry.isFile
@@ -1584,13 +1589,13 @@ export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
       openedEntry.path,
       PlatformIO.getDirSeparator(),
     ),
-    description: openedEntry.description,
+    description: openedEntry.meta?.description,
     tags: openedEntry.tags,
     size: openedEntry.size,
     lmdt: openedEntry.lmdt,
     path: openedEntry.path,
   };
-}
+}*/
 
 export function createFsEntryMeta(
   path: string,

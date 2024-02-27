@@ -23,12 +23,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  OpenedEntry,
-} from '-/reducers/app';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -36,6 +30,8 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { TS } from '-/tagspaces.namespace';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type DescriptionContextData = {
   description: string;
@@ -65,14 +61,12 @@ export const DescriptionContextProvider = ({
   const {
     openedEntry,
     addToEntryContainer,
-    updateOpenedFile,
-    reloadOpenedFile,
+    // reloadOpenedFile,
   } = useOpenedEntryContext();
-  const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
-    useCurrentLocationContext();
-  const { updateCurrentDirEntry } = useDirectoryContentContext();
+  const { readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const openedFile = useRef<OpenedEntry>(openedEntry);
+  const { setDescriptionChange } = useEditedEntryMetaContext();
+  const openedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
@@ -83,7 +77,9 @@ export const DescriptionContextProvider = ({
         openedFile.current !== undefined &&
         isChanged.current &&
         openedFile.current.path !== openedEntry.path &&
-        openedFile.current.description !== openedEntry.description
+        openedFile.current.meta &&
+        openedEntry.meta &&
+        openedFile.current.meta.description !== openedEntry.meta.description
       ) {
         // handle not saved changes
         addToEntryContainer({ ...openedFile.current, editMode: false });
@@ -109,10 +105,17 @@ export const DescriptionContextProvider = ({
       showNotification(t('Saving description not supported'));
       return;
     }
-    if (openedFile.current.description !== undefined) {
-      //forceUpdate();
-      //setDescriptionChanged(false);
-      if (openedFile.current.locationId) {
+    if (
+      openedFile.current.meta &&
+      openedFile.current.meta.description !== undefined
+    ) {
+      setDescriptionChange(
+        openedFile.current,
+        openedFile.current.meta.description,
+        openedFile.current.locationId,
+      );
+
+      /*if (openedFile.current.locationId) {
         switchLocationTypeByID(openedFile.current.locationId).then(
           (currentLocationId) => {
             saveMetaData()
@@ -132,11 +135,11 @@ export const DescriptionContextProvider = ({
             ' dont have locationId! Current Location can be changed. Trying to save opened file in current location',
         );
         saveMetaData();
-      }
+      }*/
     }
   };
 
-  function saveMetaData() {
+  /*function saveMetaData() {
     return Pro.MetaOperations.saveFsEntryMeta(openedFile.current.path, {
       description: openedFile.current.description,
     }).then((entryMeta) => {
@@ -144,28 +147,28 @@ export const DescriptionContextProvider = ({
       updateCurrentDirEntry(openedFile.current.path, {
         description: entryMeta.description,
       });
-      openedFile.current.description = undefined;
+      openedFile.current.meta.description = undefined;
       isChanged.current = false;
       return updateOpenedFile(openedFile.current.path, entryMeta);
     });
-  }
+  }*/
 
   function setDescription(d: string) {
-    openedFile.current.description = d;
+    openedFile.current.meta.description = d;
     isChanged.current = true;
   }
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
       isChanged.current = false;
-      reloadOpenedFile();
+      // reloadOpenedFile();
     }
     saveDescriptionConfirmOpened(isOpened);
   }
 
   const context = useMemo(() => {
     return {
-      description: openedFile.current?.description,
+      description: openedFile.current?.meta?.description,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,

@@ -47,8 +47,7 @@ import {
 } from '-/services/utils-io';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import {
   OpenNewWindowIcon,
@@ -65,6 +64,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 interface Props {
   anchorEl: Element;
@@ -102,8 +102,9 @@ function FileMenu(props: Props) {
 
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { setBackgroundImageChange, setThumbnailImageChange } =
+    useEditedEntryMetaContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -162,15 +163,16 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(selectedFilePath)
-      .then((directoryPath: string) => {
-        showNotification('Thumbnail created for: ' + directoryPath);
+    setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
+      .then((thumbPath: string) => {
+        setThumbnailImageChange(selectedEntries[0], thumbPath);
+        showNotification('Thumbnail created: ' + thumbPath);
         return true;
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
         console.warn(
-          'Error setting Thumb for entry: ' + selectedFilePath,
+          'Error setting Thumb for entry: ' + selectedEntries[0].path,
           error,
         );
         return true;
@@ -191,9 +193,10 @@ function FileMenu(props: Props) {
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
-        dispatch(
+        setBackgroundImageChange(selectedEntries[0]);
+        /*dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
-        );
+        );*/
         showNotification('Background created for: ' + directoryPath);
         return true;
       })

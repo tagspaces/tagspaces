@@ -84,7 +84,7 @@ function getThumbs(
 
 function setThumbForEntry(
   entry: TS.FileSystemEntry,
-  meta: Array<any>,
+  meta: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
 ): TS.FileSystemEntry {
   const thumbEntry = { ...entry, tags: [] };
   let thumbPath = getThumbFileLocationForFile(
@@ -92,8 +92,9 @@ function setThumbForEntry(
     PlatformIO.getDirSeparator(),
     false,
   );
-  if (thumbPath && meta.some((metaFile) => thumbPath.endsWith(metaFile.path))) {
-    thumbEntry.thumbPath = thumbPath;
+  const metaFile = meta.find((m) => thumbPath.endsWith(m.path));
+  if (thumbPath && metaFile) {
+    thumbEntry.meta = { ...metaFile, thumbPath };
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       if (thumbPath && thumbPath.startsWith('/')) {
         thumbPath = thumbPath.substring(1);
@@ -101,7 +102,7 @@ function setThumbForEntry(
 
       thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
       if (thumbPath) {
-        thumbEntry.thumbPath = thumbPath;
+        thumbEntry.meta = { ...metaFile, thumbPath };
       }
     }
   }

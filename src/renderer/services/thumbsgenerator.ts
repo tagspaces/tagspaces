@@ -353,107 +353,119 @@ export function getMimeType(extension) {
   return types[extension];
 }
 
+/**
+ * src: image url or base64string
+ * maxTmbSize - max size of image if not set return full image size (from url)
+ * return: base64 image string
+ */
+export function getResizedImageThumbnail(
+  src: string,
+  maxTmbSize?: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    let canvas: HTMLCanvasElement = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let img: HTMLImageElement = new Image();
+    if (maxTmbSize && maxTmbSize > maxSize) {
+      maxSize = maxTmbSize;
+    }
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      // EXIF extraction not need because the image are rotated
+      // automatically in Chrome version 81 and higher
+      // EXIF.getData(img as any, function() {
+      //   // TODO Use EXIF only for jpegs
+      //   const orientation = EXIF.getTag(this, 'Orientation');
+      //   /*
+      //     1 - 0 degrees – the correct orientation, no adjustment is required.
+      //     2 - 0 degrees, mirrored – image has been flipped back-to-front.
+      //     3 - 180 degrees – image is upside down.
+      //     4 - 180 degrees, mirrored – image is upside down and flipped back-to-front.
+      //     5 - 90 degrees – image is on its side.
+      //     6 - 90 degrees, mirrored – image is on its side and flipped back-to-front.
+      //     7 - 270 degrees – image is on its far side.
+      //     8 - 270 degrees, mirrored – image is on its far side and flipped back-to-front.
+      //   */
+      //   let angleInRadians;
+      //   switch (orientation) {
+      //     case 8:
+      //       angleInRadians = 270 * (Math.PI / 180);
+      //       break;
+      //     case 3:
+      //       angleInRadians = 180 * (Math.PI / 180);
+      //       break;
+      //     case 6:
+      //       angleInRadians = 90 * (Math.PI / 180);
+      //       break;
+      //     case 1:
+      //       // ctx.rotate(0);
+      //       break;
+      //     default:
+      //     // ctx.rotate(0);
+      //   }
+      let maxSizeWidth = maxSize;
+      if (img.width < maxSize) {
+        maxSizeWidth = img.width;
+      }
+      let maxSizeHeight = maxSize;
+      if (img.height < maxSize) {
+        maxSizeHeight = img.height;
+      }
+      if (img.width >= img.height) {
+        canvas.width = maxSizeWidth;
+        canvas.height = (maxSizeWidth * img.height) / img.width;
+      } else {
+        canvas.height = maxSizeHeight;
+        canvas.width = (maxSizeHeight * img.width) / img.height;
+      }
+
+      const { width, height } = canvas;
+      const x = canvas.width / 2;
+      const y = canvas.height / 2;
+
+      ctx.translate(x, y);
+      // ctx.rotate(angleInRadians);
+      ctx.fillStyle = thumbnailBackgroundColor;
+      ctx.fillRect(-width / 2, -height / 2, width, height);
+      ctx.drawImage(img, -width / 2, -height / 2, width, height);
+      // ctx.rotate(-angleInRadians);
+      ctx.translate(-x, -y);
+      const dataurl = canvas.toDataURL(AppConfig.thumbType);
+      resolve(dataurl);
+      img = null;
+      canvas = null;
+      // });
+    };
+    img.src = src;
+    img.onerror = (err) => {
+      console.warn(`Error getResizedImageThumbnail`, err);
+      resolve('');
+    };
+  });
+}
+
 export function generateImageThumbnail(
   fileURL: string,
   maxTmbSize?: number,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      PlatformIO.getFileContentPromise(fileURL, 'arraybuffer')
-        .then((content) => {
-          let canvas: HTMLCanvasElement = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          let img: HTMLImageElement = new Image();
-          if (maxTmbSize && maxTmbSize > maxSize) {
-            maxSize = maxTmbSize;
-          }
-          img.crossOrigin = 'anonymous';
-          img.onload = () => {
-            // EXIF extraction not need because the image are rotated
-            // automatically in Chrome version 81 and higher
-            // EXIF.getData(img as any, function() {
-            //   // TODO Use EXIF only for jpegs
-            //   const orientation = EXIF.getTag(this, 'Orientation');
-            //   /*
-            //     1 - 0 degrees – the correct orientation, no adjustment is required.
-            //     2 - 0 degrees, mirrored – image has been flipped back-to-front.
-            //     3 - 180 degrees – image is upside down.
-            //     4 - 180 degrees, mirrored – image is upside down and flipped back-to-front.
-            //     5 - 90 degrees – image is on its side.
-            //     6 - 90 degrees, mirrored – image is on its side and flipped back-to-front.
-            //     7 - 270 degrees – image is on its far side.
-            //     8 - 270 degrees, mirrored – image is on its far side and flipped back-to-front.
-            //   */
-            //   let angleInRadians;
-            //   switch (orientation) {
-            //     case 8:
-            //       angleInRadians = 270 * (Math.PI / 180);
-            //       break;
-            //     case 3:
-            //       angleInRadians = 180 * (Math.PI / 180);
-            //       break;
-            //     case 6:
-            //       angleInRadians = 90 * (Math.PI / 180);
-            //       break;
-            //     case 1:
-            //       // ctx.rotate(0);
-            //       break;
-            //     default:
-            //     // ctx.rotate(0);
-            //   }
-            let maxSizeWidth = maxSize;
-            if (img.width < maxSize) {
-              maxSizeWidth = img.width;
-            }
-            let maxSizeHeight = maxSize;
-            if (img.height < maxSize) {
-              maxSizeHeight = img.height;
-            }
-            if (img.width >= img.height) {
-              canvas.width = maxSizeWidth;
-              canvas.height = (maxSizeWidth * img.height) / img.width;
-            } else {
-              canvas.height = maxSizeHeight;
-              canvas.width = (maxSizeHeight * img.width) / img.height;
-            }
-
-            const { width, height } = canvas;
-            const x = canvas.width / 2;
-            const y = canvas.height / 2;
-
-            ctx.translate(x, y);
-            // ctx.rotate(angleInRadians);
-            ctx.fillStyle = thumbnailBackgroundColor;
-            ctx.fillRect(-width / 2, -height / 2, width, height);
-            ctx.drawImage(img, -width / 2, -height / 2, width, height);
-            // ctx.rotate(-angleInRadians);
-            ctx.translate(-x, -y);
-            const dataurl = canvas.toDataURL(AppConfig.thumbType);
-            resolve(dataurl);
-            img = null;
-            canvas = null;
-            // });
-          };
-          const ext = extractFileExtension(
-            fileURL,
-            PlatformIO.getDirSeparator(),
-          ).toLowerCase();
-          const blob = new Blob([content], { type: getMimeType(ext) });
-          img.src = URL.createObjectURL(blob);
-          img.onerror = (err) => {
-            console.warn(`Error loading: ${fileURL} for tmb gen`, err);
-            resolve('');
-          };
-        })
-        .catch((e) => {
-          console.log(`Error get: ${fileURL}`, e);
-          resolve('');
-        });
-    } catch (e) {
-      console.warn(`Error creating image thumb for : ${fileURL}`, e);
-      resolve('');
-    }
-  });
+  try {
+    return PlatformIO.getFileContentPromise(fileURL, 'arraybuffer')
+      .then((content) => {
+        const ext = extractFileExtension(
+          fileURL,
+          PlatformIO.getDirSeparator(),
+        ).toLowerCase();
+        const blob = new Blob([content], { type: getMimeType(ext) });
+        return getResizedImageThumbnail(URL.createObjectURL(blob), maxTmbSize);
+      })
+      .catch((e) => {
+        console.log(`Error get: ${fileURL}`, e);
+        return Promise.resolve('');
+      });
+  } catch (e) {
+    console.warn(`Error creating image thumb for : ${fileURL}`, e);
+    return Promise.resolve('');
+  }
 }
 
 function generateVideoThumbnail(fileURL): Promise<string> {

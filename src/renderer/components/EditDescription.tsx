@@ -3,7 +3,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
-import { OpenedEntry } from '-/reducers/app';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';

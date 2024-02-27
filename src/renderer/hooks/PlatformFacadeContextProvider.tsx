@@ -29,7 +29,7 @@ import {
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import {
@@ -169,7 +169,7 @@ export const PlatformFacadeContextProvider = ({
 
   /**
    * @param filePath
-   * return Promise<directoryPath> of directory in order to open Folder properties next
+   * return Promise<destThumbPath>
    */
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
     const directoryPath = extractContainingDirectoryPath(
@@ -196,8 +196,8 @@ export const PlatformFacadeContextProvider = ({
       destThumbPath,
       t('core:thumbAlreadyExists', { directoryName }),
     ).then(() => {
-      dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
-      return directoryPath;
+      //  dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
+      return destThumbPath;
     });
   }
 
