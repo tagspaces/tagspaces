@@ -537,7 +537,9 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.isAutoSaveEnabled = fsEntry.meta.autoSave;
     }
 
-    document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config
+    const locationName = currentLocation ? currentLocation.name : 'TagSpaces'; // TODO get it later from app config
+
+    document.title = fsEntry.name + ' | ' + locationName;
 
     if (currentLocation) {
       entryForOpening.locationId = currentLocation.uuid;
