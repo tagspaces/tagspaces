@@ -23,7 +23,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { saveMetaDataPromise } from '-/services/utils-io';
 
 type EditedEntryMetaContextData = {
-  actions: TS.EditMetaAction[];
+  metaActions: TS.EditMetaAction[];
   setReflectMetaActions: (...actionsArray: TS.EditMetaAction[]) => void;
   setAutoSave: (
     entry: TS.FileSystemEntry,
@@ -50,7 +50,7 @@ type EditedEntryMetaContextData = {
 
 export const EditedEntryMetaContext = createContext<EditedEntryMetaContextData>(
   {
-    actions: undefined,
+    metaActions: undefined,
     setReflectMetaActions: undefined,
     setAutoSave: undefined,
     setDescriptionChange: undefined,
@@ -69,12 +69,12 @@ export const EditedEntryMetaContextProvider = ({
 }: EditedEntryMetaContextProviderProps) => {
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const actions = useRef<TS.EditMetaAction[]>(undefined);
+  const metaActions = useRef<TS.EditMetaAction[]>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   function setReflectMetaActions(...actionsArray: TS.EditMetaAction[]) {
-    actions.current = actionsArray;
+    metaActions.current = actionsArray;
     forceUpdate();
   }
 
@@ -217,7 +217,7 @@ export const EditedEntryMetaContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      actions: actions.current,
+      metaActions: metaActions.current,
       setReflectMetaActions,
       setAutoSave,
       setDescriptionChange,
@@ -225,7 +225,7 @@ export const EditedEntryMetaContextProvider = ({
       setBackgroundColorChange,
       setThumbnailImageChange,
     };
-  }, [actions.current]);
+  }, [metaActions.current]);
 
   return (
     <EditedEntryMetaContext.Provider value={context}>

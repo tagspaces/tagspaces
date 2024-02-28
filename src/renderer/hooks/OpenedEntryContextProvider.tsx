@@ -32,7 +32,6 @@ import {
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getRelativeEntryPath,
-  loadJSONFile,
   openURLExternally,
 } from '-/services/utils-io';
 import {

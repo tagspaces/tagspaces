@@ -45,6 +45,7 @@ import {
   extractFileName,
   normalizePath,
   getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
   getBgndFileLocationForDirectory,
   cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
@@ -1105,7 +1106,7 @@ export async function saveLocationDataPromise(
 export async function saveMetaDataPromise(
   path: string,
   metaData: any,
-): Promise<any> {
+): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   const cleanedMetaData = cleanMetaData(metaData);
   if (entryProperties) {
@@ -1147,12 +1148,13 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator(),
       );
     }
-    const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
+    const meta = mergeFsEntryMeta(cleanedMetaData);
+    const content = JSON.stringify(meta);
     return PlatformIO.saveTextFilePromise(
       { path: metaFilePath },
       content,
       true,
-    );
+    ).then(() => meta);
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1420,23 +1422,41 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   return [...oldTagsArray, ...uniqueTags];
 }
 
-export function getFolderThumbPath(
-  path: string,
-  lastThumbnailImageChange: any,
-) {
+export function getThumbEntryPath(entry: TS.FileSystemEntry) {
+  if (!entry) {
+    return undefined;
+  }
+  return entry.isFile
+    ? getThumbFileLocationForFile(entry.path, PlatformIO.getDirSeparator())
+    : getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+}
+
+export function getEntryThumbPath(entry: TS.FileSystemEntry, dt = undefined) {
+  if (entry) {
+    return getThumbPath(getThumbEntryPath(entry), dt);
+  }
+  return undefined;
+}
+
+/**
+ * @deprecated use getEntryThumbPath instead
+ * @param path
+ * @param dt
+ */
+export function getFolderThumbPath(path: string, dt = undefined) {
   if (path) {
     return getThumbPath(
       getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastThumbnailImageChange,
+      dt,
     );
   }
   return undefined;
 }
 
-export function getThumbPath(
-  thumbPath: string,
-  lastThumbnailImageChange?: any,
-) {
+export function getThumbPath(thumbPath: string, dt = undefined) {
   if (!thumbPath) {
     return undefined;
   }
@@ -1446,13 +1466,7 @@ export function getThumbPath(
     }
     return PlatformIO.getURLforPath(thumbPath);
   }
-  return (
-    normalizeUrl(thumbPath) +
-    (lastThumbnailImageChange &&
-    lastThumbnailImageChange.thumbPath === thumbPath
-      ? '?' + lastThumbnailImageChange.dt
-      : '')
-  );
+  return normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
 }
 
 function isSignedURL(signedUrl) {
@@ -1463,33 +1477,24 @@ function isSignedURL(signedUrl) {
   return false;
 }
 
-export function getFolderBgndPath(
-  path: string,
-  lastBackgroundImageChange: any,
-) {
+export function getFolderBgndPath(path: string, dt = undefined) {
   if (path !== undefined) {
     return getBgndPath(
       getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastBackgroundImageChange,
+      dt,
     );
   }
   return undefined;
 }
 
-export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
+export function getBgndPath(bgndPath: string, dt = undefined) {
   if (!bgndPath) {
     return undefined;
   }
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     return PlatformIO.getURLforPath(bgndPath);
   }
-  return (
-    normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange
-      ? // && lastBackgroundImageChange.folderPath === bgndPath
-        '?' + lastBackgroundImageChange.dt
-      : '')
-  );
+  return normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
 }
 
 export function setLocationType(location: TS.Location): Promise<boolean> {

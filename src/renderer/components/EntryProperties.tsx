@@ -24,12 +24,7 @@ import React, {
   useState,
 } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import {
-  getBgndFileLocationForDirectory,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForFile,
-  getThumbFileLocationForDirectory,
-} from '@tagspaces/tagspaces-common/paths';
+import { getMetaFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
   Grid,
@@ -66,7 +61,8 @@ import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import {
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl,
+  getFolderBgndPath,
+  getThumbPath,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
@@ -74,12 +70,6 @@ import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
-import {
-  AppDispatch,
-  getLastBackgroundImageChange,
-  getLastThumbnailImageChange,
-} from '-/reducers/app';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
@@ -89,10 +79,7 @@ import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
-import { useDispatch, useSelector } from 'react-redux';
 import FormHelperText from '@mui/material/FormHelperText';
-import { actions as AppActions } from '-/reducers/app';
-import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
 import { useTranslation } from 'react-i18next';
@@ -205,25 +192,19 @@ function EntryProperties(props: Props) {
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useIOActionsContext();
-  const { setBackgroundColorChange } = useEditedEntryMetaContext();
+  const { metaActions, setBackgroundColorChange } = useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { updateThumbnailUrl, setDirectoryPerspective } =
-    useDirectoryContentContext();
+  const { setDirectoryPerspective } = useDirectoryContentContext();
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
-  const dispatch: AppDispatch = useDispatch();
 
   const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
-  // const fileDescriptionRef = useRef<MilkdownRef>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
-  //const openedEntry = openedEntries[0];
-  const lastBackgroundImageChange = useSelector(getLastBackgroundImageChange);
-  const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
 
   const entryName = openedEntry
     ? openedEntry.isFile
@@ -243,11 +224,10 @@ function EntryProperties(props: Props) {
   const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
     useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const bgndUrl = useRef<string>(getBgndUrl());
-  const thumbUrl = useRef<string>(getThumbUrl());
+  const bgndUrl = useRef<string>(getFolderBgndPath(openedEntry.path));
+  // const thumbUrl = getEntryThumbPath(openedEntry); //useRef<string>(getThumbUrl());
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -256,18 +236,29 @@ function EntryProperties(props: Props) {
   }, [editName]);
 
   useEffect(() => {
-    if (!firstRender) {
-      bgndUrl.current = getBgndUrl();
-      forceUpdate();
+    if (metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (openedEntry.path === action.entry.path) {
+          if (action.action === 'thumbChange') {
+            if (action.entry.meta.thumbPath) {
+              openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
+              //thumbUrl.current = getThumbUrl(action.entry.meta?.lastUpdated);
+            } else {
+              const { thumbPath, ...meta } = openedEntry.meta;
+              openedEntry.meta = meta;
+            }
+            forceUpdate();
+          } else if (action.action === 'bgdImgChange') {
+            bgndUrl.current = getFolderBgndPath(
+              openedEntry.path,
+              action.entry.meta?.lastUpdated,
+            );
+            forceUpdate();
+          }
+        }
+      }
     }
-  }, [lastBackgroundImageChange]);
-
-  useEffect(() => {
-    if (!firstRender) {
-      thumbUrl.current = getThumbUrl();
-      forceUpdate();
-    }
-  }, [lastThumbnailImageChange]);
+  }, [metaActions]);
 
   const renameEntry = () => {
     if (editName !== undefined) {
@@ -353,7 +344,7 @@ function EntryProperties(props: Props) {
     return t(PlatformIO.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
   };
 
-  const setThumb = (filePath, thumbFilePath) => {
+  /*const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
       return switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
@@ -367,15 +358,15 @@ function EntryProperties(props: Props) {
             );
             return true;
           }
-          /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
-          .then(objUrl => {*/
+          /!*return replaceThumbnailURLPromise(filePath, thumbFilePath)
+          .then(objUrl => {*!/
           updateThumbnailUrl(
             openedEntry.path,
             thumbFilePath,
             // objUrl.tmbPath
-            /*(props.lastThumbnailImageChange
+            /!*(props.lastThumbnailImageChange
                   ? '?' + props.lastThumbnailImageChange
-                  : '')*/
+                  : '')*!/
           );
           return switchCurrentLocationType();
         },
@@ -392,7 +383,7 @@ function EntryProperties(props: Props) {
           showNotification('Error reset Thumbnail');
         });
     }
-  };
+  };*/
 
   const toggleBackgroundColorPicker = () => {
     if (readOnlyMode) {
@@ -416,35 +407,6 @@ function EntryProperties(props: Props) {
     }
     //openedEntry.color = color;
     setBackgroundColorChange(openedEntry, color);
-    /*switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
-      Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, { color })
-        .then((entryMeta) => {
-          if (openedEntry.path === currentDirectoryPath) {
-            setDirectoryMeta(entryMeta);
-          }
-          // for KanBan
-          dispatch(
-            AppActions.setLastBackgroundColorChange(
-              openedEntry.path,
-              new Date().getTime(),
-            ),
-          );
-          // todo handle LastBackgroundColorChange and skip updateOpenedFile
-          updateOpenedFile(openedEntry.path, entryMeta).then(() =>
-            switchCurrentLocationType(),
-          );
-
-          /!* } else {
-            setCurrentEntry({ ...openedEntry, color });
-          } *!/
-          return true;
-        })
-        .catch((error) => {
-          switchCurrentLocationType();
-          console.warn('Error saving color for folder ' + error);
-          showNotification(t('Error saving color for folder'));
-        });
-    });*/
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -519,7 +481,7 @@ function EntryProperties(props: Props) {
     return <div />;
   }
 
-  function getBgndUrl() {
+  /*function getBgndUrl(dt = undefined) {
     if (openedEntry && !openedEntry.isFile) {
       const bgndPath = getBgndFileLocationForDirectory(
         openedEntry.path,
@@ -532,20 +494,14 @@ function EntryProperties(props: Props) {
         ) {
           return PlatformIO.getURLforPath(bgndPath);
         } else {
-          return (
-            normalizeUrl(bgndPath) +
-            (lastBackgroundImageChange &&
-            lastBackgroundImageChange.folderPath === bgndPath
-              ? '?' + lastBackgroundImageChange.dt
-              : '')
-          );
+          return normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
         }
       }
     }
     return undefined;
-  }
+  }*/
 
-  function getThumbPath() {
+  /*function getThumbPath() {
     if (!openedEntry) {
       return undefined;
     }
@@ -560,9 +516,9 @@ function EntryProperties(props: Props) {
       openedEntry.path,
       PlatformIO.getDirSeparator(),
     );
-  }
+  }*/
 
-  function getThumbUrl() {
+  /*function getThumbUrl(dt = undefined) {
     const thumbPath = getThumbPath();
 
     if (thumbPath !== undefined) {
@@ -572,17 +528,11 @@ function EntryProperties(props: Props) {
       ) {
         return PlatformIO.getURLforPath(thumbPath);
       } else {
-        return (
-          normalizeUrl(thumbPath) +
-          (lastThumbnailImageChange &&
-          lastThumbnailImageChange.thumbPath === thumbPath
-            ? '?' + lastThumbnailImageChange.dt
-            : '')
-        );
+        return normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
       }
     }
     return undefined;
-  }
+  }*/
 
   const ldtm = openedEntry.lmdt
     ? new Date(openedEntry.lmdt)
@@ -643,6 +593,11 @@ function EntryProperties(props: Props) {
   const isCloudLocation = openedEntry.url && openedEntry.url.length > 5;
 
   const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
+
+  const thumbUrl = getThumbPath(
+    openedEntry.meta?.thumbPath,
+    openedEntry.meta?.lastUpdated,
+  );
 
   return (
     <Root>
@@ -1154,8 +1109,8 @@ function EntryProperties(props: Props) {
                         style={{
                           backgroundSize: 'cover',
                           backgroundRepeat: 'no-repeat',
-                          backgroundImage: thumbUrl.current
-                            ? 'url("' + thumbUrl.current + '")'
+                          backgroundImage: thumbUrl
+                            ? 'url("' + thumbUrl + '")'
                             : '',
                           backgroundPosition: 'center',
                           borderRadius: 8,

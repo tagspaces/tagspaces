@@ -946,12 +946,12 @@ export const actions = {
 };
 
 // Selectors
-export const getLastBackgroundImageChange = (state: any) =>
+/*export const getLastBackgroundImageChange = (state: any) =>
   state.app.lastBackgroundImageChange;
 export const getLastBackgroundColorChange = (state: any) =>
   state.app.lastBackgroundColorChange;
 export const getLastThumbnailImageChange = (state: any) =>
-  state.app.lastThumbnailImageChange;
+  state.app.lastThumbnailImageChange;*/
 export const currentUser = (state: any) => state.app.user;
 //export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
 /*export const getCurrentDirectoryColor = (state: any) =>

@@ -121,7 +121,7 @@ type DirectoryContentContextData = {
   setCurrentDirectoryFiles: (files: TS.OrderVisibilitySettings[]) => void;
   updateCurrentDirEntry: (path: string, entry: TS.FileSystemEntry) => void;
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
-  updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
+  //updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
@@ -167,7 +167,7 @@ export const DirectoryContentContext =
     setCurrentDirectoryFiles: () => {},
     updateCurrentDirEntry: () => {},
     updateCurrentDirEntries: () => {},
-    updateThumbnailUrl: () => {},
+    //updateThumbnailUrl: () => {},
     setDirectoryMeta: () => {},
     setSearchResults: () => {},
     appendSearchResults: () => {},
@@ -517,7 +517,7 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function updateThumbnailUrl(filePath: string, thumbUrl: string) {
+  /*function updateThumbnailUrl(filePath: string, thumbUrl: string) {
     const dirEntries = currentDirectoryEntries.current.map((entry) => {
       if (entry.path === filePath) {
         return { ...entry, thumbPath: thumbUrl };
@@ -525,7 +525,7 @@ export const DirectoryContentContextProvider = ({
       return entry;
     });
     setCurrentDirectoryEntries(dirEntries);
-  }
+  }*/
 
   function loadDirectoryContent(
     directoryPath: string,
@@ -943,7 +943,7 @@ export const DirectoryContentContextProvider = ({
       //removeDirectoryEntries,
       //reflectRenameEntries,
       updateCurrentDirEntries,
-      updateThumbnailUrl,
+      //updateThumbnailUrl,
       setDirectoryMeta,
       setSearchResults,
       appendSearchResults,
