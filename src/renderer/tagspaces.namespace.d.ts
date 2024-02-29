@@ -109,6 +109,7 @@ export namespace TS {
 
   interface EditMetaAction {
     action:
+      | 'perspectiveChange'
       | 'autoSaveChange'
       | 'descriptionChange'
       | 'thumbChange'

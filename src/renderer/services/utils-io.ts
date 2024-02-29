@@ -358,24 +358,18 @@ export function addExtensionsForEntry(
 }
 
 export function findExtensionsForEntry(
-  uuid: string,
+  entry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>,
-  entryPath: string,
-  isFile = true,
 ): TS.OpenedEntry {
   return addExtensionsForEntry(
     {
-      ...(uuid && { uuid: uuid }),
-      path: entryPath,
+      ...entry,
       viewingExtensionPath: 'about:blank',
       viewingExtensionId: '',
-      isFile,
-      // changed: false,
-      // locationId: undefined,
-      lmdt: 0,
+      /*lmdt: 0,
       size: 0,
       name: '',
-      tags: [],
+      tags: [],*/
     },
     supportedFileTypes,
   );

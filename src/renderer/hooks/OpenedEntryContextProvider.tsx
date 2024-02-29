@@ -129,12 +129,8 @@ export const OpenedEntryContextProvider = ({
 
   const { openLocation, currentLocation, getLocationPath } =
     useCurrentLocationContext();
-  const {
-    currentDirectoryPath,
-    currentDirectoryPerspective,
-    currentLocationPath,
-    openDirectory,
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath, currentLocationPath, openDirectory } =
+    useDirectoryContentContext();
 
   const { selectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
@@ -308,7 +304,7 @@ export const OpenedEntryContextProvider = ({
 
   function addToEntryContainer(fsEntry: TS.OpenedEntry) {
     setSharedLinks(fsEntry);
-    currentEntry.current = fsEntry;
+    currentEntry.current = { ...fsEntry };
     forceUpdate();
     // setOpenedEntries([fsEntry]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
   }
@@ -483,10 +479,6 @@ export const OpenedEntryContextProvider = ({
       if (openFile.editMode) {
         entryForOpening = {
           ...openFile,
-          /*shouldReload:
-            openFile.shouldReload !== undefined
-              ? !openFile.shouldReload
-              : undefined,*/
         }; // false };
         addToEntryContainer(entryForOpening);
         showNotification(
@@ -497,13 +489,7 @@ export const OpenedEntryContextProvider = ({
         return Promise.resolve(false);
       }
     }
-    // TODO decide to copy all props from {...fsEntry} into openedEntry
-    entryForOpening = findExtensionsForEntry(
-      fsEntry.uuid,
-      supportedFileTypes,
-      fsEntry.path,
-      fsEntry.isFile,
-    );
+    entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
@@ -512,35 +498,12 @@ export const OpenedEntryContextProvider = ({
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
-    /*if (fsEntry.meta && fsEntry.meta.perspective) {
-      entryForOpening.perspective = fsEntry.perspective;
-    }*/
-    /*if (fsEntry.color) {
-      entryForOpening.color = fsEntry.color;
-    }
-    if (fsEntry.description) {
-      entryForOpening.description = fsEntry.description;
-    }*/
-    if (fsEntry.tags) {
-      entryForOpening.tags = fsEntry.tags;
-    }
-    if (fsEntry.lmdt) {
-      entryForOpening.lmdt = fsEntry.lmdt;
-    }
-    if (fsEntry.size) {
-      entryForOpening.size = fsEntry.size;
-    }
     if (
       fsEntry.isNewFile &&
       AppConfig.editableFiles.includes(fsEntry.extension)
     ) {
       entryForOpening.editMode = true;
     }
-    /*if (fsEntry.isAutoSaveEnabled !== undefined) {
-      entryForOpening.isAutoSaveEnabled = fsEntry.isAutoSaveEnabled;
-    } else if (fsEntry.meta && fsEntry.meta.autoSave) {
-      entryForOpening.isAutoSaveEnabled = fsEntry.meta.autoSave;
-    }*/
 
     const locationName = currentLocation ? currentLocation.name : 'TagSpaces'; // TODO get it later from app config
 

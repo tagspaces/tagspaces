@@ -35,6 +35,11 @@ type EditedEntryMetaContextData = {
     description: string,
     locationId?,
   ) => Promise<boolean>;
+  saveDirectoryPerspective: (
+    entry: TS.FileSystemEntry,
+    perspective: TS.PerspectiveType,
+    locationId?,
+  ) => Promise<boolean>;
   setBackgroundImageChange: (entry: TS.FileSystemEntry) => void;
   setBackgroundColorChange: (
     entry: TS.FileSystemEntry,
@@ -54,6 +59,7 @@ export const EditedEntryMetaContext = createContext<EditedEntryMetaContextData>(
     setReflectMetaActions: undefined,
     setAutoSave: undefined,
     setDescriptionChange: undefined,
+    saveDirectoryPerspective: undefined,
     setBackgroundImageChange: undefined,
     setBackgroundColorChange: undefined,
     setThumbnailImageChange: undefined,
@@ -88,6 +94,29 @@ export const EditedEntryMetaContextProvider = ({
         if (meta) {
           const action: TS.EditMetaAction = {
             action: 'autoSaveChange',
+            entry: {
+              ...entry,
+              meta: { ...meta, lastUpdated: new Date().getTime() },
+            },
+          };
+          setReflectMetaActions(action);
+          return true;
+        }
+        return false;
+      },
+    );
+  }
+
+  function saveDirectoryPerspective(
+    entry: TS.FileSystemEntry,
+    perspective: TS.PerspectiveType,
+    locationId = undefined,
+  ): Promise<boolean> {
+    return saveMetaData(entry.path, { perspective }, locationId).then(
+      (meta) => {
+        if (meta) {
+          const action: TS.EditMetaAction = {
+            action: 'perspectiveChange',
             entry: {
               ...entry,
               meta: { ...meta, lastUpdated: new Date().getTime() },
@@ -221,6 +250,7 @@ export const EditedEntryMetaContextProvider = ({
       setReflectMetaActions,
       setAutoSave,
       setDescriptionChange,
+      saveDirectoryPerspective,
       setBackgroundImageChange,
       setBackgroundColorChange,
       setThumbnailImageChange,

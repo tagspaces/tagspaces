@@ -86,7 +86,6 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
@@ -192,9 +191,9 @@ function EntryProperties(props: Props) {
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useIOActionsContext();
-  const { metaActions, setBackgroundColorChange } = useEditedEntryMetaContext();
+  const { metaActions, setBackgroundColorChange, saveDirectoryPerspective } =
+    useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { setDirectoryPerspective } = useDirectoryContentContext();
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
@@ -254,7 +253,12 @@ function EntryProperties(props: Props) {
               action.entry.meta?.lastUpdated,
             );
             forceUpdate();
-          }
+          } /*else if (action.action === 'perspectiveChange') {
+            if(!openedEntry.meta || openedEntry.meta.perspective !== action.entry.meta.perspective) {
+              openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
+              forceUpdate();
+            }
+          }*/
         }
       }
     }
@@ -544,14 +548,16 @@ function EntryProperties(props: Props) {
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
-    setDirectoryPerspective(perspective, openedEntry.path, false)
-      /*.then((entryMeta: TS.FileSystemEntryMeta) => {
-        return updateOpenedFile(openedEntry.path, entryMeta);
-      })*/
+    openedEntry.meta.perspective = perspective;
+    saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationId);
+    /*.then((entryMeta: TS.FileSystemEntryMeta) => {
+        openedEntry.meta = entryMeta;
+        //return updateOpenedFile(openedEntry.path, entryMeta);
+      })
       .catch((error) => {
         console.warn('Error saving perspective for folder ' + error);
         showNotification(t('Error saving perspective for folder'));
-      });
+      });*/
   };
 
   let perspectiveDefault;

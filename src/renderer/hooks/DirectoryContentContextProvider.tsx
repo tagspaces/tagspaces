@@ -39,6 +39,8 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
+  getAllPropertiesPromise,
+  getFolderBgndPath,
   loadJSONFile,
   merge,
   toFsEntry,
@@ -66,6 +68,7 @@ import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -110,12 +113,7 @@ type DirectoryContentContextData = {
   openCurrentDirectory: (showHiddenEntries?: boolean) => Promise<boolean>;
   clearDirectoryContent: () => void;
   perspective: TS.PerspectiveType;
-  setDirectoryPerspective: (
-    perspective: string,
-    dir?: string,
-    isManual?: boolean,
-    reload?: boolean,
-  ) => Promise<TS.FileSystemEntryMeta | null>;
+  setManualDirectoryPerspective: (perspective: string, dir?: string) => void;
   setCurrentDirectoryColor: (color: string) => void;
   setCurrentDirectoryDirs: (dirs: TS.OrderVisibilitySettings[]) => void;
   setCurrentDirectoryFiles: (files: TS.OrderVisibilitySettings[]) => void;
@@ -161,7 +159,7 @@ export const DirectoryContentContext =
     openCurrentDirectory: undefined,
     clearDirectoryContent: () => {},
     perspective: undefined,
-    setDirectoryPerspective: undefined,
+    setManualDirectoryPerspective: undefined,
     setCurrentDirectoryColor: () => {},
     setCurrentDirectoryDirs: () => {},
     setCurrentDirectoryFiles: () => {},
@@ -195,6 +193,7 @@ export const DirectoryContentContextProvider = ({
     getLocationPath,
   } = useCurrentLocationContext();
   const { actions } = useEditedEntryContext();
+  const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
 
@@ -247,6 +246,20 @@ export const DirectoryContentContextProvider = ({
       exitSearchMode();
     }
   }, [currentLocation]);
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (currentDirectoryPath.current === action.entry.path) {
+          if (action.action === 'perspectiveChange') {
+            manualPerspective.current = action.entry.meta.perspective;
+            forceUpdate();
+            //setManualDirectoryPerspective(action.entry.meta.perspective);
+          }
+        }
+      }
+    }
+  }, [metaActions]);
 
   useEffect(() => {
     reflectActions(actions).catch(console.error);
@@ -764,13 +777,31 @@ export const DirectoryContentContextProvider = ({
     return manualPerspective.current;
   }
 
-  function setDirectoryPerspective(
+  function setManualDirectoryPerspective(
     perspective: TS.PerspectiveType,
     directory: string = undefined,
-    isManual: boolean = false,
-    reload: boolean = true,
-  ): Promise<TS.FileSystemEntryMeta | null> {
-    return new Promise((resolve) => {
+  ) {
+    manualPerspective.current = perspective;
+    getAllPropertiesPromise(
+      directory ? directory : currentDirectoryPath.current,
+    )
+      .then((entry: TS.FileSystemEntry) => {
+        const action: TS.EditMetaAction = {
+          action: 'perspectiveChange',
+          entry: {
+            ...entry,
+            meta: { ...(entry.meta && { ...entry.meta }), perspective },
+          },
+        };
+        setReflectMetaActions(action);
+      })
+      .catch((error) => {
+        console.warn(
+          'Error getting properties for entry: ' + directory + ' - ' + error,
+        );
+      });
+
+    /*return new Promise((resolve) => {
       if (isManual) {
         //&& currentPerspective.current === 'unspecified') {
         manualPerspective.current = perspective;
@@ -792,7 +823,7 @@ export const DirectoryContentContextProvider = ({
       if (reload) {
         forceUpdate();
       }
-    });
+    });*/
   }
 
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
@@ -934,7 +965,7 @@ export const DirectoryContentContextProvider = ({
       openDirectory,
       openCurrentDirectory,
       clearDirectoryContent,
-      setDirectoryPerspective,
+      setManualDirectoryPerspective,
       perspective,
       setCurrentDirectoryColor,
       setCurrentDirectoryDirs,

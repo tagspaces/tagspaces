@@ -77,7 +77,7 @@ function DirectoryMenu(props: Props) {
     openDirectory,
     currentDirectoryPath,
     currentDirectoryEntries,
-    setDirectoryPerspective,
+    setManualDirectoryPerspective,
     openCurrentDirectory,
   } = useDirectoryContentContext();
   const { generateThumbnails } = useThumbGenerationContext();
@@ -167,7 +167,7 @@ function DirectoryMenu(props: Props) {
       if (switchPerspective) {
         switchPerspective(perspectiveId);
       } else {
-        setDirectoryPerspective(perspectiveId, undefined, true);
+        setManualDirectoryPerspective(perspectiveId);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
