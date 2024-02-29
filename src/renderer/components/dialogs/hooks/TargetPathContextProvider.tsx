@@ -42,7 +42,7 @@ export const TargetPathContextProvider = ({
 }: TargetPathContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { currentDirectoryPerspective, currentDirectoryPath, getPerspective } =
+  const { perspective, currentDirectoryPath, getPerspective } =
     useDirectoryContentContext();
 
   const firstRWLocation = useSelector(getFirstRWLocation);
@@ -70,12 +70,7 @@ export const TargetPathContextProvider = ({
     return {
       targetDirectoryPath,
     };
-  }, [
-    firstRWLocation,
-    selectedEntries,
-    currentDirectoryPath,
-    currentDirectoryPerspective,
-  ]);
+  }, [firstRWLocation, selectedEntries, currentDirectoryPath, perspective]);
 
   return (
     <TargetPathContext.Provider value={context}>

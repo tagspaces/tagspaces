@@ -74,7 +74,7 @@ type DirectoryContentContextData = {
   currentLocationPath: string;
   currentDirectoryEntries: TS.FileSystemEntry[];
   directoryMeta: TS.FileSystemEntryMeta;
-  currentDirectoryPerspective: TS.PerspectiveType;
+  //currentDirectoryPerspective: TS.PerspectiveType;
   currentDirectoryPath: string;
   /**
    * used for reorder files in KanBan
@@ -140,7 +140,7 @@ export const DirectoryContentContext =
     currentLocationPath: undefined,
     currentDirectoryEntries: [],
     directoryMeta: undefined,
-    currentDirectoryPerspective: undefined,
+    //currentDirectoryPerspective: undefined,
     currentDirectoryPath: undefined,
     currentDirectoryFiles: [],
     currentDirectoryDirs: [],
@@ -214,7 +214,7 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
-  const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
+  //const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
   const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
   const directoryMeta = useRef<TS.FileSystemEntryMeta>(getDefaultDirMeta());
   /**
@@ -252,7 +252,10 @@ export const DirectoryContentContextProvider = ({
       for (const action of metaActions) {
         if (currentDirectoryPath.current === action.entry.path) {
           if (action.action === 'perspectiveChange') {
-            manualPerspective.current = action.entry.meta.perspective;
+            manualPerspective.current =
+              action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
+                ? defaultPerspective
+                : action.entry.meta.perspective;
             forceUpdate();
             //setManualDirectoryPerspective(action.entry.meta.perspective);
           }
@@ -381,9 +384,9 @@ export const DirectoryContentContextProvider = ({
   }
 
   function getDefaultDirMeta(): TS.FileSystemEntryMeta {
-    const perspective = getPerspective();
+    // const perspective = getPerspective();
     const settings: TS.PerspectiveSettings = {
-      [getPerspective()]: getDefaultPerspectiveSettings(perspective),
+      [defaultPerspective]: getDefaultPerspectiveSettings(defaultPerspective),
     };
     return {
       id: getUuid(),
@@ -666,12 +669,12 @@ export const DirectoryContentContextProvider = ({
     hideNotifications(['error']);
 
     if (directoryMeta.current) {
-      if (directoryMeta.current.perspective) {
+      /*if (directoryMeta.current.perspective) {
         currentPerspective.current = directoryMeta.current
           .perspective as TS.PerspectiveType;
       } else {
         currentPerspective.current = 'unspecified';
-      }
+      }*/
       if (directoryMeta.current.customOrder) {
         if (directoryMeta.current.customOrder.files) {
           currentDirectoryFiles.current =
@@ -682,9 +685,9 @@ export const DirectoryContentContextProvider = ({
             directoryMeta.current.customOrder.folders;
         }
       }
-    } else {
+    } /*else {
       currentPerspective.current = 'unspecified';
-    }
+    }*/
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD,
@@ -764,15 +767,18 @@ export const DirectoryContentContextProvider = ({
 
   const perspective = useMemo(
     () => getPerspective(),
-    [currentPerspective.current, manualPerspective.current],
+    [directoryMeta.current?.perspective, manualPerspective.current],
   );
 
   function getPerspective(): TS.PerspectiveType {
     if (manualPerspective.current === 'unspecified') {
-      if (currentPerspective.current === 'unspecified') {
+      if (
+        !directoryMeta.current ||
+        directoryMeta.current.perspective === 'unspecified'
+      ) {
         return defaultPerspective;
       }
-      return currentPerspective.current;
+      return directoryMeta.current.perspective;
     }
     return manualPerspective.current;
   }
@@ -948,7 +954,7 @@ export const DirectoryContentContextProvider = ({
       currentLocationPath: currentLocationPath.current,
       currentDirectoryEntries: currentDirectoryEntries.current,
       directoryMeta: directoryMeta.current,
-      currentDirectoryPerspective: currentPerspective.current,
+      //currentDirectoryPerspective: currentPerspective.current,
       currentDirectoryPath: currentDirectoryPath.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
@@ -990,7 +996,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryEntries.current,
     currentDirectoryPath.current,
     directoryMeta.current,
-    currentPerspective.current,
+    //currentPerspective.current,
     perspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
