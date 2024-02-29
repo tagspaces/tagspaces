@@ -453,7 +453,7 @@ function EntryContainer() {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        // reloadOpenedFile();
+        reloadOpenedFile();
       }
     }
   };

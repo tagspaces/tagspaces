@@ -349,6 +349,7 @@ export const OpenedEntryContextProvider = ({
 
   function reloadOpenedFile(): Promise<boolean> {
     if (currentEntry.current) {
+      currentEntry.current.editMode = false;
       return openEntry(currentEntry.current.path, true);
       /*//openedEntries && openedEntries.length > 0) {
       const openedFile = currentEntry.current; //openedEntries[0];

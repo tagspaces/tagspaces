@@ -271,7 +271,7 @@ export const DirectoryContentContextProvider = ({
             };
           }
           // update ordered entries (KanBan)
-          if (Pro && Pro.MetaOperations) {
+          if (Pro && Pro.MetaOperations && action.oldEntryPath) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               PlatformIO.getDirSeparator(),
