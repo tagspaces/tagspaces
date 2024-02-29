@@ -130,7 +130,7 @@
     "test": "jest",
     "test-clone-data": "rimraf tests/testdata && git clone https://github.com/tagspaces/testdata tests/testdata",
     "test-playwright": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '^(?!.*\\b_pro\\b).*\\belectron\\b.*'",
-    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\belectron\\b/'",
+    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\bTST0204\\b/'",
     "test-playwright-web": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
     "test-playwright-web-headless": "npm run test-refresh-data && cross-env HEADLESS_MODE=true npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
     "test-pw-web-browsers": "npm run test-refresh-data && cross-env DEBUG=pw:api npx playwright test --config ./playwright.config.web.browsers.js -g '/\\bweb\\b/'",
@@ -225,7 +225,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.15-alpha.0"
+    "@tagspacespro/tagspacespro": "5.0.15-alpha.1"
   },
   "devDependencies": {
     "@electron/notarize": "^2.2.0",

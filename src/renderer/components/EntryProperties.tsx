@@ -253,7 +253,10 @@ function EntryProperties(props: Props) {
               action.entry.meta?.lastUpdated,
             );
             forceUpdate();
-          } /*else if (action.action === 'perspectiveChange') {
+          } /*else if (action.action === 'bgdColorChange') {
+            openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
+            forceUpdate();
+          }*/ /*else if (action.action === 'perspectiveChange') {
             if(!openedEntry.meta || openedEntry.meta.perspective !== action.entry.meta.perspective) {
               openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
               forceUpdate();
@@ -410,7 +413,9 @@ function EntryProperties(props: Props) {
       color = 'transparent';
     }
     //openedEntry.color = color;
-    setBackgroundColorChange(openedEntry, color);
+    setBackgroundColorChange(openedEntry, color).then(() => {
+      openedEntry.meta = { ...openedEntry.meta, color };
+    });
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {

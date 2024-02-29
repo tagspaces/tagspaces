@@ -258,6 +258,9 @@ export const DirectoryContentContextProvider = ({
                 : action.entry.meta.perspective;
             forceUpdate();
             //setManualDirectoryPerspective(action.entry.meta.perspective);
+          } else if (action.action === 'bgdColorChange') {
+            directoryMeta.current = { ...action.entry.meta };
+            forceUpdate();
           }
         }
       }
