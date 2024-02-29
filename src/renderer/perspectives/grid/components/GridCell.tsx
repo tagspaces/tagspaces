@@ -168,6 +168,9 @@ function GridCell(props: Props) {
               action.entry,
             );
             forceUpdate();
+          } else if (action.action === 'descriptionChange') {
+            fsEntry.meta = { ...action.entry.meta };
+            forceUpdate();
           }
         }
       }
