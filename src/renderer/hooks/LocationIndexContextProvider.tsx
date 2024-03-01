@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
@@ -88,6 +94,7 @@ export const LocationIndexContextProvider = ({
   const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     clearDirectoryIndex();
@@ -181,6 +188,7 @@ export const LocationIndexContextProvider = ({
   function cancelDirectoryIndexing() {
     window.walkCanceled = true;
     isIndexing.current = false;
+    forceUpdate();
   }
 
   function createDirIndex(
@@ -191,6 +199,7 @@ export const LocationIndexContextProvider = ({
     ignorePatterns: Array<string> = [],
   ): Promise<boolean> {
     isIndexing.current = true;
+    forceUpdate();
     return createDirectoryIndex(
       { path: directoryPath, locationID },
       extractText,
@@ -203,11 +212,13 @@ export const LocationIndexContextProvider = ({
           setIndex(directoryIndex);
         }
         isIndexing.current = false;
+        forceUpdate();
         return true;
       })
       .catch((err) => {
         isIndexing.current = false;
         lastError.current = err;
+        forceUpdate();
         return false;
       });
   }
@@ -255,6 +266,7 @@ export const LocationIndexContextProvider = ({
 
   function createLocationsIndexes(extractText = true): Promise<boolean> {
     isIndexing.current = true;
+    forceUpdate();
     const promises = allLocations.map((location: TS.Location) =>
       getLocationPath(location).then((locationPath) =>
         createDirectoryIndex(
@@ -263,7 +275,6 @@ export const LocationIndexContextProvider = ({
           location.ignorePatternPaths,
           enableWS,
         ).catch((err) => {
-          isIndexing.current = false;
           lastError.current = err;
         }),
       ),
@@ -272,10 +283,13 @@ export const LocationIndexContextProvider = ({
     return Promise.all(promises)
       .then((e) => {
         isIndexing.current = false;
+        forceUpdate();
         console.log('Resolution is complete!', e);
         return true;
       })
       .catch((e) => {
+        isIndexing.current = false;
+        forceUpdate();
         console.warn('Resolution is failed!', e);
         return false;
       });
@@ -284,6 +298,7 @@ export const LocationIndexContextProvider = ({
   function clearDirectoryIndex() {
     isIndexing.current = false;
     setIndex([]);
+    forceUpdate();
   }
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
@@ -549,7 +564,7 @@ export const LocationIndexContextProvider = ({
       indexUpdateSidecarTags,
       reflectUpdateSidecarMeta,
     };
-  }, [currentLocation, index, isIndexing.current]);
+  }, [currentLocation, index.current, isIndexing.current]);
 
   return (
     <LocationIndexContext.Provider value={context}>
