@@ -492,7 +492,7 @@ export const DirectoryContentContextProvider = ({
     );
   }
 
-  const getMergedEntries = (entries1, entries2) => {
+  /*const getMergedEntries = (entries1, entries2) => {
     if (entries1 && entries1.length > 0) {
       return entries1.map((currentEntry) => {
         const updatedEntries = entries2.filter(
@@ -509,7 +509,7 @@ export const DirectoryContentContextProvider = ({
       });
     }
     return entries2;
-  };
+  };*/
 
   function updateCurrentDirEntries(
     dirEntries: TS.FileSystemEntry[],
@@ -527,7 +527,14 @@ export const DirectoryContentContextProvider = ({
           currentDirectoryEntries.current.length > 0
         ) {
           setCurrentDirectoryEntries(
-            getMergedEntries(currentDirectoryEntries.current, entries),
+            currentDirectoryEntries.current.map((e) => {
+              const eUpdated = entries.find((u) => u.path === e.path);
+              if (eUpdated) {
+                return { ...e, meta: { ...e.meta, ...eUpdated.meta } };
+              }
+              return e;
+            }),
+            //getMergedEntries(currentDirectoryEntries.current, entries),
           );
         } else {
           setCurrentDirectoryEntries(entries);

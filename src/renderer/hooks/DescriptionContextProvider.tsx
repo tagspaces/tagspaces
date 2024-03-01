@@ -20,6 +20,7 @@ import React, {
   createContext,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
 } from 'react';
@@ -59,33 +60,32 @@ export const DescriptionContextProvider = ({
   const { readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const { setDescriptionChange } = useEditedEntryMetaContext();
-  const description = useRef<string>(openedEntry.meta?.description);
+  //const description = useRef<string>(openedEntry.meta?.description);
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (openedEntry) {
       if (
-        isChanged.current
-        //openedFile.current !== undefined &&
-        //openedFile.current.path !== openedEntry.path &&
-        //openedFile.current.meta &&
+        isChanged.current &&
+        lastOpenedFile.current !== undefined &&
+        lastOpenedFile.current.path !== openedEntry.path
+        //lastOpenedFile.current.meta &&
         //openedEntry.meta &&
-        //openedFile.current.meta.description !== openedEntry.meta.description
+        //lastOpenedFile.current.meta.description !== openedEntry.meta.description
       ) {
         // handle not saved changes
-        //addToEntryContainer({ ...openedFile.current, editMode: false });
-        //setSelectedEntries([]);
         saveDescriptionConfirmOpened(true);
       } else {
         lastOpenedFile.current = { ...openedEntry };
-        description.current = openedEntry.meta?.description;
+        //description.current = openedEntry.meta?.description;
       }
     } else {
-      description.current = undefined;
-      // openedFile.current = undefined;
+      lastOpenedFile.current = undefined;
+      //description.current = undefined;
     }
   }, [openedEntry]);
 
@@ -101,20 +101,26 @@ export const DescriptionContextProvider = ({
       showNotification(t('Saving description not supported'));
       return;
     }
-    if (description.current !== undefined) {
+    if (lastOpenedFile.current !== undefined) {
+      // to reload description
+      lastOpenedFile.current = { ...lastOpenedFile.current };
+      isChanged.current = false;
+      forceUpdate();
       setDescriptionChange(
         lastOpenedFile.current,
-        description.current,
+        lastOpenedFile.current.meta?.description,
         lastOpenedFile.current.locationId,
       ).then(() => {
-        lastOpenedFile.current = { ...openedEntry };
-        description.current = openedEntry.meta?.description;
+        if (lastOpenedFile.current.path !== openedEntry.path) {
+          lastOpenedFile.current = { ...openedEntry };
+        }
+        // description.current = openedEntry.meta?.description;
       });
     }
   };
 
   function setDescription(d: string) {
-    description.current = d;
+    lastOpenedFile.current.meta.description = d;
     isChanged.current = true;
   }
 
@@ -128,13 +134,13 @@ export const DescriptionContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      description: description.current,
+      description: lastOpenedFile.current.meta.description,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,
       saveDescription,
     };
-  }, [description.current, isSaveDescriptionConfirmOpened]);
+  }, [lastOpenedFile.current, isSaveDescriptionConfirmOpened]);
 
   return (
     <DescriptionContext.Provider value={context}>

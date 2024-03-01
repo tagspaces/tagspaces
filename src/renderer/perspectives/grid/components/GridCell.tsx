@@ -224,7 +224,8 @@ function GridCell(props: Props) {
     );
   }
 
-  const fileSystemEntryTags = fsEntry.tags ? fsEntry.tags : [];
+  const fileSystemEntryTags =
+    fsEntry.meta && fsEntry.meta.tags ? fsEntry.meta.tags : [];
   const sideCarTagsTitles = fileSystemEntryTags.map((tag) => tag.title);
   const entryTags = [
     ...fileSystemEntryTags,

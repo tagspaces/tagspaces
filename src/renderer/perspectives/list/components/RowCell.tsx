@@ -153,19 +153,19 @@ function RowCell(props: Props) {
   };
 
   // remove isNewFile on Cell click it will open file in editMode
-  const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
+  /*const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
     fsEntry,
-  );
+  );*/
 
   const entryTitle = extractTitle(
-    fSystemEntry.name,
-    !fSystemEntry.isFile,
+    fsEntry.name,
+    !fsEntry.isFile,
     PlatformIO.getDirSeparator(),
   );
 
   let description;
   if (showEntriesDescription) {
-    description = fSystemEntry.meta?.description;
+    description = fsEntry.meta?.description;
     if (
       description &&
       description.length > defaultSettings.maxDescriptionPreviewLength
@@ -176,41 +176,37 @@ function RowCell(props: Props) {
       );
     }
 
-    if (description && fSystemEntry.isFile) {
+    if (description && fsEntry.isFile) {
       description = ' | ' + description;
     }
   }
 
-  const fileSystemEntryColor = findColorForEntry(
-    fSystemEntry,
-    supportedFileTypes,
-  );
-  const fileSystemEntryBgColor = findBackgroundColorForFolder(fSystemEntry);
+  const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  const fileSystemEntryBgColor = findBackgroundColorForFolder(fsEntry);
 
   let fileNameTags = [];
-  if (fSystemEntry.isFile) {
+  if (fsEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
-      fSystemEntry.name,
+      fsEntry.name,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator(),
     );
   }
 
-  const fileSystemEntryTags = fSystemEntry.tags ? fSystemEntry.tags : [];
+  const fileSystemEntryTags =
+    fsEntry.meta && fsEntry.meta.tags ? fsEntry.meta.tags : [];
   const sideCarTagsTitles = fileSystemEntryTags.map((tag) => tag.title);
   const entryTags = [
     ...fileSystemEntryTags,
     ...fileNameTags.filter((tag) => !sideCarTagsTitles.includes(tag.title)),
   ];
 
-  const entrySizeFormatted = fSystemEntry.isFile
-    ? formatFileSize(fSystemEntry.size) + ' | '
+  const entrySizeFormatted = fsEntry.isFile
+    ? formatFileSize(fsEntry.size) + ' | '
     : '';
 
   const entryLMDTFormatted =
-    fSystemEntry.isFile &&
-    fSystemEntry.lmdt &&
-    formatDateTime(fSystemEntry.lmdt, true);
+    fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
 
   let tagTitles = '';
   if (entryTags) {
@@ -226,7 +222,7 @@ function RowCell(props: Props) {
     return url.indexOf('?') > 0 ? '&' : '?';
   }
 
-  const entryPath = fSystemEntry.path;
+  const entryPath = fsEntry.path;
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
@@ -283,9 +279,9 @@ function RowCell(props: Props) {
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
-            selectEntry(fSystemEntry, false);
+            selectEntry(fsEntry, false);
           } else {
-            selectEntry(fSystemEntry);
+            selectEntry(fsEntry);
           }
         }}
       >
@@ -306,7 +302,7 @@ function RowCell(props: Props) {
         )}
       </IconButton>
     ) : (
-      <Tooltip title={i18n.t('clickToSelect') + ' ' + fSystemEntry.path}>
+      <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
         <Typography
           style={{
             paddingTop: 1,
@@ -323,17 +319,17 @@ function RowCell(props: Props) {
             textShadow: '1px 1px #8f8f8f',
             textOverflow: 'unset',
             height: 15,
-            maxWidth: fSystemEntry.isFile ? 50 : 100,
+            maxWidth: fsEntry.isFile ? 50 : 100,
             alignSelf: 'center',
           }}
           noWrap={true}
           variant="button"
           onClick={(e) => {
             e.stopPropagation();
-            selectEntry(fSystemEntry);
+            selectEntry(fsEntry);
           }}
         >
-          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOutlineIcon />}
+          {fsEntry.isFile ? fsEntry.extension : <FolderOutlineIcon />}
         </Typography>
       </Tooltip>
     );
@@ -349,7 +345,7 @@ function RowCell(props: Props) {
   return (
     <RowPaper
       elevation={2}
-      data-entry-id={fSystemEntry.uuid}
+      data-entry-id={fsEntry.uuid}
       className={classNames(
         classes.rowCell,
         selected && classes.selectedRowCell,
@@ -359,18 +355,18 @@ function RowCell(props: Props) {
         marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default,
       }}
-      onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
+      onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={(event) => {
-        handleGridCellDblClick(event, fSystemEntry);
+        handleGridCellDblClick(event, fsEntry);
       }}
       onClick={(event) => {
         event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-          ? handleGridCellDblClick(event, fSystemEntry)
-          : handleGridCellClick(event, fSystemEntry);
+          ? handleGridCellDblClick(event, fsEntry)
+          : handleGridCellClick(event, fsEntry);
       }}
       onDrag={(event) => {
-        handleGridCellClick(event, fSystemEntry);
+        handleGridCellClick(event, fsEntry);
       }}
     >
       <Grid
@@ -411,10 +407,10 @@ function RowCell(props: Props) {
                 alignSelf: 'center',
               }}
               title={
-                fSystemEntry.name +
+                fsEntry.name +
                 ' | ' +
                 entrySizeFormatted +
-                formatDateTime(fSystemEntry.lmdt, true)
+                formatDateTime(fsEntry.lmdt, true)
               }
             >
               <>{entryTitle}</>
@@ -426,7 +422,7 @@ function RowCell(props: Props) {
           <Grid item xs zeroMinWidth style={{ alignSelf: 'center' }}>
             <Typography
               variant="body1"
-              title={fSystemEntry.name}
+              title={fsEntry.name}
               style={{ wordBreak: 'break-all' }}
             >
               {entryTitle}
@@ -438,14 +434,14 @@ function RowCell(props: Props) {
               }}
               variant="body2"
             >
-              <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
+              <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
                 {entrySizeFormatted}
               </Tooltip>
               <Tooltip
                 title={
                   t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fSystemEntry.lmdt, true)
+                  formatDateTime(fsEntry.lmdt, true)
                 }
               >
                 <span>{entryLMDTFormatted}</span>
@@ -455,7 +451,7 @@ function RowCell(props: Props) {
             {showTags && entryTags ? renderTags : tagPlaceholder}
           </Grid>
         )}
-        {fSystemEntry.meta && fSystemEntry.meta.thumbPath && (
+        {fsEntry.meta && fsEntry.meta.thumbPath && (
           <Grid
             item
             style={{
@@ -467,13 +463,13 @@ function RowCell(props: Props) {
             <img
               alt="thumbnail"
               src={
-                fSystemEntry.meta?.thumbPath +
-                (fSystemEntry.meta &&
-                fSystemEntry.meta.thumbPath &&
+                fsEntry.meta?.thumbPath +
+                (fsEntry.meta &&
+                fsEntry.meta.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
-                  ? urlGetDelim(fSystemEntry.meta?.thumbPath) +
-                    fSystemEntry.meta.lastUpdated
+                  ? urlGetDelim(fsEntry.meta?.thumbPath) +
+                    fsEntry.meta.lastUpdated
                   : '')
               }
               // @ts-ignore
