@@ -155,23 +155,6 @@ function GridPagination(props: Props) {
     }
   }, [metaActions]);
 
-  // TODO move in DirectoryContentContextProvider
-  /*useEffect(() => {
-    folderTmbPath.current = getFolderThumbPath(
-      props.currentDirectoryPath,
-      props.lastThumbnailImageChange,
-    );
-    forceUpdate();
-  }, [props.currentDirectoryPath, props.lastThumbnailImageChange]);
-
-  useEffect(() => {
-    folderBgndPath.current = getFolderBgndPath(
-      props.currentDirectoryPath,
-      props.lastBackgroundImageChange,
-    );
-    forceUpdate();
-  }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);*/
-
   const handleChange = (event, value) => {
     setCurrentPage(value);
     if (containerEl && containerEl.current) {

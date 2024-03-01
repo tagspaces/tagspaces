@@ -261,6 +261,9 @@ export const DirectoryContentContextProvider = ({
           } else if (action.action === 'bgdColorChange') {
             directoryMeta.current = { ...action.entry.meta };
             forceUpdate();
+          } else if (action.action === 'descriptionChange') {
+            directoryMeta.current = { ...action.entry.meta };
+            forceUpdate();
           }
         }
       }
