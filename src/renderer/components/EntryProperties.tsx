@@ -223,7 +223,9 @@ function EntryProperties(props: Props) {
   const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
     useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const bgndUrl = useRef<string>(getFolderBgndPath(openedEntry.path));
+  const bgndUrl = useRef<string>(
+    getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated),
+  );
   // const thumbUrl = getEntryThumbPath(openedEntry); //useRef<string>(getThumbUrl());
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);

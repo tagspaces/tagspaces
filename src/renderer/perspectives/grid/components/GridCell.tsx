@@ -422,7 +422,10 @@ function GridCell(props: Props) {
             src={
               thumbUrl.current
                 ? thumbUrl.current
-                : getThumbPath(fsEntry.meta.thumbPath)
+                : getThumbPath(
+                    fsEntry.meta.thumbPath,
+                    fsEntry.meta?.lastUpdated,
+                  )
             }
             style={{
               height: maxHeight - 70,

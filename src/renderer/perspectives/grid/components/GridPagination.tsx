@@ -34,7 +34,6 @@ import {
   getDescriptionPreview,
   getFolderThumbPath,
   getFolderBgndPath,
-  getThumbPath,
 } from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
@@ -121,17 +120,17 @@ function GridPagination(props: Props) {
     : 10;
 
   const containerEl = useRef<HTMLDivElement>(null);
-  const folderTmbPath = useRef<string>(
-    getFolderThumbPath(currentDirectoryPath),
-  );
-  const folderBgndPath = useRef<string>(
-    getFolderBgndPath(currentDirectoryPath),
-  );
+  /*const folderTmbPath = useRef<string>(
+    getFolderThumbPath(currentDirectoryPath, directoryMeta.lastUpdated),
+  );*/
+  /*const folderBgndPath = useRef<string>(
+    getFolderBgndPath(currentDirectoryPath, directoryMeta.lastUpdated),
+  );*/
 
-  const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const firstRender = useFirstRender();
+  //const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  //const firstRender = useFirstRender();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (currentDirectoryPath === action.entry.path) {
@@ -153,7 +152,7 @@ function GridPagination(props: Props) {
         }
       }
     }
-  }, [metaActions]);
+  }, [metaActions]);*/
 
   const handleChange = (event, value) => {
     setCurrentPage(value);
@@ -197,7 +196,13 @@ function GridPagination(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
-          backgroundImage: 'url("' + folderBgndPath.current + '")',
+          backgroundImage:
+            'url("' +
+            getFolderBgndPath(
+              currentDirectoryPath,
+              directoryMeta?.lastUpdated,
+            ) +
+            '")',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
         }}
@@ -298,13 +303,18 @@ function GridPagination(props: Props) {
                       </Typography>
                     )}
                 </Box>
-                {/* <Tooltip title={t('core:thumbnail')}> */}
                 <div
                   style={{
                     borderRadius: 10,
                     height: 100,
                     width: 140,
-                    backgroundImage: `url("${folderTmbPath.current}")`,
+                    backgroundImage:
+                      'url("' +
+                      getFolderThumbPath(
+                        currentDirectoryPath,
+                        directoryMeta?.lastUpdated,
+                      ) +
+                      '")',
                     backgroundSize: 'cover', // cover contain
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center center',
@@ -312,8 +322,7 @@ function GridPagination(props: Props) {
                     top: 0,
                     right: 0,
                   }}
-                ></div>
-                {/* </Tooltip> */}
+                />
               </div>
             </Grid>
           )}
