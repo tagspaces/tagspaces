@@ -44,6 +44,7 @@ import PlatformIO from '-/services/platform-facade';
 import {
   setFolderBackgroundPromise,
   getRelativeEntryPath,
+  toFsEntry,
 } from '-/services/utils-io';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
@@ -167,9 +168,12 @@ function FileMenu(props: Props) {
     setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
       .then((thumbPath: string) => {
         setThumbnailImageChange(
-          extractContainingDirectoryPath(
-            selectedEntries[0],
-            PlatformFacade.getDirSeparator(),
+          toFsEntry(
+            extractContainingDirectoryPath(
+              selectedEntries[0].path,
+              PlatformFacade.getDirSeparator(),
+            ),
+            false,
           ),
           thumbPath,
         );
@@ -200,7 +204,7 @@ function FileMenu(props: Props) {
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
-        setBackgroundImageChange(selectedEntries[0]);
+        setBackgroundImageChange(toFsEntry(directoryPath, false));
         /*dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
         );*/
