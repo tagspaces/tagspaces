@@ -191,7 +191,7 @@ function EntryProperties(props: Props) {
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { renameDirectory, renameFile } = useIOActionsContext();
-  const { metaActions, setBackgroundColorChange, saveDirectoryPerspective } =
+  const { setBackgroundColorChange, saveDirectoryPerspective } =
     useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
@@ -223,10 +223,6 @@ function EntryProperties(props: Props) {
   const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
     useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const bgndUrl = useRef<string>(
-    getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated),
-  );
-  // const thumbUrl = getEntryThumbPath(openedEntry); //useRef<string>(getThumbUrl());
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -235,39 +231,6 @@ function EntryProperties(props: Props) {
       fileNameRef.current.focus();
     }
   }, [editName]);
-
-  useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
-      for (const action of metaActions) {
-        if (openedEntry.path === action.entry.path) {
-          if (action.action === 'thumbChange') {
-            if (action.entry.meta.thumbPath) {
-              openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
-              //thumbUrl.current = getThumbUrl(action.entry.meta?.lastUpdated);
-            } else {
-              const { thumbPath, ...meta } = openedEntry.meta;
-              openedEntry.meta = meta;
-            }
-            forceUpdate();
-          } else if (action.action === 'bgdImgChange') {
-            bgndUrl.current = getFolderBgndPath(
-              openedEntry.path,
-              action.entry.meta?.lastUpdated,
-            );
-            forceUpdate();
-          } /*else if (action.action === 'bgdColorChange') {
-            openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
-            forceUpdate();
-          }*/ /*else if (action.action === 'perspectiveChange') {
-            if(!openedEntry.meta || openedEntry.meta.perspective !== action.entry.meta.perspective) {
-              openedEntry.meta = { ...openedEntry.meta, ...action.entry.meta };
-              forceUpdate();
-            }
-          }*/
-        }
-      }
-    }
-  }, [metaActions]);
 
   const renameEntry = () => {
     if (editName !== undefined) {
@@ -353,47 +316,6 @@ function EntryProperties(props: Props) {
     return t(PlatformIO.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
   };
 
-  /*const setThumb = (filePath, thumbFilePath) => {
-    if (filePath !== undefined) {
-      return switchLocationTypeByID(openedEntry.locationId).then(
-        (currentLocationId) => {
-          if (
-            PlatformIO.haveObjectStoreSupport() ||
-            PlatformIO.haveWebDavSupport()
-          ) {
-            updateThumbnailUrl(
-              openedEntry.path,
-              PlatformIO.getURLforPath(thumbFilePath),
-            );
-            return true;
-          }
-          /!*return replaceThumbnailURLPromise(filePath, thumbFilePath)
-          .then(objUrl => {*!/
-          updateThumbnailUrl(
-            openedEntry.path,
-            thumbFilePath,
-            // objUrl.tmbPath
-            /!*(props.lastThumbnailImageChange
-                  ? '?' + props.lastThumbnailImageChange
-                  : '')*!/
-          );
-          return switchCurrentLocationType();
-        },
-      );
-    } else {
-      // reset Thumbnail
-      return getThumbnailURLPromise(openedEntry.path)
-        .then((objUrl) => {
-          updateThumbnailUrl(openedEntry.path, objUrl.tmbPath);
-          return true;
-        })
-        .catch((err) => {
-          console.warn('Error getThumbnailURLPromise ' + err);
-          showNotification('Error reset Thumbnail');
-        });
-    }
-  };*/
-
   const toggleBackgroundColorPicker = () => {
     if (readOnlyMode) {
       return;
@@ -440,15 +362,6 @@ function EntryProperties(props: Props) {
     }
   };
 
-  /*const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'description') {
-      setEditDescription(value);
-    }
-  };*/
-
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     const metaFilePath = getMetaFileLocationForFile(
       openedEntry.path,
@@ -491,59 +404,6 @@ function EntryProperties(props: Props) {
   if (!openedEntry || !openedEntry.path || openedEntry.path === '') {
     return <div />;
   }
-
-  /*function getBgndUrl(dt = undefined) {
-    if (openedEntry && !openedEntry.isFile) {
-      const bgndPath = getBgndFileLocationForDirectory(
-        openedEntry.path,
-        PlatformIO.getDirSeparator(),
-      );
-      if (bgndPath !== undefined) {
-        if (
-          PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()
-        ) {
-          return PlatformIO.getURLforPath(bgndPath);
-        } else {
-          return normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
-        }
-      }
-    }
-    return undefined;
-  }*/
-
-  /*function getThumbPath() {
-    if (!openedEntry) {
-      return undefined;
-    }
-    if (openedEntry.isFile) {
-      return getThumbFileLocationForFile(
-        openedEntry.path,
-        PlatformIO.getDirSeparator(),
-        false,
-      );
-    }
-    return getThumbFileLocationForDirectory(
-      openedEntry.path,
-      PlatformIO.getDirSeparator(),
-    );
-  }*/
-
-  /*function getThumbUrl(dt = undefined) {
-    const thumbPath = getThumbPath();
-
-    if (thumbPath !== undefined) {
-      if (
-        PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport()
-      ) {
-        return PlatformIO.getURLforPath(thumbPath);
-      } else {
-        return normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
-      }
-    }
-    return undefined;
-  }*/
 
   const ldtm = openedEntry.lmdt
     ? new Date(openedEntry.lmdt)
@@ -1180,9 +1040,13 @@ function EntryProperties(props: Props) {
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: bgndUrl.current
-                              ? 'url("' + bgndUrl.current + '")'
-                              : '',
+                            backgroundImage:
+                              'url("' +
+                              getFolderBgndPath(
+                                openedEntry.path,
+                                openedEntry.meta?.lastUpdated,
+                              ) +
+                              '")',
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,

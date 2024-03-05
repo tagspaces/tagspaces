@@ -49,8 +49,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import useFirstRender from '-/utils/useFirstRender';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -100,7 +98,6 @@ function GridPagination(props: Props) {
     gridPageLimit,
     singleClickAction,
   } = usePerspectiveSettingsContext();
-  const { metaActions } = useEditedEntryMetaContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -120,39 +117,6 @@ function GridPagination(props: Props) {
     : 10;
 
   const containerEl = useRef<HTMLDivElement>(null);
-  /*const folderTmbPath = useRef<string>(
-    getFolderThumbPath(currentDirectoryPath, directoryMeta.lastUpdated),
-  );*/
-  /*const folderBgndPath = useRef<string>(
-    getFolderBgndPath(currentDirectoryPath, directoryMeta.lastUpdated),
-  );*/
-
-  //const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  //const firstRender = useFirstRender();
-
-  /*useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
-      for (const action of metaActions) {
-        if (currentDirectoryPath === action.entry.path) {
-          if (action.action === 'thumbChange') {
-            if (action.entry.meta) {
-              folderTmbPath.current = getThumbPath(
-                action.entry.meta.thumbPath,
-                action.entry.meta.lastUpdated,
-              );
-              forceUpdate();
-            }
-          } else if (action.action === 'bgdImgChange') {
-            folderBgndPath.current = getFolderBgndPath(
-              currentDirectoryPath,
-              action.entry.meta?.lastUpdated,
-            );
-            forceUpdate();
-          }
-        }
-      }
-    }
-  }, [metaActions]);*/
 
   const handleChange = (event, value) => {
     setCurrentPage(value);

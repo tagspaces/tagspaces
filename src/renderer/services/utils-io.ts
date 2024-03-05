@@ -1097,6 +1097,10 @@ export async function saveLocationDataPromise(
   return Promise.reject(new Error('file not found' + path));
 }
 
+/**
+ * @param path
+ * @param metaData - this will override existing meta data
+ */
 export async function saveMetaDataPromise(
   path: string,
   metaData: any,
@@ -1436,7 +1440,6 @@ export function getEntryThumbPath(entry: TS.FileSystemEntry, dt = undefined) {
 }
 
 /**
- * @deprecated use getEntryThumbPath instead
  * @param path
  * @param dt
  */

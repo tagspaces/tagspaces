@@ -134,7 +134,7 @@ export const DescriptionContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      description: lastOpenedFile.current.meta.description,
+      description: lastOpenedFile.current?.meta?.description,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,

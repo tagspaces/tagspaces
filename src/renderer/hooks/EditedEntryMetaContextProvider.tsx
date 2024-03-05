@@ -18,9 +18,8 @@
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { saveMetaDataPromise } from '-/services/utils-io';
+import { saveFsEntryMeta } from '-/utils/metaoperations';
 
 type EditedEntryMetaContextData = {
   metaActions: TS.EditMetaAction[];
@@ -89,22 +88,20 @@ export const EditedEntryMetaContextProvider = ({
     autoSave: boolean,
     locationId = undefined,
   ) {
-    return saveProMetaData(entry.path, { autoSave }, locationId).then(
-      (meta) => {
-        if (meta) {
-          const action: TS.EditMetaAction = {
-            action: 'autoSaveChange',
-            entry: {
-              ...entry,
-              meta: { ...meta, lastUpdated: new Date().getTime() },
-            },
-          };
-          setReflectMetaActions(action);
-          return true;
-        }
-        return false;
-      },
-    );
+    return saveMetaData(entry.path, { autoSave }, locationId).then((meta) => {
+      if (meta) {
+        const action: TS.EditMetaAction = {
+          action: 'autoSaveChange',
+          entry: {
+            ...entry,
+            meta: meta,
+          },
+        };
+        setReflectMetaActions(action);
+        return true;
+      }
+      return false;
+    });
   }
 
   function saveDirectoryPerspective(
@@ -119,7 +116,7 @@ export const EditedEntryMetaContextProvider = ({
             action: 'perspectiveChange',
             entry: {
               ...entry,
-              meta: { ...meta, lastUpdated: new Date().getTime() },
+              meta: meta,
             },
           };
           setReflectMetaActions(action);
@@ -135,14 +132,14 @@ export const EditedEntryMetaContextProvider = ({
     description: string,
     locationId = undefined,
   ): Promise<boolean> {
-    return saveProMetaData(entry.path, { description }, locationId).then(
+    return saveMetaData(entry.path, { description }, locationId).then(
       (meta) => {
         if (meta) {
           const action: TS.EditMetaAction = {
             action: 'descriptionChange',
             entry: {
               ...entry,
-              meta: { ...meta, lastUpdated: new Date().getTime() },
+              meta: meta,
             },
           };
           setReflectMetaActions(action);
@@ -169,13 +166,13 @@ export const EditedEntryMetaContextProvider = ({
     color: string,
     locationId = undefined,
   ): Promise<boolean> {
-    return saveProMetaData(entry.path, { color }, locationId).then((meta) => {
+    return saveMetaData(entry.path, { color }, locationId).then((meta) => {
       if (meta) {
         const action: TS.EditMetaAction = {
           action: 'bgdColorChange',
           entry: {
             ...entry,
-            meta: { ...meta, lastUpdated: new Date().getTime() },
+            meta: meta,
           },
         };
         setReflectMetaActions(action);
@@ -196,7 +193,7 @@ export const EditedEntryMetaContextProvider = ({
           action: 'thumbChange',
           entry: {
             ...entry,
-            meta: { ...meta, lastUpdated: new Date().getTime() },
+            meta: meta,
           },
         };
         setReflectMetaActions(action);
@@ -212,26 +209,7 @@ export const EditedEntryMetaContextProvider = ({
     locationId = undefined,
   ): Promise<TS.FileSystemEntryMeta> {
     return switchLocationTypeByID(locationId).then((currentLocationId) =>
-      saveMetaDataPromise(path, meta)
-        .then((entryMeta) => entryMeta)
-        .catch((error) => {
-          if (currentLocationId) {
-            switchCurrentLocationType();
-          }
-          console.warn('Error saving color for folder ' + error);
-          // showNotification(t('Error saving color for folder'));
-          return undefined;
-        }),
-    );
-  }
-
-  function saveProMetaData(
-    path: string,
-    meta: any,
-    locationId = undefined,
-  ): Promise<TS.FileSystemEntryMeta> {
-    return switchLocationTypeByID(locationId).then((currentLocationId) =>
-      Pro.MetaOperations.saveFsEntryMeta(path, meta)
+      saveFsEntryMeta(path, meta)
         .then((entryMeta) => entryMeta)
         .catch((error) => {
           if (currentLocationId) {

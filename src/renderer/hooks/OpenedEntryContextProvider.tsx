@@ -64,6 +64,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -135,6 +136,7 @@ export const OpenedEntryContextProvider = ({
   const { selectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -206,6 +208,45 @@ export const OpenedEntryContextProvider = ({
       }
     }
   }, [actions]);
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      let isChanged = false;
+      for (const action of metaActions) {
+        if (
+          currentEntry.current &&
+          currentEntry.current.path === action.entry.path
+        ) {
+          if (action.action === 'thumbChange') {
+            if (action.entry.meta.thumbPath) {
+              currentEntry.current = {
+                ...currentEntry.current,
+                meta: { ...currentEntry.current.meta, ...action.entry.meta },
+              };
+            } else {
+              const { thumbPath, ...meta } = currentEntry.current.meta;
+              currentEntry.current = { ...currentEntry.current, meta };
+            }
+            isChanged = true;
+          } else if (
+            action.action === 'bgdColorChange' ||
+            //action.action === 'thumbChange' ||
+            action.action === 'bgdImgChange' ||
+            action.action === 'descriptionChange'
+          ) {
+            currentEntry.current = {
+              ...currentEntry.current,
+              meta: action.entry.meta,
+            };
+            isChanged = true;
+          }
+        }
+      }
+      if (isChanged) {
+        forceUpdate();
+      }
+    }
+  }, [metaActions]);
 
   /*useEffect(() => {
     if (
