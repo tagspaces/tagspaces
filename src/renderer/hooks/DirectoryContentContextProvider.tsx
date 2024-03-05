@@ -65,7 +65,6 @@ import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
-import { savePerspective } from '-/utils/metaoperations';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
@@ -533,9 +532,12 @@ export const DirectoryContentContextProvider = ({
         ) {
           setCurrentDirectoryEntries(
             currentDirectoryEntries.current.map((e) => {
-              const eUpdated = entries.find((u) => u.path === e.path);
-              if (eUpdated) {
-                return { ...e, meta: { ...e.meta, ...eUpdated.meta } };
+              const eUpdated = entries.filter((u) => u.path === e.path);
+              if (eUpdated.length > 0) {
+                const mergedMeta = eUpdated.reduce((merged, obj) => {
+                  return { ...merged, ...obj.meta };
+                }, {});
+                return { ...e, meta: { ...e.meta, ...mergedMeta } };
               }
               return e;
             }),

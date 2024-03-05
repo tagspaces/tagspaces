@@ -65,6 +65,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import PlatformFacade from '-/services/platform-facade';
 
 interface Props {
   anchorEl: Element;
@@ -165,7 +166,13 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
       .then((thumbPath: string) => {
-        setThumbnailImageChange(selectedEntries[0], thumbPath);
+        setThumbnailImageChange(
+          extractContainingDirectoryPath(
+            selectedEntries[0],
+            PlatformFacade.getDirSeparator(),
+          ),
+          thumbPath,
+        );
         showNotification('Thumbnail created: ' + thumbPath);
         return true;
       })

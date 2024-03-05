@@ -1,12 +1,13 @@
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
-import { getMetaForEntry } from '-/services/utils-io';
+import { executePromisesInBatches, getMetaForEntry } from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import AppConfig from '-/AppConfig';
 
 export function loadCurrentDirMeta(
@@ -37,8 +38,9 @@ export function loadCurrentDirMeta(
 }
 
 function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
-  const catchHandler = (error) => undefined;
-  return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
+  // const catchHandler = (error) => undefined;
+  //return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
+  return executePromisesInBatches(metaPromises, 100)
     .then((entries: TS.FileSystemEntry[]) => {
       return entries;
     })
@@ -94,7 +96,7 @@ function setThumbForEntry(
   );
   const metaFile = meta.find((m) => thumbPath.endsWith(m.path));
   if (thumbPath && metaFile) {
-    thumbEntry.meta = { ...metaFile, thumbPath };
+    thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       if (thumbPath && thumbPath.startsWith('/')) {
         thumbPath = thumbPath.substring(1);
@@ -102,7 +104,7 @@ function setThumbForEntry(
 
       thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
       if (thumbPath) {
-        thumbEntry.meta = { ...metaFile, thumbPath };
+        thumbEntry.meta = { id: getUuid(), thumbPath };
       }
     }
   }

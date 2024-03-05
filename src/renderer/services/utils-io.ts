@@ -1420,12 +1420,16 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   return [...oldTagsArray, ...uniqueTags];
 }
 
-export function getThumbEntryPath(entry: TS.FileSystemEntry) {
+export function getThumbEntryPath(entry: TS.FileSystemEntry, encoded = false) {
   if (!entry) {
     return undefined;
   }
   return entry.isFile
-    ? getThumbFileLocationForFile(entry.path, PlatformIO.getDirSeparator())
+    ? getThumbFileLocationForFile(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+        encoded,
+      )
     : getThumbFileLocationForDirectory(
         entry.path,
         PlatformIO.getDirSeparator(),

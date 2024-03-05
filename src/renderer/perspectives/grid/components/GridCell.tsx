@@ -159,8 +159,10 @@ function GridCell(props: Props) {
             } else {
               //thumbnail deleted
               thumbUrl.current = undefined;
-              const { thumbPath, ...meta } = fsEntry.meta;
-              fsEntry.meta = meta;
+              if (fsEntry.meta) {
+                const { thumbPath, ...meta } = fsEntry.meta;
+                fsEntry.meta = meta;
+              }
             }
             forceUpdate();
           } else if (action.action === 'bgdColorChange') {
