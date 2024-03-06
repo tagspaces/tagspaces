@@ -20,6 +20,7 @@ import React, { useEffect, useState } from 'react';
 import {
   getBackupFileLocation,
   extractContainingDirectoryPath,
+  extractFileNameWithoutExt,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
 import PlatformIO from '-/services/platform-facade';
@@ -71,6 +72,10 @@ function Revisions() {
     }
   }, [openedEntry]);
 
+  function getLmdt(fileName) {
+    return parseInt(extractFileNameWithoutExt(fileName));
+  }
+
   function loadHistoryItems(openedFile: TS.OpenedEntry) {
     if (Pro) {
       Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
@@ -88,7 +93,11 @@ function Revisions() {
           switchLocationTypeByID(openedFile.locationId)
             .then(() => {
               PlatformIO.listDirectoryPromise(backupPath, []).then((h) => {
-                setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)));
+                setRows(
+                  h.sort((a, b) =>
+                    getLmdt(a.name) < getLmdt(b.name) ? 1 : -1,
+                  ),
+                );
                 return switchCurrentLocationType();
               });
             })
@@ -230,7 +239,7 @@ function Revisions() {
                   {row.name}
                 </TableCell>
                 <TableCell align="right" title={titleFormat(row.lmdt)}>
-                  {cellFormat(row.lmdt)}
+                  {cellFormat(getLmdt(row.name))}
                 </TableCell>
                 <TableCell align="right">
                   <Tooltip title={t('core:view')}>

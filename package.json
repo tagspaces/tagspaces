@@ -158,7 +158,7 @@
     "@mui/material": "^5.15.4",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.1.8",
-    "@tagspaces/tagspaces-common-aws": "4.1.8",
+    "@tagspaces/tagspaces-common-aws": "4.1.9",
     "@tagspaces/tagspaces-common-cordova": "4.1.8",
     "@tagspaces/tagspaces-indexer": "4.1.8",
     "@tagspaces/tagspaces-md": "4.0.3",
