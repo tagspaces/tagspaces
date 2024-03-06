@@ -342,7 +342,7 @@ export const OpenedEntryContextProvider = ({
   function reflectUpdateOpenedFileContent(entry: TS.FileSystemEntry) {
     if (currentEntry.current) {
       if (currentEntry.current.path === entry.path) {
-        currentEntry.current.lmdt = entry.lmdt;
+        currentEntry.current = { ...currentEntry.current, lmdt: entry.lmdt };
         forceUpdate();
       }
     }
