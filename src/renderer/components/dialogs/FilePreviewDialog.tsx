@@ -24,9 +24,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
-import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { getCurrentTheme, getSupportedFileTypes } from '-/reducers/settings';
+import { getCurrentTheme } from '-/reducers/settings';
 import { useSelector } from 'react-redux';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
@@ -55,7 +54,7 @@ function FilePreviewDialog(props: Props) {
     useRef<HTMLDivElement>(null);
   const eventID = useRef<string>(getUuid());
 
-  const openedFile: OpenedEntry =
+  const openedFile: TS.OpenedEntry =
     fsEntry && openedEntry
       ? {
           ...openedEntry,

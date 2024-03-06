@@ -1,12 +1,13 @@
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
-import { getMetaForEntry } from '-/services/utils-io';
+import { executePromisesInBatches, getMetaForEntry } from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import AppConfig from '-/AppConfig';
 
 export function loadCurrentDirMeta(
@@ -37,8 +38,9 @@ export function loadCurrentDirMeta(
 }
 
 function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
-  const catchHandler = (error) => undefined;
-  return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
+  // const catchHandler = (error) => undefined;
+  //return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
+  return executePromisesInBatches(metaPromises, 100)
     .then((entries: TS.FileSystemEntry[]) => {
       return entries;
     })
@@ -84,7 +86,7 @@ function getThumbs(
 
 function setThumbForEntry(
   entry: TS.FileSystemEntry,
-  meta: Array<any>,
+  meta: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
 ): TS.FileSystemEntry {
   const thumbEntry = { ...entry, tags: [] };
   let thumbPath = getThumbFileLocationForFile(
@@ -92,8 +94,9 @@ function setThumbForEntry(
     PlatformIO.getDirSeparator(),
     false,
   );
-  if (thumbPath && meta.some((metaFile) => thumbPath.endsWith(metaFile.path))) {
-    thumbEntry.thumbPath = thumbPath;
+  const metaFile = meta.find((m) => thumbPath.endsWith(m.path));
+  if (thumbPath && metaFile) {
+    thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       if (thumbPath && thumbPath.startsWith('/')) {
         thumbPath = thumbPath.substring(1);
@@ -101,7 +104,7 @@ function setThumbForEntry(
 
       thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
       if (thumbPath) {
-        thumbEntry.thumbPath = thumbPath;
+        thumbEntry.meta = { id: getUuid(), thumbPath };
       }
     }
   }

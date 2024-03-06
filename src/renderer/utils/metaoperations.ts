@@ -5,6 +5,37 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
+export function saveFsEntryMeta(
+  path: string,
+  meta: any,
+): Promise<TS.FileSystemEntryMeta> {
+  return loadMetaDataPromise(path)
+    .then((fsEntryMeta) => {
+      return saveMetaData(path, {
+        ...fsEntryMeta,
+        ...meta,
+        lastUpdated: new Date().getTime(),
+      });
+    })
+    .catch(() => {
+      return saveMetaData(path, mergeFsEntryMeta(meta));
+    });
+}
+
+function saveMetaData(
+  path: string,
+  fsEntryMeta: TS.FileSystemEntryMeta,
+): Promise<TS.FileSystemEntryMeta> {
+  return saveMetaDataPromise(path, fsEntryMeta)
+    .then(() => {
+      return fsEntryMeta;
+    })
+    .catch((err) => {
+      console.warn('Error saveMetaData for ' + path + ' ', err);
+      return fsEntryMeta;
+    });
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export function savePerspective(
   path: string,

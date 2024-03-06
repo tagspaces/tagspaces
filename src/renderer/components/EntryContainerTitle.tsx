@@ -175,7 +175,7 @@ function EntryContainerTitle(props: Props) {
               setAnchorEl(event.currentTarget);
             }}
             style={{
-              backgroundColor: openedEntry.color,
+              backgroundColor: openedEntry.meta?.color,
               display: 'flex',
               alignItems: 'center',
               textTransform: 'uppercase',

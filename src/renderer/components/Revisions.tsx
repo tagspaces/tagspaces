@@ -23,7 +23,6 @@ import {
   extractFileNameWithoutExt,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import { OpenedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -53,10 +52,9 @@ const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
-  // const dispatch: AppDispatch = useDispatch();
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const { openedEntry, updateOpenedFile } = useOpenedEntryContext();
+  const { openedEntry } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
@@ -78,7 +76,7 @@ function Revisions() {
     return parseInt(extractFileNameWithoutExt(fileName));
   }
 
-  function loadHistoryItems(openedFile: OpenedEntry) {
+  function loadHistoryItems(openedFile: TS.OpenedEntry) {
     if (Pro) {
       Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
         (id) => {
@@ -145,13 +143,13 @@ function Revisions() {
     );
     return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
       copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() => {
-        const fsMeta = {
+        /*const fsMeta = {
           id: '',
           ...openedEntry,
           editMode: false,
           shouldReload: !openedEntry.shouldReload,
         };
-        updateOpenedFile(openedEntry.path, fsMeta);
+        updateOpenedFile(openedEntry.path, fsMeta);*/
       }),
     );
   }

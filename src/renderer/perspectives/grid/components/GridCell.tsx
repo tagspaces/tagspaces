@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTheme, styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +47,7 @@ import {
   findBackgroundColorForFolder,
   findColorForEntry,
   getDescriptionPreview,
+  getThumbPath,
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
@@ -54,23 +55,16 @@ import TagsPreview from '-/components/TagsPreview';
 import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getLastThumbnailImageChange,
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { dataTidFormat } from '-/services/test';
-import {
-  getSupportedFileTypes,
-  isDesktopMode,
-  isReorderTags,
-} from '-/reducers/settings';
+import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
 import { defaultSettings } from '../index';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import i18n from '-/services/i18n';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -136,14 +130,54 @@ function GridCell(props: Props) {
   const theme = useTheme();
   const { entrySize, showEntriesDescription, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
+  //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
   // const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  const fileSystemEntryBgColor = useRef<string>(
+    findBackgroundColorForFolder(fsEntry),
+  );
+  const thumbUrl = useRef<string>(undefined);
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (fsEntry.path === action.entry.path) {
+          if (action.action === 'thumbChange') {
+            if (action.entry.meta.thumbPath) {
+              thumbUrl.current = getThumbPath(
+                action.entry.meta.thumbPath,
+                action.entry.meta?.lastUpdated,
+              );
+            } else {
+              //thumbnail deleted
+              thumbUrl.current = undefined;
+              if (fsEntry.meta) {
+                const { thumbPath, ...meta } = fsEntry.meta;
+                fsEntry.meta = meta;
+              }
+            }
+            forceUpdate();
+          } else if (action.action === 'bgdColorChange') {
+            fileSystemEntryBgColor.current = findBackgroundColorForFolder(
+              action.entry,
+            );
+            forceUpdate();
+          } else if (action.action === 'descriptionChange') {
+            fsEntry.meta = { ...action.entry.meta };
+            forceUpdate();
+          }
+        }
+      }
+    }
+  }, [metaActions]);
 
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
     editTagForEntry(path, tag, newTagTitle);
@@ -157,19 +191,19 @@ function GridCell(props: Props) {
   };
 
   // remove isNewFile on Cell click it will open file in editMode
-  const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
+  /*const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
     fsEntry,
-  );
+  );*/
 
   const entryTitle = extractTitle(
-    fSystemEntry.name,
-    !fSystemEntry.isFile,
+    fsEntry.name,
+    !fsEntry.isFile,
     PlatformIO.getDirSeparator(),
   );
 
   let description;
   if (showEntriesDescription) {
-    description = fSystemEntry.description;
+    description = fsEntry.meta?.description;
     if (
       description &&
       description.length > defaultSettings.maxDescriptionPreviewLength
@@ -181,29 +215,26 @@ function GridCell(props: Props) {
     }
   }
 
-  const fileSystemEntryColor = findColorForEntry(
-    fSystemEntry,
-    supportedFileTypes,
-  );
-  const fileSystemEntryBgColor = findBackgroundColorForFolder(fSystemEntry);
+  const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
 
   let fileNameTags = [];
-  if (fSystemEntry.isFile) {
+  if (fsEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
-      fSystemEntry.name,
+      fsEntry.name,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator(),
     );
   }
 
-  const fileSystemEntryTags = fSystemEntry.tags ? fSystemEntry.tags : [];
+  const fileSystemEntryTags =
+    fsEntry.meta && fsEntry.meta.tags ? fsEntry.meta.tags : [];
   const sideCarTagsTitles = fileSystemEntryTags.map((tag) => tag.title);
   const entryTags = [
     ...fileSystemEntryTags,
     ...fileNameTags.filter((tag) => !sideCarTagsTitles.includes(tag.title)),
   ];
 
-  const entryPath = fSystemEntry.path;
+  const entryPath = fsEntry.path;
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
 
   const renderTags = useMemo(() => {
@@ -244,20 +275,18 @@ function GridCell(props: Props) {
   function generateCardHeader() {
     return (
       !isSmall &&
-      fSystemEntry.isFile &&
-      fSystemEntry.lmdt && (
+      fsEntry.isFile &&
+      fsEntry.lmdt && (
         <>
           <Tooltip
             title={
-              t('core:modifiedDate') +
-              ': ' +
-              formatDateTime(fSystemEntry.lmdt, true)
+              t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)
             }
           >
-            {formatDateTime(fSystemEntry.lmdt, false)}
+            {formatDateTime(fsEntry.lmdt, false)}
           </Tooltip>
-          <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
-            <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
+          <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
+            <span>{' | ' + formatFileSize(fsEntry.size)}</span>
           </Tooltip>
         </>
       )
@@ -284,9 +313,9 @@ function GridCell(props: Props) {
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
-            selectEntry(fSystemEntry, false);
+            selectEntry(fsEntry, false);
           } else {
-            selectEntry(fSystemEntry);
+            selectEntry(fsEntry);
           }
         }}
       >
@@ -307,7 +336,7 @@ function GridCell(props: Props) {
         )}
       </IconButton>
     ) : (
-      <Tooltip title={i18n.t('clickToSelect') + ' ' + fSystemEntry.path}>
+      <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
         <Typography
           style={{
             paddingTop: 1,
@@ -324,34 +353,25 @@ function GridCell(props: Props) {
             textShadow: '1px 1px #8f8f8f',
             textOverflow: 'unset',
             height: 15,
-            maxWidth: fSystemEntry.isFile ? 50 : 100,
+            maxWidth: fsEntry.isFile ? 50 : 100,
           }}
           noWrap={true}
           variant="button"
           onClick={(e) => {
             e.stopPropagation();
-            selectEntry(fSystemEntry);
+            selectEntry(fsEntry);
           }}
         >
-          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOutlineIcon />}
+          {fsEntry.isFile ? fsEntry.extension : <FolderOutlineIcon />}
         </Typography>
       </Tooltip>
     );
   }
 
-  const tmbImgSrc =
-    fSystemEntry.thumbPath +
-    (lastThumbnailImageChange &&
-    lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
-    !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport()
-      ? urlGetDelim(fSystemEntry.thumbPath) + lastThumbnailImageChange.dt
-      : '');
-
   return (
     <Card
-      data-entry-id={fSystemEntry.uuid}
-      data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
+      data-entry-id={fsEntry.uuid}
+      data-tid={'fsEntryName_' + dataTidFormat(fsEntry.name)}
       raised={selected}
       style={{
         height: maxHeight,
@@ -365,25 +385,25 @@ function GridCell(props: Props) {
         display: 'flex',
         flexDirection: 'column',
       }}
-      onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
+      onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={(event) => {
-        handleGridCellDblClick(event, fSystemEntry);
+        handleGridCellDblClick(event, fsEntry);
       }}
       onClick={(event) => {
         event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-          ? handleGridCellDblClick(event, fSystemEntry)
-          : handleGridCellClick(event, fSystemEntry);
+          ? handleGridCellDblClick(event, fsEntry)
+          : handleGridCellClick(event, fsEntry);
       }}
       onDrag={(event) => {
-        handleGridCellClick(event, fSystemEntry);
+        handleGridCellClick(event, fsEntry);
       }}
     >
       <Box
         style={{
           height: maxHeight - 70,
           position: 'relative',
-          backgroundColor: fileSystemEntryBgColor || 'transparent',
+          backgroundColor: fileSystemEntryBgColor.current || 'transparent',
         }}
       >
         <Box style={{ position: 'absolute' }}>
@@ -393,7 +413,7 @@ function GridCell(props: Props) {
             <TagsPreview tags={entryTags} />
           )}
         </Box>
-        {fSystemEntry.thumbPath ? (
+        {(fsEntry.meta && fsEntry.meta.thumbPath) || thumbUrl.current ? (
           <CardMedia
             component="img"
             loading="lazy"
@@ -401,7 +421,14 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={tmbImgSrc}
+            src={
+              thumbUrl.current
+                ? thumbUrl.current
+                : getThumbPath(
+                    fsEntry.meta.thumbPath,
+                    fsEntry.meta?.lastUpdated,
+                  )
+            }
             style={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,
@@ -416,8 +443,8 @@ function GridCell(props: Props) {
             }}
           >
             <EntryIcon
-              isFile={fSystemEntry.isFile}
-              fileExtension={fSystemEntry.extension}
+              isFile={fsEntry.isFile}
+              fileExtension={fsEntry.extension}
             />
           </Box>
         )}
@@ -425,7 +452,7 @@ function GridCell(props: Props) {
 
       <CardContent sx={{ padding: '1px 5px 0px 5px', flexGrow: 1 }}>
         <Typography
-          title={fSystemEntry.name}
+          title={fsEntry.name}
           style={{
             paddingRight: 4,
             overflowX: 'clip',
@@ -476,7 +503,7 @@ function GridCell(props: Props) {
             aria-label="entry context menu"
             size="small"
             style={{ marginRight: 5 }}
-            onClick={(event) => handleGridContextMenu(event, fSystemEntry)}
+            onClick={(event) => handleGridContextMenu(event, fsEntry)}
           >
             <MoreMenuIcon />
           </IconButton>

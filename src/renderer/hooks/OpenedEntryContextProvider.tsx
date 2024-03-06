@@ -24,7 +24,7 @@ import React, {
   useRef,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, OpenedEntry } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
@@ -32,7 +32,6 @@ import {
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getRelativeEntryPath,
-  loadJSONFile,
   openURLExternally,
 } from '-/services/utils-io';
 import {
@@ -65,23 +64,24 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type OpenedEntryContextData = {
-  openedEntry: OpenedEntry;
+  openedEntry: TS.OpenedEntry;
   isEntryInFullWidth: boolean;
   sharingLink: string;
   sharingParentFolderLink: string;
   setEntryInFullWidth: (fullWidth: boolean) => void;
-  addToEntryContainer: (fsEntry: OpenedEntry) => void;
+  addToEntryContainer: (fsEntry: TS.OpenedEntry) => void;
   closeAllFiles: () => void;
   reflectUpdateOpenedFileContent: (entry: TS.FileSystemEntry) => void;
   reloadOpenedFile: () => void;
-  updateOpenedFile: (
+  /*updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
-  ) => Promise<boolean>;
-  openEntry: (path?: string, showDetails?) => void;
-  openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => void;
+  ) => Promise<boolean>;*/
+  openEntry: (path?: string, showDetails?) => Promise<boolean>;
+  openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => Promise<boolean>;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
   goForward: () => void;
@@ -106,9 +106,9 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   closeAllFiles: () => {},
   reflectUpdateOpenedFileContent: () => {},
   reloadOpenedFile: () => {},
-  updateOpenedFile: () => Promise.resolve(false),
-  openEntry: () => {},
-  openFsEntry: () => {},
+  //updateOpenedFile: () => Promise.resolve(false),
+  openEntry: undefined,
+  openFsEntry: undefined,
   toggleEntryFullWidth: () => {},
   openLink: () => {},
   goForward: () => {},
@@ -130,16 +130,13 @@ export const OpenedEntryContextProvider = ({
 
   const { openLocation, currentLocation, getLocationPath } =
     useCurrentLocationContext();
-  const {
-    currentDirectoryPath,
-    currentDirectoryPerspective,
-    currentLocationPath,
-    openDirectory,
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath, currentLocationPath, openDirectory } =
+    useDirectoryContentContext();
 
   const { selectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -152,7 +149,7 @@ export const OpenedEntryContextProvider = ({
     (state: any) => state.settings[historyKeys.folderOpenKey],
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
-  const currentEntry = useRef<OpenedEntry>(undefined);
+  const currentEntry = useRef<TS.OpenedEntry>(undefined);
   /* const dirProps = useRef<TS.DirProp>({
     totalSize: undefined,
     filesCount: undefined,
@@ -213,6 +210,45 @@ export const OpenedEntryContextProvider = ({
   }, [actions]);
 
   useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      let isChanged = false;
+      for (const action of metaActions) {
+        if (
+          currentEntry.current &&
+          currentEntry.current.path === action.entry.path
+        ) {
+          if (action.action === 'thumbChange') {
+            if (action.entry.meta.thumbPath) {
+              currentEntry.current = {
+                ...currentEntry.current,
+                meta: { ...currentEntry.current.meta, ...action.entry.meta },
+              };
+            } else {
+              const { thumbPath, ...meta } = currentEntry.current.meta;
+              currentEntry.current = { ...currentEntry.current, meta };
+            }
+            isChanged = true;
+          } else if (
+            action.action === 'bgdColorChange' ||
+            //action.action === 'thumbChange' ||
+            action.action === 'bgdImgChange' ||
+            action.action === 'descriptionChange'
+          ) {
+            currentEntry.current = {
+              ...currentEntry.current,
+              meta: action.entry.meta,
+            };
+            isChanged = true;
+          }
+        }
+      }
+      if (isChanged) {
+        forceUpdate();
+      }
+    }
+  }, [metaActions]);
+
+  /*useEffect(() => {
     if (
       currentEntry.current &&
       currentEntry.current.path === currentDirectoryPath
@@ -223,7 +259,7 @@ export const OpenedEntryContextProvider = ({
       };
       forceUpdate();
     }
-  }, [currentDirectoryPerspective]);
+  }, [currentDirectoryPerspective]);*/
 
   function getOpenedDirProps(): Promise<TS.DirProp> {
     if (
@@ -307,9 +343,9 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  function addToEntryContainer(fsEntry: OpenedEntry) {
+  function addToEntryContainer(fsEntry: TS.OpenedEntry) {
     setSharedLinks(fsEntry);
-    currentEntry.current = fsEntry;
+    currentEntry.current = { ...fsEntry };
     forceUpdate();
     // setOpenedEntries([fsEntry]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
   }
@@ -350,7 +386,9 @@ export const OpenedEntryContextProvider = ({
 
   function reloadOpenedFile(): Promise<boolean> {
     if (currentEntry.current) {
-      //openedEntries && openedEntries.length > 0) {
+      currentEntry.current.editMode = false;
+      return openEntry(currentEntry.current.path, true);
+      /*//openedEntries && openedEntries.length > 0) {
       const openedFile = currentEntry.current; //openedEntries[0];
       const metaFilePath = openedFile.isFile
         ? getMetaFileLocationForFile(
@@ -386,12 +424,12 @@ export const OpenedEntryContextProvider = ({
           shouldReload: !openedFile.shouldReload,
         };
         return updateOpenedFile(openedFile.path, entryMeta);
-      }
+      }*/
     }
     return Promise.resolve(false);
   }
 
-  function updateOpenedFile(
+  /*function updateOpenedFile(
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
   ): Promise<boolean> {
@@ -399,14 +437,14 @@ export const OpenedEntryContextProvider = ({
       return PlatformIO.getPropertiesPromise(entryPath)
         .then((entryProps) => {
           if (entryProps) {
-            let entryForOpening: OpenedEntry;
+            let entryForOpening: TS.OpenedEntry;
 
             entryForOpening = { ...currentEntry.current }; //entryExist };
 
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
-            entryForOpening.shouldReload = fsEntryMeta.shouldReload;
+            //entryForOpening.shouldReload = fsEntryMeta.shouldReload;
             if (fsEntryMeta.color) {
               if (fsEntryMeta.color === 'transparent') {
                 entryForOpening.color = undefined;
@@ -440,22 +478,26 @@ export const OpenedEntryContextProvider = ({
         });
     }
     return Promise.resolve(false);
-  }
+  }*/
 
-  function openEntry(path?: string, showDetails = false) {
+  function openEntry(path?: string, showDetails = false): Promise<boolean> {
     if (path === undefined) {
       return openFsEntry(undefined, showDetails);
     }
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
-      .catch((error) =>
+      .catch((error) => {
         console.warn(
           'Error getting properties for entry: ' + path + ' - ' + error,
-        ),
-      );
+        );
+        return false;
+      });
   }
 
-  function openFsEntry(fsEntry?: TS.FileSystemEntry, showDetails = false) {
+  function openFsEntry(
+    fsEntry?: TS.FileSystemEntry,
+    showDetails = false,
+  ): Promise<boolean> {
     dispatch(SettingsActions.setShowDetails(showDetails));
     if (fsEntry === undefined) {
       if (selectedEntries && selectedEntries.length > 0) {
@@ -464,10 +506,10 @@ export const OpenedEntryContextProvider = ({
           return openDirectory(lastSelectedEntry.path); //, false);
         }
       } else {
-        return;
+        return Promise.resolve(false);
       }
     }
-    let entryForOpening: OpenedEntry;
+    let entryForOpening: TS.OpenedEntry;
 
     /**
      * check for editMode in order to show save changes dialog (shouldReload: false)
@@ -478,10 +520,6 @@ export const OpenedEntryContextProvider = ({
       if (openFile.editMode) {
         entryForOpening = {
           ...openFile,
-          shouldReload:
-            openFile.shouldReload !== undefined
-              ? !openFile.shouldReload
-              : undefined,
         }; // false };
         addToEntryContainer(entryForOpening);
         showNotification(
@@ -489,16 +527,10 @@ export const OpenedEntryContextProvider = ({
           'default',
           true,
         );
-        return false;
+        return Promise.resolve(false);
       }
     }
-    // TODO decide to copy all props from {...fsEntry} into openedEntry
-    entryForOpening = findExtensionsForEntry(
-      fsEntry.uuid,
-      supportedFileTypes,
-      fsEntry.path,
-      fsEntry.isFile,
-    );
+    entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
@@ -507,34 +539,11 @@ export const OpenedEntryContextProvider = ({
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
-    if (fsEntry.perspective) {
-      entryForOpening.perspective = fsEntry.perspective;
-    }
-    if (fsEntry.color) {
-      entryForOpening.color = fsEntry.color;
-    }
-    if (fsEntry.description) {
-      entryForOpening.description = fsEntry.description;
-    }
-    if (fsEntry.tags) {
-      entryForOpening.tags = fsEntry.tags;
-    }
-    if (fsEntry.lmdt) {
-      entryForOpening.lmdt = fsEntry.lmdt;
-    }
-    if (fsEntry.size) {
-      entryForOpening.size = fsEntry.size;
-    }
     if (
       fsEntry.isNewFile &&
       AppConfig.editableFiles.includes(fsEntry.extension)
     ) {
       entryForOpening.editMode = true;
-    }
-    if (fsEntry.isAutoSaveEnabled !== undefined) {
-      entryForOpening.isAutoSaveEnabled = fsEntry.isAutoSaveEnabled;
-    } else if (fsEntry.meta && fsEntry.meta.autoSave) {
-      entryForOpening.isAutoSaveEnabled = fsEntry.meta.autoSave;
     }
 
     const locationName = currentLocation ? currentLocation.name : 'TagSpaces'; // TODO get it later from app config
@@ -587,6 +596,7 @@ export const OpenedEntryContextProvider = ({
         }
       }
     }
+    return Promise.resolve(true);
   }
 
   function toggleEntryFullWidth() {
@@ -855,7 +865,7 @@ export const OpenedEntryContextProvider = ({
       closeAllFiles,
       reflectUpdateOpenedFileContent,
       reloadOpenedFile,
-      updateOpenedFile,
+      //updateOpenedFile,
       openEntry,
       openFsEntry,
       toggleEntryFullWidth,

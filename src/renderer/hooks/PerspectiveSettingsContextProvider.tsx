@@ -83,7 +83,7 @@ export const PerspectiveSettingsContextProvider = ({
 }: PerspectiveSettingsContextProviderProps) => {
   const {
     currentDirectoryPath,
-    currentDirectoryPerspective,
+    perspective,
     directoryMeta,
     setDirectoryMeta,
     getDefaultPerspectiveSettings,
@@ -97,22 +97,22 @@ export const PerspectiveSettingsContextProvider = ({
   useEffect(() => {
     settings.current = getSettings(getPerspective(), directoryMeta);
     forceUpdate();
-  }, [currentDirectoryPerspective, directoryMeta]);
+  }, [perspective, directoryMeta]);
 
   function getSettings(
-    perspective: string,
+    persp: string,
     directoryMeta: TS.FileSystemEntryMeta,
   ): TS.FolderSettings {
-    const defaultSettings = getDefaultPerspectiveSettings(perspective);
+    const defaultSettings = getDefaultPerspectiveSettings(persp);
     let s: TS.FolderSettings = defaultSettings;
     if (
       Pro &&
       directoryMeta &&
       directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[perspective]
+      directoryMeta.perspectiveSettings[persp]
     ) {
       const proSettings: TS.FolderSettings =
-        directoryMeta.perspectiveSettings[perspective];
+        directoryMeta.perspectiveSettings[persp];
       if (proSettings) {
         s = { ...s, ...proSettings };
       }

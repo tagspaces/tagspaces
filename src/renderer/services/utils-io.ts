@@ -45,13 +45,13 @@ import {
   extractFileName,
   normalizePath,
   getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
   getBgndFileLocationForDirectory,
   cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import versionMeta from '../version.json';
-import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { generateImageThumbnail } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
@@ -99,9 +99,9 @@ export function getMetaForEntry(
 }
 
 export function enhanceOpenedEntry(
-  entry: OpenedEntry,
+  entry: TS.OpenedEntry,
   tagDelimiter,
-): OpenedEntry {
+): TS.OpenedEntry {
   if (entry.isFile) {
     const fineNameTags = extractTagsAsObjects(
       entry.path,
@@ -318,9 +318,9 @@ export function findExtensionPathForId(
 }
 
 export function addExtensionsForEntry(
-  openedEntry: OpenedEntry,
+  openedEntry: TS.OpenedEntry,
   supportedFileTypes: Array<TS.FileTypes>,
-): OpenedEntry {
+): TS.OpenedEntry {
   const fileExtension = extractFileExtension(
     openedEntry.path,
     PlatformIO.getDirSeparator(),
@@ -334,7 +334,9 @@ export function addExtensionsForEntry(
   if (fileType) {
     fileForOpening.viewingExtensionId = fileType.viewer;
     if (fileType.color) {
-      fileForOpening.color = fileType.color;
+      fileForOpening.meta = fileForOpening.meta
+        ? { ...fileForOpening.meta, color: fileType.color }
+        : { id: openedEntry.uuid, color: fileType.color };
     }
     fileForOpening.viewingExtensionPath = findExtensionPathForId(
       fileType.viewer,
@@ -356,22 +358,18 @@ export function addExtensionsForEntry(
 }
 
 export function findExtensionsForEntry(
-  uuid: string,
+  entry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>,
-  entryPath: string,
-  isFile = true,
-): OpenedEntry {
+): TS.OpenedEntry {
   return addExtensionsForEntry(
     {
-      ...(uuid && { uuid: uuid }),
-      path: entryPath,
+      ...entry,
       viewingExtensionPath: 'about:blank',
       viewingExtensionId: '',
-      isFile,
-      // changed: false,
-      // locationId: undefined,
-      lmdt: 0,
+      /*lmdt: 0,
       size: 0,
+      name: '',
+      tags: [],*/
     },
     supportedFileTypes,
   );
@@ -986,6 +984,9 @@ export function cleanMetaData(
   if (metaData.autoSave) {
     cleanedMeta.autoSave = metaData.autoSave;
   }
+  if (metaData.thumbPath) {
+    cleanedMeta.thumbPath = metaData.thumbPath;
+  }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
       if (!cleanedMeta.perspectiveSettings) {
@@ -1097,10 +1098,14 @@ export async function saveLocationDataPromise(
   return Promise.reject(new Error('file not found' + path));
 }
 
+/**
+ * @param path
+ * @param metaData - this will override existing meta data
+ */
 export async function saveMetaDataPromise(
   path: string,
   metaData: any,
-): Promise<any> {
+): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   const cleanedMetaData = cleanMetaData(metaData);
   if (entryProperties) {
@@ -1142,12 +1147,13 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator(),
       );
     }
-    const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
+    const meta = mergeFsEntryMeta(cleanedMetaData);
+    const content = JSON.stringify(meta);
     return PlatformIO.saveTextFilePromise(
       { path: metaFilePath },
       content,
       true,
-    );
+    ).then(() => meta);
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1193,8 +1199,8 @@ export function setFolderBackgroundPromise(
 
 export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
   if (!fsEntry.isFile) {
-    if (fsEntry.color) {
-      return fsEntry.color;
+    if (fsEntry.meta && fsEntry.meta.color) {
+      return fsEntry.meta.color;
     }
   }
   return 'transparent';
@@ -1415,23 +1421,44 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   return [...oldTagsArray, ...uniqueTags];
 }
 
-export function getFolderThumbPath(
-  path: string,
-  lastThumbnailImageChange: any,
-) {
+export function getThumbEntryPath(entry: TS.FileSystemEntry, encoded = false) {
+  if (!entry) {
+    return undefined;
+  }
+  return entry.isFile
+    ? getThumbFileLocationForFile(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+        encoded,
+      )
+    : getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+}
+
+export function getEntryThumbPath(entry: TS.FileSystemEntry, dt = undefined) {
+  if (entry) {
+    return getThumbPath(getThumbEntryPath(entry), dt);
+  }
+  return undefined;
+}
+
+/**
+ * @param path
+ * @param dt
+ */
+export function getFolderThumbPath(path: string, dt = undefined) {
   if (path) {
     return getThumbPath(
       getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastThumbnailImageChange,
+      dt,
     );
   }
   return undefined;
 }
 
-export function getThumbPath(
-  thumbPath: string,
-  lastThumbnailImageChange?: any,
-) {
+export function getThumbPath(thumbPath: string, dt = undefined) {
   if (!thumbPath) {
     return undefined;
   }
@@ -1441,13 +1468,7 @@ export function getThumbPath(
     }
     return PlatformIO.getURLforPath(thumbPath);
   }
-  return (
-    normalizeUrl(thumbPath) +
-    (lastThumbnailImageChange &&
-    lastThumbnailImageChange.thumbPath === thumbPath
-      ? '?' + lastThumbnailImageChange.dt
-      : '')
-  );
+  return normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
 }
 
 function isSignedURL(signedUrl) {
@@ -1458,33 +1479,24 @@ function isSignedURL(signedUrl) {
   return false;
 }
 
-export function getFolderBgndPath(
-  path: string,
-  lastBackgroundImageChange: any,
-) {
+export function getFolderBgndPath(path: string, dt = undefined) {
   if (path !== undefined) {
     return getBgndPath(
       getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastBackgroundImageChange,
+      dt,
     );
   }
   return undefined;
 }
 
-export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
+export function getBgndPath(bgndPath: string, dt = undefined) {
   if (!bgndPath) {
     return undefined;
   }
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     return PlatformIO.getURLforPath(bgndPath);
   }
-  return (
-    normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange
-      ? // && lastBackgroundImageChange.folderPath === bgndPath
-        '?' + lastBackgroundImageChange.dt
-      : '')
-  );
+  return normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
 }
 
 export function setLocationType(location: TS.Location): Promise<boolean> {
@@ -1566,7 +1578,6 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
       : extractDirectoryName(path, PlatformIO.getDirSeparator()),
     isFile,
     extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-    description: '',
     tags: [],
     size: 0,
     lmdt: new Date().getTime(),
@@ -1574,7 +1585,7 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
   };
 }
 
-export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
+/*export function openedToFsEntry(openedEntry: TS.OpenedEntry): TS.FileSystemEntry {
   return {
     uuid: getUuid(),
     name: openedEntry.isFile
@@ -1585,13 +1596,13 @@ export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
       openedEntry.path,
       PlatformIO.getDirSeparator(),
     ),
-    description: openedEntry.description,
+    description: openedEntry.meta?.description,
     tags: openedEntry.tags,
     size: openedEntry.size,
     lmdt: openedEntry.lmdt,
     path: openedEntry.path,
   };
-}
+}*/
 
 export function createFsEntryMeta(
   path: string,

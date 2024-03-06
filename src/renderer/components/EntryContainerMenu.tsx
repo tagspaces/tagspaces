@@ -13,7 +13,6 @@ import {
   MenuList,
   Divider,
 } from '@mui/material';
-import { OpenedEntry } from '-/reducers/app';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import {

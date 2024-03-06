@@ -49,9 +49,9 @@ export const types = {
   PROGRESS: 'APP/PROGRESS',
   PROGRESS_FINISH: 'APP/PROGRESS_FINISH',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
-  LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
-  LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
-  LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
+  //LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
+  //LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
+  //LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
   //OPEN_LINK: 'APP/OPEN_LINK',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
@@ -115,7 +115,7 @@ export const types = {
   UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION',
 };
 
-export type OpenedEntry = {
+/*export type OpenedEntry = {
   uuid: string;
   path: string;
   url?: string;
@@ -133,15 +133,15 @@ export type OpenedEntry = {
   perspective?: TS.PerspectiveType;
   editMode?: boolean;
   // changed?: boolean;
-  /**
+  /!**
    * if its true iframe will be reloaded
    * if its false && editMode==true and changed==true => show reload dialog
    * default: undefined
-   */
+   *!/
   shouldReload?: boolean;
   focused?: boolean; // TODO make it mandatory once support for multiple files is added
   tags?: Array<TS.Tag>;
-};
+};*/
 
 let showLocations = true;
 let showTagLibrary = false;
@@ -226,7 +226,7 @@ export const initialState = {
 // eslint-disable-next-line default-param-last
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
-    case types.LAST_BACKGROUND_IMAGE_CHANGE: {
+    /*case types.LAST_BACKGROUND_IMAGE_CHANGE: {
       return {
         ...state,
         lastBackgroundImageChange: {
@@ -252,7 +252,7 @@ export default (state: any = initialState, action: any) => {
           dt: action.lastThumbnailImageChange,
         },
       };
-    }
+    }*/
     case types.LOGIN_SUCCESS: {
       return { ...state, user: action.user };
     }
@@ -626,7 +626,7 @@ export const actions = {
     type: types.UPDATE_EXTENSION,
     extension,
   }),
-  setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
+  /*setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
     folderPath,
     lastBackgroundImageChange,
@@ -636,15 +636,15 @@ export const actions = {
     folderPath,
     lastBackgroundColorChange,
   }),
-  /**
+  /!**
    * @param thumbPath
    * @param lastThumbnailImageChange - timestamp set -1 if thumbnail image deleted
-   */
+   *!/
   setLastThumbnailImageChange: (thumbPath, lastThumbnailImageChange?) => ({
     type: types.LAST_THUMBNAIL_IMAGE_CHANGE,
     thumbPath,
     lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime(),
-  }),
+  }),*/
   loggedIn: (user) => ({ type: types.LOGIN_SUCCESS, user }),
   /*openLink: (url: string, options = { fullWidth: true }) => ({
     type: types.OPEN_LINK,
@@ -946,12 +946,12 @@ export const actions = {
 };
 
 // Selectors
-export const getLastBackgroundImageChange = (state: any) =>
+/*export const getLastBackgroundImageChange = (state: any) =>
   state.app.lastBackgroundImageChange;
 export const getLastBackgroundColorChange = (state: any) =>
   state.app.lastBackgroundColorChange;
 export const getLastThumbnailImageChange = (state: any) =>
-  state.app.lastThumbnailImageChange;
+  state.app.lastThumbnailImageChange;*/
 export const currentUser = (state: any) => state.app.user;
 //export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
 /*export const getCurrentDirectoryColor = (state: any) =>

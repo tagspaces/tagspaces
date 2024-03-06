@@ -70,7 +70,7 @@ function FolderContainer(props: Props) {
     currentDirectoryEntries,
     currentDirectoryPath,
     perspective,
-    setDirectoryPerspective,
+    setManualDirectoryPerspective,
     enterSearchMode,
     isSearchMode,
   } = useDirectoryContentContext();
@@ -139,7 +139,7 @@ function FolderContainer(props: Props) {
       perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
-      setDirectoryPerspective(perspectiveId, undefined, true);
+      setManualDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {

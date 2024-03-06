@@ -38,7 +38,6 @@ import {
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { PerspectiveIDs } from '-/perspectives';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -55,11 +54,7 @@ function FileUploadDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
-  const {
-    loadDirectoryContent,
-    currentDirectoryPerspective,
-    currentDirectoryPath,
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
 

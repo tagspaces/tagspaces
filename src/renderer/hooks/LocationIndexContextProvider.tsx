@@ -356,15 +356,16 @@ export const LocationIndexContextProvider = ({
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
-                entry.thumbPath &&
-                entry.thumbPath.length > 1
+                entry.meta &&
+                entry.meta.thumbPath &&
+                entry.meta.thumbPath.length > 1
                 // !entry.thumbPath.startsWith('http')
               ) {
                 const thumbPath = entry.path.startsWith('/')
                   ? entry.path.substring(1)
                   : entry.path;
                 // eslint-disable-next-line no-param-reassign
-                entry.thumbPath = PlatformIO.getURLforPath(
+                entry.meta.thumbPath = PlatformIO.getURLforPath(
                   getThumbFileLocationForFile(
                     thumbPath,
                     PlatformIO.getDirSeparator(),
@@ -474,11 +475,14 @@ export const LocationIndexContextProvider = ({
                     const url = PlatformIO.getURLforPath(cleanedPath);
                     let thumbPath;
                     if (
-                      entry.thumbPath &&
-                      entry.thumbPath.length > 1 &&
-                      !entry.thumbPath.startsWith('http')
+                      entry.meta &&
+                      entry.meta.thumbPath &&
+                      entry.meta.thumbPath.length > 1 &&
+                      !entry.meta.thumbPath.startsWith('http')
                     ) {
-                      thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
+                      thumbPath = PlatformIO.getURLforPath(
+                        entry.meta.thumbPath,
+                      );
                     }
                     return { ...entry, url, thumbPath };
                   });

@@ -731,7 +731,7 @@ export const IOActionsContextProvider = ({
                   console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
-                fsEntry.thumbPath = PlatformIO.getURLforPath(thumbPath);
+                fsEntry.meta.thumbPath = PlatformIO.getURLforPath(thumbPath);
               }
               fsEntries.push(fsEntry);
               showNotification(
@@ -800,7 +800,7 @@ export const IOActionsContextProvider = ({
                 }
               } else if (fileType === 'thumb') {
                 // eslint-disable-next-line no-param-reassign
-                fsEntry.thumbPath = fsEntry.path;
+                fsEntry.meta.thumbPath = fsEntry.path;
               }
 
               return fsEntry;
@@ -972,8 +972,8 @@ export const IOActionsContextProvider = ({
                     thumbFilePath.replace(/[/\\]/g, '')
                   ) {
                     // eslint-disable-next-line no-param-reassign
-                    file.thumbPath = PlatformIO.getURLforPath(
-                      thumbFile.thumbPath,
+                    file.meta.thumbPath = PlatformIO.getURLforPath(
+                      thumbFile.meta.thumbPath,
                     );
                   }
                 }

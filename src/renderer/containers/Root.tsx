@@ -39,6 +39,7 @@ import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProv
 import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -63,25 +64,27 @@ export default function Root({ store, persistor }: RootType) {
       <NotificationContextProvider>
         <CurrentLocationContextProvider>
           <EditedEntryContextProvider>
-            <SelectedEntryContextProvider>
-              <DirectoryContentContextProvider>
-                <FSWatcherContextProvider>
-                  <PlatformFacadeContextProvider>
-                    <LocationIndexContextProvider>
-                      <OpenedEntryContextProvider>
-                        <IOActionsContextProvider>
-                          <TaggingActionsContextProvider>
-                            <DndProvider backend={HTML5Backend}>
-                              <MainPage />
-                            </DndProvider>
-                          </TaggingActionsContextProvider>
-                        </IOActionsContextProvider>
-                      </OpenedEntryContextProvider>
-                    </LocationIndexContextProvider>
-                  </PlatformFacadeContextProvider>
-                </FSWatcherContextProvider>
-              </DirectoryContentContextProvider>
-            </SelectedEntryContextProvider>
+            <EditedEntryMetaContextProvider>
+              <SelectedEntryContextProvider>
+                <DirectoryContentContextProvider>
+                  <FSWatcherContextProvider>
+                    <PlatformFacadeContextProvider>
+                      <LocationIndexContextProvider>
+                        <OpenedEntryContextProvider>
+                          <IOActionsContextProvider>
+                            <TaggingActionsContextProvider>
+                              <DndProvider backend={HTML5Backend}>
+                                <MainPage />
+                              </DndProvider>
+                            </TaggingActionsContextProvider>
+                          </IOActionsContextProvider>
+                        </OpenedEntryContextProvider>
+                      </LocationIndexContextProvider>
+                    </PlatformFacadeContextProvider>
+                  </FSWatcherContextProvider>
+                </DirectoryContentContextProvider>
+              </SelectedEntryContextProvider>
+            </EditedEntryMetaContextProvider>
           </EditedEntryContextProvider>
         </CurrentLocationContextProvider>
       </NotificationContextProvider>
