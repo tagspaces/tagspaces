@@ -23,7 +23,7 @@ A full list of the changes is available in the [changelog](https://www.tagspaces
 
 ## Main Features
 
-- **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and man files and folders.
+- **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and managing files and folders.
 - **File tagging** - The application supports two ways for tagging files. The default one embeds the tags directly in the name of the file, the other one uses a so called sidecar files for persisting the tags.
 - **Searching** - The search functionality supports fuzzy functionality and can filter your locations for files and folders containing one or more tags
 - **Browser for local content** - TagSpaces can be used just as browser for your local photos or navigation thought your local ebook library
@@ -82,7 +82,7 @@ and install the project dependencies:
 
     $ npm install
 
-Note: we have two package.json in `release/app` for the native dependencies and `/` you need to run `npm install` twice. 
+Note: we have two package.json in `release/app` for the native dependencies and `/` you need to run `npm install` twice.
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
