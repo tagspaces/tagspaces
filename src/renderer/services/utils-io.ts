@@ -534,11 +534,12 @@ export function createDirectoryIndex(
   }
 
   let listDirectoryPromise;
-  let loadTextFilePromise;
+  //let loadTextFilePromise;
   if (PlatformIO.haveObjectStoreSupport()) {
     listDirectoryPromise = PlatformIO.listObjectStoreDir;
-    // eslint-disable-next-line prefer-destructuring
-    loadTextFilePromise = PlatformIO.loadTextFilePromise;
+    //loadTextFilePromise = PlatformIO.loadTextFilePromise;
+  } else {
+    listDirectoryPromise = PlatformIO.listDirectoryPromise;
   }
   const mode = ['extractThumbPath'];
   if (extractText) {
@@ -547,7 +548,7 @@ export function createDirectoryIndex(
   return createIndex(
     param,
     listDirectoryPromise,
-    loadTextFilePromise,
+    PlatformIO.loadTextFilePromise,
     mode,
     ignorePatterns,
   )
