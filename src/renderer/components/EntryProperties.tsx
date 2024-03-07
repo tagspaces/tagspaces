@@ -415,7 +415,10 @@ function EntryProperties(props: Props) {
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
-    openedEntry.meta.perspective = perspective;
+    openedEntry.meta = {
+      ...(openedEntry.meta && openedEntry.meta),
+      perspective,
+    };
     saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationId);
     /*.then((entryMeta: TS.FileSystemEntryMeta) => {
         openedEntry.meta = entryMeta;

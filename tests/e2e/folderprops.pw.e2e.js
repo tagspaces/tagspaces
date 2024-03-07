@@ -262,9 +262,13 @@ test.describe('TST02 - Folder properties', () => {
       timeout: 15000,
     }); // todo double click
     await clickOn('[data-tid=changePerspectiveTID]');
-    await clickOn('[data-value=gallery]');
-    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
-
+    await clickOn('li[data-value=gallery]');
+    //await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await clickOn(getGridFileSelector('empty_folder'));
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
+    );
     await expectElementExist(
       '[data-tid=perspectiveGalleryToolbar]',
       true,
