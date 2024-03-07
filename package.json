@@ -198,7 +198,7 @@
     "rc-table": "^7.8.0",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
-    "react-best-gradient-color-picker": "2.3.2",
+    "react-best-gradient-color-picker": "^3.0.7",
     "react-color": "^2.19.3",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2",
