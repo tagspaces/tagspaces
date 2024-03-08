@@ -17,7 +17,10 @@
  */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
-import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
+import {
+  getBgndFileLocationForDirectory,
+  getThumbFileLocationForDirectory,
+} from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { saveFsEntryMeta } from '-/utils/metaoperations';
@@ -199,6 +202,17 @@ export const EditedEntryMetaContextProvider = ({
   ): Promise<boolean> {
     return saveMetaData(entry.path, { thumbPath }, locationId).then((meta) => {
       if (meta) {
+        if (
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()
+        ) {
+          // reload cache
+          const folderThumbPath = getThumbFileLocationForDirectory(
+            entry.path,
+            PlatformIO.getDirSeparator(),
+          );
+          PlatformIO.generateURLforPath(folderThumbPath, 604800);
+        }
         const action: TS.EditMetaAction = {
           action: 'thumbChange',
           entry: {
