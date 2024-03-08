@@ -194,7 +194,7 @@ function FileMenu(props: Props) {
     onClose();
     let path =
       PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-        ? PlatformIO.getURLforPath(selectedFilePath)
+        ? PlatformIO.generateURLforPath(selectedFilePath, 604800) // 7 days
         : selectedFilePath;
 
     const directoryPath = extractContainingDirectoryPath(

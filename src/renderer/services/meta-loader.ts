@@ -102,7 +102,7 @@ function setThumbForEntry(
         thumbPath = thumbPath.substring(1);
       }
 
-      thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
+      thumbPath = PlatformIO.generateURLforPath(thumbPath, 604800);
       if (thumbPath) {
         thumbEntry.meta = { id: getUuid(), thumbPath };
       }

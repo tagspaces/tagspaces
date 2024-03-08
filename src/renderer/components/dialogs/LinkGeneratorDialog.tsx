@@ -88,13 +88,6 @@ function LinkGeneratorDialog(props: Props) {
       forceUpdate();
       return switchCurrentLocationType();
     });
-    /*} else {
-      signedLink.current = PlatformIO.getURLforPath(
-        path,
-        linkValidityDuration.current
-      );
-      forceUpdate();
-    }*/
   }
 
   return (

@@ -23,6 +23,7 @@ import { Pro } from '-/pro';
 import { openUrlForWeb } from '-/services/utils-io';
 
 let objectStoreAPI, webDavAPI;
+const urlCache = {};
 
 export default class PlatformFacade {
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> => {
@@ -147,13 +148,31 @@ export default class PlatformFacade {
 
   /**
    * ObjectStore and webDav only
+   * Function to generate or retrieve cached URL with expiration date
    * @param path
    * @param expirationInSeconds
    */
   static getURLforPath = (
     path: string,
-    expirationInSeconds?: number,
+    expirationInSeconds: number = 900,
   ): string => {
+    const currentTime = new Date().getTime();
+
+    // Check if URL is cached and not expired
+    if (urlCache[path] && urlCache[path].expirationTime > currentTime) {
+      return urlCache[path].url;
+    } else {
+      // Generate new URL and cache it with expiration time
+      const newURL = this.generateURLforPath(path, expirationInSeconds);
+      urlCache[path] = {
+        url: newURL,
+        expirationTime: currentTime + expirationInSeconds * 1000,
+      };
+      return newURL;
+    }
+  };
+
+  static generateURLforPath = (path, expirationInSeconds) => {
     if (objectStoreAPI) {
       const param = {
         path,
