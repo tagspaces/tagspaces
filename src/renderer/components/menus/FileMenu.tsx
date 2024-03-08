@@ -67,6 +67,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import PlatformFacade from '-/services/platform-facade';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   anchorEl: Element;
@@ -167,16 +168,17 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
       .then((thumbPath: string) => {
-        setThumbnailImageChange(
-          toFsEntry(
-            extractContainingDirectoryPath(
-              selectedEntries[0].path,
-              PlatformFacade.getDirSeparator(),
-            ),
-            false,
+        const entry: TS.FileSystemEntry = toFsEntry(
+          extractContainingDirectoryPath(
+            selectedEntries[0].path,
+            PlatformFacade.getDirSeparator(),
           ),
-          thumbPath,
+          false,
         );
+        setThumbnailImageChange({
+          ...entry,
+          meta: { id: entry.uuid, thumbPath },
+        });
         showNotification('Thumbnail created: ' + thumbPath);
         return true;
       })

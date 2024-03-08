@@ -141,16 +141,16 @@ function GridCell(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const fileSystemEntryBgColor = useRef<string>(
+  /*const fileSystemEntryBgColor = useRef<string>(
     findBackgroundColorForFolder(fsEntry),
-  );
-  const thumbUrl = useRef<string>(undefined);
+  );*/
+  //const thumbUrl = useRef<string>(undefined);
 
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (fsEntry.path === action.entry.path) {
-          if (action.action === 'thumbChange') {
+          /*if (action.action === 'thumbChange') {
             if (action.entry.meta.thumbPath) {
               thumbUrl.current = getThumbPath(
                 action.entry.meta.thumbPath,
@@ -165,12 +165,18 @@ function GridCell(props: Props) {
               }
             }
             forceUpdate();
-          } else if (action.action === 'bgdColorChange') {
+          } else*/
+          /*if (action.action === 'bgdColorChange') {
             fileSystemEntryBgColor.current = findBackgroundColorForFolder(
               action.entry,
             );
             forceUpdate();
-          } else if (action.action === 'descriptionChange') {
+          } else*/
+          if (
+            action.action === 'thumbChange' ||
+            action.action === 'bgdColorChange' ||
+            action.action === 'descriptionChange'
+          ) {
             fsEntry.meta = { ...action.entry.meta };
             forceUpdate();
           }
@@ -403,7 +409,7 @@ function GridCell(props: Props) {
         style={{
           height: maxHeight - 70,
           position: 'relative',
-          backgroundColor: fileSystemEntryBgColor.current || 'transparent',
+          backgroundColor: findBackgroundColorForFolder(fsEntry),
         }}
       >
         <Box style={{ position: 'absolute' }}>
@@ -413,7 +419,7 @@ function GridCell(props: Props) {
             <TagsPreview tags={entryTags} />
           )}
         </Box>
-        {(fsEntry.meta && fsEntry.meta.thumbPath) || thumbUrl.current ? (
+        {fsEntry.meta && fsEntry.meta.thumbPath ? (
           <CardMedia
             component="img"
             loading="lazy"
@@ -421,14 +427,10 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={
-              thumbUrl.current
-                ? thumbUrl.current
-                : getThumbPath(
-                    fsEntry.meta.thumbPath,
-                    fsEntry.meta?.lastUpdated,
-                  )
-            }
+            src={getThumbPath(
+              fsEntry.meta.thumbPath,
+              fsEntry.meta?.lastUpdated,
+            )}
             style={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,

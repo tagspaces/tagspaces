@@ -1,6 +1,10 @@
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
-import { executePromisesInBatches, getMetaForEntry } from '-/services/utils-io';
+import {
+  executePromisesInBatches,
+  getMetaForEntry,
+  loadMetaForDir,
+} from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
@@ -125,7 +129,12 @@ export function getEnhancedDir(
   if (entry.name === AppConfig.metaFolder) {
     return Promise.resolve(undefined);
   }
-  return PlatformIO.listMetaDirectoryPromise(entry.path).then((meta) => {
+  return getDirMeta(entry.path).then((meta) => ({
+    ...entry,
+    meta,
+  }));
+
+  /*return PlatformIO.listMetaDirectoryPromise(entry.path).then((meta) => {
     const metaFilePath = getMetaFileLocationForDir(
       entry.path,
       PlatformIO.getDirSeparator(),
@@ -140,7 +149,7 @@ export function getEnhancedDir(
         PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
           ? PlatformIO.getURLforPath(thumbDirPath)
           : thumbDirPath;
-      enhancedEntry = { ...entry, thumbPath };
+      enhancedEntry = { ...entry, meta: { thumbPath } };
     }
     if (
       meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
@@ -151,5 +160,36 @@ export function getEnhancedDir(
       return getMetaForEntry(enhancedEntry || entry, metaFilePath);
     }
     return enhancedEntry;
+  });*/
+}
+
+export function getDirMeta(dirPath: string): Promise<TS.FileSystemEntryMeta> {
+  return PlatformIO.listMetaDirectoryPromise(dirPath).then((meta) => {
+    const metaFilePath = getMetaFileLocationForDir(
+      dirPath,
+      PlatformIO.getDirSeparator(),
+    );
+    const thumbDirPath = getThumbFileLocationForDirectory(
+      dirPath,
+      PlatformIO.getDirSeparator(),
+    );
+    let thumbPath;
+    if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
+      thumbPath =
+        PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
+          ? PlatformIO.getURLforPath(thumbDirPath)
+          : thumbDirPath;
+    }
+    if (
+      meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
+      dirPath.indexOf(AppConfig.metaFolder + PlatformIO.getDirSeparator()) ===
+        -1
+    ) {
+      return loadMetaForDir(dirPath, { thumbPath });
+    }
+    if (thumbPath) {
+      return { id: '', thumbPath, lastUpdated: new Date().getTime() };
+    }
+    return undefined;
   });
 }

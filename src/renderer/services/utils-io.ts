@@ -57,7 +57,13 @@ import { generateImageThumbnail } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
+import { getEnhancedDir } from '-/services/meta-loader';
 
+/**
+ * @deprecated use loadMetaForDir
+ * @param entry
+ * @param metaFilePath
+ */
 export function getMetaForEntry(
   entry: TS.FileSystemEntry,
   metaFilePath?: string,
@@ -86,6 +92,7 @@ export function getMetaForEntry(
         {
           ...entry,
           meta: {
+            ...(entry.meta && entry.meta),
             ...meta,
             description: getDescriptionPreview(meta.description, 200),
           },
@@ -95,6 +102,24 @@ export function getMetaForEntry(
       );
     }
     return entry;
+  });
+}
+
+export function loadMetaForDir(
+  dirPath: string,
+  metaAdd?,
+): Promise<TS.FileSystemEntryMeta> {
+  return loadJSONFile(
+    getMetaFileLocationForDir(dirPath, PlatformIO.getDirSeparator()),
+  ).then((meta: TS.FileSystemEntryMeta) => {
+    if (meta) {
+      return {
+        ...(metaAdd && metaAdd),
+        ...meta,
+        description: getDescriptionPreview(meta.description, 200),
+      };
+    }
+    return undefined;
   });
 }
 
@@ -573,11 +598,15 @@ export function getAllPropertiesPromise(
   return PlatformIO.getPropertiesPromise(entryPath).then(
     (entryProps: TS.FileSystemEntry) => {
       if (entryProps) {
-        const metaFilePath = entryProps.isFile
-          ? getMetaFileLocationForFile(entryPath, PlatformIO.getDirSeparator())
-          : getMetaFileLocationForDir(entryPath, PlatformIO.getDirSeparator());
-        //const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
-        //if (metaFileProps.isFile) {
+        if (!entryProps.isFile) {
+          return getEnhancedDir(entryProps);
+        }
+
+        const metaFilePath = getMetaFileLocationForFile(
+          entryPath,
+          PlatformIO.getDirSeparator(),
+        );
+
         try {
           return loadJSONFile(metaFilePath).then(
             (meta: TS.FileSystemEntryMeta) => {
@@ -983,9 +1012,6 @@ export function cleanMetaData(
   }
   if (metaData.autoSave) {
     cleanedMeta.autoSave = metaData.autoSave;
-  }
-  if (metaData.thumbPath) {
-    cleanedMeta.thumbPath = metaData.thumbPath;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {

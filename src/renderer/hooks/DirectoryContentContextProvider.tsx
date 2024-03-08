@@ -34,15 +34,10 @@ import {
   extractContainingDirectoryPath,
   extractFileName,
   extractParentDirectoryPath,
-  getMetaFileLocationForDir,
-  getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
   getAllPropertiesPromise,
-  getFolderBgndPath,
-  loadJSONFile,
-  merge,
   toFsEntry,
   updateFsEntries,
 } from '-/services/utils-io';
@@ -66,7 +61,7 @@ import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { getDirMeta, loadCurrentDirMeta } from '-/services/meta-loader';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type DirectoryContentContextData = {
@@ -574,7 +569,15 @@ export const DirectoryContentContextProvider = ({
       setSelectedEntries([]);
     }
     if (loadDirMeta) {
-      const metaDirectory = getMetaDirectoryPath(directoryPath);
+      return getDirMeta(directoryPath).then((meta) => {
+        if (meta) {
+          directoryMeta.current = meta;
+        } else {
+          directoryMeta.current = getDefaultDirMeta();
+        }
+        return loadDirectoryContentInt(directoryPath, showHiddenEntries);
+      });
+      /*const metaDirectory = getMetaDirectoryPath(directoryPath);
       return PlatformIO.checkDirExist(metaDirectory).then((exist) => {
         if (exist) {
           //isMetaFolderExist.current = true;
@@ -595,7 +598,7 @@ export const DirectoryContentContextProvider = ({
           directoryMeta.current = getDefaultDirMeta();
           return loadDirectoryContentInt(directoryPath, showHiddenEntries);
         }
-      });
+      });*/
     } else {
       isMetaLoaded.current = false;
       directoryMeta.current = getDefaultDirMeta();
@@ -813,7 +816,7 @@ export const DirectoryContentContextProvider = ({
           action: 'perspectiveChange',
           entry: {
             ...entry,
-            meta: { ...(entry.meta && { ...entry.meta }), perspective },
+            meta: { ...(entry.meta && entry.meta), perspective },
           },
         };
         setReflectMetaActions(action);

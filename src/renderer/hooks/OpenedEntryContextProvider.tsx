@@ -217,20 +217,9 @@ export const OpenedEntryContextProvider = ({
           currentEntry.current &&
           currentEntry.current.path === action.entry.path
         ) {
-          if (action.action === 'thumbChange') {
-            if (action.entry.meta.thumbPath) {
-              currentEntry.current = {
-                ...currentEntry.current,
-                meta: { ...currentEntry.current.meta, ...action.entry.meta },
-              };
-            } else {
-              const { thumbPath, ...meta } = currentEntry.current.meta;
-              currentEntry.current = { ...currentEntry.current, meta };
-            }
-            isChanged = true;
-          } else if (
+          if (
             action.action === 'bgdColorChange' ||
-            //action.action === 'thumbChange' ||
+            action.action === 'thumbChange' ||
             action.action === 'bgdImgChange' ||
             action.action === 'descriptionChange'
           ) {
