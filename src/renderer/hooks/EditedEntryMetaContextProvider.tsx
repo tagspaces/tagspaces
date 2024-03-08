@@ -17,9 +17,11 @@
  */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { saveFsEntryMeta } from '-/utils/metaoperations';
+import PlatformIO from '-/services/platform-facade';
 
 type EditedEntryMetaContextData = {
   metaActions: TS.EditMetaAction[];
@@ -151,6 +153,14 @@ export const EditedEntryMetaContextProvider = ({
   }
 
   function setBackgroundImageChange(entry: TS.FileSystemEntry) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      // reload cache
+      const folderBgndPath = getBgndFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+      PlatformIO.generateURLforPath(folderBgndPath, 604800);
+    }
     const action: TS.EditMetaAction = {
       action: 'bgdImgChange',
       entry: {

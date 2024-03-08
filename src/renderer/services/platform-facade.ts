@@ -163,26 +163,28 @@ export default class PlatformFacade {
       return urlCache[path].url;
     } else {
       // Generate new URL and cache it with expiration time
-      const newURL = this.generateURLforPath(path, expirationInSeconds);
-      urlCache[path] = {
-        url: newURL,
-        expirationTime: currentTime + expirationInSeconds * 1000,
-      };
-      return newURL;
+      return this.generateURLforPath(path, expirationInSeconds);
     }
   };
 
   static generateURLforPath = (path, expirationInSeconds) => {
+    let url;
     if (objectStoreAPI) {
       const param = {
         path,
         bucketName: objectStoreAPI.config().bucketName,
       };
-      return objectStoreAPI.getURLforPath(param, expirationInSeconds);
+      url = objectStoreAPI.getURLforPath(param, expirationInSeconds);
     } else if (webDavAPI) {
-      return webDavAPI.getURLforPath(path);
+      url = webDavAPI.getURLforPath(path);
     }
-    return undefined;
+    if (url) {
+      urlCache[path] = {
+        url: url,
+        expirationTime: new Date().getTime() + expirationInSeconds * 1000,
+      };
+    }
+    return url;
   };
 
   /**

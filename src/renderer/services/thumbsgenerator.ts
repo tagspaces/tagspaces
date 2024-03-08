@@ -449,6 +449,9 @@ export function generateImageThumbnail(
   maxTmbSize?: number,
 ): Promise<string> {
   try {
+    if (fileURL.startsWith('http://') || fileURL.startsWith('https://')) {
+      return getResizedImageThumbnail(fileURL, maxTmbSize);
+    }
     return PlatformIO.getFileContentPromise(fileURL, 'arraybuffer')
       .then((content) => {
         const ext = extractFileExtension(
