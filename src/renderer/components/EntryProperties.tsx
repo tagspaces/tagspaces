@@ -559,7 +559,7 @@ function EntryProperties(props: Props) {
                 openedEntry.current.editMode ||
                 editName !== undefined
               }*/
-              tags={openedEntry.tags}
+              tags={openedEntry.meta?.tags}
               tagMode="default"
               handleChange={handleChange}
               selectedEntryPath={openedEntry.path}

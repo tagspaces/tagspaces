@@ -260,7 +260,7 @@ function EntryContainerTitle(props: Props) {
           )}
         </IconButton>
       </ProTooltip>
-      <TagsPreview tags={openedEntry.tags} />
+      <TagsPreview tags={openedEntry.meta?.tags} />
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}
