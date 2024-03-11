@@ -222,7 +222,8 @@ export const OpenedEntryContextProvider = ({
             action.action === 'bgdColorChange' ||
             action.action === 'thumbChange' ||
             action.action === 'bgdImgChange' ||
-            action.action === 'descriptionChange'
+            action.action === 'descriptionChange' ||
+            action.action === 'autoSaveChange'
           ) {
             currentEntry.current = {
               ...currentEntry.current,
