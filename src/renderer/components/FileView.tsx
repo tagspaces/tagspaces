@@ -115,8 +115,8 @@ function FileView(props: Props) {
           theming +
           extQuery +
           event +
-          '&edit=true&t=' +
-          openedEntry.lmdt
+          '&edit=true'
+          // '&t=' + openedEntry.lmdt
         );
       } else {
         return (

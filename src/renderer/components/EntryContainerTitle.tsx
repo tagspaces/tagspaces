@@ -42,6 +42,7 @@ import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { getAllTags } from '-/services/utils-io';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -260,7 +261,7 @@ function EntryContainerTitle(props: Props) {
           )}
         </IconButton>
       </ProTooltip>
-      <TagsPreview tags={openedEntry.tags} />
+      <TagsPreview tags={getAllTags(openedEntry)} />
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}

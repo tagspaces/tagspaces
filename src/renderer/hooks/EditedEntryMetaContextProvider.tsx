@@ -50,11 +50,7 @@ type EditedEntryMetaContextData = {
     color: string,
     locationId?,
   ) => Promise<boolean>;
-  setThumbnailImageChange: (
-    entry: TS.FileSystemEntry,
-    thumbPath: string,
-    locationId?,
-  ) => Promise<boolean>;
+  setThumbnailImageChange: (entry: TS.FileSystemEntry) => void;
 };
 
 export const EditedEntryMetaContext = createContext<EditedEntryMetaContextData>(
@@ -99,7 +95,7 @@ export const EditedEntryMetaContextProvider = ({
           action: 'autoSaveChange',
           entry: {
             ...entry,
-            meta: meta,
+            meta: { ...(entry.meta && entry.meta), ...meta },
           },
         };
         setReflectMetaActions(action);
@@ -121,7 +117,7 @@ export const EditedEntryMetaContextProvider = ({
             action: 'perspectiveChange',
             entry: {
               ...entry,
-              meta: meta,
+              meta: { ...(entry.meta && entry.meta), ...meta },
             },
           };
           setReflectMetaActions(action);
@@ -144,7 +140,7 @@ export const EditedEntryMetaContextProvider = ({
             action: 'descriptionChange',
             entry: {
               ...entry,
-              meta: meta,
+              meta: { ...(entry.meta && entry.meta), ...meta },
             },
           };
           setReflectMetaActions(action);
@@ -168,7 +164,10 @@ export const EditedEntryMetaContextProvider = ({
       action: 'bgdImgChange',
       entry: {
         ...entry,
-        meta: { ...entry.meta, lastUpdated: new Date().getTime() },
+        meta: {
+          ...(entry.meta && entry.meta),
+          lastUpdated: new Date().getTime(),
+        },
       },
     };
     setReflectMetaActions(action);
@@ -185,7 +184,7 @@ export const EditedEntryMetaContextProvider = ({
           action: 'bgdColorChange',
           entry: {
             ...entry,
-            meta: meta,
+            meta: { ...(entry.meta && entry.meta), ...meta },
           },
         };
         setReflectMetaActions(action);
@@ -195,36 +194,23 @@ export const EditedEntryMetaContextProvider = ({
     });
   }
 
-  function setThumbnailImageChange(
-    entry: TS.FileSystemEntry,
-    thumbPath: string,
-    locationId = undefined,
-  ): Promise<boolean> {
-    return saveMetaData(entry.path, { thumbPath }, locationId).then((meta) => {
-      if (meta) {
-        if (
-          PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()
-        ) {
-          // reload cache
-          const folderThumbPath = getThumbFileLocationForDirectory(
-            entry.path,
-            PlatformIO.getDirSeparator(),
-          );
-          PlatformIO.generateURLforPath(folderThumbPath, 604800);
-        }
-        const action: TS.EditMetaAction = {
-          action: 'thumbChange',
-          entry: {
-            ...entry,
-            meta: meta,
-          },
-        };
-        setReflectMetaActions(action);
-        return true;
-      }
-      return false;
-    });
+  function setThumbnailImageChange(entry: TS.FileSystemEntry) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      // reload cache
+      const folderThumbPath = getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+      PlatformIO.generateURLforPath(folderThumbPath, 604800);
+    }
+    const action: TS.EditMetaAction = {
+      action: 'thumbChange',
+      entry: {
+        ...entry,
+        meta: { ...entry.meta, lastUpdated: new Date().getTime() },
+      },
+    };
+    setReflectMetaActions(action);
   }
 
   function saveMetaData(

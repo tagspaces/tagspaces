@@ -36,6 +36,9 @@ function TagContainerMenu(props: Props) {
   if (readOnlyMode) {
     return <div style={{ width: 10 }} />;
   }
+  if (tagMode === 'display') {
+    return <div style={{ width: 10 }} />;
+  }
   return tagMode === 'remove' ? (
     deleteIcon || (
       <RemoveTagIcon
