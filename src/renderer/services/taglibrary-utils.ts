@@ -1,7 +1,6 @@
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import {
-  extend,
   formatDateTime4Tag,
   immutablySwapItems,
   prepareTagGroupForExport,

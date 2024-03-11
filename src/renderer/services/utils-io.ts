@@ -59,6 +59,24 @@ import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 import { getEnhancedDir } from '-/services/meta-loader';
 
+export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
+  const tags = [];
+  if (entry.meta && entry.meta.tags && entry.meta.tags.length > 0) {
+    tags.push(...entry.meta.tags);
+  }
+  if (entry.tags && entry.tags.length > 0) {
+    if (tags.length > 0) {
+      const filteredTags = entry.tags.filter(
+        (tag) => !tags.some((t) => t.title === tag.title),
+      );
+      tags.push(...filteredTags);
+    } else {
+      tags.push(...entry.tags);
+    }
+  }
+  return tags;
+}
+
 /**
  * @deprecated use loadMetaForDir
  * @param entry
@@ -94,7 +112,7 @@ export function getMetaForEntry(
           meta: {
             ...(entry.meta && entry.meta),
             ...meta,
-            description: getDescriptionPreview(meta.description, 200),
+            // description: getDescriptionPreview(meta.description, 200),
           },
         },
         AppConfig.tagDelimiter,
@@ -116,7 +134,7 @@ export function loadMetaForDir(
       return {
         ...(metaAdd && metaAdd),
         ...meta,
-        description: getDescriptionPreview(meta.description, 200),
+        // description: getDescriptionPreview(meta.description, 200),
       };
     }
     return undefined;

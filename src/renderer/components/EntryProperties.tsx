@@ -63,6 +63,7 @@ import {
   dirNameValidation,
   getFolderBgndPath,
   getThumbPath,
+  getAllTags,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
@@ -559,7 +560,7 @@ function EntryProperties(props: Props) {
                 openedEntry.current.editMode ||
                 editName !== undefined
               }*/
-              tags={openedEntry.meta?.tags}
+              tags={getAllTags(openedEntry)}
               tagMode="default"
               handleChange={handleChange}
               selectedEntryPath={openedEntry.path}
