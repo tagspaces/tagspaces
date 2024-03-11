@@ -186,7 +186,8 @@ export const OpenedEntryContextProvider = ({
     if (actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.open && action.entry.isFile && action.entry.isNewFile) {
+          if (action.open && action.entry.isFile) {
+            //&& action.entry.isNewFile) {
             openFsEntry(action.entry, true);
           }
         } else if (action.action === 'delete') {
@@ -376,100 +377,12 @@ export const OpenedEntryContextProvider = ({
   function reloadOpenedFile(): Promise<boolean> {
     if (currentEntry.current) {
       currentEntry.current.editMode = false;
-      return openEntry(currentEntry.current.path, true);
-      /*//openedEntries && openedEntries.length > 0) {
-      const openedFile = currentEntry.current; //openedEntries[0];
-      const metaFilePath = openedFile.isFile
-        ? getMetaFileLocationForFile(
-            openedFile.path,
-            PlatformIO.getDirSeparator(),
-          )
-        : getMetaFileLocationForDir(
-            openedFile.path,
-            PlatformIO.getDirSeparator(),
-          );
-      try {
-        return loadJSONFile(metaFilePath).then((fsEntryMeta) => {
-          if (fsEntryMeta) {
-            return updateOpenedFile(openedFile.path, {
-              ...fsEntryMeta,
-              editMode: false,
-              shouldReload: !openedFile.shouldReload,
-            });
-          }
-          // @ts-ignore
-          const entryMeta: TS.FileSystemEntryMeta = {
-            ...openedFile,
-            editMode: false,
-            shouldReload: !openedFile.shouldReload,
-          };
-          return updateOpenedFile(openedFile.path, entryMeta);
-        });
-      } catch (e) {
-        // @ts-ignore
-        const entryMeta: TS.FileSystemEntryMeta = {
-          ...openedFile,
-          editMode: false,
-          shouldReload: !openedFile.shouldReload,
-        };
-        return updateOpenedFile(openedFile.path, entryMeta);
-      }*/
+      return openEntry(currentEntry.current.path); //true);
     }
     return Promise.resolve(false);
   }
 
-  /*function updateOpenedFile(
-    entryPath: string,
-    fsEntryMeta: TS.FileSystemEntryMeta,
-  ): Promise<boolean> {
-    if (currentEntry.current && currentEntry.current.path === entryPath) {
-      return PlatformIO.getPropertiesPromise(entryPath)
-        .then((entryProps) => {
-          if (entryProps) {
-            let entryForOpening: TS.OpenedEntry;
-
-            entryForOpening = { ...currentEntry.current }; //entryExist };
-
-            if (fsEntryMeta.editMode !== undefined) {
-              entryForOpening.editMode = fsEntryMeta.editMode;
-            }
-            //entryForOpening.shouldReload = fsEntryMeta.shouldReload;
-            if (fsEntryMeta.color) {
-              if (fsEntryMeta.color === 'transparent') {
-                entryForOpening.color = undefined;
-              } else {
-                entryForOpening.color = fsEntryMeta.color;
-              }
-            }
-            if (fsEntryMeta.description !== undefined) {
-              entryForOpening.description = fsEntryMeta.description;
-            }
-            if (fsEntryMeta.perspective) {
-              entryForOpening.perspective = fsEntryMeta.perspective;
-            } else {
-              entryForOpening.perspective = 'unspecified';
-            }
-            if (fsEntryMeta.tags) {
-              entryForOpening.tags = fsEntryMeta.tags;
-            }
-            if (fsEntryMeta.autoSave !== undefined) {
-              entryForOpening.isAutoSaveEnabled = fsEntryMeta.autoSave;
-            }
-            entryForOpening.lmdt = entryProps.lmdt;
-            entryForOpening.size = entryProps.size;
-            addToEntryContainer(entryForOpening);
-          }
-          return true;
-        })
-        .catch((err) => {
-          console.log('updateOpenedFile ' + entryPath + ' not exist ' + err);
-          return Promise.resolve(false);
-        });
-    }
-    return Promise.resolve(false);
-  }*/
-
-  function openEntry(path?: string, showDetails = false): Promise<boolean> {
+  function openEntry(path?: string, showDetails = undefined): Promise<boolean> {
     if (path === undefined) {
       return openFsEntry(undefined, showDetails);
     }
@@ -485,9 +398,11 @@ export const OpenedEntryContextProvider = ({
 
   function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
-    showDetails = false,
+    showDetails = undefined,
   ): Promise<boolean> {
-    dispatch(SettingsActions.setShowDetails(showDetails));
+    if (showDetails !== undefined) {
+      dispatch(SettingsActions.setShowDetails(showDetails));
+    }
     if (fsEntry === undefined) {
       if (selectedEntries && selectedEntries.length > 0) {
         const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
