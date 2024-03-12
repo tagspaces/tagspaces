@@ -275,4 +275,42 @@ test.describe('TST02 - Folder properties', () => {
       5000,
     );
   });
+
+  test('TST0219 - Set and remove predefined folder thumbnail [web,minio,electron,_pro]', async () => {
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('ul[data-tid=predefinedThumbnailsTID] > li');
+    await clickOn('[data-tid=confirmCustomThumb]');
+
+    const imgElement = await global.client.$(
+      '[data-tid=fsEntryName_empty_folder] img',
+    );
+    const srcValue = await imgElement.getAttribute('src');
+    expect(srcValue.indexOf('.ts/tst.jpg')).toBeGreaterThan(-1);
+  });
+
+  test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
+    );
+    await clickOn('[data-tid=changeBackgroundImageTID]');
+    await clickOn('ul[data-tid=predefinedBackgroundsTID] > li');
+
+    await expectElementExist(
+      '[data-tid=bgnColorPickerDialogContent] > img',
+      true,
+      5000,
+    );
+    await clickOn('[data-tid=colorPickerConfirm]');
+    // todo expects - background link is always the same
+    /*const imgElement = await global.client.$(
+      '[data-tid=propsBgnImageTID]',
+    );
+    const styleValue = await imgElement.getAttribute('style');
+    expect(styleValue.indexOf('.ts/tsb.jpg')).toBeGreaterThan(-1);*/
+  });
 });

@@ -965,7 +965,11 @@ function EntryProperties(props: Props) {
                         !openedEntry.editMode &&
                         editName === undefined && (
                           <ProTooltip tooltip={t('changeThumbnail')}>
-                            <Button fullWidth onClick={toggleThumbFilesDialog}>
+                            <Button
+                              data-tid="changeThumbnailTID"
+                              fullWidth
+                              onClick={toggleThumbFilesDialog}
+                            >
                               {t('core:change')}
                             </Button>
                             {/* <IconButton
@@ -1023,7 +1027,11 @@ function EntryProperties(props: Props) {
                           !openedEntry.editMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeBackgroundImage')}>
-                              <Button fullWidth onClick={toggleBgndImgDialog}>
+                              <Button
+                                data-tid="changeBackgroundImageTID"
+                                fullWidth
+                                onClick={toggleBgndImgDialog}
+                              >
                                 {t('core:change')}
                               </Button>
                               {/* <IconButton
@@ -1037,8 +1045,8 @@ function EntryProperties(props: Props) {
                               </IconButton> */}
                             </ProTooltip>
                           )}
-                        {/* <ProTooltip tooltip={t('changeBackgroundImage')}> */}
                         <div
+                          data-tid="propsBgnImageTID"
                           role="button"
                           tabIndex={0}
                           style={{
@@ -1059,7 +1067,6 @@ function EntryProperties(props: Props) {
                           }}
                           onClick={toggleBgndImgDialog}
                         />
-                        {/* </ProTooltip> */}
                       </Stack>
                     </InputAdornment>
                   ),
