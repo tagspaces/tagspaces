@@ -326,6 +326,12 @@ export const DirectoryContentContextProvider = ({
               }
             }
           }
+          if (currentDirectoryPath.current === action.entry.path) {
+            directoryMeta.current = {
+              ...(directoryMeta.current && directoryMeta.current),
+              ...(action.entry.meta && action.entry.meta),
+            };
+          }
         } else if (action.action === 'move') {
           await reflectAddAction(action.entry);
           reflectDeleteAction(
