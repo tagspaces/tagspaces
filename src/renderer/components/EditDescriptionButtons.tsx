@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
-import { convertMarkDown } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -61,24 +60,24 @@ const EditDescriptionButtons: React.FC<Props> = ({
     }
   }, [editMode]);
 
-  const printHTML = () => {
-    const sanitizedDescription = description
-      ? convertMarkDown(description, currentDirectoryPath)
-      : t('core:addMarkdownDescription');
+  // const printHTML = () => {
+  //   const sanitizedDescription = description
+  //     ? convertMarkDown(description, currentDirectoryPath)
+  //     : t('core:addMarkdownDescription');
 
-    const printWin = window.open('', 'PRINT', 'height=400,width=600');
-    printWin.document.write(
-      '<html><head><title>' + currentDirectoryPath + ' description</title>',
-    );
-    printWin.document.write('</head><body >');
-    printWin.document.write(sanitizedDescription);
-    printWin.document.write('</body></html>');
-    printWin.document.close(); // necessary for IE >= 10
-    printWin.focus(); // necessary for IE >= 10*/
-    printWin.print();
-    // printWin.close();
-    return true;
-  };
+  //   const printWin = window.open('', 'PRINT', 'height=400,width=600');
+  //   printWin.document.write(
+  //     '<html><head><title>' + currentDirectoryPath + ' description</title>',
+  //   );
+  //   printWin.document.write('</head><body >');
+  //   printWin.document.write(sanitizedDescription);
+  //   printWin.document.write('</body></html>');
+  //   printWin.document.close(); // necessary for IE >= 10
+  //   printWin.focus(); // necessary for IE >= 10*/
+  //   printWin.print();
+  //   // printWin.close();
+  //   return true;
+  // };
 
   return (
     <Root>
@@ -92,11 +91,11 @@ const EditDescriptionButtons: React.FC<Props> = ({
           {t(isDescriptionChanged ? 'core:cancel' : 'core:close')}
         </Button>
       )}
-      {!editMode && (
+      {/* {!editMode && (
         <Button className={classes.button} onClick={printHTML}>
           {t('core:print')}
         </Button>
-      )}
+      )} */}
       <ProTooltip tooltip={t('editDescription')}>
         <Button
           data-tid="editDescriptionTID"
