@@ -31,6 +31,24 @@ export async function takeScreenshot(testInfo, title = 'failure') {
   return await global.client.screenshot({ path: sPath });
 }
 
+export async function getElementScreenshot(
+  selector,
+  options = {
+    /*encoding: 'base64'*/
+  },
+) {
+  try {
+    const buffer = await global.client
+      .locator(selector)
+      .screenshot({ ...options });
+    //const buffer = await el.screenshot({ ...options/*, clip: boundingBox*/ });
+    return buffer.toString('base64');
+  } catch (e) {
+    console.log('getElementScreenshot ' + selector + ' error: ', e);
+  }
+  return undefined;
+}
+
 export async function clickOn(selector, options = { timeout: 15000 }) {
   try {
     await global.client.click(selector, options);

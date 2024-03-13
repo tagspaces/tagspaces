@@ -910,6 +910,7 @@ function EntryProperties(props: Props) {
                         <ProTooltip tooltip={t('changeBackgroundColor')}>
                           <IconButton
                             key={cnt}
+                            data-tid={'backgroundTID' + cnt}
                             aria-label="fingerprint"
                             onClick={() => handleChangeColor(background)}
                             style={{
@@ -925,6 +926,7 @@ function EntryProperties(props: Props) {
                           <ProTooltip tooltip={t('clearFolderColor')}>
                             <span>
                               <IconButton
+                                data-tid={'backgroundClearTID'}
                                 disabled={!Pro}
                                 aria-label="clear"
                                 size="small"

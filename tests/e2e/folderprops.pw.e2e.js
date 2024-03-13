@@ -17,6 +17,7 @@ import {
   createNewDirectory,
   dnd,
   setInputKeys,
+  getElementScreenshot,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -276,10 +277,42 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
+  test('TST0218 - Set and remove predefined background gradient for folder [web,minio,electron,_pro]', async () => {
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
+    );
+    const initScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    await clickOn('[data-tid=backgroundTID1]');
+
+    const withBgnColorScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).not.toBe(withBgnColorScreenshot);
+
+    // remove background
+    await clickOn('[data-tid=backgroundClearTID]');
+    await clickOn('[data-tid=confirmConfirmResetColorDialog]');
+
+    const bgnRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).toBe(bgnRemovedScreenshot);
+  });
+
   test('TST0219 - Set and remove predefined folder thumbnail [web,minio,electron,_pro]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
+    );
+    const initScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
     );
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('ul[data-tid=predefinedThumbnailsTID] > li');
@@ -290,6 +323,20 @@ test.describe('TST02 - Folder properties', () => {
     );
     const srcValue = await imgElement.getAttribute('src');
     expect(srcValue.indexOf('.ts/tst.jpg')).toBeGreaterThan(-1);
+
+    const withThumbScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).not.toBe(withThumbScreenshot);
+
+    // remove thumb
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=clearThumbnail]');
+
+    const thumbRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).toBe(thumbRemovedScreenshot);
   });
 
   test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
@@ -297,6 +344,9 @@ test.describe('TST02 - Folder properties', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
+    const initScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    ); //propsBgnImageTID
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('ul[data-tid=predefinedBackgroundsTID] > li');
 
@@ -306,11 +356,17 @@ test.describe('TST02 - Folder properties', () => {
       5000,
     );
     await clickOn('[data-tid=colorPickerConfirm]');
-    // todo expects - background link is always the same
-    /*const imgElement = await global.client.$(
-      '[data-tid=propsBgnImageTID]',
+    const withBgnScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
     );
-    const styleValue = await imgElement.getAttribute('style');
-    expect(styleValue.indexOf('.ts/tsb.jpg')).toBeGreaterThan(-1);*/
+    expect(initScreenshot).not.toBe(withBgnScreenshot);
+
+    // remove background
+    await clickOn('[data-tid=changeBackgroundImageTID]');
+    await clickOn('[data-tid=clearBackground]');
+    const bgnRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 });

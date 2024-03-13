@@ -179,7 +179,7 @@ function FileMenu(props: Props) {
           ...entry,
           meta: { id: entry.uuid, thumbPath },
         });
-        showNotification('Thumbnail created: ' + thumbPath);
+        //showNotification('Thumbnail created: ' + thumbPath);
         return true;
       })
       .catch((error) => {

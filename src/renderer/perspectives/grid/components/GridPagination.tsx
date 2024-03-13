@@ -268,6 +268,7 @@ function GridPagination(props: Props) {
                     )}
                 </Box>
                 <div
+                  data-tid="folderThumbTID"
                   style={{
                     borderRadius: 10,
                     height: 100,

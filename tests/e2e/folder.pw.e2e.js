@@ -17,6 +17,11 @@ import {
   takeScreenshot,
   selectorFile,
   setInputKeys,
+  getGridFileSelector,
+  getElementScreenshot,
+  waitForNotification,
+  expectAllFileSelected,
+  selectAllFiles,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -221,6 +226,44 @@ test.describe('TST01 - Folder management', () => {
   });
 
   test.skip('TST0113 - Delete not empty folder to trashcan [electron]', async () => {});
+
+  test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
+    const fileName = 'sample.jpg';
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'fileMenuMoveCopyFile',
+    );
+    await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
+    );
+    const initScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+    await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
+
+    const withThumbScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+    expect(initScreenshot).not.toBe(withThumbScreenshot);
+
+    // remove thumb
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=clearThumbnail]');
+    //await clickOn('[data-tid=folderThumbTID]');
+    const thumbRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+    expect(initScreenshot).toBe(thumbRemovedScreenshot);
+  });
 
   test('TST0116 - Switch to Grid Perspective [web,minio,electron]', async () => {
     await clickOn('[data-tid=openListPerspective]');
