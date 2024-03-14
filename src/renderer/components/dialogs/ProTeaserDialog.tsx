@@ -30,11 +30,8 @@ import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
-import { register } from 'swiper/element/bundle';
-import { Navigation, Pagination } from 'swiper/modules';
 import { useTranslation } from 'react-i18next';
-
-register();
+import Slider from 'react-slick';
 
 interface Props {
   open: boolean;
@@ -68,94 +65,92 @@ function Slide(props: SlideProps) {
     pictureShadow,
   } = props;
   return (
-    <swiper-slide>
-      <div
-        style={{
-          padding: 50,
-          textAlign: 'left',
-        }}
+    <div
+      style={{
+        padding: 50,
+        textAlign: 'left',
+      }}
+    >
+      <Typography
+        variant="h5"
+        style={{ textAlign: 'center', paddingBottom: 10 }}
       >
-        <Typography
-          variant="h5"
-          style={{ textAlign: 'center', paddingBottom: 10 }}
-        >
-          {title}
-        </Typography>
-        {description && (
-          <Typography variant="subtitle1">{description}</Typography>
-        )}
-        {items &&
-          items.map((item) => (
-            <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
-          ))}
-        <Typography variant="subtitle1">&nbsp;</Typography>
-        <div style={{ textAlign: 'center' }}>
-          {pictureURL && (
-            <a
-              href="#"
-              onClick={() => {
-                openURLExternally(ctaURL, true);
+        {title}
+      </Typography>
+      {description && (
+        <Typography variant="subtitle1">{description}</Typography>
+      )}
+      {items &&
+        items.map((item) => (
+          <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
+        ))}
+      <Typography variant="subtitle1">&nbsp;</Typography>
+      <div style={{ textAlign: 'center' }}>
+        {pictureURL && (
+          <a
+            href="#"
+            onClick={() => {
+              openURLExternally(ctaURL, true);
+            }}
+          >
+            <img
+              style={{
+                cursor: 'pointer',
+                maxHeight: pictureHeight,
+                marginTop: 15,
+                marginBottom: 15,
+                boxShadow: pictureShadow
+                  ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
+                  : 'none',
+                maxWidth: '95%',
               }}
-            >
-              <img
-                style={{
-                  cursor: 'pointer',
-                  maxHeight: pictureHeight,
-                  marginTop: 15,
-                  marginBottom: 15,
-                  boxShadow: pictureShadow
-                    ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
-                    : 'none',
-                  maxWidth: '95%',
-                }}
-                src={pictureURL}
-                alt=""
-              />
-            </a>
-          )}
-          {videoURL && (
-            <video
-              src={videoURL}
-              poster={videoPosterUrl}
-              autoPlay={true}
-              loop
-              controls
-              style={{ width: '100%', marginBottom: 15 }}
+              src={pictureURL}
+              alt=""
             />
-          )}
-          <br />
+          </a>
+        )}
+        {videoURL && (
+          <video
+            src={videoURL}
+            poster={videoPosterUrl}
+            autoPlay={true}
+            loop
+            controls
+            style={{ width: '100%', marginBottom: 15 }}
+          />
+        )}
+        <br />
+        <Button
+          onClick={() => {
+            openURLExternally(Links.links.productsOverview, true);
+          }}
+          // variant="contained"
+          color="primary"
+          size="small"
+        >
+          Compare TagSpaces Products
+        </Button>
+        {ctaTitle && (
           <Button
             onClick={() => {
-              openURLExternally(Links.links.productsOverview, true);
+              openURLExternally(ctaURL, true);
             }}
+            style={{ marginLeft: 10 }}
             // variant="contained"
             color="primary"
             size="small"
           >
-            Compare TagSpaces Products
+            {ctaTitle}
           </Button>
-          {ctaTitle && (
-            <Button
-              onClick={() => {
-                openURLExternally(ctaURL, true);
-              }}
-              style={{ marginLeft: 10 }}
-              // variant="contained"
-              color="primary"
-              size="small"
-            >
-              {ctaTitle}
-            </Button>
-          )}
-        </div>
+        )}
       </div>
-    </swiper-slide>
+    </div>
   );
 }
 
 function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
-  const swiperElRef = useRef(null); //<SwiperRef>
+  //const swiperElRef = useRef(null); //<SwiperRef>
   const slideIndex = useSelector(getProTeaserIndex);
 
   const slidesEN = getProTeaserSlides(t);
@@ -171,6 +166,14 @@ function ProTeaserDialog(props: Props) {
   }
 
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
+
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   return (
     <Dialog
@@ -189,7 +192,7 @@ function ProTeaserDialog(props: Props) {
           overflowY: 'auto',
         }}
       >
-        <style>
+        {/*<style>
           {`
         swiper-container::part(bullet-active) {
           background-color: ${theme.palette.primary.main};
@@ -201,24 +204,10 @@ function ProTeaserDialog(props: Props) {
           color: ${theme.palette.primary.main};
         }
         `}
-        </style>
-        <swiper-container
-          ref={swiperElRef}
-          initialSlide={initialSlide}
-          slidesPerView={1}
-          navigation={true}
-          /*scrollbar={true}*/
-          pagination={{
-            clickable: true,
-          }}
-          cssMode={false}
-          /*keyboard={{
-            enabled: true
-          }}*/
-          modules={[Pagination, Navigation]}
-        >
-          {slides}
-        </swiper-container>
+        </style>*/}
+        <div className="slider-container">
+          <Slider {...sliderSettings}>{slides}</Slider>
+        </div>
       </DialogContent>
     </Dialog>
   );

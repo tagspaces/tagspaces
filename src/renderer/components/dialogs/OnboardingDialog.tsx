@@ -18,7 +18,7 @@
 
 import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navigation, Pagination } from 'swiper/modules';
+import Slider from 'react-slick';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -46,10 +46,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
 
-import { register } from 'swiper/element/bundle';
 import { useTranslation } from 'react-i18next';
-
-register();
 
 interface Props {
   classes: any;
@@ -64,7 +61,7 @@ function OnboardingDialog(props: Props) {
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
-  const swiperElRef = useRef(null); //<SwiperRef>
+  //const swiperElRef = useRef(null); //<SwiperRef>
 
   /*useEffect(() => {
   if(swiperElRef.current){
@@ -98,6 +95,17 @@ function OnboardingDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  const sliderSettings = {
+    className: 'center',
+    centerMode: true,
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+  };
+
   return (
     <Dialog
       open={open}
@@ -115,7 +123,7 @@ function OnboardingDialog(props: Props) {
           overflowY: 'auto',
         }}
       >
-        <style>
+        {/*<style>
           {`
         swiper-container::part(bullet-active) {
           background-color: ${theme.palette.primary.main};
@@ -127,24 +135,10 @@ function OnboardingDialog(props: Props) {
           color: ${theme.palette.primary.main};
         }
         `}
-        </style>
-        <swiper-container
-          ref={swiperElRef}
-          slidesPerView={1}
-          navigation="true"
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination, Navigation]}
-        >
-          <swiper-slide>
-            <div
-              style={{
-                textAlign: 'center',
-                overflowX: 'hidden',
-                padding: 50,
-              }}
-            >
+        </style>*/}
+        <div style={{ width: 500, textAlign: 'center' }}>
+          <Slider {...sliderSettings}>
+            <div>
               <Typography variant="h5">
                 {t('core:welcomeToTagSpaces')}
               </Typography>
@@ -167,14 +161,7 @@ function OnboardingDialog(props: Props) {
                 <ToggleButton value="dark">Dark</ToggleButton>
               </ToggleButtonGroup>
             </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 50,
-              }}
-            >
+            <div>
               <Typography variant="h5">
                 Choose your the default tagging method for files
               </Typography>
@@ -241,14 +228,7 @@ function OnboardingDialog(props: Props) {
                 stay.
               </Typography>
             </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 50,
-              }}
-            >
+            <div>
               <Typography variant="h5">
                 Collect web pages, create bookmarks or take screenshot from
                 websites directly in your web browser.
@@ -276,14 +256,7 @@ function OnboardingDialog(props: Props) {
                 Get the web clipper
               </Button>
             </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 50,
-              }}
-            >
+            <div>
               <Typography variant="h5">
                 We hope you will love TagSpaces as much as we do!
               </Typography>
@@ -305,8 +278,8 @@ function OnboardingDialog(props: Props) {
                 Start using TagSpaces
               </Button>
             </div>
-          </swiper-slide>
-        </swiper-container>
+          </Slider>
+        </div>
       </DialogContent>
     </Dialog>
   );
