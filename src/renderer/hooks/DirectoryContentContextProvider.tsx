@@ -734,7 +734,7 @@ export const DirectoryContentContextProvider = ({
     isSearchMode.current = false;
 
     setCurrentDirectoryEntries(directoryContent);
-    currentDirectoryPath.current = directoryPath;
+    currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
     updateHistory(
       { ...currentLocation, path: currentLocationPath.current },
       directoryPath,

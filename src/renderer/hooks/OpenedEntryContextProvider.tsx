@@ -401,9 +401,6 @@ export const OpenedEntryContextProvider = ({
     fsEntry?: TS.FileSystemEntry,
     showDetails = undefined,
   ): Promise<boolean> {
-    if (showDetails !== undefined) {
-      dispatch(SettingsActions.setShowDetails(showDetails));
-    }
     if (fsEntry === undefined) {
       if (selectedEntries && selectedEntries.length > 0) {
         const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
@@ -434,6 +431,9 @@ export const OpenedEntryContextProvider = ({
         );
         return Promise.resolve(false);
       }
+    }
+    if (showDetails !== undefined) {
+      dispatch(SettingsActions.setShowDetails(showDetails));
     }
     entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
