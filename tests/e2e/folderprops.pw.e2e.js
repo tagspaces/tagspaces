@@ -312,20 +312,20 @@ test.describe('TST02 - Folder properties', () => {
       'showProperties',
     );
     const initScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
+      '[data-tid=fsEntryName_empty_folder]', //perspectiveGridFileTable
     );
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('ul[data-tid=predefinedThumbnailsTID] > li');
     await clickOn('[data-tid=confirmCustomThumb]');
 
-    const imgElement = await global.client.$(
-      '[data-tid=fsEntryName_empty_folder] img',
+    const imgElement = await global.client.waitForSelector(
+      '[data-tid=fsEntryName_empty_folder] img', //[contenteditable=true]'
     );
     const srcValue = await imgElement.getAttribute('src');
     expect(srcValue.indexOf('.ts/tst.jpg')).toBeGreaterThan(-1);
 
     const withThumbScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
+      '[data-tid=fsEntryName_empty_folder]',
     );
     expect(initScreenshot).not.toBe(withThumbScreenshot);
 
@@ -334,7 +334,7 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=clearThumbnail]');
 
     const thumbRemovedScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
+      '[data-tid=fsEntryName_empty_folder]',
     );
     expect(initScreenshot).toBe(thumbRemovedScreenshot);
   });
