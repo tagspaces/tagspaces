@@ -100,6 +100,8 @@ function OnboardingDialog(props: Props) {
     centerMode: true,
     dots: true,
     infinite: false,
+    initialSlide: 0,
+    centerPadding: '0px',
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
