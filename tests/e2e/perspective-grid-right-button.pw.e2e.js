@@ -354,14 +354,14 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
 
     //await waitForNotification();
-    await expectElementExist(getGridFileSelector(fileName), false);
+    await expectElementExist(fileSelector, false, 4000);
 
     //await global.client.dblclick(selectorFolder);
     await openContextEntryMenu(
       getGridFileSelector(folderName),
       'openDirectory',
     );
-    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectElementExist(fileSelector, true);
 
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
@@ -372,7 +372,7 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectElementExist(fileSelector, true);
 
     // cleanup
     // await global.client.dblclick(selectorFolder);
@@ -380,11 +380,11 @@ test.describe('TST50** - Right button on a file', () => {
       getGridFileSelector(folderName),
       'openDirectory',
     );
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(fileSelector, true);
     await deleteFileFromMenu();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(fileSelector, false);
     await reloadDirectory();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(fileSelector, false);
   });
 
   test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
