@@ -307,13 +307,12 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0219 - Set and remove predefined folder thumbnail [web,minio,electron,_pro]', async () => {
+    const screenshotSelector = '[data-tid=fsEntryName_empty_folder] > div';
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
     );
-    const initScreenshot = await getElementScreenshot(
-      '[data-tid=fsEntryName_empty_folder]', //perspectiveGridFileTable
-    );
+    const initScreenshot = await getElementScreenshot(screenshotSelector);
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('ul[data-tid=predefinedThumbnailsTID] > li');
     await clickOn('[data-tid=confirmCustomThumb]');
@@ -324,19 +323,19 @@ test.describe('TST02 - Folder properties', () => {
     const srcValue = await imgElement.getAttribute('src');
     expect(srcValue.indexOf('.ts/tst.jpg')).toBeGreaterThan(-1);
 
-    const withThumbScreenshot = await getElementScreenshot(
-      '[data-tid=fsEntryName_empty_folder]',
-    );
+    const withThumbScreenshot = await getElementScreenshot(screenshotSelector);
     expect(initScreenshot).not.toBe(withThumbScreenshot);
 
     // remove thumb
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
 
-    const thumbRemovedScreenshot = await getElementScreenshot(
-      '[data-tid=fsEntryName_empty_folder]',
-    );
+    const thumbRemovedScreenshot =
+      await getElementScreenshot(screenshotSelector);
+    //if (!global.isWeb && !global.isWin) {
+    // thumbnails are visual equal on windows but with diff base64 screenshots
     expect(initScreenshot).toBe(thumbRemovedScreenshot);
+    //}
   });
 
   test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
