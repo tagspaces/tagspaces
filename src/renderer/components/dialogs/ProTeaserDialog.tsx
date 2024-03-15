@@ -69,7 +69,7 @@ function Slide(props: SlideProps) {
   return (
     <div
       style={{
-        padding: 50,
+        padding: 15,
         textAlign: 'left',
       }}
     >
