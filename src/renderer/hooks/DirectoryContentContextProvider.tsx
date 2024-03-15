@@ -531,9 +531,12 @@ export const DirectoryContentContextProvider = ({
   ) {
     if (dirEntries) {
       const entries = dirEntries.filter((e) => e !== undefined);
+      const isNotFromCurrentDir = entries.some(
+        (e) => !e.path.startsWith(currentDirectoryPath.current),
+      );
       if (
         entries.length > 0 &&
-        entries[0].path.startsWith(currentDirectoryPath.current)
+        !isNotFromCurrentDir //entries[0].path.startsWith(currentDirectoryPath.current)
       ) {
         //const currDirEntries = currentDirEntries ? currentDirEntries : currentDirectoryEntries;
         if (

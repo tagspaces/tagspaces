@@ -275,6 +275,7 @@ test.describe('TST02 - Folder properties', () => {
       true,
       5000,
     );
+    await clearDataStorage();
   });
 
   test('TST0218 - Set and remove predefined background gradient for folder [web,minio,electron,_pro]', async () => {
@@ -339,6 +340,10 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'openDirectory',
