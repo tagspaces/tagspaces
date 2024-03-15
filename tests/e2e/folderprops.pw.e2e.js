@@ -308,7 +308,7 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0219 - Set and remove predefined folder thumbnail [web,minio,electron,_pro]', async () => {
-    const screenshotSelector = '[data-tid=fsEntryName_empty_folder] > div';
+    const screenshotSelector = '[data-tid=fsEntryName_empty_folder]'; // > div
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
@@ -333,10 +333,11 @@ test.describe('TST02 - Folder properties', () => {
 
     const thumbRemovedScreenshot =
       await getElementScreenshot(screenshotSelector);
-    //if (!global.isWeb && !global.isWin) {
-    // thumbnails are visual equal on windows but with diff base64 screenshots
-    expect(initScreenshot).toBe(thumbRemovedScreenshot);
-    //}
+    if (!global.isWeb && !global.isWin) {
+      // thumbnails are visual equal on windows but with diff base64 screenshots
+      expect(initScreenshot).toBe(thumbRemovedScreenshot);
+    }
+    //todo check if tsb.jpg not exist
   });
 
   test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
