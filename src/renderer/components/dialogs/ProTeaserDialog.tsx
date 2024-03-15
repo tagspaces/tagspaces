@@ -169,6 +169,32 @@ function ProTeaserDialog(props: Props) {
 
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
 
+  function NextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', background: 'red' }}
+        onClick={onClick}
+      >
+        <NavigateNextIcon color="primary" />
+      </div>
+    );
+  }
+
+  function PrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', background: 'red' }}
+        onClick={onClick}
+      >
+        <NavigateBeforeIcon color="primary" />
+      </div>
+    );
+  }
+
   const sliderSettings = {
     className: 'center',
     centerMode: true,
@@ -180,12 +206,8 @@ function ProTeaserDialog(props: Props) {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: true,
-    nextArrow: (
-      <NavigateNextIcon style={{ color: theme.palette.primary.main }} />
-    ),
-    prevArrow: (
-      <NavigateBeforeIcon style={{ color: theme.palette.primary.main }} />
-    ),
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
   };
 
   return (
@@ -201,8 +223,9 @@ function ProTeaserDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          paddingBottom: 0,
+          marginTop: 20,
           overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         {/*<style>

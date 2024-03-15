@@ -97,6 +97,32 @@ function OnboardingDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  function NextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', background: 'red' }}
+        onClick={onClick}
+      >
+        <NavigateNextIcon color="primary" />
+      </div>
+    );
+  }
+
+  function PrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', background: 'red' }}
+        onClick={onClick}
+      >
+        <NavigateBeforeIcon color="primary" />
+      </div>
+    );
+  }
+
   const sliderSettings = {
     className: 'center',
     centerMode: true,
@@ -108,12 +134,8 @@ function OnboardingDialog(props: Props) {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: true,
-    nextArrow: (
-      <NavigateNextIcon style={{ color: theme.palette.primary.main }} />
-    ),
-    prevArrow: (
-      <NavigateBeforeIcon style={{ color: theme.palette.primary.main }} />
-    ),
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
   };
 
   return (
@@ -131,6 +153,7 @@ function OnboardingDialog(props: Props) {
         style={{
           marginTop: 20,
           overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         {/*<style>
