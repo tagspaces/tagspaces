@@ -94,13 +94,17 @@ function Slide(props: SlideProps) {
             onClick={() => {
               openURLExternally(ctaURL, true);
             }}
+            style={{
+              paddingTop: 15,
+              paddingBottom: 15,
+            }}
           >
             <img
               style={{
                 cursor: 'pointer',
                 maxHeight: pictureHeight,
-                marginTop: 15,
-                marginBottom: 15,
+                margin: 'auto',
+                display: 'block',
                 boxShadow: pictureShadow
                   ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
                   : 'none',
@@ -172,11 +176,7 @@ function ProTeaserDialog(props: Props) {
   function NextArrow(props) {
     const { className, style, onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: 'block', background: 'red' }}
-        onClick={onClick}
-      >
+      <div className={className} onClick={onClick}>
         <NavigateNextIcon color="primary" />
       </div>
     );
@@ -185,11 +185,7 @@ function ProTeaserDialog(props: Props) {
   function PrevArrow(props) {
     const { className, style, onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: 'block', background: 'red' }}
-        onClick={onClick}
-      >
+      <div className={className} onClick={onClick}>
         <NavigateBeforeIcon color="primary" />
       </div>
     );
@@ -223,27 +219,26 @@ function ProTeaserDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          marginTop: 20,
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
       >
-        {/*<style>
+        <style>
           {`
-        swiper-container::part(bullet-active) {
-          background-color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-prev) {
-          color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-next) {
-          color: ${theme.palette.primary.main};
-        }
+            .slick-arrow {
+              height: 200px;
+              display: flex;
+              align-items: center;
+            } 
+            .slick-next:before {
+              content: '';
+            }
+            .slick-prev:before {
+              content: '';
+            }
         `}
-        </style>*/}
-        <div className="slider-container">
-          <Slider {...sliderSettings}>{slides}</Slider>
-        </div>
+        </style>
+        <Slider {...sliderSettings}>{slides}</Slider>
       </DialogContent>
     </Dialog>
   );

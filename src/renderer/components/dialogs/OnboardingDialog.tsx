@@ -49,6 +49,7 @@ import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { overflow } from 'html2canvas/dist/types/css/property-descriptors/overflow';
 
 interface Props {
   classes: any;
@@ -100,11 +101,7 @@ function OnboardingDialog(props: Props) {
   function NextArrow(props) {
     const { className, style, onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: 'block', background: 'red' }}
-        onClick={onClick}
-      >
+      <div className={className} onClick={onClick}>
         <NavigateNextIcon color="primary" />
       </div>
     );
@@ -113,11 +110,7 @@ function OnboardingDialog(props: Props) {
   function PrevArrow(props) {
     const { className, style, onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: 'block', background: 'red' }}
-        onClick={onClick}
-      >
+      <div className={className} onClick={onClick}>
         <NavigateBeforeIcon color="primary" />
       </div>
     );
@@ -151,32 +144,40 @@ function OnboardingDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          marginTop: 20,
+          margin: 'auto',
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
       >
-        {/*<style>
+        <style>
           {`
-        swiper-container::part(bullet-active) {
-          background-color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-prev) {
-          color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-next) {
-          color: ${theme.palette.primary.main};
-        }
+            .slick-arrow {
+              height: 200px;
+              display: flex;
+              align-items: center;
+            } 
+            .slick-next:before {
+              content: '';
+            }
+            .slick-prev:before {
+              content: '';
+            }
         `}
-        </style>*/}
-        <div style={{ width: 500, textAlign: 'center' }}>
+        </style>
+        <div style={{ width: 500, minHeight: 600, textAlign: 'center' }}>
           <Slider {...sliderSettings}>
             <div>
               <Typography variant="h5">
                 {t('core:welcomeToTagSpaces')}
               </Typography>
               <img
-                style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
+                style={{
+                  maxHeight: 300,
+                  paddingTop: 15,
+                  paddingBottom: 40,
+                  margin: 'auto',
+                  display: 'block',
+                }}
                 src={NewLook}
                 alt=""
               />
@@ -194,7 +195,7 @@ function OnboardingDialog(props: Props) {
                 <ToggleButton value="dark">Dark</ToggleButton>
               </ToggleButtonGroup>
             </div>
-            <div>
+            <div style={{ overflow: 'hidden' }}>
               <Typography variant="h5">
                 Choose your the default tagging method for files
               </Typography>
@@ -261,13 +262,19 @@ function OnboardingDialog(props: Props) {
                 stay.
               </Typography>
             </div>
-            <div>
+            <div style={{ textAlign: 'center' }}>
               <Typography variant="h5">
                 Collect web pages, create bookmarks or take screenshot from
                 websites directly in your web browser.
               </Typography>
               <img
-                style={{ maxHeight: 300, marginTop: 15, marginBottom: 20 }}
+                style={{
+                  maxHeight: 300,
+                  paddingTop: 15,
+                  paddingBottom: 20,
+                  margin: 'auto',
+                  display: 'block',
+                }}
                 src={BrowserExtension}
                 alt=""
               />
@@ -294,7 +301,13 @@ function OnboardingDialog(props: Props) {
                 We hope you will love TagSpaces as much as we do!
               </Typography>
               <img
-                style={{ maxHeight: 300, maxWidth: '90%', marginTop: 100 }}
+                style={{
+                  maxHeight: 300,
+                  maxWidth: '90%',
+                  paddingTop: 70,
+                  margin: 'auto',
+                  display: 'block',
+                }}
                 src={WizardFinished}
                 alt=""
               />
