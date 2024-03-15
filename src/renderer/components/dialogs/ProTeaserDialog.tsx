@@ -168,11 +168,16 @@ function ProTeaserDialog(props: Props) {
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
 
   const sliderSettings = {
+    className: 'center',
+    centerMode: true,
     dots: true,
     infinite: false,
+    initialSlide: initialSlide,
+    centerPadding: '0px',
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    adaptiveHeight: true,
   };
 
   return (
