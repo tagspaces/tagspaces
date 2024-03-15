@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -32,6 +32,8 @@ import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 interface Props {
   open: boolean;
@@ -178,6 +180,12 @@ function ProTeaserDialog(props: Props) {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: true,
+    nextArrow: (
+      <NavigateNextIcon style={{ color: theme.palette.primary.main }} />
+    ),
+    prevArrow: (
+      <NavigateBeforeIcon style={{ color: theme.palette.primary.main }} />
+    ),
   };
 
   return (

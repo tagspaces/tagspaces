@@ -47,6 +47,8 @@ import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
 
 import { useTranslation } from 'react-i18next';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 interface Props {
   classes: any;
@@ -106,6 +108,12 @@ function OnboardingDialog(props: Props) {
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: true,
+    nextArrow: (
+      <NavigateNextIcon style={{ color: theme.palette.primary.main }} />
+    ),
+    prevArrow: (
+      <NavigateBeforeIcon style={{ color: theme.palette.primary.main }} />
+    ),
   };
 
   return (
