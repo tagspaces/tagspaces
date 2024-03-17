@@ -650,12 +650,20 @@ function MainPage(props: Props) {
         )}
         <NewEntryDialog
           open={props.isNewEntryDialogOpened}
-          onClose={toggleNewEntryDialog}
+          onClose={(event, reason) => {
+            if (reason !== 'backdropClick') {
+              toggleNewEntryDialog();
+            }
+          }}
         />
         {props.isNewFileDialogOpened && (
           <NewFileDialog
             open={props.isNewFileDialogOpened}
-            onClose={toggleNewFileDialog}
+            onClose={(event, reason) => {
+              if (reason !== 'backdropClick') {
+                toggleNewFileDialog();
+              }
+            }}
           />
         )}
         {props.isNewAudioDialogOpened && (

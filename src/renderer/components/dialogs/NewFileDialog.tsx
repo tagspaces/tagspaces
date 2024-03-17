@@ -32,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
-  onClose: () => void;
+  onClose: (event?: Object, reason?: string) => void;
 }
 
 function NewFileDialog(props: Props) {
@@ -63,7 +63,7 @@ function NewFileDialog(props: Props) {
             marginBottom: 20,
             overflow: 'overlay',
           }}
-          data-tid="keyboardShortCutsDialog"
+          data-tid="newFileDialog"
         >
           <CreateFile onClose={onClose} />
           <TargetPath />
