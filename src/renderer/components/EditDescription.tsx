@@ -1,10 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
@@ -27,12 +26,13 @@ const EditDescriptionRoot = styled('div')(({ theme }) => ({
 function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry } = useOpenedEntryContext();
+  // const { openedEntry } = useOpenedEntryContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { description, setDescription } = useDescriptionContext();
+  const { description, setDescription, isEditMode, setEditMode } =
+    useDescriptionContext();
 
   const fileDescriptionRef = useRef<MilkdownRef>(null);
-  const [editMode, setEditMode] = useState<boolean>(false);
+  //const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
   const descriptionButtonsRef = useRef(null);
 
@@ -54,28 +54,21 @@ function EditDescription() {
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
       setDescription(markdown);
-      descriptionButtonsRef.current.setDescriptionChanged(true);
+      if (descriptionButtonsRef.current) {
+        descriptionButtonsRef.current.setDescriptionChanged(true);
+      }
     }
-    // update codeMirror
-    /*const { current } = codeMirrorRef;
-      if (!current) return;
-      current.update(markdown);*/
   }, []);
 
   const noDescription = !description || description.length < 1;
   return (
     <EditDescriptionRoot>
-      {!openedEntry.editMode && (
-        <EditDescriptionButtons
-          buttonsRef={descriptionButtonsRef}
-          editMode={editMode}
-          setEditMode={setEditMode}
-        />
-      )}
+      <EditDescriptionButtons buttonsRef={descriptionButtonsRef} />
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (!editMode && !openedEntry.editMode) {
+          if (!isEditMode) {
+            //&& !openedEntry.editMode) {
             setEditMode(true);
           }
         }}
@@ -87,7 +80,7 @@ function EditDescription() {
           overflowY: 'auto',
         }}
       >
-        {noDescription && !editMode ? (
+        {noDescription && !isEditMode ? (
           <Typography
             variant="caption"
             style={{
@@ -97,7 +90,7 @@ function EditDescription() {
             }}
           >
             {t(
-              openedEntry.editMode
+              isEditMode //openedEntry.editMode
                 ? 'core:editDisabled'
                 : 'core:addMarkdownDescription',
             )}
@@ -119,9 +112,9 @@ function EditDescription() {
               content={description || ''}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}
-              readOnly={!editMode}
+              readOnly={!isEditMode}
               lightMode={false}
-              excludePlugins={!editMode ? ['menu', 'upload'] : []}
+              excludePlugins={!isEditMode ? ['menu', 'upload'] : []}
               currentFolder={currentDirectoryPath}
             />
           </>
