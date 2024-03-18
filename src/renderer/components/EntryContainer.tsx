@@ -453,7 +453,9 @@ function EntryContainer() {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        reloadOpenedFile();
+        return switchLocationTypeByID(openedEntry.locationId).then(() =>
+          reloadOpenedFile().then(() => switchCurrentLocationType()),
+        );
       }
     }
   };
