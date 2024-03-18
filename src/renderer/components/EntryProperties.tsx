@@ -186,6 +186,26 @@ interface Props {
 }
 
 const defaultBackgrounds = [
+  'transparent',
+  '#00000044',
+  '#ac725e44',
+  '#f83a2244',
+  '#ff753744',
+  '#ffad4644',
+  '#42d69244',
+  '#00800044',
+  '#7bd14844',
+  '#fad16544',
+  '#92e1c044',
+  '#9fe1e744',
+  '#9fc6e744',
+  '#4986e744',
+  '#9a9cff44',
+  '#c2c2c244',
+  '#cca6ac44',
+  '#f691b244',
+  '#cd74e644',
+  '#a47ae244',
   '#845EC260',
   '#D65DB160',
   '#FF6F9160',
@@ -938,6 +958,7 @@ function EntryProperties(props: Props) {
                         <IconButton
                           aria-describedby={popoverId}
                           onClick={handlePopeverClick}
+                          disabled={!Pro}
                         >
                           <ColorPaletteIcon />
                         </IconButton>
@@ -984,18 +1005,16 @@ function EntryProperties(props: Props) {
                     {openedEntry.meta && openedEntry.meta.color && (
                       <>
                         <ProTooltip tooltip={t('clearFolderColor')}>
-                          <span>
-                            <IconButton
-                              data-tid={'backgroundClearTID'}
-                              disabled={!Pro}
-                              aria-label="clear"
-                              onClick={() =>
-                                setConfirmResetColorDialogOpened(true)
-                              }
-                            >
-                              <ClearBackgroundIcon />
-                            </IconButton>
-                          </span>
+                          <IconButton
+                            data-tid={'backgroundClearTID'}
+                            disabled={!Pro}
+                            aria-label="clear"
+                            onClick={() =>
+                              setConfirmResetColorDialogOpened(true)
+                            }
+                          >
+                            <ClearBackgroundIcon />
+                          </IconButton>
                         </ProTooltip>
                       </>
                     )}
@@ -1031,18 +1050,8 @@ function EntryProperties(props: Props) {
                             >
                               {t('core:change')}
                             </Button>
-                            {/* <IconButton
-                              disabled={!Pro}
-                              color="primary"
-                              className={classes.button}
-                              style={{ whiteSpace: 'nowrap' }}
-                              onClick={toggleThumbFilesDialog}
-                            >
-                              <EditIcon />
-                            </IconButton> */}
                           </ProTooltip>
                         )}
-                      {/* <ProTooltip tooltip={t('changeThumbnail')}> */}
                       <div
                         role="button"
                         tabIndex={0}
@@ -1060,7 +1069,6 @@ function EntryProperties(props: Props) {
                         }}
                         onClick={toggleThumbFilesDialog}
                       />
-                      {/* </ProTooltip> */}
                     </Stack>
                   </InputAdornment>
                 ),
@@ -1093,15 +1101,6 @@ function EntryProperties(props: Props) {
                               >
                                 {t('core:change')}
                               </Button>
-                              {/* <IconButton
-                                disabled={!Pro}
-                                color="primary"
-                                className={classes.button}
-                                style={{ whiteSpace: 'nowrap' }}
-                                onClick={toggleBgndImgDialog}
-                              >
-                                <EditIcon />
-                              </IconButton> */}
                             </ProTooltip>
                           )}
                         <div
@@ -1134,7 +1133,6 @@ function EntryProperties(props: Props) {
             </Grid>
           )}
         </Grid>
-        {/*<Grid container item xs={12} style={{ height: 150 }} />*/}
       </Grid>
       {isConfirmResetColorDialogOpened && (
         <ConfirmDialog
@@ -1176,9 +1174,6 @@ function EntryProperties(props: Props) {
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           entry={openedEntry as TS.FileSystemEntry}
-          /*selectedFile={openedEntry.path}
-          thumbPath={getThumbPath()}
-          setThumb={setThumb}*/
         />
       )}
       {showSharingLinkDialog && (
@@ -1203,30 +1198,6 @@ function EntryProperties(props: Props) {
           setColor={handleChangeColor}
           onClose={toggleBackgroundColorPicker}
           currentDirectoryPath={openedEntry.path}
-          /*presetColors={[
-          'transparent',
-          '#FFFFFF44',
-          '#00000044',
-          '#ac725e44',
-          '#f83a2244',
-          '#fa573c44',
-          '#ff753744',
-          '#ffad4644',
-          '#42d69244',
-          '#00800044',
-          '#7bd14844',
-          '#fad16544',
-          '#92e1c044',
-          '#9fe1e744',
-          '#9fc6e744',
-          '#4986e744',
-          '#9a9cff44',
-          '#c2c2c244',
-          '#cca6ac44',
-          '#f691b244',
-          '#cd74e644',
-          '#a47ae244'
-        ]}*/
         />
       )}
     </Root>
