@@ -17,7 +17,7 @@ import {
   globalShortcut,
   BrowserWindowConstructorOptions,
 } from 'electron';
-import { autoUpdater } from 'electron-updater';
+// import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
@@ -33,13 +33,13 @@ import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
 import { Extensions } from './types';
 
-class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
+// class AppUpdater {
+//   constructor() {
+//     log.transports.file.level = 'info';
+//     autoUpdater.logger = log;
+//     autoUpdater.checkForUpdatesAndNotify();
+//   }
+// }
 
 let isMacLike = process.platform === 'darwin';
 
@@ -541,7 +541,7 @@ const createWindow = async (i18n) => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
