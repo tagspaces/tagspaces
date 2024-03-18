@@ -34,6 +34,8 @@ import {
   inputBaseClasses,
   Button,
   InputAdornment,
+  Popover,
+  Box,
 } from '@mui/material';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
@@ -180,6 +182,14 @@ interface Props {
 }
 
 const defaultBackgrounds = [
+  '#845EC260',
+  '#D65DB160',
+  '#FF6F9160',
+  '#FF967160',
+  '#FFC75F60',
+  '#F9F87160',
+  '#008E9B60',
+  '#008F7A60',
   'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 190) 45%, rgb(255, 204, 112) 100%)',
   'linear-gradient( 102deg,  rgba(253,189,85,1) 8%, rgba(249,131,255,1) 100% )',
   'radial-gradient( circle farthest-corner at 1.4% 2.8%,  rgba(240,249,249,1) 0%, rgba(182,199,226,1) 100% )',
@@ -226,6 +236,20 @@ function EntryProperties(props: Props) {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  const [popoverAnchorEl, setPopoverAnchorEl] =
+    React.useState<HTMLElement | null>(null);
+
+  const popoverOpen = Boolean(popoverAnchorEl);
+  const popoverId = popoverOpen ? 'popoverBackground' : undefined;
+
+  const handlePopeverClick = (event: React.MouseEvent<HTMLElement>) => {
+    setPopoverAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setPopoverAnchorEl(null);
+  };
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -887,61 +911,90 @@ function EntryProperties(props: Props) {
                 readOnly: true,
                 startAdornment: (
                   <InputAdornment position="start" style={{ marginTop: 10 }}>
-                    {/* <Tooltip title={t('core:changeBackgroundColor')}> */}
                     <TransparentBackground>
-                      <Button
-                        fullWidth
-                        style={{
-                          width: 100,
-                          background: openedEntry.meta?.color,
-                        }}
-                        onClick={toggleBackgroundColorPicker}
-                      >
-                        &nbsp;
-                      </Button>
+                      <Tooltip title={t('editBackgroundColor')}>
+                        <Button
+                          fullWidth
+                          style={{
+                            width: 140,
+                            background: openedEntry.meta?.color,
+                          }}
+                          onClick={toggleBackgroundColorPicker}
+                        >
+                          &nbsp;
+                        </Button>
+                      </Tooltip>
                     </TransparentBackground>
-                    {/* </Tooltip> */}
                   </InputAdornment>
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Stack direction="row" spacing={1}>
-                      {defaultBackgrounds.map((background, cnt) => (
-                        <ProTooltip tooltip={t('changeBackgroundColor')}>
-                          <IconButton
-                            key={cnt}
-                            data-tid={'backgroundTID' + cnt}
-                            aria-label="fingerprint"
-                            onClick={() => handleChangeColor(background)}
-                            style={{
-                              backgroundImage: background,
-                            }}
-                          >
-                            <SetBackgroundIcon />
-                          </IconButton>
-                        </ProTooltip>
-                      ))}
-                      {openedEntry.meta && openedEntry.meta.color && (
-                        <>
-                          <ProTooltip tooltip={t('clearFolderColor')}>
-                            <span>
+                    <Box>
+                      <ProTooltip tooltip={t('changeBackgroundColor')}>
+                        <IconButton
+                          aria-describedby={popoverId}
+                          onClick={handlePopeverClick}
+                        >
+                          <SetBackgroundIcon />
+                        </IconButton>
+                      </ProTooltip>
+                      <Popover
+                        open={popoverOpen}
+                        onClose={handlePopoverClose}
+                        anchorEl={popoverAnchorEl}
+                        id={popoverId}
+                        anchorOrigin={{
+                          vertical: 'top',
+                          horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'center',
+                        }}
+                      >
+                        <Box style={{ padding: 10 }}>
+                          {defaultBackgrounds.map((background, cnt) => (
+                            <>
                               <IconButton
-                                data-tid={'backgroundClearTID'}
-                                disabled={!Pro}
-                                aria-label="clear"
-                                size="small"
-                                style={{ marginTop: 5 }}
-                                onClick={() =>
-                                  setConfirmResetColorDialogOpened(true)
-                                }
+                                key={cnt}
+                                data-tid={'backgroundTID' + cnt}
+                                aria-label="changeFolderBackround"
+                                onClick={() => {
+                                  handleChangeColor(background);
+                                  handlePopoverClose();
+                                }}
+                                style={{
+                                  backgroundColor: background,
+                                  backgroundImage: background,
+                                  margin: 5,
+                                }}
                               >
-                                <ClearBackgroundIcon />
+                                <SetBackgroundIcon />
                               </IconButton>
-                            </span>
-                          </ProTooltip>
-                        </>
-                      )}
-                    </Stack>
+                              {cnt % 4 === 3 && <br />}
+                            </>
+                          ))}
+                        </Box>
+                      </Popover>
+                    </Box>
+                    {openedEntry.meta && openedEntry.meta.color && (
+                      <>
+                        <ProTooltip tooltip={t('clearFolderColor')}>
+                          <span>
+                            <IconButton
+                              data-tid={'backgroundClearTID'}
+                              disabled={!Pro}
+                              aria-label="clear"
+                              onClick={() =>
+                                setConfirmResetColorDialogOpened(true)
+                              }
+                            >
+                              <ClearBackgroundIcon />
+                            </IconButton>
+                          </span>
+                        </ProTooltip>
+                      </>
+                    )}
                   </InputAdornment>
                 ),
               }}
