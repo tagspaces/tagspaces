@@ -3493,14 +3493,16 @@ The following npm packages may be included in this product:
  - @types/d3-time@3.0.3
  - @types/debug@4.1.12
  - @types/dompurify@3.0.5
+ - @types/hast@3.0.4
  - @types/hoist-non-react-statics@3.3.5
  - @types/istanbul-lib-coverage@2.0.6
  - @types/istanbul-lib-report@3.0.3
  - @types/istanbul-reports@3.0.4
  - @types/katex@0.16.7
  - @types/lodash.debounce@4.0.9
- - @types/lodash@4.14.202
+ - @types/lodash@4.17.0
  - @types/mdast@3.0.15
+ - @types/mdast@4.0.3
  - @types/ms@0.7.34
  - @types/node-emoji@1.8.2
  - @types/node@20.6.2
@@ -3514,6 +3516,7 @@ The following npm packages may be included in this product:
  - @types/stack-utils@2.0.3
  - @types/trusted-types@2.0.7
  - @types/unist@2.0.10
+ - @types/unist@3.0.2
  - @types/use-sync-external-store@0.0.3
  - @types/yargs-parser@21.0.3
  - @types/yargs@17.0.32
@@ -3576,7 +3579,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.17
+ - @tagspacespro/tagspacespro@5.0.23
 
 This package contains the following license and notice below:
 
@@ -4307,6 +4310,38 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
+The following npm packages may be included in this product:
+
+ - remark-parse@11.0.0
+ - remark-stringify@11.0.0
+ - remark@15.0.1
+
+These packages each contain the following license and notice below:
+
+(The MIT License)
+
+Copyright (c) 2014 Titus Wormer <tituswormer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
 The following npm package may be included in this product:
 
  - debug@2.6.9
@@ -4486,39 +4521,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
-The following npm packages may be included in this product:
-
- - remark-parse@10.0.2
- - remark-stringify@10.0.3
- - remark@14.0.3
-
-These packages each contain the following license and notice below:
-
-(The MIT License)
-
-Copyright (c) 2014-2020 Titus Wormer <tituswormer@gmail.com>
-Copyright (c) 2011-2014, Christopher Jeffrey (https://github.com/chjj/)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
------------
-
 The following npm package may be included in this product:
 
  - unpipe@1.0.0
@@ -4583,7 +4585,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - unist-util-is@5.2.1
+ - unist-util-is@6.0.0
 
 This package contains the following license and notice below:
 
@@ -4618,8 +4620,9 @@ The following npm packages may be included in this product:
  - ccount@2.0.1
  - character-entities@2.0.2
  - mdast-util-to-string@3.2.0
- - remark-inline-links@6.0.1
- - unist-util-visit@4.1.2
+ - mdast-util-to-string@4.0.0
+ - remark-inline-links@7.0.0
+ - unist-util-visit@5.0.0
 
 These packages each contain the following license and notice below:
 
@@ -4650,8 +4653,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - unified@10.1.2
- - vfile@5.3.7
+ - unified@11.0.4
+ - vfile@6.0.1
 
 These packages each contain the following license and notice below:
 
@@ -4681,7 +4684,7 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - mdast-util-definitions@5.1.2
+ - mdast-util-definitions@6.0.0
 
 This package contains the following license and notice below:
 
@@ -4743,8 +4746,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm packages may be included in this product:
 
+ - unist-util-remove-position@5.0.0
  - unist-util-stringify-position@3.0.3
- - unist-util-visit-parents@5.1.3
+ - unist-util-stringify-position@4.0.0
+ - unist-util-visit-parents@6.0.1
  - zwitch@2.0.4
 
 These packages each contain the following license and notice below:
@@ -4806,7 +4811,7 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - vfile-message@3.1.4
+ - vfile-message@4.0.2
 
 This package contains the following license and notice below:
 
@@ -4837,7 +4842,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - mdast-util-phrasing@3.0.1
+ - mdast-util-phrasing@4.1.0
 
 This package contains the following license and notice below:
 
@@ -4899,23 +4904,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - mdast-util-find-and-replace@2.2.2
+ - mdast-util-find-and-replace@3.0.1
  - mdast-util-from-markdown@1.3.1
- - mdast-util-gfm-autolink-literal@1.0.3
- - mdast-util-gfm-strikethrough@1.0.3
- - mdast-util-gfm-table@1.0.7
- - mdast-util-gfm-task-list-item@1.0.2
- - mdast-util-gfm@2.0.2
- - mdast-util-math@2.0.2
- - mdast-util-to-markdown@1.5.0
- - micromark-extension-gfm-autolink-literal@1.0.5
- - micromark-extension-gfm-strikethrough@1.0.7
- - micromark-extension-gfm-table@1.0.7
- - micromark-extension-gfm-tagfilter@1.0.2
- - micromark-extension-gfm-task-list-item@1.0.5
- - micromark-extension-gfm@2.0.3
- - micromark-extension-math@2.1.2
- - remark-gfm@3.0.1
+ - mdast-util-from-markdown@2.0.0
+ - mdast-util-gfm-autolink-literal@2.0.0
+ - mdast-util-gfm-strikethrough@2.0.0
+ - mdast-util-gfm-table@2.0.0
+ - mdast-util-gfm-task-list-item@2.0.0
+ - mdast-util-gfm@3.0.0
+ - mdast-util-math@3.0.0
+ - mdast-util-to-markdown@2.1.0
+ - micromark-extension-gfm-autolink-literal@2.0.0
+ - micromark-extension-gfm-strikethrough@2.0.0
+ - micromark-extension-gfm-table@2.0.0
+ - micromark-extension-gfm-tagfilter@2.0.0
+ - micromark-extension-gfm-task-list-item@2.0.1
+ - micromark-extension-gfm@3.0.0
+ - micromark-extension-math@3.0.0
+ - remark-gfm@4.0.0
 
 These packages each contain the following license and notice below:
 
@@ -4947,14 +4953,45 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following npm packages may be included in this product:
 
  - decode-named-character-reference@1.0.2
- - mdast-util-gfm-footnote@1.0.2
- - micromark-extension-gfm-footnote@1.1.2
+ - mdast-util-gfm-footnote@2.0.0
+ - micromark-extension-gfm-footnote@2.0.0
 
 These packages each contain the following license and notice below:
 
 (The MIT License)
 
 Copyright (c) 2021 Titus Wormer <tituswormer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
+
+ - devlop@1.1.0
+
+This package contains the following license and notice below:
+
+(The MIT License)
+
+Copyright (c) 2023 Titus Wormer <tituswormer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -5049,7 +5086,7 @@ SOFTWARE.**
 
 The following npm package may be included in this product:
 
- - elkjs@0.9.1
+ - elkjs@0.9.2
 
 This package contains the following license and notice below:
 
@@ -5350,59 +5387,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
------------
-
-The following npm package may be included in this product:
-
- - marked@4.3.0
-
-This package contains the following license and notice below:
-
-# License information
-
-## Contribution License Agreement
-
-If you contribute code to this project, you are implicitly allowing your code
-to be distributed under the MIT license. You are also implicitly verifying that
-all code is your original work. `</legalese>`
-
-## Marked
-
-Copyright (c) 2018+, MarkedJS (https://github.com/markedjs/)
-Copyright (c) 2011-2018, Christopher Jeffrey (https://github.com/chjj/)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-## Markdown
-
-Copyright © 2004, John Gruber
-http://daringfireball.net/
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-* Neither the name “Markdown” nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-This software is provided by the copyright holders and contributors “as is” and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the copyright owner or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
 
 -----------
 
@@ -8083,7 +8067,7 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - prosemirror-tables@1.3.5
+ - prosemirror-tables@1.3.7
 
 This package contains the following license and notice below:
 
@@ -9006,43 +8990,6 @@ THIS SOFTWARE.
 
 The following npm package may be included in this product:
 
- - d3-scale-chromatic@3.0.0
-
-This package contains the following license and notice below:
-
-Copyright 2010-2021 Mike Bostock
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
-
-Apache-Style Software License for ColorBrewer software and ColorBrewer Color Schemes
-
-Copyright 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-
------------
-
-The following npm package may be included in this product:
-
  - d3-ease@3.0.1
 
 This package contains the following license and notice below:
@@ -9102,13 +9049,73 @@ THIS SOFTWARE.
 
 -----------
 
+The following npm packages may be included in this product:
+
+ - d3-array@3.2.4
+ - d3@7.9.0
+
+These packages each contain the following license and notice below:
+
+Copyright 2010-2023 Mike Bostock
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+-----------
+
 The following npm package may be included in this product:
 
- - d3-geo@3.1.0
+ - d3-scale-chromatic@3.1.0
 
 This package contains the following license and notice below:
 
-Copyright 2010-2022 Mike Bostock
+Copyright 2010-2024 Mike Bostock
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+Apache-Style Software License for ColorBrewer software and ColorBrewer Color Schemes
+
+Copyright 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+-----------
+
+The following npm package may be included in this product:
+
+ - d3-geo@3.1.1
+
+This package contains the following license and notice below:
+
+Copyright 2010-2024 Mike Bostock
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
 with or without fee is hereby granted, provided that the above copyright notice
@@ -9142,29 +9149,6 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------------
-
-The following npm packages may be included in this product:
-
- - d3-array@3.2.4
- - d3@7.8.5
-
-These packages each contain the following license and notice below:
-
-Copyright 2010-2023 Mike Bostock
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
 
 -----------
 
@@ -10175,7 +10159,7 @@ terms above.
 The following npm packages may be included in this product:
 
  - dompurify@2.4.7
- - dompurify@3.0.8
+ - dompurify@3.0.9
 
 These packages each contain the following license and notice below:
 
@@ -10938,28 +10922,49 @@ The following npm packages may be included in this product:
  - isomorphic-unfetch@3.1.0
  - lazy-val@1.0.5
  - micromark-core-commonmark@1.1.0
+ - micromark-core-commonmark@2.0.0
  - micromark-factory-destination@1.1.0
+ - micromark-factory-destination@2.0.0
  - micromark-factory-label@1.1.0
+ - micromark-factory-label@2.0.0
  - micromark-factory-space@1.1.0
+ - micromark-factory-space@2.0.0
  - micromark-factory-title@1.1.0
+ - micromark-factory-title@2.0.0
  - micromark-factory-whitespace@1.1.0
+ - micromark-factory-whitespace@2.0.0
  - micromark-util-character@1.2.0
+ - micromark-util-character@2.1.0
  - micromark-util-chunked@1.1.0
+ - micromark-util-chunked@2.0.0
  - micromark-util-classify-character@1.1.0
+ - micromark-util-classify-character@2.0.0
  - micromark-util-combine-extensions@1.1.0
+ - micromark-util-combine-extensions@2.0.0
  - micromark-util-decode-numeric-character-reference@1.1.0
+ - micromark-util-decode-numeric-character-reference@2.0.1
  - micromark-util-decode-string@1.1.0
+ - micromark-util-decode-string@2.0.0
  - micromark-util-encode@1.1.0
+ - micromark-util-encode@2.0.0
  - micromark-util-html-tag-name@1.2.0
+ - micromark-util-html-tag-name@2.0.0
  - micromark-util-normalize-identifier@1.1.0
+ - micromark-util-normalize-identifier@2.0.0
  - micromark-util-resolve-all@1.1.0
+ - micromark-util-resolve-all@2.0.0
  - micromark-util-sanitize-uri@1.2.0
+ - micromark-util-sanitize-uri@2.0.0
  - micromark-util-subtokenize@1.1.0
+ - micromark-util-subtokenize@2.0.0
  - micromark-util-symbol@1.1.0
+ - micromark-util-symbol@2.0.0
  - micromark-util-types@1.1.0
+ - micromark-util-types@2.0.0
  - micromark@3.2.0
+ - micromark@4.0.0
  - qrcode-generator@1.4.4
- - remark-math@5.1.1
+ - remark-math@6.0.0
  - tr46@0.0.3
  - ts-react-splitter@3.0.0
  - zen-push@0.2.1
@@ -12858,7 +12863,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - react-best-gradient-color-picker@2.3.2
+ - react-best-gradient-color-picker@3.0.7
 
 This package contains the following license and notice below:
 
@@ -14452,6 +14457,36 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
+ - enquire.js@2.1.6
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2012 Nick Williams
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
+
  - for-each@0.3.3
 
 This package contains the following license and notice below:
@@ -14530,6 +14565,35 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
+ - slick-carousel@1.8.1
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2013-2016
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
+
  - utils-merge@1.0.1
 
 This package contains the following license and notice below:
@@ -14589,7 +14653,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - mermaid@10.8.0
+ - mermaid@10.9.0
 
 This package contains the following license and notice below:
 
@@ -14636,36 +14700,6 @@ These packages each contain the following license and notice below:
 The MIT License (MIT)
 
 Copyright (c) 2014 Call-Em-All
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------
-
-The following npm package may be included in this product:
-
- - node-emoji@1.11.0
-
-This package contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Daniel Bugl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -14803,6 +14837,67 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
+
+ - string-convert@0.2.1
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Kiran Abburi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------
+
+The following npm packages may be included in this product:
+
+ - json2mq@0.2.0
+ - react-slick@0.30.2
+
+These packages each contain the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Kiran Abburi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 -----------
 
@@ -15709,7 +15804,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - remark-emoji@3.1.2
+ - remark-emoji@4.0.1
 
 This package contains the following license and notice below:
 
@@ -16160,35 +16255,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - swiper@10.3.1
-
-This package contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) 2019 Vladimir Kharlampidi
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------------
-
-The following npm package may be included in this product:
-
  - rc-resize-observer@1.4.0
 
 This package contains the following license and notice below:
@@ -16267,28 +16333,28 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @milkdown/core@7.2.4
- - @milkdown/ctx@7.2.4
- - @milkdown/exception@7.2.4
- - @milkdown/plugin-block@7.2.4
- - @milkdown/plugin-clipboard@7.2.4
- - @milkdown/plugin-cursor@7.2.4
- - @milkdown/plugin-diagram@7.2.4
- - @milkdown/plugin-emoji@7.2.4
- - @milkdown/plugin-history@7.2.4
- - @milkdown/plugin-listener@7.2.4
- - @milkdown/plugin-math@7.2.4
- - @milkdown/plugin-slash@7.2.4
- - @milkdown/plugin-tooltip@7.2.4
- - @milkdown/plugin-trailing@7.2.4
- - @milkdown/plugin-upload@7.2.4
- - @milkdown/preset-commonmark@7.2.4
- - @milkdown/preset-gfm@7.2.4
- - @milkdown/prose@7.2.4
- - @milkdown/react@7.2.4
- - @milkdown/theme-nord@7.2.4
- - @milkdown/transformer@7.2.4
- - @milkdown/utils@7.2.4
+ - @milkdown/core@7.3.5
+ - @milkdown/ctx@7.3.5
+ - @milkdown/exception@7.3.5
+ - @milkdown/plugin-block@7.3.5
+ - @milkdown/plugin-clipboard@7.3.5
+ - @milkdown/plugin-cursor@7.3.5
+ - @milkdown/plugin-diagram@7.3.5
+ - @milkdown/plugin-emoji@7.3.5
+ - @milkdown/plugin-history@7.3.5
+ - @milkdown/plugin-listener@7.3.5
+ - @milkdown/plugin-math@7.3.5
+ - @milkdown/plugin-slash@7.3.5
+ - @milkdown/plugin-tooltip@7.3.5
+ - @milkdown/plugin-trailing@7.3.5
+ - @milkdown/plugin-upload@7.3.5
+ - @milkdown/preset-commonmark@7.3.5
+ - @milkdown/preset-gfm@7.3.5
+ - @milkdown/prose@7.3.5
+ - @milkdown/react@7.3.5
+ - @milkdown/theme-nord@7.3.5
+ - @milkdown/transformer@7.3.5
+ - @milkdown/utils@7.3.5
 
 These packages each contain the following license and notice below:
 
@@ -16409,7 +16475,6 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - is-buffer@2.0.5
  - safe-buffer@5.1.2
  - safe-buffer@5.2.1
 
@@ -16724,11 +16789,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - nanoid@4.0.2
+ - nanoid@5.0.6
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 The MIT License (MIT)
 
@@ -16941,11 +17007,11 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws@4.1.9
- - @tagspaces/tagspaces-common-cordova@4.1.8
- - @tagspaces/tagspaces-common@4.1.8
- - @tagspaces/tagspaces-indexer@4.1.8
- - @tagspaces/tagspaces-md@4.0.3
+ - @tagspaces/tagspaces-common-aws@4.1.12
+ - @tagspaces/tagspaces-common-cordova@4.1.12
+ - @tagspaces/tagspaces-common@4.1.12
+ - @tagspaces/tagspaces-indexer@4.1.12
+ - @tagspaces/tagspaces-md@4.1.13
 
 These packages each contain the following license and notice below:
 
