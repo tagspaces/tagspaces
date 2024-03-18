@@ -6,7 +6,6 @@ import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'EditDescriptionButtons';
 
@@ -29,23 +28,17 @@ export interface DescriptionChangedRef {
 
 type Props = {
   buttonsRef: ForwardedRef<DescriptionChangedRef>;
-  editMode: boolean;
-  setEditMode: (edit: boolean) => void;
 };
 
-const EditDescriptionButtons: React.FC<Props> = ({
-  buttonsRef,
-  editMode,
-  setEditMode,
-}) => {
+const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
   const { t } = useTranslation();
   const {
-    description,
     isSaveDescriptionConfirmOpened,
     setSaveDescriptionConfirmOpened,
     saveDescription,
+    isEditMode,
+    setEditMode,
   } = useDescriptionContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
   const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   React.useImperativeHandle(buttonsRef, () => ({
@@ -55,10 +48,10 @@ const EditDescriptionButtons: React.FC<Props> = ({
   }));
 
   useEffect(() => {
-    if (!editMode && isDescriptionChanged) {
+    if (!isEditMode && isDescriptionChanged) {
       descriptionChanged(false);
     }
-  }, [editMode]);
+  }, [isEditMode]);
 
   // const printHTML = () => {
   //   const sanitizedDescription = description
@@ -81,7 +74,7 @@ const EditDescriptionButtons: React.FC<Props> = ({
 
   return (
     <Root>
-      {editMode && (
+      {isEditMode && (
         <Button
           className={classes.button}
           onClick={() => {
@@ -103,13 +96,13 @@ const EditDescriptionButtons: React.FC<Props> = ({
           className={classes.button}
           disabled={!Pro}
           onClick={() => {
-            if (editMode) {
+            if (isEditMode) {
               saveDescription();
             }
-            setEditMode(!editMode);
+            setEditMode(!isEditMode);
           }}
         >
-          {editMode ? t('core:confirmSaveButton') : t('core:edit')}
+          {isEditMode ? t('core:confirmSaveButton') : t('core:edit')}
         </Button>
       </ProTooltip>
       <ConfirmDialog

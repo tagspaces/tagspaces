@@ -35,6 +35,8 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 type DescriptionContextData = {
   description: string;
   isSaveDescriptionConfirmOpened: boolean;
+  isEditMode: boolean;
+  setEditMode: (editMode: boolean) => void;
   setSaveDescriptionConfirmOpened: (open: boolean) => void;
   setDescription: (description: string) => void;
   saveDescription: () => void;
@@ -43,6 +45,8 @@ type DescriptionContextData = {
 export const DescriptionContext = createContext<DescriptionContextData>({
   description: undefined,
   isSaveDescriptionConfirmOpened: false,
+  isEditMode: false,
+  setEditMode: () => {},
   setSaveDescriptionConfirmOpened: () => {},
   setDescription: () => {},
   saveDescription: undefined,
@@ -63,6 +67,7 @@ export const DescriptionContextProvider = ({
   //const description = useRef<string>(openedEntry.meta?.description);
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);
+  const isEditMode = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -105,6 +110,7 @@ export const DescriptionContextProvider = ({
       // to reload description
       lastOpenedFile.current = { ...lastOpenedFile.current };
       isChanged.current = false;
+      isEditMode.current = false;
       forceUpdate();
       setDescriptionChange(
         lastOpenedFile.current,
@@ -120,8 +126,21 @@ export const DescriptionContextProvider = ({
   };
 
   function setDescription(d: string) {
-    lastOpenedFile.current.meta.description = d;
+    lastOpenedFile.current = {
+      ...lastOpenedFile.current,
+      meta: {
+        ...(lastOpenedFile.current.meta && lastOpenedFile.current.meta),
+        description: d,
+      },
+    };
     isChanged.current = true;
+  }
+
+  function setEditMode(editMode: boolean) {
+    isEditMode.current = editMode;
+    isChanged.current = false;
+    lastOpenedFile.current = { ...openedEntry };
+    forceUpdate();
   }
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
@@ -139,8 +158,14 @@ export const DescriptionContextProvider = ({
       setSaveDescriptionConfirmOpened,
       setDescription,
       saveDescription,
+      isEditMode: isEditMode.current,
+      setEditMode,
     };
-  }, [lastOpenedFile.current, isSaveDescriptionConfirmOpened]);
+  }, [
+    lastOpenedFile.current,
+    isEditMode.current,
+    isSaveDescriptionConfirmOpened,
+  ]);
 
   return (
     <DescriptionContext.Provider value={context}>

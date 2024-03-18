@@ -194,7 +194,7 @@ export namespace TS {
     viewingExtensionId: string;
     editingExtensionPath?: string;
     editingExtensionId?: string;
-    editMode?: boolean;
+    editMode?: boolean; // TODO move in DescriptionContextProvider
     focused?: boolean; // TODO make it mandatory once support for multiple files is added
   }
 
