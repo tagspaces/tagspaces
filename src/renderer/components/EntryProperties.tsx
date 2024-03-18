@@ -37,12 +37,19 @@ import {
   Popover,
   Box,
 } from '@mui/material';
-import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
-import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import Stack from '@mui/material/Stack';
+import {
+  LinkIcon,
+  LocalLocationIcon,
+  CloudLocationIcon,
+} from '-/components/CommonIcons';
+import QRCodeIcon from '@mui/icons-material/QrCode';
+import ColorPaletteIcon from '@mui/icons-material/ColorLens';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import InfoIcon from '-/components/InfoIcon';
 import {
   AttributionControl,
   MapContainer,
@@ -79,12 +86,10 @@ import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
-import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import FormHelperText from '@mui/material/FormHelperText';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
-import { LinkIcon } from '-/components/CommonIcons';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -92,7 +97,6 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 const PREFIX = 'EntryProperties';
@@ -935,7 +939,7 @@ function EntryProperties(props: Props) {
                           aria-describedby={popoverId}
                           onClick={handlePopeverClick}
                         >
-                          <SetBackgroundIcon />
+                          <ColorPaletteIcon />
                         </IconButton>
                       </ProTooltip>
                       <Popover
