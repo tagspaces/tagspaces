@@ -678,7 +678,7 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:watchForChangesInLocation')}
-                    <ProLabel />
+                    {Pro ? <BetaLabel /> : <ProLabel />}
                   </>
                 }
               />
