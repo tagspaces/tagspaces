@@ -474,6 +474,17 @@ const createWindow = async (i18n) => {
       });
     });*/
 
+  /*mainWindow.webContents.on('did-finish-load', () => {
+    const cssPath = app.isPackaged ? path.join(
+      process.resourcesPath,
+      'node_modules/@milkdown/theme-nord/lib/style.css',
+    ) :  path.join(
+      __dirname,
+      '../../node_modules/@milkdown/theme-nord/lib/style.css',
+    )
+    mainWindow?.webContents.insertCSS(fs.readFileSync(cssPath, 'utf8'));
+  });*/
+
   mainWindow.webContents.on('before-input-event', (_, input) => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
