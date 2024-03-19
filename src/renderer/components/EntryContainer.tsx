@@ -344,55 +344,53 @@ function EntryContainer() {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        switchLocationTypeByID(openedEntry.locationId).then(
-          (currentLocationId) => {
-            PlatformIO.loadTextFilePromise(
-              textFilePath,
-              data.preview ? data.preview : false,
-            )
-              .then((content) => {
-                const UTF8_BOM = '\ufeff';
-                if (content.indexOf(UTF8_BOM) === 0) {
-                  // eslint-disable-next-line no-param-reassign
-                  content = content.substr(1);
-                }
-                let fileDirectory = extractContainingDirectoryPath(
-                  textFilePath,
-                  PlatformIO.getDirSeparator(),
+        switchLocationTypeByID(openedEntry.locationId).then(() => {
+          PlatformIO.loadTextFilePromise(
+            textFilePath,
+            data.preview ? data.preview : false,
+          )
+            .then((content) => {
+              const UTF8_BOM = '\ufeff';
+              if (content.indexOf(UTF8_BOM) === 0) {
+                // eslint-disable-next-line no-param-reassign
+                content = content.substr(1);
+              }
+              let fileDirectory = extractContainingDirectoryPath(
+                textFilePath,
+                PlatformIO.getDirSeparator(),
+              );
+              if (AppConfig.isWeb) {
+                fileDirectory =
+                  extractContainingDirectoryPath(
+                    // eslint-disable-next-line no-restricted-globals
+                    location.href,
+                    PlatformIO.getDirSeparator(),
+                  ) +
+                  '/' +
+                  fileDirectory;
+              }
+              if (
+                fileViewer &&
+                fileViewer.current &&
+                fileViewer.current.contentWindow &&
+                // @ts-ignore
+                fileViewer.current.contentWindow.setContent
+              ) {
+                // @ts-ignore call setContent from iframe
+                fileViewer.current.contentWindow.setContent(
+                  content,
+                  fileDirectory,
+                  !openedEntry.editMode,
+                  theme.palette.mode,
                 );
-                if (AppConfig.isWeb) {
-                  fileDirectory =
-                    extractContainingDirectoryPath(
-                      // eslint-disable-next-line no-restricted-globals
-                      location.href,
-                      PlatformIO.getDirSeparator(),
-                    ) +
-                    '/' +
-                    fileDirectory;
-                }
-                if (
-                  fileViewer &&
-                  fileViewer.current &&
-                  fileViewer.current.contentWindow &&
-                  // @ts-ignore
-                  fileViewer.current.contentWindow.setContent
-                ) {
-                  // @ts-ignore call setContent from iframe
-                  fileViewer.current.contentWindow.setContent(
-                    content,
-                    fileDirectory,
-                    !openedEntry.editMode,
-                    theme.palette.mode,
-                  );
-                }
-                return switchCurrentLocationType();
-              })
-              .catch((err) => {
-                console.warn('Error loading text content ' + err);
-                return switchCurrentLocationType();
-              });
-          },
-        );
+              }
+              return switchCurrentLocationType();
+            })
+            .catch((err) => {
+              console.warn('Error loading text content ' + err);
+              return switchCurrentLocationType();
+            });
+        });
         break;
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
