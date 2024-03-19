@@ -75,7 +75,7 @@ type OpenedEntryContextData = {
   addToEntryContainer: (fsEntry: TS.OpenedEntry) => void;
   closeAllFiles: () => void;
   reflectUpdateOpenedFileContent: (entry: TS.FileSystemEntry) => void;
-  reloadOpenedFile: () => void;
+  reloadOpenedFile: () => Promise<boolean>;
   /*updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
@@ -105,7 +105,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   addToEntryContainer: () => {},
   closeAllFiles: () => {},
   reflectUpdateOpenedFileContent: () => {},
-  reloadOpenedFile: () => {},
+  reloadOpenedFile: undefined,
   //updateOpenedFile: () => Promise.resolve(false),
   openEntry: undefined,
   openFsEntry: undefined,
@@ -378,7 +378,20 @@ export const OpenedEntryContextProvider = ({
   function reloadOpenedFile(): Promise<boolean> {
     if (currentEntry.current) {
       currentEntry.current.editMode = false;
-      return openEntry(currentEntry.current.path); //true);
+      //return openEntry(currentEntry.current.path); //true);
+      return getAllPropertiesPromise(currentEntry.current.path)
+        .then((fsEntry: TS.FileSystemEntry) =>
+          openFsEntry({ ...currentEntry.current, ...fsEntry }, undefined),
+        )
+        .catch((error) => {
+          console.warn(
+            'Error getting properties for entry: ' +
+              currentEntry.current.path +
+              ' - ' +
+              error,
+          );
+          return false;
+        });
     }
     return Promise.resolve(false);
   }
@@ -455,7 +468,7 @@ export const OpenedEntryContextProvider = ({
 
     document.title = fsEntry.name + ' | ' + locationName;
 
-    if (currentLocation) {
+    if (!entryForOpening.locationId && currentLocation) {
       entryForOpening.locationId = currentLocation.uuid;
       updateHistory(
         { ...currentLocation, path: currentLocationPath },
