@@ -818,5 +818,6 @@
   "confirmDialogClosing": "Do you want to close this dialog?",
   "clickToSelect": "Click to select",
   "newVersionAvailable": "New version available",
+  "urlNotSupported": "URL not supported",
   "-": "-"
 }

@@ -693,6 +693,11 @@ export const OpenedEntryContextProvider = ({
       ) {
         openURLExternally(decodedURI);
       } else {
+        showNotification(
+          t('core:urlNotSupported') + ': ' + decodedURI,
+          'info',
+          true,
+        );
         console.log('Not supported URL format: ' + decodedURI);
       }
     } catch (e) {
