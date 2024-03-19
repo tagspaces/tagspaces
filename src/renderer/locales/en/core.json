@@ -300,6 +300,7 @@
   "deleteConfirmationContent": "The selected entries will be permanently deleted. Are you sure?",
   "backgroundColor": "Folder Background",
   "changeBackgroundColor": "Change Background",
+  "editBackgroundColor": "Edit Background",
   "moreOperations": "More Operations",
   "options": "Options",
   "desktopMode": "Desktop mode",

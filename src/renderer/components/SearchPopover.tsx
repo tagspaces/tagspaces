@@ -241,20 +241,20 @@ function SearchPopover(props: Props) {
   }
 
   const handleTagFieldChange = (name, value, reason) => {
-    let searchQuery;
+    let sq;
     if (reason === 'remove-value') {
       if (name === 'tagsAND') {
-        searchQuery = {
+        sq = {
           ...searchQuery,
           tagsAND: removeTags(searchQuery.tagsAND, value),
         };
       } else if (name === 'tagsNOT') {
-        searchQuery = {
+        sq = {
           ...searchQuery,
           tagsNOT: removeTags(searchQuery.tagsNOT, value),
         };
       } else if (name === 'tagsOR') {
-        searchQuery = {
+        sq = {
           ...searchQuery,
           tagsOR: removeTags(searchQuery.tagsOR, value),
         };
@@ -262,18 +262,18 @@ function SearchPopover(props: Props) {
     } else {
       // eslint-disable-next-line no-lonely-if
       if (name === 'tagsAND') {
-        searchQuery = { ...searchQuery, tagsAND: value };
+        sq = { ...searchQuery, tagsAND: value };
       } else if (name === 'tagsNOT') {
-        searchQuery = { ...searchQuery, tagsNOT: value };
+        sq = { ...searchQuery, tagsNOT: value };
       } else if (name === 'tagsOR') {
-        searchQuery = { ...searchQuery, tagsOR: value };
+        sq = { ...searchQuery, tagsOR: value };
       }
     }
-    if (!haveSearchFilters(searchQuery)) {
+    if (!haveSearchFilters(sq)) {
       clearSearch();
     } else {
       setSearchQuery({
-        ...searchQuery,
+        ...sq,
         searchBoxing: searchBoxing,
         showUnixHiddenEntries,
         executeSearch: false,
