@@ -362,7 +362,7 @@ function MainPage(props: Props) {
       try {
         const data = JSON.parse(e.data);
         if (data.command === 'openLinkExternally') {
-          openLink(data.link);
+          openLink(data.link, { fullWidth: false });
         }
       } catch (ex) {
         console.debug(

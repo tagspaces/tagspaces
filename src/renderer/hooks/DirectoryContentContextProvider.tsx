@@ -812,6 +812,7 @@ export const DirectoryContentContextProvider = ({
     if (manualPerspective.current === 'unspecified') {
       if (
         !directoryMeta.current ||
+        !directoryMeta.current.perspective ||
         directoryMeta.current.perspective === 'unspecified'
       ) {
         return defaultPerspective;
