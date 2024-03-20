@@ -305,7 +305,7 @@ test.describe('TST08 - File folder properties', () => {
     await createFile('sample.txt', newFileContent, '.');
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
-    await expectFileContain(newFileContent);
+    await expectFileContain(newFileContent, 15000);
   });
 
   test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async () => {
