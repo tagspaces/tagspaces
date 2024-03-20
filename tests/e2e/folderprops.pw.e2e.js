@@ -256,13 +256,16 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
 
-    //const perspectiveEl = await global.client.waitForSelector('[data-tid=changePerspectiveTID]');
-    //await perspectiveEl.focus();
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
+
     await clickOn('[data-tid=changePerspectiveTID]', {
       // force: true,
       timeout: 15000,
     }); // todo double click
-    await clickOn('[data-tid=changePerspectiveTID]');
+    //await clickOn('[data-tid=changePerspectiveTID]');
     await clickOn('li[data-value=gallery]');
     //await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
     await clickOn(getGridFileSelector('empty_folder'));
@@ -275,7 +278,12 @@ test.describe('TST02 - Folder properties', () => {
       true,
       5000,
     );
-    await clearDataStorage();
+    // await clearDataStorage();
+    // turn back grid perspective
+    await clickOn('[data-tid=changePerspectiveTID]');
+    //await clickOn('[data-tid=changePerspectiveTID]');
+    await clickOn('li[data-value=grid]');
+    await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
   test('TST0218 - Set and remove predefined background gradient for folder [web,minio,electron,_pro]', async () => {
@@ -290,6 +298,7 @@ test.describe('TST02 - Folder properties', () => {
     const initScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
+    await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
 
     const withBgnColorScreenshot = await getElementScreenshot(

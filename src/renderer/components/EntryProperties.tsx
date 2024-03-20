@@ -956,6 +956,7 @@ function EntryProperties(props: Props) {
                     <Box>
                       <ProTooltip tooltip={t('changeBackgroundColor')}>
                         <IconButton
+                          data-tid="changeBackgroundColorTID"
                           aria-describedby={popoverId}
                           onClick={handlePopeverClick}
                           disabled={!Pro}
