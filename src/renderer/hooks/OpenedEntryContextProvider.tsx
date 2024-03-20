@@ -46,8 +46,7 @@ import {
   cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   generateSharingLink,
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
+  joinPaths,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import {
@@ -649,8 +648,12 @@ export const OpenedEntryContextProvider = ({
                     showNotification(t('core:invalidLink'), 'warning', true);
                     return true;
                   }
-                  const dirFullPath =
-                    locationPath + PlatformIO.getDirSeparator() + directoryPath;
+                  const dirFullPath = joinPaths(
+                    PlatformIO.getDirSeparator(),
+                    locationPath,
+                    directoryPath,
+                  );
+                  //locationPath + PlatformIO.getDirSeparator() + directoryPath;
                   openDirectory(dirFullPath);
                 } else {
                   openDirectory(locationPath);
