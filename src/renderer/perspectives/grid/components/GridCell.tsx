@@ -132,13 +132,12 @@ function GridCell(props: Props) {
     usePerspectiveSettingsContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
-  const { addTags, editTagForEntry } = useTaggingActionsContext();
+  const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
   // const desktopMode = useSelector(isDesktopMode);
-  const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   /*const fileSystemEntryBgColor = useRef<string>(
@@ -193,7 +192,7 @@ function GridCell(props: Props) {
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
-    dispatch(AppActions.addTag(tag, parentTagGroupUuid));
+    addTag(tag, parentTagGroupUuid);
   };
 
   // remove isNewFile on Cell click it will open file in editMode

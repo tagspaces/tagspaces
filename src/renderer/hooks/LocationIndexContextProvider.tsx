@@ -29,6 +29,7 @@ import { TS } from '-/tagspaces.namespace';
 import { createDirectoryIndex } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { getMetaIndexFilePath } from '@tagspaces/tagspaces-indexer';
 import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
@@ -39,6 +40,7 @@ import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -82,6 +84,7 @@ export const LocationIndexContextProvider = ({
   const { t } = useTranslation();
 
   const { currentLocation, getLocationPath } = useCurrentLocationContext();
+  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults } =
     useDirectoryContentContext();
   const { actions } = useEditedEntryContext();
@@ -191,6 +194,25 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
+  function createDirectoryIndexWrapper(
+    param: string | any,
+    extractText = false,
+    ignorePatterns: Array<string> = [],
+    enableWS = true,
+  ): Promise<any> {
+    const indexFilePath = getMetaIndexFilePath(param.path);
+    ignoreByWatcher(indexFilePath);
+    return createDirectoryIndex(
+      param,
+      extractText,
+      ignorePatterns,
+      enableWS,
+    ).then((directoryIndex) => {
+      deignoreByWatcher(indexFilePath);
+      return directoryIndex;
+    });
+  }
+
   function createDirIndex(
     directoryPath: string,
     extractText: boolean,
@@ -200,7 +222,7 @@ export const LocationIndexContextProvider = ({
   ): Promise<boolean> {
     isIndexing.current = true;
     forceUpdate();
-    return createDirectoryIndex(
+    return createDirectoryIndexWrapper(
       { path: directoryPath, locationID },
       extractText,
       ignorePatterns,
@@ -269,7 +291,7 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
     const promises = allLocations.map((location: TS.Location) =>
       getLocationPath(location).then((locationPath) =>
-        createDirectoryIndex(
+        createDirectoryIndexWrapper(
           { path: locationPath, location: location.uuid },
           extractText,
           location.ignorePatternPaths,
@@ -328,7 +350,7 @@ export const LocationIndexContextProvider = ({
           (!index || index.length < 1 || indexAge > maxIndexAge))
       ) {
         console.log('Start creating index for : ' + currentPath);
-        const newIndex = await createDirectoryIndex(
+        const newIndex = await createDirectoryIndexWrapper(
           {
             path: currentPath,
             locationID: currentLocation.uuid,
@@ -437,7 +459,7 @@ export const LocationIndexContextProvider = ({
             (!location.disableIndexing && !indexExist)
           ) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(
+            directoryIndex = await createDirectoryIndexWrapper(
               {
                 path: nextPath,
                 locationID: location.uuid,

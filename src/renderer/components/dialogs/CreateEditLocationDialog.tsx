@@ -62,14 +62,11 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { getLocations } from '-/reducers/locations';
-import { AppDispatch } from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
@@ -77,6 +74,7 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -102,6 +100,7 @@ function CreateEditLocationDialog(props: Props) {
 
   const { showNotification } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
+  const { loadLocationDataPromise } = useTagGroupsLocationContext();
   const { addLocation, selectedLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
