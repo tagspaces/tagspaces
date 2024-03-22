@@ -87,7 +87,10 @@ type TaggingActionsContextData = {
   removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
   removeAllTags: (paths: Array<string>) => Promise<boolean>;
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
-  createTagGroup: (entry: TS.TagGroup, location?: TS.Location) => void;
+  createTagGroup: (
+    entry: TS.TagGroup,
+    location?: TS.Location,
+  ) => Promise<boolean>;
   mergeTagGroup: (entry: TS.TagGroup) => void;
   removeTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
   addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => void;
@@ -1052,16 +1055,20 @@ export const TaggingActionsContextProvider = ({
     return tagGroups;
   }*/
 
-  function createTagGroup(entry: TS.TagGroup, location?: TS.Location) {
+  function createTagGroup(
+    entry: TS.TagGroup,
+    location?: TS.Location,
+  ): Promise<boolean> {
     const newEntry = {
       ...entry,
       created_date: new Date().getTime(),
       modified_date: new Date().getTime(),
     };
-    if (Pro && location) {
-      createLocationTagGroup(location.path, newEntry);
-    }
     saveTagLibrary([...tagGroups, newEntry]);
+    if (Pro && location) {
+      return createLocationTagGroup(location.path, newEntry).then(() => true);
+    }
+    return Promise.resolve(true);
   }
 
   function mergeTagGroup(entry: TS.TagGroup) {
@@ -1439,6 +1446,7 @@ export const TaggingActionsContextProvider = ({
     persistTagsInSidecarFile,
     addTagsToLibrary,
     currentDirectoryEntries,
+    saveTagInLocation,
   ]);
 
   return (

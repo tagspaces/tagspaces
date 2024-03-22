@@ -136,55 +136,46 @@ export const TagGroupsLocationContextProvider = ({
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
-    return new Promise((resolve, reject) => {
-      loadLocationDataPromise(path)
-        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          let tagGroups;
-          if (fsEntryMeta.tagGroups && fsEntryMeta.tagGroups.length > 0) {
-            tagGroups = [
-              ...fsEntryMeta.tagGroups.filter(
-                (tg) => tg.uuid !== tagGroup.uuid,
-              ),
-              tagGroup,
-            ];
-            //tagGroups = [...fsEntryMeta.tagGroups, tagGroup];
-          } else {
-            tagGroups = [tagGroup];
-          }
-          const updatedEntryMeta: TS.FileSystemEntryMeta = {
-            ...fsEntryMeta,
-            tagGroups,
-          };
-          saveLocationDataPromise(path, updatedEntryMeta)
-            .then(() => {
-              resolve(updatedEntryMeta);
-              return true;
-            })
-            .catch((err) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + err,
-              );
-              reject();
-            });
-          return true;
-        })
-        .catch(() => {
-          const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
-            tagGroups: [tagGroup],
+    return loadLocationDataPromise(path)
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        let tagGroups;
+        if (
+          fsEntryMeta &&
+          fsEntryMeta.tagGroups &&
+          fsEntryMeta.tagGroups.length > 0
+        ) {
+          tagGroups = [
+            ...fsEntryMeta.tagGroups.filter((tg) => tg.uuid !== tagGroup.uuid),
+            tagGroup,
+          ];
+          //tagGroups = [...fsEntryMeta.tagGroups, tagGroup];
+        } else {
+          tagGroups = [tagGroup];
+        }
+        const updatedEntryMeta: TS.FileSystemEntryMeta = {
+          ...(fsEntryMeta && fsEntryMeta),
+          tagGroups,
+        };
+        return saveLocationDataPromise(path, updatedEntryMeta)
+          .then(() => {
+            return updatedEntryMeta;
+          })
+          .catch((err) => {
+            return Promise.reject(err);
           });
-          saveLocationDataPromise(path, newFsEntryMeta)
-            .then(() => {
-              resolve(newFsEntryMeta);
-              return true;
-            })
-            .catch((error) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + error,
-              );
-              reject();
-            });
+      })
+      .catch(() => {
+        const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
+          tagGroups: [tagGroup],
         });
-    });
+        return saveLocationDataPromise(path, newFsEntryMeta)
+          .then(() => {
+            return newFsEntryMeta;
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      });
   }
 
   function editLocationTagGroup(
@@ -409,7 +400,7 @@ export const TagGroupsLocationContextProvider = ({
       mergeLocationTagGroup,
       loadLocationDataPromise,
     };
-  }, []);
+  }, [saveTagInLocation]);
 
   return (
     <TagGroupsLocationContext.Provider value={context}>
