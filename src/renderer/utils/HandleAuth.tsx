@@ -6,21 +6,16 @@ import {
 } from '@aws-amplify/ui-components';
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { actions as LocationActions } from '-/reducers/locations';
-// import { actions as TagGroupActions } from '-/reducers/taglibrary';
-import { actions as AppActions } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import { importTagGroups } from '-/services/taglibrary-utils';
+import { useDispatch } from 'react-redux';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
-interface Props {
-  loggedIn: (user: CognitoUserInterface) => void;
-  initApp: () => void;
-}
-function HandleAuth(props: Props) {
+function HandleAuth() {
   const username = useRef(undefined);
   const { addLocations } = useCurrentLocationContext();
+  const { importTagGroups } = useTaggingActionsContext();
+  const dispatch: AppDispatch = useDispatch();
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
@@ -54,15 +49,14 @@ function HandleAuth(props: Props) {
             .catch((e) => {
               console.log(e);
             });
-          props.initApp();
+          dispatch(AppActions.initApp());
         }
         // @ts-ignore
         username.current = authData.username;
-        // @ts-ignore
-        props.loggedIn(authData);
+        dispatch(AppActions.loggedIn(authData));
       } else if (nextAuthState === AuthState.SignedOut) {
         username.current = undefined;
-        props.loggedIn(undefined);
+        dispatch(AppActions.loggedIn(undefined));
       }
     });
   }, []);
@@ -101,33 +95,23 @@ function HandleAuth(props: Props) {
     }
   };
 
-  const fetchTenant = () =>
+  const fetchTenant = (): Promise<string | undefined> =>
     // get the access token of the signed in user
     Auth.currentSession()
       .then((session) => {
         const accessToken = session.getAccessToken();
         const cognitogroups = accessToken.payload['cognito:groups'];
         if (cognitogroups) {
-          return cognitogroups[0];
+          return cognitogroups[0] as string;
         }
         return undefined;
       })
       .catch((e) => {
         console.log(e);
+        return undefined;
       });
 
   return null;
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      loggedIn: AppActions.loggedIn,
-      initApp: AppActions.initApp,
-      // importTagGroups: TagGroupActions.importTagGroups
-    },
-    dispatch,
-  );
-}
-
-export default connect(undefined, mapDispatchToProps)(React.memo(HandleAuth));
+export default HandleAuth;

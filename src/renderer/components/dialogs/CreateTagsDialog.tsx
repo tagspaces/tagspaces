@@ -29,17 +29,18 @@ import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  addTag: (tags: string, uuid: string) => void;
   selectedTagGroupEntry: TS.TagGroup;
 }
 
 function CreateTagsDialog(props: Props) {
-  const { open, onClose, addTag, selectedTagGroupEntry } = props;
+  const { open, onClose, selectedTagGroupEntry } = props;
   const { t } = useTranslation();
+  const { addTag } = useTaggingActionsContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const [tagTitle, setTagTitle] = useState<string>('');
 

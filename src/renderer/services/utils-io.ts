@@ -876,28 +876,6 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   }
 }
 
-export async function loadLocationDataPromise(
-  path: string,
-  metaFile = AppConfig.folderLocationsFile,
-): Promise<TS.FileSystemEntryMeta> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (!entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForDir(
-      path,
-      PlatformIO.getDirSeparator(),
-      metaFile,
-    );
-    const metaData = await loadJSONFile(metaFilePath);
-    if (metaData) {
-      return {
-        ...metaData,
-        description: getDescriptionPreview(metaData.description, 200),
-      };
-    }
-  }
-  return undefined;
-}
-
 /**
  * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
  * @param path
@@ -1068,47 +1046,6 @@ export function cleanMetaData(
     });
   }
   return cleanedMeta;
-}
-
-export async function saveLocationDataPromise(
-  path: string,
-  metaData: any,
-): Promise<any> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (entryProperties) {
-    let metaFilePath;
-    if (!entryProperties.isFile) {
-      // check and create meta folder if not exist
-      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-      const metaDirectoryPath = getMetaDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const metaDirectoryProperties =
-        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-      if (!metaDirectoryProperties) {
-        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-      }
-
-      metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator(),
-        AppConfig.folderLocationsFile,
-      );
-    }
-    const content = JSON.stringify({
-      ...metaData,
-      appName: versionMeta.name,
-      appVersion: versionMeta.version,
-      lastUpdated: new Date().toJSON(),
-    });
-    return PlatformIO.saveTextFilePromise(
-      { path: metaFilePath },
-      content,
-      true,
-    );
-  }
-  return Promise.reject(new Error('file not found' + path));
 }
 
 /**

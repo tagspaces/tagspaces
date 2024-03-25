@@ -29,8 +29,7 @@ import {
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
-import { AppDispatch } from '-/reducers/app';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import {
   executePromisesInBatches,
@@ -154,7 +153,6 @@ export const PlatformFacadeContextProvider = ({
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const useTrashCan = useSelector(getUseTrashCan);
 
   function createDirectoryPromise(path: string): Promise<any> {

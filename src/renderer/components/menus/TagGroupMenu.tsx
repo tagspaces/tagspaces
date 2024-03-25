@@ -37,7 +37,6 @@ import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
@@ -49,9 +48,6 @@ interface Props {
   showCreateTagsDialog: () => void;
   showDeleteTagGroupDialog: () => void;
   showEditTagGroupDialog: () => void;
-  moveTagGroupUp: (tagGroupId: string) => void;
-  moveTagGroupDown: (tagGroupId: string) => void;
-  sortTagGroup: (tagGroupId: string) => void;
   handleCloseTagGroupMenu: () => void;
 }
 
@@ -61,9 +57,6 @@ function TagGroupMenu(props: Props) {
     onClose,
     selectedTagGroupEntry,
     handleCloseTagGroupMenu,
-    moveTagGroupUp,
-    moveTagGroupDown,
-    sortTagGroup,
     anchorEl,
     showCreateTagsDialog,
     showEditTagGroupDialog,
@@ -71,9 +64,13 @@ function TagGroupMenu(props: Props) {
   } = props;
   const { t } = useTranslation();
 
-  const { collectTagsFromLocation } = useTaggingActionsContext();
+  const {
+    collectTagsFromLocation,
+    moveTagGroupUp,
+    moveTagGroupDown,
+    sortTagGroup,
+  } = useTaggingActionsContext();
   const { setSearchQuery } = useDirectoryContentContext();
-  const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
 
   function handleCollectTags() {
@@ -83,7 +80,7 @@ function TagGroupMenu(props: Props) {
       collectTagsFromLocation(selectedTagGroupEntry);
     }
     handleCloseTagGroupMenu();
-    dispatch(AppActions.tagLibraryChanged());
+    //dispatch(AppActions.tagLibraryChanged());
   }
 
   function moveTagGroupUpInt() {

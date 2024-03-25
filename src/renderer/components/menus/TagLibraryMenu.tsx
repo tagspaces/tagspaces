@@ -17,7 +17,6 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
@@ -28,30 +27,32 @@ import AddIcon from '@mui/icons-material/Add';
 import ReloadIcon from '@mui/icons-material/Sync';
 import AppConfig from '-/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
-import { TS } from '-/tagspaces.namespace';
 import Links from 'assets/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useSelector } from 'react-redux';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   classes?: any;
   anchorEl: Element;
-  tagGroups: Array<Object>;
   open: boolean;
   onClose: () => void;
-  importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
   showCreateTagGroupDialog: () => void;
-  saveTagInLocation: boolean;
-  refreshTagsFromLocation: () => void;
 }
 
 function TagLibraryMenu(props: Props) {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
+  const { tagGroups } = useEditedTagLibraryContext();
+  const { refreshTagsFromLocation } = useTaggingActionsContext();
+
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
@@ -106,11 +107,8 @@ function TagLibraryMenu(props: Props) {
         <ImportExportTagGroupsDialog
           open={isImportExportTagGroupDialogOpened}
           onClose={handleCloseDialogs}
-          tagGroups={
-            dialogModeImport ? tagGroupsImported.current : props.tagGroups
-          }
+          tagGroups={dialogModeImport ? tagGroupsImported.current : tagGroups}
           dialogModeImport={dialogModeImport}
-          importTagGroups={props.importTagGroups}
         />
       )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
@@ -131,10 +129,10 @@ function TagLibraryMenu(props: Props) {
           tooltip={t('core:enableTagsFromLocationHelp')}
         >
           <MenuItem
-            disabled={!Pro || !props.saveTagInLocation}
+            disabled={!Pro || !saveTagInLocation}
             data-tid="refreshTagGroups"
             onClick={() => {
-              props.refreshTagsFromLocation();
+              refreshTagsFromLocation();
               props.onClose();
             }}
           >
