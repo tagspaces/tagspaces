@@ -55,7 +55,7 @@ import { generateImageThumbnail } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
-import { getEnhancedDir } from '-/services/meta-loader';
+import { getEnhancedDir, getEnhancedFile } from '-/services/meta-loader';
 
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
@@ -617,36 +617,7 @@ export function getAllPropertiesPromise(
         if (!entryProps.isFile) {
           return getEnhancedDir(entryProps);
         }
-
-        const metaFilePath = getMetaFileLocationForFile(
-          entryPath,
-          PlatformIO.getDirSeparator(),
-        );
-
-        try {
-          return loadJSONFile(metaFilePath).then(
-            (meta: TS.FileSystemEntryMeta) => {
-              if (meta) {
-                return enhanceEntry(
-                  { ...entryProps, meta },
-                  AppConfig.tagDelimiter,
-                  PlatformIO.getDirSeparator(),
-                );
-              }
-              return enhanceEntry(
-                entryProps,
-                AppConfig.tagDelimiter,
-                PlatformIO.getDirSeparator(),
-              );
-            },
-          );
-        } catch (e) {
-          return enhanceEntry(
-            entryProps,
-            AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator(),
-          );
-        }
+        return getEnhancedFile(entryProps);
       }
       console.log('Error getting props for ' + entryPath);
       return entryProps;

@@ -244,7 +244,10 @@ export const DirectoryContentContextProvider = ({
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
-        if (currentDirectoryPath.current === action.entry.path) {
+        if (
+          cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+          cleanTrailingDirSeparator(action.entry.path)
+        ) {
           if (action.action === 'perspectiveChange') {
             manualPerspective.current =
               action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
@@ -326,7 +329,10 @@ export const DirectoryContentContextProvider = ({
               }
             }
           }
-          if (currentDirectoryPath.current === action.entry.path) {
+          if (
+            cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+            cleanTrailingDirSeparator(action.entry.path)
+          ) {
             directoryMeta.current = {
               ...(directoryMeta.current && directoryMeta.current),
               ...(action.entry.meta && action.entry.meta),
