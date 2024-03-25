@@ -3,6 +3,7 @@ import PlatformIO from '-/services/platform-facade';
 import {
   executePromisesInBatches,
   getMetaForEntry,
+  loadJSONFile,
   loadMetaForDir,
 } from '-/services/utils-io';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import AppConfig from '-/AppConfig';
+import { enhanceEntry } from '@tagspaces/tagspaces-common/utils-io';
 
 export function loadCurrentDirMeta(
   directoryPath: string,
@@ -161,6 +163,57 @@ export function getEnhancedDir(
     }
     return enhancedEntry;
   });*/
+}
+
+export function getEnhancedFile(
+  entry: TS.FileSystemEntry,
+): Promise<TS.FileSystemEntry> {
+  if (!entry) {
+    return Promise.resolve(undefined);
+  }
+  if (!entry.isFile) {
+    return Promise.reject(
+      new Error('getEnhancedFile accept file only:' + entry.path),
+    );
+  }
+
+  const thumbFilePath = getThumbFileLocationForFile(
+    entry.path,
+    PlatformIO.getDirSeparator(),
+    false,
+  );
+
+  return PlatformIO.checkFileExist(thumbFilePath).then((exist) => {
+    const metaProps = exist ? { thumbPath: thumbFilePath } : {};
+
+    const metaFilePath = getMetaFileLocationForFile(
+      entry.path,
+      PlatformIO.getDirSeparator(),
+    );
+
+    try {
+      return loadJSONFile(metaFilePath).then((meta: TS.FileSystemEntryMeta) => {
+        if (meta) {
+          return enhanceEntry(
+            { ...entry, meta: { ...meta, ...metaProps } },
+            AppConfig.tagDelimiter,
+            PlatformIO.getDirSeparator(),
+          );
+        }
+        return enhanceEntry(
+          { ...entry, meta: { ...metaProps } },
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator(),
+        );
+      });
+    } catch (e) {
+      return enhanceEntry(
+        { ...entry, meta: { ...metaProps } },
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator(),
+      );
+    }
+  });
 }
 
 export function getDirMeta(dirPath: string): Promise<TS.FileSystemEntryMeta> {
