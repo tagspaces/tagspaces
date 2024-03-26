@@ -134,11 +134,10 @@ function RowCell(props: Props) {
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
-  const { addTags, editTagForEntry } = useTaggingActionsContext();
+  const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  const dispatch: AppDispatch = useDispatch();
 
   // You can use the dispatch function to dispatch actions
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
@@ -149,7 +148,7 @@ function RowCell(props: Props) {
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
-    dispatch(AppActions.addTag(tag, parentTagGroupUuid));
+    addTag(tag, parentTagGroupUuid);
   };
 
   // remove isNewFile on Cell click it will open file in editMode

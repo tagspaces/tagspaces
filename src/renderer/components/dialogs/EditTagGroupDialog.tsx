@@ -37,18 +37,20 @@ import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 interface Props {
   open: boolean;
-  editTagGroup: (tagGroup: TS.TagGroup) => void;
   selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
 }
 
 function EditTagGroupDialog(props: Props) {
-  const { editTagGroup, selectedTagGroupEntry, open, onClose } = props;
+  const { selectedTagGroupEntry, open, onClose } = props;
+
+  const { updateTagGroup } = useTaggingActionsContext();
   const { t } = useTranslation();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
@@ -108,7 +110,7 @@ function EditTagGroupDialog(props: Props) {
           );
         }
       }
-      editTagGroup({
+      updateTagGroup({
         ...selectedTagGroupEntry,
         title,
         color,
