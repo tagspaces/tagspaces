@@ -520,10 +520,7 @@ export const IOActionsContextProvider = ({
                     fsEntryMeta.id,
                     PlatformIO.getDirSeparator(),
                   );
-                  return PlatformIO.moveDirectoryPromise(
-                    { path: backupDir },
-                    newBackupDir,
-                  )
+                  return moveDirectoryPromise({ path: backupDir }, newBackupDir)
                     .then(() => {
                       console.log(
                         'Moving revisions successful from ' +
@@ -825,7 +822,7 @@ export const IOActionsContextProvider = ({
                       PlatformIO.getDirSeparator(),
                       false,
                     );
-                    return PlatformIO.saveBinaryFilePromise(
+                    return saveBinaryFilePromise(
                       { path: thumbPath },
                       fileContent,
                       true,
@@ -1660,11 +1657,7 @@ export const IOActionsContextProvider = ({
       .then((base64Image) => {
         if (base64Image) {
           const data = base64ToBlob(base64Image.split(',').pop());
-          return PlatformIO.saveBinaryFilePromise(
-            { path: folderBgndPath },
-            data,
-            true,
-          )
+          return saveBinaryFilePromise({ path: folderBgndPath }, data, true)
             .then(() => {
               // props.setLastBackgroundImageChange(new Date().getTime());
               return directoryPath;

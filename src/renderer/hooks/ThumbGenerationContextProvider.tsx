@@ -46,6 +46,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { base64ToBlob } from '-/utils/dom';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -70,6 +71,7 @@ export const ThumbGenerationContextProvider = ({
     updateCurrentDirEntries,
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
+  const { saveBinaryFilePromise } = usePlatformFacadeContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -395,7 +397,7 @@ export const ThumbGenerationContextProvider = ({
     }
     const baseString = dataURL.split(',').pop();
     const content = base64ToBlob(baseString);
-    return PlatformIO.saveBinaryFilePromise(
+    return saveBinaryFilePromise(
       { path: filePath },
       content, //PlatformIO.isMinio() ? content : content.buffer,
       true,
