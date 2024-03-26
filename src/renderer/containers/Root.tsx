@@ -42,6 +42,7 @@ import { DndProvider } from 'react-dnd';
 import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
 import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
 import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
+import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -68,27 +69,29 @@ export default function Root({ store, persistor }: RootType) {
           <EditedEntryContextProvider>
             <EditedEntryMetaContextProvider>
               <EditedTagLibraryContextProvider>
-                <SelectedEntryContextProvider>
-                  <DirectoryContentContextProvider>
-                    <FSWatcherContextProvider>
-                      <PlatformFacadeContextProvider>
-                        <LocationIndexContextProvider>
-                          <OpenedEntryContextProvider>
-                            <IOActionsContextProvider>
-                              <TagGroupsLocationContextProvider>
-                                <TaggingActionsContextProvider>
-                                  <DndProvider backend={HTML5Backend}>
-                                    <MainPage />
-                                  </DndProvider>
-                                </TaggingActionsContextProvider>
-                              </TagGroupsLocationContextProvider>
-                            </IOActionsContextProvider>
-                          </OpenedEntryContextProvider>
-                        </LocationIndexContextProvider>
-                      </PlatformFacadeContextProvider>
-                    </FSWatcherContextProvider>
-                  </DirectoryContentContextProvider>
-                </SelectedEntryContextProvider>
+                <EditedKanBanMetaContextProvider>
+                  <SelectedEntryContextProvider>
+                    <DirectoryContentContextProvider>
+                      <FSWatcherContextProvider>
+                        <PlatformFacadeContextProvider>
+                          <LocationIndexContextProvider>
+                            <OpenedEntryContextProvider>
+                              <IOActionsContextProvider>
+                                <TagGroupsLocationContextProvider>
+                                  <TaggingActionsContextProvider>
+                                    <DndProvider backend={HTML5Backend}>
+                                      <MainPage />
+                                    </DndProvider>
+                                  </TaggingActionsContextProvider>
+                                </TagGroupsLocationContextProvider>
+                              </IOActionsContextProvider>
+                            </OpenedEntryContextProvider>
+                          </LocationIndexContextProvider>
+                        </PlatformFacadeContextProvider>
+                      </FSWatcherContextProvider>
+                    </DirectoryContentContextProvider>
+                  </SelectedEntryContextProvider>
+                </EditedKanBanMetaContextProvider>
               </EditedTagLibraryContextProvider>
             </EditedEntryMetaContextProvider>
           </EditedEntryContextProvider>

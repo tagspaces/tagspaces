@@ -16,17 +16,11 @@
  *
  */
 
-// import EXIF from 'exif-js';
 import {
   extractFileExtension,
-  extractContainingDirectoryPath,
-  extractFileName,
-  normalizePath,
-  getMetaDirectoryPath,
   encodeFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import { base64ToBlob } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 import { FileTypeGroups } from '-/services/search';
@@ -100,181 +94,6 @@ export const supportedVideos = [
 ];
 const maxFileSize = 30 * 1024 * 1024; // 30 MB
 
-function saveThumbnailPromise(filePath, dataURL) {
-  if (!dataURL || dataURL.length < 7) {
-    // data:,
-    return Promise.reject(new Error('Invalid dataURL'));
-  }
-  const baseString = dataURL.split(',').pop();
-  const content = base64ToBlob(baseString);
-  return PlatformIO.saveBinaryFilePromise(
-    { path: filePath },
-    content, //PlatformIO.isMinio() ? content : content.buffer,
-    true,
-  )
-    .then(() => filePath)
-    .catch((error) => {
-      console.warn(
-        'Saving thumbnail for ' +
-          filePath +
-          ' failed with ' +
-          JSON.stringify(error),
-      );
-      return Promise.reject(new Error('Saving tmb failed for: ' + filePath));
-    });
-}
-
-function getThumbFileLocation(filePath: string) {
-  const containingFolder = extractContainingDirectoryPath(
-    filePath,
-    PlatformIO.getDirSeparator(),
-  );
-  const metaFolder = getMetaDirectoryPath(
-    containingFolder,
-    PlatformIO.getDirSeparator(),
-  );
-  return (
-    metaFolder +
-    PlatformIO.getDirSeparator() +
-    extractFileName(filePath, PlatformIO.getDirSeparator()) +
-    AppConfig.thumbFileExt
-  );
-}
-
-export function getThumbnailURLPromise(
-  filePath: string,
-): Promise<{ filePath: string; tmbPath?: string }> {
-  return PlatformIO.getPropertiesPromise(filePath)
-    .then((origStats) => {
-      const thumbFilePath = getThumbFileLocation(filePath);
-      return PlatformIO.getPropertiesPromise(thumbFilePath)
-        .then((stats) => {
-          if (stats) {
-            // Thumbnail exists
-            if (origStats.lmdt > stats.lmdt) {
-              // Checking if is up to date
-              return createThumbnailPromise(
-                filePath,
-                origStats.size,
-                thumbFilePath,
-                origStats.isFile,
-              )
-                .then((tmbPath) => ({ filePath, tmbPath }))
-                .catch((err) => {
-                  console.warn('Thumb generation failed ' + err);
-                  return Promise.resolve({ filePath, tmbPath: thumbFilePath });
-                });
-            } else {
-              // Tmb up to date
-              return Promise.resolve({ filePath, tmbPath: thumbFilePath });
-            }
-          } else {
-            // Thumbnail does not exists
-            return createThumbnailPromise(
-              filePath,
-              origStats.size,
-              thumbFilePath,
-              origStats.isFile,
-            )
-              .then((tmbPath) => {
-                if (tmbPath !== undefined) {
-                  return { filePath, tmbPath };
-                } else {
-                  return { filePath };
-                }
-              })
-              .catch((err) => {
-                console.warn('Thumb generation failed ' + err);
-                return Promise.resolve({ filePath });
-              });
-          }
-        })
-        .catch((err) => {
-          console.warn('Error getting tmb properties ' + err);
-          return Promise.resolve({ filePath });
-        });
-    })
-    .catch((err) => {
-      console.warn('Error getting file properties ' + err);
-      return Promise.resolve({ filePath });
-    });
-}
-
-/*export function replaceThumbnailURLPromise(
-  filePath: string,
-  thumbFilePath: string
-): Promise<any> {
-  return PlatformIO.getPropertiesPromise(filePath)
-    .then(origStats =>
-      createThumbnailPromise(
-        filePath,
-        origStats.size,
-        thumbFilePath,
-        origStats.isFile
-      )
-        .then(tmbPath => ({ filePath, tmbPath }))
-        .catch(err => {
-          console.warn('Thumb generation failed ' + err);
-          return { filePath, tmbPath: thumbFilePath };
-        })
-    )
-    .catch(err => {
-      console.warn('Error getting file properties ' + err);
-      return { filePath };
-    });
-}*/
-
-export function createThumbnailPromise(
-  filePath: string,
-  fileSize: number,
-  thumbFilePath: string,
-  isFile: boolean,
-): Promise<string | undefined> {
-  const metaDirectory = extractContainingDirectoryPath(
-    thumbFilePath,
-    PlatformIO.getDirSeparator(),
-  );
-  const fileDirectory = isFile
-    ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
-    : filePath;
-  const normalizedFileDirectory = normalizePath(fileDirectory);
-  if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
-    return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
-  }
-  return PlatformIO.checkDirExist(metaDirectory).then((exist) => {
-    if (!exist) {
-      return PlatformIO.createDirectoryPromise(metaDirectory).then(() => {
-        return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
-      });
-    } else {
-      return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
-    }
-  });
-}
-
-function createThumbnailSavePromise(
-  filePath: string,
-  fileSize: number,
-  thumbFilePath: string,
-): Promise<string | undefined> {
-  return generateThumbnailPromise(filePath, fileSize)
-    .then((dataURL) => {
-      if (dataURL && dataURL.length) {
-        return saveThumbnailPromise(thumbFilePath, dataURL)
-          .then(() => thumbFilePath)
-          .catch((err) => {
-            console.warn('Thumb saving failed ' + err + ' for ' + filePath);
-            return Promise.resolve(undefined);
-          });
-      }
-      return undefined; // thumbFilePath;
-    })
-    .catch((err) => {
-      console.warn('Thumb generation failed ' + err + ' for ' + filePath);
-      return Promise.resolve(undefined);
-    });
-}
-
 /**
  * return thumbFilePath: Promise<string> or empty sting on error or not supported
  */
@@ -284,9 +103,10 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     PlatformIO.getDirSeparator(),
   ).toLowerCase();
 
-  const fileURLEscaped = /^https?:\/\//.test(fileURL)
-    ? fileURL
-    : encodeFileName(fileURL, PlatformIO.getDirSeparator());
+  const fileURLEscaped =
+    /^https?:\/\//.test(fileURL) || AppConfig.isElectron
+      ? fileURL
+      : encodeFileName(fileURL, PlatformIO.getDirSeparator());
 
   if (supportedImgs.indexOf(ext) >= 0) {
     if (Pro && ext === 'tga') {

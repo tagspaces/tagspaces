@@ -32,7 +32,6 @@ import {
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
   extractContainingDirectoryPath,
-  extractFileName,
   extractParentDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
@@ -63,6 +62,7 @@ import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { getDirMeta, loadCurrentDirMeta } from '-/services/meta-loader';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -122,11 +122,6 @@ type DirectoryContentContextData = {
   findFromSavedSearch: (uuid: string) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   getPerspective: () => TS.PerspectiveType;
-  toggleDirVisibility: (
-    dir: TS.OrderVisibilitySettings,
-    parentDirPath?: string,
-    update?: boolean,
-  ) => Promise<TS.FileSystemEntryMeta>;
 };
 
 export const DirectoryContentContext =
@@ -168,7 +163,6 @@ export const DirectoryContentContext =
     findFromSavedSearch: () => {},
     getDefaultPerspectiveSettings: undefined,
     getPerspective: undefined,
-    toggleDirVisibility: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -188,6 +182,7 @@ export const DirectoryContentContextProvider = ({
   } = useCurrentLocationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
+  const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
 
@@ -270,6 +265,20 @@ export const DirectoryContentContextProvider = ({
   }, [metaActions]);
 
   useEffect(() => {
+    if (kanbanActions && kanbanActions.length > 0) {
+      for (const action of kanbanActions) {
+        if (action.action === 'directoryVisibilityChange') {
+          directoryMeta.current = action.meta;
+          currentDirectoryDirs.current = [
+            ...directoryMeta.current.customOrder.folders,
+          ];
+          forceUpdate();
+        }
+      }
+    }
+  }, [kanbanActions]);
+
+  useEffect(() => {
     reflectActions(actions).catch(console.error);
   }, [actions]);
 
@@ -291,8 +300,8 @@ export const DirectoryContentContextProvider = ({
               ...action.entry,
             };
           }
-          // update ordered entries (KanBan)
-          if (Pro && Pro.MetaOperations && action.oldEntryPath) {
+          // update ordered entries (KanBan) todo find better place for this
+          /*if (Pro && Pro.MetaOperations && action.oldEntryPath) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               PlatformIO.getDirSeparator(),
@@ -307,12 +316,13 @@ export const DirectoryContentContextProvider = ({
                 PlatformIO.getDirSeparator(),
               );
               const dirMeta: TS.FileSystemEntryMeta =
-                await Pro.MetaOperations.reflectOrderEntryRenamed(
+                await Pro.MetaOperations.getOrderEntryRenamed(
                   dirPath,
                   oldName,
                   action.entry.name,
                 );
               if (dirMeta) {
+                await saveMetaDataPromise(dirPath, dirMeta);
                 directoryMeta.current = { ...dirMeta };
                 if (directoryMeta.current.customOrder) {
                   if (directoryMeta.current.customOrder.files) {
@@ -328,7 +338,7 @@ export const DirectoryContentContextProvider = ({
                 }
               }
             }
-          }
+          }*/
           if (
             cleanTrailingDirSeparator(currentDirectoryPath.current) ===
             cleanTrailingDirSeparator(action.entry.path)
@@ -370,14 +380,14 @@ export const DirectoryContentContextProvider = ({
         ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
       ) {
         currentDirectoryEntries.current.push(entry);
-        // reflect add KanBan folders visibility
-        if (!entry.isFile) {
+        // reflect add KanBan folders visibility todo move in IOActionContext
+        /*if (!entry.isFile) {
           await toggleDirVisibility(
             { name: entry.name, uuid: entry.uuid },
             dirPath,
             false,
           );
-        }
+        }*/
       }
     }
   }
@@ -967,7 +977,7 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
-  function toggleDirVisibility(
+  /*function toggleDirVisibility(
     dir: TS.OrderVisibilitySettings,
     parentDirPath: string = undefined,
     update: boolean = true,
@@ -992,7 +1002,7 @@ export const DirectoryContentContextProvider = ({
         return meta;
       });
     }
-  }
+  }*/
 
   const context = useMemo(() => {
     return {
@@ -1033,7 +1043,6 @@ export const DirectoryContentContextProvider = ({
       exitSearchMode,
       findFromSavedSearch,
       getDefaultPerspectiveSettings,
-      toggleDirVisibility,
     };
   }, [
     // currentLocation,

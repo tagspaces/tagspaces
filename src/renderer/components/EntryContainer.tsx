@@ -68,7 +68,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -91,7 +91,7 @@ function EntryContainer() {
     addToEntryContainer,
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
-  const { setAutoSave } = useEditedEntryMetaContext();
+  const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
@@ -565,10 +565,7 @@ function EntryContainer() {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
     if (Pro && revisionsEnabled) {
-      const id = await Pro.MetaOperations.getMetadataID(
-        fileOpen.path,
-        fileOpen.uuid,
-      );
+      const id = await getMetadataID(fileOpen.path, fileOpen.uuid);
       const targetPath = getBackupFileLocation(
         fileOpen.path,
         id,

@@ -118,6 +118,11 @@ export namespace TS {
     entry: TS.FileSystemEntry;
   }
 
+  interface KanBanMetaActions {
+    action: 'directoryVisibilityChange';
+    meta: TS.FileSystemEntryMeta;
+  }
+
   interface Tag {
     title?: string;
     /**

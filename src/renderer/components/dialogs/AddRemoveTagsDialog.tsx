@@ -58,7 +58,6 @@ function AddRemoveTagsDialog(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const selected = props.selected ? props.selected : selectedEntries;
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -84,14 +83,7 @@ function AddRemoveTagsDialog(props: Props) {
   const addTagsAction = () => {
     if (selected && selected.length > 0) {
       const paths = selected.map((entry) => entry.path);
-      const metaFilePaths: string[] = paths.map((p) =>
-        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
-      );
-      // tmp fix; saving meta sidecar file is not ignored by watcher
-      ignoreByWatcher(...metaFilePaths);
-      addTags(paths, newlyAddedTags).then(() =>
-        deignoreByWatcher(...metaFilePaths),
-      );
+      addTags(paths, newlyAddedTags);
     }
     onCloseDialog(true);
   };
@@ -99,14 +91,7 @@ function AddRemoveTagsDialog(props: Props) {
   const removeTagsAction = () => {
     if (selected && selected.length > 0) {
       const paths = selected.map((entry) => entry.path);
-      const metaFilePaths: string[] = paths.map((p) =>
-        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
-      );
-      // tmp fix; saving meta sidecar file is not ignored by watcher
-      ignoreByWatcher(...metaFilePaths);
-      removeTags(paths, newlyAddedTags).then(() =>
-        deignoreByWatcher(...metaFilePaths),
-      );
+      removeTags(paths, newlyAddedTags);
     }
     onCloseDialog(true);
   };
@@ -114,12 +99,7 @@ function AddRemoveTagsDialog(props: Props) {
   const removeAllTagsAction = () => {
     if (selected && selected.length > 0) {
       const paths = selected.map((entry) => entry.path);
-      const metaFilePaths: string[] = paths.map((p) =>
-        getMetaFileLocationForFile(p, PlatformIO.getDirSeparator()),
-      );
-      // tmp fix; saving meta sidecar file is not ignored by watcher
-      ignoreByWatcher(...metaFilePaths);
-      removeAllTags(paths).then(() => deignoreByWatcher(...metaFilePaths));
+      removeAllTags(paths);
     }
     onCloseDialog(true);
   };

@@ -25,9 +25,8 @@ import React, {
 } from 'react';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { TS } from '-/tagspaces.namespace';
-import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import { removeFolderCustomSettings } from '-/utils/metaoperations';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 type PerspectiveSettingsContextData = {
   orderBy: boolean;
@@ -89,6 +88,8 @@ export const PerspectiveSettingsContextProvider = ({
     getDefaultPerspectiveSettings,
     getPerspective,
   } = useDirectoryContentContext();
+  const { removeFolderCustomSettings, saveMetaDataPromise } =
+    useIOActionsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
     getSettings(getPerspective(), directoryMeta),
@@ -161,12 +162,13 @@ export const PerspectiveSettingsContextProvider = ({
       isDefaultSetting = !haveLocalSetting();
     }
     if (Pro && !isDefaultSetting) {
-      Pro.MetaOperations.savePerspectiveSettings(
+      Pro.MetaOperations.setPerspectiveSettings(
         currentDirectoryPath,
         getPerspective(),
         settings.current,
-      ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        setDirectoryMeta(fsEntryMeta);
+      ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
+        saveMetaDataPromise(currentDirectoryPath, updatedFsEntryMeta);
+        setDirectoryMeta(updatedFsEntryMeta);
       });
     } else {
       const defaultSettings = getDefaultPerspectiveSettings(getPerspective());

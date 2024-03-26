@@ -30,7 +30,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 type DescriptionContextData = {
   description: string;
@@ -63,7 +63,7 @@ export const DescriptionContextProvider = ({
   const { openedEntry } = useOpenedEntryContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const { setDescriptionChange } = useEditedEntryMetaContext();
+  const { setDescriptionChange } = useIOActionsContext();
   //const description = useRef<string>(openedEntry.meta?.description);
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);

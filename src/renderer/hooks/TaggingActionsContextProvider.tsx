@@ -47,7 +47,6 @@ import {
   loadFileMetaDataPromise,
   loadMetaDataPromise,
   parseNewTags,
-  saveMetaDataPromise,
 } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
@@ -166,7 +165,7 @@ export const TaggingActionsContextProvider = ({
   } = useTagGroupsLocationContext();
   const { currentDirectoryEntries } = useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
-  const { renameFile } = useIOActionsContext();
+  const { renameFile, saveMetaDataPromise } = useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
