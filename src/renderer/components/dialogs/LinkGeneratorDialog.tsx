@@ -34,9 +34,11 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
 import Links from 'assets/links';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { generateClipboardLink } from '-/utils/dom';
 
 const PREFIX = 'LinkGeneratorDialog';
 
@@ -136,11 +138,18 @@ function LinkGeneratorDialog(props: Props) {
                 <Button
                   data-tid="copySharingLinkTID"
                   onClick={() => {
-                    navigator.clipboard
-                      .writeText(signedLink.current)
-                      .then(() => {
-                        showNotification(t('core:linkCopied'));
-                      });
+                    const entryTitle = extractTitle(
+                      path,
+                      true,
+                      PlatformIO.getDirSeparator(),
+                    );
+                    const clibboardItem = generateClipboardLink(
+                      signedLink.current,
+                      entryTitle,
+                    );
+                    navigator.clipboard.write(clibboardItem).then(() => {
+                      showNotification(t('core:linkCopied'));
+                    });
                   }}
                   color="primary"
                 >
