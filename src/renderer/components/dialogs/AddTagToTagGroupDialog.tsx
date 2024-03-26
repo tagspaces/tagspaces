@@ -32,8 +32,8 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
@@ -45,7 +45,8 @@ interface Props {
 
 function AddTagToTagGroupDialog(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { addTag } = useTaggingActionsContext();
+  //const dispatch: AppDispatch = useDispatch();
   const [tagGroup, setTagGroup] = useState<string>(undefined);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -62,7 +63,8 @@ function AddTagToTagGroupDialog(props: Props) {
     if (!selectedTag.color) {
       selectedTag.color = defaultBackgroundColor;
     }
-    dispatch(AppActions.addTag(selectedTag, tagGroup));
+    addTag(selectedTag, tagGroup);
+    //dispatch(AppActions.addTag(selectedTag, tagGroup));
     props.onClose();
   };
 

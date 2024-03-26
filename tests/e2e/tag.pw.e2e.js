@@ -22,6 +22,7 @@ import {
   addTags,
   arrTags,
   createTagGroup,
+  deleteTagGroup,
   editedGroupName,
   newTagName,
   tagMenu,
@@ -54,25 +55,12 @@ test.beforeEach(async () => {
 test.describe('TST04 - Testing the tag library:', () => {
   test('TST0401 - Should create a tag group [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
-    await expectElementExist(
-      '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      true,
-    );
+    await deleteTagGroup(testGroup);
   });
 
   test('TST0402 - Should delete tag group [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
-    await expectElementExist(
-      '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      true,
-    );
-    await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
-    await clickOn('[data-tid=deleteTagGroup]');
-    await clickOn('[data-tid=confirmDeleteTagGroupDialog]');
-    await expectElementExist(
-      '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      false,
-    );
+    await deleteTagGroup(testGroup);
   });
 
   test('TST0403 - Rename tag group [web,minio,electron]', async () => {
@@ -85,6 +73,7 @@ test.describe('TST04 - Testing the tag library:', () => {
       '[data-tid=tagLibraryTagGroupTitle_' + editedGroupName + ']',
       true,
     );
+    await deleteTagGroup(editedGroupName);
   });
 
   test.skip('TST0404 - Change default tag group tag colors [web,minio,electron]', async () => {
@@ -113,6 +102,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     const hex = rgb2hex(colorStyle); //color.value);
     expect(hex.hex).toBe('#000000'); //'rgb(0,0,0)');
     await clickOn('[data-tid=editTagGroupConfirmButton]');
+    await deleteTagGroup(testGroup);
   });
 
   test('TST0405 - Should add tag to a tag group [web,minio,electron]', async () => {
@@ -123,6 +113,7 @@ test.describe('TST04 - Testing the tag library:', () => {
       '[data-tid=tagContainer_' + newTagName + ']',
       true,
     );
+    await deleteTagGroup(testGroup);
   });
 
   test.skip('TST0406 - Import tag groups [manual]', async () => {});
@@ -137,6 +128,7 @@ test.describe('TST04 - Testing the tag library:', () => {
         true,
       );
     }
+    await deleteTagGroup(testGroup);
   });
 
   test('TST0407 - Should rename tag [web,minio,electron]', async () => {
@@ -272,6 +264,8 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=locationManager]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectMetaFilesExist(['tsl.json'], true);
+    // cleanup
+    await deleteTagGroup(testGroup);
   });
 
   test('TST0420 - Load tag groups from location [web,minio,electron, _pro]', async () => {

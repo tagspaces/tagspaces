@@ -19,44 +19,43 @@
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { TS } from '-/tagspaces.namespace';
 
-type EditedEntryMetaContextData = {
-  metaActions: TS.EditMetaAction[];
-  setReflectMetaActions: (...actionsArray: TS.EditMetaAction[]) => void;
+type EditedKanBanMetaContextData = {
+  kanbanActions: TS.KanBanMetaActions[];
+  setReflectKanBanActions: (...actionsArray: TS.KanBanMetaActions[]) => void;
 };
 
-export const EditedEntryMetaContext = createContext<EditedEntryMetaContextData>(
-  {
-    metaActions: undefined,
-    setReflectMetaActions: undefined,
-  },
-);
+export const EditedKanBanMetaContext =
+  createContext<EditedKanBanMetaContextData>({
+    kanbanActions: undefined,
+    setReflectKanBanActions: undefined,
+  });
 
-export type EditedEntryMetaContextProviderProps = {
+export type EditedKanBanMetaContextProviderProps = {
   children: React.ReactNode;
 };
 
-export const EditedEntryMetaContextProvider = ({
+export const EditedKanBanMetaContextProvider = ({
   children,
-}: EditedEntryMetaContextProviderProps) => {
-  const metaActions = useRef<TS.EditMetaAction[]>(undefined);
+}: EditedKanBanMetaContextProviderProps) => {
+  const metaActions = useRef<TS.KanBanMetaActions[]>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function setReflectMetaActions(...actionsArray: TS.EditMetaAction[]) {
+  function setReflectKanBanActions(...actionsArray: TS.KanBanMetaActions[]) {
     metaActions.current = actionsArray;
     forceUpdate();
   }
 
   const context = useMemo(() => {
     return {
-      metaActions: metaActions.current,
-      setReflectMetaActions,
+      kanbanActions: metaActions.current,
+      setReflectKanBanActions,
     };
   }, [metaActions.current]);
 
   return (
-    <EditedEntryMetaContext.Provider value={context}>
+    <EditedKanBanMetaContext.Provider value={context}>
       {children}
-    </EditedEntryMetaContext.Provider>
+    </EditedKanBanMetaContext.Provider>
   );
 };
