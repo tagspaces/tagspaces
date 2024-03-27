@@ -150,7 +150,7 @@ test.describe('TST01 - Folder management', () => {
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
   test('TST0108 - Move folder [web,minio,electron]', async () => {
-    await createFile('file_to_move.txt', 'testing file content');
+    createFile('file_to_move.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'fileMenuMoveCopyDirectoryTID',
@@ -174,7 +174,7 @@ test.describe('TST01 - Folder management', () => {
   });
 
   test('TST0109 - Copy folder [web,minio,electron]', async () => {
-    await createFile('file_to_copy.txt', 'testing file content');
+    createFile('file_to_copy.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'fileMenuMoveCopyDirectoryTID',

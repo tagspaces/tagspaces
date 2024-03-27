@@ -206,7 +206,7 @@ export async function testDataRefresh() {
   await fse.copy(src, newPath); //, { overwrite: true });
 }
 
-export async function createFile(
+export function createFile(
   fileName = 'empty_file.html',
   fileContent = undefined,
   rootFolder = 'empty_folder',
@@ -223,9 +223,9 @@ export async function createFile(
 
   try {
     if (fileContent) {
-      await fse.outputFile(filePath, fileContent);
+      fse.outputFileSync(filePath, fileContent);
     } else {
-      await fse.createFile(filePath);
+      fse.createFileSync(filePath);
       console.log('Empty file created!');
     }
   } catch (err) {

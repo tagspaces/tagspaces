@@ -302,7 +302,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain();
 
     const newFileContent = 'testing_file_content';
-    await createFile('sample.txt', newFileContent, '.');
+    createFile('sample.txt', newFileContent, '.');
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
     await expectFileContain(newFileContent, 15000);
@@ -319,7 +319,7 @@ test.describe('TST08 - File folder properties', () => {
       stroke="#bbbbbb22"
     ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
     </svg>`;
-    await createFile(fileName, svg);
+    createFile(fileName, svg);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',

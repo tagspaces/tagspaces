@@ -62,7 +62,7 @@ test.beforeEach(async () => {
 test.describe('TST02 - Folder properties', () => {
   test('TST0201 - Open in main area [web,minio,electron]', async () => {
     const testFile = 'file_in_empty_folder.txt';
-    await createFile(testFile);
+    createFile(testFile);
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInMainAreaTID]');
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
@@ -88,7 +88,7 @@ test.describe('TST02 - Folder properties', () => {
       ],
       id: '73e839b38d034a4a807971e755c17091',
     };
-    await createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
+    createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
 
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadFolderTID]');

@@ -43,7 +43,7 @@ test.beforeAll(async () => {
   await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
-  await createFile();
+  createFile();
 });
 
 test.afterAll(async () => {
@@ -326,8 +326,8 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
-    await createFile('n1ote.txt');
-    await createFile('note.txt');
+    createFile('n1ote.txt');
+    createFile('note.txt');
     // fuzzy
     await addSearchCommand('a:', false);
     await clickOn('#textQuery-option-0');
@@ -392,7 +392,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
    * for web fulltext index is not created in tsi.json
    */
   test('TST0636 - Search q. fulltext in content [electron]', async () => {
-    await createFile('fulltext.txt', 'testing fulltext');
+    createFile('fulltext.txt', 'testing fulltext');
 
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-2');
@@ -410,10 +410,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0646 - Open directory from search results [web,electron]', async () => {
-    await createFile(
-      'text_file.txt',
-      'testing open subfolder from search results',
-    );
+    createFile('text_file.txt', 'testing open subfolder from search results');
     await addSearchCommand('empty_folder', true);
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await openContextEntryMenu(
