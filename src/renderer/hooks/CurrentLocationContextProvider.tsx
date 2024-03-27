@@ -313,8 +313,7 @@ export const CurrentLocationContextProvider = ({
           return setLocationType(location).then(() => null);
         } else {
           // handle the same location type but different location
-          // dispatch(actions.setCurrentLocationId(location.uuid));
-          return setLocationType(location).then(() => currentLocation.uuid);
+          // return setLocationType(location).then(() => currentLocation.uuid);
         }
       }
     }

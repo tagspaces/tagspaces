@@ -86,12 +86,14 @@ export const LocationIndexContextProvider = ({
     useDirectoryContentContext();
   const { actions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
+  const { switchLocationTypeByID, switchCurrentLocationType } =
+    useCurrentLocationContext();
 
   const enableWS = useSelector(getEnableWS);
   const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<boolean>(false);
-  const lastError = useRef(undefined);
+  //const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -200,7 +202,7 @@ export const LocationIndexContextProvider = ({
   ): Promise<boolean> {
     isIndexing.current = true;
     forceUpdate();
-    return createDirectoryIndex(
+    return createDirectoryIndexWrapper(
       { path: directoryPath, locationID },
       extractText,
       ignorePatterns,
@@ -217,7 +219,7 @@ export const LocationIndexContextProvider = ({
       })
       .catch((err) => {
         isIndexing.current = false;
-        lastError.current = err;
+        //lastError.current = err;
         forceUpdate();
         return false;
       });
@@ -225,74 +227,72 @@ export const LocationIndexContextProvider = ({
 
   function createLocationIndex(location: TS.Location): Promise<boolean> {
     if (location) {
-      const isCurrentLocation =
-        currentLocation && currentLocation.uuid === location.uuid;
-      getLocationPath(location).then((locationPath) => {
-        if (location.type === locationType.TYPE_CLOUD) {
-          return PlatformIO.enableObjectStoreSupport(location)
-            .then(() =>
-              createDirIndex(
-                locationPath,
-                location.fullTextIndex,
-                isCurrentLocation,
-                location.uuid,
-              ),
-            )
-            .catch(() => {
-              PlatformIO.disableObjectStoreSupport();
-              return false;
-            });
-        } else if (location.type === locationType.TYPE_WEBDAV) {
-          PlatformIO.enableWebdavSupport(location);
-          return createDirIndex(
-            locationPath,
-            location.fullTextIndex,
-            isCurrentLocation,
-            location.uuid,
-          );
-        } else if (location.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          return createDirIndex(
-            locationPath,
-            location.fullTextIndex,
-            isCurrentLocation,
-            location.uuid,
-          );
-        }
+      return getLocationPath(location).then((locationPath) => {
+        const isCurrentLocation =
+          currentLocation && currentLocation.uuid === location.uuid;
+        return createDirIndex(
+          locationPath,
+          location.fullTextIndex,
+          isCurrentLocation,
+          location.uuid,
+          location.ignorePatternPaths,
+        )
+          .then(() => true)
+          .catch(() => {
+            return false;
+          });
       });
     }
     return Promise.resolve(false);
   }
 
-  function createLocationsIndexes(extractText = true): Promise<boolean> {
+  function createDirectoryIndexWrapper(
+    param: string | any,
+    extractText = false,
+    ignorePatterns: Array<string> = [],
+    enableWS = true,
+    // disableIndexing = true,
+  ): Promise<any> {
+    return switchLocationTypeByID(param.locationID)
+      .then(() =>
+        createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
+      )
+      .then((index) => switchCurrentLocationType().then(() => index))
+      .catch((err) => {
+        //lastError.current = err;
+        console.warn('Error loading text content ' + err);
+        return switchCurrentLocationType();
+      });
+  }
+
+  async function createLocationsIndexes(extractText = true): Promise<boolean> {
     isIndexing.current = true;
     forceUpdate();
-    const promises = allLocations.map((location: TS.Location) =>
-      getLocationPath(location).then((locationPath) =>
-        createDirectoryIndex(
-          { path: locationPath, location: location.uuid },
+    //(async () => {
+    for (let location of allLocations) {
+      try {
+        const locationPath = await getLocationPath(location);
+        await createDirectoryIndexWrapper(
+          { path: locationPath, locationID: location.uuid },
           extractText,
           location.ignorePatternPaths,
           enableWS,
-        ).catch((err) => {
-          lastError.current = err;
-        }),
-      ),
-    );
-
-    return Promise.all(promises)
-      .then((e) => {
-        isIndexing.current = false;
-        forceUpdate();
-        console.log('Resolution is complete!', e);
-        return true;
-      })
-      .catch((e) => {
+        );
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    }
+    // })();
+    isIndexing.current = false;
+    forceUpdate();
+    console.log('Resolution is complete!');
+    return true;
+    /*.catch((e) => {
         isIndexing.current = false;
         forceUpdate();
         console.warn('Resolution is failed!', e);
         return false;
-      });
+      });*/
   }
 
   function clearDirectoryIndex() {
@@ -328,7 +328,7 @@ export const LocationIndexContextProvider = ({
           (!index || index.length < 1 || indexAge > maxIndexAge))
       ) {
         console.log('Start creating index for : ' + currentPath);
-        const newIndex = await createDirectoryIndex(
+        const newIndex = await createDirectoryIndexWrapper(
           {
             path: currentPath,
             locationID: currentLocation.uuid,
@@ -437,7 +437,7 @@ export const LocationIndexContextProvider = ({
             (!location.disableIndexing && !indexExist)
           ) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(
+            directoryIndex = await createDirectoryIndexWrapper(
               {
                 path: nextPath,
                 locationID: location.uuid,

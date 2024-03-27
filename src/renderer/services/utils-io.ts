@@ -531,7 +531,7 @@ export function createDirectoryIndex(
   ignorePatterns: Array<string> = [],
   enableWS = true,
   // disableIndexing = true,
-) {
+): Promise<any> {
   //: Promise<TS.FileSystemEntry[]> {
   if (Pro && Pro.Watcher) {
     Pro.Watcher.stopWatching();

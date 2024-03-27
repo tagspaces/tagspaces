@@ -396,6 +396,9 @@ export default class PlatformFacade {
   };
 
   static checkFileExist = (file: string): Promise<boolean> => {
+    if (file === undefined) {
+      return Promise.resolve(false);
+    }
     if (objectStoreAPI) {
       return objectStoreAPI
         .getPropertiesPromise({
