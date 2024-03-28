@@ -253,16 +253,18 @@ export const LocationIndexContextProvider = ({
     enableWS = true,
     // disableIndexing = true,
   ): Promise<any> {
-    return switchLocationTypeByID(param.locationID)
-      .then(() =>
-        createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
-      )
-      .then((index) => switchCurrentLocationType().then(() => index))
-      .catch((err) => {
-        //lastError.current = err;
-        console.warn('Error loading text content ' + err);
-        return switchCurrentLocationType();
-      });
+    return (
+      switchLocationTypeByID(param.locationID)
+        .then(() =>
+          createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
+        )
+        // .then((index) => switchCurrentLocationType().then(() => index))
+        .catch((err) => {
+          //lastError.current = err;
+          console.warn('Error loading text content ' + err);
+          return false; //switchCurrentLocationType();
+        })
+    );
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
@@ -393,13 +395,14 @@ export const LocationIndexContextProvider = ({
 
   function searchAllLocations(searchQuery: TS.SearchQuery) {
     console.time('globalSearch');
+    setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
     // Preparing for global search
     // setSearchResults([]);
-    if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
+    /*if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.disableObjectStoreSupport();
-    }
+    }*/
     window.walkCanceled = false;
     let searchResultCount = 0;
     let maxSearchResultReached = false;
@@ -416,16 +419,16 @@ export const LocationIndexContextProvider = ({
           let directoryIndex = [];
           let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-          console.log('Searching in: ' + nextPath);
+          //console.log('Searching in: ' + nextPath);
           showNotification(
             t('core:searching') + ' ' + location.name,
             'default',
             true,
             'TIDSearching',
           );
-          if (isCloudLocation) {
+          /*if (isCloudLocation) {
             await PlatformIO.enableObjectStoreSupport(location);
-          }
+          }*/
           // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
           indexExist = await hasIndex(
             nextPath,
@@ -449,6 +452,7 @@ export const LocationIndexContextProvider = ({
             );
           } else {
             console.log('Loading index for : ' + nextPath);
+            await switchLocationTypeByID(location.uuid);
             directoryIndex = await loadIndex(
               {
                 path: nextPath,
@@ -489,18 +493,20 @@ export const LocationIndexContextProvider = ({
               }
 
               searchResultCount += enhancedSearchResult.length;
+              switchCurrentLocationType();
               appendSearchResults(enhancedSearchResult);
               hideNotifications();
-              if (isCloudLocation) {
+              /*if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
-              }
+              }*/
               return true;
             })
             .catch((e) => {
-              if (isCloudLocation) {
+              /*if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
-              }
+              }*/
               console.log('Searching Index failed: ', e);
+              switchCurrentLocationType();
               setSearchResults([]);
               // dispatch(AppActions.hideNotifications());
               showNotification(
@@ -528,21 +534,21 @@ export const LocationIndexContextProvider = ({
           showNotification(t('Global search completed'), 'default', true);
         }
         console.log('Global search completed!');
-        if (
+        /*if (
           currentLocation &&
           currentLocation.type === locationType.TYPE_CLOUD
         ) {
           PlatformIO.enableObjectStoreSupport(currentLocation);
-        }
+        }*/
         return true;
       })
       .catch((e) => {
-        if (
+        /*if (
           currentLocation &&
           currentLocation.type === locationType.TYPE_CLOUD
         ) {
           PlatformIO.enableObjectStoreSupport(currentLocation);
-        }
+        }*/
         console.timeEnd('globalSearch');
         console.warn('Global search failed!', e);
       });

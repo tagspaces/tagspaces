@@ -540,7 +540,7 @@ function EntryContainer() {
                 entryProp.path,
               );
               if (currentDirectoryPath === openedEntryDir) {
-                openDirectory(openedEntryDir);
+                openDirectory(openedEntryDir, openedEntry.locationId);
                 /*
                   updateOpenedFile(openedEntry.path, {
                     ...openedEntry,

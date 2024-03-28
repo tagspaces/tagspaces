@@ -102,6 +102,7 @@ type DirectoryContentContextData = {
   ) => any;
   openDirectory: (
     dirPath: string,
+    locationID?: string,
     showHiddenEntries?: boolean,
   ) => Promise<boolean>;
   openCurrentDirectory: (showHiddenEntries?: boolean) => Promise<boolean>;
@@ -185,6 +186,7 @@ export const DirectoryContentContextProvider = ({
     currentLocation,
     skipInitialDirList,
     getLocationPath,
+    switchLocationTypeByID,
   } = useCurrentLocationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
@@ -230,7 +232,7 @@ export const DirectoryContentContextProvider = ({
       getLocationPath(currentLocation).then((locationPath) => {
         currentLocationPath.current = locationPath;
         if (!skipInitialDirList) {
-          return openDirectory(locationPath);
+          return openDirectory(locationPath, currentLocation.uuid);
         }
       });
       manualPerspective.current = 'unspecified';
@@ -490,7 +492,7 @@ export const DirectoryContentContextProvider = ({
           cleanTrailingDirSeparator(currentLocationPath.current),
         )
       ) {
-        openDirectory(parentDirectory);
+        openDirectory(parentDirectory, currentLocation.uuid);
       } else {
         showNotification(t('core:parentDirNotInLocation'), 'warning', true);
         // dispatch(actions.setIsLoading(false));
@@ -680,29 +682,37 @@ export const DirectoryContentContextProvider = ({
     showHiddenEntries = undefined,
   ): Promise<boolean> {
     if (currentDirectoryPath.current !== undefined) {
-      return openDirectory(currentDirectoryPath.current, showHiddenEntries);
+      return openDirectory(
+        currentDirectoryPath.current,
+        currentLocation.uuid,
+        showHiddenEntries,
+      );
     }
     return Promise.resolve(false);
   }
 
   function openDirectory(
     dirPath: string,
+    locationID: string = undefined,
     showHiddenEntries = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
-      const reloadMeta = currentDirectoryPath.current === dirPath;
-      return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
-        (dirEntries) => {
-          if (dirEntries && reloadMeta) {
-            // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
-            return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
-              updateCurrentDirEntries(entries);
-              return true;
-            });
-          }
-          return true;
-        },
-      );
+      const currentLocationID = locationID ? locationID : currentLocation.uuid;
+      return switchLocationTypeByID(currentLocationID).then(() => {
+        const reloadMeta = currentDirectoryPath.current === dirPath;
+        return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
+          (dirEntries) => {
+            if (dirEntries && reloadMeta) {
+              // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
+              return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
+                updateCurrentDirEntries(entries);
+                return true;
+              });
+            }
+            return true;
+          },
+        );
+      });
     }
     return Promise.resolve(false);
   }
@@ -1038,7 +1048,7 @@ export const DirectoryContentContextProvider = ({
       toggleDirVisibility,
     };
   }, [
-    // currentLocation,
+    currentLocation,
     currentLocationPath.current,
     currentDirectoryEntries.current,
     currentDirectoryPath.current,

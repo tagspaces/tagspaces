@@ -92,7 +92,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      openDirectory(currentLocationPath); //PlatformIO.getLocationPath(location));
+      openDirectory(currentLocationPath, location.uuid); //PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       // setSelectedEntries([]);
