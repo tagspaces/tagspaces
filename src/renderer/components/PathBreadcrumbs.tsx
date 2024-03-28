@@ -172,7 +172,7 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() => openDirectory(pathPart)}
+              onClick={() => openDirectory(pathPart, currentLocation.uuid)}
             />
           </Tooltip>
         );

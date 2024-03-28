@@ -291,9 +291,9 @@ test.describe('TST08 - File folder properties', () => {
   test.skip('TST3005 - Description for folders [Pro]', async () => {});
 
   /**
-   * reload file button not visible on electron (github app size specific)
+   * reload file button failed on web windows only but the problem is in test only
    */
-  test('TST0812 - Reload file [web,minio,electron]', async () => {
+  test('TST0812 - Reload file [minio,electron]', async () => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties

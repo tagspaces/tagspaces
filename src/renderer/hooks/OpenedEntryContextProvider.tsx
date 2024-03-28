@@ -417,7 +417,7 @@ export const OpenedEntryContextProvider = ({
       if (selectedEntries && selectedEntries.length > 0) {
         const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
         if (!lastSelectedEntry.isFile) {
-          return openDirectory(lastSelectedEntry.path); //, false);
+          return openDirectory(lastSelectedEntry.path, currentLocation.uuid); //, false);
         }
       } else {
         return Promise.resolve(false);
@@ -569,7 +569,7 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              openDirectory(fsEntry.path);
+              openDirectory(fsEntry.path, currentLocation.uuid);
             }
             return true;
           })
@@ -614,9 +614,9 @@ export const OpenedEntryContextProvider = ({
                     locationPath.length > 0
                       ? locationPath + '/' + newRelDir
                       : directoryPath;
-                  openDirectory(dirFullPath);
+                  openDirectory(dirFullPath, targetLocation.uuid);
                 } else {
-                  openDirectory(locationPath);
+                  openDirectory(locationPath, targetLocation.uuid);
                 }
 
                 if (entryPath) {
@@ -654,9 +654,9 @@ export const OpenedEntryContextProvider = ({
                     directoryPath,
                   );
                   //locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                  openDirectory(dirFullPath);
+                  openDirectory(dirFullPath, targetLocation.uuid);
                 } else {
-                  openDirectory(locationPath);
+                  openDirectory(locationPath, targetLocation.uuid);
                 }
 
                 if (entryPath && entryPath.length > 0) {

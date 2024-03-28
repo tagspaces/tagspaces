@@ -71,11 +71,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       );
       onClose();
       if (currentLocation.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(currentLocation)
-          .then(() => openDirectory(currentDirectoryPath))
-          .catch((error) => {
-            console.log('enableObjectStoreSupport', error);
-          });
+        openDirectory(currentDirectoryPath, currentLocation.uuid);
       }
     }
   }
