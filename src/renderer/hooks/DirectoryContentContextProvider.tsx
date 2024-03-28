@@ -438,16 +438,18 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setSearchResults(searchResults: TS.FileSystemEntry[]) {
-    setCurrentDirectoryEntries(
-      searchResults.map((sr) => ({
-        ...sr,
-        // @ts-ignore temp fix model in common
-        ...(sr.thumbPath && {
-          // @ts-ignore
-          meta: { ...(sr.meta && sr.meta), thumbPath: sr.thumbPath },
-        }),
-      })),
-    );
+    if (isSearchMode.current) {
+      setCurrentDirectoryEntries(
+        searchResults.map((sr) => ({
+          ...sr,
+          // @ts-ignore temp fix model in common
+          ...(sr.thumbPath && {
+            // @ts-ignore
+            meta: { ...(sr.meta && sr.meta), thumbPath: sr.thumbPath },
+          }),
+        })),
+      );
+    }
   }
 
   function appendSearchResults(searchResults: TS.FileSystemEntry[]) {
