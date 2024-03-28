@@ -100,7 +100,7 @@ function setThumbForEntry(
     PlatformIO.getDirSeparator(),
     false,
   );
-  const metaFile = meta.find((m) => thumbPath.endsWith(m.path));
+  const metaFile = meta.find((m) => thumbPath && thumbPath.endsWith(m.path));
   if (thumbPath && metaFile) {
     thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
