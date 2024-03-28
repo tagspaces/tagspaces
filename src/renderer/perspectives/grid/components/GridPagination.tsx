@@ -370,7 +370,13 @@ function GridPagination(props: Props) {
               {!showDescription &&
                 directoryMeta &&
                 directoryMeta.description && (
-                  <div style={{ position: 'relative', marginBottom: 150 }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      margin: 'auto',
+                      maxWidth: 150,
+                    }}
+                  >
                     <EntryIcon isFile={false} />
                   </div>
                 )}
@@ -393,7 +399,13 @@ function GridPagination(props: Props) {
                 {!showDescription &&
                   directoryMeta &&
                   directoryMeta.description && (
-                    <div style={{ position: 'relative', marginBottom: 150 }}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        margin: 'auto',
+                        maxWidth: 150,
+                      }}
+                    >
                       <EntryIcon isFile={false} />
                     </div>
                   )}
