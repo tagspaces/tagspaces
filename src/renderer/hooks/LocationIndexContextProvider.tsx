@@ -33,9 +33,12 @@ import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
-import { hasIndex, loadIndex } from '@tagspaces/tagspaces-indexer';
+import { loadIndex } from '@tagspaces/tagspaces-indexer';
 import Search from '-/services/search';
-import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
+import {
+  getThumbFileLocationForFile,
+  getMetaDirectoryPath,
+} from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
@@ -417,23 +420,28 @@ export const LocationIndexContextProvider = ({
           }
           const nextPath = await getLocationPath(location);
           let directoryIndex = [];
-          let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           //console.log('Searching in: ' + nextPath);
           showNotification(
             t('core:searching') + ' ' + location.name,
             'default',
-            true,
+            false,
             'TIDSearching',
           );
-          /*if (isCloudLocation) {
-            await PlatformIO.enableObjectStoreSupport(location);
-          }*/
-          // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
-          indexExist = await hasIndex(
-            nextPath,
+
+          await switchLocationTypeByID(location.uuid);
+          const folderIndexPath =
+            getMetaDirectoryPath(nextPath) +
+            PlatformIO.getDirSeparator() +
+            AppConfig.folderIndexFile;
+          const indexExist = await PlatformIO.checkFileExist(folderIndexPath);
+
+          /*indexExist = await hasIndex(
+            {
+              path: nextPath,
+            },
             PlatformIO.getPropertiesPromise,
-          ); // , PlatformIO.getDirSeparator());
+          );*/
 
           if (
             searchQuery.forceIndexing ||
@@ -452,7 +460,6 @@ export const LocationIndexContextProvider = ({
             );
           } else {
             console.log('Loading index for : ' + nextPath);
-            await switchLocationTypeByID(location.uuid);
             directoryIndex = await loadIndex(
               {
                 path: nextPath,
@@ -493,7 +500,6 @@ export const LocationIndexContextProvider = ({
               }
 
               searchResultCount += enhancedSearchResult.length;
-              switchCurrentLocationType();
               appendSearchResults(enhancedSearchResult);
               hideNotifications();
               /*if (isCloudLocation) {
@@ -506,7 +512,6 @@ export const LocationIndexContextProvider = ({
                 PlatformIO.disableObjectStoreSupport();
               }*/
               console.log('Searching Index failed: ', e);
-              switchCurrentLocationType();
               setSearchResults([]);
               // dispatch(AppActions.hideNotifications());
               showNotification(
@@ -534,13 +539,7 @@ export const LocationIndexContextProvider = ({
           showNotification(t('Global search completed'), 'default', true);
         }
         console.log('Global search completed!');
-        /*if (
-          currentLocation &&
-          currentLocation.type === locationType.TYPE_CLOUD
-        ) {
-          PlatformIO.enableObjectStoreSupport(currentLocation);
-        }*/
-        return true;
+        return switchCurrentLocationType();
       })
       .catch((e) => {
         /*if (

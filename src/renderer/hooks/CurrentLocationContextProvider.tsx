@@ -296,14 +296,15 @@ export const CurrentLocationContextProvider = ({
 
   function switchLocationTypeByID(locationId: string) {
     const location = locations.find((location) => location.uuid === locationId);
-    return switchLocationType(location);
+    return setLocationType(location);
+    //return switchLocationType(location);
   }
 
   /**
    * @param location
    * return Promise<currentLocationId> if location is changed or null if location and type is changed
    */
-  function switchLocationType(location: TS.Location) {
+  /*function switchLocationType(location: TS.Location) {
     if (location !== undefined) {
       if (currentLocation === undefined) {
         return setLocationType(location).then(() => null);
@@ -313,12 +314,12 @@ export const CurrentLocationContextProvider = ({
           return setLocationType(location).then(() => null);
         } else {
           // handle the same location type but different location
-          // return setLocationType(location).then(() => currentLocation.uuid);
+          return setLocationType(location).then(() => currentLocation.uuid);
         }
       }
     }
     return Promise.resolve(null);
-  }
+  }*/
 
   function switchCurrentLocationType() {
     return setLocationType(currentLocation);
