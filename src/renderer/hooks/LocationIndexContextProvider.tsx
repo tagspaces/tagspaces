@@ -29,6 +29,7 @@ import { TS } from '-/tagspaces.namespace';
 import { createDirectoryIndex } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+const { loadJSONString } = require('@tagspaces/tagspaces-common/utils-io');
 import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
@@ -135,6 +136,24 @@ export const LocationIndexContextProvider = ({
 
   function getIndex() {
     return index.current;
+  }
+
+  function loadIndexFromDisk(
+    folderPath: string,
+  ): Promise<TS.FileSystemEntry[]> {
+    const folderIndexPath =
+      getMetaDirectoryPath(folderPath) +
+      PlatformIO.getDirSeparator() +
+      AppConfig.folderIndexFile;
+    return PlatformIO.loadTextFilePromise(folderIndexPath)
+      .then(
+        (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntry[],
+      )
+      .catch((e) => {
+        console.log('cannot load json:' + folderPath, e);
+        return undefined;
+      });
+    // const indexExist = PlatformIO.checkFileExist(folderIndexPath);
   }
 
   function reflectDeleteEntry(path: string) {
@@ -256,18 +275,16 @@ export const LocationIndexContextProvider = ({
     enableWS = true,
     // disableIndexing = true,
   ): Promise<any> {
-    return (
-      switchLocationTypeByID(param.locationID)
-        .then(() =>
-          createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
-        )
-        // .then((index) => switchCurrentLocationType().then(() => index))
-        .catch((err) => {
-          //lastError.current = err;
-          console.warn('Error loading text content ' + err);
-          return false; //switchCurrentLocationType();
-        })
-    );
+    return switchLocationTypeByID(param.locationID)
+      .then(() =>
+        createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
+      )
+      .then((index) => switchCurrentLocationType().then(() => index))
+      .catch((err) => {
+        //lastError.current = err;
+        console.warn('Error loading text content ' + err);
+        return false; //switchCurrentLocationType();
+      });
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
@@ -316,7 +333,12 @@ export const LocationIndexContextProvider = ({
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
     setTimeout(async () => {
-      const index = getIndex();
+      const currentPath = await getLocationPath(currentLocation);
+      let directoryIndex = getIndex();
+      if (!directoryIndex || directoryIndex.length < 1) {
+        directoryIndex = await loadIndexFromDisk(currentPath);
+        setIndex(directoryIndex);
+      }
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
       const indexAge = indexLoadedOn.current
@@ -326,14 +348,15 @@ export const LocationIndexContextProvider = ({
         ? currentLocation.maxIndexAge
         : AppConfig.maxIndexAge;
 
-      const currentPath = await getLocationPath(currentLocation);
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
-          (!index || index.length < 1 || indexAge > maxIndexAge))
+          (!directoryIndex ||
+            directoryIndex.length < 1 ||
+            indexAge > maxIndexAge))
       ) {
         console.log('Start creating index for : ' + currentPath);
-        const newIndex = await createDirectoryIndexWrapper(
+        const newIndex = await createDirectoryIndex(
           {
             path: currentPath,
             locationID: currentLocation.uuid,
@@ -344,7 +367,7 @@ export const LocationIndexContextProvider = ({
           enableWS,
         );
         setIndex(newIndex);
-      } else if (isCloudLocation || !index || index.length === 0) {
+      } /*else if (isCloudLocation || !index || index.length === 0) {
         const newIndex = await loadIndex(
           {
             path: currentPath,
@@ -355,7 +378,7 @@ export const LocationIndexContextProvider = ({
           PlatformIO.loadTextFilePromise,
         );
         setIndex(newIndex);
-      }
+      }*/
       Search.searchLocationIndex(getIndex(), searchQuery)
         .then((searchResults) => {
           if (isCloudLocation) {
@@ -419,8 +442,9 @@ export const LocationIndexContextProvider = ({
             return Promise.resolve();
           }
           const nextPath = await getLocationPath(location);
-          let directoryIndex = [];
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+          await switchLocationTypeByID(location.uuid);
+          let directoryIndex = await loadIndexFromDisk(nextPath);
           //console.log('Searching in: ' + nextPath);
           showNotification(
             t('core:searching') + ' ' + location.name,
@@ -429,26 +453,21 @@ export const LocationIndexContextProvider = ({
             'TIDSearching',
           );
 
-          await switchLocationTypeByID(location.uuid);
-          const folderIndexPath =
+          /*const folderIndexPath =
             getMetaDirectoryPath(nextPath) +
             PlatformIO.getDirSeparator() +
             AppConfig.folderIndexFile;
-          const indexExist = await PlatformIO.checkFileExist(folderIndexPath);
-
-          /*indexExist = await hasIndex(
-            {
-              path: nextPath,
-            },
-            PlatformIO.getPropertiesPromise,
-          );*/
+          const indexExist = await PlatformIO.checkFileExist(folderIndexPath);*/
 
           if (
-            searchQuery.forceIndexing ||
-            (!location.disableIndexing && !indexExist)
+            !location.disableIndexing &&
+            (!directoryIndex ||
+              directoryIndex.length < 1 ||
+              searchQuery.forceIndexing)
+            // || (!location.disableIndexing && !indexExist)
           ) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndexWrapper(
+            directoryIndex = await createDirectoryIndex(
               {
                 path: nextPath,
                 locationID: location.uuid,
@@ -458,20 +477,20 @@ export const LocationIndexContextProvider = ({
               location.ignorePatternPaths,
               enableWS,
             );
-          } else {
+          } /*else {
             console.log('Loading index for : ' + nextPath);
             directoryIndex = await loadIndex(
               {
                 path: nextPath,
                 locationID: location.uuid,
                 ...(isCloudLocation && {
-                  bucketName: currentLocation.bucketName,
+                  bucketName: location.bucketName,
                 }),
               },
               PlatformIO.getDirSeparator(),
               PlatformIO.loadTextFilePromise,
             );
-          }
+          }*/
           return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then((searchResults: Array<TS.FileSystemEntry>) => {
               let enhancedSearchResult = searchResults;
