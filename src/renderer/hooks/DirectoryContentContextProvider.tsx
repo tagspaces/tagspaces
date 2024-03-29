@@ -441,7 +441,8 @@ export const DirectoryContentContextProvider = ({
 
   function setSearchResults(searchResults: TS.FileSystemEntry[]) {
     if (isSearchMode.current) {
-      setCurrentDirectoryEntries(
+      setCurrentDirectoryEntries(searchResults);
+      /*setCurrentDirectoryEntries(
         searchResults.map((sr) => ({
           ...sr,
           // @ts-ignore temp fix model in common
@@ -450,7 +451,7 @@ export const DirectoryContentContextProvider = ({
             meta: { ...(sr.meta && sr.meta), thumbPath: sr.thumbPath },
           }),
         })),
-      );
+      );*/
     }
   }
 

@@ -159,6 +159,7 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
+    locationID?: string;
     //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
     textContent?: string;

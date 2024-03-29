@@ -34,7 +34,7 @@ import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
-import { loadIndex } from '@tagspaces/tagspaces-indexer';
+import { enhanceDirectoryIndex } from '@tagspaces/tagspaces-indexer';
 import Search from '-/services/search';
 import {
   getThumbFileLocationForFile,
@@ -140,15 +140,27 @@ export const LocationIndexContextProvider = ({
 
   function loadIndexFromDisk(
     folderPath: string,
+    location: TS.Location,
   ): Promise<TS.FileSystemEntry[]> {
     const folderIndexPath =
       getMetaDirectoryPath(folderPath) +
       PlatformIO.getDirSeparator() +
       AppConfig.folderIndexFile;
     return PlatformIO.loadTextFilePromise(folderIndexPath)
-      .then(
-        (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntry[],
-      )
+      .then((jsonContent) => {
+        const directoryIndex = loadJSONString(jsonContent);
+        return enhanceDirectoryIndex(
+          {
+            path: folderPath,
+            locationID: location.uuid,
+            ...(location.type === locationType.TYPE_CLOUD && {
+              bucketName: location.bucketName,
+            }),
+          },
+          directoryIndex,
+          location.uuid,
+        ) as TS.FileSystemEntry[];
+      })
       .catch((e) => {
         console.log('cannot load json:' + folderPath, e);
         return undefined;
@@ -323,6 +335,52 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
+  function getSearchResults(
+    searchIndex: TS.FileSystemEntry[],
+    searchQuery: TS.SearchQuery,
+    isCloudLocation: boolean,
+  ): Promise<TS.FileSystemEntry[]> {
+    return Search.searchLocationIndex(searchIndex, searchQuery)
+      .then((searchResults) => {
+        if (isCloudLocation) {
+          const sResults: TS.FileSystemEntry[] = searchResults.map(
+            (entry: TS.FileSystemEntry) => {
+              /*if (
+                entry.meta &&
+                entry.meta.thumbPath &&
+                entry.meta.thumbPath.length > 1
+                // && !entry.meta.thumbPath.startsWith('http') thumb can be expired
+              ) {*/
+              const thumb = entry.path.startsWith('/')
+                ? entry.path.substring(1)
+                : entry.path;
+              const thumbPath = PlatformIO.getURLforPath(
+                getThumbFileLocationForFile(
+                  thumb,
+                  PlatformIO.getDirSeparator(),
+                ),
+              );
+              return { ...entry, meta: { ...entry.meta, thumbPath } };
+              // }
+              //return entry;
+            },
+          );
+          return sResults;
+        }
+        return searchResults;
+      })
+      .catch((err) => {
+        // dispatch(AppActions.hideNotifications());
+        console.log('Searching Index failed: ', err);
+        showNotification(
+          t('core:searchingFailed') + ' ' + err.message,
+          'warning',
+          true,
+        );
+        return [];
+      });
+  }
+
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
     window.walkCanceled = false;
     if (!currentLocation) {
@@ -336,7 +394,7 @@ export const LocationIndexContextProvider = ({
       const currentPath = await getLocationPath(currentLocation);
       let directoryIndex = getIndex();
       if (!directoryIndex || directoryIndex.length < 1) {
-        directoryIndex = await loadIndexFromDisk(currentPath);
+        directoryIndex = await loadIndexFromDisk(currentPath, currentLocation);
         setIndex(directoryIndex);
       }
       // Workaround used to show the start search notification
@@ -367,55 +425,12 @@ export const LocationIndexContextProvider = ({
           enableWS,
         );
         setIndex(newIndex);
-      } /*else if (isCloudLocation || !index || index.length === 0) {
-        const newIndex = await loadIndex(
-          {
-            path: currentPath,
-            locationID: currentLocation.uuid,
-            ...(isCloudLocation && { bucketName: currentLocation.bucketName }),
-          },
-          PlatformIO.getDirSeparator(),
-          PlatformIO.loadTextFilePromise,
-        );
-        setIndex(newIndex);
-      }*/
-      Search.searchLocationIndex(getIndex(), searchQuery)
-        .then((searchResults) => {
-          if (isCloudLocation) {
-            searchResults.forEach((entry: TS.FileSystemEntry) => {
-              if (
-                entry.meta &&
-                entry.meta.thumbPath &&
-                entry.meta.thumbPath.length > 1
-                // !entry.thumbPath.startsWith('http')
-              ) {
-                const thumbPath = entry.path.startsWith('/')
-                  ? entry.path.substring(1)
-                  : entry.path;
-                // eslint-disable-next-line no-param-reassign
-                entry.meta.thumbPath = PlatformIO.getURLforPath(
-                  getThumbFileLocationForFile(
-                    thumbPath,
-                    PlatformIO.getDirSeparator(),
-                  ),
-                );
-              }
-            });
-          }
-          setSearchResults(searchResults);
-          hideNotifications();
-          return true;
-        })
-        .catch((err) => {
-          setSearchResults([]);
-          // dispatch(AppActions.hideNotifications());
-          console.log('Searching Index failed: ', err);
-          showNotification(
-            t('core:searchingFailed') + ' ' + err.message,
-            'warning',
-            true,
-          );
-        });
+      }
+      getSearchResults(getIndex(), searchQuery, isCloudLocation).then(
+        (results) => setSearchResults(results),
+      );
+
+      hideNotifications();
     }, 50);
   }
 
@@ -444,7 +459,7 @@ export const LocationIndexContextProvider = ({
           const nextPath = await getLocationPath(location);
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           await switchLocationTypeByID(location.uuid);
-          let directoryIndex = await loadIndexFromDisk(nextPath);
+          let directoryIndex = await loadIndexFromDisk(nextPath, location);
           //console.log('Searching in: ' + nextPath);
           showNotification(
             t('core:searching') + ' ' + location.name,
@@ -477,21 +492,18 @@ export const LocationIndexContextProvider = ({
               location.ignorePatternPaths,
               enableWS,
             );
-          } /*else {
-            console.log('Loading index for : ' + nextPath);
-            directoryIndex = await loadIndex(
-              {
-                path: nextPath,
-                locationID: location.uuid,
-                ...(isCloudLocation && {
-                  bucketName: location.bucketName,
-                }),
-              },
-              PlatformIO.getDirSeparator(),
-              PlatformIO.loadTextFilePromise,
-            );
-          }*/
-          return Search.searchLocationIndex(directoryIndex, searchQuery)
+          }
+          return getSearchResults(
+            directoryIndex,
+            searchQuery,
+            isCloudLocation,
+          ).then((results) => {
+            searchResultCount += results.length;
+            appendSearchResults(results);
+            //hideNotifications();
+            return true;
+          });
+          /*return Search.searchLocationIndex(directoryIndex, searchQuery)
             .then((searchResults: Array<TS.FileSystemEntry>) => {
               let enhancedSearchResult = searchResults;
               if (isCloudLocation) {
@@ -521,15 +533,15 @@ export const LocationIndexContextProvider = ({
               searchResultCount += enhancedSearchResult.length;
               appendSearchResults(enhancedSearchResult);
               hideNotifications();
-              /*if (isCloudLocation) {
+              /!*if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
-              }*/
+              }*!/
               return true;
             })
             .catch((e) => {
-              /*if (isCloudLocation) {
+              /!*if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
-              }*/
+              }*!/
               console.log('Searching Index failed: ', e);
               setSearchResults([]);
               // dispatch(AppActions.hideNotifications());
@@ -538,7 +550,7 @@ export const LocationIndexContextProvider = ({
                 'warning',
                 true,
               );
-            });
+            });*/
         }),
       Promise.resolve(),
     );

@@ -59,6 +59,7 @@ export const renderCell = (
   openDirectory,
   setFileContextMenuAnchorEl,
   setDirContextMenuAnchorEl,
+  switchLocationTypeByID,
   showNotification: (
     text: string,
     notificationType: string,
@@ -228,29 +229,30 @@ export const renderCell = (
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          getAllPropertiesPromise(fsEntry.path)
-            .then((entry: TS.FileSystemEntry) => {
-              if (entry) {
-                openFsEntry(entry);
-              } else {
-                openFsEntry(fsEntry);
-                showNotification(
-                  'File ' + fsEntry.path + ' not exist on filesystem!',
-                  'warning',
-                  true,
+          switchLocationTypeByID(fsEntry.locationID).then(() => {
+            getAllPropertiesPromise(fsEntry.path)
+              .then((entry: TS.FileSystemEntry) => {
+                if (entry) {
+                  openFsEntry(entry);
+                } else {
+                  openFsEntry(fsEntry);
+                  showNotification(
+                    'File ' + fsEntry.path + ' not exist on filesystem!',
+                    'warning',
+                    true,
+                  );
+                }
+              })
+              .catch((error) => {
+                console.warn(
+                  'Error getting properties for entry: ' +
+                    fsEntry.path +
+                    ' - ' +
+                    error,
                 );
-              }
-            })
-            .catch((error) => {
-              console.warn(
-                'Error getting properties for entry: ' +
-                  fsEntry.path +
-                  ' - ' +
-                  error,
-              );
-              return false;
-            });
-          // openEntry(fsEntry.path);
+                return false;
+              });
+          });
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }

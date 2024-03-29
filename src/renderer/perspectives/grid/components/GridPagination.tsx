@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -102,7 +102,8 @@ function GridPagination(props: Props) {
   const { openFsEntry } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
-  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
+  const { readOnlyMode, currentLocation, switchLocationTypeByID } =
+    useCurrentLocationContext();
   const { openDirectory, directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
@@ -335,6 +336,7 @@ function GridPagination(props: Props) {
                 openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
+                switchLocationTypeByID,
                 showNotification,
                 moveFiles,
                 clearSelection,
@@ -359,6 +361,7 @@ function GridPagination(props: Props) {
               openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
+              switchLocationTypeByID,
               showNotification,
               moveFiles,
               clearSelection,
