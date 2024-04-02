@@ -56,6 +56,7 @@ import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 import { getEnhancedDir, getEnhancedFile } from '-/services/meta-loader';
+import removeMd from 'remove-markdown';
 
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
@@ -1265,14 +1266,15 @@ export function loadFileContentPromise(
  */
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview = mdContent
-    .replace(
-      /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
-      // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-      '',
-    )
-    .replace(/<[^>]*>/g, '') // remove html
-    .replace(/\*|~|#|_/g, '');
+  // let preview = mdContent
+  //   .replace(
+  //     /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+  //     // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+  //     '',
+  //   )
+  //   .replace(/<[^>]*>/g, '') // remove html
+  //   .replace(/\*|~|#|_/g, '');
+  let preview = removeMd(mdContent);
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
