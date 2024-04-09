@@ -39,6 +39,7 @@ import {
   extractContainingDirectoryPath,
   getBackupFileLocation,
   extractFileExtension,
+  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
@@ -592,7 +593,7 @@ function EntryContainer() {
             historyKeys.fileEditKey,
             {
               path: fileOpen.path,
-              url: fileOpen.url,
+              url: generateSharingLink(fileOpen.url, fileOpen.path),
               lid: fileOpen.locationId,
             },
             fileEditHistoryKey,
