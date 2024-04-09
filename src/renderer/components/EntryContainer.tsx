@@ -593,7 +593,7 @@ function EntryContainer() {
             historyKeys.fileEditKey,
             {
               path: fileOpen.path,
-              url: generateSharingLink(fileOpen.url, fileOpen.path),
+              url: generateSharingLink(fileOpen.locationId, fileOpen.path),
               lid: fileOpen.locationId,
             },
             fileEditHistoryKey,
