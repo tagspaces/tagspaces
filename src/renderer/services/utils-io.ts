@@ -1364,12 +1364,16 @@ export function fileNameValidation(fileName): boolean {
  *  normalize path for URL is always '/'
  */
 export function normalizeUrl(url: string) {
+  let normalizedUrl = url;
   if (PlatformIO.getDirSeparator() !== '/') {
     if (url) {
-      return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+      normalizedUrl = url.replaceAll(PlatformIO.getDirSeparator(), '/');
     }
   }
-  return url;
+  if (!normalizedUrl.startsWith('http') && !normalizedUrl.startsWith('/')) {
+    normalizedUrl = '/' + normalizedUrl;
+  }
+  return normalizedUrl;
 }
 
 /**
