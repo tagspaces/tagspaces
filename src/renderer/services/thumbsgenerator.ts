@@ -302,7 +302,7 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     } else if (Pro && ext === 'psd') {
       return Pro.ThumbsGenerator.generatePSDThumbnail(fileURLEscaped, maxSize);
     } else if (fileSize && fileSize < maxFileSize) {
-      return generateImageThumbnail(fileURLEscaped);
+      return generateImageThumbnail(fileURL); //fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
     return Pro.ThumbsGenerator.generatePDFThumbnail(fileURLEscaped, maxSize);
