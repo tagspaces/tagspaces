@@ -549,7 +549,8 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport()
+    !PlatformIO.haveWebDavSupport() &&
+    !AppConfig.isCordova
     // PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
