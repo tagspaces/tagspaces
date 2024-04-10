@@ -85,7 +85,7 @@ function EntryContainer() {
     reflectUpdateOpenedFileContent,
     addToEntryContainer,
   } = useOpenedEntryContext();
-  const { saveDescription } = useDescriptionContext();
+  const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave } = useEditedEntryMetaContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
@@ -739,12 +739,14 @@ function EntryContainer() {
         );
       }
     }
+    const haveDescription = description?.length > 0;
     const tabsComponent = (marginRight = undefined) => (
       <EntryContainerTabs
         isEditable={isEditable}
         isPanelOpened={isPanelOpened}
         openPanel={openPanel}
         toggleProperties={toggleProperties}
+        haveDescription={haveDescription}
         marginRight={marginRight}
       />
     );
