@@ -159,7 +159,7 @@
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.1.18",
     "@tagspaces/tagspaces-common-aws": "4.1.18",
-    "@tagspaces/tagspaces-common-cordova": "4.1.19",
+    "@tagspaces/tagspaces-common-cordova": "4.1.20",
     "@tagspaces/tagspaces-indexer": "4.1.18",
     "@tagspaces/tagspaces-md": "4.1.14",
     "aws-amplify": "^4.3.8",
