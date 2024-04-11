@@ -34,6 +34,7 @@ import {
 import {
   FolderPropertiesIcon,
   DescriptionIcon,
+  EditDescriptionIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
@@ -82,6 +83,7 @@ const StyledTab = styled((props: StyledTabProps) => (
   marginRight: theme.spacing(1),
   minHeight: 50,
   maxHeight: 50,
+  minWidth: 40,
 }));
 
 function a11yProps(index: number) {
@@ -96,6 +98,7 @@ interface EntryContainerTabsProps {
   toggleProperties: () => void;
   isEditable: boolean;
   isPanelOpened: boolean;
+  haveDescription: boolean;
   marginRight: string;
 }
 
@@ -112,6 +115,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     marginRight,
     isEditable,
     isPanelOpened,
+    haveDescription,
   } = props;
 
   const { t } = useTranslation();
@@ -197,7 +201,9 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           />
           <StyledTab
             data-tid="descriptionTabTID"
-            icon={<DescriptionIcon />}
+            icon={
+              haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
+            }
             label={desktopMode && t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}

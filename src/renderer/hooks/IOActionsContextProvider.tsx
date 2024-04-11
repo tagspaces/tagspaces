@@ -1049,7 +1049,7 @@ export const IOActionsContextProvider = ({
     reflect = true,
   ): Promise<boolean> {
     return renameFilePromise(filePath, newFilePath, undefined, reflect)
-      .then((result) => {
+      .then(() => {
         // const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
         showNotification(t('core:renamingSuccessfully'), 'default', true);

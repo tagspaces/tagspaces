@@ -114,6 +114,8 @@ function MainToolbar(props: Props) {
     // (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) &&
     !AppConfig.isCordovaAndroid; // saveAs do not work on Android
 
+  const folderSettingsAvailable = haveLocalSetting();
+
   return (
     <Toolbar
       style={{
@@ -282,24 +284,18 @@ function MainToolbar(props: Props) {
         <Tooltip
           title={
             t('core:perspectiveSettingsTitle') +
-            (haveLocalSetting && ' - folder specific')
+            (folderSettingsAvailable ? ' - folder specific' : '')
           }
         >
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
           >
-            <Badge
-              color="primary"
-              variant="dot"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              invisible={!haveLocalSetting()}
-            >
+            {folderSettingsAvailable ? (
+              <PerspectiveSettingsIcon color="primary" />
+            ) : (
               <PerspectiveSettingsIcon />
-            </Badge>
+            )}
           </IconButton>
         </Tooltip>
       </Box>

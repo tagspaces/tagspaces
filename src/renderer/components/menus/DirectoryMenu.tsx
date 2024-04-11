@@ -50,6 +50,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 import { generateClipboardLink } from '-/utils/dom';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 interface Props {
   open: boolean;
@@ -83,6 +84,7 @@ function DirectoryMenu(props: Props) {
   } = useDirectoryContentContext();
   const { generateThumbnails } = useThumbGenerationContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
+  const { setReflectActions } = useEditedEntryContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -303,8 +305,12 @@ Do you want to continue?`)
     const newFilePath =
       normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
 
-    renameFilePromise(filePath, newFilePath)
-      .then(() => {
+    renameFilePromise(filePath, newFilePath, undefined, false)
+      .then((newEntry) => {
+        setReflectActions({
+          action: 'add',
+          entry: newEntry,
+        });
         showNotification(
           'File ' + newFilePath + ' successfully imported.',
           'default',

@@ -774,7 +774,7 @@ export default class PlatformFacade {
         useTrash,
       );
     } else if (AppConfig.isCordova) {
-      return cordovaIO.saveTextFilePromise(path);
+      return cordovaIO.deleteFilePromise(path);
     }
     return Promise.reject(new Error('deleteFilePromise: not implemented'));
   };
