@@ -69,6 +69,7 @@ export const SidePanel = styled('div')(({ theme }) => ({
   },
   [`& .${classes.panelTitle}`]: {
     textTransform: 'uppercase',
+    fontSize: '0.9rem',
     flex: 1,
     paddingLeft: 7,
     paddingTop: 12,
