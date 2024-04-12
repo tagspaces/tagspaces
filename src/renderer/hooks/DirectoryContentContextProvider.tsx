@@ -113,7 +113,10 @@ type DirectoryContentContextData = {
   setCurrentDirectoryDirs: (dirs: TS.OrderVisibilitySettings[]) => void;
   setCurrentDirectoryFiles: (files: TS.OrderVisibilitySettings[]) => void;
   updateCurrentDirEntry: (path: string, entry: TS.FileSystemEntry) => void;
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
+  updateCurrentDirEntries: (
+    dirEntries: TS.FileSystemEntry[],
+    checkCurrentDir?: boolean,
+  ) => void;
   //updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
@@ -538,16 +541,18 @@ export const DirectoryContentContextProvider = ({
 
   function updateCurrentDirEntries(
     dirEntries: TS.FileSystemEntry[],
-    //currentDirEntries?: TS.FileSystemEntry[],
+    checkCurrentDir = true,
   ) {
     if (dirEntries) {
       const entries = dirEntries.filter((e) => e !== undefined);
-      const isNotFromCurrentDir = entries.some(
-        (e) =>
-          !cleanFrontDirSeparator(e.path).startsWith(
-            cleanFrontDirSeparator(currentDirectoryPath.current),
-          ),
-      );
+      const isNotFromCurrentDir =
+        checkCurrentDir &&
+        entries.some(
+          (e) =>
+            !cleanFrontDirSeparator(e.path).startsWith(
+              cleanFrontDirSeparator(currentDirectoryPath.current),
+            ),
+        );
       if (
         entries.length > 0 &&
         !isNotFromCurrentDir //entries[0].path.startsWith(currentDirectoryPath.current)
@@ -557,6 +562,22 @@ export const DirectoryContentContextProvider = ({
           currentDirectoryEntries.current &&
           currentDirectoryEntries.current.length > 0
         ) {
+          /*if (inlineUpdate) {
+            // inline update currentDirectoryEntries
+            let isUpdated = false;
+            for (const oldEntry of currentDirectoryEntries.current) {
+              const entryUpdated = entries.find(
+                (updated) => updated.path === oldEntry.path,
+              );
+              if (entryUpdated) {
+                oldEntry.meta = { ...oldEntry.meta, ...entryUpdated.meta };
+                isUpdated = true;
+              }
+            }
+            if (isUpdated) {
+              forceUpdate();
+            }
+          }*/
           setCurrentDirectoryEntries(
             currentDirectoryEntries.current.map((e) => {
               const eUpdated = entries.filter((u) => u.path === e.path);
@@ -568,7 +589,6 @@ export const DirectoryContentContextProvider = ({
               }
               return e;
             }),
-            //getMergedEntries(currentDirectoryEntries.current, entries),
           );
         } else {
           setCurrentDirectoryEntries(entries);

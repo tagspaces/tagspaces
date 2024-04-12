@@ -400,12 +400,11 @@ export default class PlatformFacade {
       return Promise.resolve(false);
     }
     if (objectStoreAPI) {
-      return objectStoreAPI
-        .getPropertiesPromise({
-          path: file,
-          bucketName: objectStoreAPI.config().bucketName,
-        })
-        .then((stats) => stats && stats.isFile);
+      return objectStoreAPI.isFileExist({
+        path: file,
+        bucketName: objectStoreAPI.config().bucketName,
+      });
+      //.then((stats) => stats && stats.isFile);
     } else if (webDavAPI) {
       return webDavAPI
         .getPropertiesPromise(file)
