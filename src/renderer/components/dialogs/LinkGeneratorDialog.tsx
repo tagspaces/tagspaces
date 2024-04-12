@@ -18,7 +18,6 @@
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -40,29 +39,12 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
 
-const PREFIX = 'LinkGeneratorDialog';
-
-const classes = {
-  root: `${PREFIX}-root`,
-};
-
-const StyledDialog = styled(Dialog)(({ theme: Theme }) => ({
-  [`& .${classes.root}`]: {
-    marginTop: 12,
-    '& .MuiInputBase-root': {
-      height: 450,
-    },
-  },
-}));
-
 interface Props {
   open: boolean;
   onClose: () => void;
   path: string;
   locationId?: string;
 }
-
-const QRTextField = TextField;
 
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
@@ -81,7 +63,6 @@ function LinkGeneratorDialog(props: Props) {
   }, []);
 
   function setSignedLink() {
-    //if (switchLocationType) {
     switchLocationTypeByID(props.locationId).then((currentLocationId) => {
       signedLink.current = PlatformIO.generateURLforPath(
         path,
@@ -93,18 +74,19 @@ function LinkGeneratorDialog(props: Props) {
   }
 
   return (
-    <StyledDialog
+    <Dialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
+      style={{ marginTop: 12 }}
     >
       <DialogTitle>
         {t('core:generateDownloadLink')}{' '}
         <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ overflow: 'auto' }}>
+      <DialogContent style={{ overflow: 'auto', height: 450 }}>
         <TextField
           style={{ marginTop: 8 }}
           select
@@ -143,11 +125,11 @@ function LinkGeneratorDialog(props: Props) {
                       true,
                       PlatformIO.getDirSeparator(),
                     );
-                    const clibboardItem = generateClipboardLink(
+                    const clipboardItem = generateClipboardLink(
                       signedLink.current,
                       entryTitle,
                     );
-                    navigator.clipboard.write(clibboardItem).then(() => {
+                    navigator.clipboard.write(clipboardItem).then(() => {
                       showNotification(t('core:linkCopied'));
                     });
                   }}
@@ -158,26 +140,18 @@ function LinkGeneratorDialog(props: Props) {
               </InputAdornment>
             ),
           }}
-          label={
-            <>
-              {t('core:downloadLink')}
-              {/* <InfoIcon
-                tooltip={t(
-                  'Link for time limited sharing on the Internet'
-                )}
-              /> */}
-            </>
-          }
+          label={<>{t('core:downloadLink')}</>}
           fullWidth={true}
           value={signedLink.current}
         />
-        <QRTextField
+        <TextField
           margin="dense"
           name="path"
           label={t('core:qrCode')}
           value={' '}
           InputProps={{
             readOnly: true,
+            style: { height: 380 },
             startAdornment: (
               <InputAdornment position="start">
                 <QRCode
@@ -191,9 +165,6 @@ function LinkGeneratorDialog(props: Props) {
                 />
               </InputAdornment>
             ),
-          }}
-          classes={{
-            root: classes.root,
           }}
         />
       </DialogContent>
@@ -221,7 +192,7 @@ function LinkGeneratorDialog(props: Props) {
           {t('core:close')}
         </Button>
       </DialogActions>
-    </StyledDialog>
+    </Dialog>
   );
 }
 
