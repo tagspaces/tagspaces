@@ -98,7 +98,7 @@ function MainToolbar(props: Props) {
         const cleanedPath = entry.path.startsWith('/')
           ? entry.path.substr(1)
           : entry.path;
-        const url = PlatformIO.getURLforPath(cleanedPath);
+        const url = PlatformIO.generateURLforPath(cleanedPath, 900);
         fetch(url)
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {

@@ -83,7 +83,7 @@ function LinkGeneratorDialog(props: Props) {
   function setSignedLink() {
     //if (switchLocationType) {
     switchLocationTypeByID(props.locationId).then((currentLocationId) => {
-      signedLink.current = PlatformIO.getURLforPath(
+      signedLink.current = PlatformIO.generateURLforPath(
         path,
         linkValidityDuration.current,
       );
