@@ -420,7 +420,8 @@ export const LocationIndexContextProvider = ({
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
     window.walkCanceled = false;
     if (!currentLocation) {
-      showNotification(t('core:pleaseOpenLocation'), 'warning', true);
+      //showNotification(t('core:pleaseOpenLocation'), 'warning', true);
+      searchAllLocations(searchQuery);
       return;
     }
 

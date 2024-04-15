@@ -519,6 +519,7 @@
   "location": "Location",
   "locationId": "Location ID",
   "folder": "Folder",
+  "global": "Global",
   "globalSearch": "Global",
   "localLocation": "Local - pointing to a local folder",
   "objectStorage": "Object Storage",
