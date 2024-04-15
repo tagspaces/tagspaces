@@ -54,7 +54,7 @@ export const renderCell = (
   setSelectedEntries,
   lastSelectedEntryPath,
   directoryContent,
-  openFsEntry,
+  openEntryInternal,
   openFileNatively,
   openDirectory,
   setFileContextMenuAnchorEl,
@@ -133,7 +133,7 @@ export const renderCell = (
   const openLocation = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       setSelectedEntries([fsEntry]);
-      openFsEntry(fsEntry);
+      openEntryInternal(fsEntry);
       //openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
@@ -229,30 +229,7 @@ export const renderCell = (
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          switchLocationTypeByID(fsEntry.locationID).then(() => {
-            getAllPropertiesPromise(fsEntry.path)
-              .then((entry: TS.FileSystemEntry) => {
-                if (entry) {
-                  openFsEntry(entry);
-                } else {
-                  openFsEntry(fsEntry);
-                  showNotification(
-                    'File ' + fsEntry.path + ' not exist on filesystem!',
-                    'warning',
-                    true,
-                  );
-                }
-              })
-              .catch((error) => {
-                console.warn(
-                  'Error getting properties for entry: ' +
-                    fsEntry.path +
-                    ' - ' +
-                    error,
-                );
-                return false;
-              });
-          });
+          openEntryInternal(fsEntry);
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }

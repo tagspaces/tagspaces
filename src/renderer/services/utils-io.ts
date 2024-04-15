@@ -1530,11 +1530,23 @@ export function getFolderThumbPath(path: string, dt = undefined) {
   return undefined;
 }
 
-export function getThumbPath(thumbPath: string, dt = undefined) {
+/**
+ * @param thumbPath
+ * @param dt
+ * @param isLocalFile - force to generate local URL
+ */
+export function getThumbPath(
+  thumbPath: string,
+  dt = undefined,
+  isLocalFile = false,
+) {
   if (!thumbPath) {
     return undefined;
   }
-  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+  if (
+    !isLocalFile &&
+    (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport())
+  ) {
     if (isSignedURL(thumbPath)) {
       return thumbPath;
     }

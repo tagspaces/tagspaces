@@ -99,7 +99,7 @@ function GridPagination(props: Props) {
     singleClickAction,
   } = usePerspectiveSettingsContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
-  const { openFsEntry } = useOpenedEntryContext();
+  const { openEntryInternal } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation, switchLocationTypeByID } =
@@ -331,7 +331,7 @@ function GridPagination(props: Props) {
                 setSelectedEntries,
                 lastSelectedEntryPath,
                 sortedDirContent,
-                openFsEntry,
+                openEntryInternal,
                 openFileNatively,
                 openDirectory,
                 setFileContextMenuAnchorEl,
@@ -356,7 +356,7 @@ function GridPagination(props: Props) {
               setSelectedEntries,
               lastSelectedEntryPath,
               sortedDirContent,
-              openFsEntry,
+              openEntryInternal,
               openFileNatively,
               openDirectory,
               setFileContextMenuAnchorEl,
