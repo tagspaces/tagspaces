@@ -50,6 +50,8 @@ function getUsedWsPort() {
   return usedWsPort;
 }*/
 
+let globalShortcutsEnabled = false;
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -322,6 +324,7 @@ function bindTrayMenu(i18n) {
     },
     i18n,
     isMacLike,
+    globalShortcutsEnabled,
   );
 }
 
@@ -536,7 +539,6 @@ const createWindow = async (i18n) => {
       app.quit();
     },
   );
-
   try {
     bindAppMenu(i18n);
     bindTrayMenu(i18n);
@@ -695,7 +697,13 @@ app
         mainWindow?.webContents.setZoomFactor(zoomLevel);
       });
 
-      ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
+      ipcMain.on('global-shortcuts-enabled', (e, globalShortcuts) => {
+        globalShortcutsEnabled = globalShortcuts;
+        try {
+          bindTrayMenu(i18n);
+        } catch (ex) {
+          console.log('buildMenus', ex);
+        }
         if (globalShortcutsEnabled) {
           globalShortcut.register('CommandOrControl+Shift+F', showSearch);
           globalShortcut.register('CommandOrControl+Shift+P', resumePlayback);
