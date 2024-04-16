@@ -47,8 +47,8 @@ function TagsPreview(props: Props) {
   let firstTagColor: string;
   let firstTagTextColor: string;
   if (tags[0].color && tags[0].textcolor) {
-    firstTagColor = tags[0].textcolor;
-    firstTagTextColor = tags[0].color;
+    firstTagColor = tags[0].color;
+    firstTagTextColor = tags[0].textcolor;
   } else {
     const tagColors = getTagColors(
       tags[0].title,

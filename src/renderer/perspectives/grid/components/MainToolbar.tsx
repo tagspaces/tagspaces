@@ -98,7 +98,7 @@ function MainToolbar(props: Props) {
         const cleanedPath = entry.path.startsWith('/')
           ? entry.path.substr(1)
           : entry.path;
-        const url = PlatformIO.getURLforPath(cleanedPath);
+        const url = PlatformIO.generateURLforPath(cleanedPath, 900);
         fetch(url)
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {
@@ -113,6 +113,8 @@ function MainToolbar(props: Props) {
     selectedEntries?.length > 0 &&
     // (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) &&
     !AppConfig.isCordovaAndroid; // saveAs do not work on Android
+
+  const folderSettingsAvailable = haveLocalSetting();
 
   return (
     <Toolbar
@@ -282,24 +284,18 @@ function MainToolbar(props: Props) {
         <Tooltip
           title={
             t('core:perspectiveSettingsTitle') +
-            (haveLocalSetting && ' - folder specific')
+            (folderSettingsAvailable ? ' - folder specific' : '')
           }
         >
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
           >
-            <Badge
-              color="primary"
-              variant="dot"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              invisible={!haveLocalSetting()}
-            >
+            {folderSettingsAvailable ? (
+              <PerspectiveSettingsIcon color="primary" />
+            ) : (
               <PerspectiveSettingsIcon />
-            </Badge>
+            )}
           </IconButton>
         </Tooltip>
       </Box>

@@ -116,6 +116,8 @@ export { default as RevisionIcon } from '@mui/icons-material/Restore';
 
 export { default as DescriptionIcon } from '@mui/icons-material/Subject';
 
+export { default as EditDescriptionIcon } from '@mui/icons-material/EditNote';
+
 export { default as AudioRecordIcon } from '@mui/icons-material/KeyboardVoice';
 
 export { default as NewFileIcon } from '@mui/icons-material/InsertDriveFile';

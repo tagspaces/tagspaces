@@ -332,19 +332,27 @@ export const PlatformFacadeContextProvider = ({
     });
   }
 
+  /**
+   * @param filePath
+   * @param newFilePath
+   * @param onProgress
+   * @param reflect
+   * return Promise<TS.FileSystemEntry> new file entry renamed
+   */
   function renameFilePromise(
     filePath: string,
     newFilePath: string,
     onProgress = undefined,
     reflect = true,
-  ): Promise<any> {
+  ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(filePath, newFilePath);
     return PlatformFacade.renameFilePromise(
       filePath,
       newFilePath,
       onProgress,
     ).then((result) => {
-      getAllPropertiesPromise(newFilePath).then(
+      deignoreByWatcher(filePath, newFilePath);
+      return getAllPropertiesPromise(newFilePath).then(
         (fsEntry: TS.FileSystemEntry) => {
           if (reflect) {
             setReflectActions({
@@ -353,10 +361,9 @@ export const PlatformFacadeContextProvider = ({
               oldEntryPath: filePath,
             });
           }
+          return fsEntry;
         },
       );
-      deignoreByWatcher(filePath, newFilePath);
-      return result;
     });
   }
 

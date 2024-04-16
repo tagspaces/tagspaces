@@ -52,6 +52,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 import { getEnhancedDir, getEnhancedFile } from '-/services/meta-loader';
+import removeMd from 'remove-markdown';
 
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
@@ -544,7 +545,8 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport()
+    !PlatformIO.haveWebDavSupport() &&
+    !AppConfig.isCordova
     // PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
@@ -1099,14 +1101,15 @@ export function loadFileContentPromise(
  */
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview = mdContent
-    .replace(
-      /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
-      // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-      '',
-    )
-    .replace(/<[^>]*>/g, '') // remove html
-    .replace(/\*|~|#|_/g, '');
+  // let preview = mdContent
+  //   .replace(
+  //     /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+  //     // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+  //     '',
+  //   )
+  //   .replace(/<[^>]*>/g, '') // remove html
+  //   .replace(/\*|~|#|_/g, '');
+  let preview = removeMd(mdContent);
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
@@ -1196,12 +1199,16 @@ export function fileNameValidation(fileName): boolean {
  *  normalize path for URL is always '/'
  */
 export function normalizeUrl(url: string) {
+  let normalizedUrl = url;
   if (PlatformIO.getDirSeparator() !== '/') {
     if (url) {
-      return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+      normalizedUrl = url.replaceAll(PlatformIO.getDirSeparator(), '/');
     }
   }
-  return url;
+  if (!normalizedUrl.startsWith('http') && !normalizedUrl.startsWith('/')) {
+    normalizedUrl = '/' + normalizedUrl;
+  }
+  return normalizedUrl;
 }
 
 /**

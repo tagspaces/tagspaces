@@ -49,6 +49,8 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
+import { generateClipboardLink } from '-/utils/dom';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 interface Props {
   open: boolean;
@@ -82,6 +84,7 @@ function DirectoryMenu(props: Props) {
   } = useDirectoryContentContext();
   const { generateThumbnails } = useThumbGenerationContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
+  const { setReflectActions } = useEditedEntryContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -119,7 +122,7 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleProTeaser(slidePage));
   };
 
-  function generateFolderLink(): Promise<string> {
+  function generateFolderLink(): Promise<any> {
     let locationID = currentLocation.uuid;
     let entryPath = currentDirectoryPath;
     if (selectedEntries && selectedEntries.length > 0) {
@@ -131,23 +134,33 @@ function DirectoryMenu(props: Props) {
     const tmpLoc = locations.find((location) => location.uuid === locationID);
     return getLocationPath(tmpLoc).then((locationPath) => {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
-      return generateSharingLink(locationID, undefined, relativePath);
+      const folderName = extractDirectoryName(
+        selectedEntries[0].name,
+        PlatformIO.getDirSeparator(),
+      );
+      return {
+        url: generateSharingLink(locationID, undefined, relativePath),
+        name: folderName,
+      };
     });
   }
 
   function copySharingLink() {
-    //if (selectedEntries && selectedEntries.length === 1) {
-    generateFolderLink().then((sharingLink) =>
+    generateFolderLink().then((sharingLink) => {
+      const clibboardItem = generateClipboardLink(
+        sharingLink.url,
+        sharingLink.name,
+      );
       navigator.clipboard
-        .writeText(sharingLink)
+        .write(clibboardItem)
         .then(() => {
           showNotification(t('core:sharingLinkCopied'));
           return true;
         })
         .catch(() => {
           showNotification(t('core:sharingLinkFailed'));
-        }),
-    );
+        });
+    });
   }
 
   function openDir() {
@@ -292,8 +305,12 @@ Do you want to continue?`)
     const newFilePath =
       normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
 
-    renameFilePromise(filePath, newFilePath)
-      .then(() => {
+    renameFilePromise(filePath, newFilePath, undefined, false)
+      .then((newEntry) => {
+        setReflectActions({
+          action: 'add',
+          entry: newEntry,
+        });
         showNotification(
           'File ' + newFilePath + ' successfully imported.',
           'default',

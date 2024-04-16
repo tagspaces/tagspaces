@@ -213,7 +213,7 @@ function TagContainer(props: Props) {
             {(isTagGeo || isGeoSmartTag) && (
               <PlaceIcon
                 style={{
-                  color: tag.textcolor,
+                  color: textColor,
                   height: 20,
                   marginBottom: -5,
                   marginLeft: -5,
@@ -224,7 +224,7 @@ function TagContainer(props: Props) {
             {(isTagDate || isDateSmartTag) && (
               <DateIcon
                 style={{
-                  color: tag.textcolor,
+                  color: textColor,
                   height: 20,
                   marginBottom: -5,
                   marginLeft: -5,

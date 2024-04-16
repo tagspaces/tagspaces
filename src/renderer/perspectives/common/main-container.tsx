@@ -7,6 +7,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
+import { getAllPropertiesPromise } from '-/services/utils-io';
 
 export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
@@ -53,7 +54,7 @@ export const renderCell = (
   setSelectedEntries,
   lastSelectedEntryPath,
   directoryContent,
-  openEntry,
+  openFsEntry,
   openFileNatively,
   openDirectory,
   setFileContextMenuAnchorEl,
@@ -131,7 +132,8 @@ export const renderCell = (
   const openLocation = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       setSelectedEntries([fsEntry]);
-      openEntry(fsEntry.path);
+      openFsEntry(fsEntry);
+      //openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       openDirectory(fsEntry.path);
@@ -226,7 +228,29 @@ export const renderCell = (
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          openEntry(fsEntry.path);
+          getAllPropertiesPromise(fsEntry.path)
+            .then((entry: TS.FileSystemEntry) => {
+              if (entry) {
+                openFsEntry(entry);
+              } else {
+                openFsEntry(fsEntry);
+                showNotification(
+                  'File ' + fsEntry.path + ' not exist on filesystem!',
+                  'warning',
+                  true,
+                );
+              }
+            })
+            .catch((error) => {
+              console.warn(
+                'Error getting properties for entry: ' +
+                  fsEntry.path +
+                  ' - ' +
+                  error,
+              );
+              return false;
+            });
+          // openEntry(fsEntry.path);
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }

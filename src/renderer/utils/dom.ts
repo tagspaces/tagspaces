@@ -140,3 +140,18 @@ export function base64ToBlob(base64) {
   }
   return bytes;
 }
+
+export function generateClipboardLink(url, name?) {
+  const htmlType = 'text/html';
+  const plainTextType = 'text/plain';
+  const htmlLink = `<a href="${url}">${name ? name : url}</a>`;
+  const cbi = [
+    new ClipboardItem({
+      [htmlType]: new Blob([htmlLink], {
+        type: htmlType,
+      }),
+      [plainTextType]: new Blob([url], { type: plainTextType }),
+    }),
+  ];
+  return cbi;
+}

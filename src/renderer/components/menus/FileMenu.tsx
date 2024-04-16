@@ -39,6 +39,7 @@ import {
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
   generateSharingLink,
+  extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
@@ -63,6 +64,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import PlatformFacade from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { generateClipboardLink } from '-/utils/dom';
 
 interface Props {
   anchorEl: Element;
@@ -131,13 +133,22 @@ function FileMenu(props: Props) {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
       const sharingLink = generateFileLink();
+      const entryTitle = extractTitle(
+        selectedEntries[0].name,
+        !selectedEntries[0].isFile,
+        PlatformIO.getDirSeparator(),
+      );
+
+      const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
+
       navigator.clipboard
-        .writeText(sharingLink)
+        .write(clibboardItem)
         .then(() => {
           showNotification(t('core:sharingLinkCopied'));
           return true;
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log('Error copying to clipboard ' + e);
           showNotification(t('core:sharingLinkFailed'));
         });
     }

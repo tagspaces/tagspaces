@@ -43,7 +43,7 @@ export default {
   contentHash: '',
   isUpdateInProgress: false,
   isUpdateAvailable: false,
-  enableWS: true,
+  enableWS: AppConfig.isElectron,
   warningOpeningFilesExternally: true,
   tagDelimiter: ' ',
   maxSearchResult: 1000,

@@ -24,6 +24,10 @@ import React, {
   useState,
 } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import {
+  getMetaFileLocationForFile,
+  extractTitle,
+} from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
   Grid,
@@ -95,6 +99,9 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { generateClipboardLink } from '-/utils/dom';
 
 const PREFIX = 'EntryProperties';
 
@@ -837,8 +844,17 @@ function EntryProperties(props: Props) {
                         data-tid="copyLinkToClipboardTID"
                         color="primary"
                         onClick={() => {
+                          const entryTitle = extractTitle(
+                            openedEntry.name,
+                            !openedEntry.isFile,
+                            PlatformIO.getDirSeparator(),
+                          );
+                          const clibboardItem = generateClipboardLink(
+                            sharingLink,
+                            entryTitle,
+                          );
                           const promise =
-                            navigator.clipboard.writeText(sharingLink);
+                            navigator.clipboard.write(clibboardItem);
                           showNotification(t('core:linkCopied'));
                         }}
                       >

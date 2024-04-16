@@ -141,7 +141,7 @@
     "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd ../../..",
     "type-check": "npm run typescript-clean && tsc --noEmit",
     "typescript-clean": "tsc --build --clean",
-    "update-changelog": "git log v5.7.8..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog": "git log v5.7.12..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd tagspacespro && git log v5.6.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "./tx pull -a -f",
     "version-meta": "node scripts/versionmeta.js"
@@ -157,10 +157,10 @@
     "@mui/lab": "5.0.0-alpha.160",
     "@mui/material": "^5.15.4",
     "@mui/x-date-pickers": "^5.0.20",
-    "@tagspaces/tagspaces-common": "4.1.12",
-    "@tagspaces/tagspaces-common-aws": "4.1.14",
-    "@tagspaces/tagspaces-common-cordova": "4.1.12",
-    "@tagspaces/tagspaces-indexer": "4.1.12",
+    "@tagspaces/tagspaces-common": "4.1.18",
+    "@tagspaces/tagspaces-common-aws": "4.1.18",
+    "@tagspaces/tagspaces-common-cordova": "4.1.20",
+    "@tagspaces/tagspaces-indexer": "4.1.18",
     "@tagspaces/tagspaces-md": "4.1.14",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
@@ -169,7 +169,7 @@
     "coordinate-parser": "^1.0.7",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
-    "dompurify": "^2.3.3",
+    "dompurify": "^3.0.11",
     "echarts": "^5.4.3",
     "electron-context-menu": "^3.6.1",
     "electron-debug": "^3.2.0",
@@ -215,6 +215,7 @@
     "redux": "^4.2.0",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.4.1",
+    "remove-markdown": "^0.5.0",
     "semver": "^7.3.5",
     "slick-carousel": "^1.8.1",
     "source-map-support": "^0.5.21",
@@ -225,7 +226,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.25-alpha.0"
+    "@tagspacespro/tagspacespro": "5.0.27"
   },
   "devDependencies": {
     "@electron/notarize": "^2.2.0",

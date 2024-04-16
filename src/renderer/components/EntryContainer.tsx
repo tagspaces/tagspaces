@@ -39,6 +39,7 @@ import {
   extractContainingDirectoryPath,
   getBackupFileLocation,
   extractFileExtension,
+  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
@@ -65,16 +66,10 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { toFsEntry } from '-/services/utils-io';
+import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-
-//const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
-// const bufferedSplitResize = buffer({
-//   timeout: 300,
-//   id: 'buffered-split-resize'
-// });
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
@@ -90,11 +85,12 @@ function EntryContainer() {
     reflectUpdateOpenedFileContent,
     addToEntryContainer,
   } = useOpenedEntryContext();
-  const { saveDescription } = useDescriptionContext();
+  const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath, currentLocationPath } =
+    useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
     usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
@@ -106,8 +102,6 @@ function EntryContainer() {
   const desktopMode = useSelector(isDesktopMode);
   const revisionsEnabled = useSelector(isRevisionsEnabled);
   const theme = useTheme();
-  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
-  // const percent = useRef<number | undefined>(undefined);
   const timer = useRef<NodeJS.Timeout>(null);
 
   const openedPanelStyle: React.CSSProperties = {
@@ -118,13 +112,9 @@ function EntryContainer() {
     tabIndex !== undefined,
   );
 
-  /*const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
-    false
-  );*/
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-  // const [editingSupported, setEditingSupported] = useState<boolean>(true);
   const [
     isSaveBeforeCloseConfirmDialogOpened,
     setSaveBeforeCloseConfirmDialogOpened,
@@ -146,7 +136,6 @@ function EntryContainer() {
     useRef<HTMLDivElement>(null);
   const fileChanged = useRef<boolean>(false);
   const eventID = useRef<string>(getUuid());
-  // const firstRender = useFirstRender();
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
@@ -214,13 +203,6 @@ function EntryContainer() {
       }
     }
   }, [isFullscreen]);
-
-  /*useEffect(() => {
-    // description is saved as Preview
-    if (isPropertiesPanelVisible && openedEntry.description) {
-      reloadOpenedFile();
-    }
-  }, [isPropertiesPanelVisible]);*/
 
   useEffect(() => {
     if (fscreen.fullscreenEnabled) {
@@ -408,43 +390,6 @@ function EntryContainer() {
     }
   };
 
-  /*const reloadOpenedFile = () => {
-    if (openedEntry) {
-      const metaFilePath = openedEntry.isFile
-        ? getMetaFileLocationForFile(
-            openedEntry.path,
-            PlatformIO.getDirSeparator()
-          )
-        : getMetaFileLocationForDir(
-            openedEntry.path,
-            PlatformIO.getDirSeparator()
-          );
-      try {
-        loadJSONFile(metaFilePath)
-          .then(fsEntryMeta => {
-            updateOpenedFile(openedEntry.path, {
-              ...fsEntryMeta,
-              editMode: false,
-              shouldReload: !openedEntry.shouldReload
-            });
-          })
-          .catch(() =>
-            updateOpenedFile(openedEntry.path, {
-              ...openedEntry,
-              editMode: false,
-              shouldReload: !openedEntry.shouldReload
-            })
-          );
-      } catch (e) {
-        updateOpenedFile(openedEntry.path, {
-          ...openedEntry,
-          editMode: false,
-          shouldReload: !openedEntry.shouldReload
-        });
-      }
-    }
-  };*/
-
   const reloadDocument = () => {
     if (openedEntry) {
       if (openedEntry.editMode && fileChanged.current) {
@@ -585,11 +530,15 @@ function EntryContainer() {
       .then((entry) => {
         reflectUpdateOpenedFileContent(entry);
         if (Pro) {
+          const relativePath = getRelativeEntryPath(
+            currentLocationPath,
+            fileOpen.path,
+          );
           Pro.history.saveHistory(
             historyKeys.fileEditKey,
             {
-              path: fileOpen.path,
-              url: fileOpen.url,
+              path: relativePath,
+              url: generateSharingLink(fileOpen.locationId, relativePath),
               lid: fileOpen.locationId,
             },
             fileEditHistoryKey,
@@ -787,12 +736,14 @@ function EntryContainer() {
         );
       }
     }
+    const haveDescription = description?.length > 0;
     const tabsComponent = (marginRight = undefined) => (
       <EntryContainerTabs
         isEditable={isEditable}
         isPanelOpened={isPanelOpened}
         openPanel={openPanel}
         toggleProperties={toggleProperties}
+        haveDescription={haveDescription}
         marginRight={marginRight}
       />
     );

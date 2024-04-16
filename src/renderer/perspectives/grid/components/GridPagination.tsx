@@ -99,7 +99,7 @@ function GridPagination(props: Props) {
     singleClickAction,
   } = usePerspectiveSettingsContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
-  const { openEntry } = useOpenedEntryContext();
+  const { openFsEntry } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
@@ -211,7 +211,7 @@ function GridPagination(props: Props) {
                         data-tid={'currentDir_' + folderName}
                         style={{
                           fontSize: '1.5rem',
-                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                          filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                         }}
                         onClick={() => {
                           setSelectedEntries([]);
@@ -246,7 +246,7 @@ function GridPagination(props: Props) {
                   <Typography
                     style={{
                       fontSize: '0.9rem',
-                      filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                     }}
                   >
                     {folderSummary}
@@ -330,7 +330,7 @@ function GridPagination(props: Props) {
                 setSelectedEntries,
                 lastSelectedEntryPath,
                 sortedDirContent,
-                openEntry,
+                openFsEntry,
                 openFileNatively,
                 openDirectory,
                 setFileContextMenuAnchorEl,
@@ -354,7 +354,7 @@ function GridPagination(props: Props) {
               setSelectedEntries,
               lastSelectedEntryPath,
               sortedDirContent,
-              openEntry,
+              openFsEntry,
               openFileNatively,
               openDirectory,
               setFileContextMenuAnchorEl,
@@ -370,7 +370,13 @@ function GridPagination(props: Props) {
               {!showDescription &&
                 directoryMeta &&
                 directoryMeta.description && (
-                  <div style={{ position: 'relative', marginBottom: 150 }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      margin: 'auto',
+                      maxWidth: 150,
+                    }}
+                  >
                     <EntryIcon isFile={false} />
                   </div>
                 )}
@@ -393,7 +399,13 @@ function GridPagination(props: Props) {
                 {!showDescription &&
                   directoryMeta &&
                   directoryMeta.description && (
-                    <div style={{ position: 'relative', marginBottom: 150 }}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        margin: 'auto',
+                        maxWidth: 150,
+                      }}
+                    >
                       <EntryIcon isFile={false} />
                     </div>
                   )}
@@ -448,23 +460,5 @@ function GridPagination(props: Props) {
     </div>
   );
 }
-
-/*const areEqual = (prevProp: Props, nextProp: Props) =>
-  JSON.stringify(nextProp.lastBackgroundImageChange) ===
-    JSON.stringify(prevProp.lastBackgroundImageChange) &&
-  JSON.stringify(nextProp.lastThumbnailImageChange) ===
-    JSON.stringify(prevProp.lastThumbnailImageChange) &&
-  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  //nextProp.showDirectories === prevProp.showDirectories &&
-  //nextProp.showDetails === prevProp.showDetails &&
-  //nextProp.showDescription === prevProp.showDescription &&
-  //nextProp.showTags === prevProp.showTags &&
-  //nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
-  JSON.stringify(nextProp.directories) ===
-    JSON.stringify(prevProp.directories) &&
-  // JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
-  JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);*/
 
 export default GridPagination;

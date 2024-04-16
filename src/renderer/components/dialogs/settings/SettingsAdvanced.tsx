@@ -175,6 +175,7 @@ function SettingsAdvanced(props: Props) {
           <ListItemText primary={t('enableWS')} />
           <Switch
             data-tid="settingsEnableWS"
+            disabled={!AppConfig.isElectron}
             onClick={() => setEnableWS(!settings.enableWS)}
             checked={settings.enableWS}
           />

@@ -175,6 +175,7 @@ function FileView(props: Props) {
             zIndex: 3,
             border: 0,
           }}
+          allow="clipboard-write *"
           src={fileOpenerURL.current}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
