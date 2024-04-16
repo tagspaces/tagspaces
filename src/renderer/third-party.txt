@@ -3349,7 +3349,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.26
+ - @tagspacespro/tagspacespro@5.0.26-alpha.3
 
 This package contains the following license and notice below:
 
@@ -9942,12 +9942,12 @@ terms above.
 
 The following npm package may be included in this product:
 
- - dompurify@3.0.11
+ - dompurify@3.1.0
 
 This package contains the following license and notice below:
 
 DOMPurify
-Copyright 2023 Dr.-Ing. Mario Heiderich, Cure53
+Copyright 2024 Dr.-Ing. Mario Heiderich, Cure53
 
 DOMPurify is free software; you can redistribute it and/or modify it under the
 terms of either:
@@ -16820,10 +16820,10 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws@4.1.14
- - @tagspaces/tagspaces-common-cordova@4.1.12
- - @tagspaces/tagspaces-common@4.1.12
- - @tagspaces/tagspaces-indexer@4.1.12
+ - @tagspaces/tagspaces-common-aws@4.2.2
+ - @tagspaces/tagspaces-common-cordova@4.2.1
+ - @tagspaces/tagspaces-common@4.2.0
+ - @tagspaces/tagspaces-indexer@4.2.2
  - @tagspaces/tagspaces-md@4.1.14
 
 These packages each contain the following license and notice below:
