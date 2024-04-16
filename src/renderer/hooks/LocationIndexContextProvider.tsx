@@ -41,7 +41,10 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
 import Search from '-/services/search';
-import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
+import {
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
+} from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
@@ -319,34 +322,29 @@ export const LocationIndexContextProvider = ({
   function enhanceSearchEntry(
     entry: TS.FileSystemEntry,
   ): Promise<TS.FileSystemEntry> {
-    if (entry.isFile) {
-      const loc = allLocations.find((l) => l.uuid === entry.locationID);
-      if (loc) {
-        const thumbFilePath = getThumbFileLocationForFile(
-          entry.path,
-          PlatformIO.getDirSeparator(),
-          false,
-        );
-        /*loc.type === locationType.TYPE_CLOUD
-            ? // @ts-ignore
-              entry.thumbPath || (entry.meta && entry.meta.thumbPath) // todo create thumbpath for s3
-            : getThumbFileLocationForFile(
-                entry.path,
-                PlatformIO.getDirSeparator(),
-                false,
-              );*/
-        if (thumbFilePath) {
-          return checkFileExist(thumbFilePath, loc).then((exist) => {
-            if (exist) {
-              const thumbPath =
-                loc.type === locationType.TYPE_CLOUD
-                  ? getURLforPath(thumbFilePath, loc)
-                  : thumbFilePath;
-              return { ...entry, meta: { ...entry.meta, thumbPath } };
-            }
-            return undefined;
-          });
-        }
+    const loc = allLocations.find((l) => l.uuid === entry.locationID);
+    if (loc) {
+      const thumbFilePath = entry.isFile
+        ? getThumbFileLocationForFile(
+            entry.path,
+            PlatformIO.getDirSeparator(),
+            false,
+          )
+        : getThumbFileLocationForDirectory(
+            entry.path,
+            PlatformIO.getDirSeparator(),
+          );
+      if (thumbFilePath) {
+        return checkFileExist(thumbFilePath, loc).then((exist) => {
+          if (exist) {
+            const thumbPath =
+              loc.type === locationType.TYPE_CLOUD
+                ? getURLforPath(thumbFilePath, loc)
+                : thumbFilePath;
+            return { ...entry, meta: { ...entry.meta, thumbPath } };
+          }
+          return undefined;
+        });
       }
     }
     return undefined;
