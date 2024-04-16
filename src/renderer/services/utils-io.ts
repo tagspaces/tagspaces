@@ -1331,7 +1331,9 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
-  return preview.replace(/[#*!_\[\]()`]/g, '');
+  return preview.replaceAll('\n', ' ').replaceAll('|', '');
+  // .replaceAll('\\\\', '');
+  // return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
 // export function removeMarkDown(mdContent) {
