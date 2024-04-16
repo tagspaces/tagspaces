@@ -16,11 +16,7 @@
  */
 
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import {
-  createIndex,
-  loadIndex,
-  enhanceDirectoryIndex,
-} from '@tagspaces/tagspaces-indexer';
+import { createIndex } from '@tagspaces/tagspaces-indexer';
 import {
   enhanceEntry,
   loadJSONString,
@@ -44,6 +40,7 @@ import {
   getThumbFileLocationForFile,
   getBgndFileLocationForDirectory,
   cleanFrontDirSeparator,
+  joinPaths,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
@@ -522,13 +519,62 @@ async function persistIndex(param: string | any, directoryIndex: any) {
     });
 }
 
+export function enhanceDirectoryIndex(
+  directoryIndex: TS.FileSystemEntry[],
+  locationID,
+  folderPath,
+): TS.FileSystemEntry[] {
+  return directoryIndex.map((i: TS.FileSystemEntry) => ({
+    ...i,
+    locationID,
+    path: joinPaths(
+      AppConfig.dirSeparator,
+      folderPath,
+      AppConfig.isWin ? i.path.replaceAll('/', AppConfig.dirSeparator) : i.path, //toPlatformPath()
+    ),
+  }));
+}
+
+export function loadIndexFromDisk(
+  folderPath: string,
+  locationID: string,
+): Promise<TS.FileSystemEntry[]> {
+  const folderIndexPath =
+    getMetaDirectoryPath(folderPath) +
+    PlatformIO.getDirSeparator() +
+    AppConfig.folderIndexFile;
+  return PlatformIO.loadTextFilePromise(folderIndexPath)
+    .then((jsonContent) => {
+      const directoryIndex = loadJSONString(
+        jsonContent,
+      ) as TS.FileSystemEntry[];
+      return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
+      /*return enhanceDirectoryIndex(
+        {
+          path: folderPath,
+          locationID: location.uuid,
+          ...(location.type === locationType.TYPE_CLOUD && {
+            bucketName: location.bucketName,
+          }),
+        },
+        directoryIndex,
+        location.uuid,
+      ) as TS.FileSystemEntry[];*/
+    })
+    .catch((e) => {
+      console.log('cannot load json:' + folderPath, e);
+      return undefined;
+    });
+  // const indexExist = PlatformIO.checkFileExist(folderIndexPath);
+}
+
 export function createDirectoryIndex(
   param: string | any,
   extractText = false,
   ignorePatterns: Array<string> = [],
   enableWS = true,
   // disableIndexing = true,
-) {
+): Promise<TS.FileSystemEntry[]> {
   //: Promise<TS.FileSystemEntry[]> {
   if (Pro && Pro.Watcher) {
     Pro.Watcher.stopWatching();
@@ -556,11 +602,12 @@ export function createDirectoryIndex(
       ignorePatterns,
     ).then((result) => {
       if (result && result.success) {
-        return loadIndex(
+        return loadIndexFromDisk(dirPath, locationID);
+        /*return loadIndex(
           { path: dirPath, locationID },
           PlatformIO.getDirSeparator(),
           PlatformIO.loadTextFilePromise,
-        );
+        );*/
       } else if (result && result.error) {
         console.error('createDirectoryIndexInWorker failed:' + result.error);
       } else {
@@ -593,7 +640,12 @@ export function createDirectoryIndex(
       persistIndex(param, directoryIndex).then((success) => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
-          return enhanceDirectoryIndex(param, directoryIndex, locationID);
+          return enhanceDirectoryIndex(
+            directoryIndex,
+            locationID,
+            directoryPath,
+          );
+          //return enhanceDirectoryIndex(param, directoryIndex, locationID);
         }
         return undefined;
       }),
@@ -1113,7 +1165,9 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
-  return preview.replace(/[#*!_\[\]()`]/g, '');
+  return preview.replaceAll('\n', ' ').replaceAll('|', '');
+  // .replaceAll('\\\\', '');
+  // return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
 // export function removeMarkDown(mdContent) {
@@ -1312,11 +1366,23 @@ export function getFolderThumbPath(path: string, dt = undefined) {
   return undefined;
 }
 
-export function getThumbPath(thumbPath: string, dt = undefined) {
+/**
+ * @param thumbPath
+ * @param dt
+ * @param isLocalFile - force to generate local URL
+ */
+export function getThumbPath(
+  thumbPath: string,
+  dt = undefined,
+  isLocalFile = false,
+) {
   if (!thumbPath) {
     return undefined;
   }
-  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+  if (
+    !isLocalFile &&
+    (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport())
+  ) {
     if (isSignedURL(thumbPath)) {
       return thumbPath;
     }

@@ -18,7 +18,7 @@
 
 import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -37,6 +37,7 @@ import {
 import {
   formatFileSize,
   formatDateTime,
+  locationType,
 } from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
@@ -65,6 +66,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { getLocations } from '-/reducers/locations';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -136,6 +138,7 @@ function GridCell(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
+  const locations: Array<TS.Location> = useSelector(getLocations);
   //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
   // const desktopMode = useSelector(isDesktopMode);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -241,6 +244,18 @@ function GridCell(props: Props) {
 
   const entryPath = fsEntry.path;
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
+
+  function isLocalFile(locationID): boolean {
+    if (locationID) {
+      const loc = locations.find((l) => l.uuid === locationID);
+      if (loc) {
+        return loc.type === locationType.TYPE_LOCAL;
+      }
+    }
+    return false;
+  }
+
+  const isLocal = fsEntry.locationID ? isLocalFile(fsEntry.locationID) : false;
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
@@ -429,6 +444,7 @@ function GridCell(props: Props) {
             src={getThumbPath(
               fsEntry.meta.thumbPath,
               fsEntry.meta?.lastUpdated,
+              isLocal,
             )}
             style={{
               height: maxHeight - 70,

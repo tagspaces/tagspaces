@@ -250,7 +250,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator(),
       );
-      return openDirectory(parentFolder);
+      return openDirectory(parentFolder, currentLocation.uuid);
     }
   }
 

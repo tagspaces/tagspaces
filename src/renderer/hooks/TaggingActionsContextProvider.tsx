@@ -451,134 +451,155 @@ export const TaggingActionsContextProvider = ({
   }
 
   /**
-   * @param path
+   * @param entry: TS.FileSystemEntry
    * @param tags
    * @param reflect
    * return newPath
    */
-  async function addTagsToEntry(
-    path: string,
+  async function addTagsToFsEntry(
+    entry: TS.FileSystemEntry,
     tags: Array<TS.Tag>,
     reflect: boolean = true,
   ): Promise<string> {
-    const entryProperties = await PlatformIO.getPropertiesPromise(path);
-    let fsEntryMeta;
-    try {
-      fsEntryMeta = entryProperties.isFile
-        ? await loadFileMetaDataPromise(path)
-        : await loadDirMetaDataPromise(path);
-    } catch (error) {
-      console.log('No sidecar found ' + error);
-    }
+    if (entry) {
+      let fsEntryMeta;
+      try {
+        fsEntryMeta = entry.isFile
+          ? await loadFileMetaDataPromise(entry.path)
+          : await loadDirMetaDataPromise(entry.path);
+      } catch (error) {
+        console.log('No sidecar found ' + error);
+      }
 
-    if (!entryProperties.isFile || persistTagsInSidecarFile) {
-      // Handling adding tags in sidecar
-      if (fsEntryMeta) {
-        const uniqueTags = getNonExistingTags(
-          tags,
-          extractTags(path, tagDelimiter, PlatformIO.getDirSeparator()),
-          fsEntryMeta.tags,
-        );
-        if (uniqueTags.length > 0) {
-          const newTags: TS.Tag[] = [...fsEntryMeta.tags, ...uniqueTags];
-          const updatedFsEntryMeta = {
-            ...fsEntryMeta,
-            tags: newTags,
-          };
-          return saveMetaDataPromise(path, updatedFsEntryMeta)
+      if (!entry.isFile || persistTagsInSidecarFile) {
+        // Handling adding tags in sidecar
+        if (fsEntryMeta) {
+          const uniqueTags = getNonExistingTags(
+            tags,
+            extractTags(entry.path, tagDelimiter, PlatformIO.getDirSeparator()),
+            fsEntryMeta.tags,
+          );
+          if (uniqueTags.length > 0) {
+            const newTags: TS.Tag[] = [...fsEntryMeta.tags, ...uniqueTags];
+            const updatedFsEntryMeta = {
+              ...fsEntryMeta,
+              tags: newTags,
+            };
+            return saveMetaDataPromise(entry.path, updatedFsEntryMeta)
+              .then(() => {
+                if (reflect) {
+                  reflectUpdateMeta(entry.path);
+                }
+                return entry.path;
+              })
+              .catch((err) => {
+                console.warn(
+                  'Error adding tags for ' + entry.path + ' with ' + err,
+                );
+                showNotification(
+                  t('core:addingTagsFailed' as any) as string,
+                  'error',
+                  true,
+                );
+                return entry.path;
+              });
+          }
+        } else {
+          const newFsEntryMeta = { tags };
+          return saveMetaDataPromise(entry.path, newFsEntryMeta)
             .then(() => {
               if (reflect) {
-                reflectUpdateMeta(path);
+                reflectUpdateMeta(entry.path);
               }
-              return path;
+              return entry.path;
             })
-            .catch((err) => {
-              console.warn('Error adding tags for ' + path + ' with ' + err);
+            .catch((error) => {
+              console.warn(
+                'Error adding tags for ' + entry.path + ' with ' + error,
+              );
               showNotification(
                 t('core:addingTagsFailed' as any) as string,
                 'error',
                 true,
               );
-              return path;
+              return entry.path;
             });
         }
-      } else {
-        const newFsEntryMeta = { tags };
-        return saveMetaDataPromise(path, newFsEntryMeta)
-          .then(() => {
-            if (reflect) {
-              reflectUpdateMeta(path);
-            }
-            return path;
-          })
-          .catch((error) => {
-            console.warn('Error adding tags for ' + path + ' with ' + error);
-            showNotification(
-              t('core:addingTagsFailed' as any) as string,
-              'error',
-              true,
-            );
-            return path;
-          });
-      }
-    } else if (fsEntryMeta) {
-      // Handling tags in filename by existing sidecar
-      const extractedTags = extractTags(
-        path,
-        tagDelimiter,
-        PlatformIO.getDirSeparator(),
-      );
-      const uniqueTags = getNonExistingTags(
-        tags,
-        extractedTags,
-        fsEntryMeta.tags,
-      );
-      if (uniqueTags.length > 0) {
-        const newFilePath = addTagsToFilePath(
-          path,
-          uniqueTags.map((tag) => tag.title),
+      } else if (fsEntryMeta) {
+        // Handling tags in filename by existing sidecar
+        const extractedTags = extractTags(
+          entry.path,
+          tagDelimiter,
+          PlatformIO.getDirSeparator(),
         );
-        if (path !== newFilePath) {
-          return renameFile(path, newFilePath, reflect).then(() => {
+        const uniqueTags = getNonExistingTags(
+          tags,
+          extractedTags,
+          fsEntryMeta.tags,
+        );
+        if (uniqueTags.length > 0) {
+          const newFilePath = addTagsToFilePath(
+            entry.path,
+            uniqueTags.map((tag) => tag.title),
+          );
+          if (entry.path !== newFilePath) {
+            return renameFile(entry.path, newFilePath, reflect).then(() => {
+              return newFilePath;
+            });
+          }
+        }
+      } else {
+        // Handling tags in filename by no sidecar
+        const newFilePath = addTagsToFilePath(
+          entry.path,
+          tags.map((tag) => tag.title),
+        );
+        if (entry.path !== newFilePath) {
+          return renameFile(entry.path, newFilePath, reflect).then(() => {
             return newFilePath;
           });
         }
       }
-    } else {
-      // Handling tags in filename by no sidecar
-      const newFilePath = addTagsToFilePath(
-        path,
-        tags.map((tag) => tag.title),
-      );
-      if (path !== newFilePath) {
-        return renameFile(path, newFilePath, reflect).then(() => {
-          return newFilePath;
-        });
-      }
-    }
-    return Promise.resolve(path);
+      return Promise.resolve(entry.path);
 
-    function getNonExistingTags(
-      newTagsArray: Array<TS.Tag>,
-      fileTagsArray: string[],
-      sideCarTagsArray: Array<TS.Tag>,
-    ): TS.Tag[] {
-      const newTags = [];
-      for (let i = 0; i < newTagsArray.length; i += 1) {
-        // check if tag is already in the fileTagsArray
-        if (fileTagsArray.indexOf(newTagsArray[i].title) === -1) {
-          // check if tag is already in the sideCarTagsArray
-          if (
-            sideCarTagsArray.findIndex(
-              (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
-            ) === -1
-          ) {
-            newTags.push(newTagsArray[i]);
+      function getNonExistingTags(
+        newTagsArray: Array<TS.Tag>,
+        fileTagsArray: string[],
+        sideCarTagsArray: Array<TS.Tag>,
+      ): TS.Tag[] {
+        const newTags = [];
+        for (let i = 0; i < newTagsArray.length; i += 1) {
+          // check if tag is already in the fileTagsArray
+          if (fileTagsArray.indexOf(newTagsArray[i].title) === -1) {
+            // check if tag is already in the sideCarTagsArray
+            if (
+              sideCarTagsArray.findIndex(
+                (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
+              ) === -1
+            ) {
+              newTags.push(newTagsArray[i]);
+            }
           }
         }
+        return newTags;
       }
-      return newTags;
     }
+    return Promise.resolve('');
+  }
+  /**
+   * @param path
+   * @param tags
+   * @param reflect
+   * return newPath
+   */
+  function addTagsToEntry(
+    path: string,
+    tags: Array<TS.Tag>,
+    reflect: boolean = true,
+  ): Promise<string> {
+    return PlatformIO.getPropertiesPromise(path).then((entry) =>
+      addTagsToFsEntry(entry, tags, reflect),
+    );
   }
 
   /**

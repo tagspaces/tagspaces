@@ -122,10 +122,10 @@ function SearchAutocomplete(props: Props) {
   const fileTypes = useRef<Array<string>>(
     searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const actionValues = useRef<Array<SearchOptionType>>([]);
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
-    searchQuery.searchBoxing || 'location',
+    searchQuery.searchBoxing || scope.location,
   );
 
   const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
@@ -212,14 +212,14 @@ function SearchAutocomplete(props: Props) {
       }
 
       if (searchQuery.searchBoxing) {
-        setSearchBoxing(searchQuery.searchBoxing);
+        const sBoxing = !currentLocation
+          ? scope.global
+          : searchQuery.searchBoxing;
+        setSearchBoxing(sBoxing);
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SCOPE.fullName,
-          label:
-            SearchQueryComposition.SCOPE.fullName +
-            ' ' +
-            searchQuery.searchBoxing,
+          label: SearchQueryComposition.SCOPE.fullName + ' ' + sBoxing,
         });
       }
       if (
@@ -350,7 +350,7 @@ function SearchAutocomplete(props: Props) {
         isAction(action.action, SearchQueryComposition.SCOPE),
       )
     ) {
-      setSearchBoxing('location');
+      setSearchBoxing(scope.location);
     }
     if (
       !exceptions.some((action) =>

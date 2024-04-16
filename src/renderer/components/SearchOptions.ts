@@ -129,9 +129,9 @@ export const LastModified = {
   moreThanYear: 31556952001, // over 1 year
 };
 export const scope = {
-  location: 'location',
-  folder: 'folder',
-  global: 'global',
+  location: 'location' as ScopeType,
+  folder: 'folder' as ScopeType,
+  global: 'global' as ScopeType,
 };
 
 export const accuracy = {

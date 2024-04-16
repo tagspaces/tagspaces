@@ -81,6 +81,10 @@ type OpenedEntryContextData = {
   ) => Promise<boolean>;*/
   openEntry: (path?: string, showDetails?) => Promise<boolean>;
   openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => Promise<boolean>;
+  openEntryInternal: (
+    fsEntry: TS.FileSystemEntry,
+    showDetails?,
+  ) => Promise<boolean>;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
   goForward: () => void;
@@ -108,6 +112,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   //updateOpenedFile: () => Promise.resolve(false),
   openEntry: undefined,
   openFsEntry: undefined,
+  openEntryInternal: undefined,
   toggleEntryFullWidth: () => {},
   openLink: () => {},
   goForward: () => {},
@@ -127,8 +132,12 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { openLocation, currentLocation, getLocationPath } =
-    useCurrentLocationContext();
+  const {
+    openLocation,
+    currentLocation,
+    getLocationPath,
+    switchLocationTypeByID,
+  } = useCurrentLocationContext();
   const { currentDirectoryPath, currentLocationPath, openDirectory } =
     useDirectoryContentContext();
 
@@ -409,15 +418,45 @@ export const OpenedEntryContextProvider = ({
       });
   }
 
+  function openEntryInternal(
+    fsEntry: TS.FileSystemEntry,
+    showDetails = undefined,
+  ): Promise<boolean> {
+    return switchLocationTypeByID(fsEntry.locationID).then(() => {
+      return getAllPropertiesPromise(fsEntry.path)
+        .then((entry: TS.FileSystemEntry) => {
+          if (entry) {
+            return openFsEntry(entry, showDetails);
+          } else {
+            showNotification(
+              'File ' + fsEntry.path + ' not exist on filesystem!',
+              'warning',
+              true,
+            );
+            return openFsEntry(fsEntry, showDetails);
+          }
+        })
+        .catch((error) => {
+          console.warn(
+            'Error getting properties for entry: ' +
+              fsEntry.path +
+              ' - ' +
+              error,
+          );
+          return false;
+        });
+    });
+  }
+
   function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
     showDetails = undefined,
   ): Promise<boolean> {
-    if (fsEntry === undefined) {
+    if (!fsEntry) {
       if (selectedEntries && selectedEntries.length > 0) {
         const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
         if (!lastSelectedEntry.isFile) {
-          return openDirectory(lastSelectedEntry.path); //, false);
+          return openDirectory(lastSelectedEntry.path, currentLocation.uuid); //, false);
         }
       } else {
         return Promise.resolve(false);
@@ -569,7 +608,7 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              openDirectory(fsEntry.path);
+              openDirectory(fsEntry.path, currentLocation.uuid);
             }
             return true;
           })
@@ -614,9 +653,9 @@ export const OpenedEntryContextProvider = ({
                     locationPath.length > 0
                       ? locationPath + '/' + newRelDir
                       : directoryPath;
-                  openDirectory(dirFullPath);
+                  openDirectory(dirFullPath, targetLocation.uuid);
                 } else {
-                  openDirectory(locationPath);
+                  openDirectory(locationPath, targetLocation.uuid);
                 }
 
                 if (entryPath) {
@@ -654,9 +693,9 @@ export const OpenedEntryContextProvider = ({
                     directoryPath,
                   );
                   //locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                  openDirectory(dirFullPath);
+                  openDirectory(dirFullPath, targetLocation.uuid);
                 } else {
-                  openDirectory(locationPath);
+                  openDirectory(locationPath, targetLocation.uuid);
                 }
 
                 if (entryPath && entryPath.length > 0) {
@@ -794,6 +833,7 @@ export const OpenedEntryContextProvider = ({
       //updateOpenedFile,
       openEntry,
       openFsEntry,
+      openEntryInternal,
       toggleEntryFullWidth,
       goForward,
       goBack,
