@@ -396,13 +396,15 @@ export default class PlatformFacade {
   };
 
   static checkFileExist = (file: string): Promise<boolean> => {
+    if (file === undefined) {
+      return Promise.resolve(false);
+    }
     if (objectStoreAPI) {
-      return objectStoreAPI
-        .getPropertiesPromise({
-          path: file,
-          bucketName: objectStoreAPI.config().bucketName,
-        })
-        .then((stats) => stats && stats.isFile);
+      return objectStoreAPI.isFileExist({
+        path: file,
+        bucketName: objectStoreAPI.config().bucketName,
+      });
+      //.then((stats) => stats && stats.isFile);
     } else if (webDavAPI) {
       return webDavAPI
         .getPropertiesPromise(file)

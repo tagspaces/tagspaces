@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -99,10 +99,11 @@ function GridPagination(props: Props) {
     singleClickAction,
   } = usePerspectiveSettingsContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
-  const { openFsEntry } = useOpenedEntryContext();
+  const { openEntryInternal } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
-  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
+  const { readOnlyMode, currentLocation, switchLocationTypeByID } =
+    useCurrentLocationContext();
   const { openDirectory, directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
@@ -330,11 +331,12 @@ function GridPagination(props: Props) {
                 setSelectedEntries,
                 lastSelectedEntryPath,
                 sortedDirContent,
-                openFsEntry,
+                openEntryInternal,
                 openFileNatively,
                 openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
+                switchLocationTypeByID,
                 showNotification,
                 moveFiles,
                 clearSelection,
@@ -354,11 +356,12 @@ function GridPagination(props: Props) {
               setSelectedEntries,
               lastSelectedEntryPath,
               sortedDirContent,
-              openFsEntry,
+              openEntryInternal,
               openFileNatively,
               openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
+              switchLocationTypeByID,
               showNotification,
               moveFiles,
               clearSelection,

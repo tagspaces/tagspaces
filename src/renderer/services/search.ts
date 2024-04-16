@@ -352,7 +352,7 @@ export default class Search {
   static searchLocationIndex = (
     locationContent: Array<TS.FileSystemEntry>,
     searchQuery: TS.SearchQuery,
-  ): Promise<Array<TS.FileSystemEntry> | []> =>
+  ): Promise<TS.FileSystemEntry[]> =>
     new Promise((resolve, reject) => {
       console.time('searchtime');
       if (!locationContent || locationContent.length === 0) {

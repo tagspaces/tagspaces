@@ -164,7 +164,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function openDir() {
-    return openDirectory(directoryPath);
+    return openDirectory(directoryPath, currentLocation.uuid);
   }
 
   function showProperties() {

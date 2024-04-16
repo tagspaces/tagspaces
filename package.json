@@ -26,6 +26,8 @@
   "scripts": {
     "browserslist:update": "npx browserslist@latest --update-db",
     "bs": "npm run build && npm run run-electron",
+    "bs-dev": "npx cross-env DEBUG_PROD=true npm run build && npm run run-electron",
+    "erb-link": "ln -s \"$(pwd)/.erb\" \"$(pwd)/release/app/.erb\"",
     "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions",
     "build": "npm run prebuild && concurrently \"npm run build:main\" \"npm run build:renderer\" && node -r ts-node/register ./.erb/scripts/link-modules.ts",
     "build-e2e": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test npm run build",
@@ -157,10 +159,10 @@
     "@mui/lab": "5.0.0-alpha.160",
     "@mui/material": "^5.15.4",
     "@mui/x-date-pickers": "^5.0.20",
-    "@tagspaces/tagspaces-common": "4.1.18",
-    "@tagspaces/tagspaces-common-aws": "4.1.18",
-    "@tagspaces/tagspaces-common-cordova": "4.1.20",
-    "@tagspaces/tagspaces-indexer": "4.1.18",
+    "@tagspaces/tagspaces-common": "4.2.0",
+    "@tagspaces/tagspaces-common-aws": "4.2.2",
+    "@tagspaces/tagspaces-common-cordova": "4.2.1",
+    "@tagspaces/tagspaces-indexer": "4.2.2",
     "@tagspaces/tagspaces-md": "4.1.14",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
@@ -226,7 +228,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.27"
+    "@tagspacespro/tagspacespro": "5.0.26-alpha.3"
   },
   "devDependencies": {
     "@electron/notarize": "^2.2.0",

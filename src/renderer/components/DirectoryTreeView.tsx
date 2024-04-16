@@ -17,7 +17,7 @@
  */
 
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Table from 'rc-table';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -145,7 +145,7 @@ const DirectoryTreeView = forwardRef(
           .then(() => {
             loadSubDirectories(subDir);
             changeLocation(subDir);
-            return openDirectory(subDir.path);
+            return openDirectory(subDir.path, subDir.uuid);
           })
           .catch((error) => {
             console.log('enableObjectStoreSupport', error);
@@ -154,7 +154,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
         changeLocation(subDir);
-        openDirectory(subDir.path);
+        openDirectory(subDir.path, subDir.uuid);
       }
     };
 

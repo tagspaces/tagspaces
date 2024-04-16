@@ -1,3 +1,5 @@
+import { ScopeType } from '-/components/SearchOptions';
+
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -84,7 +86,7 @@ export namespace TS {
     tagsNOT?: Array<Tag>;
     lastModified?: string;
     fileSize?: string;
-    searchBoxing?: 'location' | 'folder' | 'global';
+    searchBoxing?: ScopeType;
     searchType?: 'fuzzy' | 'semistrict' | 'strict';
     forceIndexing?: boolean;
     currentDirectory?: string;
@@ -159,6 +161,7 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
+    locationID?: string;
     //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
     textContent?: string;
