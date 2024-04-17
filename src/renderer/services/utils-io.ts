@@ -573,86 +573,89 @@ export function createDirectoryIndex(
   extractText = false,
   ignorePatterns: Array<string> = [],
   enableWS = true,
+  isWalking = () => true,
   // disableIndexing = true,
 ): Promise<TS.FileSystemEntry[]> {
-  //: Promise<TS.FileSystemEntry[]> {
-  if (Pro && Pro.Watcher) {
-    Pro.Watcher.stopWatching();
-  }
-  let directoryPath;
-  let locationID;
-  if (typeof param === 'object' && param !== null) {
-    directoryPath = param.path;
-    ({ locationID } = param);
-  } else {
-    directoryPath = param;
-  }
-  const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (
-    enableWS &&
-    !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport() &&
-    !AppConfig.isCordova
-    // PlatformIO.isWorkerAvailable()
-  ) {
-    // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(
-      dirPath,
-      extractText,
-      ignorePatterns,
-    ).then((result) => {
-      if (result && result.success) {
-        return loadIndexFromDisk(dirPath, locationID);
-        /*return loadIndex(
-          { path: dirPath, locationID },
-          PlatformIO.getDirSeparator(),
-          PlatformIO.loadTextFilePromise,
-        );*/
-      } else if (result && result.error) {
-        console.error('createDirectoryIndexInWorker failed:' + result.error);
-      } else {
-        console.error('createDirectoryIndexInWorker failed: unknown error');
-      }
-      return undefined; // todo create index not in worker
-    });
-  }
-
-  let listDirectoryPromise;
-  //let loadTextFilePromise;
-  if (PlatformIO.haveObjectStoreSupport()) {
-    listDirectoryPromise = PlatformIO.listObjectStoreDir;
-    //loadTextFilePromise = PlatformIO.loadTextFilePromise;
-  } else {
-    listDirectoryPromise = PlatformIO.listDirectoryPromise;
-  }
-  const mode = ['extractThumbPath'];
-  if (extractText) {
-    mode.push('extractTextContent');
-  }
-  return createIndex(
-    param,
-    listDirectoryPromise,
-    PlatformIO.loadTextFilePromise,
-    mode,
-    ignorePatterns,
-  )
-    .then((directoryIndex) =>
-      persistIndex(param, directoryIndex).then((success) => {
-        if (success) {
-          console.log('Index generated in folder: ' + directoryPath);
-          return enhanceDirectoryIndex(
-            directoryIndex,
-            locationID,
-            directoryPath,
-          );
-          //return enhanceDirectoryIndex(param, directoryIndex, locationID);
+  if (isWalking()) {
+    if (Pro && Pro.Watcher) {
+      Pro.Watcher.stopWatching();
+    }
+    let directoryPath;
+    let locationID;
+    if (typeof param === 'object' && param !== null) {
+      directoryPath = param.path;
+      ({ locationID } = param);
+    } else {
+      directoryPath = param;
+    }
+    const dirPath = cleanTrailingDirSeparator(directoryPath);
+    if (
+      enableWS &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport() &&
+      !AppConfig.isCordova
+      // PlatformIO.isWorkerAvailable()
+    ) {
+      // Start indexing in worker if not in the object store mode
+      return PlatformIO.createDirectoryIndexInWorker(
+        dirPath,
+        extractText,
+        ignorePatterns,
+      ).then((result) => {
+        if (result && result.success) {
+          return loadIndexFromDisk(dirPath, locationID);
+          /*return loadIndex(
+            { path: dirPath, locationID },
+            PlatformIO.getDirSeparator(),
+            PlatformIO.loadTextFilePromise,
+          );*/
+        } else if (result && result.error) {
+          console.error('createDirectoryIndexInWorker failed:' + result.error);
+        } else {
+          console.error('createDirectoryIndexInWorker failed: unknown error');
         }
-        return undefined;
-      }),
+        return undefined; // todo create index not in worker
+      });
+    }
+
+    let listDirectoryPromise;
+    //let loadTextFilePromise;
+    if (PlatformIO.haveObjectStoreSupport()) {
+      listDirectoryPromise = PlatformIO.listObjectStoreDir;
+      //loadTextFilePromise = PlatformIO.loadTextFilePromise;
+    } else {
+      listDirectoryPromise = PlatformIO.listDirectoryPromise;
+    }
+    const mode = ['extractThumbPath'];
+    if (extractText) {
+      mode.push('extractTextContent');
+    }
+    return createIndex(
+      param,
+      listDirectoryPromise,
+      PlatformIO.loadTextFilePromise,
+      mode,
+      ignorePatterns,
+      isWalking,
     )
-    .catch((err) => {
-      console.log('Error creating index: ', err);
-    });
+      .then((directoryIndex) =>
+        persistIndex(param, directoryIndex).then((success) => {
+          if (success) {
+            console.log('Index generated in folder: ' + directoryPath);
+            return enhanceDirectoryIndex(
+              directoryIndex,
+              locationID,
+              directoryPath,
+            );
+            //return enhanceDirectoryIndex(param, directoryIndex, locationID);
+          }
+          return undefined;
+        }),
+      )
+      .catch((err) => {
+        console.log('Error creating index: ', err);
+      });
+  }
 }
 
 /**

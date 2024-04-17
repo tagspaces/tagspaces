@@ -623,7 +623,7 @@ export const DirectoryContentContextProvider = ({
     showHiddenEntries = undefined,
   ): Promise<TS.FileSystemEntry[]> {
     // console.debug('loadDirectoryContent:' + directoryPath);
-    window.walkCanceled = false;
+    //window.walkCanceled = false;
 
     // dispatch(actions.setIsLoading(true));
 

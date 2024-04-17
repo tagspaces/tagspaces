@@ -121,9 +121,9 @@ function PageNotification() {
       )}
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={isIndexing}
+        open={isIndexing !== undefined}
         autoHideDuration={undefined}
-        message="Indexing"
+        message={'Indexing ' + isIndexing}
         action={[
           <Button
             key="cancelIndexButton"

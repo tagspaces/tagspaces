@@ -31,7 +31,6 @@ import { TS } from '-/tagspaces.namespace';
 import {
   createDirectoryIndex,
   executePromisesInBatches,
-  getThumbPath,
   loadIndexFromDisk,
 } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
@@ -54,7 +53,7 @@ import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
   indexLoadedOn: number;
-  isIndexing: boolean;
+  isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
   cancelDirectoryIndexing: () => void;
   createLocationIndex: (location: TS.Location) => Promise<boolean>;
@@ -70,7 +69,7 @@ type LocationIndexContextData = {
 export const LocationIndexContext = createContext<LocationIndexContextData>({
   index: [],
   indexLoadedOn: undefined,
-  isIndexing: false,
+  isIndexing: undefined,
   getIndex: undefined,
   cancelDirectoryIndexing: () => {},
   createLocationIndex: () => Promise.resolve(false),
@@ -104,7 +103,8 @@ export const LocationIndexContextProvider = ({
   const enableWS = useSelector(getEnableWS);
   const allLocations = useSelector(getLocations);
 
-  const isIndexing = useRef<boolean>(false);
+  const isIndexing = useRef<string>(undefined);
+  let walking = true;
   //const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
@@ -199,9 +199,13 @@ export const LocationIndexContextProvider = ({
     }
   }
 
+  function isWalking() {
+    return walking;
+  }
+
   function cancelDirectoryIndexing() {
-    window.walkCanceled = true;
-    isIndexing.current = false;
+    walking = false;
+    isIndexing.current = undefined;
     forceUpdate();
   }
 
@@ -221,6 +225,7 @@ export const LocationIndexContextProvider = ({
           extractText,
           ignorePatterns,
           enableWS,
+          isWalking,
         );
       })
       .then((index) =>
@@ -236,52 +241,32 @@ export const LocationIndexContextProvider = ({
       });
   }
 
-  function createDirIndex(
-    directoryPath: string,
-    extractText: boolean,
-    isCurrentLocation = true,
-    locationID: string = undefined,
-    ignorePatterns: Array<string> = [],
-  ): Promise<boolean> {
-    isIndexing.current = true;
-    forceUpdate();
-    return createDirectoryIndexWrapper(
-      { path: directoryPath, locationID },
-      extractText,
-      ignorePatterns,
-      enableWS,
-    )
-      .then((directoryIndex) => {
-        if (isCurrentLocation) {
-          // Load index only if current location
-          setIndex(directoryIndex);
-        }
-        isIndexing.current = false;
-        forceUpdate();
-        return true;
-      })
-      .catch((err) => {
-        isIndexing.current = false;
-        //lastError.current = err;
-        forceUpdate();
-        return false;
-      });
-  }
-
   function createLocationIndex(location: TS.Location): Promise<boolean> {
     if (location) {
       return getLocationPath(location).then((locationPath) => {
         const isCurrentLocation =
           currentLocation && currentLocation.uuid === location.uuid;
-        return createDirIndex(
-          locationPath,
+        isIndexing.current = location.name;
+        forceUpdate();
+        return createDirectoryIndexWrapper(
+          { path: locationPath, locationID: location.uuid },
           location.fullTextIndex,
-          isCurrentLocation,
-          location.uuid,
           location.ignorePatternPaths,
+          enableWS,
         )
-          .then(() => true)
-          .catch(() => {
+          .then((directoryIndex) => {
+            if (isCurrentLocation) {
+              // Load index only if current location
+              setIndex(directoryIndex);
+            }
+            isIndexing.current = undefined;
+            forceUpdate();
+            return true;
+          })
+          .catch((err) => {
+            isIndexing.current = undefined;
+            //lastError.current = err;
+            forceUpdate();
             return false;
           });
       });
@@ -290,12 +275,11 @@ export const LocationIndexContextProvider = ({
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
-    isIndexing.current = true;
-    forceUpdate();
-    //(async () => {
     for (let location of allLocations) {
       try {
         const locationPath = await getLocationPath(location);
+        isIndexing.current = locationPath;
+        forceUpdate();
         await createDirectoryIndexWrapper(
           { path: locationPath, locationID: location.uuid },
           extractText,
@@ -306,21 +290,14 @@ export const LocationIndexContextProvider = ({
         console.error('An error occurred:', error);
       }
     }
-    // })();
-    isIndexing.current = false;
+    isIndexing.current = undefined;
     forceUpdate();
     console.log('Resolution is complete!');
     return true;
-    /*.catch((e) => {
-        isIndexing.current = false;
-        forceUpdate();
-        console.warn('Resolution is failed!', e);
-        return false;
-      });*/
   }
 
   function clearDirectoryIndex() {
-    isIndexing.current = false;
+    isIndexing.current = undefined;
     setIndex([]);
     forceUpdate();
   }
@@ -431,7 +408,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
-    window.walkCanceled = false;
+    walking = true;
     if (!currentLocation) {
       //showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       searchAllLocations(searchQuery);
@@ -439,7 +416,12 @@ export const LocationIndexContextProvider = ({
     }
 
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-    showNotification(t('core:searching'), 'default', false, 'TIDSearching');
+    showNotification(
+      t('core:searching' + ' ' + currentLocation.name),
+      'default',
+      false,
+      'TIDSearching',
+    );
     setTimeout(async () => {
       const currentPath = await getLocationPath(currentLocation);
       let directoryIndex = getIndex();
@@ -498,7 +480,8 @@ export const LocationIndexContextProvider = ({
     /*if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.disableObjectStoreSupport();
     }*/
-    window.walkCanceled = false;
+
+    walking = true;
     //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
