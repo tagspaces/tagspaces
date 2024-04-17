@@ -33,6 +33,7 @@ import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 const CreateEditLocationDialog = React.lazy(
   () =>
@@ -65,7 +66,7 @@ function LocationManager(props: Props) {
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
 
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -30,9 +30,10 @@ import {
 import { getKeyBindingObject } from '-/reducers/settings';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function getDirectoryMenuItems(
-  currentLocation: TS.Location,
+  currentLocation: CommonLocation,
   selectedEntriesLength: number,
   perspectiveMode: boolean,
   isReadOnlyMode: boolean,

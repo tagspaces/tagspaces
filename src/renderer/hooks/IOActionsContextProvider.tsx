@@ -244,7 +244,7 @@ export const IOActionsContextProvider = ({
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { setReflectKanBanActions } = useEditedKanBanMetaContext();
   const { currentDirectoryPath, openDirectory } = useDirectoryContentContext();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
+  const { switchLocationTypeByID, switchCurrentLocationType, currentLocation } =
     useCurrentLocationContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -335,7 +335,9 @@ export const IOActionsContextProvider = ({
   }
 
   function deleteDirectory(directoryPath: string) {
-    return deleteEntriesPromise(toFsEntry(directoryPath, false))
+    return deleteEntriesPromise(
+      toFsEntry(directoryPath, false, currentLocation.uuid),
+    )
       .then(() => {
         showNotification(
           t(
@@ -373,7 +375,7 @@ export const IOActionsContextProvider = ({
   }
 
   function deleteFile(filePath: string, uuid: string) {
-    return deleteEntriesPromise(toFsEntry(filePath, true))
+    return deleteEntriesPromise(toFsEntry(filePath, true, currentLocation.uuid))
       .then(() => {
         showNotification(
           `Deleting file ${filePath} successful.`,
@@ -403,6 +405,7 @@ export const IOActionsContextProvider = ({
           toFsEntry(
             getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             true,
+            currentLocation.uuid,
           ),
           toFsEntry(
             getThumbFileLocationForFile(
@@ -411,6 +414,7 @@ export const IOActionsContextProvider = ({
               false,
             ),
             true,
+            currentLocation.uuid,
           ),
         )
           .then(() => {
@@ -453,7 +457,7 @@ export const IOActionsContextProvider = ({
           // console.log('Moving dir from ' + path + ' to ' + targetPath);
           const action: TS.EditAction = {
             action: 'move',
-            entry: toFsEntry(newDirPath, false),
+            entry: toFsEntry(newDirPath, false, currentLocation.uuid),
             oldEntryPath: path,
           };
           return action;

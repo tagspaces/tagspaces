@@ -64,6 +64,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import AppConfig from '-/AppConfig';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -88,7 +89,7 @@ type TaggingActionsContextData = {
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   createTagGroup: (
     entry: TS.TagGroup,
-    location?: TS.Location,
+    location?: CommonLocation,
   ) => Promise<boolean>;
   mergeTagGroup: (entry: TS.TagGroup) => void;
   removeTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
@@ -175,7 +176,7 @@ export const TaggingActionsContextProvider = ({
   const tagTextColor: string = useSelector(getTagTextColor);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
 
   useEffect(() => {
@@ -1035,7 +1036,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && entry.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === entry.locationId,
         );
         if (location) {
@@ -1077,7 +1078,7 @@ export const TaggingActionsContextProvider = ({
 
   function createTagGroup(
     entry: TS.TagGroup,
-    location?: TS.Location,
+    location?: CommonLocation,
   ): Promise<boolean> {
     const newEntry = {
       ...entry,
@@ -1093,7 +1094,7 @@ export const TaggingActionsContextProvider = ({
 
   function mergeTagGroup(entry: TS.TagGroup) {
     if (Pro && entry.locationId && locations) {
-      const location: TS.Location = locations.find(
+      const location: CommonLocation = locations.find(
         (l) => l.uuid === entry.locationId,
       );
       if (location) {
@@ -1140,7 +1141,7 @@ export const TaggingActionsContextProvider = ({
     if (indexForRemoving >= 0) {
       const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === tagGroup.locationId,
         );
         if (location) {
@@ -1185,7 +1186,7 @@ export const TaggingActionsContextProvider = ({
       saveTags(newTags, tgIndex);
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === tagGroup.locationId,
         );
         if (location) {
@@ -1219,7 +1220,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === tagGroup.locationId,
         );
         if (location) {
@@ -1249,7 +1250,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === tagGroup.locationId,
         );
         if (location) {

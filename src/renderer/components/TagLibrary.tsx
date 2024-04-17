@@ -53,6 +53,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   style?: any;
@@ -79,7 +80,7 @@ function TagLibrary(props: Props) {
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
 
   const toggleTagGroupDispatch = (uuid) =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
@@ -316,7 +317,7 @@ function TagLibrary(props: Props) {
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
           createTagGroup={(entry: TS.TagGroup) => {
-            const location: TS.Location = locations.find(
+            const location: CommonLocation = locations.find(
               (l) => l.uuid === entry.locationId,
             );
             if (location) {

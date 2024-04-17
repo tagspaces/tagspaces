@@ -51,6 +51,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   open: boolean;
@@ -99,7 +100,7 @@ function DirectoryMenu(props: Props) {
     perspectiveMode,
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   const dispatch: AppDispatch = useDispatch();
 
   const toggleCreateDirectoryDialog = () => {
@@ -194,14 +195,7 @@ function DirectoryMenu(props: Props) {
   function showDeleteDirectoryDialog() {
     if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
       setSelectedEntries([
-        {
-          isFile: false,
-          name: directoryPath,
-          path: directoryPath,
-          tags: [],
-          size: 0,
-          lmdt: 0,
-        },
+        toFsEntry(directoryPath, false, currentLocation.uuid),
       ]);
     }
     toggleDeleteMultipleEntriesDialog();

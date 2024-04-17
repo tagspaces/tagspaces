@@ -38,6 +38,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -52,7 +53,7 @@ function EditTagGroupDialog(props: Props) {
 
   const { updateTagGroup } = useTaggingActionsContext();
   const { t } = useTranslation();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
@@ -100,7 +101,7 @@ function EditTagGroupDialog(props: Props) {
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
       if (Pro && locationId !== selectedTagGroupEntry.locationId) {
-        const location: TS.Location = locations.find(
+        const location: CommonLocation = locations.find(
           (l) => l.uuid === selectedTagGroupEntry.locationId,
         );
         if (location) {

@@ -50,6 +50,7 @@ import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 import { getEnhancedDir, getEnhancedFile } from '-/services/meta-loader';
 import removeMd from 'remove-markdown';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
@@ -1419,7 +1420,7 @@ export function getBgndPath(bgndPath: string, dt = undefined) {
   return normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
 }
 
-export function setLocationType(location: TS.Location): Promise<boolean> {
+export function setLocationType(location: CommonLocation): Promise<boolean> {
   if (location) {
     if (location.type === locationType.TYPE_CLOUD) {
       return PlatformIO.enableObjectStoreSupport(location);
@@ -1490,13 +1491,18 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
   };
 }
 
-export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
+export function toFsEntry(
+  path: string,
+  isFile: boolean,
+  locationID,
+): TS.FileSystemEntry {
   return {
     uuid: getUuid(),
     name: isFile
       ? extractFileName(path, PlatformIO.getDirSeparator())
       : extractDirectoryName(path, PlatformIO.getDirSeparator()),
     isFile,
+    locationID,
     extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
     tags: [],
     size: 0,

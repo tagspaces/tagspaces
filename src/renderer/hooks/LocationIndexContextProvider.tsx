@@ -31,7 +31,6 @@ import { TS } from '-/tagspaces.namespace';
 import {
   createDirectoryIndex,
   executePromisesInBatches,
-  getThumbPath,
   loadIndexFromDisk,
 } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
@@ -50,6 +49,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -57,7 +57,7 @@ type LocationIndexContextData = {
   isIndexing: boolean;
   getIndex: () => TS.FileSystemEntry[];
   cancelDirectoryIndexing: () => void;
-  createLocationIndex: (location: TS.Location) => Promise<boolean>;
+  createLocationIndex: (location: CommonLocation) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
   clearDirectoryIndex: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
@@ -268,7 +268,7 @@ export const LocationIndexContextProvider = ({
       });
   }
 
-  function createLocationIndex(location: TS.Location): Promise<boolean> {
+  function createLocationIndex(location: CommonLocation): Promise<boolean> {
     if (location) {
       return getLocationPath(location).then((locationPath) => {
         const isCurrentLocation =
@@ -365,7 +365,7 @@ export const LocationIndexContextProvider = ({
     return undefined;
   }
 
-  function getURLforPath(path: string, location: TS.Location) {
+  function getURLforPath(path: string, location: CommonLocation) {
     const api = objectStoreAPI.getS3Api(location);
     return api.getSignedUrl('getObject', {
       Bucket: location.bucketName,
@@ -376,7 +376,7 @@ export const LocationIndexContextProvider = ({
 
   function checkFileExist(
     path: string,
-    location: TS.Location,
+    location: CommonLocation,
   ): Promise<boolean> {
     if (location.type === locationType.TYPE_LOCAL) {
       return window.electronIO.ipcRenderer.invoke('checkFileExist', path);

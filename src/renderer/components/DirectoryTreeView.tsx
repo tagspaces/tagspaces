@@ -29,16 +29,17 @@ import { TS } from '-/tagspaces.namespace';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   classes: any;
-  location: TS.Location;
+  location: CommonLocation;
   //data?: any;
   handleFileMoveDrop: (item, monitor) => void;
 }
 
 export interface DirectoryTreeViewRef {
-  changeLocation: (location: TS.Location) => void;
+  changeLocation: (location: CommonLocation) => void;
   closeLocation: () => void;
   // removeLocation: () => void;
 }
@@ -55,7 +56,7 @@ const DirectoryTreeView = forwardRef(
     //const dispatch: AppDispatch = useDispatch();
 
     useImperativeHandle(ref, () => ({
-      changeLocation(location: TS.Location) {
+      changeLocation(location: CommonLocation) {
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
@@ -169,7 +170,7 @@ const DirectoryTreeView = forwardRef(
       },
     ];
 
-    const loadSubDirectories = (location: TS.Location) => {
+    const loadSubDirectories = (location: CommonLocation) => {
       getLocationPath(location).then((locationPath) => {
         const subFolder = {
           ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),

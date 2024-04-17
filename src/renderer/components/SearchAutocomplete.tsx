@@ -65,6 +65,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   style?: any;
@@ -109,7 +110,7 @@ function SearchAutocomplete(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);

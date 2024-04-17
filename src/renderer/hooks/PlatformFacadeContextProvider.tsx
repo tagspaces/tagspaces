@@ -37,6 +37,7 @@ import {
   toFsEntry,
 } from '-/services/utils-io';
 import { getUseTrashCan } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
@@ -150,6 +151,7 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
@@ -159,7 +161,7 @@ export const PlatformFacadeContextProvider = ({
     ignoreByWatcher(path);
 
     return PlatformFacade.createDirectoryPromise(path).then((result) => {
-      reflectAddEntry(toFsEntry(path, false));
+      reflectAddEntry(toFsEntry(path, false, currentLocation.uuid));
       deignoreByWatcher(path);
       return result;
     });
@@ -391,7 +393,7 @@ export const PlatformFacadeContextProvider = ({
       if (reflect) {
         const actions: TS.EditAction[] = renameJobs.map((job) => ({
           action: 'update',
-          entry: toFsEntry(job[1], true),
+          entry: toFsEntry(job[1], true, currentLocation.uuid),
           oldEntryPath: job[0],
         }));
         setReflectActions(...actions);

@@ -33,6 +33,7 @@ import { TS } from '-/tagspaces.namespace';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   menuAnchorEl?: Element;
@@ -43,7 +44,7 @@ function LocationMenu(props: Props) {
   const theme = useTheme();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   //const dispatch: AppDispatch = useDispatch();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   const [locationChooserMenuAnchorEl, setLocationChooserMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
@@ -104,7 +105,7 @@ function LocationMenu(props: Props) {
           >
             {t('core:chooseLocation')}
           </ListSubHeader>
-          {locations.map((location: TS.Location) => (
+          {locations.map((location: CommonLocation) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}

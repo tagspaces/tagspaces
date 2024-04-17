@@ -122,17 +122,17 @@ export const FSWatcherContextProvider = ({
             //currentDirectoryEntries.some((entry) => path === entry.path) &&
             !path.includes(AppConfig.metaFolder)
           ) {
-            reflectDeleteEntries(toFsEntry(path, false));
+            reflectDeleteEntries(toFsEntry(path, false, currentLocation.uuid));
           }
           break;
         case 'add':
           if (!path.includes(AppConfig.metaFolder)) {
-            reflectAddEntry(toFsEntry(path, true));
+            reflectAddEntry(toFsEntry(path, true, currentLocation.uuid));
           }
           break;
         case 'addDir':
           if (!path.includes(AppConfig.metaFolder)) {
-            reflectAddEntry(toFsEntry(path, false));
+            reflectAddEntry(toFsEntry(path, false, currentLocation.uuid));
           }
           break;
         case 'change':

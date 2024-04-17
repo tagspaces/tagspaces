@@ -940,7 +940,15 @@ function EntryContainer() {
           open={isEditTagsModalOpened}
           onClose={() => setEditTagsModalOpened(false)}
           selected={
-            openedEntry ? [toFsEntry(openedEntry.path, openedEntry.isFile)] : []
+            openedEntry
+              ? [
+                  toFsEntry(
+                    openedEntry.path,
+                    openedEntry.isFile,
+                    openedEntry.locationId,
+                  ),
+                ]
+              : []
           }
         />
       )}

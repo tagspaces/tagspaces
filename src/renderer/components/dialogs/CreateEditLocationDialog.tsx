@@ -75,6 +75,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -92,7 +93,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   open: boolean;
   onClose: () => void;
-  editLocation?: (location: TS.Location) => void;
+  editLocation?: (location: CommonLocation) => void;
 }
 
 function CreateEditLocationDialog(props: Props) {
@@ -103,7 +104,7 @@ function CreateEditLocationDialog(props: Props) {
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
   const { addLocation, selectedLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;

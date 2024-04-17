@@ -67,6 +67,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { getLocations } from '-/reducers/locations';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -138,7 +139,7 @@ function GridCell(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
   // const desktopMode = useSelector(isDesktopMode);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);

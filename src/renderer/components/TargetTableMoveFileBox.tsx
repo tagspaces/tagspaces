@@ -19,11 +19,12 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   accepts: string[];
   onDrop: (item: any, monitor: any) => void;
-  location: TS.Location;
+  location: CommonLocation;
   className: string;
 }
 

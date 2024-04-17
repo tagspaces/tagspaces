@@ -41,30 +41,37 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type CurrentLocationContextData = {
-  currentLocation: TS.Location;
+  currentLocation: CommonLocation; //TS.Location;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
-  getLocationPath: (location: TS.Location) => Promise<string>;
-  changeLocation: (location: TS.Location) => void;
-  editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
+  getLocationPath: (location: CommonLocation) => Promise<string>;
+  changeLocation: (location: CommonLocation) => void;
+  editLocation: (location: CommonLocation, openAfterEdit?: boolean) => void;
   addLocation: (
-    location: TS.Location,
+    location: CommonLocation,
     openAfterCreate?: boolean,
     locationPosition?: number,
   ) => void;
-  addLocations: (arrLocations: Array<TS.Location>, override?: boolean) => void;
-  openLocation: (location: TS.Location, skipInitialDirList?: boolean) => void;
+  addLocations: (
+    arrLocations: Array<CommonLocation>,
+    override?: boolean,
+  ) => void;
+  openLocation: (
+    location: CommonLocation,
+    skipInitialDirList?: boolean,
+  ) => void;
   closeLocation: (locationId: string) => void;
   closeAllLocations: () => void;
   switchCurrentLocationType: () => Promise<boolean>;
   switchLocationTypeByID: (locationId: string) => Promise<boolean>;
   changeLocationByID: (locationId: string) => void;
   openLocationById: (locationId: string, skipInitialDirList?: boolean) => void;
-  selectedLocation: TS.Location;
-  setSelectedLocation: (location: TS.Location) => void;
+  selectedLocation: CommonLocation; //TS.Location;
+  setSelectedLocation: (location: CommonLocation) => void;
   getLocationPosition: (locationId: string) => number;
   locationDirectoryContextMenuAnchorEl: null | HTMLElement;
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
@@ -89,7 +96,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     changeLocationByID: () => {},
     openLocationById: () => {},
     selectedLocation: undefined,
-    setSelectedLocation: () => {},
+    setSelectedLocation: undefined,
     getLocationPosition: () => 0,
     locationDirectoryContextMenuAnchorEl: undefined,
     setLocationDirectoryContextMenuAnchorEl: () => {},
@@ -107,16 +114,16 @@ export const CurrentLocationContextProvider = ({
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const [currentLocation, setCurrentLocation] =
-    useState<TS.Location>(undefined);
+    useState<CommonLocation>(undefined);
   const [selectedLocation, setSelectedLocation] =
-    useState<TS.Location>(undefined);
+    useState<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
 
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
     getPersistTagsInSidecarFile,
@@ -152,7 +159,7 @@ export const CurrentLocationContextProvider = ({
     }
   }, [locations]);
 
-  function getLocationPath(location: TS.Location): Promise<string> {
+  function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
     if (location) {
       if (location.path) {
@@ -206,7 +213,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function addLocation(
-    location: TS.Location,
+    location: CommonLocation,
     openAfterCreate = true,
     locationPosition: number = undefined,
   ) {
@@ -219,8 +226,8 @@ export const CurrentLocationContextProvider = ({
    * @param arrLocations
    * @param override = true - if location exist override else skip
    */
-  function addLocations(arrLocations: Array<TS.Location>, override = true) {
-    arrLocations.forEach((newLocation: TS.Location, idx, array) => {
+  function addLocations(arrLocations: Array<CommonLocation>, override = true) {
+    arrLocations.forEach((newLocation: CommonLocation, idx, array) => {
       const locationExist: boolean = locations.some(
         (location) => location.uuid === newLocation.uuid,
       );
@@ -233,7 +240,7 @@ export const CurrentLocationContextProvider = ({
     });
   }
 
-  function editLocation(location: TS.Location, openAfterEdit = true) {
+  function editLocation(location: CommonLocation, openAfterEdit = true) {
     dispatch(LocationActions.changeLocation(location));
     if (PlatformIO.haveObjectStoreSupport()) {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
@@ -274,7 +281,7 @@ export const CurrentLocationContextProvider = ({
     return settingsPersistTagsInSidecarFile;
   }, [currentLocation, settingsPersistTagsInSidecarFile]);
 
-  function changeLocation(location: TS.Location) {
+  function changeLocation(location: CommonLocation) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
       if (location && location.name) {
         document.title = location.name + ' | ' + versionMeta.name;
@@ -333,7 +340,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function openLocation(
-    location: TS.Location,
+    location: CommonLocation,
     skipInitDirList: boolean = false,
   ) {
     // stopWatching();

@@ -36,8 +36,6 @@ import DragItemTypes from './DragItemTypes';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
-import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -45,9 +43,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
-  location: TS.Location;
+  location: CommonLocation;
   hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;

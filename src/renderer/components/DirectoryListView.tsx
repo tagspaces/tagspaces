@@ -27,6 +27,7 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 import i18n from '-/services/i18n';
 import Typography from '@mui/material/Typography';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -36,7 +37,7 @@ function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
   const { t } = useTranslation();
   const { currentLocation } = useCurrentLocationContext();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  const locations: Array<CommonLocation> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
     currentLocation ? currentLocation.uuid : undefined,
@@ -101,7 +102,7 @@ function DirectoryListView(props: Props) {
         >
           {locations
             .filter((loc) => loc.type === locationType.TYPE_LOCAL)
-            .map((location: TS.Location) => (
+            .map((location: CommonLocation) => (
               <MenuItem key={location.uuid} value={location.uuid}>
                 <span style={{ width: '100%' }}>{location.name}</span>
               </MenuItem>

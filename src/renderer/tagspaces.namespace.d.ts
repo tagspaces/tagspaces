@@ -1,5 +1,3 @@
-import { ScopeType } from '-/components/SearchOptions';
-
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -18,6 +16,9 @@ import { ScopeType } from '-/components/SearchOptions';
  *
  */
 
+import { ScopeType } from '-/components/SearchOptions';
+import AWS from 'aws-sdk';
+
 export namespace TS {
   interface Location {
     uuid: string;
@@ -27,15 +28,9 @@ export namespace TS {
     authType?: string; // none,password,digest,token
     username?: string;
     password?: string;
-    accessKeyId?: string;
-    secretAccessKey?: string;
-    sessionToken?: string;
-    bucketName?: string;
-    region?: string;
     paths?: Array<string>; // deprecated
     path?: string;
-    endpointURL?: string;
-    children?: Array<any>;
+    //children?: Array<any>;
     perspective?: string; // id of the perspective
     creationDate?: string;
     isDefault: boolean;
@@ -49,6 +44,16 @@ export namespace TS {
     maxLoops?: number;
     persistTagsInSidecarFile?: boolean;
     ignorePatternPaths?: Array<string>;
+  }
+
+  interface S3Location extends Location {
+    accessKeyId?: string;
+    secretAccessKey?: string;
+    sessionToken?: string;
+    bucketName?: string;
+    region?: string;
+    endpointURL?: string;
+    s3API?: AWS.S3;
   }
 
   interface Extension {
@@ -166,7 +171,7 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
-    locationID?: string;
+    locationID: string;
     //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
     textContent?: string;

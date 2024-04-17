@@ -64,6 +64,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -148,7 +149,7 @@ export const OpenedEntryContextProvider = ({
   const { saveFilePromise } = usePlatformFacadeContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
     (state: any) => state.settings[historyKeys.fileOpenKey],
@@ -625,7 +626,7 @@ export const OpenedEntryContextProvider = ({
           directoryPath = extractContainingDirectoryPath(entryPath);
         }
         // Check for relative paths
-        const targetLocation: TS.Location = locations.find(
+        const targetLocation: CommonLocation = locations.find(
           (location) => location.uuid === locationId,
         );
         if (targetLocation) {

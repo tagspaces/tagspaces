@@ -27,6 +27,7 @@ import Grid from '@mui/material/Grid';
 import { TS } from '-/tagspaces.namespace';
 import DragItemTypes from '-/components/DragItemTypes';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   index: number;
@@ -37,7 +38,7 @@ interface Props {
   ) => void;
   toggleTagGroup: (uuid: string) => void;
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
-  locations: Array<TS.Location>;
+  locations: Array<CommonLocation>;
   tagGroupCollapsed: Array<string>;
   isReadOnly: boolean;
 }
@@ -113,7 +114,7 @@ function TagGroupTitleDnD(props: Props) {
 
   function getLocationName(locationId: string) {
     if (locationId) {
-      const location: TS.Location = locations.find(
+      const location: CommonLocation = locations.find(
         (l) => l.uuid === locationId,
       );
       if (location) {
