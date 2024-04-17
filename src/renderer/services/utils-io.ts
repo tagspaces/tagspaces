@@ -1494,14 +1494,20 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
 }
 
 export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
+  const name = isFile
+    ? extractFileName(path, PlatformIO.getDirSeparator())
+    : extractDirectoryName(path, PlatformIO.getDirSeparator());
+  const tags = extractTagsAsObjects(
+    name,
+    AppConfig.tagDelimiter,
+    PlatformIO.getDirSeparator(),
+  );
   return {
     uuid: getUuid(),
-    name: isFile
-      ? extractFileName(path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(path, PlatformIO.getDirSeparator()),
+    name,
     isFile,
     extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-    tags: [],
+    tags,
     size: 0,
     lmdt: new Date().getTime(),
     path,
