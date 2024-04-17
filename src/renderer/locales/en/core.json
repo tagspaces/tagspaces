@@ -439,7 +439,7 @@
   "movingFilesFailed": "Moving files failed",
   "loadingIndex": "Loading index ...",
   "loadingIndexFailed": "Loading index failed",
-  "searching": "Searching...",
+  "searching": "Searching",
   "searchingFailed": "Search failed.",
   "addingTagsFailed": "Adding tags failed",
   "removingSidecarTagsFailed": "Removing sidecar tags failed",
@@ -820,5 +820,6 @@
   "clickToSelect": "Click to select",
   "newVersionAvailable": "New version available",
   "urlNotSupported": "URL not supported",
+  "indexing": "Indexing",
   "-": "-"
 }
