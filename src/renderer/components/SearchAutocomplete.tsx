@@ -1462,7 +1462,7 @@ function SearchAutocomplete(props: Props) {
             id="searchButton"
             variant="outlined"
             size="small"
-            disabled={isIndexing}
+            disabled={isIndexing !== undefined}
             style={{
               marginRight: 10,
               marginLeft: 10,
