@@ -206,52 +206,32 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
-  function createDirIndex(
-    directoryPath: string,
-    extractText: boolean,
-    isCurrentLocation = true,
-    locationID: string = undefined,
-    ignorePatterns: Array<string> = [],
-  ): Promise<boolean> {
-    isIndexing.current = directoryPath;
-    forceUpdate();
-    return createDirectoryIndexWrapper(
-      { path: directoryPath, locationID },
-      extractText,
-      ignorePatterns,
-      enableWS,
-    )
-      .then((directoryIndex) => {
-        if (isCurrentLocation) {
-          // Load index only if current location
-          setIndex(directoryIndex);
-        }
-        isIndexing.current = undefined;
-        forceUpdate();
-        return true;
-      })
-      .catch((err) => {
-        isIndexing.current = undefined;
-        //lastError.current = err;
-        forceUpdate();
-        return false;
-      });
-  }
-
   function createLocationIndex(location: TS.Location): Promise<boolean> {
     if (location) {
       return getLocationPath(location).then((locationPath) => {
         const isCurrentLocation =
           currentLocation && currentLocation.uuid === location.uuid;
-        return createDirIndex(
-          locationPath,
+        isIndexing.current = location.name;
+        forceUpdate();
+        return createDirectoryIndexWrapper(
+          { path: locationPath, locationID: location.uuid },
           location.fullTextIndex,
-          isCurrentLocation,
-          location.uuid,
           location.ignorePatternPaths,
+          enableWS,
         )
-          .then(() => true)
-          .catch(() => {
+          .then((directoryIndex) => {
+            if (isCurrentLocation) {
+              // Load index only if current location
+              setIndex(directoryIndex);
+            }
+            isIndexing.current = undefined;
+            forceUpdate();
+            return true;
+          })
+          .catch((err) => {
+            isIndexing.current = undefined;
+            //lastError.current = err;
+            forceUpdate();
             return false;
           });
       });
