@@ -26,6 +26,15 @@ let objectStoreAPI, webDavAPI;
 const urlCache = {};
 
 export default class PlatformFacade {
+  static getPath(param) {
+    if (typeof param === 'object' && param !== null) {
+      return param.path;
+    } else if (param) {
+      return param;
+    }
+    return '';
+  }
+
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> => {
     // DisableWebdavSupport
     webDavAPI = undefined;
@@ -584,25 +593,27 @@ export default class PlatformFacade {
   };
 
   static loadTextFilePromise = (
-    filePath: string,
+    param: any,
     isPreview?: boolean,
   ): Promise<string> => {
-    let path = filePath;
+    let filePath = this.getPath(param);
     try {
-      path = decodeURIComponent(filePath);
+      filePath = decodeURIComponent(filePath);
     } catch (ex) {}
     if (objectStoreAPI) {
-      const param = {
-        path: filePath,
-        bucketName: objectStoreAPI.config().bucketName,
-      };
-      return objectStoreAPI.loadTextFilePromise(param, isPreview);
+      return objectStoreAPI.loadTextFilePromise(
+        {
+          path: filePath,
+          bucketName: objectStoreAPI.config().bucketName,
+        },
+        isPreview,
+      );
     } else if (webDavAPI) {
       return webDavAPI.loadTextFilePromise(filePath, isPreview);
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'loadTextFilePromise',
-        path,
+        filePath,
         isPreview,
       );
     } else if (AppConfig.isCordova) {
