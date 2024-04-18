@@ -629,7 +629,7 @@ export const LocationIndexContextProvider = ({
       indexUpdateSidecarTags,
       reflectUpdateSidecarMeta,
     };
-  }, [currentLocation, index.current, isIndexing.current]);
+  }, [currentLocation, index.current, isIndexing.current, enableWS]);
 
   return (
     <LocationIndexContext.Provider value={context}>

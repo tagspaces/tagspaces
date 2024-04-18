@@ -476,6 +476,7 @@ export const DirectoryContentContextProvider = ({
   function loadParentDirectoryContent() {
     if (isSearchMode.current) {
       exitSearchMode();
+      return openCurrentDirectory();
     }
 
     // dispatch(actions.setIsLoading(true));
