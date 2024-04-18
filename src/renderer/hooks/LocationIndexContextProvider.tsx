@@ -401,7 +401,7 @@ export const LocationIndexContextProvider = ({
 
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     showNotification(
-      t('core:searching' + ' ' + currentLocation.name),
+      t('core:searching') + ' ' + currentLocation.name,
       'default',
       false,
       'TIDSearching',
