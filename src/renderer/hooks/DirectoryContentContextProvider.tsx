@@ -285,6 +285,7 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     reflectActions(actions).catch(console.error);
+    reflectSelection(actions);
   }, [actions]);
 
   const reflectActions = async (actions) => {
@@ -365,6 +366,50 @@ export const DirectoryContentContextProvider = ({
       forceUpdate();
     }
   };
+
+  function reflectSelection(actions) {
+    let updated = false;
+    if (actions && actions.length > 0) {
+      let selected = [];
+      for (const action of actions) {
+        if (action.action === 'add') {
+          if (
+            currentDirectoryEntries.current.some(
+              (entry) => entry.path === action.entry.path,
+            )
+          ) {
+            if (selectedEntries.length > 0) {
+              selected = [...selectedEntries, action.entry];
+            } else {
+              selected.push(action.entry);
+            }
+            updated = true;
+          }
+        } else if (action.action === 'delete') {
+          let index = selectedEntries.findIndex(
+            (e) => e.path === action.entry.path,
+          );
+          if (index !== -1) {
+            selectedEntries.splice(index, 1);
+            selected = [...selectedEntries];
+            updated = true;
+          }
+        } else if (action.action === 'update') {
+          let index = selectedEntries.findIndex(
+            (e) => e.path === action.oldEntryPath,
+          );
+          if (index !== -1) {
+            selectedEntries[index] = action.entry;
+            selected = [...selectedEntries];
+            updated = true;
+          }
+        }
+      }
+      if (updated) {
+        setSelectedEntries(selected);
+      }
+    }
+  }
 
   async function reflectAddAction(entry: TS.FileSystemEntry) {
     const entryExist = currentDirectoryEntries.current.some(
