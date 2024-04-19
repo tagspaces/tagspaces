@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -34,7 +33,6 @@ import {
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
-  extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName,
   normalizePath,
@@ -48,8 +46,6 @@ import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import versionMeta from '../version.json';
 import { TS } from '-/tagspaces.namespace';
-import { generateImageThumbnail } from '-/services/thumbsgenerator';
-import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 import { getEnhancedDir, getEnhancedFile } from '-/services/meta-loader';
@@ -933,28 +929,6 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   }
 }
 
-export async function loadLocationDataPromise(
-  path: string,
-  metaFile = AppConfig.folderLocationsFile,
-): Promise<TS.FileSystemEntryMeta> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (!entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForDir(
-      path,
-      PlatformIO.getDirSeparator(),
-      metaFile,
-    );
-    const metaData = await loadJSONFile(metaFilePath);
-    if (metaData) {
-      return {
-        ...metaData,
-        description: getDescriptionPreview(metaData.description, 200),
-      };
-    }
-  }
-  return undefined;
-}
-
 /**
  * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
  * @param path
@@ -1125,146 +1099,6 @@ export function cleanMetaData(
     });
   }
   return cleanedMeta;
-}
-
-export async function saveLocationDataPromise(
-  path: string,
-  metaData: any,
-): Promise<any> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (entryProperties) {
-    let metaFilePath;
-    if (!entryProperties.isFile) {
-      // check and create meta folder if not exist
-      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-      const metaDirectoryPath = getMetaDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const metaDirectoryProperties =
-        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-      if (!metaDirectoryProperties) {
-        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-      }
-
-      metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator(),
-        AppConfig.folderLocationsFile,
-      );
-    }
-    const content = JSON.stringify({
-      ...metaData,
-      appName: versionMeta.name,
-      appVersion: versionMeta.version,
-      lastUpdated: new Date().toJSON(),
-    });
-    return PlatformIO.saveTextFilePromise(
-      { path: metaFilePath },
-      content,
-      true,
-    );
-  }
-  return Promise.reject(new Error('file not found' + path));
-}
-
-/**
- * @param path
- * @param metaData - this will override existing meta data
- */
-export async function saveMetaDataPromise(
-  path: string,
-  metaData: any,
-): Promise<TS.FileSystemEntryMeta> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  const cleanedMetaData = cleanMetaData(metaData);
-  if (entryProperties) {
-    let metaFilePath;
-    if (entryProperties.isFile) {
-      metaFilePath = getMetaFileLocationForFile(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      // check and create meta folder if not exist
-      const metaFolder = getMetaDirectoryPath(
-        extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
-        PlatformIO.getDirSeparator(),
-      );
-      const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
-      if (!metaExist) {
-        await PlatformIO.createDirectoryPromise(metaFolder);
-      }
-    } else {
-      // check and create meta folder if not exist
-      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-      const metaDirectoryPath = getMetaDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const metaDirectoryProperties =
-        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-      if (!metaDirectoryProperties) {
-        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-      }
-
-      if (!cleanedMetaData.id) {
-        // add id for directories
-        cleanedMetaData.id = getUuid();
-      }
-
-      metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-    }
-    const meta = mergeFsEntryMeta(cleanedMetaData);
-    const content = JSON.stringify(meta);
-    return PlatformIO.saveTextFilePromise(
-      { path: metaFilePath },
-      content,
-      true,
-    ).then(() => meta);
-  }
-  return Promise.reject(new Error('file not found' + path));
-}
-
-/**
- * @param filePath
- * @param directoryPath
- * return Promise<directoryPath> of directory in order to open Folder properties next
- */
-export function setFolderBackgroundPromise(
-  filePath: string,
-  directoryPath: string,
-): Promise<string> {
-  const folderBgndPath = getBgndFileLocationForDirectory(
-    directoryPath,
-    PlatformIO.getDirSeparator(),
-  );
-
-  return generateImageThumbnail(filePath, AppConfig.maxBgndSize) // 4K -> 3840, 2K -> 2560
-    .then((base64Image) => {
-      if (base64Image) {
-        const data = base64ToArrayBuffer(base64Image.split(',').pop());
-        return PlatformIO.saveBinaryFilePromise(
-          { path: folderBgndPath },
-          data,
-          true,
-        )
-          .then(() => {
-            // props.setLastBackgroundImageChange(new Date().getTime());
-            return directoryPath;
-          })
-          .catch((error) => {
-            console.log('Save to file failed ', error);
-            return Promise.reject(error);
-          });
-      }
-    })
-    .catch((error) => {
-      console.log('Background generation failed ', error);
-      return Promise.reject(error);
-    });
 }
 
 export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
@@ -1660,14 +1494,20 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
 }
 
 export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
+  const name = isFile
+    ? extractFileName(path, PlatformIO.getDirSeparator())
+    : extractDirectoryName(path, PlatformIO.getDirSeparator());
+  const tags = extractTagsAsObjects(
+    name,
+    AppConfig.tagDelimiter,
+    PlatformIO.getDirSeparator(),
+  );
   return {
     uuid: getUuid(),
-    name: isFile
-      ? extractFileName(path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(path, PlatformIO.getDirSeparator()),
+    name,
     isFile,
     extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-    tags: [],
+    tags,
     size: 0,
     lmdt: new Date().getTime(),
     path,
@@ -1693,24 +1533,6 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
   };
 }*/
 
-export function createFsEntryMeta(
-  path: string,
-  props: any = {},
-): Promise<string> {
-  const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
-  return saveMetaDataPromise(path, newFsEntryMeta)
-    .then(() => newFsEntryMeta.id)
-    .catch((error) => {
-      console.log(
-        'Error saveMetaDataPromise for ' +
-          path +
-          ' orphan id: ' +
-          newFsEntryMeta.id,
-        error,
-      );
-      return newFsEntryMeta.id;
-    });
-}
 export function getDefaultViewer(fileType) {
   const type = supportedFileTypes.find((fType) => fType.type === fileType);
   if (type) {

@@ -42,11 +42,7 @@ import {
   extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import {
-  setFolderBackgroundPromise,
-  getRelativeEntryPath,
-  toFsEntry,
-} from '-/services/utils-io';
+import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
 import { useSelector } from 'react-redux';
@@ -66,7 +62,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import PlatformFacade from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
@@ -108,14 +103,18 @@ function FileMenu(props: Props) {
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { setBackgroundImageChange, setThumbnailImageChange } =
-    useEditedEntryMetaContext();
+  const {
+    setBackgroundImageChange,
+    setThumbnailImageChange,
+    openFileNatively,
+    duplicateFile,
+    setFolderBackgroundPromise,
+  } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
-  const { openFileNatively, duplicateFile } = useIOActionsContext();
 
   function generateFileLink() {
     const entryPath = selectedEntries[0].path;

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useEffect, useMemo } from 'react';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -29,27 +29,39 @@ import {
   getBackupFileLocation,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
+  getMetaFileLocationForDir,
   getThumbFileLocationForFile,
+  getBgndFileLocationForDirectory,
+  getThumbFileLocationForDirectory,
   joinPaths,
   normalizePath,
   extractTags,
+  cleanTrailingDirSeparator,
+  cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  cleanMetaData,
   executePromisesInBatches,
   generateFileName,
   getAllPropertiesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
+  loadMetaDataPromise,
+  mergeFsEntryMeta,
   toFsEntry,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Progress } from 'aws-sdk/clients/s3';
 import AppConfig from '-/AppConfig';
-import { generateThumbnailPromise } from '-/services/thumbsgenerator';
-import { base64ToArrayBuffer } from '-/utils/dom';
+import {
+  generateImageThumbnail,
+  generateThumbnailPromise,
+} from '-/services/thumbsgenerator';
+import { base64ToBlob } from '-/utils/dom';
 import {
   enhanceEntry,
   loadJSONString,
@@ -61,6 +73,10 @@ import {
 } from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
+import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 
 type IOActionsContextData = {
   createDirectory: (directoryPath: string) => Promise<boolean>;
@@ -118,6 +134,51 @@ type IOActionsContextData = {
   ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
   duplicateFile: (selectedFilePath: string) => void;
+  saveMetaDataPromise: (
+    path: string,
+    metaData: any,
+  ) => Promise<TS.FileSystemEntryMeta>;
+  getMetadataID: (path: string, id: string) => Promise<string>;
+  createFsEntryMeta: (path: string, props?: any) => Promise<string>;
+  saveFsEntryMeta: (path: string, meta: any) => Promise<TS.FileSystemEntryMeta>;
+  savePerspective: (
+    path: string,
+    perspective: TS.PerspectiveType,
+  ) => Promise<TS.FileSystemEntryMeta>;
+  removeFolderCustomSettings: (
+    path: string,
+    perspective: string,
+  ) => Promise<TS.FileSystemEntryMeta>;
+  setAutoSave: (
+    entry: TS.FileSystemEntry,
+    autoSave: boolean,
+    locationId?,
+  ) => Promise<boolean>;
+  setDescriptionChange: (
+    entry: TS.FileSystemEntry,
+    description: string,
+    locationId?,
+  ) => Promise<boolean>;
+  saveDirectoryPerspective: (
+    entry: TS.FileSystemEntry,
+    perspective: TS.PerspectiveType,
+    locationId?,
+  ) => Promise<boolean>;
+  setBackgroundImageChange: (entry: TS.FileSystemEntry) => void;
+  setBackgroundColorChange: (
+    entry: TS.FileSystemEntry,
+    color: string,
+    locationId?,
+  ) => Promise<boolean>;
+  setThumbnailImageChange: (entry: TS.FileSystemEntry) => void;
+  setFolderBackgroundPromise: (
+    filePath: string,
+    directoryPath: string,
+  ) => Promise<string>;
+  toggleDirVisibility: (
+    dir: TS.OrderVisibilitySettings,
+    parentDirPath?,
+  ) => void;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
@@ -136,6 +197,20 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   renameFile: undefined,
   openFileNatively: undefined,
   duplicateFile: undefined,
+  saveMetaDataPromise: undefined,
+  getMetadataID: undefined,
+  createFsEntryMeta: undefined,
+  saveFsEntryMeta: undefined,
+  savePerspective: undefined,
+  removeFolderCustomSettings: undefined,
+  setAutoSave: undefined,
+  setDescriptionChange: undefined,
+  saveDirectoryPerspective: undefined,
+  setBackgroundImageChange: undefined,
+  setBackgroundColorChange: undefined,
+  setThumbnailImageChange: undefined,
+  setFolderBackgroundPromise: undefined,
+  toggleDirVisibility: undefined,
 });
 
 export type IOActionsContextProviderProps = {
@@ -161,15 +236,46 @@ export const IOActionsContextProvider = ({
     copyDirectoryPromise,
     moveDirectoryPromise,
     saveFilePromise,
+    saveTextFilePromise,
     saveBinaryFilePromise,
     deleteEntriesPromise,
   } = usePlatformFacadeContext();
-  const { setReflectActions } = useEditedEntryContext();
+  const { actions, setReflectActions } = useEditedEntryContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
+  const { setReflectKanBanActions } = useEditedKanBanMetaContext();
   const { currentDirectoryPath, openDirectory } = useDirectoryContentContext();
+  const { switchLocationTypeByID, switchCurrentLocationType } =
+    useCurrentLocationContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
+
+  useEffect(() => {
+    if (actions && actions.length > 0) {
+      for (const action of actions) {
+        if (action.action === 'add') {
+          // reflect visibility change on new KanBan column add
+          if (!action.entry.isFile) {
+            const dirPath = extractContainingDirectoryPath(
+              action.entry.path,
+              PlatformIO.getDirSeparator(),
+            );
+            if (
+              cleanTrailingDirSeparator(
+                cleanFrontDirSeparator(currentDirectoryPath),
+              ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
+            ) {
+              toggleDirVisibility(
+                { name: action.entry.name, uuid: action.entry.uuid },
+                dirPath,
+              );
+            }
+          }
+        }
+      }
+    }
+  }, [actions]);
 
   function createDirectory(directoryPath: string) {
     return createDirectoryPromise(directoryPath)
@@ -414,10 +520,7 @@ export const IOActionsContextProvider = ({
                     fsEntryMeta.id,
                     PlatformIO.getDirSeparator(),
                   );
-                  return PlatformIO.moveDirectoryPromise(
-                    { path: backupDir },
-                    newBackupDir,
-                  )
+                  return moveDirectoryPromise({ path: backupDir }, newBackupDir)
                     .then(() => {
                       console.log(
                         'Moving revisions successful from ' +
@@ -607,7 +710,7 @@ export const IOActionsContextProvider = ({
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
-            const fileContent = base64ToArrayBuffer(baseString);
+            const fileContent = base64ToBlob(baseString);
             return saveBinaryFilePromise(
               {
                 path: getThumbFileLocationForFile(
@@ -713,13 +816,13 @@ export const IOActionsContextProvider = ({
                 .then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
-                    const fileContent = base64ToArrayBuffer(baseString);
+                    const fileContent = base64ToBlob(baseString);
                     const thumbPath = getThumbFileLocationForFile(
                       fileTargetPath,
                       PlatformIO.getDirSeparator(),
                       false,
                     );
-                    return PlatformIO.saveBinaryFilePromise(
+                    return saveBinaryFilePromise(
                       { path: thumbPath },
                       fileContent,
                       true,
@@ -893,7 +996,7 @@ export const IOActionsContextProvider = ({
                 return generateThumbnailPromise(job[3], 0).then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
-                    const fileContent = base64ToArrayBuffer(baseString);
+                    const fileContent = base64ToBlob(baseString);
                     return uploadFile(
                       filePath,
                       fileType,
@@ -1169,6 +1272,440 @@ export const IOActionsContextProvider = ({
     showNotification('Unable to duplicate, no file selected');
   }
 
+  /**
+   * @param path
+   * @param metaData - this will override existing meta data
+   */
+  async function saveMetaDataPromise(
+    path: string,
+    metaData: any,
+  ): Promise<TS.FileSystemEntryMeta> {
+    const entryProperties = await PlatformIO.getPropertiesPromise(path);
+    const cleanedMetaData = cleanMetaData(metaData);
+    if (entryProperties) {
+      let metaFilePath;
+      if (entryProperties.isFile) {
+        metaFilePath = getMetaFileLocationForFile(
+          path,
+          PlatformIO.getDirSeparator(),
+        );
+        // check and create meta folder if not exist
+        const metaFolder = getMetaDirectoryPath(
+          extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
+          PlatformIO.getDirSeparator(),
+        );
+        const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
+        if (!metaExist) {
+          await PlatformIO.createDirectoryPromise(metaFolder);
+        }
+      } else {
+        // check and create meta folder if not exist
+        // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+        const metaDirectoryPath = getMetaDirectoryPath(
+          path,
+          PlatformIO.getDirSeparator(),
+        );
+        const metaDirectoryProperties =
+          await PlatformIO.getPropertiesPromise(metaDirectoryPath);
+        if (!metaDirectoryProperties) {
+          await PlatformIO.createDirectoryPromise(metaDirectoryPath);
+        }
+
+        if (!cleanedMetaData.id) {
+          // add id for directories
+          cleanedMetaData.id = getUuid();
+        }
+
+        metaFilePath = getMetaFileLocationForDir(
+          path,
+          PlatformIO.getDirSeparator(),
+        );
+      }
+      const meta = mergeFsEntryMeta(cleanedMetaData);
+      const content = JSON.stringify(meta);
+      return saveTextFilePromise({ path: metaFilePath }, content, true).then(
+        () => meta,
+      );
+    }
+    return Promise.reject(new Error('file not found' + path));
+  }
+
+  /**
+   * @param path
+   * @param id FileSystemEntry.uuid
+   */
+  function getMetadataID(path: string, id: string): Promise<string> {
+    return loadMetaDataPromise(path)
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        if (fsEntryMeta.id) {
+          return fsEntryMeta.id;
+        } else {
+          return createFsEntryMeta(path, { ...fsEntryMeta, id: id });
+        }
+      })
+      .catch(() => {
+        return createFsEntryMeta(path, { id: id });
+      });
+  }
+
+  function switchLocationAndSaveMetaData(
+    path: string,
+    meta: any,
+    locationId = undefined,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return switchLocationTypeByID(locationId).then((currentLocationId) =>
+      saveFsEntryMeta(path, meta)
+        .then((entryMeta) => entryMeta)
+        .catch((error) => {
+          if (currentLocationId) {
+            switchCurrentLocationType();
+          }
+          console.warn('Error saving color for folder ' + error);
+          // showNotification(t('Error saving color for folder'));
+          return undefined;
+        }),
+    );
+  }
+
+  function createFsEntryMeta(path: string, props: any = {}): Promise<string> {
+    const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
+    return saveMetaDataPromise(path, newFsEntryMeta)
+      .then(() => newFsEntryMeta.id)
+      .catch((error) => {
+        console.log(
+          'Error saveMetaDataPromise for ' +
+            path +
+            ' orphan id: ' +
+            newFsEntryMeta.id,
+          error,
+        );
+        return newFsEntryMeta.id;
+      });
+  }
+
+  function saveFsEntryMeta(
+    path: string,
+    meta: any,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return loadMetaDataPromise(path)
+      .then((fsEntryMeta) => {
+        return saveMetaDataPromise(path, {
+          ...fsEntryMeta,
+          ...meta,
+          lastUpdated: new Date().getTime(),
+        });
+      })
+      .catch(() => {
+        return saveMetaDataPromise(path, mergeFsEntryMeta(meta));
+      });
+  }
+
+  function savePerspective(
+    path: string,
+    perspective: TS.PerspectiveType,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return new Promise((resolve, reject) => {
+      loadMetaDataPromise(path)
+        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+          let updatedFsEntryMeta: TS.FileSystemEntryMeta;
+          if (perspective && perspective !== 'unspecified') {
+            updatedFsEntryMeta = {
+              ...fsEntryMeta,
+              perspective,
+            };
+          } else {
+            const { perspective: remove, ...rest } = fsEntryMeta;
+            updatedFsEntryMeta = rest;
+          }
+          saveMetaDataPromise(path, updatedFsEntryMeta)
+            .then(() => {
+              resolve(updatedFsEntryMeta);
+              return true;
+            })
+            .catch((err) => {
+              console.warn(
+                'Error adding perspective for ' + path + ' with ' + err,
+              );
+              reject();
+            });
+          return true;
+        })
+        .catch(() => {
+          const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
+            perspective,
+          });
+          saveMetaDataPromise(path, newFsEntryMeta)
+            .then(() => {
+              resolve(newFsEntryMeta);
+              return true;
+            })
+            .catch((error) => {
+              console.warn(
+                'Error adding perspective for ' + path + ' with ' + error,
+              );
+              reject();
+            });
+        });
+    });
+  }
+
+  function removeFolderCustomSettings(
+    path: string,
+    perspective: string,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return new Promise((resolve, reject) => {
+      loadMetaDataPromise(path, true)
+        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+          let updatedFsEntryMeta: TS.FileSystemEntryMeta = {
+            ...(fsEntryMeta && fsEntryMeta),
+            perspectiveSettings: {
+              ...(fsEntryMeta &&
+                fsEntryMeta.perspectiveSettings &&
+                fsEntryMeta.perspectiveSettings),
+              [perspective]: undefined,
+            },
+          };
+
+          saveMetaDataPromise(path, updatedFsEntryMeta)
+            .then(() => {
+              resolve(updatedFsEntryMeta);
+              return true;
+            })
+            .catch((err) => {
+              console.warn(
+                'Error adding perspective for ' + path + ' with ' + err,
+              );
+              reject();
+            });
+          return true;
+        })
+        .catch(() => {
+          const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
+            perspectiveSettings: {
+              [perspective]: undefined,
+            },
+          });
+          saveMetaDataPromise(path, newFsEntryMeta)
+            .then(() => {
+              resolve(newFsEntryMeta);
+              return true;
+            })
+            .catch((error) => {
+              console.warn(
+                'Error adding perspective for ' + path + ' with ' + error,
+              );
+              reject();
+            });
+        });
+    });
+  }
+
+  function setAutoSave(
+    entry: TS.FileSystemEntry,
+    autoSave: boolean,
+    locationId = undefined,
+  ) {
+    return switchLocationAndSaveMetaData(
+      entry.path,
+      { autoSave },
+      locationId,
+    ).then((meta) => {
+      if (meta) {
+        const action: TS.EditMetaAction = {
+          action: 'autoSaveChange',
+          entry: {
+            ...entry,
+            meta: { ...(entry.meta && entry.meta), ...meta },
+          },
+        };
+        setReflectMetaActions(action);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function saveDirectoryPerspective(
+    entry: TS.FileSystemEntry,
+    perspective: TS.PerspectiveType,
+    locationId = undefined,
+  ): Promise<boolean> {
+    return switchLocationAndSaveMetaData(
+      entry.path,
+      { perspective },
+      locationId,
+    ).then((meta) => {
+      if (meta) {
+        const action: TS.EditMetaAction = {
+          action: 'perspectiveChange',
+          entry: {
+            ...entry,
+            meta: { ...(entry.meta && entry.meta), ...meta },
+          },
+        };
+        setReflectMetaActions(action);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function setDescriptionChange(
+    entry: TS.FileSystemEntry,
+    description: string,
+    locationId = undefined,
+  ): Promise<boolean> {
+    return switchLocationAndSaveMetaData(
+      entry.path,
+      { description },
+      locationId,
+    ).then((meta) => {
+      if (meta) {
+        const action: TS.EditMetaAction = {
+          action: 'descriptionChange',
+          entry: {
+            ...entry,
+            meta: { ...(entry.meta && entry.meta), ...meta },
+          },
+        };
+        setReflectMetaActions(action);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function setBackgroundImageChange(entry: TS.FileSystemEntry) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      // reload cache
+      const folderBgndPath = getBgndFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+      PlatformIO.generateURLforPath(folderBgndPath, 604800);
+    }
+    const action: TS.EditMetaAction = {
+      action: 'bgdImgChange',
+      entry: {
+        ...entry,
+        meta: {
+          ...(entry.meta && entry.meta),
+          lastUpdated: new Date().getTime(),
+        },
+      },
+    };
+    setReflectMetaActions(action);
+  }
+
+  function setBackgroundColorChange(
+    entry: TS.FileSystemEntry,
+    color: string,
+    locationId = undefined,
+  ): Promise<boolean> {
+    return switchLocationAndSaveMetaData(
+      entry.path,
+      { color },
+      locationId,
+    ).then((meta) => {
+      if (meta) {
+        const action: TS.EditMetaAction = {
+          action: 'bgdColorChange',
+          entry: {
+            ...entry,
+            meta: { ...(entry.meta && entry.meta), ...meta },
+          },
+        };
+        setReflectMetaActions(action);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function setThumbnailImageChange(entry: TS.FileSystemEntry) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      // reload cache
+      const folderThumbPath = getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator(),
+      );
+      PlatformIO.generateURLforPath(folderThumbPath, 604800);
+    }
+    const action: TS.EditMetaAction = {
+      action: 'thumbChange',
+      entry: {
+        ...entry,
+        meta: { ...entry.meta, lastUpdated: new Date().getTime() },
+      },
+    };
+    setReflectMetaActions(action);
+  }
+
+  /**
+   * @param filePath
+   * @param directoryPath
+   * return Promise<directoryPath> of directory in order to open Folder properties next
+   */
+  function setFolderBackgroundPromise(
+    filePath: string,
+    directoryPath: string,
+  ): Promise<string> {
+    const folderBgndPath = getBgndFileLocationForDirectory(
+      directoryPath,
+      PlatformIO.getDirSeparator(),
+    );
+
+    return generateImageThumbnail(filePath, AppConfig.maxBgndSize) // 4K -> 3840, 2K -> 2560
+      .then((base64Image) => {
+        if (base64Image) {
+          const data = base64ToBlob(base64Image.split(',').pop());
+          return saveBinaryFilePromise({ path: folderBgndPath }, data, true)
+            .then(() => {
+              // props.setLastBackgroundImageChange(new Date().getTime());
+              return directoryPath;
+            })
+            .catch((error) => {
+              console.log('Save to file failed ', error);
+              return Promise.reject(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log('Background generation failed ', error);
+        return Promise.reject(error);
+      });
+  }
+
+  function toggleDirVisibility(
+    dir: TS.OrderVisibilitySettings,
+    parentDirPath: string = undefined,
+  ) {
+    if (Pro && Pro.MetaOperations) {
+      const currentDirPath = parentDirPath
+        ? parentDirPath
+        : currentDirectoryPath;
+      Pro.MetaOperations.toggleDirectoryVisibility(currentDirPath, dir).then(
+        (updatedFsEntryMeta) => {
+          if (updatedFsEntryMeta) {
+            saveMetaDataPromise(currentDirPath, updatedFsEntryMeta)
+              .then(() => {
+                const action: TS.KanBanMetaActions = {
+                  action: 'directoryVisibilityChange',
+                  meta: updatedFsEntryMeta,
+                };
+                setReflectKanBanActions(action);
+              })
+              .catch((err) => {
+                console.warn(
+                  'Error adding dirs for ' + currentDirPath + ' with ' + err,
+                );
+              });
+          }
+        },
+      );
+    }
+  }
+
   const context = useMemo(() => {
     return {
       createDirectory,
@@ -1186,6 +1723,20 @@ export const IOActionsContextProvider = ({
       renameFile,
       openFileNatively,
       duplicateFile,
+      saveMetaDataPromise,
+      getMetadataID,
+      createFsEntryMeta,
+      saveFsEntryMeta,
+      savePerspective,
+      removeFolderCustomSettings,
+      setAutoSave,
+      setDescriptionChange,
+      saveDirectoryPerspective,
+      setBackgroundImageChange,
+      setBackgroundColorChange,
+      setThumbnailImageChange,
+      setFolderBackgroundPromise,
+      toggleDirVisibility,
     };
   }, [warningOpeningFilesExternally, currentDirectoryPath]);
 

@@ -229,14 +229,16 @@ function EntryProperties(props: Props) {
   const theme = useTheme();
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
-  const { renameDirectory, renameFile } = useIOActionsContext();
-  const { setBackgroundColorChange, saveDirectoryPerspective } =
-    useEditedEntryMetaContext();
+  const {
+    renameDirectory,
+    renameFile,
+    setBackgroundColorChange,
+    saveDirectoryPerspective,
+  } = useIOActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
 
   const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -293,25 +295,23 @@ function EntryProperties(props: Props) {
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      switchLocationTypeByID(openedEntry.locationId).then(
-        (currentLocationId) => {
-          if (openedEntry.isFile) {
-            renameFile(openedEntry.path, nextPath)
-              .then(() => switchCurrentLocationType())
-              .catch(() => {
-                switchCurrentLocationType();
-                fileNameRef.current.value = entryName;
-              });
-          } else {
-            renameDirectory(openedEntry.path, editName)
-              .then((newDirPath) => switchCurrentLocationType())
-              .catch(() => {
-                switchCurrentLocationType();
-                fileNameRef.current.value = entryName;
-              });
-          }
-        },
-      );
+      switchLocationTypeByID(openedEntry.locationId).then(() => {
+        if (openedEntry.isFile) {
+          renameFile(openedEntry.path, nextPath)
+            .then(() => switchCurrentLocationType())
+            .catch(() => {
+              switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        } else {
+          renameDirectory(openedEntry.path, editName)
+            .then((newDirPath) => switchCurrentLocationType())
+            .catch(() => {
+              switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        }
+      });
 
       setEditName(undefined);
     }
@@ -416,14 +416,8 @@ function EntryProperties(props: Props) {
   };
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    const metaFilePath = getMetaFileLocationForFile(
-      openedEntry.path,
-      PlatformIO.getDirSeparator(),
-    );
-    // tmp fix; saving meta sidecar file is not ignored by watcher
-    ignoreByWatcher(metaFilePath);
     switchLocationTypeByID(openedEntry.locationId)
-      .then((currentLocationId) => {
+      .then(() => {
         if (action === 'remove-value') {
           if (!value) {
             // no tags left in the select element
@@ -450,7 +444,7 @@ function EntryProperties(props: Props) {
         return addTags([openedEntry.path], tags);
       })
       .then(() => {
-        switchCurrentLocationType().then(() => deignoreByWatcher(metaFilePath));
+        switchCurrentLocationType();
       });
   };
 

@@ -47,6 +47,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 const initialRowsPerPage = 10;
 
@@ -54,6 +55,7 @@ function Revisions() {
   const { t } = useTranslation();
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
+  const { getMetadataID } = useIOActionsContext();
   const { openedEntry } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
@@ -78,34 +80,30 @@ function Revisions() {
 
   function loadHistoryItems(openedFile: TS.OpenedEntry) {
     if (Pro) {
-      Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
-        (id) => {
-          openedFile.uuid = id;
-          const backupFilePath = getBackupFileLocation(
-            openedFile.path,
-            openedFile.uuid,
-            PlatformIO.getDirSeparator(),
-          );
-          const backupPath = extractContainingDirectoryPath(
-            backupFilePath,
-            PlatformIO.getDirSeparator(),
-          );
-          switchLocationTypeByID(openedFile.locationId)
-            .then(() => {
-              PlatformIO.listDirectoryPromise(backupPath, []).then((h) => {
-                setRows(
-                  h.sort((a, b) =>
-                    getLmdt(a.name) < getLmdt(b.name) ? 1 : -1,
-                  ),
-                );
-                return switchCurrentLocationType();
-              });
-            })
-            .catch(() => {
+      getMetadataID(openedFile.path, openedFile.uuid).then((id) => {
+        openedFile.uuid = id;
+        const backupFilePath = getBackupFileLocation(
+          openedFile.path,
+          openedFile.uuid,
+          PlatformIO.getDirSeparator(),
+        );
+        const backupPath = extractContainingDirectoryPath(
+          backupFilePath,
+          PlatformIO.getDirSeparator(),
+        );
+        switchLocationTypeByID(openedFile.locationId)
+          .then(() => {
+            PlatformIO.listDirectoryPromise(backupPath, []).then((h) => {
+              setRows(
+                h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
+              );
               return switchCurrentLocationType();
             });
-        },
-      );
+          })
+          .catch(() => {
+            return switchCurrentLocationType();
+          });
+      });
     }
   }
 

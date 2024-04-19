@@ -31,17 +31,18 @@ import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  editTag: (tag: TS.Tag, tagGroupId: string, origTitle: string) => void;
   selectedTag: TS.Tag;
   selectedTagGroupEntry: TS.TagGroup;
 }
 
 function EditTagDialog(props: Props) {
   const { t } = useTranslation();
+  const { editTag } = useTaggingActionsContext();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
     useState<boolean>(false);
@@ -75,13 +76,8 @@ function EditTagDialog(props: Props) {
   };
 
   const onConfirm = () => {
-    if (
-      !inputError &&
-      props.editTag &&
-      props.selectedTagGroupEntry &&
-      props.selectedTag
-    ) {
-      props.editTag(
+    if (!inputError && props.selectedTagGroupEntry && props.selectedTag) {
+      editTag(
         {
           ...props.selectedTag,
           title,

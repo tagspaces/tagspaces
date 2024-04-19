@@ -112,7 +112,7 @@ export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
 export function dataURLtoBlob(dataURI) {
   const arr = dataURI.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
-  const arrBuff = base64ToArrayBuffer(arr[1]);
+  const arrBuff = base64ToBlob(arr[1]).buffer;
   return new window.Blob([arrBuff], { type: mime });
 }
 
@@ -120,14 +120,14 @@ export function dataURLtoBlob(dataURI) {
  * @deprecated use base64ToBlob instead
  * @param base64
  */
-export function base64ToArrayBuffer(base64) {
+/*export function base64ToArrayBuffer(base64) {
   const bstr = window.atob(base64);
   const bytes = new Uint8Array(bstr.length);
   for (let i = 0; i < bstr.length; i += 1) {
     bytes[i] = bstr.charCodeAt(i);
   }
   return bytes.buffer;
-}
+}*/
 
 /**
  * @param base64

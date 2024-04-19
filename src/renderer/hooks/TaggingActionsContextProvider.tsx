@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
@@ -24,13 +24,17 @@ import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
 import OpenLocationCode from 'open-location-code-typescript';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import { getTagLibrary, mergeTagGroup } from '-/services/taglibrary-utils';
+import {
+  immutablySwapItems,
+  formatDateTime4Tag,
+} from '@tagspaces/tagspaces-common/misc';
+import { getTagLibrary, setTagLibrary } from '-/services/taglibrary-utils';
 import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
   getGeoTaggingFormat,
   getPrefixTagContainer,
+  getSaveTagInLocation,
   getTagColor,
   getTagDelimiter,
   getTagTextColor,
@@ -42,13 +46,14 @@ import {
   loadDirMetaDataPromise,
   loadFileMetaDataPromise,
   loadMetaDataPromise,
-  saveMetaDataPromise,
+  parseNewTags,
 } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractTags,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getLocations } from '-/reducers/locations';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -56,6 +61,9 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import AppConfig from '-/AppConfig';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -78,6 +86,36 @@ type TaggingActionsContextData = {
   removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
   removeAllTags: (paths: Array<string>) => Promise<boolean>;
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
+  createTagGroup: (
+    entry: TS.TagGroup,
+    location?: TS.Location,
+  ) => Promise<boolean>;
+  mergeTagGroup: (entry: TS.TagGroup) => void;
+  removeTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
+  addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => void;
+  editTag: (
+    tag: TS.Tag,
+    parentTagGroupUuid: TS.Uuid,
+    origTitle: string,
+  ) => void;
+  deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => void;
+  moveTag: (
+    tagTitle: string,
+    fromTagGroupId: TS.Uuid,
+    toTagGroupId: TS.Uuid,
+  ) => void;
+  changeTagOrder: (
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number,
+  ) => void;
+  moveTagGroupUp: (parentTagGroupUuid: TS.Uuid) => void;
+  moveTagGroupDown: (parentTagGroupUuid: TS.Uuid) => void;
+  moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
+  sortTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
+  updateTagGroup: (tg: TS.TagGroup) => void;
+  importTagGroups: (newEntries: Array<TS.TagGroup>, replace?: boolean) => void;
+  refreshTagsFromLocation: () => void;
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
@@ -90,6 +128,21 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   removeTagsFromEntry: undefined,
   removeAllTags: undefined,
   collectTagsFromLocation: undefined,
+  createTagGroup: undefined,
+  mergeTagGroup: undefined,
+  removeTagGroup: undefined,
+  addTag: undefined,
+  editTag: undefined,
+  deleteTag: undefined,
+  moveTag: undefined,
+  changeTagOrder: undefined,
+  moveTagGroupUp: undefined,
+  moveTagGroupDown: undefined,
+  moveTagGroup: undefined,
+  sortTagGroup: undefined,
+  updateTagGroup: undefined,
+  importTagGroups: undefined,
+  refreshTagsFromLocation: undefined,
 });
 
 export type TaggingActionsContextProviderProps = {
@@ -100,10 +153,19 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { persistTagsInSidecarFile } = useCurrentLocationContext();
+  const { currentLocation, persistTagsInSidecarFile } =
+    useCurrentLocationContext();
+  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
+  const {
+    getTagGroups,
+    createLocationTagGroup,
+    editLocationTagGroup,
+    removeLocationTagGroup,
+    mergeLocationTagGroup,
+  } = useTagGroupsLocationContext();
   const { currentDirectoryEntries } = useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
-  const { renameFile } = useIOActionsContext();
+  const { renameFile, saveMetaDataPromise } = useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
@@ -114,6 +176,37 @@ export const TaggingActionsContextProvider = ({
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   const locations: TS.Location[] = useSelector(getLocations);
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+
+  useEffect(() => {
+    if (Pro && saveTagInLocation) {
+      refreshTagsFromLocation();
+    }
+  }, [saveTagInLocation, currentLocation]);
+
+  function refreshTagsFromLocation() {
+    if (currentLocation) {
+      getTagGroups(currentLocation.path).then((locationTagGroups) => {
+        if (locationTagGroups && locationTagGroups.length > 0) {
+          const oldGroups = getTagLibrary();
+          if (checkTagGroupModified(locationTagGroups, oldGroups)) {
+            importTagGroups(locationTagGroups, false);
+          }
+        }
+      });
+    }
+  }
+
+  function checkTagGroupModified(
+    newGroups: Array<TS.TagGroup>,
+    oldGroups: Array<TS.TagGroup>,
+  ) {
+    return !oldGroups.some((group) =>
+      newGroups.some(
+        (newGroup) => newGroup.modified_date === group.modified_date,
+      ),
+    );
+  }
 
   function extractContent(
     options: extractOptions = {
@@ -293,8 +386,8 @@ export const TaggingActionsContextProvider = ({
             created_date: new Date().getTime(),
             modified_date: new Date().getTime(),
           };
-          mergeTagGroup(tagGroup, getTagLibrary());
-          dispatch(AppActions.tagLibraryChanged());
+          mergeTagGroup(tagGroup);
+          //dispatch(AppActions.tagLibraryChanged());
         }
       }
 
@@ -687,8 +780,8 @@ export const TaggingActionsContextProvider = ({
           created_date: new Date().getTime(),
           modified_date: new Date().getTime(),
         };
-        mergeTagGroup(tagGroup, getTagLibrary());
-        dispatch(AppActions.tagLibraryChanged());
+        mergeTagGroup(tagGroup);
+        // dispatch(AppActions.tagLibraryChanged());
       }
     }
   }
@@ -876,7 +969,7 @@ export const TaggingActionsContextProvider = ({
         children: uniqueTags,
         modified_date: new Date().getTime(),
       };
-      mergeTagGroup(changedTagGroup, getTagLibrary(), locations);
+      mergeTagGroup(changedTagGroup);
       // dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
     }
   }
@@ -908,6 +1001,439 @@ export const TaggingActionsContextProvider = ({
     return uniqueTags;
   }
 
+  function saveTagLibrary(tg: TS.TagGroup[]) {
+    reflectTagLibraryChanged(setTagLibrary(tg));
+  }
+
+  function saveTags(tags: TS.Tag[], indexForEditing: number) {
+    if (indexForEditing >= 0) {
+      /*const taggroupTags = tagGroups[indexForEditing].children;
+      if (
+        !taggroupTags.some((tag) => tags.some((t) => t.title === tag.title))
+      ) {*/
+      saveTagLibrary([
+        ...tagGroups.slice(0, indexForEditing),
+        {
+          ...tagGroups[indexForEditing],
+          children: tags,
+        },
+        ...tagGroups.slice(indexForEditing + 1),
+      ]);
+    }
+  }
+
+  function updateTagGroup(entry: TS.TagGroup) {
+    let indexForEditing = tagGroups.findIndex(
+      (tagGroup) => tagGroup.uuid === entry.uuid,
+    );
+
+    if (indexForEditing >= 0) {
+      const modifiedEntry = {
+        ...entry,
+        ...(!entry.created_date && { created_date: new Date().getTime() }),
+        ...(!entry.modified_date && { modified_date: new Date().getTime() }),
+      };
+
+      if (Pro && entry.locationId) {
+        const location: TS.Location = locations.find(
+          (l) => l.uuid === entry.locationId,
+        );
+        if (location) {
+          editLocationTagGroup(location.path, modifiedEntry);
+        }
+      }
+
+      return saveTagLibrary([
+        ...tagGroups.slice(0, indexForEditing),
+        modifiedEntry,
+        ...tagGroups.slice(indexForEditing + 1),
+      ]);
+    }
+  }
+
+  /*function saveTagInt(
+    newTag: TS.Tag,
+    parentTagGroupUuid: TS.Uuid
+  ) {
+    let indexForEditing = tagGroups.findIndex(
+      (tagGroup) => tagGroup.uuid === parentTagGroupUuid,
+    );
+
+    if (indexForEditing >= 0) {
+      const taggroupTags = tagGroups[indexForEditing].children;
+      if (!taggroupTags.some((tag) => tag.title === newTag.title)) {
+        return saveTagLibrary([
+          ...tagGroups.slice(0, indexForEditing),
+          {
+            ...tagGroups[indexForEditing],
+            children: [...taggroupTags, newTag],
+          },
+          ...tagGroups.slice(indexForEditing + 1),
+        ]);
+      }
+    }
+    return tagGroups;
+  }*/
+
+  function createTagGroup(
+    entry: TS.TagGroup,
+    location?: TS.Location,
+  ): Promise<boolean> {
+    const newEntry = {
+      ...entry,
+      created_date: new Date().getTime(),
+      modified_date: new Date().getTime(),
+    };
+    saveTagLibrary([...tagGroups, newEntry]);
+    if (Pro && location) {
+      return createLocationTagGroup(location.path, newEntry).then(() => true);
+    }
+    return Promise.resolve(true);
+  }
+
+  function mergeTagGroup(entry: TS.TagGroup) {
+    if (Pro && entry.locationId && locations) {
+      const location: TS.Location = locations.find(
+        (l) => l.uuid === entry.locationId,
+      );
+      if (location) {
+        mergeLocationTagGroup(location.path, entry);
+      }
+    }
+    const indexForEditing = tagGroups.findIndex(
+      (obj) => obj.uuid === entry.uuid,
+    );
+    if (indexForEditing > -1) {
+      const tags = [...tagGroups[indexForEditing].children, ...entry.children];
+      tags.splice(0, tags.length - AppConfig.maxCollectedTag);
+      saveTagLibrary([
+        ...tagGroups.slice(0, indexForEditing),
+        {
+          uuid: entry.uuid,
+          title: entry.title,
+          children: tags,
+          created_date: entry.created_date,
+          modified_date: new Date().getTime(),
+        },
+        ...tagGroups.slice(indexForEditing + 1),
+      ]);
+    } else {
+      saveTagLibrary([
+        ...tagGroups,
+        {
+          uuid: entry.uuid || getUuid(),
+          title: entry.title,
+          color: entry.color,
+          textcolor: entry.textcolor,
+          children: entry.children,
+          created_date: new Date().getTime(),
+          modified_date: new Date().getTime(),
+        },
+      ]);
+    }
+  }
+
+  function removeTagGroup(parentTagGroupUuid: TS.Uuid) {
+    const indexForRemoving = tagGroups.findIndex(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+    if (indexForRemoving >= 0) {
+      const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
+      if (Pro && tagGroup && tagGroup.locationId) {
+        const location: TS.Location = locations.find(
+          (l) => l.uuid === tagGroup.locationId,
+        );
+        if (location) {
+          removeLocationTagGroup(location.path, parentTagGroupUuid);
+        }
+      }
+
+      saveTagLibrary([
+        ...tagGroups.slice(0, indexForRemoving),
+        ...tagGroups.slice(indexForRemoving + 1),
+      ]);
+    }
+  }
+
+  function addTag(tag: any, parentTagGroupUuid: TS.Uuid) {
+    const tgIndex = tagGroups.findIndex(
+      (tagGroup) => tagGroup.uuid === parentTagGroupUuid,
+    );
+    if (tgIndex > -1) {
+      const tagGroup = tagGroups[tgIndex];
+      let newTags: Array<TS.Tag>;
+      if (typeof tag === 'object' && tag !== null) {
+        if (tagGroup.children.some((t) => t.title === tag.title)) {
+          // tag exist
+          return;
+        }
+        const tagObject: TS.Tag = {
+          ...tag,
+          textcolor: tag.textcolor, // || tagTextColor,
+          color: tag.color, // || tagBackgroundColor
+        };
+        newTags = [tagObject];
+        //tagGroupsReturn = saveTagInt(tagObject, parentTagGroupUuid, tagGroups);
+      } else {
+        const newTagGroup = {
+          ...tagGroup,
+          color: tagGroup.color, // ? tagGroup.color : tagBackgroundColor,
+          textcolor: tagGroup.textcolor, // ? tagGroup.textcolor : tagTextColor
+        };
+        newTags = parseNewTags(tag, newTagGroup);
+      }
+      saveTags(newTags, tgIndex);
+
+      if (Pro && tagGroup && tagGroup.locationId) {
+        const location: TS.Location = locations.find(
+          (l) => l.uuid === tagGroup.locationId,
+        );
+        if (location) {
+          tagGroup.children = newTags;
+          editLocationTagGroup(location.path, tagGroup);
+        }
+      }
+    }
+  }
+
+  function editTag(
+    tag: TS.Tag,
+    parentTagGroupUuid: TS.Uuid,
+    origTitle: string,
+  ) {
+    const indexForEditing = tagGroups.findIndex(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+
+    if (indexForEditing > -1) {
+      const tagGroup: TS.TagGroup = tagGroups[indexForEditing];
+      const newTagGroup: TS.TagGroup = {
+        ...tagGroup,
+        modified_date: new Date().getTime(),
+        children: tagGroup.children.map((t) => {
+          if (t.title === origTitle) {
+            return tag;
+          }
+          return t;
+        }),
+      };
+
+      if (Pro && tagGroup && tagGroup.locationId) {
+        const location: TS.Location = locations.find(
+          (l) => l.uuid === tagGroup.locationId,
+        );
+        if (location) {
+          editLocationTagGroup(location.path, newTagGroup, true);
+        }
+      }
+      updateTagGroup(newTagGroup);
+    }
+  }
+
+  function deleteTag(tagTitle: string, parentTagGroupUuid: TS.Uuid) {
+    const tagGroup: TS.TagGroup = tagGroups.find(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+
+    const tagIndexForRemoving = tagGroup.children.findIndex(
+      (tag) => tag.title === tagTitle,
+    );
+    if (tagIndexForRemoving >= 0) {
+      const editedTagGroup: TS.TagGroup = {
+        ...tagGroup,
+        modified_date: new Date().getTime(),
+        children: [
+          ...tagGroup.children.slice(0, tagIndexForRemoving),
+          ...tagGroup.children.slice(tagIndexForRemoving + 1),
+        ],
+      };
+
+      if (Pro && tagGroup.locationId) {
+        const location: TS.Location = locations.find(
+          (l) => l.uuid === tagGroup.locationId,
+        );
+        if (location) {
+          editLocationTagGroup(location.path, editedTagGroup, true);
+        }
+      }
+      updateTagGroup(editedTagGroup);
+    }
+  }
+
+  function moveTag(
+    tagTitle: string,
+    fromTagGroupId: TS.Uuid,
+    toTagGroupId: TS.Uuid,
+  ) {
+    let tagIndexForRemoving = -1;
+    let indexFromGroup = -1;
+    let indexToGroup = -1;
+    tagGroups.forEach((tagGroup, index) => {
+      if (tagGroup.uuid === fromTagGroupId) {
+        indexFromGroup = index;
+      }
+      if (tagGroup.uuid === toTagGroupId) {
+        indexToGroup = index;
+      }
+    });
+    if (indexFromGroup >= 0 && tagGroups[indexFromGroup].children) {
+      tagIndexForRemoving = tagGroups[indexFromGroup].children.findIndex(
+        (tag) => tag.title === tagTitle,
+      );
+    }
+    if (indexToGroup >= 0 && indexToGroup >= 0 && tagIndexForRemoving >= 0) {
+      const newTagLibrary = [...tagGroups];
+      const tag = {
+        ...tagGroups[indexFromGroup].children[tagIndexForRemoving],
+      };
+      const found = newTagLibrary[indexToGroup].children.find(
+        (t) => t.title === tag.title,
+      );
+      if (!found) {
+        newTagLibrary[indexToGroup].children.push(tag);
+        newTagLibrary[indexFromGroup].children = [
+          ...newTagLibrary[indexFromGroup].children.slice(
+            0,
+            tagIndexForRemoving,
+          ),
+          ...newTagLibrary[indexFromGroup].children.slice(
+            tagIndexForRemoving + 1,
+          ),
+        ];
+        return saveTagLibrary(newTagLibrary);
+      }
+      console.warn(
+        'Tag with this title already exists in the target tag group',
+      );
+    }
+  }
+
+  function changeTagOrder(
+    tagGroupUuid: TS.Uuid,
+    fromIndex: number,
+    toIndex: number,
+  ) {
+    const indexFromGroup = tagGroups.findIndex(
+      (tagGroup) => tagGroup.uuid === tagGroupUuid,
+    );
+
+    if (indexFromGroup > -1) {
+      const newTagLibrary = [...tagGroups];
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#swapping_variables
+      [
+        newTagLibrary[indexFromGroup].children[fromIndex],
+        newTagLibrary[indexFromGroup].children[toIndex],
+      ] = [
+        newTagLibrary[indexFromGroup].children[toIndex],
+        newTagLibrary[indexFromGroup].children[fromIndex],
+      ];
+
+      saveTagLibrary(newTagLibrary);
+    }
+  }
+
+  function moveTagGroupUp(parentTagGroupUuid: TS.Uuid) {
+    let indexForUpdating = tagGroups.findIndex(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+    if (indexForUpdating > 0) {
+      const secondIndex = indexForUpdating - 1;
+      return saveTagLibrary(
+        immutablySwapItems(tagGroups, indexForUpdating, secondIndex),
+      );
+    }
+    return tagGroups;
+  }
+
+  function moveTagGroupDown(parentTagGroupUuid: TS.Uuid) {
+    let indexForUpdating = tagGroups.findIndex(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+    if (indexForUpdating >= 0 && indexForUpdating < tagGroups.length - 1) {
+      const secondIndex = indexForUpdating + 1;
+      return saveTagLibrary(
+        immutablySwapItems(tagGroups, indexForUpdating, secondIndex),
+      );
+    }
+    return tagGroups;
+  }
+
+  function moveTagGroup(tagGroupUuid: TS.Uuid, position: number) {
+    let indexForUpdating = tagGroups.findIndex((t) => t.uuid === tagGroupUuid);
+    if (indexForUpdating > -1 && indexForUpdating !== position) {
+      const tagGroupsReturn = Array.from(tagGroups);
+      const [removed] = tagGroupsReturn.splice(indexForUpdating, 1);
+      tagGroupsReturn.splice(position, 0, removed);
+      saveTagLibrary(tagGroupsReturn);
+    }
+  }
+
+  function sortTagGroup(parentTagGroupUuid: TS.Uuid) {
+    let indexForUpdating = tagGroups.findIndex(
+      (t) => t.uuid === parentTagGroupUuid,
+    );
+    if (indexForUpdating > -1) {
+      saveTagLibrary([
+        ...tagGroups.slice(0, indexForUpdating),
+        {
+          ...tagGroups[indexForUpdating],
+          children: tagGroups[indexForUpdating].children.sort((a, b) =>
+            a.title > b.title ? 1 : a.title < b.title ? -1 : 0,
+          ),
+        },
+        ...tagGroups.slice(indexForUpdating + 1),
+      ]);
+    }
+  }
+
+  function importTagGroups(newEntries: Array<TS.TagGroup>, replace = false) {
+    const arr = replace ? [] : [...tagGroups];
+    // console.log(arr);
+    // @ts-ignore
+    if (newEntries[0] && newEntries[0].key) {
+      // TODO test this migration
+      newEntries.forEach((newTg: TS.TagGroup, index) => {
+        // migration of old tag groups 2.9 or less in the new version 3.0-present
+        // @ts-ignore
+        if (newTg.key === tagGroups.uuid || newTg.key !== tagGroups.uuid) {
+          newTg = {
+            title: newTg.title,
+            // @ts-ignore
+            uuid: newTg.key,
+            children: newTg.children,
+          };
+          const tagsArr = [];
+          newTg.children.forEach((tag) => {
+            tagsArr.push(tag);
+            newTg.children = tagsArr;
+            arr.push(newTg);
+          });
+        }
+      });
+    } else {
+      newEntries.forEach((tagGroup) => {
+        const index = arr.findIndex((obj) => obj.uuid === tagGroup.uuid);
+        if (index > -1) {
+          tagGroup.children.forEach((tag) => {
+            const stateTag = arr[index].children.find(
+              (obj) => obj.title === tag.title,
+            );
+            if (stateTag === undefined) {
+              arr[index].children.push(tag);
+            }
+          });
+          if (tagGroup.locationId) {
+            arr[index].locationId = tagGroup.locationId;
+          }
+        } else {
+          arr.push(tagGroup);
+        }
+      });
+    }
+
+    saveTagLibrary(arr);
+  }
+
   const context = useMemo(() => {
     return {
       extractContent,
@@ -919,8 +1445,29 @@ export const TaggingActionsContextProvider = ({
       removeTagsFromEntry,
       removeAllTags,
       collectTagsFromLocation,
+      createTagGroup,
+      mergeTagGroup,
+      removeTagGroup,
+      addTag,
+      editTag,
+      deleteTag,
+      moveTag,
+      changeTagOrder,
+      moveTagGroupUp,
+      moveTagGroupDown,
+      moveTagGroup,
+      sortTagGroup,
+      updateTagGroup,
+      importTagGroups,
+      refreshTagsFromLocation,
     };
-  }, [persistTagsInSidecarFile, addTagsToLibrary, currentDirectoryEntries]);
+  }, [
+    tagGroups,
+    persistTagsInSidecarFile,
+    addTagsToLibrary,
+    currentDirectoryEntries,
+    saveTagInLocation,
+  ]);
 
   return (
     <TaggingActionsContext.Provider value={context}>

@@ -30,6 +30,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { toFsEntry } from '-/services/utils-io';
 import { Changed } from '../../main/chokidarWatcher';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { TS } from '-/tagspaces.namespace';
 
 type FSWatcherContextData = {
   ignored: string[];
@@ -65,10 +66,11 @@ export const FSWatcherContextProvider = ({
     currentDirectoryPath,
     perspective,
   } = useDirectoryContentContext();
-  const { reflectDeleteEntries, reflectAddEntry, reflectUpdateMeta } =
-    useEditedEntryContext();
+  const { setReflectActions, reflectUpdateMeta } = useEditedEntryContext();
   const ignored = useRef<string[]>([]);
   const watchingFolderPath = useRef<string>(undefined);
+  let timer; // Timer variable to delay batch execution
+  const actionsQueue: TS.EditAction[] = [];
 
   useEffect(() => {
     if (
@@ -93,6 +95,14 @@ export const FSWatcherContextProvider = ({
     PlatformIO.watchFolder(locationPath, depth);
   }
 
+  function executeBatchActions() {
+    if (actionsQueue.length > 0) {
+      setReflectActions(...actionsQueue);
+      // Clear the actions queue after executing batch changes
+      actionsQueue.length = 0;
+    }
+  }
+
   const folderChanged = useMemo(() => {
     return (event, path): void => {
       console.log(`File ${path} has been ${event}`);
@@ -114,6 +124,14 @@ export const FSWatcherContextProvider = ({
           return;
         }
       }
+      // Clear existing timer
+      clearTimeout(timer);
+
+      // Set timer to delay batch execution
+      timer = setTimeout(() => {
+        // Execute batch changes after 1 second delay
+        executeBatchActions();
+      }, 1000);
 
       switch (event) {
         case 'unlink':
@@ -122,17 +140,31 @@ export const FSWatcherContextProvider = ({
             //currentDirectoryEntries.some((entry) => path === entry.path) &&
             !path.includes(AppConfig.metaFolder)
           ) {
-            reflectDeleteEntries(toFsEntry(path, false));
+            actionsQueue.push({
+              action: 'delete',
+              entry: toFsEntry(path, false),
+            });
+            //reflectDeleteEntries(toFsEntry(path, false));
           }
           break;
         case 'add':
           if (!path.includes(AppConfig.metaFolder)) {
-            reflectAddEntry(toFsEntry(path, true));
+            actionsQueue.push({
+              action: 'add',
+              entry: toFsEntry(path, true),
+              open: false,
+            });
+            // reflectAddEntry(toFsEntry(path, true));
           }
           break;
         case 'addDir':
           if (!path.includes(AppConfig.metaFolder)) {
-            reflectAddEntry(toFsEntry(path, false));
+            actionsQueue.push({
+              action: 'add',
+              entry: toFsEntry(path, false),
+              open: false,
+            });
+            //reflectAddEntry(toFsEntry(path, false));
           }
           break;
         case 'change':

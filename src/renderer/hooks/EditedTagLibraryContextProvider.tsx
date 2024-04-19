@@ -18,45 +18,45 @@
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { TS } from '-/tagspaces.namespace';
+import { getTagLibrary } from '-/services/taglibrary-utils';
 
-type EditedEntryMetaContextData = {
-  metaActions: TS.EditMetaAction[];
-  setReflectMetaActions: (...actionsArray: TS.EditMetaAction[]) => void;
+type EditedTagLibraryContextData = {
+  tagGroups: TS.TagGroup[];
+  reflectTagLibraryChanged: (tg: TS.TagGroup[]) => void;
 };
 
-export const EditedEntryMetaContext = createContext<EditedEntryMetaContextData>(
-  {
-    metaActions: undefined,
-    setReflectMetaActions: undefined,
-  },
-);
+export const EditedTagLibraryContext =
+  createContext<EditedTagLibraryContextData>({
+    tagGroups: undefined,
+    reflectTagLibraryChanged: undefined,
+  });
 
-export type EditedEntryMetaContextProviderProps = {
+export type EditedTagLibraryContextProviderProps = {
   children: React.ReactNode;
 };
 
-export const EditedEntryMetaContextProvider = ({
+export const EditedTagLibraryContextProvider = ({
   children,
-}: EditedEntryMetaContextProviderProps) => {
-  const metaActions = useRef<TS.EditMetaAction[]>(undefined);
+}: EditedTagLibraryContextProviderProps) => {
+  const tagGroups = useRef<TS.TagGroup[]>(getTagLibrary());
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function setReflectMetaActions(...actionsArray: TS.EditMetaAction[]) {
-    metaActions.current = actionsArray;
+  function reflectTagLibraryChanged(tg: TS.TagGroup[]) {
+    tagGroups.current = tg;
     forceUpdate();
   }
 
   const context = useMemo(() => {
     return {
-      metaActions: metaActions.current,
-      setReflectMetaActions,
+      tagGroups: tagGroups.current,
+      reflectTagLibraryChanged,
     };
-  }, [metaActions.current]);
+  }, [tagGroups.current]);
 
   return (
-    <EditedEntryMetaContext.Provider value={context}>
+    <EditedTagLibraryContext.Provider value={context}>
       {children}
-    </EditedEntryMetaContext.Provider>
+    </EditedTagLibraryContext.Provider>
   );
 };

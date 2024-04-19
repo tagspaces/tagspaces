@@ -19,9 +19,8 @@
 import AppConfig from '-/AppConfig';
 import { getURLParameter } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
-import { mergeByProp, toFsEntry } from '-/services/utils-io';
+import { mergeByProp } from '-/services/utils-io';
 import i18n from '../services/i18n';
-import { actions as tagLibraryActions } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
@@ -29,11 +28,6 @@ import {
   isGlobalKeyBindingEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import {
-  addTag,
-  getTagLibrary,
-  setTagLibrary,
-} from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 import { extensionsFound } from '-/extension-config';
 
@@ -70,7 +64,7 @@ export const types = {
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   //SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   //SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
-  SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
+  //SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
@@ -303,9 +297,9 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }*/
-    case types.SET_TAG_LIBRARY_CHANGED: {
+    /*case types.SET_TAG_LIBRARY_CHANGED: {
       return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
-    }
+    }*/
     case types.TOGGLE_EDIT_TAG_DIALOG: {
       return {
         ...state,
@@ -654,7 +648,7 @@ export const actions = {
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
     // migrate TagLibrary from redux state
-    const { taglibrary } = getState();
+    /*const { taglibrary } = getState();
     if (taglibrary && taglibrary.length > 0) {
       try {
         setTagLibrary(taglibrary);
@@ -662,7 +656,7 @@ export const actions = {
       } catch (e) {
         console.log('migrate TagLibrary failed', e);
       }
-    }
+    }*/
 
     dispatch(SettingsActions.setZoomRestoreApp());
     dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
@@ -853,7 +847,7 @@ export const actions = {
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
   }),*/
-  addTag:
+  /*addTag:
     (tag: any, parentTagGroupUuid: TS.Uuid) =>
     (dispatch: (action) => void, getState: () => any) => {
       const { locations } = getState();
@@ -862,7 +856,7 @@ export const actions = {
     },
   tagLibraryChanged: () => ({
     type: types.SET_TAG_LIBRARY_CHANGED,
-  }),
+  }),*/
   /*openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
   },*/

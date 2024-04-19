@@ -35,6 +35,7 @@ import {
 } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { getMetaIndexFilePath } from '@tagspaces/tagspaces-indexer';
 import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
@@ -47,6 +48,7 @@ import {
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -90,6 +92,7 @@ export const LocationIndexContextProvider = ({
   const { t } = useTranslation();
 
   const { currentLocation, getLocationPath } = useCurrentLocationContext();
+  const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
   const { actions } = useEditedEntryContext();
@@ -206,6 +209,38 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
+  function createDirectoryIndexWrapper(
+    param: string | any,
+    extractText = false,
+    ignorePatterns: Array<string> = [],
+    enableWS = true,
+    // disableIndexing = true,
+  ): Promise<any> {
+    const indexFilePath = getMetaIndexFilePath(param.path);
+    return switchLocationTypeByID(param.locationID)
+      .then(() => {
+        ignoreByWatcher(indexFilePath);
+        return createDirectoryIndex(
+          param,
+          extractText,
+          ignorePatterns,
+          enableWS,
+          isWalking,
+        );
+      })
+      .then((index) =>
+        switchCurrentLocationType().then(() => {
+          deignoreByWatcher(indexFilePath);
+          return index;
+        }),
+      )
+      .catch((err) => {
+        //lastError.current = err;
+        console.warn('Error loading text content ' + err);
+        return false; //switchCurrentLocationType();
+      });
+  }
+
   function createLocationIndex(location: TS.Location): Promise<boolean> {
     if (location) {
       return getLocationPath(location).then((locationPath) => {
@@ -237,25 +272,6 @@ export const LocationIndexContextProvider = ({
       });
     }
     return Promise.resolve(false);
-  }
-
-  function createDirectoryIndexWrapper(
-    param: string | any,
-    extractText = false,
-    ignorePatterns: Array<string> = [],
-    enableWS = true,
-    // disableIndexing = true,
-  ): Promise<any> {
-    return switchLocationTypeByID(param.locationID)
-      .then(() =>
-        createDirectoryIndex(param, extractText, ignorePatterns, enableWS),
-      )
-      .then((index) => switchCurrentLocationType().then(() => index))
-      .catch((err) => {
-        //lastError.current = err;
-        console.warn('Error loading text content ' + err);
-        return false; //switchCurrentLocationType();
-      });
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
@@ -433,7 +449,7 @@ export const LocationIndexContextProvider = ({
             indexAge > maxIndexAge))
       ) {
         console.log('Start creating index for : ' + currentPath);
-        const newIndex = await createDirectoryIndex(
+        const newIndex = await createDirectoryIndexWrapper(
           {
             path: currentPath,
             locationID: currentLocation.uuid,
@@ -504,7 +520,7 @@ export const LocationIndexContextProvider = ({
             // || (!location.disableIndexing && !indexExist)
           ) {
             console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndex(
+            directoryIndex = await createDirectoryIndexWrapper(
               {
                 path: nextPath,
                 locationID: location.uuid,
@@ -513,7 +529,6 @@ export const LocationIndexContextProvider = ({
               location.fullTextIndex,
               location.ignorePatternPaths,
               enableWS,
-              isWalking,
             );
           }
           return getSearchResults(directoryIndex, searchQuery).then(

@@ -35,6 +35,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { exportTagGroups } from '-/services/taglibrary-utils';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
@@ -42,11 +43,10 @@ interface Props {
   onClose: () => void;
   dialogModeImport: boolean;
   showNotification?: (text: string) => void;
-  importTagGroups: (taggroups: Array<TS.TagGroup>) => void;
 }
 
 function ImportExportTagGroupsDialog(props: Props) {
-  // const [selectedAll, setSelectedAll] = useState<boolean>(true);
+  const { importTagGroups } = useTaggingActionsContext();
   const { t } = useTranslation();
   const selectedAll = useRef(true);
   const [tagGroupList, setTagGroupList] = useState<Array<any>>(
@@ -84,7 +84,7 @@ function ImportExportTagGroupsDialog(props: Props) {
     const groupList = tagGroupList.filter((tagGroup) => tagGroup.selected);
     props.onClose();
     if (props.dialogModeImport) {
-      props.importTagGroups(groupList);
+      importTagGroups(groupList);
       if (isFunc(showNotification)) {
         showNotification(t('core:successfullyImportedGroupTags'));
       }
