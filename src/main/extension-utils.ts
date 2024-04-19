@@ -110,10 +110,16 @@ function processDirs(
               );
               if (existingItemIndex !== -1) {
                 // If an item with the same id already exists, update its properties
-                supportedFileTypes[existingItemIndex] = {
-                  ...supportedFileTypes[existingItemIndex],
-                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
-                };
+                if (
+                  supportedFileTypes[existingItemIndex].viewer !==
+                  '@tagspaces/extensions/md-editor/build'
+                ) {
+                  // todo ugly fix to not override md-editor extension with md-editor-next
+                  supportedFileTypes[existingItemIndex] = {
+                    ...supportedFileTypes[existingItemIndex],
+                    ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
+                  };
+                }
               } else {
                 supportedFileTypes.push({
                   type: fileType.ext,
