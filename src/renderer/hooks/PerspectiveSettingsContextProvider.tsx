@@ -201,7 +201,7 @@ export const PerspectiveSettingsContextProvider = ({
       setSettings: setSettings,
       saveSettings: saveSettings,
     };
-  }, [settings.current]);
+  }, [settings.current, currentDirectoryPath]);
 
   return (
     <PerspectiveSettingsContext.Provider value={context}>
