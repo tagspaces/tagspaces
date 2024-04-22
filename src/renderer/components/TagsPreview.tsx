@@ -79,6 +79,7 @@ function TagsPreview(props: Props) {
       <span
         style={{
           display: 'inline-block',
+          minWidth: 15,
           width: 18,
           height: 15,
           marginLeft: 5,
