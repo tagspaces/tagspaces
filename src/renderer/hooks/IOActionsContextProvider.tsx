@@ -1461,9 +1461,11 @@ export const IOActionsContextProvider = ({
       loadMetaDataPromise(path, true)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           let updatedFsEntryMeta: TS.FileSystemEntryMeta = {
-            ...fsEntryMeta,
+            ...(fsEntryMeta && fsEntryMeta),
             perspectiveSettings: {
-              ...fsEntryMeta.perspectiveSettings,
+              ...(fsEntryMeta &&
+                fsEntryMeta.perspectiveSettings &&
+                fsEntryMeta.perspectiveSettings),
               [perspective]: undefined,
             },
           };

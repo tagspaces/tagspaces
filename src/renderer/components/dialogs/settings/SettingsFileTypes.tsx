@@ -395,7 +395,10 @@ function SettingsFileTypes() {
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >
-                      {extension.extensionName} ({extension.version})
+                      {extension.extensionName}{' '}
+                      <small style={{ marginLeft: 5 }}>
+                        v{extension.version}
+                      </small>
                     </MenuItem>
                   ),
               )}
@@ -423,7 +426,8 @@ function SettingsFileTypes() {
                   key={extension.extensionName}
                   value={extension.extensionId}
                 >
-                  {extension.extensionName} ({extension.version})
+                  {extension.extensionName}
+                  <small style={{ marginLeft: 5 }}>v{extension.version}</small>
                 </MenuItem>
               ))}
           </Select>

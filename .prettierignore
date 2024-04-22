@@ -23,3 +23,4 @@ tests/bin
 src/renderer/aws-exports.js
 src/main/config/config.json
 src/renderer/extension-config.ts
+extensions

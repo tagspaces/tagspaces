@@ -82,7 +82,7 @@ export default {
   currentDarkTheme: 'darklegacy',
   geoTaggingFormat: 'pluscodes',
   defaultPerspective: PerspectiveIDs.GRID,
-  enableGlobalKeyboardShortcuts: true,
+  enableGlobalKeyboardShortcuts: false,
   zoomFactor: 1,
   lastPublishedVersion: '',
   entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',

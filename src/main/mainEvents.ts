@@ -67,7 +67,7 @@ export default function loadMainEvents() {
         });
       }
     } catch (e) {
-      console.error(e);
+      console.error('wss error:', e);
     }
 
     //watchFolder(mainWindow, e, path, depth);

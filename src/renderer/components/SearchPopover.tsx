@@ -551,7 +551,7 @@ function SearchPopover(props: Props) {
                 <Select
                   name="savedSearch"
                   labelId="saved-searches"
-                  disabled={isIndexing || !Pro}
+                  disabled={isIndexing !== undefined || !Pro}
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
@@ -611,7 +611,10 @@ function SearchPopover(props: Props) {
             />
           </Grid>
         </Grid>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
             size="small"
@@ -637,7 +640,10 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <ToggleButtonGroup
             onChange={switchSearchType}
             size="small"
@@ -662,7 +668,10 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <ToggleButtonGroup
             onChange={() => {
               forceIndexing.current = !forceIndexing.current;
@@ -685,7 +694,10 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <TagsSelect
             dataTid="searchTagsAndTID"
             placeholderText={t('core:selectTags')}
@@ -696,7 +708,10 @@ function SearchPopover(props: Props) {
             tagMode="remove"
           />
         </FormControl>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <TagsSelect
             dataTid="searchTagsOrTID"
             placeholderText={t('core:selectTags')}
@@ -707,7 +722,10 @@ function SearchPopover(props: Props) {
             tagMode="remove"
           />
         </FormControl>
-        <FormControl className={classes.formControl} disabled={isIndexing}>
+        <FormControl
+          className={classes.formControl}
+          disabled={isIndexing !== undefined}
+        >
           <TagsSelect
             dataTid="searchTagsNotTID"
             placeholderText={t('core:selectTags')}
@@ -720,7 +738,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={isIndexing || !Pro}
+          disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterByTypTooltip')}>
             <InputLabel htmlFor="file-type">{t('core:fileType')}</InputLabel>
@@ -843,7 +861,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={isIndexing || !Pro}
+          disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterBySizeTooltip')}>
             <InputLabel
@@ -897,7 +915,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={isIndexing || !Pro}
+          disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterByLastModifiedDateTooltip')}>
             <InputLabel
@@ -940,7 +958,7 @@ function SearchPopover(props: Props) {
               <Box position="relative" display="inline-flex">
                 <DatePicker
                   label={t('enterTagTimePeriodFrom')}
-                  disabled={isIndexing || !Pro}
+                  disabled={isIndexing !== undefined || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={new Date(tagTimePeriodFrom)}
                   onChange={(fromDataTime: Date) => {
@@ -956,7 +974,7 @@ function SearchPopover(props: Props) {
                 />
                 <DatePicker
                   label={t('enterTagTimePeriodTo')}
-                  disabled={isIndexing || !Pro}
+                  disabled={isIndexing !== undefined || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={new Date(tagTimePeriodTo)}
                   onChange={(toDataTime: Date) => {
@@ -1049,13 +1067,15 @@ function SearchPopover(props: Props) {
             {t('resetBtn')}
           </Button>
           <Button
-            disabled={isIndexing}
+            disabled={isIndexing !== undefined}
             variant="contained"
             id="searchButtonAdvTID"
             onClick={executeSearch}
             size="small"
           >
-            {isIndexing ? 'Search disabled while indexing' : t('searchTitle')}
+            {isIndexing !== undefined
+              ? 'Search disabled while indexing'
+              : t('searchTitle')}
           </Button>
         </div>
       </div>

@@ -36,6 +36,7 @@ import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import i18n from '-/services/i18n';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -121,9 +122,9 @@ function PageNotification() {
       )}
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={isIndexing}
+        open={isIndexing !== undefined}
         autoHideDuration={undefined}
-        message="Indexing"
+        message={i18n.t('indexing') + ': ' + isIndexing}
         action={[
           <Button
             key="cancelIndexButton"

@@ -112,7 +112,8 @@ function SettingsExtensions() {
                 .filter((ext) => !ext.extensionExternal)
                 .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
-                    {ext.extensionName} ({ext.version})
+                    {ext.extensionName}{' '}
+                    <small style={{ marginLeft: 5 }}>v{ext.version}</small>
                   </ListItem>
                 ))}
           </List>
@@ -136,7 +137,8 @@ function SettingsExtensions() {
                 .filter((ext) => ext.extensionExternal)
                 .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
-                    {ext.extensionName} ({ext.version})
+                    {ext.extensionName}{' '}
+                    <small style={{ marginLeft: 5 }}>v{ext.version}</small>
                     <Switch
                       data-tid="enableExtensionTID"
                       name="enableExtension"
