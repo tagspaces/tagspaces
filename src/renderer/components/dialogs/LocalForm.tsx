@@ -27,8 +27,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   errorTextPath: boolean;
@@ -42,16 +42,18 @@ interface Props {
 function LocalForm(props: Props) {
   const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
   const { t } = useTranslation();
+  const { currentLocation } = useCurrentLocationContext();
 
   const openDirectory = () => {
-    PlatformIO.selectDirectoryDialog()
+    currentLocation
+      .selectDirectoryDialog()
       .then((selectedPaths) => {
         const selectedPath = decodeURI(selectedPaths[0]);
         setPath(selectedPath);
         if (name.length < 1 && selectedPath.length > 0) {
           const dirName = extractDirectoryName(
             selectedPath,
-            PlatformIO.getDirSeparator(),
+            currentLocation.getDirSeparator(),
           );
           setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
         }

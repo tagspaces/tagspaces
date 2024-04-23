@@ -73,14 +73,12 @@ import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import {
   fileNameValidation,
   dirNameValidation,
-  getFolderBgndPath,
-  getThumbPath,
   getAllTags,
+  openUrl,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
-import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
@@ -236,8 +234,7 @@ function EntryProperties(props: Props) {
     saveDirectoryPerspective,
   } = useIOActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
-    useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
 
   const dirProps = useRef<TS.DirProp>(undefined);
@@ -248,8 +245,11 @@ function EntryProperties(props: Props) {
 
   const entryName = openedEntry
     ? openedEntry.isFile
-      ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator())
+      ? extractFileName(openedEntry.path, currentLocation.getDirSeparator())
+      : extractDirectoryName(
+          openedEntry.path,
+          currentLocation.getDirSeparator(),
+        )
     : '';
 
   const [editName, setEditName] = useState<string>(undefined);
@@ -291,27 +291,19 @@ function EntryProperties(props: Props) {
     if (editName !== undefined) {
       const path = extractContainingDirectoryPath(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
-      const nextPath = path + PlatformIO.getDirSeparator() + editName;
+      const nextPath = path + currentLocation.getDirSeparator() + editName;
 
-      switchLocationTypeByID(openedEntry.locationId).then(() => {
-        if (openedEntry.isFile) {
-          renameFile(openedEntry.path, nextPath)
-            .then(() => switchCurrentLocationType())
-            .catch(() => {
-              switchCurrentLocationType();
-              fileNameRef.current.value = entryName;
-            });
-        } else {
-          renameDirectory(openedEntry.path, editName)
-            .then((newDirPath) => switchCurrentLocationType())
-            .catch(() => {
-              switchCurrentLocationType();
-              fileNameRef.current.value = entryName;
-            });
-        }
-      });
+      if (openedEntry.isFile) {
+        renameFile(openedEntry.path, nextPath).catch(() => {
+          fileNameRef.current.value = entryName;
+        });
+      } else {
+        renameDirectory(openedEntry.path, editName).catch(() => {
+          fileNameRef.current.value = entryName;
+        });
+      }
 
       setEditName(undefined);
     }
@@ -366,7 +358,9 @@ function EntryProperties(props: Props) {
     } else if (dirProps.current) {
       return formatBytes(dirProps.current.totalSize);
     }
-    return t(PlatformIO.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
+    return t(
+      currentLocation.haveObjectStoreSupport() ? 'core:notAvailable' : '?',
+    );
   };
 
   const toggleBackgroundColorPicker = () => {
@@ -377,10 +371,10 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    if (!Pro.MetaOperations) {
+    /*if (!Pro.MetaOperations) {
       showNotification(t('Saving color not supported'));
       return;
-    }
+    }*/
     setDisplayColorPicker(!displayColorPicker);
   };
 
@@ -416,36 +410,24 @@ function EntryProperties(props: Props) {
   };
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    switchLocationTypeByID(openedEntry.locationId)
-      .then(() => {
-        if (action === 'remove-value') {
-          if (!value) {
-            // no tags left in the select element
-            return removeAllTags([openedEntry.path]); /*.then(() =>
-              updateOpenedFile(openedEntry.path, {
-                id: '',
-                tags: [],
-              }),
-            );*/
-          } else {
-            return removeTags([openedEntry.path], value);
-          }
-        } else if (action === 'clear') {
-          return removeAllTags([openedEntry.path]);
-        }
-        // create-option or select-option
-        const tags =
-          openedEntry.tags === undefined
-            ? value
-            : value.filter(
-                (tag) =>
-                  !openedEntry.tags.some((obj) => obj.title === tag.title),
-              );
-        return addTags([openedEntry.path], tags);
-      })
-      .then(() => {
-        switchCurrentLocationType();
-      });
+    if (action === 'remove-value') {
+      if (!value) {
+        // no tags left in the select element
+        return removeAllTags([openedEntry.path]);
+      } else {
+        return removeTags([openedEntry.path], value);
+      }
+    } else if (action === 'clear') {
+      return removeAllTags([openedEntry.path]);
+    }
+    // create-option or select-option
+    const tags =
+      openedEntry.tags === undefined
+        ? value
+        : value.filter(
+            (tag) => !openedEntry.tags.some((obj) => obj.title === tag.title),
+          );
+    return addTags([openedEntry.path], tags);
   };
 
   if (!openedEntry || !openedEntry.path || openedEntry.path === '') {
@@ -517,7 +499,7 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
 
-  const thumbUrl = getThumbPath(
+  const thumbUrl = currentLocation.getThumbPath(
     openedEntry.meta?.thumbPath,
     openedEntry.meta?.lastUpdated,
   );
@@ -663,7 +645,7 @@ function EntryProperties(props: Props) {
                         color="primary"
                         variant="outlined"
                         onClick={() => {
-                          PlatformIO.openUrl(
+                          openUrl(
                             'https://www.openstreetmap.org/?mlat=' +
                               geoLocation.lat +
                               '&mlon=' +
@@ -685,7 +667,7 @@ function EntryProperties(props: Props) {
                         color="primary"
                         variant="outlined"
                         onClick={() => {
-                          PlatformIO.openUrl(
+                          openUrl(
                             'https://maps.google.com/?q=' +
                               geoLocation.lat +
                               ',' +
@@ -726,7 +708,7 @@ function EntryProperties(props: Props) {
           <Grid item xs={6}>
             <Tooltip
               title={
-                !PlatformIO.haveObjectStoreSupport() &&
+                !currentLocation.haveObjectStoreSupport() &&
                 dirProps.current &&
                 !openedEntry.isFile &&
                 dirProps.current.dirsCount +
@@ -847,7 +829,7 @@ function EntryProperties(props: Props) {
                           const entryTitle = extractTitle(
                             openedEntry.name,
                             !openedEntry.isFile,
-                            PlatformIO.getDirSeparator(),
+                            currentLocation.getDirSeparator(),
                           );
                           const clibboardItem = generateClipboardLink(
                             sharingLink,
@@ -1120,7 +1102,7 @@ function EntryProperties(props: Props) {
                             backgroundRepeat: 'no-repeat',
                             backgroundImage:
                               'url("' +
-                              getFolderBgndPath(
+                              currentLocation.getFolderBgndPath(
                                 openedEntry.path,
                                 openedEntry.meta?.lastUpdated,
                               ) +

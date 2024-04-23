@@ -56,6 +56,11 @@ export namespace TS {
     s3API?: AWS.S3;
   }
 
+  interface FileExistenceCheck {
+    promise: Promise<boolean>;
+    path: string;
+  }
+
   interface Extension {
     extensionId: string;
     extensionName: string;

@@ -25,7 +25,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
@@ -38,6 +37,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -60,6 +60,7 @@ interface Props {
 function CreateDirectory(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
+  const { currentLocation } = useCurrentLocationContext();
   const { downloadFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
@@ -119,18 +120,18 @@ function CreateDirectory(props: Props) {
         } else if (fileName.indexOf('.') === -1) {
           fileName = url.hostname + '-' + fileName + '.html';
         }
-        if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
+        if (currentLocation.haveObjectStoreSupport() || AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
           dispatch(AppActions.toggleUploadDialog());
           downloadFile(
             fileUrl.current,
             targetDirectoryPath +
-              PlatformIO.getDirSeparator() +
+              currentLocation.getDirSeparator() +
               decodeURIComponent(fileName),
             onUploadProgress,
           )
             .then(() => {
-              if (PlatformIO.haveObjectStoreSupport()) {
+              if (currentLocation.haveObjectStoreSupport()) {
                 // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
                 dispatch(AppActions.setProgress(fileUrl.current, 100));
               }

@@ -18,21 +18,17 @@
 
 import React, { createContext, useMemo } from 'react';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getDescriptionPreview,
-  loadJSONFile,
-  mergeFsEntryMeta,
-} from '-/services/utils-io';
+import { getDescriptionPreview, mergeFsEntryMeta } from '-/services/utils-io';
 import {
   getMetaDirectoryPath,
   getMetaFileLocationForDir,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import versionMeta from '-/version.json';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelector } from 'react-redux';
 import { getSaveTagInLocation } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type TagGroupsLocationContextData = {
   getTagGroups: (path: string) => Promise<TS.TagGroup[]>;
@@ -76,6 +72,7 @@ export type TagGroupsLocationContextProviderProps = {
 export const TagGroupsLocationContextProvider = ({
   children,
 }: TagGroupsLocationContextProviderProps) => {
+  const { currentLocation } = useCurrentLocationContext();
   const { createDirectoryPromise, saveTextFilePromise } =
     usePlatformFacadeContext();
 
@@ -110,14 +107,14 @@ export const TagGroupsLocationContextProvider = ({
     metaFile = AppConfig.folderLocationsFile,
   ): Promise<TS.FileSystemEntryMeta> {
     if (saveTagInLocation) {
-      const entryProperties = await PlatformIO.getPropertiesPromise(path);
+      const entryProperties = await currentLocation.getPropertiesPromise(path);
       if (!entryProperties.isFile) {
         const metaFilePath = getMetaFileLocationForDir(
           path,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
           metaFile,
         );
-        const metaData = await loadJSONFile(metaFilePath);
+        const metaData = await currentLocation.loadJSONFile(metaFilePath);
         if (metaData) {
           return {
             ...metaData,
@@ -357,7 +354,7 @@ export const TagGroupsLocationContextProvider = ({
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
-    const entryProperties = await PlatformIO.getPropertiesPromise(path);
+    const entryProperties = await currentLocation.getPropertiesPromise(path);
     if (entryProperties) {
       let metaFilePath;
       if (!entryProperties.isFile) {
@@ -365,17 +362,17 @@ export const TagGroupsLocationContextProvider = ({
         // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
         const metaDirectoryPath = getMetaDirectoryPath(
           path,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
         );
         const metaDirectoryProperties =
-          await PlatformIO.getPropertiesPromise(metaDirectoryPath);
+          await currentLocation.getPropertiesPromise(metaDirectoryPath);
         if (!metaDirectoryProperties) {
           await createDirectoryPromise(metaDirectoryPath);
         }
 
         metaFilePath = getMetaFileLocationForDir(
           path,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
           AppConfig.folderLocationsFile,
         );
       }

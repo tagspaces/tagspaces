@@ -1,5 +1,5 @@
 import React, { useState, useRef, useReducer, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -14,7 +14,6 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
-import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -22,16 +21,13 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
-import Tooltip from '-/components/Tooltip';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import {
-  checkDirsExistPromise,
-  checkFilesExistPromise,
-} from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { getDirProperties } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -43,6 +39,7 @@ interface Props {
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
@@ -80,12 +77,12 @@ function MoveCopyFilesDialog(props: Props) {
     if (
       selectedDirs.length > 0 &&
       AppConfig.isElectron &&
-      !PlatformIO.haveObjectStoreSupport() &&
-      !PlatformIO.haveWebDavSupport()
+      !currentLocation.haveObjectStoreSupport() &&
+      !currentLocation.haveWebDavSupport()
     ) {
       const promises = selectedDirs.map((dirPath) => {
         try {
-          return PlatformIO.getDirProperties(dirPath).then((prop) => {
+          return getDirProperties(dirPath).then((prop) => {
             dirProp.current[dirPath] = prop;
             return true;
           });
@@ -126,14 +123,14 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopyMove(copy = true) {
     if (selectedFiles.length > 0) {
-      checkFilesExistPromise(selectedFiles, targetPath).then((exist) =>
-        handleEntryExist(copy, exist),
-      );
+      currentLocation
+        .checkFilesExistPromise(selectedFiles, targetPath)
+        .then((exist) => handleEntryExist(copy, exist));
     }
     if (selectedDirs.length > 0) {
-      checkDirsExistPromise(selectedDirs, targetPath).then((exist) =>
-        handleEntryExist(copy, exist),
-      );
+      currentLocation
+        .checkDirsExistPromise(selectedDirs, targetPath)
+        .then((exist) => handleEntryExist(copy, exist));
     }
   }
 
@@ -177,17 +174,6 @@ function MoveCopyFilesDialog(props: Props) {
     }
     onClose(true);
   }
-
-  /*function selectDirectory() {
-    PlatformIO.selectDirectoryDialog()
-      .then(selectedPaths => {
-        setTargetPath(selectedPaths[0]);
-        return true;
-      })
-      .catch(err => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
-  }*/
 
   function formatFileExist(entries) {
     if (entries !== undefined) {

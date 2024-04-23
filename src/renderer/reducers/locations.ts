@@ -172,7 +172,7 @@ export const actions = {
 
 // Selectors
 export const getLocations = (state: any): Array<CommonLocation> =>
-  state.locations;
+  state.locations.map((l) => new CommonLocation(l));
 export const getLocation = (
   state: any,
   locationId: string,

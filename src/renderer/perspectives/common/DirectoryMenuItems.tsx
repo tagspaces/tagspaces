@@ -6,7 +6,6 @@ import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
@@ -29,7 +28,6 @@ import {
 } from '-/components/CommonIcons';
 import { getKeyBindingObject } from '-/reducers/settings';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 
 export function getDirectoryMenuItems(
@@ -179,10 +177,11 @@ export function getDirectoryMenuItems(
   }
 
   if (
+    currentLocation &&
     selectedEntriesLength < 2 &&
     !(
-      PlatformIO.haveObjectStoreSupport() ||
-      PlatformIO.haveWebDavSupport() ||
+      currentLocation.haveObjectStoreSupport() ||
+      currentLocation.haveWebDavSupport() ||
       AppConfig.isWeb
     ) &&
     showInFileManager

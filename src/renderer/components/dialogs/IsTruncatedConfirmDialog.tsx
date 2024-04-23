@@ -31,7 +31,6 @@ import AppConfig from '-/AppConfig';
 import Typography from '@mui/material/Typography';
 import InfoIcon from '-/components/InfoIcon';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -71,7 +70,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       );
       onClose();
       if (currentLocation.type === locationType.TYPE_CLOUD) {
-        openDirectory(currentDirectoryPath, currentLocation.uuid);
+        openDirectory(currentDirectoryPath);
       }
     }
   }

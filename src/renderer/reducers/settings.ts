@@ -19,7 +19,6 @@
 import semver from 'semver';
 import AppConfig from '-/AppConfig';
 import defaultSettings from './settings-default';
-import PlatformIO from '-/services/platform-facade';
 import Links from 'assets/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
@@ -30,6 +29,7 @@ import {
   getDefaultEditor,
   getDefaultViewer,
   mergeByProp,
+  setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
 
@@ -315,11 +315,11 @@ export default (state: any = defaultSettings, action: any) => {
       };
     }
     case types.SET_ZOOM_RESET: {
-      PlatformIO.setZoomFactorElectron(1);
+      setZoomFactorElectron(1);
       return { ...state, zoomFactor: 1 };
     }
     case types.SET_ZOOM_RESTORE: {
-      PlatformIO.setZoomFactorElectron(state.zoomFactor);
+      setZoomFactorElectron(state.zoomFactor);
       return state;
     }
     case types.SET_ZOOM_IN: {
@@ -329,7 +329,7 @@ export default (state: any = defaultSettings, action: any) => {
       const threshold = zoomLevel + correctedOffset;
       if (zoomLevel.toPrecision(2) <= threshold) {
         zoomLevel += offSet;
-        PlatformIO.setZoomFactorElectron(zoomLevel);
+        setZoomFactorElectron(zoomLevel);
       }
       return { ...state, zoomFactor: zoomLevel };
     }
@@ -338,7 +338,7 @@ export default (state: any = defaultSettings, action: any) => {
       const offSet = 0.1;
       if (zoomLevel.toPrecision(2) > offSet * 4) {
         zoomLevel -= offSet;
-        PlatformIO.setZoomFactorElectron(zoomLevel);
+        setZoomFactorElectron(zoomLevel);
       }
       return { ...state, zoomFactor: zoomLevel };
     }

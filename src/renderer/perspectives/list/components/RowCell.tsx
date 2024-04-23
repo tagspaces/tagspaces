@@ -47,9 +47,7 @@ import {
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
 import { defaultSettings } from '../index';
 import { useTranslation } from 'react-i18next';
@@ -135,7 +133,7 @@ function RowCell(props: Props) {
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
   const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
 
@@ -159,7 +157,7 @@ function RowCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    PlatformIO.getDirSeparator(),
+    currentLocation.getDirSeparator(),
   );
 
   let description;
@@ -188,7 +186,7 @@ function RowCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
   }
 
@@ -465,8 +463,8 @@ function RowCell(props: Props) {
                 fsEntry.meta?.thumbPath +
                 (fsEntry.meta &&
                 fsEntry.meta.thumbPath &&
-                !PlatformIO.haveObjectStoreSupport() &&
-                !PlatformIO.haveWebDavSupport()
+                !currentLocation.haveObjectStoreSupport() &&
+                !currentLocation.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.meta?.thumbPath) +
                     fsEntry.meta.lastUpdated
                   : '')

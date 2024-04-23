@@ -20,8 +20,8 @@ import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { extractTagsAsObjects } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '-/services/platform-facade';
-import { getAllPropertiesPromise } from '-/services/utils-io';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type EditedEntryContextData = {
   actions: TS.EditAction[];
@@ -49,6 +49,8 @@ export const EditedEntryContextProvider = ({
   children,
 }: EditedEntryContextProviderProps) => {
   const actions = useRef<TS.EditAction[]>(undefined);
+  const { getAllPropertiesPromise } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -115,7 +117,7 @@ export const EditedEntryContextProvider = ({
       entry.tags = extractTagsAsObjects(
         entry.name,
         AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
     }
     const currentAction: TS.EditAction = {

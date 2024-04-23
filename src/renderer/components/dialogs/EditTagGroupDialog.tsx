@@ -39,6 +39,7 @@ import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -52,6 +53,7 @@ function EditTagGroupDialog(props: Props) {
   const { selectedTagGroupEntry, open, onClose } = props;
 
   const { updateTagGroup } = useTaggingActionsContext();
+  const { removeLocationTagGroup } = useTagGroupsLocationContext();
   const { t } = useTranslation();
   const locations: Array<CommonLocation> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
@@ -105,10 +107,7 @@ function EditTagGroupDialog(props: Props) {
           (l) => l.uuid === selectedTagGroupEntry.locationId,
         );
         if (location) {
-          Pro.MetaOperations.removeTagGroup(
-            location.path,
-            selectedTagGroupEntry.uuid,
-          );
+          removeLocationTagGroup(location.path, selectedTagGroupEntry.uuid);
         }
       }
       updateTagGroup({

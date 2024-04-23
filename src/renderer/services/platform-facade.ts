@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+/*
 
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 import AppConfig from '-/AppConfig';
@@ -130,13 +131,13 @@ export default class PlatformFacade {
   static quitApp = (): void => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('quitApp');
-    } /*else {
+    } /!*else {
       platformQuitApp();
-    }*/
+    }*!/
   };
 
-  /*static watchDirectory = (dirPath: string, listener): void =>
-    platformWatchDirectory(dirPath, listener);*/
+  /!*static watchDirectory = (dirPath: string, listener): void =>
+    platformWatchDirectory(dirPath, listener);*!/
 
   static focusWindow = (): void => {
     if (AppConfig.isElectron) {
@@ -155,12 +156,12 @@ export default class PlatformFacade {
     }
   };
 
-  /**
+  /!**
    * ObjectStore and webDav only
    * Function to generate or retrieve cached URL with expiration date
    * @param path
    * @param expirationInSeconds
-   */
+   *!/
   static getURLforPath = (
     path: string,
     expirationInSeconds: number = 900,
@@ -196,9 +197,9 @@ export default class PlatformFacade {
     return url;
   };
 
-  /**
+  /!**
    * needs to run in init this function always return false first time
-   */
+   *!/
   static isWorkerAvailable = (): Promise<boolean> => {
     if (
       AppConfig.isElectron &&
@@ -236,9 +237,9 @@ export default class PlatformFacade {
     }
   };
 
-  /*static tiffJs = () => {
+  /!*static tiffJs = () => {
     return platformTiffJs();
-  };*/
+  };*!/
 
   static createDirectoryIndexInWorker = (
     directoryPath: string,
@@ -284,13 +285,13 @@ export default class PlatformFacade {
     return Promise.reject(new Error('createThumbnailsInWorker not Electron!'));
   };
 
-  /**
+  /!**
    * Promise === undefined on error
    * @param path
    * @param mode = ['extractTextContent', 'extractThumbPath']
    * @param ignorePatterns
    * @param resultsLimit
-   */
+   *!/
   static listDirectoryPromise = (
     path: string,
     mode = ['extractThumbPath'],
@@ -447,10 +448,10 @@ export default class PlatformFacade {
     return Promise.reject(new Error('createDirectoryPromise: not implemented'));
   };
 
-  /**
+  /!**
    * @param sourceFilePath
    * @param targetFilePath - if exist overwrite it
-   */
+   *!/
   static copyFilePromiseOverwrite = (
     sourceFilePath: string,
     targetFilePath: string,
@@ -860,10 +861,10 @@ export default class PlatformFacade {
     return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
   };
 
-  /**
+  /!**
    * cordova only
    * @param files
-   */
+   *!/
   static shareFiles = (files: Array<string>): void => {
     if (AppConfig.isCordova) {
       cordovaIO.shareFiles(files);
@@ -872,9 +873,9 @@ export default class PlatformFacade {
     }
   };
 
-  /**
+  /!**
    *  Load extensions is supported only on Electron
-   */
+   *!/
   static loadExtensions() {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('load-extensions');
@@ -921,3 +922,4 @@ export default class PlatformFacade {
     }
   }
 }
+*/

@@ -25,7 +25,6 @@ import {
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import PlatformIO from '-/services/platform-facade';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
@@ -43,6 +42,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getAllTags } from '-/services/utils-io';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -74,8 +74,8 @@ function EntryContainerTitle(props: Props) {
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, sharingLink, sharingParentFolderLink } =
-    useOpenedEntryContext();
+  const { openedEntry, sharingLink } = useOpenedEntryContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -105,7 +105,7 @@ function EntryContainerTitle(props: Props) {
     ? extractTitle(
         openedEntry.path,
         !openedEntry.isFile,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       )
     : '';
 
@@ -114,12 +114,12 @@ function EntryContainerTitle(props: Props) {
     if (openedEntry.isFile) {
       fileName = extractFileName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
     } else {
       fileName = extractDirectoryName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
     }
   }
@@ -189,7 +189,7 @@ function EntryContainerTitle(props: Props) {
               //'.' +
               extractFileExtension(
                 openedEntry.path,
-                PlatformIO.getDirSeparator(),
+                currentLocation.getDirSeparator(),
               )
             }
             <MoreMenuIcon style={{ fontSize: 20 }} />

@@ -68,13 +68,11 @@ function TagLibrary(props: Props) {
     removeTagGroup,
     deleteTag,
     changeTagOrder,
-    importTagGroups,
     moveTag,
     moveTagGroup,
   } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
-    useCurrentLocationContext();
+  const { readOnlyMode } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
@@ -321,10 +319,7 @@ function TagLibrary(props: Props) {
               (l) => l.uuid === entry.locationId,
             );
             if (location) {
-              switchLocationTypeByID(location.uuid).then(() => {
-                createTagGroup(entry, location);
-                switchCurrentLocationType();
-              });
+              createTagGroup(entry, location);
             } else {
               createTagGroup(entry);
             }

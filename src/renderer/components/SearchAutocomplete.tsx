@@ -88,12 +88,8 @@ function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openEntry, openLink } = useOpenedEntryContext();
-  const {
-    currentLocation,
-    changeLocationByID,
-    switchLocationTypeByID,
-    openLocationById,
-  } = useCurrentLocationContext();
+  const { currentLocation, changeLocationByID, openLocationById } =
+    useCurrentLocationContext();
   const {
     currentDirectoryPath,
     exitSearchMode,
@@ -880,10 +876,8 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
-              switchLocationTypeByID(option.id).then(() => {
-                changeLocationByID(option.id);
-                setSearchQuery(option.searchQuery);
-              });
+              changeLocationByID(option.id);
+              setSearchQuery(option.searchQuery);
             } else {
             }
           } else if (Pro && Pro.history) {

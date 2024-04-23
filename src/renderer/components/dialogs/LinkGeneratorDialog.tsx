@@ -31,13 +31,13 @@ import InfoIcon from '-/components/InfoIcon';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import PlatformIO from '-/services/platform-facade';
 import Links from 'assets/links';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
+import { openUrl } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -49,12 +49,11 @@ interface Props {
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
   const { t } = useTranslation();
+  const { currentLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
   const linkValidityDuration = useRef<number>(60 * 15);
   const signedLink = useRef<string>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -63,14 +62,11 @@ function LinkGeneratorDialog(props: Props) {
   }, []);
 
   function setSignedLink() {
-    switchLocationTypeByID(props.locationId).then((currentLocationId) => {
-      signedLink.current = PlatformIO.generateURLforPath(
-        path,
-        linkValidityDuration.current,
-      );
-      forceUpdate();
-      return switchCurrentLocationType();
-    });
+    signedLink.current = currentLocation.generateURLforPath(
+      path,
+      linkValidityDuration.current,
+    );
+    forceUpdate();
   }
 
   return (
@@ -123,7 +119,7 @@ function LinkGeneratorDialog(props: Props) {
                     const entryTitle = extractTitle(
                       path,
                       true,
-                      PlatformIO.getDirSeparator(),
+                      currentLocation.getDirSeparator(),
                     );
                     const clipboardItem = generateClipboardLink(
                       signedLink.current,
@@ -178,7 +174,7 @@ function LinkGeneratorDialog(props: Props) {
           variant="text"
           data-tid="helpSearchButtonTID"
           onClick={() => {
-            PlatformIO.openUrl(Links.documentationLinks.sharing);
+            openUrl(Links.documentationLinks.sharing);
           }}
         >
           {t('help')}

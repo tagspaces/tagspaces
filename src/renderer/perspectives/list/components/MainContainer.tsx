@@ -31,7 +31,6 @@ import RowCell from '-/perspectives/list/components/RowCell';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
-import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
@@ -49,6 +48,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
 import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -60,6 +60,7 @@ function ListPerspective(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { showDirectories } = usePerspectiveSettingsContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useIOActionsContext();
   const dispatch: AppDispatch = useDispatch();
@@ -347,7 +348,9 @@ function ListPerspective(props: Props) {
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
         openShareFilesDialog={
-          PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
+          currentLocation.haveObjectStoreSupport()
+            ? openShareFilesDialog
+            : undefined
         }
       />
       <GlobalHotKeys
@@ -419,7 +422,7 @@ function ListPerspective(props: Props) {
           openRenameFileDialog={openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
           openShareFilesDialog={
-            PlatformIO.haveObjectStoreSupport()
+            currentLocation.haveObjectStoreSupport()
               ? openShareFilesDialog
               : undefined
           }

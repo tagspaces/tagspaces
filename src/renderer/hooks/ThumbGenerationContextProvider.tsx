@@ -29,7 +29,6 @@ import {
   getShowUnixHiddenEntries,
   getUseGenerateThumbnails,
 } from '-/reducers/settings';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
 import {
@@ -43,10 +42,13 @@ import {
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { base64ToBlob } from '-/utils/dom';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import {
+  createThumbnailsInWorker,
+  isWorkerAvailable,
+} from '-/services/utils-io';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -69,6 +71,7 @@ export const ThumbGenerationContextProvider = ({
     currentDirectoryPath,
     currentDirectoryEntries,
     updateCurrentDirEntries,
+    loadCurrentDirMeta,
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const { saveBinaryFilePromise } = usePlatformFacadeContext();
@@ -151,16 +154,13 @@ export const ThumbGenerationContextProvider = ({
     dirEntries: TS.FileSystemEntry[],
   ): Promise<boolean> {
     if (
-      //AppConfig.isWeb || // not in web mode
-      //PlatformIO.haveObjectStoreSupport() || // not in object store mode
-      //PlatformIO.haveWebDavSupport() || // not in webdav mode
       !genThumbnailsEnabled() // enabled in the settings
     ) {
       return Promise.resolve(false);
     }
 
     if (AppConfig.isElectron) {
-      return PlatformIO.isWorkerAvailable().then((isWorkerAvailable) =>
+      return isWorkerAvailable().then((isWorkerAvailable) =>
         generateThumbnails2(dirEntries, isWorkerAvailable),
       );
     }
@@ -171,7 +171,6 @@ export const ThumbGenerationContextProvider = ({
     dirEntries: TS.FileSystemEntry[],
     isWorkerAvailable,
   ): Promise<boolean> {
-    // const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
     dirEntries.map((entry) => {
@@ -203,7 +202,7 @@ export const ThumbGenerationContextProvider = ({
 
     if (workerEntries.length > 0) {
       setGenThumbs(true);
-      return PlatformIO.createThumbnailsInWorker(workerEntries)
+      return createThumbnailsInWorker(workerEntries)
         .then(() =>
           thumbnailMainGeneration(mainEntries).then(() => {
             setGenThumbs(false);
@@ -263,10 +262,12 @@ export const ThumbGenerationContextProvider = ({
   function getThumbnailURLPromise(
     filePath: string,
   ): Promise<{ filePath: string; tmbPath?: string }> {
-    return PlatformIO.getPropertiesPromise(filePath)
+    return currentLocation
+      .getPropertiesPromise(filePath)
       .then((origStats) => {
         const thumbFilePath = getThumbFileLocation(filePath);
-        return PlatformIO.getPropertiesPromise(thumbFilePath)
+        return currentLocation
+          .getPropertiesPromise(thumbFilePath)
           .then((stats) => {
             if (stats) {
               // Thumbnail exists
@@ -325,16 +326,16 @@ export const ThumbGenerationContextProvider = ({
   function getThumbFileLocation(filePath: string) {
     const containingFolder = extractContainingDirectoryPath(
       filePath,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
     const metaFolder = getMetaDirectoryPath(
       containingFolder,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
     return (
       metaFolder +
-      PlatformIO.getDirSeparator() +
-      extractFileName(filePath, PlatformIO.getDirSeparator()) +
+      currentLocation.getDirSeparator() +
+      extractFileName(filePath, currentLocation.getDirSeparator()) +
       AppConfig.thumbFileExt
     );
   }
@@ -347,20 +348,29 @@ export const ThumbGenerationContextProvider = ({
   ): Promise<string | undefined> {
     const metaDirectory = extractContainingDirectoryPath(
       thumbFilePath,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
     const fileDirectory = isFile
-      ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
+      ? extractContainingDirectoryPath(
+          filePath,
+          currentLocation.getDirSeparator(),
+        )
       : filePath;
     const normalizedFileDirectory = normalizePath(fileDirectory);
     if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
       return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
     }
-    return PlatformIO.checkDirExist(metaDirectory).then((exist) => {
+    return currentLocation.checkDirExist(metaDirectory).then((exist) => {
       if (!exist) {
-        return PlatformIO.createDirectoryPromise(metaDirectory).then(() => {
-          return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
-        });
+        return currentLocation
+          .createDirectoryPromise(metaDirectory)
+          .then(() => {
+            return createThumbnailSavePromise(
+              filePath,
+              fileSize,
+              thumbFilePath,
+            );
+          });
       } else {
         return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
       }
@@ -372,7 +382,13 @@ export const ThumbGenerationContextProvider = ({
     fileSize: number,
     thumbFilePath: string,
   ): Promise<string | undefined> {
-    return generateThumbnailPromise(filePath, fileSize)
+    return generateThumbnailPromise(
+      filePath,
+      fileSize,
+      currentLocation.loadTextFilePromise,
+      currentLocation.getFileContentPromise,
+      currentLocation.getDirSeparator(),
+    )
       .then((dataURL) => {
         if (dataURL && dataURL.length) {
           return saveThumbnailPromise(thumbFilePath, dataURL)

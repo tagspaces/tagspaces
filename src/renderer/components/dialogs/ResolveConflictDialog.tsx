@@ -31,7 +31,6 @@ import {
   extractFileExtension,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformFacade from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
@@ -115,7 +114,7 @@ function ResolveConflictDialog(props: Props) {
                 props
                   .saveAs(
                     extractContainingDirectoryPath(openedEntry.path) +
-                      PlatformFacade.getDirSeparator() +
+                      '/' +
                       copyFileName.current,
                   )
                   .then(() => {

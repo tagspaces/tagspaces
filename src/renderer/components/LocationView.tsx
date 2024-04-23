@@ -30,7 +30,6 @@ import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
-import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import DirectoryTreeView, {
@@ -91,7 +90,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      openDirectory(currentLocationPath, location.uuid); //PlatformIO.getLocationPath(location));
+      openDirectory(currentLocationPath);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       // setSelectedEntries([]);
@@ -156,22 +155,14 @@ function LocationView(props: Props) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
-          // TODO Webdav
-          PlatformIO.enableObjectStoreSupport(targetLocation)
-            .then(() => {
-              dispatch(AppActions.resetProgress());
-              dispatch(AppActions.toggleUploadDialog());
-              return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
-                (error) => {
-                  console.log('uploadFiles', error);
-                },
-              );
-            })
-            .catch((error) => {
-              console.log('enableObjectStoreSupport', error);
-            });
+          dispatch(AppActions.resetProgress());
+          dispatch(AppActions.toggleUploadDialog());
+          return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
+            (error) => {
+              console.log('uploadFiles', error);
+            },
+          );
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
           moveFiles(arrPath, targetPath);
         }
         setSelectedEntries([]);
@@ -179,7 +170,7 @@ function LocationView(props: Props) {
     }
   };
 
-  let locationNameTitle = currentLocationPath; //PlatformIO.getLocationPath(location);
+  let locationNameTitle = currentLocationPath;
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -271,7 +262,7 @@ function LocationView(props: Props) {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            targetPath={currentLocationPath} //PlatformIO.getLocationPath(location)}
+            targetPath={currentLocationPath}
             targetLocation={location}
           >
             {LocationTitle}

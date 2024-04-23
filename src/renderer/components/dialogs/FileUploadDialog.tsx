@@ -29,7 +29,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { LinearProgress, Grid, Tooltip } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
-import PlatformIO from '-/services/platform-facade';
 import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
@@ -42,6 +41,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
+import { uploadAbort } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -93,14 +93,7 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      return PlatformIO.uploadAbort();
-      /*progress.map((fileProgress) => {
-        const { abort } = fileProgress;
-        if (abort !== undefined && typeof abort === 'function') {
-          abort();
-        }
-        return true;
-      });*/
+      return uploadAbort();
     }
   };
 
@@ -214,7 +207,7 @@ function FileUploadDialog(props: Props) {
                       ? filePath
                       : extractFileName(
                           targetPath.current,
-                          PlatformIO.getDirSeparator(),
+                          currentLocation.getDirSeparator(),
                         )}
                     {percentage === -1 && (
                       <Tooltip

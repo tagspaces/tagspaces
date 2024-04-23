@@ -29,15 +29,17 @@ import {
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
-import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import FileUploadContainer, {
   FileUploadContainerRef,
 } from '-/components/FileUploadContainer';
-import { TS } from '-/tagspaces.namespace';
-import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
+import {
+  createNewInstance,
+  getRelativeEntryPath,
+  openDirectoryMessage,
+  readMacOSTags,
+} from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
-import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
@@ -137,7 +139,7 @@ function DirectoryMenu(props: Props) {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
       const folderName = extractDirectoryName(
         selectedEntries[0].name,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
       return {
         url: generateSharingLink(locationID, undefined, relativePath),
@@ -165,7 +167,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function openDir() {
-    return openDirectory(directoryPath, currentLocation.uuid);
+    return openDirectory(directoryPath);
   }
 
   function showProperties() {
@@ -195,7 +197,7 @@ function DirectoryMenu(props: Props) {
   function showDeleteDirectoryDialog() {
     if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
       setSelectedEntries([
-        toFsEntry(directoryPath, false, currentLocation.uuid),
+        currentLocation.toFsEntry(directoryPath, false, currentLocation.uuid),
       ]);
     }
     toggleDeleteMultipleEntriesDialog();
@@ -210,14 +212,14 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    PlatformIO.openDirectory(directoryPath);
+    openDirectoryMessage(directoryPath);
   }
 
   function openInNewWindow() {
     generateFolderLink().then((sharingLink) => {
       const newInstanceLink =
         window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
+      createNewInstance(newInstanceLink);
     });
   }
 
@@ -237,7 +239,7 @@ Do you want to continue?`)
       toggleProgressDialog();
 
       const entryCallback = (entry) => {
-        PlatformFacade.readMacOSTags(entry.path)
+        readMacOSTags(entry.path)
           .then((tags) => {
             if (tags.length > 0) {
               addTags([entry.path], tags);
@@ -248,7 +250,11 @@ Do you want to continue?`)
             console.warn('Error creating tags: ' + err);
           });
       };
-      Pro.MacTagsImport.importTags(directoryPath, entryCallback)
+      Pro.MacTagsImport.importTags(
+        directoryPath,
+        currentLocation.listDirectoryPromise,
+        entryCallback,
+      )
         .then(() => {
           toggleProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
@@ -297,7 +303,9 @@ Do you want to continue?`)
       AppConfig.endTagContainer +
       '.jpg';
     const newFilePath =
-      normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
+      normalizePath(directoryPath) +
+      currentLocation.getDirSeparator() +
+      fileName;
 
     renameFilePromise(filePath, newFilePath, undefined, false)
       .then((newEntry) => {
@@ -347,21 +355,21 @@ Do you want to continue?`)
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
       directoryPath,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
     const parentDirectoryName = extractDirectoryName(
       parentDirectoryPath,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
 
     copyFilePromise(
       getThumbFileLocationForDirectory(
         directoryPath,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       ),
       getThumbFileLocationForDirectory(
         parentDirectoryPath,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       ),
       t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )

@@ -36,16 +36,22 @@ import {
   getExtensions,
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import {
+  getUserDataDir,
+  loadExtensions,
+  removeExtension,
+  unZip,
+} from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
-  const { switchCurrentLocationType } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] =
@@ -61,33 +67,30 @@ function SettingsExtensions() {
 
   const handleFileInputChange = (selection: any) => {
     const files: File[] = Array.from(selection.currentTarget.files);
-    PlatformIO.getUserDataDir().then((dataDir) => {
+    getUserDataDir().then((dataDir) => {
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
-      PlatformIO.disableObjectStoreSupport();
-      PlatformIO.disableWebdavSupport();
-      const destinationPath =
-        dataDir + PlatformIO.getDirSeparator() + 'tsplugins';
+      const destinationPath = dataDir + AppConfig.dirSeparator + 'tsplugins';
       uploadFilesAPI(files, destinationPath, onUploadProgress, false)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const targetPath =
             destinationPath +
-            PlatformIO.getDirSeparator() +
+            AppConfig.dirSeparator +
             '@tagspaces' +
-            PlatformIO.getDirSeparator() +
+            AppConfig.dirSeparator +
             'extensions';
           const promises = fsEntries.map((fsEntry) =>
-            PlatformIO.unZip(fsEntry.path, targetPath),
+            unZip(fsEntry.path, targetPath),
           );
           return Promise.all(promises).then((paths) => {
-            PlatformIO.loadExtensions();
-            paths.forEach((path) => PlatformIO.deleteFilePromise(path));
-            return switchCurrentLocationType();
+            loadExtensions();
+            paths.forEach((path) => currentLocation.deleteFilePromise(path));
+            return true;
           });
         })
         .catch((error) => {
           console.log('uploadFiles', error);
-          return switchCurrentLocationType();
+          return true;
         });
     });
   };
@@ -157,7 +160,7 @@ function SettingsExtensions() {
                               true,
                             ),
                           );
-                          PlatformIO.loadExtensions();
+                          loadExtensions();
                         } else {
                           dispatch(
                             AppActions.updateExtension({
@@ -213,7 +216,7 @@ function SettingsExtensions() {
                     removeExtDialogOpened.extensionId,
                   ),
                 );
-                PlatformIO.removeExtension(removeExtDialogOpened.extensionId);
+                removeExtension(removeExtDialogOpened.extensionId);
               }
             }}
             cancelDialogTID="cancelRemoveExtDialogTID"

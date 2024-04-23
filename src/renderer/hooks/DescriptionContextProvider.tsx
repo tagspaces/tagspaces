@@ -102,10 +102,10 @@ export const DescriptionContextProvider = ({
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    if (!Pro.MetaOperations) {
+    /*if (!Pro.MetaOperations) {
       showNotification(t('Saving description not supported'));
       return;
-    }
+    }*/
     if (lastOpenedFile.current !== undefined) {
       // to reload description
       lastOpenedFile.current = { ...lastOpenedFile.current };

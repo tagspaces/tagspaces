@@ -20,12 +20,8 @@ import {
   FolderOutlineIcon as FolderIcon,
 } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
-import i18n from '-/services/i18n';
 import Typography from '@mui/material/Typography';
 import { CommonLocation } from '-/utils/CommonLocation';
 
@@ -114,11 +110,12 @@ function DirectoryListView(props: Props) {
 
   function listDirectory(directoryPath) {
     chosenDirectory.current = directoryPath;
-    PlatformIO.listDirectoryPromise(
-      directoryPath,
-      [], // mode,
-      [],
-    )
+    currentLocation
+      .listDirectoryPromise(
+        directoryPath,
+        [], // mode,
+        [],
+      )
       .then((results) => {
         if (results !== undefined) {
           setDirectoryContent(
@@ -176,7 +173,7 @@ function DirectoryListView(props: Props) {
         onClick={() => {
           if (chosenDirectory.current) {
             let currentPath = chosenDirectory.current;
-            if (currentPath.endsWith(PlatformIO.getDirSeparator())) {
+            if (currentPath.endsWith(currentLocation.getDirSeparator())) {
               currentPath = currentPath.slice(0, -1);
             }
             const parentDir = extractContainingDirectoryPath(currentPath);

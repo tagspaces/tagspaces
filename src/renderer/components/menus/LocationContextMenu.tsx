@@ -36,11 +36,11 @@ import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
+import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -123,7 +123,7 @@ function LocationContextMenu(props: Props) {
   const showInFileManagerInt = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
     getLocationPath(selectedLocation).then((path) =>
-      PlatformIO.openDirectory(path),
+      openDirectoryMessage(path),
     );
   };
 
@@ -138,7 +138,7 @@ function LocationContextMenu(props: Props) {
   const openInNewWindow = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
     const sharingLink = generateSharingLink(selectedLocation.uuid);
-    PlatformIO.createNewInstance(
+    createNewInstance(
       window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1],
     );
   };

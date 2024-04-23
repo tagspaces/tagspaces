@@ -23,7 +23,6 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Tooltip from '-/components/Tooltip';
 import Chip from '@mui/material/Chip';
 import ExpandMoreIcon from '@mui/icons-material/MoreVert';
-import PlatformIO from '../services/platform-facade';
 import {
   normalizePath,
   extractShortDirectoryName,
@@ -115,7 +114,7 @@ function PathBreadcrumbs(props: Props) {
 
   if (currentDirectoryPath) {
     // Make the path unix like ending always with /
-    const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
+    const addSlash = currentLocation.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
       addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
@@ -131,9 +130,9 @@ function PathBreadcrumbs(props: Props) {
     ) {
       pathParts.push(
         normalizedCurrentPath
-          .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
+          .substring(currentLocation.haveObjectStoreSupport() ? 2 : 1)
           .split('/')
-          .join(PlatformIO.getDirSeparator()),
+          .join(currentLocation.getDirSeparator()),
       ); // TODO: optimization needed
       normalizedCurrentPath = normalizedCurrentPath.substring(
         0,
@@ -163,7 +162,7 @@ function PathBreadcrumbs(props: Props) {
       breadcrumbs = pathParts.map((pathPart, index) => {
         const folderName = extractShortDirectoryName(
           pathPart,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
         );
         return (
           <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>
@@ -172,7 +171,7 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() => openDirectory(pathPart, currentLocation.uuid)}
+              onClick={() => openDirectory(pathPart)}
             />
           </Tooltip>
         );

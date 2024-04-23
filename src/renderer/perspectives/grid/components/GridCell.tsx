@@ -48,15 +48,12 @@ import {
   findBackgroundColorForFolder,
   findColorForEntry,
   getDescriptionPreview,
-  getThumbPath,
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { dataTidFormat } from '-/services/test';
 import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
 import { defaultSettings } from '../index';
@@ -136,7 +133,7 @@ function GridCell(props: Props) {
   const { metaActions } = useEditedEntryMetaContext();
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   const locations: Array<CommonLocation> = useSelector(getLocations);
@@ -207,7 +204,7 @@ function GridCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    PlatformIO.getDirSeparator(),
+    currentLocation.getDirSeparator(),
   );
 
   let description;
@@ -231,7 +228,7 @@ function GridCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
   }
 
@@ -442,7 +439,7 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={getThumbPath(
+            src={currentLocation.getThumbPath(
               fsEntry.meta.thumbPath,
               fsEntry.meta?.lastUpdated,
               isLocal,

@@ -21,7 +21,6 @@ import Grid from '@mui/material/Grid';
 import React from 'react';
 import Button from '@mui/material/Button';
 import ListItem from '@mui/material/ListItem';
-import PlatformIO from '-/services/platform-facade';
 import { Tooltip } from '@mui/material';
 import { Pro } from '-/pro';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
@@ -52,13 +51,16 @@ function RenderHistory(props: Props) {
 
   const openLinkDispatch = (link) => openLink(link, { fullWidth: false });
 
+  if (!currentLocation) {
+    return null;
+  }
   return (
     <>
       {items &&
         items.slice(0, maxItems || items.length).map((item) => {
-          const itemName = item.path.endsWith(PlatformIO.getDirSeparator())
-            ? extractDirectoryName(item.path, PlatformIO.getDirSeparator())
-            : extractFileName(item.path, PlatformIO.getDirSeparator());
+          const itemName = item.path.endsWith(currentLocation.getDirSeparator())
+            ? extractDirectoryName(item.path, currentLocation.getDirSeparator())
+            : extractFileName(item.path, currentLocation.getDirSeparator());
           return (
             <ListItem
               dense

@@ -23,9 +23,7 @@ import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
-import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
-import { TS } from '-/tagspaces.namespace';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -48,7 +46,8 @@ const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
-    const { changeLocation, getLocationPath } = useCurrentLocationContext();
+    const { currentLocation, changeLocation, getLocationPath } =
+      useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
@@ -60,20 +59,7 @@ const DirectoryTreeView = forwardRef(
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
-        } else if (location.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(location)
-            .then(() => {
-              loadSubDirectories(location);
-            })
-            .catch((error) => {
-              console.log('enableObjectStoreSupport', error);
-            });
-        } else if (location.type === locationType.TYPE_WEBDAV) {
-          PlatformIO.enableWebdavSupport(location);
-          loadSubDirectories(location);
-        } else if (location.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          PlatformIO.disableWebdavSupport();
+        } else {
           loadSubDirectories(location);
         }
       },
@@ -141,22 +127,9 @@ const DirectoryTreeView = forwardRef(
     };
 
     const onRowClick = (subDir) => {
-      if (subDir.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(subDir)
-          .then(() => {
-            loadSubDirectories(subDir);
-            changeLocation(subDir);
-            return openDirectory(subDir.path, subDir.uuid);
-          })
-          .catch((error) => {
-            console.log('enableObjectStoreSupport', error);
-          });
-      } else if (subDir.type === locationType.TYPE_LOCAL) {
-        PlatformIO.disableObjectStoreSupport();
-        loadSubDirectories(subDir);
-        changeLocation(subDir);
-        openDirectory(subDir.path, subDir.uuid);
-      }
+      loadSubDirectories(subDir);
+      changeLocation(subDir);
+      openDirectory(subDir.path);
     };
 
     const columns = [
@@ -234,7 +207,8 @@ const DirectoryTreeView = forwardRef(
     const getDirectoriesTree = (subFolder: SubFolder) =>
       // const { settings } = getState();
       new Promise((resolve, reject) => {
-        PlatformIO.listDirectoryPromise(subFolder.path, [])
+        currentLocation
+          .listDirectoryPromise(subFolder.path, [])
           .then((dirEntries) => {
             if (dirEntries !== undefined) {
               // console.debug('listDirectoryPromise resolved:' + dirEntries.length);

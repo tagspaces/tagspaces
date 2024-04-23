@@ -24,7 +24,6 @@ import Switch from '@mui/material/Switch';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { isStr } from '@tagspaces/tagspaces-common/misc';
-import PlatformIO from '-/services/platform-facade';
 import {
   actions as SettingsActions,
   getKeyBindings,
@@ -34,6 +33,7 @@ import DefaultSettings from '-/reducers/settings-default';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
+import { setGlobalShortcuts } from '-/services/utils-io';
 
 const PREFIX = 'SettingsKeyBindings';
 
@@ -60,7 +60,7 @@ function SettingsKeyBindings() {
 
   const setGlobalKeyBinding = (value) => {
     dispatch(SettingsActions.setGlobalKeyBinding(value));
-    PlatformIO.setGlobalShortcuts(value);
+    setGlobalShortcuts(value);
   };
 
   return (

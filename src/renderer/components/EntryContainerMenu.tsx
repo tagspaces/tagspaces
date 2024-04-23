@@ -4,7 +4,6 @@ import {
   extractFileName,
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import {
   ListItemIcon,
   ListItemText,
@@ -40,6 +39,11 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import {
+  createNewInstance,
+  openDirectoryMessage,
+  openFileMessage,
+} from '-/services/utils-io';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -67,7 +71,7 @@ function EntryContainerMenu(props: Props) {
     sharingParentFolderLink,
   } = useOpenedEntryContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { deleteFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
@@ -114,9 +118,12 @@ function EntryContainerMenu(props: Props) {
   function downloadFile() {
     const entryName = `${baseName(
       openedEntry.path,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     )}`;
-    const fileName = extractFileName(entryName, PlatformIO.getDirSeparator());
+    const fileName = extractFileName(
+      entryName,
+      currentLocation.getDirSeparator(),
+    );
 
     if (AppConfig.isCordova) {
       if (openedEntry.url) {
@@ -166,22 +173,21 @@ function EntryContainerMenu(props: Props) {
   };
 
   const openInNewWindow = () => {
-    PlatformIO.createNewInstance(window.location.href);
+    createNewInstance(window.location.href);
     handleClose();
   };
 
   const shareFile = (filePath: string) => {
-    PlatformIO.shareFiles([filePath]);
+    currentLocation.shareFiles([filePath]);
     handleClose();
   };
 
   const openNatively = () => {
     if (openedEntry.path) {
       if (openedEntry.isFile) {
-        PlatformIO.openFile(openedEntry.path, warningOpeningFilesExternally);
-        //dispatch(AppActions.openFileNatively(openedEntry.path));
+        openFileMessage(openedEntry.path, warningOpeningFilesExternally);
       } else {
-        PlatformIO.openDirectory(openedEntry.path);
+        openDirectoryMessage(openedEntry.path);
       }
     }
     handleClose();
@@ -321,8 +327,8 @@ function EntryContainerMenu(props: Props) {
     }
     if (
       !(
-        PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport() ||
+        currentLocation.haveObjectStoreSupport() ||
+        currentLocation.haveWebDavSupport() ||
         AppConfig.isWeb
       )
     ) {
@@ -390,8 +396,8 @@ function EntryContainerMenu(props: Props) {
     }
     if (
       !(
-        PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport() ||
+        currentLocation.haveObjectStoreSupport() ||
+        currentLocation.haveWebDavSupport() ||
         AppConfig.isWeb
       )
     ) {
@@ -467,7 +473,7 @@ function EntryContainerMenu(props: Props) {
   );
 
   const entryName = openedEntry.path
-    ? extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator())
+    ? extractDirectoryName(openedEntry.path, currentLocation.getDirSeparator())
     : '';
 
   return (

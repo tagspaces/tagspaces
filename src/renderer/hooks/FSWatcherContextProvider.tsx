@@ -18,7 +18,6 @@
 
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
@@ -27,10 +26,11 @@ import {
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { toFsEntry } from '-/services/utils-io';
 import { Changed } from '../../main/chokidarWatcher';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { TS } from '-/tagspaces.namespace';
+import { watchFolderMessage } from '-/services/utils-io';
+import { Pro } from '-/pro';
 
 type FSWatcherContextData = {
   ignored: string[];
@@ -89,10 +89,16 @@ export const FSWatcherContextProvider = ({
   }, [currentLocation, currentDirectoryPath]);
 
   function watchFolder(locationPath, depth) {
-    console.log('Start watching: ' + locationPath);
-    stopWatching();
-    watchingFolderPath.current = locationPath;
-    PlatformIO.watchFolder(locationPath, depth);
+    if (
+      Pro &&
+      !currentLocation.haveObjectStoreSupport() &&
+      !currentLocation.haveWebDavSupport()
+    ) {
+      console.log('Start watching: ' + locationPath);
+      stopWatching();
+      watchingFolderPath.current = locationPath;
+      watchFolderMessage(locationPath, depth);
+    }
   }
 
   function executeBatchActions() {
@@ -114,7 +120,7 @@ export const FSWatcherContextProvider = ({
         return;
       }
       // console.log(`ignored list:` + JSON.stringify(ignored.current));
-      const pathParts = path.split(PlatformIO.getDirSeparator());
+      const pathParts = path.split(currentLocation.getDirSeparator());
       for (let i = 0; i < ignored.current.length; i++) {
         if (
           path.startsWith(ignored.current[i]) ||
@@ -142,7 +148,11 @@ export const FSWatcherContextProvider = ({
           ) {
             actionsQueue.push({
               action: 'delete',
-              entry: toFsEntry(path, false, currentLocation.uuid),
+              entry: currentLocation.toFsEntry(
+                path,
+                false,
+                currentLocation.uuid,
+              ),
             });
             //reflectDeleteEntries(toFsEntry(path, false, currentLocation.uuid));
           }
@@ -151,7 +161,11 @@ export const FSWatcherContextProvider = ({
           if (!path.includes(AppConfig.metaFolder)) {
             actionsQueue.push({
               action: 'add',
-              entry: toFsEntry(path, true, currentLocation.uuid),
+              entry: currentLocation.toFsEntry(
+                path,
+                true,
+                currentLocation.uuid,
+              ),
               open: false,
             });
             // reflectAddEntry(toFsEntry(path, true, currentLocation.uuid));
@@ -161,7 +175,11 @@ export const FSWatcherContextProvider = ({
           if (!path.includes(AppConfig.metaFolder)) {
             actionsQueue.push({
               action: 'add',
-              entry: toFsEntry(path, false, currentLocation.uuid),
+              entry: currentLocation.toFsEntry(
+                path,
+                false,
+                currentLocation.uuid,
+              ),
               open: false,
             });
             //reflectAddEntry(toFsEntry(path, false, currentLocation.uuid));
@@ -177,7 +195,7 @@ export const FSWatcherContextProvider = ({
               // endsWith json
               const filePath = getFileLocationFromMetaFile(
                 path,
-                PlatformIO.getDirSeparator(),
+                currentLocation.getDirSeparator(),
               );
               reflectUpdateMeta(filePath);
             }
@@ -185,12 +203,12 @@ export const FSWatcherContextProvider = ({
               // endsWith tsm.json
               const directoryPath = getFileLocationFromMetaFile(
                 path,
-                PlatformIO.getDirSeparator(),
+                currentLocation.getDirSeparator(),
               );
               loadDirectoryContent(
                 extractContainingDirectoryPath(
                   directoryPath,
-                  PlatformIO.getDirSeparator(),
+                  currentLocation.getDirSeparator(),
                 ),
                 false,
                 true,
@@ -241,7 +259,7 @@ export const FSWatcherContextProvider = ({
     setTimeout(() => {
       for (let i = 0; i < ignored.current.length; i++) {
         const pathParts = ignored.current[i].split(
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
         );
         if (path.startsWith(ignored.current[i]) || pathParts.includes(path)) {
           ignored.current.splice(i, 1);

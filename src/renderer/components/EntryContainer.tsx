@@ -42,7 +42,6 @@ import {
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import {
   isDesktopMode,
@@ -66,7 +65,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
+import { getRelativeEntryPath } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -87,8 +86,7 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
-  const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath, currentLocationPath } =
     useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
@@ -326,53 +324,51 @@ function EntryContainer() {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        switchLocationTypeByID(openedEntry.locationId).then(() => {
-          PlatformIO.loadTextFilePromise(
+        currentLocation
+          .loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false,
           )
-            .then((content) => {
-              const UTF8_BOM = '\ufeff';
-              if (content.indexOf(UTF8_BOM) === 0) {
-                // eslint-disable-next-line no-param-reassign
-                content = content.substr(1);
-              }
-              let fileDirectory = extractContainingDirectoryPath(
-                textFilePath,
-                PlatformIO.getDirSeparator(),
+          .then((content) => {
+            const UTF8_BOM = '\ufeff';
+            if (content.indexOf(UTF8_BOM) === 0) {
+              // eslint-disable-next-line no-param-reassign
+              content = content.substr(1);
+            }
+            let fileDirectory = extractContainingDirectoryPath(
+              textFilePath,
+              currentLocation.getDirSeparator(),
+            );
+            if (AppConfig.isWeb) {
+              fileDirectory =
+                extractContainingDirectoryPath(
+                  // eslint-disable-next-line no-restricted-globals
+                  location.href,
+                  currentLocation.getDirSeparator(),
+                ) +
+                '/' +
+                fileDirectory;
+            }
+            if (
+              fileViewer &&
+              fileViewer.current &&
+              fileViewer.current.contentWindow &&
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent
+            ) {
+              // @ts-ignore call setContent from iframe
+              fileViewer.current.contentWindow.setContent(
+                content,
+                fileDirectory,
+                !openedEntry.editMode,
+                theme.palette.mode,
               );
-              if (AppConfig.isWeb) {
-                fileDirectory =
-                  extractContainingDirectoryPath(
-                    // eslint-disable-next-line no-restricted-globals
-                    location.href,
-                    PlatformIO.getDirSeparator(),
-                  ) +
-                  '/' +
-                  fileDirectory;
-              }
-              if (
-                fileViewer &&
-                fileViewer.current &&
-                fileViewer.current.contentWindow &&
-                // @ts-ignore
-                fileViewer.current.contentWindow.setContent
-              ) {
-                // @ts-ignore call setContent from iframe
-                fileViewer.current.contentWindow.setContent(
-                  content,
-                  fileDirectory,
-                  !openedEntry.editMode,
-                  theme.palette.mode,
-                );
-              }
-              return switchCurrentLocationType();
-            })
-            .catch((err) => {
-              console.warn('Error loading text content ' + err);
-              return switchCurrentLocationType();
-            });
-        });
+            }
+            return true;
+          })
+          .catch((err) => {
+            console.warn('Error loading text content ' + err);
+          });
         break;
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
@@ -396,9 +392,7 @@ function EntryContainer() {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        return switchLocationTypeByID(openedEntry.locationId).then(() =>
-          reloadOpenedFile().then(() => switchCurrentLocationType()),
-        );
+        reloadOpenedFile();
       }
     }
   };
@@ -441,7 +435,7 @@ function EntryContainer() {
         //check if file is changed
         if (fileChanged.current || force) {
           setSavingInProgress(true);
-          saveFile().then((success) => {
+          save(openedEntry).then((success) => {
             if (success) {
               fileChanged.current = false;
               // showNotification(
@@ -461,48 +455,32 @@ function EntryContainer() {
   };
 
   const override = (): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      PlatformIO.getPropertiesPromise(openedEntry.path).then(
-        (entryProp: TS.FileSystemEntry) =>
-          save({ ...openedEntry, lmdt: entryProp.lmdt }).then(() =>
-            switchCurrentLocationType(),
-          ),
-      ),
-    );
+    return currentLocation
+      .getPropertiesPromise(openedEntry.path)
+      .then((entryProp: TS.FileSystemEntry) =>
+        save({ ...openedEntry, lmdt: entryProp.lmdt }),
+      );
   };
 
   const saveAs = (newFilePath: string): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      copyFilePromise(openedEntry.path, newFilePath).then(() =>
-        PlatformIO.getPropertiesPromise(newFilePath).then(
-          (entryProp: TS.FileSystemEntry) =>
-            save({
-              ...openedEntry,
-              path: entryProp.path,
-              lmdt: entryProp.lmdt,
-            }).then(() => {
-              const openedEntryDir = extractContainingDirectoryPath(
-                entryProp.path,
-              );
-              if (currentDirectoryPath === openedEntryDir) {
-                openDirectory(openedEntryDir, openedEntry.locationId);
-                /*
-                  updateOpenedFile(openedEntry.path, {
-                    ...openedEntry,
-                    editMode: false,
-                    shouldReload: !openedEntry.shouldReload
-                  });*/
-              }
-              return switchCurrentLocationType();
-            }),
+    return copyFilePromise(openedEntry.path, newFilePath).then(() =>
+      currentLocation
+        .getPropertiesPromise(newFilePath)
+        .then((entryProp: TS.FileSystemEntry) =>
+          save({
+            ...openedEntry,
+            path: entryProp.path,
+            lmdt: entryProp.lmdt,
+          }).then(() => {
+            const openedEntryDir = extractContainingDirectoryPath(
+              entryProp.path,
+            );
+            if (currentDirectoryPath === openedEntryDir) {
+              openDirectory(openedEntryDir);
+            }
+            return true;
+          }),
         ),
-      ),
-    );
-  };
-
-  const saveFile = (): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      save(openedEntry).then(() => switchCurrentLocationType()),
     );
   };
 
@@ -514,7 +492,7 @@ function EntryContainer() {
       const targetPath = getBackupFileLocation(
         fileOpen.path,
         id,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
       try {
         await copyFilePromiseOverwrite(fileOpen.path, targetPath, false); // todo test what happened if remove await?
@@ -613,7 +591,7 @@ function EntryContainer() {
 
   const fileExtension =
     openedEntry &&
-    extractFileExtension(openedEntry.path, PlatformIO.getDirSeparator());
+    extractFileExtension(openedEntry.path, currentLocation.getDirSeparator());
   const isEditable =
     openedEntry &&
     openedEntry.isFile &&
@@ -621,7 +599,7 @@ function EntryContainer() {
 
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
-    if (Pro && Pro.MetaOperations) {
+    if (Pro) {
       setAutoSave(openedEntry, autoSave, openedEntry.locationId);
       /*switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
@@ -942,7 +920,7 @@ function EntryContainer() {
           selected={
             openedEntry
               ? [
-                  toFsEntry(
+                  currentLocation.toFsEntry(
                     openedEntry.path,
                     openedEntry.isFile,
                     openedEntry.locationId,

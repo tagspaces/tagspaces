@@ -39,15 +39,7 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
-import PlatformIO from '-/services/platform-facade';
-import {
-  generateFileName,
-  getAllPropertiesPromise,
-  loadDirMetaDataPromise,
-  loadFileMetaDataPromise,
-  loadMetaDataPromise,
-  parseNewTags,
-} from '-/services/utils-io';
+import { generateFileName, parseNewTags } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
@@ -164,7 +156,8 @@ export const TaggingActionsContextProvider = ({
     removeLocationTagGroup,
     mergeLocationTagGroup,
   } = useTagGroupsLocationContext();
-  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { currentDirectoryEntries, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
   const { renameFile, saveMetaDataPromise } = useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
@@ -224,6 +217,7 @@ export const TaggingActionsContextProvider = ({
     showNotification('Extracting content...', 'info', false);
     return Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
+      currentLocation.getFileContentPromise,
       options,
     ).then((extracted: { [filePath: string]: TS.Tag[] }) => {
       hideNotifications();
@@ -236,25 +230,26 @@ export const TaggingActionsContextProvider = ({
       const extractedTags: string[] = extractTags(
         path,
         tagDelimiter,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
       const uniqueTags = tags.filter(
         (tag) => !extractedTags.some((tagName) => tagName === tag),
       );
-      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const fileName = extractFileName(path, currentLocation.getDirSeparator());
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
 
       return (
         (containingDirectoryPath
-          ? containingDirectoryPath + PlatformIO.getDirSeparator()
+          ? containingDirectoryPath + currentLocation.getDirSeparator()
           : '') +
         generateFileName(
           fileName,
           [...extractedTags, ...uniqueTags],
           tagDelimiter,
+          currentLocation.getDirSeparator(),
           prefixTagContainer,
         )
       );
@@ -466,8 +461,8 @@ export const TaggingActionsContextProvider = ({
       let fsEntryMeta;
       try {
         fsEntryMeta = entry.isFile
-          ? await loadFileMetaDataPromise(entry.path)
-          : await loadDirMetaDataPromise(entry.path);
+          ? await currentLocation.loadFileMetaDataPromise(entry.path)
+          : await currentLocation.loadDirMetaDataPromise(entry.path);
       } catch (error) {
         console.log('No sidecar found ' + error);
       }
@@ -477,7 +472,11 @@ export const TaggingActionsContextProvider = ({
         if (fsEntryMeta) {
           const uniqueTags = getNonExistingTags(
             tags,
-            extractTags(entry.path, tagDelimiter, PlatformIO.getDirSeparator()),
+            extractTags(
+              entry.path,
+              tagDelimiter,
+              currentLocation.getDirSeparator(),
+            ),
             fsEntryMeta.tags,
           );
           if (uniqueTags.length > 0) {
@@ -531,7 +530,7 @@ export const TaggingActionsContextProvider = ({
         const extractedTags = extractTags(
           entry.path,
           tagDelimiter,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
         );
         const uniqueTags = getNonExistingTags(
           tags,
@@ -598,9 +597,9 @@ export const TaggingActionsContextProvider = ({
     tags: Array<TS.Tag>,
     reflect: boolean = true,
   ): Promise<string> {
-    return PlatformIO.getPropertiesPromise(path).then((entry) =>
-      addTagsToFsEntry(entry, tags, reflect),
-    );
+    return currentLocation
+      .getPropertiesPromise(path)
+      .then((entry) => addTagsToFsEntry(entry, tags, reflect));
   }
 
   /**
@@ -625,7 +624,7 @@ export const TaggingActionsContextProvider = ({
     ) {
       // Work around solution
       delete tag.functionality;
-      const entryProperties = await PlatformIO.getPropertiesPromise(path);
+      const entryProperties = await currentLocation.getPropertiesPromise(path);
       if (entryProperties.isFile && !persistTagsInSidecarFile) {
         tag.type = 'plain';
       }
@@ -638,15 +637,15 @@ export const TaggingActionsContextProvider = ({
     const extractedTags: string[] = extractTags(
       path,
       tagDelimiter,
-      PlatformIO.getDirSeparator(),
+      currentLocation.getDirSeparator(),
     );
     // TODO: Handle adding already added tags
     if (extractedTags.includes(tag.title)) {
       // tag.type === 'plain') {
-      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const fileName = extractFileName(path, currentLocation.getDirSeparator());
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
       );
 
       let tagFoundPosition = -1;
@@ -670,17 +669,21 @@ export const TaggingActionsContextProvider = ({
         fileName,
         extractedTags,
         tagDelimiter,
+        currentLocation.getDirSeparator(),
         prefixTagContainer,
       );
       if (newFileName !== fileName) {
         await renameFile(
           path,
-          containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName,
+          containingDirectoryPath +
+            currentLocation.getDirSeparator() +
+            newFileName,
         );
       }
     } else {
       //if (tag.type === 'sidecar') {
-      loadMetaDataPromise(path)
+      currentLocation
+        .loadMetaDataPromise(path)
         .then((fsEntryMeta) => {
           let tagFoundPosition = -1;
           let newTagsArray = fsEntryMeta.tags.map((sidecarTag, index) => {
@@ -831,7 +834,8 @@ export const TaggingActionsContextProvider = ({
     const tagTitlesForRemoving = tags
       ? tags.map((tag) => tag.title)
       : undefined;
-    return loadMetaDataPromise(path)
+    return currentLocation
+      .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         const newTags = tagTitlesForRemoving
           ? fsEntryMeta.tags.filter(
@@ -906,13 +910,16 @@ export const TaggingActionsContextProvider = ({
         let extractedTags = extractTags(
           path,
           tagDelimiter,
-          PlatformIO.getDirSeparator(),
+          currentLocation.getDirSeparator(),
         );
         if (extractedTags.length > 0) {
-          const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+          const fileName = extractFileName(
+            path,
+            currentLocation.getDirSeparator(),
+          );
           const containingDirectoryPath = extractContainingDirectoryPath(
             path,
-            PlatformIO.getDirSeparator(),
+            currentLocation.getDirSeparator(),
           );
           if (tagTitlesForRemoving) {
             for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
@@ -930,12 +937,13 @@ export const TaggingActionsContextProvider = ({
           }
           const newFilePath =
             (containingDirectoryPath
-              ? containingDirectoryPath + PlatformIO.getDirSeparator()
+              ? containingDirectoryPath + currentLocation.getDirSeparator()
               : '') +
             generateFileName(
               fileName,
               extractedTags,
               tagDelimiter,
+              currentLocation.getDirSeparator(),
               prefixTagContainer,
             );
           if (path !== newFilePath) {

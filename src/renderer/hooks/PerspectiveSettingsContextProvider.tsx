@@ -27,6 +27,8 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { mergeFsEntryMeta } from '-/services/utils-io';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type PerspectiveSettingsContextData = {
   orderBy: boolean;
@@ -80,6 +82,7 @@ export type PerspectiveSettingsContextProviderProps = {
 export const PerspectiveSettingsContextProvider = ({
   children,
 }: PerspectiveSettingsContextProviderProps) => {
+  const { currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryPath,
     perspective,
@@ -162,7 +165,7 @@ export const PerspectiveSettingsContextProvider = ({
       isDefaultSetting = !haveLocalSetting();
     }
     if (Pro && !isDefaultSetting) {
-      Pro.MetaOperations.setPerspectiveSettings(
+      setPerspectiveSettings(
         currentDirectoryPath,
         getPerspective(),
         settings.current,
@@ -177,6 +180,35 @@ export const PerspectiveSettingsContextProvider = ({
         JSON.stringify(settings.current),
       );
     }
+  }
+
+  function setPerspectiveSettings(
+    path: string,
+    perspective: string,
+    folderSettings?: TS.FolderSettings,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return new Promise((resolve, reject) => {
+      currentLocation
+        .loadMetaDataPromise(path, true)
+        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+          return {
+            ...(fsEntryMeta && fsEntryMeta),
+            perspectiveSettings: {
+              ...(fsEntryMeta &&
+                fsEntryMeta.perspectiveSettings &&
+                fsEntryMeta.perspectiveSettings),
+              [perspective]: folderSettings,
+            },
+          };
+        })
+        .catch(() => {
+          return mergeFsEntryMeta({
+            perspectiveSettings: {
+              [perspective]: folderSettings,
+            },
+          });
+        });
+    });
   }
 
   const context = useMemo(() => {

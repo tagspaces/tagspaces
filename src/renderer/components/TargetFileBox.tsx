@@ -21,7 +21,6 @@ import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { classes, DnD } from '-/components/DnD.css';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '-/services/platform-facade';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
@@ -43,7 +42,7 @@ interface Props {
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
@@ -102,8 +101,8 @@ function TargetFileBox(props: Props) {
         if (files && files.length) {
           if (
             AppConfig.isElectron &&
-            !PlatformIO.haveObjectStoreSupport() &&
-            !PlatformIO.haveWebDavSupport()
+            !currentLocation.haveObjectStoreSupport() &&
+            !currentLocation.haveWebDavSupport()
           ) {
             return setMoveCopyDialogOpened(files);
           } else {
