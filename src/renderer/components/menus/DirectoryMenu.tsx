@@ -41,7 +41,6 @@ import {
 } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -53,7 +52,6 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   open: boolean;
@@ -75,7 +73,7 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode, getLocationPath } =
+  const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const {
@@ -102,7 +100,7 @@ function DirectoryMenu(props: Props) {
     perspectiveMode,
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const dispatch: AppDispatch = useDispatch();
 
   const toggleCreateDirectoryDialog = () => {
@@ -134,7 +132,7 @@ function DirectoryMenu(props: Props) {
       }
       entryPath = selectedEntries[0].path;
     }
-    const tmpLoc = locations.find((location) => location.uuid === locationID);
+    const tmpLoc = findLocation(locationID);
     return getLocationPath(tmpLoc).then((locationPath) => {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
       const folderName = extractDirectoryName(

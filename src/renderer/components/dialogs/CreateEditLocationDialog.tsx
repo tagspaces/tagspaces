@@ -61,7 +61,6 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { getLocations } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import WebdavForm from '-/components/dialogs/WebdavForm';
@@ -102,9 +101,10 @@ function CreateEditLocationDialog(props: Props) {
   const { showNotification } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
-  const { addLocation, selectedLocation } = useCurrentLocationContext();
+  const { addLocation, selectedLocation, findLocation } =
+    useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
@@ -269,7 +269,8 @@ function CreateEditLocationDialog(props: Props) {
     loadLocationDataPromise(path, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          if (!locations.some((ln) => ln.uuid === meta.id)) {
+          const location = findLocation(meta.id);
+          if (!location) {
             setNewUuid(meta.id);
           }
         }
@@ -280,7 +281,8 @@ function CreateEditLocationDialog(props: Props) {
       });
   }
   function setNewLocationID(newId: string) {
-    if (!locations.some((ln) => ln.uuid === newId)) {
+    const location = findLocation(newId);
+    if (!location) {
       setNewUuid(newId);
     } else {
       showNotification('Location with this ID already exists', 'error');

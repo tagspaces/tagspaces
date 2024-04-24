@@ -38,7 +38,6 @@ import {
   getNewHTMLFileContent,
   getSupportedFileTypes,
 } from '-/reducers/settings';
-import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
   cleanRootPath,
@@ -133,7 +132,7 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { openLocation, currentLocation, getLocationPath } =
+  const { findLocation, openLocation, currentLocation, getLocationPath } =
     useCurrentLocationContext();
   const {
     currentDirectoryPath,
@@ -149,7 +148,7 @@ export const OpenedEntryContextProvider = ({
   const { saveFilePromise } = usePlatformFacadeContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const locations: CommonLocation[] = useSelector(getLocations);
+  //const locations: CommonLocation[] = useSelector(getLocations);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
     (state: any) => state.settings[historyKeys.fileOpenKey],
@@ -285,9 +284,7 @@ export const OpenedEntryContextProvider = ({
           const locationId = params.get('tslid');
           //if (params.has('tsdpath')) {
           // const folderPath2 = params.get('tsdpath');
-          const folderLocation = locations.find(
-            (location) => location.uuid === locationId,
-          );
+          const folderLocation = findLocation(locationId);
           const folderPath = extractContainingDirectoryPath(openedFile.path);
           if (
             folderPath.indexOf(
@@ -300,7 +297,7 @@ export const OpenedEntryContextProvider = ({
               cleanRootPath(
                 folderPath,
                 folderLocation.path,
-                currentLocation.getDirSeparator(),
+                folderLocation.getDirSeparator(),
               ),
             );
           }
@@ -622,11 +619,9 @@ export const OpenedEntryContextProvider = ({
           directoryPath = extractContainingDirectoryPath(entryPath);
         }
         // Check for relative paths
-        const targetLocation: CommonLocation = locations.find(
-          (location) => location.uuid === locationId,
-        );
+        const targetLocation: CommonLocation = findLocation(locationId);
         if (targetLocation) {
-          let openLocationTimer = 1000;
+          //let openLocationTimer = 1000;
           const isCloudLocation =
             targetLocation.type === locationType.TYPE_CLOUD;
           if (
@@ -634,90 +629,88 @@ export const OpenedEntryContextProvider = ({
             targetLocation.uuid !== currentLocation.uuid
           ) {
             openLocation(targetLocation, true);
-          } else {
+          } /*else {
             openLocationTimer = 0;
-          }
+          }*/
           getLocationPath(targetLocation).then((path) => {
             const locationPath: string = cleanTrailingDirSeparator(path);
 
             // setTimeout is needed for case of a location switch, if no location swith the timer is 0
-            setTimeout(() => {
-              if (isCloudLocation) {
-                if (directoryPath && directoryPath.length > 0) {
-                  const newRelDir = getRelativeEntryPath(path, directoryPath);
-                  const dirFullPath =
-                    locationPath.length > 0
-                      ? locationPath + '/' + newRelDir
-                      : directoryPath;
-                  openDirectory(dirFullPath);
-                } else {
-                  openDirectory(locationPath);
-                }
-
-                if (entryPath) {
-                  getAllPropertiesPromise(
-                    (locationPath.length > 0 ? locationPath + '/' : '') +
-                      entryPath,
-                  )
-                    .then((fsEntry: TS.FileSystemEntry) => {
-                      if (fsEntry) {
-                        openFsEntry(fsEntry);
-                        if (options.fullWidth) {
-                          setEntryInFullWidth(true);
-                        }
-                      }
-                      return true;
-                    })
-                    .catch(() =>
-                      showNotification(t('core:invalidLink'), 'warning', true),
-                    );
-                }
-                // });
+            //setTimeout(() => {
+            if (isCloudLocation) {
+              if (directoryPath && directoryPath.length > 0) {
+                const newRelDir = getRelativeEntryPath(path, directoryPath);
+                const dirFullPath =
+                  locationPath.length > 0
+                    ? locationPath + '/' + newRelDir
+                    : directoryPath;
+                openDirectory(dirFullPath, undefined, targetLocation);
               } else {
-                // local files case
-                if (directoryPath && directoryPath.length > 0) {
-                  if (
-                    directoryPath.includes('../') ||
-                    directoryPath.includes('..\\')
-                  ) {
-                    showNotification(t('core:invalidLink'), 'warning', true);
-                    return true;
-                  }
-                  const dirFullPath = joinPaths(
-                    currentLocation.getDirSeparator(),
-                    locationPath,
-                    directoryPath,
-                  );
-                  openDirectory(dirFullPath);
-                } else {
-                  openDirectory(locationPath);
-                }
-
-                if (entryPath && entryPath.length > 0) {
-                  if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                    showNotification(t('core:invalidLink'), 'warning', true);
-                    return true;
-                  }
-                  const entryFullPath =
-                    locationPath +
-                    currentLocation.getDirSeparator() +
-                    entryPath;
-                  getAllPropertiesPromise(entryFullPath)
-                    .then((fsEntry: TS.FileSystemEntry) => {
-                      if (fsEntry) {
-                        openFsEntry(fsEntry);
-                        if (options.fullWidth) {
-                          setEntryInFullWidth(true);
-                        }
-                      }
-                      return true;
-                    })
-                    .catch(() =>
-                      showNotification(t('core:invalidLink'), 'warning', true),
-                    );
-                }
+                openDirectory(locationPath, undefined, targetLocation);
               }
-            }, openLocationTimer);
+
+              if (entryPath) {
+                getAllPropertiesPromise(
+                  (locationPath.length > 0 ? locationPath + '/' : '') +
+                    entryPath,
+                )
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      openFsEntry(fsEntry);
+                      if (options.fullWidth) {
+                        setEntryInFullWidth(true);
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    showNotification(t('core:invalidLink'), 'warning', true),
+                  );
+              }
+              // });
+            } else {
+              // local files case
+              if (directoryPath && directoryPath.length > 0) {
+                if (
+                  directoryPath.includes('../') ||
+                  directoryPath.includes('..\\')
+                ) {
+                  showNotification(t('core:invalidLink'), 'warning', true);
+                  return true;
+                }
+                const dirFullPath = joinPaths(
+                  targetLocation.getDirSeparator(),
+                  locationPath,
+                  directoryPath,
+                );
+                openDirectory(dirFullPath, undefined, targetLocation);
+              } else {
+                openDirectory(locationPath, undefined, targetLocation);
+              }
+
+              if (entryPath && entryPath.length > 0) {
+                if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                  showNotification(t('core:invalidLink'), 'warning', true);
+                  return true;
+                }
+                const entryFullPath =
+                  locationPath + targetLocation.getDirSeparator() + entryPath;
+                getAllPropertiesPromise(entryFullPath)
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      openFsEntry(fsEntry);
+                      if (options.fullWidth) {
+                        setEntryInFullWidth(true);
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    showNotification(t('core:invalidLink'), 'warning', true),
+                  );
+              }
+            }
+            //}, openLocationTimer);
           });
         } else {
           showNotification(t('core:invalidLink'), 'warning', true);

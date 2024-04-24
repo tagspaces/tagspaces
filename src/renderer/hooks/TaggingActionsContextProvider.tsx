@@ -46,7 +46,6 @@ import {
   extractTags,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { getLocations } from '-/reducers/locations';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
@@ -146,7 +145,7 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { currentLocation, persistTagsInSidecarFile } =
+  const { findLocation, currentLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
   const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
@@ -169,7 +168,7 @@ export const TaggingActionsContextProvider = ({
   const tagTextColor: string = useSelector(getTagTextColor);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
-  const locations: CommonLocation[] = useSelector(getLocations);
+  //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
 
   useEffect(() => {
@@ -1044,9 +1043,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && entry.locationId) {
-        const location: CommonLocation = locations.find(
-          (l) => l.uuid === entry.locationId,
-        );
+        const location: CommonLocation = findLocation(entry.locationId);
         if (location) {
           editLocationTagGroup(location.path, modifiedEntry);
         }
@@ -1101,10 +1098,8 @@ export const TaggingActionsContextProvider = ({
   }
 
   function mergeTagGroup(entry: TS.TagGroup) {
-    if (Pro && entry.locationId && locations) {
-      const location: CommonLocation = locations.find(
-        (l) => l.uuid === entry.locationId,
-      );
+    if (Pro && entry.locationId) {
+      const location: CommonLocation = findLocation(entry.locationId);
       if (location) {
         mergeLocationTagGroup(location.path, entry);
       }
@@ -1149,9 +1144,7 @@ export const TaggingActionsContextProvider = ({
     if (indexForRemoving >= 0) {
       const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           removeLocationTagGroup(location.path, parentTagGroupUuid);
         }
@@ -1194,9 +1187,7 @@ export const TaggingActionsContextProvider = ({
       saveTags(newTags, tgIndex);
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           tagGroup.children = newTags;
           editLocationTagGroup(location.path, tagGroup);
@@ -1228,9 +1219,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           editLocationTagGroup(location.path, newTagGroup, true);
         }
@@ -1258,9 +1247,7 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup.locationId) {
-        const location: CommonLocation = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           editLocationTagGroup(location.path, editedTagGroup, true);
         }

@@ -53,7 +53,6 @@ import {
   SearchOptionType,
   SearchQueryComposition,
 } from '-/components/SearchOptions';
-import { getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
@@ -88,7 +87,7 @@ function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openEntry, openLink } = useOpenedEntryContext();
-  const { currentLocation, changeLocationByID, openLocationById } =
+  const { locations, currentLocation, changeLocationByID, openLocationById } =
     useCurrentLocationContext();
   const {
     currentDirectoryPath,
@@ -106,7 +105,7 @@ function SearchAutocomplete(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const locations: CommonLocation[] = useSelector(getLocations);
+  //const locations: CommonLocation[] = useSelector(getLocations);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);

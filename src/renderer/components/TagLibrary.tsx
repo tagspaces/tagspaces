@@ -44,7 +44,6 @@ import { AppDispatch } from '-/reducers/app';
 import SmartTags from '../reducers/smart-tags';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
-import { getLocations } from '-/reducers/locations';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { classes, SidePanel } from '-/components/SidePanels.css';
@@ -72,13 +71,13 @@ function TagLibrary(props: Props) {
     moveTagGroup,
   } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { readOnlyMode, findLocation } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
 
   const toggleTagGroupDispatch = (uuid) =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
@@ -193,7 +192,6 @@ function TagLibrary(props: Props) {
           }}
           handleTagGroupMenu={handleTagGroupMenu}
           toggleTagGroup={toggleTagGroupDispatch}
-          locations={locations}
           tagGroupCollapsed={tagGroupCollapsed}
           isReadOnly={tagGroup.readOnly || isTagLibraryReadOnly}
         />
@@ -315,9 +313,7 @@ function TagLibrary(props: Props) {
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
           createTagGroup={(entry: TS.TagGroup) => {
-            const location: CommonLocation = locations.find(
-              (l) => l.uuid === entry.locationId,
-            );
+            const location: CommonLocation = findLocation(entry.locationId);
             if (location) {
               createTagGroup(entry, location);
             } else {

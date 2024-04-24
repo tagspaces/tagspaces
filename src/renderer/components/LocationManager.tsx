@@ -17,12 +17,12 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
@@ -31,7 +31,6 @@ import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 const CreateEditLocationDialog = React.lazy(
   () =>
@@ -57,6 +56,7 @@ function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const {
+    locations,
     currentLocation,
     addLocations,
     editLocation,
@@ -65,7 +65,7 @@ function LocationManager(props: Props) {
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
 
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);

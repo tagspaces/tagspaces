@@ -28,8 +28,6 @@ import Tooltip from '-/components/Tooltip';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
-import { useSelector } from 'react-redux';
-import { getLocations } from '-/reducers/locations';
 import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
@@ -75,9 +73,9 @@ function EntryContainerTitle(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntry, sharingLink } = useOpenedEntryContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const locations = useSelector(getLocations);
+  //const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -101,6 +99,7 @@ function EntryContainerTitle(props: Props) {
     }
   };
 
+  const currentLocation = findLocation(openedEntry.locationId);
   let fileTitle: string = openedEntry.path
     ? extractTitle(
         openedEntry.path,
@@ -124,9 +123,6 @@ function EntryContainerTitle(props: Props) {
     }
   }
   if (!fileName) {
-    const currentLocation = locations.find(
-      (location) => location.uuid === openedEntry.locationId,
-    );
     if (currentLocation) {
       fileName = currentLocation.name;
     }

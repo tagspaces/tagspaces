@@ -160,7 +160,7 @@
     "@mui/material": "^5.15.4",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.2.4",
-    "@tagspaces/tagspaces-common-aws": "4.2.4",
+    "@tagspaces/tagspaces-common-aws3": "4.3.0",
     "@tagspaces/tagspaces-common-cordova": "4.2.4",
     "@tagspaces/tagspaces-indexer": "4.2.4",
     "@tagspaces/tagspaces-md": "4.1.14",

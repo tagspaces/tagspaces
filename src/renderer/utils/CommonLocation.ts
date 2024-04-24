@@ -1,20 +1,20 @@
 // import AWS from "aws-sdk";
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
+  extractDirectoryName,
+  extractFileExtension,
+  extractFileName,
+  extractTagsAsObjects,
+  getBgndFileLocationForDirectory,
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
-  getBgndFileLocationForDirectory,
-  getMetaFileLocationForFile,
-  getMetaFileLocationForDir,
-  extractDirectoryName,
-  extractFileName,
   normalizePath,
-  extractTagsAsObjects,
-  extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
-import { loadJSONString, getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import AppConfig from '-/AppConfig';
-import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
+//import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 import { TS } from '-/tagspaces.namespace';
 import {
@@ -86,7 +86,7 @@ export class CommonLocation implements TS.Location {
       this.bucketName = (location as TS.S3Location).bucketName;
       this.region = (location as TS.S3Location).region;
       this.endpointURL = (location as TS.S3Location).endpointURL;
-      this.ioAPI = objectStoreAPI.getS3Api(location);
+      this.ioAPI = require('@tagspaces/tagspaces-common-aws3'); //objectStoreAPI.getS3Api(location);
     } else if (location.type === locationType.TYPE_WEBDAV) {
       // TODO impl
     } else if (AppConfig.isCordova) {
@@ -118,9 +118,9 @@ export class CommonLocation implements TS.Location {
     return normalizedUrl;
   };
 
-  haveObjectStoreSupport = (): boolean => this.type !== locationType.TYPE_CLOUD;
+  haveObjectStoreSupport = (): boolean => this.type === locationType.TYPE_CLOUD;
 
-  haveWebDavSupport = (): boolean => this.type !== locationType.TYPE_WEBDAV;
+  haveWebDavSupport = (): boolean => this.type === locationType.TYPE_WEBDAV;
 
   getDirSeparator = (): string => {
     return this.ioAPI ? '/' : AppConfig.dirSeparator;
@@ -158,20 +158,17 @@ export class CommonLocation implements TS.Location {
   /**
    * @param thumbPath
    * @param dt
-   * @param isLocalFile - force to generate local URL
+   * // isLocalFile - force to generate local URL
    */
   getThumbPath = (
     thumbPath: string,
     dt = undefined,
-    isLocalFile = false, // todo rethink this
+    // isLocalFile = false, // todo rethink this
   ) => {
     if (!thumbPath) {
       return undefined;
     }
-    if (
-      !isLocalFile &&
-      (this.haveObjectStoreSupport() || this.haveWebDavSupport())
-    ) {
+    if (this.haveObjectStoreSupport() || this.haveWebDavSupport()) {
       if (this.isSignedURL(thumbPath)) {
         return thumbPath;
       }
@@ -233,6 +230,7 @@ export class CommonLocation implements TS.Location {
           {
             path,
             bucketName: this.bucketName,
+            location: this,
           },
           mode,
           ignorePatterns,
@@ -258,6 +256,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.listMetaDirectoryPromise({
           path,
           bucketName: this.bucketName,
+          location: this,
         });
       }
       this.ioAPI.listMetaDirectoryPromise(path);
@@ -278,6 +277,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.getPropertiesPromise({
           path,
           bucketName: this.bucketName,
+          location: this,
         });
       }
       this.ioAPI.getPropertiesPromise(path);
@@ -296,6 +296,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.isFileExist({
           path: file,
           bucketName: this.bucketName,
+          location: this,
         });
       } else if (AppConfig.isCordova) {
         return this.ioAPI.checkFileExist(file);
@@ -316,6 +317,7 @@ export class CommonLocation implements TS.Location {
           .getPropertiesPromise({
             path: dir,
             bucketName: this.bucketName,
+            location: this,
           })
           .then((stats) => stats && !stats.isFile);
       } else if (AppConfig.isCordova) {
@@ -352,6 +354,7 @@ export class CommonLocation implements TS.Location {
         const param = {
           path,
           bucketName: this.bucketName,
+          location: this,
         };
         url = this.ioAPI.getURLforPath(param, expirationInSeconds);
       } else if (this.haveWebDavSupport()) {
@@ -399,6 +402,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.createDirectoryPromise({
           path: dirPath,
           bucketName: this.bucketName,
+          location: this,
         });
       }
       return this.ioAPI.createDirectoryPromise(dirPath);
@@ -421,6 +425,7 @@ export class CommonLocation implements TS.Location {
           {
             path: sourceFilePath,
             bucketName: this.bucketName,
+            location: this,
           },
           targetFilePath,
         );
@@ -449,6 +454,7 @@ export class CommonLocation implements TS.Location {
           {
             path: filePath,
             bucketName: this.bucketName,
+            location: this,
           },
           newFilePath,
           onProgress,
@@ -476,6 +482,7 @@ export class CommonLocation implements TS.Location {
           {
             path: dirPath,
             bucketName: this.bucketName,
+            location: this,
           },
           newDirName,
         );
@@ -502,6 +509,7 @@ export class CommonLocation implements TS.Location {
           {
             ...param,
             bucketName: this.bucketName,
+            location: this,
           },
           newDirPath,
           onProgress,
@@ -530,6 +538,7 @@ export class CommonLocation implements TS.Location {
           {
             ...param,
             bucketName: this.bucketName,
+            location: this,
           },
           newDirPath,
           onProgress,
@@ -558,6 +567,7 @@ export class CommonLocation implements TS.Location {
           {
             ...param,
             bucketName: this.bucketName,
+            location: this,
           },
           content,
           overwrite,
@@ -586,6 +596,7 @@ export class CommonLocation implements TS.Location {
           {
             ...param,
             bucketName: this.bucketName,
+            location: this,
           },
           content,
           overwrite,
@@ -618,6 +629,7 @@ export class CommonLocation implements TS.Location {
           {
             ...param,
             bucketName: this.bucketName,
+            location: this,
           },
           content,
           overwrite,
@@ -660,6 +672,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.deleteFilePromise({
           path,
           bucketName: this.bucketName,
+          location: this,
         });
       }
       return this.ioAPI.deleteFilePromise(path);
@@ -679,6 +692,7 @@ export class CommonLocation implements TS.Location {
         return this.ioAPI.deleteDirectoryPromise({
           path,
           bucketName: this.bucketName,
+          location: this,
         });
       }
       return this.ioAPI.deleteDirectoryPromise(path);
@@ -733,6 +747,7 @@ export class CommonLocation implements TS.Location {
           {
             path: filePath,
             bucketName: this.bucketName,
+            location: this,
           },
           isPreview,
         );
@@ -755,6 +770,7 @@ export class CommonLocation implements TS.Location {
           {
             path: filePath,
             bucketName: this.bucketName,
+            location: this,
           },
           type,
         );

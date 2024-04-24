@@ -19,7 +19,6 @@ import {
   NewFolderIcon,
   FolderOutlineIcon as FolderIcon,
 } from '-/components/CommonIcons';
-import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import Typography from '@mui/material/Typography';
@@ -32,8 +31,9 @@ interface Props {
 function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  const { currentLocation, findLocation, locations } =
+    useCurrentLocationContext();
+  // const locations: Array<CommonLocation> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
     currentLocation ? currentLocation.uuid : undefined,
@@ -44,9 +44,7 @@ function DirectoryListView(props: Props) {
   >([]);
 
   useEffect(() => {
-    const chosenLocation = locations.find(
-      (location) => location.uuid === chosenLocationId.current,
-    );
+    const chosenLocation = findLocation(chosenLocationId.current);
     if (chosenLocation) {
       const path =
         currentLocation &&
@@ -62,9 +60,7 @@ function DirectoryListView(props: Props) {
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
-    const chosenLocation = locations.find(
-      (location) => location.uuid === chosenLocationId.current,
-    );
+    const chosenLocation = findLocation(chosenLocationId.current);
     if (chosenLocation) {
       listDirectory(chosenLocation.path);
       setTargetDir(chosenLocation.path);
@@ -72,9 +68,7 @@ function DirectoryListView(props: Props) {
   };
 
   function getDirLocations() {
-    const chosenLocation = locations.find(
-      (location) => location.uuid === chosenLocationId.current,
-    );
+    const chosenLocation = findLocation(chosenLocationId.current);
     if (chosenLocation.type !== locationType.TYPE_LOCAL) {
       return null;
     }

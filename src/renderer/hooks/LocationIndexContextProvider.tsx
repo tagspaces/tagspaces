@@ -26,7 +26,7 @@ import React, {
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
+import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws3';
 import { TS } from '-/tagspaces.namespace';
 import { executePromisesInBatches } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
@@ -37,7 +37,6 @@ import {
   createIndex,
 } from '@tagspaces/tagspaces-indexer';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
 import Search from '-/services/search';
 import {
@@ -95,7 +94,8 @@ export const LocationIndexContextProvider = ({
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { currentLocation, getLocationPath } = useCurrentLocationContext();
+  const { locations, findLocation, currentLocation, getLocationPath } =
+    useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
@@ -103,7 +103,7 @@ export const LocationIndexContextProvider = ({
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
-  const allLocations = useSelector(getLocations);
+  //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
   let walking = true;
@@ -351,7 +351,7 @@ export const LocationIndexContextProvider = ({
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
-    for (let location of allLocations) {
+    for (let location of locations) {
       try {
         const locationPath = await getLocationPath(location);
         isIndexing.current = locationPath;
@@ -390,7 +390,7 @@ export const LocationIndexContextProvider = ({
   function enhanceSearchEntry(
     entry: TS.FileSystemEntry,
   ): Promise<TS.FileSystemEntry> {
-    const loc = allLocations.find((l) => l.uuid === entry.locationID);
+    const loc = findLocation(entry.locationID);
     if (loc) {
       const thumbFilePath = entry.isFile
         ? getThumbFileLocationForFile(
@@ -556,7 +556,7 @@ export const LocationIndexContextProvider = ({
     let searchResults = [];
     let maxSearchResultReached = false;
 
-    const result = allLocations.reduce(
+    const result = locations.reduce(
       (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
           // cancel search if max search result count reached

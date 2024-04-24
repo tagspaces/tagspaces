@@ -63,8 +63,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { getLocations } from '-/reducers/locations';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -133,14 +131,15 @@ function GridCell(props: Props) {
   const { metaActions } = useEditedEntryMetaContext();
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  const locations: Array<CommonLocation> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
   // const desktopMode = useSelector(isDesktopMode);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
+  const gridCellLocation = findLocation(fsEntry.locationID);
   /*const fileSystemEntryBgColor = useRef<string>(
     findBackgroundColorForFolder(fsEntry),
   );*/
@@ -204,7 +203,7 @@ function GridCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    currentLocation.getDirSeparator(),
+    gridCellLocation.getDirSeparator(),
   );
 
   let description;
@@ -228,7 +227,7 @@ function GridCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      currentLocation.getDirSeparator(),
+      gridCellLocation.getDirSeparator(),
     );
   }
 
@@ -243,9 +242,9 @@ function GridCell(props: Props) {
   const entryPath = fsEntry.path;
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
 
-  function isLocalFile(locationID): boolean {
+  /*function isLocalFile(locationID): boolean {
     if (locationID) {
-      const loc = locations.find((l) => l.uuid === locationID);
+      const loc = findLocation(locationID);
       if (loc) {
         return loc.type === locationType.TYPE_LOCAL;
       }
@@ -253,7 +252,7 @@ function GridCell(props: Props) {
     return false;
   }
 
-  const isLocal = fsEntry.locationID ? isLocalFile(fsEntry.locationID) : false;
+  const isLocal = fsEntry.locationID ? isLocalFile(fsEntry.locationID) : false;*/
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
@@ -439,10 +438,9 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={currentLocation.getThumbPath(
+            src={gridCellLocation.getThumbPath(
               fsEntry.meta.thumbPath,
               fsEntry.meta?.lastUpdated,
-              isLocal,
             )}
             style={{
               height: maxHeight - 70,

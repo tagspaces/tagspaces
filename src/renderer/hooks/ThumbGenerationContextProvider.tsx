@@ -183,7 +183,9 @@ export const ThumbGenerationContextProvider = ({
       if (
         isWorkerAvailable &&
         enableWS &&
-        supportedImgsWS.includes(entry.extension)
+        supportedImgsWS.includes(entry.extension) &&
+        !currentLocation.haveObjectStoreSupport() &&
+        !currentLocation.haveWebDavSupport()
       ) {
         workerEntries.push(entry.path);
       } else if (
