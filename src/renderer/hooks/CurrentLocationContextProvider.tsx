@@ -40,6 +40,7 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { getDevicePaths } from '-/services/utils-io';
 
 type CurrentLocationContextData = {
   locations: CommonLocation[];
@@ -114,6 +115,7 @@ export const CurrentLocationContextProvider = ({
   const currentLocation = useRef<CommonLocation>(undefined);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
+  const initLocations = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
@@ -194,26 +196,28 @@ export const CurrentLocationContextProvider = ({
   }
 
   function setDefaultLocations() {
-    currentLocation.current
-      .getDevicePaths()
-      .then((devicePaths) => {
-        if (devicePaths) {
-          Object.keys(devicePaths).forEach((key) => {
-            const location = new CommonLocation({
-              uuid: getUuid(),
-              type: locationType.TYPE_LOCAL,
-              name: t(('core:' + key) as any) as string,
-              path: devicePaths[key] as string,
-              isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-              isReadOnly: false,
-              disableIndexing: false,
+    if (!initLocations.current) {
+      initLocations.current = true;
+      getDevicePaths()
+        .then((devicePaths) => {
+          if (devicePaths) {
+            Object.keys(devicePaths).forEach((key) => {
+              const location = new CommonLocation({
+                uuid: getUuid(),
+                type: locationType.TYPE_LOCAL,
+                name: t(('core:' + key) as any) as string,
+                path: devicePaths[key] as string,
+                isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+                isReadOnly: false,
+                disableIndexing: false,
+              });
+              addLocation(location, false);
             });
-            addLocation(location, false);
-          });
-        }
-        return true;
-      })
-      .catch((ex) => console.log(ex));
+          }
+          return true;
+        })
+        .catch((ex) => console.log(ex));
+    }
   }
 
   function addLocation(

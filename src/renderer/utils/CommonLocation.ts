@@ -706,17 +706,6 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('deleteDirectoryPromise: not implemented'));
   };
 
-  getDevicePaths = (): Promise<any> => {
-    if (AppConfig.isElectron) {
-      return window.electronIO.ipcRenderer.invoke('getDevicePaths');
-    } else if (AppConfig.isCordova) {
-      return this.ioAPI.getDevicePaths();
-    } else {
-      console.log('getDevicePaths not supported');
-      return Promise.resolve(undefined);
-    }
-  };
-
   shareFiles = (files: Array<string>): void => {
     if (AppConfig.isCordova) {
       cordovaIO.shareFiles(files);

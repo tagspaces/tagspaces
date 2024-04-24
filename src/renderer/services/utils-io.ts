@@ -1033,3 +1033,14 @@ export function uploadAbort(path?: string): Promise<any> {
   }
   return Promise.resolve(false);
 }
+export function getDevicePaths(): Promise<any> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('getDevicePaths');
+  } else if (AppConfig.isCordova) {
+    const ioAPI = require('@tagspaces/tagspaces-common-cordova');
+    return ioAPI.getDevicePaths();
+  } else {
+    console.log('getDevicePaths not supported');
+    return Promise.resolve(undefined);
+  }
+}
