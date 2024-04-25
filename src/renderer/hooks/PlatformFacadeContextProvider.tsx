@@ -666,7 +666,7 @@ export const PlatformFacadeContextProvider = ({
       deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
-  }, [ignored]); //watcher
+  }, [ignored, currentLocation]); //watcher
 
   return (
     <PlatformFacadeContext.Provider value={context}>
