@@ -34,7 +34,8 @@ export class CommonLocation implements TS.Location {
   path?: string;
   children?: Array<any>; // this is for tree -> getDirectoriesTree
   perspective?: string; // id of the perspective
-  creationDate?: string;
+  creationDate?: number;
+  lastEditedDate?: number;
   isDefault: boolean;
   isReadOnly?: boolean;
   isNotEditable?: boolean;
@@ -67,7 +68,10 @@ export class CommonLocation implements TS.Location {
     this.path = location.path;
     //children?: Array<any>;
     this.perspective = location.perspective; // id of the perspective
-    this.creationDate = location.creationDate;
+    this.creationDate = location.creationDate
+      ? location.creationDate
+      : new Date().getTime();
+    this.lastEditedDate = new Date().getTime();
     this.isDefault = location.isDefault;
     this.isReadOnly = location.isReadOnly;
     this.isNotEditable = location.isNotEditable;

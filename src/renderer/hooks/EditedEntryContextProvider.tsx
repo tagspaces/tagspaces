@@ -21,7 +21,6 @@ import { extractTagsAsObjects } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type EditedEntryContextData = {
   actions: TS.EditAction[];
@@ -50,7 +49,6 @@ export const EditedEntryContextProvider = ({
 }: EditedEntryContextProviderProps) => {
   const actions = useRef<TS.EditAction[]>(undefined);
   const { getAllPropertiesPromise } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -114,11 +112,7 @@ export const EditedEntryContextProvider = ({
    */
   function reflectAddEntry(entry: TS.FileSystemEntry, open = true) {
     if (!entry.tags || entry.tags.length === 0) {
-      entry.tags = extractTagsAsObjects(
-        entry.name,
-        AppConfig.tagDelimiter,
-        currentLocation.getDirSeparator(),
-      );
+      entry.tags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
     }
     const currentAction: TS.EditAction = {
       action: 'add',

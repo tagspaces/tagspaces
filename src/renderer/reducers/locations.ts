@@ -38,10 +38,11 @@ export default (state: Array<CommonLocation> = initialState, action: any) => {
         ? state.map((location) => ({ ...location, isDefault: false }))
         : [...state];
 
-      const newLocation = {
+      const newLocation: CommonLocation = {
         ...action.location,
         uuid: action.location.uuid || getUuid(),
-        creationDate: new Date().toJSON(),
+        creationDate: new Date().getTime(),
+        lastEditedDate: new Date().getTime(),
       };
       if (action.locationPosition) {
         locations.splice(action.locationPosition, 0, newLocation);
@@ -73,6 +74,7 @@ export default (state: Array<CommonLocation> = initialState, action: any) => {
                 ? action.location.newuuid
                 : action.location.uuid,
             persistTagsInSidecarFile: action.location.persistTagsInSidecarFile,
+            lastEditedDate: new Date().getTime(),
           },
           ...state.slice(indexForEditing + 1),
         ];

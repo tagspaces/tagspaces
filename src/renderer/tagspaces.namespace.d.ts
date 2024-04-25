@@ -32,7 +32,8 @@ export namespace TS {
     path?: string;
     //children?: Array<any>;
     perspective?: string; // id of the perspective
-    creationDate?: string;
+    creationDate?: number;
+    lastEditedDate?: number;
     isDefault: boolean;
     isReadOnly?: boolean;
     isNotEditable?: boolean;

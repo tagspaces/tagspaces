@@ -133,9 +133,10 @@ function RowCell(props: Props) {
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
   const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
+  const rowCellLocation = findLocation(fsEntry.locationID);
 
   // You can use the dispatch function to dispatch actions
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
@@ -157,7 +158,7 @@ function RowCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    currentLocation.getDirSeparator(),
+    rowCellLocation.getDirSeparator(),
   );
 
   let description;
@@ -186,7 +187,7 @@ function RowCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      currentLocation.getDirSeparator(),
+      rowCellLocation.getDirSeparator(),
     );
   }
 
@@ -463,8 +464,8 @@ function RowCell(props: Props) {
                 fsEntry.meta?.thumbPath +
                 (fsEntry.meta &&
                 fsEntry.meta.thumbPath &&
-                !currentLocation.haveObjectStoreSupport() &&
-                !currentLocation.haveWebDavSupport()
+                !rowCellLocation.haveObjectStoreSupport() &&
+                !rowCellLocation.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.meta?.thumbPath) +
                     fsEntry.meta.lastUpdated
                   : '')

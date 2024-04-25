@@ -755,13 +755,13 @@ export const DirectoryContentContextProvider = ({
         location || currentLocation,
         showHiddenEntries,
       ).then((dirEntries) => {
-        /*if (dirEntries && reloadMeta) {      // TODO rethink this!
-            // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
-            return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
-              updateCurrentDirEntries(entries);
-              return true;
-            });
-          }*/
+        if (dirEntries && reloadMeta) {
+          // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
+          return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
+            updateCurrentDirEntries(entries);
+            return true;
+          });
+        }
         return true;
       });
     }
