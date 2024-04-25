@@ -125,9 +125,7 @@ function CreateDirectory(props: Props) {
           dispatch(AppActions.toggleUploadDialog());
           downloadFile(
             fileUrl.current,
-            targetDirectoryPath +
-              currentLocation.getDirSeparator() +
-              decodeURIComponent(fileName),
+            targetDirectoryPath + '/' + decodeURIComponent(fileName),
             onUploadProgress,
           )
             .then(() => {

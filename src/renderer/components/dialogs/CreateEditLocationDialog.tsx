@@ -437,10 +437,10 @@ function CreateEditLocationDialog(props: Props) {
       }
 
       if (!selectedLocation) {
-        addLocation(loc);
+        addLocation(new CommonLocation(loc));
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
-        props.editLocation(loc);
+        props.editLocation(new CommonLocation(loc));
       } else {
         console.log('No addLocation or editLocation props exist');
       }

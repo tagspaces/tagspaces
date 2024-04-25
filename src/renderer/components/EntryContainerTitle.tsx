@@ -104,7 +104,7 @@ function EntryContainerTitle(props: Props) {
     ? extractTitle(
         openedEntry.path,
         !openedEntry.isFile,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       )
     : '';
 
@@ -113,12 +113,12 @@ function EntryContainerTitle(props: Props) {
     if (openedEntry.isFile) {
       fileName = extractFileName(
         openedEntry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     } else {
       fileName = extractDirectoryName(
         openedEntry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     }
   }
@@ -185,7 +185,7 @@ function EntryContainerTitle(props: Props) {
               //'.' +
               extractFileExtension(
                 openedEntry.path,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               )
             }
             <MoreMenuIcon style={{ fontSize: 20 }} />

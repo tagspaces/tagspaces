@@ -139,11 +139,10 @@ function GridCell(props: Props) {
   // const desktopMode = useSelector(isDesktopMode);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const gridCellLocation = findLocation(fsEntry.locationID);
-  /*const fileSystemEntryBgColor = useRef<string>(
-    findBackgroundColorForFolder(fsEntry),
-  );*/
-  //const thumbUrl = useRef<string>(undefined);
+  const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  const maxHeight = calculateEntryHeight(entrySize);
+  const entryPath = fsEntry.path;
+  const isSmall = entrySize === 'tiny' || entrySize === 'small';
 
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
@@ -184,6 +183,12 @@ function GridCell(props: Props) {
     }
   }, [metaActions]);
 
+  const gridCellLocation = findLocation(fsEntry.locationID);
+  if (!gridCellLocation && fsEntry.locationID) {
+    // location not exist in locationManager (maybe removed)
+    return null;
+  }
+
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
     editTagForEntry(path, tag, newTagTitle);
   };
@@ -203,7 +208,7 @@ function GridCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    gridCellLocation.getDirSeparator(),
+    gridCellLocation?.getDirSeparator(),
   );
 
   let description;
@@ -220,17 +225,35 @@ function GridCell(props: Props) {
     }
   }
 
-  const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  function generateCardHeader() {
+    return (
+      !isSmall &&
+      fsEntry.isFile &&
+      fsEntry.lmdt && (
+        <>
+          <Tooltip
+            title={
+              t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)
+            }
+          >
+            {formatDateTime(fsEntry.lmdt, false)}
+          </Tooltip>
+          <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
+            <span>{' | ' + formatFileSize(fsEntry.size)}</span>
+          </Tooltip>
+        </>
+      )
+    );
+  }
 
   let fileNameTags = [];
   if (fsEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      gridCellLocation.getDirSeparator(),
+      gridCellLocation?.getDirSeparator(),
     );
   }
-
   const fileSystemEntryTags =
     fsEntry.meta && fsEntry.meta.tags ? fsEntry.meta.tags : [];
   const sideCarTagsTitles = fileSystemEntryTags.map((tag) => tag.title);
@@ -238,23 +261,7 @@ function GridCell(props: Props) {
     ...fileSystemEntryTags,
     ...fileNameTags.filter((tag) => !sideCarTagsTitles.includes(tag.title)),
   ];
-
-  const entryPath = fsEntry.path;
-  const isSmall = entrySize === 'tiny' || entrySize === 'small';
-
-  /*function isLocalFile(locationID): boolean {
-    if (locationID) {
-      const loc = findLocation(locationID);
-      if (loc) {
-        return loc.type === locationType.TYPE_LOCAL;
-      }
-    }
-    return false;
-  }
-
-  const isLocal = fsEntry.locationID ? isLocalFile(fsEntry.locationID) : false;*/
-
-  const renderTags = useMemo(() => {
+  const renderTags = () => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
       const tagContainer = readOnlyMode ? (
@@ -285,30 +292,7 @@ function GridCell(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
-
-  const maxHeight = calculateEntryHeight(entrySize);
-
-  function generateCardHeader() {
-    return (
-      !isSmall &&
-      fsEntry.isFile &&
-      fsEntry.lmdt && (
-        <>
-          <Tooltip
-            title={
-              t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)
-            }
-          >
-            {formatDateTime(fsEntry.lmdt, false)}
-          </Tooltip>
-          <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
-            <span>{' | ' + formatFileSize(fsEntry.size)}</span>
-          </Tooltip>
-        </>
-      )
-    );
-  }
+  }; //, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
   function generateExtension() {
     return selectionMode ? (
@@ -425,7 +409,7 @@ function GridCell(props: Props) {
       >
         <Box style={{ position: 'absolute' }}>
           {showTags && entryTags ? (
-            renderTags
+            renderTags()
           ) : (
             <TagsPreview tags={entryTags} />
           )}

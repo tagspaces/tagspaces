@@ -113,14 +113,14 @@ function FilePreviewDialog(props: Props) {
             }
             let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
               fileDirectory =
                 extractContainingDirectoryPath(
                   // eslint-disable-next-line no-restricted-globals
                   location.href,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                 ) +
                 '/' +
                 fileDirectory;

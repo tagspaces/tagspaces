@@ -167,7 +167,7 @@ function DirectoryListView(props: Props) {
         onClick={() => {
           if (chosenDirectory.current) {
             let currentPath = chosenDirectory.current;
-            if (currentPath.endsWith(currentLocation.getDirSeparator())) {
+            if (currentPath.endsWith(currentLocation?.getDirSeparator())) {
               currentPath = currentPath.slice(0, -1);
             }
             const parentDir = extractContainingDirectoryPath(currentPath);

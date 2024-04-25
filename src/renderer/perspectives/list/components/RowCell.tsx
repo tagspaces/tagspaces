@@ -158,7 +158,7 @@ function RowCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    rowCellLocation.getDirSeparator(),
+    rowCellLocation?.getDirSeparator(),
   );
 
   let description;
@@ -187,7 +187,7 @@ function RowCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      rowCellLocation.getDirSeparator(),
+      rowCellLocation?.getDirSeparator(),
     );
   }
 

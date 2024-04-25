@@ -395,12 +395,12 @@ export const LocationIndexContextProvider = ({
       const thumbFilePath = entry.isFile
         ? getThumbFileLocationForFile(
             entry.path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
             false,
           )
         : getThumbFileLocationForDirectory(
             entry.path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           );
       if (thumbFilePath) {
         return checkFileExist(thumbFilePath, loc).then((exist) => {
@@ -652,7 +652,7 @@ export const LocationIndexContextProvider = ({
     }
     const folderIndexPath =
       metaDirectory +
-      currentLocation.getDirSeparator() +
+      currentLocation?.getDirSeparator() +
       AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
     return currentLocation
       .saveTextFilePromise(
@@ -695,7 +695,7 @@ export const LocationIndexContextProvider = ({
   ): Promise<TS.FileSystemEntry[]> {
     const folderIndexPath =
       getMetaDirectoryPath(folderPath) +
-      currentLocation.getDirSeparator() +
+      currentLocation?.getDirSeparator() +
       AppConfig.folderIndexFile;
     return currentLocation
       .loadTextFilePromise(folderIndexPath)

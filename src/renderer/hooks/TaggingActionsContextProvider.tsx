@@ -229,26 +229,32 @@ export const TaggingActionsContextProvider = ({
       const extractedTags: string[] = extractTags(
         path,
         tagDelimiter,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       const uniqueTags = tags.filter(
         (tag) => !extractedTags.some((tagName) => tagName === tag),
       );
-      const fileName = extractFileName(path, currentLocation.getDirSeparator());
+      const fileName = extractFileName(
+        path,
+        currentLocation?.getDirSeparator(),
+      );
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       return (
         (containingDirectoryPath
-          ? containingDirectoryPath + currentLocation.getDirSeparator()
+          ? containingDirectoryPath +
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator)
           : '') +
         generateFileName(
           fileName,
           [...extractedTags, ...uniqueTags],
           tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
           prefixTagContainer,
         )
       );
@@ -474,7 +480,7 @@ export const TaggingActionsContextProvider = ({
             extractTags(
               entry.path,
               tagDelimiter,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             ),
             fsEntryMeta.tags,
           );
@@ -529,7 +535,7 @@ export const TaggingActionsContextProvider = ({
         const extractedTags = extractTags(
           entry.path,
           tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const uniqueTags = getNonExistingTags(
           tags,
@@ -636,15 +642,18 @@ export const TaggingActionsContextProvider = ({
     const extractedTags: string[] = extractTags(
       path,
       tagDelimiter,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     // TODO: Handle adding already added tags
     if (extractedTags.includes(tag.title)) {
       // tag.type === 'plain') {
-      const fileName = extractFileName(path, currentLocation.getDirSeparator());
+      const fileName = extractFileName(
+        path,
+        currentLocation?.getDirSeparator(),
+      );
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       let tagFoundPosition = -1;
@@ -668,14 +677,16 @@ export const TaggingActionsContextProvider = ({
         fileName,
         extractedTags,
         tagDelimiter,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
         prefixTagContainer,
       );
       if (newFileName !== fileName) {
         await renameFile(
           path,
           containingDirectoryPath +
-            currentLocation.getDirSeparator() +
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator) +
             newFileName,
         );
       }
@@ -909,16 +920,16 @@ export const TaggingActionsContextProvider = ({
         let extractedTags = extractTags(
           path,
           tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         if (extractedTags.length > 0) {
           const fileName = extractFileName(
             path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           );
           const containingDirectoryPath = extractContainingDirectoryPath(
             path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           );
           if (tagTitlesForRemoving) {
             for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
@@ -942,7 +953,7 @@ export const TaggingActionsContextProvider = ({
               fileName,
               extractedTags,
               tagDelimiter,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
               prefixTagContainer,
             );
           if (path !== newFilePath) {

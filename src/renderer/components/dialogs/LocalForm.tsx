@@ -29,6 +29,7 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { selectDirectoryDialog } from '-/services/utils-io';
 
 interface Props {
   errorTextPath: boolean;
@@ -45,15 +46,14 @@ function LocalForm(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
 
   const openDirectory = () => {
-    currentLocation
-      .selectDirectoryDialog()
+    selectDirectoryDialog()
       .then((selectedPaths) => {
         const selectedPath = decodeURI(selectedPaths[0]);
         setPath(selectedPath);
         if (name.length < 1 && selectedPath.length > 0) {
           const dirName = extractDirectoryName(
             selectedPath,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           );
           setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
         }

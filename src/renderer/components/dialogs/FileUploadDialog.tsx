@@ -207,7 +207,7 @@ function FileUploadDialog(props: Props) {
                       ? filePath
                       : extractFileName(
                           targetPath.current,
-                          currentLocation.getDirSeparator(),
+                          currentLocation?.getDirSeparator(),
                         )}
                     {percentage === -1 && (
                       <Tooltip

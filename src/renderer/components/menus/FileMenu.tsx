@@ -138,7 +138,7 @@ function FileMenu(props: Props) {
       const entryTitle = extractTitle(
         selectedEntries[0].name,
         !selectedEntries[0].isFile,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
@@ -183,7 +183,7 @@ function FileMenu(props: Props) {
         const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
           extractContainingDirectoryPath(
             selectedEntries[0].path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           ),
           false,
           currentLocation.uuid,
@@ -215,7 +215,7 @@ function FileMenu(props: Props) {
 
     const directoryPath = extractContainingDirectoryPath(
       selectedFilePath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     setFolderBackgroundPromise(path, directoryPath)
@@ -254,7 +254,7 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       const parentFolder = extractParentDirectoryPath(
         selectedFilePath,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return openDirectory(parentFolder);
     }

@@ -156,7 +156,8 @@ export const CurrentLocationContextProvider = ({
           (location) => location.uuid === currentLocation.current.uuid,
         );
         if (!location) {
-          closeLocation(currentLocation.current.uuid);
+          setCurrentLocation(undefined);
+          //closeLocation(currentLocation.current.uuid);
         }
       }
     }

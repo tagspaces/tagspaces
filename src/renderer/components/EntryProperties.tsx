@@ -245,10 +245,10 @@ function EntryProperties(props: Props) {
 
   const entryName = openedEntry
     ? openedEntry.isFile
-      ? extractFileName(openedEntry.path, currentLocation.getDirSeparator())
+      ? extractFileName(openedEntry.path, currentLocation?.getDirSeparator())
       : extractDirectoryName(
           openedEntry.path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         )
     : '';
 
@@ -291,9 +291,9 @@ function EntryProperties(props: Props) {
     if (editName !== undefined) {
       const path = extractContainingDirectoryPath(
         openedEntry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
-      const nextPath = path + currentLocation.getDirSeparator() + editName;
+      const nextPath = path + currentLocation?.getDirSeparator() + editName;
 
       if (openedEntry.isFile) {
         renameFile(openedEntry.path, nextPath).catch(() => {
@@ -829,7 +829,7 @@ function EntryProperties(props: Props) {
                           const entryTitle = extractTitle(
                             openedEntry.name,
                             !openedEntry.isFile,
-                            currentLocation.getDirSeparator(),
+                            currentLocation?.getDirSeparator(),
                           );
                           const clibboardItem = generateClipboardLink(
                             sharingLink,

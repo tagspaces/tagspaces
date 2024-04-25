@@ -122,7 +122,7 @@ function GridPagination(props: Props) {
 
   const folderName = extractDirectoryName(
     props.currentDirectoryPath,
-    currentLocation.getDirSeparator(),
+    currentLocation?.getDirSeparator(),
   );
 
   const dirColor =
@@ -157,7 +157,7 @@ function GridPagination(props: Props) {
           overflowY: 'auto',
           backgroundImage:
             'url("' +
-            currentLocation.getFolderBgndPath(
+            currentLocation?.getFolderBgndPath(
               currentDirectoryPath,
               directoryMeta?.lastUpdated,
             ) +
@@ -270,7 +270,7 @@ function GridPagination(props: Props) {
                     width: 140,
                     backgroundImage:
                       'url("' +
-                      currentLocation.getFolderThumbPath(
+                      currentLocation?.getFolderThumbPath(
                         currentDirectoryPath,
                         directoryMeta?.lastUpdated,
                       ) +

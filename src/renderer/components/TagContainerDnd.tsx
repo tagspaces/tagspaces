@@ -195,7 +195,7 @@ const TagContainerDnd = (props: Props) => {
         const extractedTags = extractTags(
           entryPath,
           AppConfig.tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         if (
           extractedTags.length > 0 &&

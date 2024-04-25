@@ -118,11 +118,11 @@ function EntryContainerMenu(props: Props) {
   function downloadFile() {
     const entryName = `${baseName(
       openedEntry.path,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     )}`;
     const fileName = extractFileName(
       entryName,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     if (AppConfig.isCordova) {
@@ -473,7 +473,7 @@ function EntryContainerMenu(props: Props) {
   );
 
   const entryName = openedEntry.path
-    ? extractDirectoryName(openedEntry.path, currentLocation.getDirSeparator())
+    ? extractDirectoryName(openedEntry.path, currentLocation?.getDirSeparator())
     : '';
 
   return (

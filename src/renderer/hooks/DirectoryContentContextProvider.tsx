@@ -125,7 +125,10 @@ type DirectoryContentContextData = {
   findFromSavedSearch: (uuid: string) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   getPerspective: () => TS.PerspectiveType;
-  getAllPropertiesPromise: (entryPath: string) => Promise<TS.FileSystemEntry>;
+  getAllPropertiesPromise: (
+    entryPath: string,
+    locationID?: string,
+  ) => Promise<TS.FileSystemEntry>;
   loadCurrentDirMeta: (
     directoryPath: string,
     dirEntries: TS.FileSystemEntry[],
@@ -394,7 +397,7 @@ export const DirectoryContentContextProvider = ({
     } else {
       const dirPath = extractContainingDirectoryPath(
         entry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       if (
         cleanTrailingDirSeparator(
@@ -511,7 +514,7 @@ export const DirectoryContentContextProvider = ({
     if (currentDirectoryPath.current !== undefined) {
       const parentDirectory = extractParentDirectoryPath(
         currentDirectoryPath.current,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       console.log(
         'parentDirectory: ' +
@@ -861,7 +864,7 @@ export const DirectoryContentContextProvider = ({
       const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
         entry,
         AppConfig.tagDelimiter,
-        location.getDirSeparator(),
+        location?.getDirSeparator(),
       );
       directoryContent.push({ ...enhancedEntry, locationID: location.uuid });
       return true;
@@ -1033,12 +1036,14 @@ export const DirectoryContentContextProvider = ({
    */
   function getAllPropertiesPromise(
     entryPath: string,
+    locationID: string = undefined,
   ): Promise<TS.FileSystemEntry> {
-    return currentLocation
+    const location = locationID ? findLocation(locationID) : currentLocation;
+    return location
       .getPropertiesPromise(entryPath)
       .then((entryProps: TS.FileSystemEntry) => {
         if (entryProps) {
-          const entry = { ...entryProps, locationID: currentLocation.uuid };
+          const entry = { ...entryProps, locationID: location.uuid };
           if (!entryProps.isFile) {
             return getEnhancedDir(entry);
           }
@@ -1072,7 +1077,7 @@ export const DirectoryContentContextProvider = ({
             },
           },
           AppConfig.tagDelimiter,
-          location.getDirSeparator(),
+          location?.getDirSeparator(),
         );
       }
     });
@@ -1155,14 +1160,14 @@ export const DirectoryContentContextProvider = ({
     return pageFiles.map((entry) => {
       const metaFilePath = getMetaFileLocationForFile(
         entry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       if (
         // check if metaFilePath exist in listMetaDirectory content
         meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
         // !checkEntryExist(entry.path) &&
         entry.path.indexOf(
-          AppConfig.metaFolder + currentLocation.getDirSeparator(),
+          AppConfig.metaFolder + currentLocation?.getDirSeparator(),
         ) === -1
       ) {
         return getMetaForEntry(entry);
@@ -1200,7 +1205,7 @@ export const DirectoryContentContextProvider = ({
     const thumbEntry = { ...entry, tags: [] };
     let thumbPath = getThumbFileLocationForFile(
       entry.path,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
       false,
     );
     const metaFile = meta.find((m) => thumbPath && thumbPath.endsWith(m.path));
@@ -1258,7 +1263,7 @@ export const DirectoryContentContextProvider = ({
 
     const thumbFilePath = getThumbFileLocationForFile(
       entry.path,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
       false,
     );
 
@@ -1267,7 +1272,7 @@ export const DirectoryContentContextProvider = ({
 
       const metaFilePath = getMetaFileLocationForFile(
         entry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       try {
@@ -1278,20 +1283,20 @@ export const DirectoryContentContextProvider = ({
               return enhanceEntry(
                 { ...entry, meta: { ...meta, ...metaProps } },
                 AppConfig.tagDelimiter,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               );
             }
             return enhanceEntry(
               { ...entry, meta: { ...metaProps } },
               AppConfig.tagDelimiter,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             );
           });
       } catch (e) {
         return enhanceEntry(
           { ...entry, meta: { ...metaProps } },
           AppConfig.tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
       }
     });
@@ -1304,11 +1309,11 @@ export const DirectoryContentContextProvider = ({
     return location.listMetaDirectoryPromise(dirPath).then((meta) => {
       const metaFilePath = getMetaFileLocationForDir(
         dirPath,
-        location.getDirSeparator(),
+        location?.getDirSeparator(),
       );
       const thumbDirPath = getThumbFileLocationForDirectory(
         dirPath,
-        location.getDirSeparator(),
+        location?.getDirSeparator(),
       );
       let thumbPath;
       if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
@@ -1319,7 +1324,7 @@ export const DirectoryContentContextProvider = ({
       }
       if (
         meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
-        dirPath.indexOf(AppConfig.metaFolder + location.getDirSeparator()) ===
+        dirPath.indexOf(AppConfig.metaFolder + location?.getDirSeparator()) ===
           -1
       ) {
         return loadMetaForDir(dirPath, location, { thumbPath });

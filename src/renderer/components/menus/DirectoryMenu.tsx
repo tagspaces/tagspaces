@@ -137,7 +137,7 @@ function DirectoryMenu(props: Props) {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
       const folderName = extractDirectoryName(
         selectedEntries[0].name,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return {
         url: generateSharingLink(locationID, undefined, relativePath),
@@ -353,21 +353,21 @@ Do you want to continue?`)
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
       directoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const parentDirectoryName = extractDirectoryName(
       parentDirectoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     copyFilePromise(
       getThumbFileLocationForDirectory(
         directoryPath,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       ),
       getThumbFileLocationForDirectory(
         parentDirectoryPath,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       ),
       t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )

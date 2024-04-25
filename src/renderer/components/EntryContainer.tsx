@@ -337,14 +337,14 @@ function EntryContainer() {
             }
             let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
               fileDirectory =
                 extractContainingDirectoryPath(
                   // eslint-disable-next-line no-restricted-globals
                   location.href,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                 ) +
                 '/' +
                 fileDirectory;
@@ -492,7 +492,7 @@ function EntryContainer() {
       const targetPath = getBackupFileLocation(
         fileOpen.path,
         id,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       try {
         await copyFilePromiseOverwrite(fileOpen.path, targetPath, false); // todo test what happened if remove await?
@@ -591,7 +591,7 @@ function EntryContainer() {
 
   const fileExtension =
     openedEntry &&
-    extractFileExtension(openedEntry.path, currentLocation.getDirSeparator());
+    extractFileExtension(openedEntry.path, currentLocation?.getDirSeparator());
   const isEditable =
     openedEntry &&
     openedEntry.isFile &&

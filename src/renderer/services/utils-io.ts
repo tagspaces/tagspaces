@@ -310,7 +310,7 @@ export function generateFileName(
   fileName: string,
   tags: string[],
   tagDelimiter: string,
-  dirSeparator: string,
+  dirSeparator: string = AppConfig.dirSeparator,
   prefixTagContainer = AppConfig.prefixTagContainer,
 ) {
   let tagsString = '';
@@ -1043,4 +1043,14 @@ export function getDevicePaths(): Promise<any> {
     console.log('getDevicePaths not supported');
     return Promise.resolve(undefined);
   }
+}
+
+export function selectDirectoryDialog(): Promise<any> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
+  } else if (AppConfig.isCordova) {
+    const ioAPI = require('@tagspaces/tagspaces-common-cordova');
+    return ioAPI.selectDirectoryDialog();
+  }
+  return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
 }

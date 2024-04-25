@@ -272,7 +272,7 @@ export const IOActionsContextProvider = ({
           if (!action.entry.isFile) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             );
             if (
               cleanTrailingDirSeparator(
@@ -301,7 +301,7 @@ export const IOActionsContextProvider = ({
         showNotification(
           `Creating directory ${extractDirectoryName(
             directoryPath,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           )} successful.`,
           'default',
           true,
@@ -313,7 +313,7 @@ export const IOActionsContextProvider = ({
         showNotification(
           `Error creating directory '${extractDirectoryName(
             directoryPath,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           )}'`,
           'error',
           true,
@@ -358,7 +358,7 @@ export const IOActionsContextProvider = ({
             {
               dirPath: extractDirectoryName(
                 directoryPath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
             } as any,
           ) as string,
@@ -375,7 +375,7 @@ export const IOActionsContextProvider = ({
             {
               dirPath: extractDirectoryName(
                 directoryPath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
             } as any,
           ) as string,
@@ -401,11 +401,11 @@ export const IOActionsContextProvider = ({
         const backupFilePath = getBackupFileLocation(
           filePath,
           uuid,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const backupPath = extractContainingDirectoryPath(
           backupFilePath,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         // Delete revisions, sidecar file and thumb
         deleteEntriesPromise(
@@ -413,7 +413,7 @@ export const IOActionsContextProvider = ({
           currentLocation.toFsEntry(
             getMetaFileLocationForFile(
               filePath,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
             ),
             true,
             currentLocation.uuid,
@@ -421,7 +421,7 @@ export const IOActionsContextProvider = ({
           currentLocation.toFsEntry(
             getThumbFileLocationForFile(
               filePath,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
               false,
             ),
             true,
@@ -460,11 +460,17 @@ export const IOActionsContextProvider = ({
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(
         path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return moveDirectoryPromise(
         { path: path, total: count },
-        joinPaths(currentLocation.getDirSeparator(), targetPath, dirName),
+        joinPaths(
+          currentLocation
+            ? currentLocation.getDirSeparator()
+            : AppConfig.dirSeparator,
+          targetPath,
+          dirName,
+        ),
         progress,
         false,
       )
@@ -516,8 +522,10 @@ export const IOActionsContextProvider = ({
     const moveJobs = paths.map((path) => [
       path,
       normalizePath(targetPath) +
-        currentLocation.getDirSeparator() +
-        extractFileName(path, currentLocation.getDirSeparator()),
+        (currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator) +
+        extractFileName(path, currentLocation?.getDirSeparator()),
     ]);
     return moveFilesPromise(
       moveJobs,
@@ -537,12 +545,12 @@ export const IOActionsContextProvider = ({
                   const backupDir = getBackupFileDir(
                     job[0],
                     fsEntryMeta.id,
-                    currentLocation.getDirSeparator(),
+                    currentLocation?.getDirSeparator(),
                   );
                   const newBackupDir = getBackupFileDir(
                     job[1],
                     fsEntryMeta.id,
-                    currentLocation.getDirSeparator(),
+                    currentLocation?.getDirSeparator(),
                   );
                   return moveDirectoryPromise({ path: backupDir }, newBackupDir)
                     .then(() => {
@@ -567,22 +575,22 @@ export const IOActionsContextProvider = ({
             moveMetaJobs.push([
               getMetaFileLocationForFile(
                 job[0],
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
               getMetaFileLocationForFile(
                 job[1],
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
             ]);
             moveMetaJobs.push([
               getThumbFileLocationForFile(
                 job[0],
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
                 false,
               ),
               getThumbFileLocationForFile(
                 job[1],
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
                 false,
               ),
             ]);
@@ -618,11 +626,17 @@ export const IOActionsContextProvider = ({
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(
         path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return copyDirectoryPromise(
         { path: path, total: count },
-        joinPaths(currentLocation.getDirSeparator(), targetPath, dirName),
+        joinPaths(
+          currentLocation
+            ? currentLocation.getDirSeparator()
+            : AppConfig.dirSeparator,
+          targetPath,
+          dirName,
+        ),
         progress,
         false,
       )
@@ -678,10 +692,13 @@ export const IOActionsContextProvider = ({
         if (success) {
           showNotification(t('core:filesCopiedSuccessful'));
           const metaPaths = paths.flatMap((path) => [
-            getMetaFileLocationForFile(path, currentLocation.getDirSeparator()),
+            getMetaFileLocationForFile(
+              path,
+              currentLocation?.getDirSeparator(),
+            ),
             getThumbFileLocationForFile(
               path,
-              currentLocation.getDirSeparator(),
+              currentLocation?.getDirSeparator(),
               false,
             ),
           ]);
@@ -742,7 +759,7 @@ export const IOActionsContextProvider = ({
           fsEntry.size,
           currentLocation.loadTextFilePromise,
           currentLocation.getFileContentPromise,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
@@ -751,7 +768,7 @@ export const IOActionsContextProvider = ({
               {
                 path: getThumbFileLocationForFile(
                   targetPath,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                   false,
                 ),
               },
@@ -811,7 +828,9 @@ export const IOActionsContextProvider = ({
         } catch (ex) {}
         let filePath =
           normalizePath(targetPath) +
-          currentLocation.getDirSeparator() +
+          (currentLocation
+            ? currentLocation.getDirSeparator()
+            : AppConfig.dirSeparator) +
           fileName;
         if (
           currentLocation.haveObjectStoreSupport() &&
@@ -852,7 +871,7 @@ export const IOActionsContextProvider = ({
                 fsEntry.size,
                 currentLocation.loadTextFilePromise,
                 currentLocation.getFileContentPromise,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               )
                 .then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
@@ -860,7 +879,7 @@ export const IOActionsContextProvider = ({
                     const fileContent = base64ToBlob(baseString);
                     const thumbPath = getThumbFileLocationForFile(
                       fileTargetPath,
-                      currentLocation.getDirSeparator(),
+                      currentLocation?.getDirSeparator(),
                       false,
                     );
                     return saveBinaryFilePromise(
@@ -1042,7 +1061,7 @@ export const IOActionsContextProvider = ({
                   0,
                   currentLocation.loadTextFilePromise,
                   currentLocation.getFileContentPromise,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                 ).then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
@@ -1135,7 +1154,7 @@ export const IOActionsContextProvider = ({
                 return enhanceEntry(
                   file,
                   AppConfig.tagDelimiter,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                 );
               }
               return file;
@@ -1175,7 +1194,7 @@ export const IOActionsContextProvider = ({
         showNotification(
           `Renaming directory ${extractDirectoryName(
             directoryPath,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           )} successful.`,
           'default',
           true,
@@ -1187,7 +1206,7 @@ export const IOActionsContextProvider = ({
         showNotification(
           `Error renaming directory '${extractDirectoryName(
             directoryPath,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           )}'`,
           'error',
           true,
@@ -1212,22 +1231,22 @@ export const IOActionsContextProvider = ({
             [
               getMetaFileLocationForFile(
                 filePath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
               getMetaFileLocationForFile(
                 newFilePath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               ),
             ],
             [
               getThumbFileLocationForFile(
                 filePath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
                 false,
               ),
               getThumbFileLocationForFile(
                 newFilePath,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
                 false,
               ),
             ],
@@ -1286,29 +1305,34 @@ export const IOActionsContextProvider = ({
     if (selectedFilePath) {
       const dirPath = extractContainingDirectoryPath(
         selectedFilePath,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       const fileName = extractFileName(
         selectedFilePath,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       const extractedTags = extractTags(
         selectedFilePath,
         AppConfig.tagDelimiter,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       extractedTags.push('copy');
       extractedTags.push(formatDateTime4Tag(new Date(), true));
 
       const newFilePath =
-        (dirPath ? dirPath + currentLocation.getDirSeparator() : '') +
+        (dirPath
+          ? dirPath +
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator)
+          : '') +
         generateFileName(
           fileName,
           extractedTags,
           AppConfig.tagDelimiter,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
           prefixTagContainer,
         );
 
@@ -1338,15 +1362,15 @@ export const IOActionsContextProvider = ({
       if (entryProperties.isFile) {
         metaFilePath = getMetaFileLocationForFile(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         // check and create meta folder if not exist
         const metaFolder = getMetaDirectoryPath(
           extractContainingDirectoryPath(
             path,
-            currentLocation.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           ),
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const metaExist =
           await currentLocation.getPropertiesPromise(metaFolder);
@@ -1358,7 +1382,7 @@ export const IOActionsContextProvider = ({
         // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
         const metaDirectoryPath = getMetaDirectoryPath(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const metaDirectoryProperties =
           await currentLocation.getPropertiesPromise(metaDirectoryPath);
@@ -1373,7 +1397,7 @@ export const IOActionsContextProvider = ({
 
         metaFilePath = getMetaFileLocationForDir(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
       }
       const meta = mergeFsEntryMeta(cleanedMetaData);
@@ -1605,7 +1629,7 @@ export const IOActionsContextProvider = ({
       // reload cache
       const folderBgndPath = getBgndFileLocationForDirectory(
         entry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       currentLocation.generateURLforPath(folderBgndPath, 604800);
     }
@@ -1650,7 +1674,7 @@ export const IOActionsContextProvider = ({
       // reload cache
       const folderThumbPath = getThumbFileLocationForDirectory(
         entry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       currentLocation.generateURLforPath(folderThumbPath, 604800);
     }
@@ -1675,13 +1699,13 @@ export const IOActionsContextProvider = ({
   ): Promise<string> {
     const folderBgndPath = getBgndFileLocationForDirectory(
       directoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     return generateImageThumbnail(
       filePath,
       currentLocation.getFileContentPromise,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
       AppConfig.maxBgndSize,
     ) // 4K -> 3840, 2K -> 2560
       .then((base64Image) => {

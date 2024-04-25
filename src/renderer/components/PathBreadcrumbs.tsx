@@ -114,7 +114,8 @@ function PathBreadcrumbs(props: Props) {
 
   if (currentDirectoryPath) {
     // Make the path unix like ending always with /
-    const addSlash = currentLocation.haveObjectStoreSupport() ? '//' : '/';
+    const addSlash =
+      currentLocation && currentLocation.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
       addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
@@ -125,6 +126,7 @@ function PathBreadcrumbs(props: Props) {
     }
 
     while (
+      currentLocation &&
       normalizedCurrentPath.lastIndexOf('/') > 0 &&
       normalizedCurrentPath.startsWith(normalizedCurrentLocationPath)
     ) {
@@ -162,7 +164,7 @@ function PathBreadcrumbs(props: Props) {
       breadcrumbs = pathParts.map((pathPart, index) => {
         const folderName = extractShortDirectoryName(
           pathPart,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         return (
           <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>

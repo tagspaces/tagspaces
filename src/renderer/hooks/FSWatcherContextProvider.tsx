@@ -120,7 +120,11 @@ export const FSWatcherContextProvider = ({
         return;
       }
       // console.log(`ignored list:` + JSON.stringify(ignored.current));
-      const pathParts = path.split(currentLocation.getDirSeparator());
+      const pathParts = path.split(
+        currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator,
+      );
       for (let i = 0; i < ignored.current.length; i++) {
         if (
           path.startsWith(ignored.current[i]) ||
@@ -195,7 +199,7 @@ export const FSWatcherContextProvider = ({
               // endsWith json
               const filePath = getFileLocationFromMetaFile(
                 path,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               );
               reflectUpdateMeta(filePath);
             }
@@ -203,12 +207,12 @@ export const FSWatcherContextProvider = ({
               // endsWith tsm.json
               const directoryPath = getFileLocationFromMetaFile(
                 path,
-                currentLocation.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               );
               loadDirectoryContent(
                 extractContainingDirectoryPath(
                   directoryPath,
-                  currentLocation.getDirSeparator(),
+                  currentLocation?.getDirSeparator(),
                 ),
                 false,
                 true,
@@ -259,7 +263,9 @@ export const FSWatcherContextProvider = ({
     setTimeout(() => {
       for (let i = 0; i < ignored.current.length; i++) {
         const pathParts = ignored.current[i].split(
-          currentLocation.getDirSeparator(),
+          currentLocation
+            ? currentLocation.getDirSeparator()
+            : AppConfig.dirSeparator,
         );
         if (path.startsWith(ignored.current[i]) || pathParts.includes(path)) {
           ignored.current.splice(i, 1);

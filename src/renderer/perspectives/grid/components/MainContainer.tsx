@@ -178,7 +178,9 @@ function GridPerspective(props: Props) {
   };
 
   const openShareFilesDialog = () => {
-    setIsShareFilesDialogOpened(true);
+    if (currentLocation && currentLocation.haveObjectStoreSupport()) {
+      setIsShareFilesDialogOpened(true);
+    }
   };
 
   const openDeleteFileDialog = () => {
@@ -347,11 +349,7 @@ function GridPerspective(props: Props) {
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        openShareFilesDialog={
-          currentLocation.haveObjectStoreSupport()
-            ? openShareFilesDialog
-            : undefined
-        }
+        openShareFilesDialog={openShareFilesDialog}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -421,11 +419,7 @@ function GridPerspective(props: Props) {
           openDeleteFileDialog={openDeleteFileDialog}
           openRenameFileDialog={openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-          openShareFilesDialog={
-            currentLocation.haveObjectStoreSupport()
-              ? openShareFilesDialog
-              : undefined
-          }
+          openShareFilesDialog={openShareFilesDialog}
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           selectedFilePath={
             lastSelectedEntryPath ? lastSelectedEntryPath : currentDirectoryPath

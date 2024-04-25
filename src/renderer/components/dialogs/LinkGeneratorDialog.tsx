@@ -119,7 +119,7 @@ function LinkGeneratorDialog(props: Props) {
                     const entryTitle = extractTitle(
                       path,
                       true,
-                      currentLocation.getDirSeparator(),
+                      currentLocation?.getDirSeparator(),
                     );
                     const clipboardItem = generateClipboardLink(
                       signedLink.current,

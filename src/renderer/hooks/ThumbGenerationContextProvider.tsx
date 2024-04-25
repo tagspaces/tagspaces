@@ -328,16 +328,18 @@ export const ThumbGenerationContextProvider = ({
   function getThumbFileLocation(filePath: string) {
     const containingFolder = extractContainingDirectoryPath(
       filePath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const metaFolder = getMetaDirectoryPath(
       containingFolder,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     return (
       metaFolder +
-      currentLocation.getDirSeparator() +
-      extractFileName(filePath, currentLocation.getDirSeparator()) +
+      (currentLocation
+        ? currentLocation.getDirSeparator()
+        : AppConfig.dirSeparator) +
+      extractFileName(filePath, currentLocation?.getDirSeparator()) +
       AppConfig.thumbFileExt
     );
   }
@@ -350,12 +352,12 @@ export const ThumbGenerationContextProvider = ({
   ): Promise<string | undefined> {
     const metaDirectory = extractContainingDirectoryPath(
       thumbFilePath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const fileDirectory = isFile
       ? extractContainingDirectoryPath(
           filePath,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         )
       : filePath;
     const normalizedFileDirectory = normalizePath(fileDirectory);
@@ -389,7 +391,7 @@ export const ThumbGenerationContextProvider = ({
       fileSize,
       currentLocation.loadTextFilePromise,
       currentLocation.getFileContentPromise,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     )
       .then((dataURL) => {
         if (dataURL && dataURL.length) {

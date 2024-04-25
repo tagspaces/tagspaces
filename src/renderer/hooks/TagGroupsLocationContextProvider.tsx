@@ -111,7 +111,7 @@ export const TagGroupsLocationContextProvider = ({
       if (!entryProperties.isFile) {
         const metaFilePath = getMetaFileLocationForDir(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
           metaFile,
         );
         const metaData = await currentLocation.loadJSONFile(metaFilePath);
@@ -362,7 +362,7 @@ export const TagGroupsLocationContextProvider = ({
         // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
         const metaDirectoryPath = getMetaDirectoryPath(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const metaDirectoryProperties =
           await currentLocation.getPropertiesPromise(metaDirectoryPath);
@@ -372,7 +372,7 @@ export const TagGroupsLocationContextProvider = ({
 
         metaFilePath = getMetaFileLocationForDir(
           path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
           AppConfig.folderLocationsFile,
         );
       }

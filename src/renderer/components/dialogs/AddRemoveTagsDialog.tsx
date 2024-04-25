@@ -154,11 +154,11 @@ function AddRemoveTagsDialog(props: Props) {
                   {entry.isFile
                     ? extractFileName(
                         entry.path || '',
-                        currentLocation.getDirSeparator(),
+                        currentLocation?.getDirSeparator(),
                       )
                     : extractDirectoryName(
                         entry.path || '',
-                        currentLocation.getDirSeparator(),
+                        currentLocation?.getDirSeparator(),
                       )}
                 </Typography>
               </ListItem>

@@ -34,6 +34,7 @@ import { executePromisesInBatches } from '-/services/utils-io';
 import { getUseTrashCan } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import AppConfig from '-/AppConfig';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
@@ -173,21 +174,21 @@ export const PlatformFacadeContextProvider = ({
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
     const directoryPath = extractContainingDirectoryPath(
       filePath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const directoryName = extractDirectoryName(
       directoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const sourceThumbPath = getThumbFileLocationForFile(
       filePath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
       false,
     );
 
     const destThumbPath = getThumbFileLocationForDirectory(
       directoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     return copyFilePromise(
@@ -237,8 +238,10 @@ export const PlatformFacadeContextProvider = ({
     const ioJobPromises = paths.map((path) => {
       const targetFile =
         normalizePath(targetPath) +
-        currentLocation.getDirSeparator() +
-        extractFileName(path, currentLocation.getDirSeparator());
+        (currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator) +
+        extractFileName(path, currentLocation?.getDirSeparator());
       return {
         promise: copyFilePromiseOverwrite(path, targetFile, false),
         path: path,
@@ -265,8 +268,10 @@ export const PlatformFacadeContextProvider = ({
         const targetPaths = paths.map(
           (path) =>
             normalizePath(targetPath) +
-            currentLocation.getDirSeparator() +
-            extractFileName(path, currentLocation.getDirSeparator()),
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator) +
+            extractFileName(path, currentLocation?.getDirSeparator()),
         );
         return reflectAddEntryPath(...targetPaths);
       }
@@ -551,7 +556,7 @@ export const PlatformFacadeContextProvider = ({
     return currentLocation
       .saveFilePromise(param, content, overwrite)
       .then((fsEntry) => {
-        reflectAddEntry(fsEntry, open);
+        reflectAddEntry({ ...fsEntry, locationID: currentLocation.uuid }, open);
         deignoreByWatcher(param.path);
         return fsEntry;
       });

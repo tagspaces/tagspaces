@@ -132,7 +132,7 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { findLocation, openLocation, currentLocation, getLocationPath } =
+  const { currentLocation, findLocation, openLocation, getLocationPath } =
     useCurrentLocationContext();
   const {
     currentDirectoryPath,
@@ -297,7 +297,7 @@ export const OpenedEntryContextProvider = ({
               cleanRootPath(
                 folderPath,
                 folderLocation.path,
-                folderLocation.getDirSeparator(),
+                folderLocation?.getDirSeparator(),
               ),
             );
           }
@@ -383,7 +383,10 @@ export const OpenedEntryContextProvider = ({
     if (currentEntry.current) {
       currentEntry.current.editMode = false;
       //return openEntry(currentEntry.current.path); //true);
-      return getAllPropertiesPromise(currentEntry.current.path)
+      return getAllPropertiesPromise(
+        currentEntry.current.path,
+        currentEntry.current.locationID,
+      )
         .then((fsEntry: TS.FileSystemEntry) =>
           openFsEntry({ ...currentEntry.current, ...fsEntry }, undefined),
         )
@@ -404,7 +407,7 @@ export const OpenedEntryContextProvider = ({
     if (path === undefined) {
       return openFsEntry(undefined, showDetails);
     }
-    return getAllPropertiesPromise(path)
+    return getAllPropertiesPromise(path, currentEntry.current?.locationID)
       .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
       .catch((error) => {
         console.warn(
@@ -418,7 +421,7 @@ export const OpenedEntryContextProvider = ({
     fsEntry: TS.FileSystemEntry,
     showDetails = undefined,
   ): Promise<boolean> {
-    return getAllPropertiesPromise(fsEntry.path)
+    return getAllPropertiesPromise(fsEntry.path, fsEntry.locationID)
       .then((entry: TS.FileSystemEntry) => {
         if (entry) {
           return openFsEntry(entry, showDetails);
@@ -478,14 +481,12 @@ export const OpenedEntryContextProvider = ({
       dispatch(SettingsActions.setShowDetails(showDetails));
     }
     entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
-    if (
-      currentLocation.haveObjectStoreSupport() ||
-      currentLocation.haveWebDavSupport()
-    ) {
+    const loc = findLocation(fsEntry.locationID);
+    if (loc.haveObjectStoreSupport() || loc.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
-      entryForOpening.url = currentLocation.getURLforPath(cleanedPath);
+      entryForOpening.url = loc.getURLforPath(cleanedPath);
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
@@ -496,18 +497,18 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.editMode = true;
     }
 
-    const locationName = currentLocation ? currentLocation.name : 'TagSpaces'; // TODO get it later from app config
+    const locationName = loc ? loc.name : 'TagSpaces'; // TODO get it later from app config
 
     document.title = fsEntry.name + ' | ' + locationName;
 
-    if (!entryForOpening.locationId && currentLocation) {
+    /*if (!entryForOpening.locationId && currentLocation) { //todo entryForOpening.locationId is always true
       entryForOpening.locationId = currentLocation.uuid;
       updateHistory(
         { ...currentLocation, path: currentLocationPath },
         currentDirectoryPath,
         fsEntry.path,
       );
-    }
+    }*/
 
     addToEntryContainer(entryForOpening);
 
@@ -596,7 +597,7 @@ export const OpenedEntryContextProvider = ({
       const cmdOpen = getURLParameter('cmdopen', url);
       if (cmdOpen && cmdOpen.length > 0) {
         const entryPath = decodeURIComponent(cmdOpen);
-        getAllPropertiesPromise(entryPath)
+        getAllPropertiesPromise(entryPath, lid)
           .then((fsEntry: TS.FileSystemEntry) => {
             if (fsEntry.isFile) {
               openFsEntry(fsEntry);
@@ -653,6 +654,7 @@ export const OpenedEntryContextProvider = ({
                 getAllPropertiesPromise(
                   (locationPath.length > 0 ? locationPath + '/' : '') +
                     entryPath,
+                  lid,
                 )
                   .then((fsEntry: TS.FileSystemEntry) => {
                     if (fsEntry) {
@@ -695,7 +697,7 @@ export const OpenedEntryContextProvider = ({
                 }
                 const entryFullPath =
                   locationPath + targetLocation.getDirSeparator() + entryPath;
-                getAllPropertiesPromise(entryFullPath)
+                getAllPropertiesPromise(entryFullPath, lid)
                   .then((fsEntry: TS.FileSystemEntry) => {
                     if (fsEntry) {
                       openFsEntry(fsEntry);
@@ -741,7 +743,9 @@ export const OpenedEntryContextProvider = ({
     if (currentDirectoryPath !== undefined) {
       const filePath =
         currentDirectoryPath +
-        currentLocation.getDirSeparator() +
+        (currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator) +
         'textfile' +
         AppConfig.beginTagContainer +
         formatDateTime4Tag(new Date(), true) +
@@ -777,7 +781,9 @@ export const OpenedEntryContextProvider = ({
       '.';
     const filePath =
       normalizePath(targetPath) +
-      currentLocation.getDirSeparator() +
+      (currentLocation
+        ? currentLocation.getDirSeparator()
+        : AppConfig.dirSeparator) +
       fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
@@ -817,7 +823,9 @@ export const OpenedEntryContextProvider = ({
   ): TS.OpenedEntry {
     const fileExtension = extractFileExtension(
       openedEntry.path,
-      currentLocation.getDirSeparator(),
+      currentLocation
+        ? currentLocation.getDirSeparator()
+        : AppConfig.dirSeparator,
     ).toLowerCase();
 
     const fileForOpening = { ...openedEntry };

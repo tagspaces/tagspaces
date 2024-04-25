@@ -209,19 +209,6 @@ export class CommonLocation implements TS.Location {
     return this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
   };
 
-  selectDirectoryDialog = (): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !this.haveObjectStoreSupport() &&
-      !this.haveWebDavSupport()
-    ) {
-      return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
-    } else if (AppConfig.isCordova) {
-      return this.ioAPI.selectDirectoryDialog();
-    }
-    return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
-  };
-
   listDirectoryPromise = (
     path: string,
     mode = ['extractThumbPath'],

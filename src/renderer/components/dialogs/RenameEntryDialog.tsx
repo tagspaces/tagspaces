@@ -65,12 +65,12 @@ function RenameEntryDialog(props: Props) {
     if (isFile) {
       defaultName = extractFileName(
         lastSelectedEntry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     } else {
       defaultName = extractDirectoryName(
         lastSelectedEntry.path,
-        currentLocation.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     }
     originPath = lastSelectedEntry.path;
@@ -78,7 +78,7 @@ function RenameEntryDialog(props: Props) {
     isFile = false;
     defaultName = extractDirectoryName(
       currentDirectoryPath,
-      currentLocation.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     originPath = currentDirectoryPath;
   } else {
@@ -140,7 +140,7 @@ function RenameEntryDialog(props: Props) {
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
-          currentLocation.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const newFilePath =
           fileDirectory + currentLocation.getDirSeparator() + name.current;
