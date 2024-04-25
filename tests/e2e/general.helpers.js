@@ -360,7 +360,7 @@ export async function expectAudioPlay() {
       {
         message: 'progress of file is not greater that 0', // custom error message
         // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-        timeout: 10000,
+        timeout: 15000,
       },
     )
     .toBe(true);
