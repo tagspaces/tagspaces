@@ -328,7 +328,12 @@ export const IOActionsContextProvider = ({
       return deleteEntriesPromise(...entries)
         .then((success) => {
           if (success) {
-            const fileNames = entries.map((e) => e.name).join(' ');
+            const fileNames = entries
+              .map((e) => {
+                deleteMeta(e.path, e.uuid);
+                return e.name;
+              })
+              .join(' ');
             showNotification(
               t('deletingEntriesSuccessful', {
                 dirPath: fileNames,
@@ -387,6 +392,59 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  function deleteMeta(filePath: string, uuid: string): Promise<boolean> {
+    if (
+      !filePath.endsWith(
+        (currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator) + AppConfig.metaFolder,
+      )
+    ) {
+      // Delete revisions path
+      const backupFilePath = getBackupFileLocation(
+        filePath,
+        uuid,
+        currentLocation?.getDirSeparator(),
+      );
+      const backupPath = extractContainingDirectoryPath(
+        backupFilePath,
+        currentLocation?.getDirSeparator(),
+      );
+      // Delete revisions, sidecar file and thumb
+      return deleteEntriesPromise(
+        currentLocation.toFsEntry(backupPath, false, currentLocation.uuid),
+        currentLocation.toFsEntry(
+          getMetaFileLocationForFile(
+            filePath,
+            currentLocation?.getDirSeparator(),
+          ),
+          true,
+          currentLocation.uuid,
+        ),
+        currentLocation.toFsEntry(
+          getThumbFileLocationForFile(
+            filePath,
+            currentLocation?.getDirSeparator(),
+            false,
+          ),
+          true,
+          currentLocation.uuid,
+        ),
+      )
+        .then(() => {
+          console.log(
+            'Cleaning revisions meta file and thumb successful for ' + filePath,
+          );
+          return true;
+        })
+        .catch((err) => {
+          console.warn('Cleaning meta file and thumb failed with ' + err);
+          return false;
+        });
+    }
+    return Promise.resolve(false);
+  }
+
   function deleteFile(filePath: string, uuid: string) {
     return deleteEntriesPromise(
       currentLocation.toFsEntry(filePath, true, currentLocation.uuid),
@@ -397,48 +455,7 @@ export const IOActionsContextProvider = ({
           'default',
           true,
         );
-        // Delete revisions path
-        const backupFilePath = getBackupFileLocation(
-          filePath,
-          uuid,
-          currentLocation?.getDirSeparator(),
-        );
-        const backupPath = extractContainingDirectoryPath(
-          backupFilePath,
-          currentLocation?.getDirSeparator(),
-        );
-        // Delete revisions, sidecar file and thumb
-        deleteEntriesPromise(
-          backupPath,
-          currentLocation.toFsEntry(
-            getMetaFileLocationForFile(
-              filePath,
-              currentLocation?.getDirSeparator(),
-            ),
-            true,
-            currentLocation.uuid,
-          ),
-          currentLocation.toFsEntry(
-            getThumbFileLocationForFile(
-              filePath,
-              currentLocation?.getDirSeparator(),
-              false,
-            ),
-            true,
-            currentLocation.uuid,
-          ),
-        )
-          .then(() => {
-            console.log(
-              'Cleaning revisions meta file and thumb successful for ' +
-                filePath,
-            );
-            return true;
-          })
-          .catch((err) => {
-            console.warn('Cleaning meta file and thumb failed with ' + err);
-          });
-        return true;
+        return deleteMeta(filePath, uuid).then(() => true);
       })
       .catch((error) => {
         console.warn('Error while deleting file: ' + error);
@@ -1424,7 +1441,22 @@ export const IOActionsContextProvider = ({
         }
       })
       .catch(() => {
-        return createFsEntryMeta(path, { id: id });
+        // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
+        const content = JSON.stringify({ id: id });
+        const metaFilePath = path.endsWith(
+          currentLocation
+            ? currentLocation.getDirSeparator()
+            : AppConfig.dirSeparator,
+        )
+          ? getMetaFileLocationForDir(path, currentLocation?.getDirSeparator())
+          : getMetaFileLocationForFile(
+              path,
+              currentLocation?.getDirSeparator(),
+            );
+        return saveTextFilePromise({ path: metaFilePath }, content, true).then(
+          () => id,
+        );
+        //return createFsEntryMeta(path, { id: id });
       });
   }
 

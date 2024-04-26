@@ -27,6 +27,7 @@ import {
   getThumbFileLocationForFile,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
@@ -556,9 +557,14 @@ export const PlatformFacadeContextProvider = ({
     return currentLocation
       .saveFilePromise(param, content, overwrite)
       .then((fsEntry) => {
-        reflectAddEntry({ ...fsEntry, locationID: currentLocation.uuid }, open);
+        const entry = {
+          ...fsEntry,
+          uuid: getUuid(),
+          locationID: currentLocation.uuid,
+        };
+        reflectAddEntry(entry, open);
         deignoreByWatcher(param.path);
-        return fsEntry;
+        return entry;
       });
   }
 

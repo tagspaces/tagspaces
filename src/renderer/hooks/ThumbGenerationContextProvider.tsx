@@ -135,9 +135,9 @@ export const ThumbGenerationContextProvider = ({
       currentDirectoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder,
       ) ||
-      currentDirectoryPath.endsWith(
+      currentDirectoryPath.indexOf(
         AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator,
-      )
+      ) !== -1
     ) {
       return false; // dont generate thumbnails in meta folder
     }
