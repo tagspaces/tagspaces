@@ -153,7 +153,12 @@ function MoveCopyFilesDialog(props: Props) {
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      copyDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
+      copyDirs(
+        getEntriesCount(selectedDirs),
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
     }
     onClose(true);
   }
@@ -170,7 +175,12 @@ function MoveCopyFilesDialog(props: Props) {
     if (selectedDirs.length > 0) {
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog('moveEntriesTitle'));
-      moveDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
+      moveDirs(
+        getEntriesCount(selectedDirs),
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
     }
     onClose(true);
   }

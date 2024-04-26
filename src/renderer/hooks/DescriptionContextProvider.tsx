@@ -115,7 +115,7 @@ export const DescriptionContextProvider = ({
       setDescriptionChange(
         lastOpenedFile.current,
         lastOpenedFile.current.meta?.description,
-        lastOpenedFile.current.locationId,
+        lastOpenedFile.current.locationID,
       ).then(() => {
         if (lastOpenedFile.current.path !== openedEntry.path) {
           lastOpenedFile.current = { ...openedEntry };

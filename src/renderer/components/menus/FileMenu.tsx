@@ -186,7 +186,6 @@ function FileMenu(props: Props) {
             currentLocation?.getDirSeparator(),
           ),
           false,
-          currentLocation.uuid,
         );
         setThumbnailImageChange({
           ...entry,
@@ -221,7 +220,7 @@ function FileMenu(props: Props) {
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
         setBackgroundImageChange(
-          currentLocation.toFsEntry(directoryPath, false, currentLocation.uuid),
+          currentLocation.toFsEntry(directoryPath, false),
         );
         /*dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime()),

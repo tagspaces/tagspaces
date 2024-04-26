@@ -328,11 +328,7 @@ export const DirectoryContentContextProvider = ({
         } else if (action.action === 'move') {
           await reflectAddAction(action.entry);
           reflectDeleteAction(
-            currentLocation.toFsEntry(
-              action.oldEntryPath,
-              action.entry.isFile,
-              currentLocation.uuid,
-            ),
+            currentLocation.toFsEntry(action.oldEntryPath, action.entry.isFile),
           );
         }
       }

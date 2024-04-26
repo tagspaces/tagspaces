@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -194,9 +194,7 @@ function DirectoryMenu(props: Props) {
 
   function showDeleteDirectoryDialog() {
     if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
-      setSelectedEntries([
-        currentLocation.toFsEntry(directoryPath, false, currentLocation.uuid),
-      ]);
+      setSelectedEntries([currentLocation.toFsEntry(directoryPath, false)]);
     }
     toggleDeleteMultipleEntriesDialog();
   }
@@ -305,7 +303,13 @@ Do you want to continue?`)
       currentLocation.getDirSeparator() +
       fileName;
 
-    renameFilePromise(filePath, newFilePath, undefined, false)
+    renameFilePromise(
+      filePath,
+      newFilePath,
+      currentLocation.uuid,
+      undefined,
+      false,
+    )
       .then((newEntry) => {
         setReflectActions({
           action: 'add',

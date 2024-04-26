@@ -49,6 +49,7 @@ import {
   createThumbnailsInWorker,
   isWorkerAvailable,
 } from '-/services/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -73,7 +74,7 @@ export const ThumbGenerationContextProvider = ({
     updateCurrentDirEntries,
     loadCurrentDirMeta,
   } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { saveBinaryFilePromise } = usePlatformFacadeContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
@@ -129,7 +130,7 @@ export const ThumbGenerationContextProvider = ({
     }
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);
 
-  function genThumbnailsEnabled(): boolean {
+  function genThumbnailsEnabled(location: CommonLocation): boolean {
     if (
       currentDirectoryPath === undefined ||
       currentDirectoryPath.endsWith(
@@ -141,7 +142,7 @@ export const ThumbGenerationContextProvider = ({
     ) {
       return false; // dont generate thumbnails in meta folder
     }
-    if (currentLocation?.disableThumbnailGeneration === true) {
+    if (!location || location.disableThumbnailGeneration === true) {
       return false; // dont generate thumbnails if it's not enabled in location settings
     }
     if (AppConfig.useGenerateThumbnails !== undefined) {
@@ -153,23 +154,29 @@ export const ThumbGenerationContextProvider = ({
   function generateThumbnails(
     dirEntries: TS.FileSystemEntry[],
   ): Promise<boolean> {
-    if (
-      !genThumbnailsEnabled() // enabled in the settings
-    ) {
+    if (dirEntries.length === 0) {
+      return Promise.resolve(false);
+    }
+    const location: CommonLocation = findLocation(dirEntries[0].locationID);
+    if (!location || location.disableThumbnailGeneration === true) {
+      return Promise.resolve(false); // dont generate thumbnails if it's not enabled in location settings
+    }
+    if (!genThumbnailsEnabled(location)) {
       return Promise.resolve(false);
     }
 
     if (AppConfig.isElectron) {
       return isWorkerAvailable().then((isWorkerAvailable) =>
-        generateThumbnails2(dirEntries, isWorkerAvailable),
+        generateThumbnails2(dirEntries, isWorkerAvailable, location),
       );
     }
-    return generateThumbnails2(dirEntries, false);
+    return generateThumbnails2(dirEntries, false, location);
   }
 
   function generateThumbnails2(
     dirEntries: TS.FileSystemEntry[],
     isWorkerAvailable,
+    location: CommonLocation,
   ): Promise<boolean> {
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
@@ -184,8 +191,8 @@ export const ThumbGenerationContextProvider = ({
         isWorkerAvailable &&
         enableWS &&
         supportedImgsWS.includes(entry.extension) &&
-        !currentLocation.haveObjectStoreSupport() &&
-        !currentLocation.haveWebDavSupport()
+        !location.haveObjectStoreSupport() &&
+        !location.haveWebDavSupport()
       ) {
         workerEntries.push(entry.path);
       } else if (
@@ -206,7 +213,7 @@ export const ThumbGenerationContextProvider = ({
       setGenThumbs(true);
       return createThumbnailsInWorker(workerEntries)
         .then(() =>
-          thumbnailMainGeneration(mainEntries).then(() => {
+          thumbnailMainGeneration(mainEntries, location).then(() => {
             setGenThumbs(false);
             return true;
           }),
@@ -214,17 +221,17 @@ export const ThumbGenerationContextProvider = ({
         .catch((e) => {
           // WS error handle let process thumbgeneration in Main process Generator
           console.log('createThumbnailsInWorker', e);
-          return thumbnailMainGeneration([
-            ...workerEntries,
-            ...mainEntries,
-          ]).then(() => {
+          return thumbnailMainGeneration(
+            [...workerEntries, ...mainEntries],
+            location,
+          ).then(() => {
             setGenThumbs(false);
             return true;
           });
         });
     } else if (mainEntries.length > 0) {
       setGenThumbs(true);
-      return thumbnailMainGeneration(mainEntries).then(() => {
+      return thumbnailMainGeneration(mainEntries, location).then(() => {
         setGenThumbs(false);
         return true;
       });
@@ -234,10 +241,13 @@ export const ThumbGenerationContextProvider = ({
     return Promise.resolve(false);
   }
 
-  function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {
+  function thumbnailMainGeneration(
+    mainEntries: string[],
+    location: CommonLocation,
+  ): Promise<boolean> {
     const maxExecutionTime = 9000;
     const promises = mainEntries.map((tmbPath) =>
-      getThumbnailURLPromise(tmbPath),
+      getThumbnailURLPromise(tmbPath, location),
     );
     const promisesWithTimeout = promises.map((promise) => {
       const timeoutPromise = new Promise((resolve, reject) => {
@@ -263,12 +273,13 @@ export const ThumbGenerationContextProvider = ({
 
   function getThumbnailURLPromise(
     filePath: string,
+    location: CommonLocation,
   ): Promise<{ filePath: string; tmbPath?: string }> {
-    return currentLocation
+    return location
       .getPropertiesPromise(filePath)
       .then((origStats) => {
-        const thumbFilePath = getThumbFileLocation(filePath);
-        return currentLocation
+        const thumbFilePath = getThumbFileLocation(filePath, location);
+        return location
           .getPropertiesPromise(thumbFilePath)
           .then((stats) => {
             if (stats) {
@@ -280,6 +291,7 @@ export const ThumbGenerationContextProvider = ({
                   origStats.size,
                   thumbFilePath,
                   origStats.isFile,
+                  location,
                 )
                   .then((tmbPath) => ({ filePath, tmbPath }))
                   .catch((err) => {
@@ -300,6 +312,7 @@ export const ThumbGenerationContextProvider = ({
                 origStats.size,
                 thumbFilePath,
                 origStats.isFile,
+                location,
               )
                 .then((tmbPath) => {
                   if (tmbPath !== undefined) {
@@ -325,21 +338,19 @@ export const ThumbGenerationContextProvider = ({
       });
   }
 
-  function getThumbFileLocation(filePath: string) {
+  function getThumbFileLocation(filePath: string, location: CommonLocation) {
     const containingFolder = extractContainingDirectoryPath(
       filePath,
-      currentLocation?.getDirSeparator(),
+      location.getDirSeparator(),
     );
     const metaFolder = getMetaDirectoryPath(
       containingFolder,
-      currentLocation?.getDirSeparator(),
+      location.getDirSeparator(),
     );
     return (
       metaFolder +
-      (currentLocation
-        ? currentLocation.getDirSeparator()
-        : AppConfig.dirSeparator) +
-      extractFileName(filePath, currentLocation?.getDirSeparator()) +
+      location.getDirSeparator() +
+      extractFileName(filePath, location.getDirSeparator()) +
       AppConfig.thumbFileExt
     );
   }
@@ -349,34 +360,36 @@ export const ThumbGenerationContextProvider = ({
     fileSize: number,
     thumbFilePath: string,
     isFile: boolean,
+    location: CommonLocation,
   ): Promise<string | undefined> {
     const metaDirectory = extractContainingDirectoryPath(
       thumbFilePath,
-      currentLocation?.getDirSeparator(),
+      location.getDirSeparator(),
     );
     const fileDirectory = isFile
-      ? extractContainingDirectoryPath(
-          filePath,
-          currentLocation?.getDirSeparator(),
-        )
+      ? extractContainingDirectoryPath(filePath, location.getDirSeparator())
       : filePath;
     const normalizedFileDirectory = normalizePath(fileDirectory);
     if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
       return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
     }
-    return currentLocation.checkDirExist(metaDirectory).then((exist) => {
+    return location.checkDirExist(metaDirectory).then((exist) => {
       if (!exist) {
-        return currentLocation
-          .createDirectoryPromise(metaDirectory)
-          .then(() => {
-            return createThumbnailSavePromise(
-              filePath,
-              fileSize,
-              thumbFilePath,
-            );
-          });
+        return location.createDirectoryPromise(metaDirectory).then(() => {
+          return createThumbnailSavePromise(
+            filePath,
+            fileSize,
+            thumbFilePath,
+            location,
+          );
+        });
       } else {
-        return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
+        return createThumbnailSavePromise(
+          filePath,
+          fileSize,
+          thumbFilePath,
+          location,
+        );
       }
     });
   }
@@ -385,17 +398,18 @@ export const ThumbGenerationContextProvider = ({
     filePath: string,
     fileSize: number,
     thumbFilePath: string,
+    location: CommonLocation,
   ): Promise<string | undefined> {
     return generateThumbnailPromise(
       filePath,
       fileSize,
-      currentLocation.loadTextFilePromise,
-      currentLocation.getFileContentPromise,
-      currentLocation?.getDirSeparator(),
+      location.loadTextFilePromise,
+      location.getFileContentPromise,
+      location.getDirSeparator(),
     )
       .then((dataURL) => {
         if (dataURL && dataURL.length) {
-          return saveThumbnailPromise(thumbFilePath, dataURL)
+          return saveThumbnailPromise(thumbFilePath, dataURL, location)
             .then(() => thumbFilePath)
             .catch((err) => {
               console.warn('Thumb saving failed ' + err + ' for ' + filePath);
@@ -410,7 +424,7 @@ export const ThumbGenerationContextProvider = ({
       });
   }
 
-  function saveThumbnailPromise(filePath, dataURL) {
+  function saveThumbnailPromise(filePath, dataURL, locationID) {
     if (!dataURL || dataURL.length < 7) {
       // data:,
       return Promise.reject(new Error('Invalid dataURL'));
@@ -418,7 +432,7 @@ export const ThumbGenerationContextProvider = ({
     const baseString = dataURL.split(',').pop();
     const content = base64ToBlob(baseString);
     return saveBinaryFilePromise(
-      { path: filePath },
+      { path: filePath, locationID },
       content, //PlatformIO.isMinio() ? content : content.buffer,
       true,
     )
@@ -438,7 +452,7 @@ export const ThumbGenerationContextProvider = ({
     return {
       generateThumbnails,
     };
-  }, [currentLocation]);
+  }, []);
 
   return (
     <ThumbGenerationContext.Provider value={context}>

@@ -36,49 +36,61 @@ import { getUseTrashCan } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
   copyFilePromise: (
     sourceFilePath: string,
     targetFilePath: string,
+    locationID?: string,
     confirmMessage?: string,
   ) => Promise<any>;
   copyFilesWithProgress: (
     paths: Array<string>,
     targetPath: string,
+    locationID: string,
     onProgress?,
     reflect?: boolean,
   ) => Promise<boolean>;
   copyFilePromiseOverwrite: (
     sourceFilePath: string,
     targetFilePath: string,
+    locationID?: string,
     reflect?,
   ) => Promise<any>;
   renameFilePromise: (
     filePath: string,
     newFilePath: string,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   renameFilesPromise: (
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   moveFilePromise: (
     filePath: string,
     newFilePath: string,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   moveFilesPromise: (
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
-  renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
+  renameDirectoryPromise: (
+    dirPath: string,
+    newDirName: string,
+    locationID: string,
+  ) => Promise<any>;
   copyDirectoryPromise: (
     param: any,
     newDirPath: string,
@@ -149,20 +161,26 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation, findLocation } = useCurrentLocationContext();
   const { getAllPropertiesPromise } = useDirectoryContentContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
   const useTrashCan = useSelector(getUseTrashCan);
 
+  function getLocation(param: any): CommonLocation {
+    const { locationID } = param;
+    if (locationID) {
+      return findLocation(locationID);
+    }
+    return currentLocation;
+  }
+
   function createDirectoryPromise(path: string): Promise<any> {
     ignoreByWatcher(path);
 
     return currentLocation.createDirectoryPromise(path).then((result) => {
-      reflectAddEntry(
-        currentLocation.toFsEntry(path, false, currentLocation.uuid),
-      );
+      reflectAddEntry(currentLocation.toFsEntry(path, false));
       deignoreByWatcher(path);
       return result;
     });
@@ -195,6 +213,7 @@ export const PlatformFacadeContextProvider = ({
     return copyFilePromise(
       sourceThumbPath,
       destThumbPath,
+      undefined,
       t('core:thumbAlreadyExists', { directoryName }),
     ).then(() => {
       //  dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
@@ -205,31 +224,41 @@ export const PlatformFacadeContextProvider = ({
   function copyFilePromise(
     sourceFilePath: string,
     targetFilePath: string,
+    locationID: string,
     confirmMessage: string = 'File ' +
       targetFilePath +
       ' exist do you want to override it?',
   ): Promise<any> {
-    return currentLocation
+    return getLocation({ locationID })
       .getPropertiesPromise(targetFilePath)
       .then((isTargetExist) => {
         if (isTargetExist) {
           // eslint-disable-next-line no-alert
           const confirmOverwrite = window && window.confirm(confirmMessage);
           if (confirmOverwrite === true) {
-            return copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
+            return copyFilePromiseOverwrite(
+              sourceFilePath,
+              targetFilePath,
+              locationID,
+            );
           }
           // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject(
             'File "' + targetFilePath + '" exists. Copying failed.',
           );
         }
-        return copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
+        return copyFilePromiseOverwrite(
+          sourceFilePath,
+          targetFilePath,
+          locationID,
+        );
       });
   }
 
   function copyFilesWithProgress(
     paths: string[],
     targetPath: string,
+    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<boolean> {
@@ -244,7 +273,7 @@ export const PlatformFacadeContextProvider = ({
           : AppConfig.dirSeparator) +
         extractFileName(path, currentLocation?.getDirSeparator());
       return {
-        promise: copyFilePromiseOverwrite(path, targetFile, false),
+        promise: copyFilePromiseOverwrite(path, targetFile, locationID, false),
         path: path,
       };
     });
@@ -322,14 +351,16 @@ export const PlatformFacadeContextProvider = ({
   function copyFilePromiseOverwrite(
     sourceFilePath: string,
     targetFilePath: string,
+    locationID: string,
     reflect: boolean = true,
   ): Promise<any> {
     ignoreByWatcher(targetFilePath);
-    return currentLocation
+    const location = getLocation({ locationID });
+    return location
       .copyFilePromiseOverwrite(sourceFilePath, targetFilePath)
       .then((result) => {
         if (reflect) {
-          getAllPropertiesPromise(targetFilePath).then(
+          getAllPropertiesPromise(targetFilePath, location.uuid).then(
             (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry, false),
           );
         }
@@ -341,6 +372,7 @@ export const PlatformFacadeContextProvider = ({
   /**
    * @param filePath
    * @param newFilePath
+   * @param locationID
    * @param onProgress
    * @param reflect
    * return Promise<TS.FileSystemEntry> new file entry renamed
@@ -348,11 +380,12 @@ export const PlatformFacadeContextProvider = ({
   function renameFilePromise(
     filePath: string,
     newFilePath: string,
+    locationID: string = undefined,
     onProgress = undefined,
     reflect = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(filePath, newFilePath);
-    return currentLocation
+    return getLocation({ locationID })
       .renameFilePromise(filePath, newFilePath, onProgress)
       .then((result) => {
         deignoreByWatcher(filePath, newFilePath);
@@ -373,15 +406,17 @@ export const PlatformFacadeContextProvider = ({
 
   function renameFilesPromise(
     renameJobs: Array<Array<string>>,
+    locationID: string = undefined,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
+    const location = getLocation({ locationID });
     return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
-          return await currentLocation.renameFilePromise(
+          return await location.renameFilePromise(
             renameJob[0],
             renameJob[1],
             onProgress,
@@ -395,7 +430,7 @@ export const PlatformFacadeContextProvider = ({
       if (reflect) {
         const actions: TS.EditAction[] = renameJobs.map((job) => ({
           action: 'update',
-          entry: currentLocation.toFsEntry(job[1], true, currentLocation.uuid),
+          entry: location.toFsEntry(job[1], true),
           oldEntryPath: job[0],
         }));
         setReflectActions(...actions);
@@ -408,11 +443,12 @@ export const PlatformFacadeContextProvider = ({
   function moveFilePromise(
     filePath: string,
     newFilePath: string,
+    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
     ignoreByWatcher(filePath, newFilePath);
-    return currentLocation
+    return getLocation({ locationID })
       .renameFilePromise(filePath, newFilePath, onProgress)
       .then((result) => {
         if (reflect) {
@@ -425,6 +461,7 @@ export const PlatformFacadeContextProvider = ({
 
   function moveFilesPromise(
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
@@ -433,7 +470,7 @@ export const PlatformFacadeContextProvider = ({
     return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
-          return await currentLocation.renameFilePromise(
+          return await getLocation({ locationID }).renameFilePromise(
             renameJob[0],
             renameJob[1],
             onProgress,
@@ -483,9 +520,10 @@ export const PlatformFacadeContextProvider = ({
   function renameDirectoryPromise(
     dirPath: string,
     newDirName: string,
+    locationID: string,
   ): Promise<any> {
     ignoreByWatcher(dirPath, newDirName);
-    return currentLocation
+    return getLocation({ locationID })
       .renameDirectoryPromise(dirPath, newDirName)
       .then((newDirPath) => {
         getAllPropertiesPromise(newDirPath).then(
@@ -508,7 +546,7 @@ export const PlatformFacadeContextProvider = ({
     reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
-    return currentLocation
+    return getLocation(param)
       .copyDirectoryPromise(param, newDirPath, onProgress)
       .then((result) => {
         if (reflect) {
@@ -528,11 +566,12 @@ export const PlatformFacadeContextProvider = ({
     reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
-    return currentLocation
+    const location = getLocation(param);
+    return location
       .moveDirectoryPromise(param, newDirPath, onProgress)
       .then((result) => {
         if (reflect) {
-          getAllPropertiesPromise(newDirPath).then(
+          getAllPropertiesPromise(newDirPath, location.uuid).then(
             (fsEntry: TS.FileSystemEntry) =>
               setReflectActions({
                 action: 'move',
@@ -554,13 +593,14 @@ export const PlatformFacadeContextProvider = ({
     open: boolean = false,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return currentLocation
+    const location = getLocation(param);
+    return location
       .saveFilePromise(param, content, overwrite)
       .then((fsEntry) => {
         const entry = {
           ...fsEntry,
           uuid: getUuid(),
-          locationID: currentLocation.uuid,
+          locationID: location.uuid,
         };
         reflectAddEntry(entry, open);
         deignoreByWatcher(param.path);
@@ -574,7 +614,7 @@ export const PlatformFacadeContextProvider = ({
     isUpdated: boolean,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return currentLocation
+    return getLocation(param)
       .saveTextFilePromise(param, content, isUpdated)
       .then((fsEntry) => {
         if (isUpdated) {
@@ -601,7 +641,7 @@ export const PlatformFacadeContextProvider = ({
     reflect: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return currentLocation
+    return getLocation(param)
       .saveBinaryFilePromise(param, content, overwrite, onUploadProgress)
       .then((fsEntry) => {
         if (reflect) {
@@ -620,9 +660,15 @@ export const PlatformFacadeContextProvider = ({
       ignoreByWatcher(...entriesPaths);
       const promises = entries.map((e) => {
         if (e.isFile) {
-          return currentLocation.deleteFilePromise(e.path, useTrashCan);
+          return getLocation({ locationID: e.locationID }).deleteFilePromise(
+            e.path,
+            useTrashCan,
+          );
         }
-        return currentLocation.deleteDirectoryPromise(e.path, useTrashCan);
+        return getLocation({ locationID: e.locationID }).deleteDirectoryPromise(
+          e.path,
+          useTrashCan,
+        );
       });
       return executePromisesInBatches(promises).then(() => {
         reflectDeleteEntries(...entries);

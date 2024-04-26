@@ -296,11 +296,17 @@ function EntryProperties(props: Props) {
       const nextPath = path + currentLocation?.getDirSeparator() + editName;
 
       if (openedEntry.isFile) {
-        renameFile(openedEntry.path, nextPath).catch(() => {
-          fileNameRef.current.value = entryName;
-        });
+        renameFile(openedEntry.path, nextPath, openedEntry.locationID).catch(
+          () => {
+            fileNameRef.current.value = entryName;
+          },
+        );
       } else {
-        renameDirectory(openedEntry.path, editName).catch(() => {
+        renameDirectory(
+          openedEntry.path,
+          editName,
+          openedEntry.locationID,
+        ).catch(() => {
           fileNameRef.current.value = entryName;
         });
       }
@@ -448,7 +454,7 @@ function EntryProperties(props: Props) {
       ...(openedEntry.meta && openedEntry.meta),
       perspective,
     };
-    saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationId);
+    saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationID);
     /*.then((entryMeta: TS.FileSystemEntryMeta) => {
         openedEntry.meta = entryMeta;
         //return updateOpenedFile(openedEntry.path, entryMeta);
@@ -1170,8 +1176,6 @@ function EntryProperties(props: Props) {
         <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
-          path={openedEntry.path}
-          locationId={openedEntry.locationId}
         />
       )}
       {BgndImgChooserDialog && (

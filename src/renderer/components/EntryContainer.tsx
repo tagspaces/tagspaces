@@ -86,7 +86,7 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath, currentLocationPath } =
     useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
@@ -134,6 +134,7 @@ function EntryContainer() {
     useRef<HTMLDivElement>(null);
   const fileChanged = useRef<boolean>(false);
   const eventID = useRef<string>(getUuid());
+  const cLocation = findLocation(openedEntry.locationID);
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
@@ -324,7 +325,7 @@ function EntryContainer() {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        currentLocation
+        cLocation
           .loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false,
@@ -337,14 +338,14 @@ function EntryContainer() {
             }
             let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
-              currentLocation?.getDirSeparator(),
+              cLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
               fileDirectory =
                 extractContainingDirectoryPath(
                   // eslint-disable-next-line no-restricted-globals
                   location.href,
-                  currentLocation?.getDirSeparator(),
+                  cLocation?.getDirSeparator(),
                 ) +
                 '/' +
                 fileDirectory;
@@ -455,7 +456,7 @@ function EntryContainer() {
   };
 
   const override = (): Promise<boolean> => {
-    return currentLocation
+    return cLocation
       .getPropertiesPromise(openedEntry.path)
       .then((entryProp: TS.FileSystemEntry) =>
         save({ ...openedEntry, lmdt: entryProp.lmdt }),
@@ -464,7 +465,7 @@ function EntryContainer() {
 
   const saveAs = (newFilePath: string): Promise<boolean> => {
     return copyFilePromise(openedEntry.path, newFilePath).then(() =>
-      currentLocation
+      cLocation
         .getPropertiesPromise(newFilePath)
         .then((entryProp: TS.FileSystemEntry) =>
           save({
@@ -487,55 +488,63 @@ function EntryContainer() {
   async function save(fileOpen: TS.OpenedEntry): Promise<boolean> {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
-    if (Pro && revisionsEnabled) {
-      const id = await getMetadataID(fileOpen.path, fileOpen.uuid);
-      const targetPath = getBackupFileLocation(
-        fileOpen.path,
-        id,
-        currentLocation?.getDirSeparator(),
-      );
-      try {
-        await copyFilePromiseOverwrite(fileOpen.path, targetPath, false); // todo test what happened if remove await?
-      } catch (error) {
-        console.log('copyFilePromiseOverwrite', error);
-      }
-    }
-    return saveTextFilePromise(
-      { path: fileOpen.path, lmdt: fileOpen.lmdt },
-      textContent,
-      true,
-    )
-      .then((entry) => {
-        reflectUpdateOpenedFileContent(entry);
-        if (Pro) {
-          const relativePath = getRelativeEntryPath(
-            currentLocationPath,
+    const location = findLocation(fileOpen.locationID);
+    if (location) {
+      if (Pro && revisionsEnabled) {
+        const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
+        const targetPath = getBackupFileLocation(
+          fileOpen.path,
+          id,
+          location.getDirSeparator(),
+        );
+        try {
+          await copyFilePromiseOverwrite(
             fileOpen.path,
-          );
-          Pro.history.saveHistory(
-            historyKeys.fileEditKey,
-            {
-              path: relativePath,
-              url: generateSharingLink(fileOpen.locationId, relativePath),
-              lid: fileOpen.locationId,
-            },
-            fileEditHistoryKey,
-          );
+            targetPath,
+            fileOpen.locationID,
+            false,
+          ); // todo test what happened if remove await?
+        } catch (error) {
+          console.log('copyFilePromiseOverwrite', error);
         }
-        return true;
-        /*return updateOpenedFile(fileOpen.path, {
-          id: '',
-          ...fileOpen,
-          editMode: true,
-          //changed: false,
-          shouldReload: undefined,
-        }).then(() => true);*/
-      })
-      .catch((error) => {
-        setConflictDialogOpen(true);
-        console.log('Error saving file ' + fileOpen.path + ' - ' + error);
-        return false;
-      });
+      }
+      return saveTextFilePromise(
+        { path: fileOpen.path, lmdt: fileOpen.lmdt, location: location },
+        textContent,
+        true,
+      )
+        .then((entry) => {
+          reflectUpdateOpenedFileContent(entry);
+          if (Pro) {
+            const relativePath = getRelativeEntryPath(
+              currentLocationPath,
+              fileOpen.path,
+            );
+            Pro.history.saveHistory(
+              historyKeys.fileEditKey,
+              {
+                path: relativePath,
+                url: generateSharingLink(fileOpen.locationID, relativePath),
+                lid: fileOpen.locationID,
+              },
+              fileEditHistoryKey,
+            );
+          }
+          return true;
+          /*return updateOpenedFile(fileOpen.path, {
+            id: '',
+            ...fileOpen,
+            editMode: true,
+            //changed: false,
+            shouldReload: undefined,
+          }).then(() => true);*/
+        })
+        .catch((error) => {
+          setConflictDialogOpen(true);
+          console.log('Error saving file ' + fileOpen.path + ' - ' + error);
+          return false;
+        });
+    }
   }
 
   const editOpenedFile = () => {
@@ -591,7 +600,7 @@ function EntryContainer() {
 
   const fileExtension =
     openedEntry &&
-    extractFileExtension(openedEntry.path, currentLocation?.getDirSeparator());
+    extractFileExtension(openedEntry.path, cLocation?.getDirSeparator());
   const isEditable =
     openedEntry &&
     openedEntry.isFile &&
@@ -600,7 +609,7 @@ function EntryContainer() {
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
     if (Pro) {
-      setAutoSave(openedEntry, autoSave, openedEntry.locationId);
+      setAutoSave(openedEntry, autoSave, openedEntry.locationID);
       /*switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
           Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, {
@@ -919,13 +928,7 @@ function EntryContainer() {
           onClose={() => setEditTagsModalOpened(false)}
           selected={
             openedEntry
-              ? [
-                  currentLocation.toFsEntry(
-                    openedEntry.path,
-                    openedEntry.isFile,
-                    openedEntry.locationId,
-                  ),
-                ]
+              ? [cLocation.toFsEntry(openedEntry.path, openedEntry.isFile)]
               : []
           }
         />

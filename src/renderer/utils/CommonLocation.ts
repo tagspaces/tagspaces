@@ -361,11 +361,7 @@ export class CommonLocation implements TS.Location {
     return url;
   };
 
-  toFsEntry = (
-    path: string,
-    isFile: boolean,
-    locationID,
-  ): TS.FileSystemEntry => {
+  toFsEntry = (path: string, isFile: boolean): TS.FileSystemEntry => {
     const name = isFile
       ? extractFileName(path, this.getDirSeparator())
       : extractDirectoryName(path, this.getDirSeparator());
@@ -378,7 +374,7 @@ export class CommonLocation implements TS.Location {
       uuid: getUuid(),
       name,
       isFile,
-      locationID,
+      locationID: this.uuid,
       extension: extractFileExtension(path, this.getDirSeparator()),
       tags,
       size: 0,

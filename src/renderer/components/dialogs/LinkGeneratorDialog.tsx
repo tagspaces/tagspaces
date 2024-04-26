@@ -17,7 +17,6 @@
  */
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -38,18 +37,19 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { openUrl } from '-/services/utils-io';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   open: boolean;
+  path?: string;
   onClose: () => void;
-  path: string;
-  locationId?: string;
 }
 
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation, currentLocation } = useCurrentLocationContext();
+  const { openedEntry } = useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
   const linkValidityDuration = useRef<number>(60 * 15);
   const signedLink = useRef<string>(undefined);
@@ -57,13 +57,19 @@ function LinkGeneratorDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  let location = findLocation(openedEntry?.locationID);
+  if (!location) {
+    location = currentLocation;
+  }
+  const gPath = path || openedEntry.path;
+
   useEffect(() => {
     setSignedLink();
   }, []);
 
   function setSignedLink() {
-    signedLink.current = currentLocation.generateURLforPath(
-      path,
+    signedLink.current = location.generateURLforPath(
+      gPath,
       linkValidityDuration.current,
     );
     forceUpdate();
@@ -117,9 +123,9 @@ function LinkGeneratorDialog(props: Props) {
                   data-tid="copySharingLinkTID"
                   onClick={() => {
                     const entryTitle = extractTitle(
-                      path,
+                      gPath,
                       true,
-                      currentLocation?.getDirSeparator(),
+                      location.getDirSeparator(),
                     );
                     const clipboardItem = generateClipboardLink(
                       signedLink.current,

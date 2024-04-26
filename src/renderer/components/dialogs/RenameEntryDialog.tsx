@@ -144,9 +144,9 @@ function RenameEntryDialog(props: Props) {
         );
         const newFilePath =
           fileDirectory + currentLocation.getDirSeparator() + name.current;
-        return renameFile(originPath, newFilePath);
+        return renameFile(originPath, newFilePath, currentLocation.uuid);
       } else {
-        return renameDirectory(originPath, name.current);
+        return renameDirectory(originPath, name.current, currentLocation.uuid);
       }
     }
   };

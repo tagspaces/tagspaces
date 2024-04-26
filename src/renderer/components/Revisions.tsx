@@ -52,7 +52,7 @@ const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { getMetadataID } = useIOActionsContext();
   const { openedEntry } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
@@ -78,23 +78,26 @@ function Revisions() {
 
   function loadHistoryItems(openedFile: TS.OpenedEntry) {
     if (Pro) {
-      getMetadataID(openedFile.path, openedFile.uuid).then((id) => {
-        openedFile.uuid = id;
-        const backupFilePath = getBackupFileLocation(
-          openedFile.path,
-          openedFile.uuid,
-          currentLocation.getDirSeparator(),
-        );
-        const backupPath = extractContainingDirectoryPath(
-          backupFilePath,
-          currentLocation.getDirSeparator(),
-        );
-        currentLocation.listDirectoryPromise(backupPath, []).then((h) => {
-          setRows(
-            h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
+      const location = findLocation(openedFile.locationID);
+      if (location) {
+        getMetadataID(openedFile.path, openedFile.uuid, location).then((id) => {
+          openedFile.uuid = id;
+          const backupFilePath = getBackupFileLocation(
+            openedFile.path,
+            openedFile.uuid,
+            location.getDirSeparator(),
           );
+          const backupPath = extractContainingDirectoryPath(
+            backupFilePath,
+            location.getDirSeparator(),
+          );
+          location.listDirectoryPromise(backupPath, []).then((h) => {
+            setRows(
+              h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
+            );
+          });
         });
-      });
+      }
     }
   }
 
@@ -110,25 +113,28 @@ function Revisions() {
   };
 
   function deleteRevision(path) {
-    currentLocation
+    const location = findLocation(openedEntry.locationID);
+    location
       .deleteFilePromise(path, true)
       .then(() => loadHistoryItems(openedEntry));
   }
 
   function deleteRevisions() {
     if (rows.length > 0) {
+      const location = findLocation(openedEntry.locationID);
       const promises = rows.map((row) =>
-        currentLocation.deleteFilePromise(row.path, true),
+        location.deleteFilePromise(row.path, true),
       );
       Promise.all(promises).then(() => loadHistoryItems(openedEntry));
     }
   }
 
   function restoreRevision(revisionPath) {
+    const location = findLocation(openedEntry.locationID);
     const targetPath = getBackupFileLocation(
       openedEntry.path,
       openedEntry.uuid,
-      currentLocation.getDirSeparator(),
+      location.getDirSeparator(),
     );
     return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
       copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() => {

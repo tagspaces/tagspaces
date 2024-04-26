@@ -208,7 +208,6 @@ export namespace TS {
   }
 
   interface OpenedEntry extends FileSystemEntry {
-    locationId?: string;
     viewingExtensionPath: string;
     viewingExtensionId: string;
     editingExtensionPath?: string;

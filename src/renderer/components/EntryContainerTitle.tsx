@@ -99,7 +99,7 @@ function EntryContainerTitle(props: Props) {
     }
   };
 
-  const currentLocation = findLocation(openedEntry.locationId);
+  const currentLocation = findLocation(openedEntry.locationID);
   let fileTitle: string = openedEntry.path
     ? extractTitle(
         openedEntry.path,

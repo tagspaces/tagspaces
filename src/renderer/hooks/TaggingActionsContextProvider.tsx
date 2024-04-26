@@ -548,7 +548,12 @@ export const TaggingActionsContextProvider = ({
             uniqueTags.map((tag) => tag.title),
           );
           if (entry.path !== newFilePath) {
-            return renameFile(entry.path, newFilePath, reflect).then(() => {
+            return renameFile(
+              entry.path,
+              newFilePath,
+              entry.locationID,
+              reflect,
+            ).then(() => {
               return newFilePath;
             });
           }
@@ -560,7 +565,12 @@ export const TaggingActionsContextProvider = ({
           tags.map((tag) => tag.title),
         );
         if (entry.path !== newFilePath) {
-          return renameFile(entry.path, newFilePath, reflect).then(() => {
+          return renameFile(
+            entry.path,
+            newFilePath,
+            entry.locationID,
+            reflect,
+          ).then(() => {
             return newFilePath;
           });
         }
@@ -688,6 +698,7 @@ export const TaggingActionsContextProvider = ({
               ? currentLocation.getDirSeparator()
               : AppConfig.dirSeparator) +
             newFileName,
+          currentLocation.uuid,
         );
       }
     } else {
@@ -957,7 +968,12 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer,
             );
           if (path !== newFilePath) {
-            const success = await renameFile(path, newFilePath, reflect);
+            const success = await renameFile(
+              path,
+              newFilePath,
+              currentLocation.uuid,
+              reflect,
+            );
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
