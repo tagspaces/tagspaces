@@ -1199,7 +1199,10 @@ export const IOActionsContextProvider = ({
     newDirectoryName: string,
     locationID: string,
   ): Promise<string> {
-    return renameDirectoryPromise(directoryPath, newDirectoryName, locationID)
+    return renameDirectoryPromise(
+      { path: directoryPath, locationID },
+      newDirectoryName,
+    )
       .then((newDirPath) => {
         if (currentDirectoryPath === directoryPath) {
           openDirectory(newDirPath);
@@ -1658,8 +1661,8 @@ export const IOActionsContextProvider = ({
 
   function setBackgroundImageChange(entry: TS.FileSystemEntry) {
     if (
-      currentLocation.haveObjectStoreSupport() ||
-      currentLocation.haveWebDavSupport()
+      currentLocation?.haveObjectStoreSupport() ||
+      currentLocation?.haveWebDavSupport()
     ) {
       // reload cache
       const folderBgndPath = getBgndFileLocationForDirectory(
@@ -1703,8 +1706,8 @@ export const IOActionsContextProvider = ({
 
   function setThumbnailImageChange(entry: TS.FileSystemEntry) {
     if (
-      currentLocation.haveObjectStoreSupport() ||
-      currentLocation.haveWebDavSupport()
+      currentLocation?.haveObjectStoreSupport() ||
+      currentLocation?.haveWebDavSupport()
     ) {
       // reload cache
       const folderThumbPath = getThumbFileLocationForDirectory(

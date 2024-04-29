@@ -327,8 +327,8 @@ function EntryContainerMenu(props: Props) {
     }
     if (
       !(
-        currentLocation.haveObjectStoreSupport() ||
-        currentLocation.haveWebDavSupport() ||
+        currentLocation?.haveObjectStoreSupport() ||
+        currentLocation?.haveWebDavSupport() ||
         AppConfig.isWeb
       )
     ) {
@@ -396,8 +396,8 @@ function EntryContainerMenu(props: Props) {
     }
     if (
       !(
-        currentLocation.haveObjectStoreSupport() ||
-        currentLocation.haveWebDavSupport() ||
+        currentLocation?.haveObjectStoreSupport() ||
+        currentLocation?.haveWebDavSupport() ||
         AppConfig.isWeb
       )
     ) {

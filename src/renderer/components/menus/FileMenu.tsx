@@ -207,8 +207,9 @@ function FileMenu(props: Props) {
   function setFolderBackground() {
     onClose();
     let path =
-      currentLocation.haveObjectStoreSupport() ||
-      currentLocation.haveWebDavSupport()
+      currentLocation &&
+      (currentLocation.haveObjectStoreSupport() ||
+        currentLocation.haveWebDavSupport())
         ? currentLocation.generateURLforPath(selectedFilePath, 604800) // 7 days
         : selectedFilePath;
 
@@ -331,8 +332,9 @@ function FileMenu(props: Props) {
   }
   if (
     !(
-      currentLocation.haveObjectStoreSupport() ||
-      currentLocation.haveWebDavSupport() ||
+      (currentLocation &&
+        (currentLocation.haveObjectStoreSupport() ||
+          currentLocation.haveWebDavSupport())) ||
       AppConfig.isWeb
     ) &&
     selectedEntries.length < 2

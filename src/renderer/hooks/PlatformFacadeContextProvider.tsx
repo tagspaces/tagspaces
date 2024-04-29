@@ -38,6 +38,15 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
 import { CommonLocation } from '-/utils/CommonLocation';
 
+interface PlatformParms {
+  path: string;
+  lmdt?: number;
+  locationID?: string;
+  total?: number;
+}
+interface getLocationProps extends Omit<PlatformParms, 'path'> {
+  // All the properties from PlatformParms, except 'path'
+}
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
   copyFilePromise: (
@@ -73,9 +82,8 @@ type PlatformFacadeContextData = {
     reflect?,
   ) => Promise<any>;
   moveFilePromise: (
-    filePath: string,
+    param: PlatformParms,
     newFilePath: string,
-    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
@@ -87,35 +95,34 @@ type PlatformFacadeContextData = {
   ) => Promise<any>;
   reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
   renameDirectoryPromise: (
-    dirPath: string,
+    param: PlatformParms,
     newDirName: string,
-    locationID: string,
   ) => Promise<any>;
   copyDirectoryPromise: (
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   moveDirectoryPromise: (
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   saveFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     open?: boolean,
   ) => Promise<any>;
   saveTextFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: string,
     overwrite: boolean,
   ) => Promise<any>;
   saveBinaryFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
@@ -168,7 +175,7 @@ export const PlatformFacadeContextProvider = ({
   const { t } = useTranslation();
   const useTrashCan = useSelector(getUseTrashCan);
 
-  function getLocation(param: any): CommonLocation {
+  function getLocation(param: getLocationProps): CommonLocation {
     const { locationID } = param;
     if (locationID) {
       return findLocation(locationID);
@@ -441,20 +448,19 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function moveFilePromise(
-    filePath: string,
+    param: PlatformParms,
     newFilePath: string,
-    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
-    ignoreByWatcher(filePath, newFilePath);
-    return getLocation({ locationID })
-      .renameFilePromise(filePath, newFilePath, onProgress)
+    ignoreByWatcher(param.path, newFilePath);
+    return getLocation(param)
+      .renameFilePromise(param.path, newFilePath, onProgress)
       .then((result) => {
         if (reflect) {
-          reflectMoveFiles([[filePath, newFilePath]]);
+          reflectMoveFiles([[param.path, newFilePath]]);
         }
-        deignoreByWatcher(filePath, newFilePath);
+        deignoreByWatcher(param.path, newFilePath);
         return result;
       });
   }
@@ -518,29 +524,28 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function renameDirectoryPromise(
-    dirPath: string,
+    param: PlatformParms,
     newDirName: string,
-    locationID: string,
   ): Promise<any> {
-    ignoreByWatcher(dirPath, newDirName);
-    return getLocation({ locationID })
-      .renameDirectoryPromise(dirPath, newDirName)
+    ignoreByWatcher(param.path, newDirName);
+    return getLocation(param)
+      .renameDirectoryPromise(param.path, newDirName)
       .then((newDirPath) => {
         getAllPropertiesPromise(newDirPath).then(
           (fsEntry: TS.FileSystemEntry) =>
             setReflectActions({
               action: 'update',
               entry: fsEntry,
-              oldEntryPath: dirPath,
+              oldEntryPath: param.path,
             }),
         );
-        deignoreByWatcher(dirPath, newDirName);
+        deignoreByWatcher(param.path, newDirName);
         return newDirPath;
       });
   }
 
   function copyDirectoryPromise(
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress = undefined,
     reflect = true,
@@ -560,7 +565,7 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function moveDirectoryPromise(
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress = undefined,
     reflect = true,
@@ -587,7 +592,7 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function saveFilePromise(
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     open: boolean = false,
@@ -609,7 +614,7 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function saveTextFilePromise(
-    param: any,
+    param: PlatformParms,
     content: string,
     isUpdated: boolean,
   ): Promise<TS.FileSystemEntry> {
@@ -631,7 +636,7 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function saveBinaryFilePromise(
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
@@ -660,15 +665,9 @@ export const PlatformFacadeContextProvider = ({
       ignoreByWatcher(...entriesPaths);
       const promises = entries.map((e) => {
         if (e.isFile) {
-          return getLocation({ locationID: e.locationID }).deleteFilePromise(
-            e.path,
-            useTrashCan,
-          );
+          return getLocation(e).deleteFilePromise(e.path, useTrashCan);
         }
-        return getLocation({ locationID: e.locationID }).deleteDirectoryPromise(
-          e.path,
-          useTrashCan,
-        );
+        return getLocation(e).deleteDirectoryPromise(e.path, useTrashCan);
       });
       return executePromisesInBatches(promises).then(() => {
         reflectDeleteEntries(...entries);

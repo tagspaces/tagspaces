@@ -1208,8 +1208,8 @@ export const DirectoryContentContextProvider = ({
     if (thumbPath && metaFile) {
       thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
       if (
-        currentLocation.haveObjectStoreSupport() ||
-        currentLocation.haveWebDavSupport()
+        currentLocation?.haveObjectStoreSupport() ||
+        currentLocation?.haveWebDavSupport()
       ) {
         if (thumbPath && thumbPath.startsWith('/')) {
           thumbPath = thumbPath.substring(1);

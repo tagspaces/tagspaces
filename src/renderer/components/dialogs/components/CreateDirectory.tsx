@@ -120,7 +120,7 @@ function CreateDirectory(props: Props) {
         } else if (fileName.indexOf('.') === -1) {
           fileName = url.hostname + '-' + fileName + '.html';
         }
-        if (currentLocation.haveObjectStoreSupport() || AppConfig.isElectron) {
+        if (currentLocation?.haveObjectStoreSupport() || AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
           dispatch(AppActions.toggleUploadDialog());
           downloadFile(

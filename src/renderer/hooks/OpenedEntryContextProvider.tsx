@@ -274,8 +274,56 @@ export const OpenedEntryContextProvider = ({
     }
     return Promise.resolve(undefined);
   }
-
   function setSharedLinks(openedFile?) {
+    if (openedFile) {
+      const folderLocation = findLocation(openedFile.locationID);
+      const folderPath = extractContainingDirectoryPath(openedFile.path);
+      if (
+        folderPath.indexOf(cleanTrailingDirSeparator(folderLocation.path)) === 0
+      ) {
+        sharingParentFolderLink.current = generateSharingLink(
+          openedFile.locationID,
+          undefined,
+          cleanRootPath(
+            folderPath,
+            folderLocation.path,
+            folderLocation?.getDirSeparator(),
+          ),
+        );
+      }
+
+      if (openedFile.isFile) {
+        const relativePath = getRelativeEntryPath(
+          folderLocation.path,
+          openedFile.path,
+        );
+        const relativeDirPath = getRelativeEntryPath(
+          folderLocation.path,
+          folderPath,
+        );
+        sharingLink.current = generateSharingLink(
+          openedFile.locationID,
+          relativePath,
+          relativeDirPath,
+        );
+      } else {
+        const relativePath = getRelativeEntryPath(
+          folderLocation.path,
+          openedFile.path,
+        );
+
+        sharingLink.current = generateSharingLink(
+          openedFile.locationID,
+          undefined,
+          relativePath,
+        );
+      }
+    } else {
+      sharingLink.current = undefined;
+      sharingParentFolderLink.current = undefined;
+    }
+  }
+  /*function setSharedLinks(openedFile?) {
     if (openedFile) {
       if (window.location.href.indexOf('?') > 0) {
         const sharingURL = new URL(window.location.href);
@@ -336,7 +384,7 @@ export const OpenedEntryContextProvider = ({
       sharingLink.current = undefined;
       sharingParentFolderLink.current = undefined;
     }
-  }
+  }*/
 
   function addToEntryContainer(fsEntry: TS.OpenedEntry) {
     setSharedLinks(fsEntry);

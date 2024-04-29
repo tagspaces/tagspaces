@@ -509,7 +509,11 @@ function EntryContainer() {
         }
       }
       return saveTextFilePromise(
-        { path: fileOpen.path, lmdt: fileOpen.lmdt, location: location },
+        {
+          path: fileOpen.path,
+          lmdt: fileOpen.lmdt,
+          locationID: fileOpen.locationID,
+        },
         textContent,
         true,
       )
