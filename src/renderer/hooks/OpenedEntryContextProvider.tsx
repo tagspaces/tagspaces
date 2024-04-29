@@ -274,19 +274,19 @@ export const OpenedEntryContextProvider = ({
     }
     return Promise.resolve(undefined);
   }
-  function setSharedLinks(openedFile?) {
+
+  async function setSharedLinks(openedFile?) {
     if (openedFile) {
       const folderLocation = findLocation(openedFile.locationID);
+      const locationPath = await getLocationPath(folderLocation);
       const folderPath = extractContainingDirectoryPath(openedFile.path);
-      if (
-        folderPath.indexOf(cleanTrailingDirSeparator(folderLocation.path)) === 0
-      ) {
+      if (folderPath.indexOf(cleanTrailingDirSeparator(locationPath)) === 0) {
         sharingParentFolderLink.current = generateSharingLink(
           openedFile.locationID,
           undefined,
           cleanRootPath(
             folderPath,
-            folderLocation.path,
+            locationPath,
             folderLocation?.getDirSeparator(),
           ),
         );
@@ -294,13 +294,10 @@ export const OpenedEntryContextProvider = ({
 
       if (openedFile.isFile) {
         const relativePath = getRelativeEntryPath(
-          folderLocation.path,
+          locationPath,
           openedFile.path,
         );
-        const relativeDirPath = getRelativeEntryPath(
-          folderLocation.path,
-          folderPath,
-        );
+        const relativeDirPath = getRelativeEntryPath(locationPath, folderPath);
         sharingLink.current = generateSharingLink(
           openedFile.locationID,
           relativePath,
@@ -308,7 +305,7 @@ export const OpenedEntryContextProvider = ({
         );
       } else {
         const relativePath = getRelativeEntryPath(
-          folderLocation.path,
+          locationPath,
           openedFile.path,
         );
 
@@ -323,6 +320,7 @@ export const OpenedEntryContextProvider = ({
       sharingParentFolderLink.current = undefined;
     }
   }
+
   /*function setSharedLinks(openedFile?) {
     if (openedFile) {
       if (window.location.href.indexOf('?') > 0) {
@@ -387,17 +385,18 @@ export const OpenedEntryContextProvider = ({
   }*/
 
   function addToEntryContainer(fsEntry: TS.OpenedEntry) {
-    setSharedLinks(fsEntry);
-    currentEntry.current = { ...fsEntry };
-    forceUpdate();
+    setSharedLinks(fsEntry).then(() => {
+      currentEntry.current = { ...fsEntry };
+      forceUpdate();
+    });
     // setOpenedEntries([fsEntry]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
   }
 
   function closeOpenedEntries() {
-    setSharedLinks();
-    currentEntry.current = undefined;
-    forceUpdate();
-    // setOpenedEntries([]);
+    setSharedLinks().then(() => {
+      currentEntry.current = undefined;
+      forceUpdate();
+    });
   }
 
   function closeAllFiles() {
@@ -455,7 +454,7 @@ export const OpenedEntryContextProvider = ({
     if (path === undefined) {
       return openFsEntry(undefined, showDetails);
     }
-    return getAllPropertiesPromise(path, currentEntry.current?.locationID)
+    return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
       .catch((error) => {
         console.warn(
