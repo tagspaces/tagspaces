@@ -91,7 +91,7 @@ export const PerspectiveSettingsContextProvider = ({
     getDefaultPerspectiveSettings,
     getPerspective,
   } = useDirectoryContentContext();
-  const { removeFolderCustomSettings, saveMetaDataPromise } =
+  const { removeFolderCustomSettings, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
@@ -170,7 +170,7 @@ export const PerspectiveSettingsContextProvider = ({
         getPerspective(),
         settings.current,
       ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
-        saveMetaDataPromise(currentDirectoryPath, updatedFsEntryMeta);
+        saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta);
         setDirectoryMeta(updatedFsEntryMeta);
       });
     } else {

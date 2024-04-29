@@ -158,7 +158,8 @@ export const TaggingActionsContextProvider = ({
   const { currentDirectoryEntries, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
-  const { renameFile, saveMetaDataPromise } = useIOActionsContext();
+  const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
+    useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
@@ -490,7 +491,7 @@ export const TaggingActionsContextProvider = ({
               ...fsEntryMeta,
               tags: newTags,
             };
-            return saveMetaDataPromise(entry.path, updatedFsEntryMeta)
+            return saveMetaDataPromise(entry, updatedFsEntryMeta)
               .then(() => {
                 if (reflect) {
                   reflectUpdateMeta(entry.path);
@@ -511,7 +512,7 @@ export const TaggingActionsContextProvider = ({
           }
         } else {
           const newFsEntryMeta = { tags };
-          return saveMetaDataPromise(entry.path, newFsEntryMeta)
+          return saveMetaDataPromise(entry, newFsEntryMeta)
             .then(() => {
               if (reflect) {
                 reflectUpdateMeta(entry.path);
@@ -732,7 +733,7 @@ export const TaggingActionsContextProvider = ({
             (item, pos, array) =>
               array.findIndex((el) => el.title === item.title) === pos,
           );
-          saveMetaDataPromise(path, {
+          saveCurrentLocationMetaData(path, {
             ...fsEntryMeta,
             tags: newTagsArray,
           })
@@ -759,7 +760,7 @@ export const TaggingActionsContextProvider = ({
           // eslint-disable-next-line no-param-reassign
           tag.title = newTagTitle;
           const fsEntryMeta = { tags: [tag] };
-          saveMetaDataPromise(path, fsEntryMeta)
+          saveCurrentLocationMetaData(path, fsEntryMeta)
             .then(() => {
               reflectUpdateMeta(path);
               return true;
@@ -896,7 +897,7 @@ export const TaggingActionsContextProvider = ({
           ...fsEntryMeta,
           tags: newTags,
         };
-        return saveMetaDataPromise(path, updatedFsEntryMeta)
+        return saveCurrentLocationMetaData(path, updatedFsEntryMeta)
           .then(() => {
             reflectUpdateMeta(newFilePath);
             return true;

@@ -137,8 +137,12 @@ type IOActionsContextData = {
   ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
   duplicateFile: (selectedFilePath: string) => void;
-  saveMetaDataPromise: (
+  saveCurrentLocationMetaData: (
     path: string,
+    metaData: any,
+  ) => Promise<TS.FileSystemEntryMeta>;
+  saveMetaDataPromise: (
+    entry: TS.FileSystemEntry,
     metaData: any,
   ) => Promise<TS.FileSystemEntryMeta>;
   getMetadataID: (
@@ -146,10 +150,16 @@ type IOActionsContextData = {
     id: string,
     location: CommonLocation,
   ) => Promise<string>;
-  createFsEntryMeta: (path: string, props?: any) => Promise<string>;
-  saveFsEntryMeta: (path: string, meta: any) => Promise<TS.FileSystemEntryMeta>;
+  createFsEntryMeta: (
+    entry: TS.FileSystemEntry,
+    props?: any,
+  ) => Promise<string>;
+  saveFsEntryMeta: (
+    entry: TS.FileSystemEntry,
+    meta: any,
+  ) => Promise<TS.FileSystemEntryMeta>;
   savePerspective: (
-    path: string,
+    entry: TS.FileSystemEntry,
     perspective: TS.PerspectiveType,
   ) => Promise<TS.FileSystemEntryMeta>;
   removeFolderCustomSettings: (
@@ -217,6 +227,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   renameFile: undefined,
   openFileNatively: undefined,
   duplicateFile: undefined,
+  saveCurrentLocationMetaData: undefined,
   saveMetaDataPromise: undefined,
   getMetadataID: undefined,
   createFsEntryMeta: undefined,
@@ -1373,33 +1384,42 @@ export const IOActionsContextProvider = ({
     showNotification('Unable to duplicate, no file selected');
   }
 
-  /**
-   * @param path
-   * @param metaData - this will override existing meta data
-   */
-  async function saveMetaDataPromise(
+  function saveCurrentLocationMetaData(
     path: string,
     metaData: any,
   ): Promise<TS.FileSystemEntryMeta> {
-    const entryProperties = await currentLocation.getPropertiesPromise(path);
+    return currentLocation
+      .getPropertiesPromise(path)
+      .then((entryProperties) =>
+        saveMetaDataPromise(entryProperties, metaData),
+      );
+  }
+  /**
+   * @param entry
+   * @param metaData - this will override existing meta data
+   */
+  async function saveMetaDataPromise(
+    entry: TS.FileSystemEntry,
+    metaData: any,
+  ): Promise<TS.FileSystemEntryMeta> {
+    const location = findLocation(entry.locationID);
     const cleanedMetaData = cleanMetaData(metaData);
-    if (entryProperties) {
+    if (entry) {
       let metaFilePath;
-      if (entryProperties.isFile) {
+      if (entry.isFile) {
         metaFilePath = getMetaFileLocationForFile(
-          path,
-          currentLocation?.getDirSeparator(),
+          entry.path,
+          location.getDirSeparator(),
         );
         // check and create meta folder if not exist
         const metaFolder = getMetaDirectoryPath(
           extractContainingDirectoryPath(
-            path,
-            currentLocation?.getDirSeparator(),
+            entry.path,
+            location.getDirSeparator(),
           ),
-          currentLocation?.getDirSeparator(),
+          location.getDirSeparator(),
         );
-        const metaExist =
-          await currentLocation.getPropertiesPromise(metaFolder);
+        const metaExist = await location.getPropertiesPromise(metaFolder);
         if (!metaExist) {
           await createDirectoryPromise(metaFolder);
         }
@@ -1407,11 +1427,11 @@ export const IOActionsContextProvider = ({
         // check and create meta folder if not exist
         // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
         const metaDirectoryPath = getMetaDirectoryPath(
-          path,
-          currentLocation?.getDirSeparator(),
+          entry.path,
+          location.getDirSeparator(),
         );
         const metaDirectoryProperties =
-          await currentLocation.getPropertiesPromise(metaDirectoryPath);
+          await location.getPropertiesPromise(metaDirectoryPath);
         if (!metaDirectoryProperties) {
           await createDirectoryPromise(metaDirectoryPath);
         }
@@ -1422,17 +1442,19 @@ export const IOActionsContextProvider = ({
         }
 
         metaFilePath = getMetaFileLocationForDir(
-          path,
-          currentLocation?.getDirSeparator(),
+          entry.path,
+          location.getDirSeparator(),
         );
       }
       const meta = mergeFsEntryMeta(cleanedMetaData);
       const content = JSON.stringify(meta);
-      return saveTextFilePromise({ path: metaFilePath }, content, true).then(
-        () => meta,
-      );
+      return saveTextFilePromise(
+        { path: metaFilePath, locationID: entry.locationID },
+        content,
+        true,
+      ).then(() => meta);
     }
-    return Promise.reject(new Error('file not found' + path));
+    return Promise.reject(new Error('file not found' + entry.path));
   }
 
   /**
@@ -1451,7 +1473,10 @@ export const IOActionsContextProvider = ({
         if (fsEntryMeta.id) {
           return fsEntryMeta.id;
         } else {
-          return createFsEntryMeta(path, { ...fsEntryMeta, id: id });
+          return createFsEntryMeta(
+            location.toFsEntry(path, fsEntryMeta.isFile),
+            { ...fsEntryMeta, id: id },
+          );
         }
       })
       .catch(() => {
@@ -1467,14 +1492,17 @@ export const IOActionsContextProvider = ({
       });
   }
 
-  function createFsEntryMeta(path: string, props: any = {}): Promise<string> {
+  function createFsEntryMeta(
+    entry: TS.FileSystemEntry,
+    props: any = {},
+  ): Promise<string> {
     const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
-    return saveMetaDataPromise(path, newFsEntryMeta)
+    return saveMetaDataPromise(entry, newFsEntryMeta)
       .then(() => newFsEntryMeta.id)
       .catch((error) => {
         console.log(
           'Error saveMetaDataPromise for ' +
-            path +
+            entry.path +
             ' orphan id: ' +
             newFsEntryMeta.id,
           error,
@@ -1484,30 +1512,30 @@ export const IOActionsContextProvider = ({
   }
 
   function saveFsEntryMeta(
-    path: string,
+    entry: TS.FileSystemEntry,
     meta: any,
   ): Promise<TS.FileSystemEntryMeta> {
-    return currentLocation
-      .loadMetaDataPromise(path)
+    return findLocation(entry.locationID)
+      .loadMetaDataPromise(entry.path)
       .then((fsEntryMeta) => {
-        return saveMetaDataPromise(path, {
+        return saveMetaDataPromise(entry, {
           ...fsEntryMeta,
           ...meta,
           lastUpdated: new Date().getTime(),
         });
       })
       .catch(() => {
-        return saveMetaDataPromise(path, mergeFsEntryMeta(meta));
+        return saveMetaDataPromise(entry, mergeFsEntryMeta(meta));
       });
   }
 
   function savePerspective(
-    path: string,
+    entry: TS.FileSystemEntry,
     perspective: TS.PerspectiveType,
   ): Promise<TS.FileSystemEntryMeta> {
     return new Promise((resolve, reject) => {
-      currentLocation
-        .loadMetaDataPromise(path)
+      findLocation(entry.locationID)
+        .loadMetaDataPromise(entry.path)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           let updatedFsEntryMeta: TS.FileSystemEntryMeta;
           if (perspective && perspective !== 'unspecified') {
@@ -1519,14 +1547,14 @@ export const IOActionsContextProvider = ({
             const { perspective: remove, ...rest } = fsEntryMeta;
             updatedFsEntryMeta = rest;
           }
-          saveMetaDataPromise(path, updatedFsEntryMeta)
+          saveMetaDataPromise(entry, updatedFsEntryMeta)
             .then(() => {
               resolve(updatedFsEntryMeta);
               return true;
             })
             .catch((err) => {
               console.warn(
-                'Error adding perspective for ' + path + ' with ' + err,
+                'Error adding perspective for ' + entry.path + ' with ' + err,
               );
               reject();
             });
@@ -1536,14 +1564,14 @@ export const IOActionsContextProvider = ({
           const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
             perspective,
           });
-          saveMetaDataPromise(path, newFsEntryMeta)
+          saveMetaDataPromise(entry, newFsEntryMeta)
             .then(() => {
               resolve(newFsEntryMeta);
               return true;
             })
             .catch((error) => {
               console.warn(
-                'Error adding perspective for ' + path + ' with ' + error,
+                'Error adding perspective for ' + entry.path + ' with ' + error,
               );
               reject();
             });
@@ -1569,7 +1597,7 @@ export const IOActionsContextProvider = ({
             },
           };
 
-          saveMetaDataPromise(path, updatedFsEntryMeta)
+          saveCurrentLocationMetaData(path, updatedFsEntryMeta)
             .then(() => {
               resolve(updatedFsEntryMeta);
               return true;
@@ -1588,7 +1616,7 @@ export const IOActionsContextProvider = ({
               [perspective]: undefined,
             },
           });
-          saveMetaDataPromise(path, newFsEntryMeta)
+          saveCurrentLocationMetaData(path, newFsEntryMeta)
             .then(() => {
               resolve(newFsEntryMeta);
               return true;
@@ -1604,7 +1632,7 @@ export const IOActionsContextProvider = ({
   }
 
   function setAutoSave(entry: TS.FileSystemEntry, autoSave: boolean) {
-    return saveFsEntryMeta(entry.path, { autoSave }).then((meta) => {
+    return saveFsEntryMeta(entry, { autoSave }).then((meta) => {
       if (meta) {
         const action: TS.EditMetaAction = {
           action: 'autoSaveChange',
@@ -1624,7 +1652,7 @@ export const IOActionsContextProvider = ({
     entry: TS.FileSystemEntry,
     perspective: TS.PerspectiveType,
   ): Promise<boolean> {
-    return saveFsEntryMeta(entry.path, { perspective }).then((meta) => {
+    return saveFsEntryMeta(entry, { perspective }).then((meta) => {
       if (meta) {
         const action: TS.EditMetaAction = {
           action: 'perspectiveChange',
@@ -1644,7 +1672,7 @@ export const IOActionsContextProvider = ({
     entry: TS.FileSystemEntry,
     description: string,
   ): Promise<boolean> {
-    return saveFsEntryMeta(entry.path, { description }).then((meta) => {
+    return saveFsEntryMeta(entry, { description }).then((meta) => {
       if (meta) {
         const action: TS.EditMetaAction = {
           action: 'descriptionChange',
@@ -1689,7 +1717,7 @@ export const IOActionsContextProvider = ({
     entry: TS.FileSystemEntry,
     color: string,
   ): Promise<boolean> {
-    return saveFsEntryMeta(entry.path, { color }).then((meta) => {
+    return saveFsEntryMeta(entry, { color }).then((meta) => {
       if (meta) {
         const action: TS.EditMetaAction = {
           action: 'bgdColorChange',
@@ -1778,7 +1806,7 @@ export const IOActionsContextProvider = ({
       toggleDirectoryVisibility(currentDirPath, dir).then(
         (updatedFsEntryMeta) => {
           if (updatedFsEntryMeta) {
-            saveMetaDataPromise(currentDirPath, updatedFsEntryMeta)
+            saveCurrentLocationMetaData(currentDirPath, updatedFsEntryMeta)
               .then(() => {
                 const action: TS.KanBanMetaActions = {
                   action: 'directoryVisibilityChange',
@@ -1957,6 +1985,7 @@ export const IOActionsContextProvider = ({
       renameFile,
       openFileNatively,
       duplicateFile,
+      saveCurrentLocationMetaData,
       saveMetaDataPromise,
       getMetadataID,
       createFsEntryMeta,

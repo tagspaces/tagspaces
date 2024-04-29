@@ -1257,42 +1257,44 @@ export const DirectoryContentContextProvider = ({
       );
     }
 
+    const location = findLocation(entry.locationID);
+
     const thumbFilePath = getThumbFileLocationForFile(
       entry.path,
-      currentLocation?.getDirSeparator(),
+      location.getDirSeparator(),
       false,
     );
 
-    return currentLocation.checkFileExist(thumbFilePath).then((exist) => {
+    return location.checkFileExist(thumbFilePath).then((exist) => {
       const metaProps = exist ? { thumbPath: thumbFilePath } : {};
 
       const metaFilePath = getMetaFileLocationForFile(
         entry.path,
-        currentLocation?.getDirSeparator(),
+        location.getDirSeparator(),
       );
 
       try {
-        return currentLocation
+        return location
           .loadJSONFile(metaFilePath)
           .then((meta: TS.FileSystemEntryMeta) => {
             if (meta) {
               return enhanceEntry(
                 { ...entry, meta: { ...meta, ...metaProps } },
                 AppConfig.tagDelimiter,
-                currentLocation?.getDirSeparator(),
+                location.getDirSeparator(),
               );
             }
             return enhanceEntry(
               { ...entry, meta: { ...metaProps } },
               AppConfig.tagDelimiter,
-              currentLocation?.getDirSeparator(),
+              location.getDirSeparator(),
             );
           });
       } catch (e) {
         return enhanceEntry(
           { ...entry, meta: { ...metaProps } },
           AppConfig.tagDelimiter,
-          currentLocation?.getDirSeparator(),
+          location.getDirSeparator(),
         );
       }
     });

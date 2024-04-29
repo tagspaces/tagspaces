@@ -86,7 +86,7 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath, currentLocationPath } =
     useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
@@ -273,7 +273,8 @@ function EntryContainer() {
     : true;*/
 
   const editingSupported: boolean =
-    !readOnlyMode &&
+    cLocation &&
+    !cLocation.isReadOnly &&
     openedEntry &&
     openedEntry.editingExtensionId !== undefined &&
     openedEntry.editingExtensionId.length > 3;

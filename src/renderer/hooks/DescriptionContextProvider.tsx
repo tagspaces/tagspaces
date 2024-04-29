@@ -61,7 +61,7 @@ export const DescriptionContextProvider = ({
 }: DescriptionContextProviderProps) => {
   const { t } = useTranslation();
   const { openedEntry } = useOpenedEntryContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const { setDescriptionChange } = useIOActionsContext();
   //const description = useRef<string>(openedEntry.meta?.description);
@@ -95,18 +95,15 @@ export const DescriptionContextProvider = ({
   }, [openedEntry]);
 
   const saveDescription = () => {
-    if (readOnlyMode) {
-      return;
-    }
-    if (!Pro) {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-      return;
-    }
-    /*if (!Pro.MetaOperations) {
-      showNotification(t('Saving description not supported'));
-      return;
-    }*/
     if (lastOpenedFile.current !== undefined) {
+      const location = findLocation(lastOpenedFile.current.locationID);
+      if (!location || location.isReadOnly) {
+        return;
+      }
+      if (!Pro) {
+        showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+        return;
+      }
       // to reload description
       lastOpenedFile.current = { ...lastOpenedFile.current };
       isChanged.current = false;

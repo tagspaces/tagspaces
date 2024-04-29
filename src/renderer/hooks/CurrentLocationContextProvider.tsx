@@ -193,6 +193,9 @@ export const CurrentLocationContextProvider = ({
   }
 
   function findLocation(locationID: string): CommonLocation {
+    if (!locationID) {
+      return currentLocation.current;
+    }
     return locations.find((l) => l.uuid === locationID);
   }
 
