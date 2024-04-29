@@ -501,14 +501,12 @@ export const OpenedEntryContextProvider = ({
 
     document.title = fsEntry.name + ' | ' + locationName;
 
-    /*if (!entryForOpening.locationId && currentLocation) { //todo entryForOpening.locationId is always true
-      entryForOpening.locationId = currentLocation.uuid;
-      updateHistory(
-        { ...currentLocation, path: currentLocationPath },
-        currentDirectoryPath,
-        fsEntry.path,
-      );
-    }*/
+    // update history window.location.href - used for shared link generation
+    updateHistory(
+      { ...currentLocation, path: currentLocationPath },
+      currentDirectoryPath,
+      fsEntry.path,
+    );
 
     addToEntryContainer(entryForOpening);
 
