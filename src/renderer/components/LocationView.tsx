@@ -163,7 +163,7 @@ function LocationView(props: Props) {
             },
           );
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          moveFiles(arrPath, targetPath);
+          moveFiles(arrPath, targetPath, targetLocation.uuid);
         }
         setSelectedEntries([]);
       }

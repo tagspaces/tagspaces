@@ -61,7 +61,13 @@ export const renderCell = (
     notificationType: string,
     autohide: boolean,
   ) => void,
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>,
+  moveFiles: (
+    files: Array<string>,
+    destination: string,
+    locationID: string,
+    onProgress?,
+    reflect?: boolean,
+  ) => Promise<boolean>,
   clearSelection: () => void,
   isLast?: boolean,
 ) => {
@@ -243,7 +249,7 @@ export const renderCell = (
         arrPath = [item.path];
       }
       console.log('Dropped files: ' + item.path);
-      moveFiles(arrPath, item.targetPath);
+      moveFiles(arrPath, item.targetPath, currentLocation.uuid);
       //clearSelection();
     }
   };

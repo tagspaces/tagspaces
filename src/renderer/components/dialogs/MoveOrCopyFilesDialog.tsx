@@ -40,6 +40,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -53,6 +54,7 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
+  const { currentLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -108,6 +110,7 @@ function MoveOrCopyFilesDialog(props: Props) {
               moveFiles(
                 selectedFiles.map((file) => file.path),
                 currentDirectoryPath,
+                currentLocation.uuid,
               );
             }
             onClose();

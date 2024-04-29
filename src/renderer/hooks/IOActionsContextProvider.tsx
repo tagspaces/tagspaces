@@ -90,6 +90,7 @@ type IOActionsContextData = {
   moveFiles: (
     paths: Array<string>,
     targetPath: string,
+    locationID: string,
     onProgress?,
     reflect?: boolean,
   ) => Promise<boolean>;
