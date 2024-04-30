@@ -210,7 +210,7 @@ export class CommonLocation implements TS.Location {
   };
 
   listDirectoryPromise = (
-    path: string,
+    param: any,
     mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {},
@@ -219,7 +219,7 @@ export class CommonLocation implements TS.Location {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.listDirectoryPromise(
           {
-            path,
+            path: this.getPath(param),
             bucketName: this.bucketName,
             location: this,
           },
@@ -228,11 +228,16 @@ export class CommonLocation implements TS.Location {
           resultsLimit,
         );
       }
-      this.ioAPI.listDirectoryPromise(path, mode, ignorePatterns, resultsLimit);
+      return this.ioAPI.listDirectoryPromise(
+        param,
+        mode,
+        ignorePatterns,
+        resultsLimit,
+      );
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listDirectoryPromise',
-        path,
+        param,
         mode,
         ignorePatterns,
         resultsLimit,
@@ -241,20 +246,20 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('listDirectoryPromise not implemented!'));
   };
 
-  listMetaDirectoryPromise = (path: string): Promise<Array<any>> => {
+  listMetaDirectoryPromise = (param: any): Promise<Array<any>> => {
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.listMetaDirectoryPromise({
-          path,
+          path: this.getPath(param),
           bucketName: this.bucketName,
           location: this,
         });
       }
-      this.ioAPI.listMetaDirectoryPromise(path);
+      this.ioAPI.listMetaDirectoryPromise(param);
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listMetaDirectoryPromise',
-        path,
+        param,
       );
     }
     return Promise.reject(
