@@ -24,10 +24,12 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type EditedEntryContextData = {
   actions: TS.EditAction[];
-  reflectUpdateMeta: (...path: string[]) => void;
+  reflectUpdateMeta: (...entries: TS.FileSystemEntry[]) => void;
   setReflectActions: (...actionsArray: TS.EditAction[]) => void;
   reflectDeleteEntries: (...entries: TS.FileSystemEntry[]) => void;
-  reflectAddEntryPath: (...paths: string[]) => Promise<boolean>;
+  reflectAddEntryPath: (
+    ...entriesPromises: Promise<TS.FileSystemEntry>[]
+  ) => Promise<boolean>;
   reflectAddEntry: (entry: TS.FileSystemEntry, open?: boolean) => void;
 };
 
@@ -48,7 +50,7 @@ export const EditedEntryContextProvider = ({
   children,
 }: EditedEntryContextProviderProps) => {
   const actions = useRef<TS.EditAction[]>(undefined);
-  const { getAllPropertiesPromise } = useDirectoryContentContext();
+  //const { getAllPropertiesPromise } = useDirectoryContentContext(); // cannot be injected here!
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -70,39 +72,31 @@ export const EditedEntryContextProvider = ({
     forceUpdate();
   }
 
-  function reflectUpdateMeta(...path: string[]) {
-    const promises: Promise<TS.EditAction>[] = [];
-    for (let i = 0; i < path.length; i++) {
-      promises.push(
-        getAllPropertiesPromise(path[i]).then((fsEntry: TS.FileSystemEntry) => {
-          const currentAction: TS.EditAction = {
-            action: 'update',
-            entry: fsEntry,
-            oldEntryPath: fsEntry.path,
-          };
-          return currentAction;
-        }),
-      );
-    }
-    Promise.all(promises).then((actionsArray) => {
-      actions.current = actionsArray;
-      forceUpdate();
-    });
+  function reflectUpdateMeta(...entries: TS.FileSystemEntry[]) {
+    actions.current = entries.map((fsEntry) => ({
+      action: 'update',
+      entry: fsEntry,
+      oldEntryPath: fsEntry.path,
+    }));
+    forceUpdate();
   }
 
-  function reflectAddEntryPath(...paths: string[]): Promise<boolean> {
-    const entriesPromises = paths.map((path) => getAllPropertiesPromise(path));
+  function reflectAddEntryPath(
+    ...entriesPromises: Promise<TS.FileSystemEntry>[]
+  ): Promise<boolean> {
+    //const entriesPromises = paths.map((path) => getAllPropertiesPromise(path));
     return Promise.all(entriesPromises).then((entries) => {
-      const actions: TS.EditAction[] = entries.map((entry) => ({
-        action: 'add',
-        entry: entry,
-      }));
-      setReflectActions(...actions);
+      const actions: TS.EditAction[] = entries
+        .filter((entry) => entry)
+        .map((entry) => ({
+          action: 'add',
+          entry: entry,
+        }));
+      if (actions.length > 0) {
+        setReflectActions(...actions);
+      }
       return true;
     });
-    /*getAllPropertiesPromise(path).then((fsEntry: TS.FileSystemEntry) =>
-      reflectAddEntry(fsEntry),
-    );*/
   }
 
   /**

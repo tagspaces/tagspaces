@@ -711,6 +711,7 @@ export const IOActionsContextProvider = ({
     return copyFilesWithProgress(
       paths,
       targetPath,
+      undefined,
       paths.length > 10 ? undefined : onProgress,
     )
       .then((success) => {

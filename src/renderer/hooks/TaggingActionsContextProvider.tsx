@@ -398,14 +398,6 @@ export const TaggingActionsContextProvider = ({
         files[path] = processedTags;
       });
       return addFilesTags(files);
-
-      /*return Promise.all(promises).then((editedPaths) => {
-        let sideCarChanges = editedPaths.filter((item) => paths.includes(item));
-        if (sideCarChanges.length > 0) {
-          reflectUpdateMeta(...sideCarChanges);
-        }
-        return true;
-      });*/
     }
     return Promise.resolve(false);
   }
@@ -494,7 +486,7 @@ export const TaggingActionsContextProvider = ({
             return saveMetaDataPromise(entry, updatedFsEntryMeta)
               .then(() => {
                 if (reflect) {
-                  reflectUpdateMeta(entry.path);
+                  reflectUpdateMeta(entry);
                 }
                 return entry.path;
               })
@@ -515,7 +507,7 @@ export const TaggingActionsContextProvider = ({
           return saveMetaDataPromise(entry, newFsEntryMeta)
             .then(() => {
               if (reflect) {
-                reflectUpdateMeta(entry.path);
+                reflectUpdateMeta(entry);
               }
               return entry.path;
             })
@@ -738,7 +730,9 @@ export const TaggingActionsContextProvider = ({
             tags: newTagsArray,
           })
             .then(() => {
-              reflectUpdateMeta(path);
+              getAllPropertiesPromise(path).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
               return true;
             })
             .catch((err) => {
@@ -762,7 +756,9 @@ export const TaggingActionsContextProvider = ({
           const fsEntryMeta = { tags: [tag] };
           saveCurrentLocationMetaData(path, fsEntryMeta)
             .then(() => {
-              reflectUpdateMeta(path);
+              getAllPropertiesPromise(path).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
               return true;
             })
             .catch((err) => {
@@ -873,7 +869,9 @@ export const TaggingActionsContextProvider = ({
               newFilePath,
             ).then(() => {
               if (reflect) {
-                reflectUpdateMeta(newFilePath);
+                getAllPropertiesPromise(newFilePath).then((entry) =>
+                  reflectUpdateMeta(entry),
+                );
               }
               return newFilePath;
             });
@@ -899,7 +897,9 @@ export const TaggingActionsContextProvider = ({
         };
         return saveCurrentLocationMetaData(path, updatedFsEntryMeta)
           .then(() => {
-            reflectUpdateMeta(newFilePath);
+            getAllPropertiesPromise(newFilePath).then((entry) =>
+              reflectUpdateMeta(entry),
+            );
             return true;
           })
           .catch((err) => {

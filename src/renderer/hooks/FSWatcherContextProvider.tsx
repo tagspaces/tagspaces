@@ -61,6 +61,7 @@ export const FSWatcherContextProvider = ({
 }: FSWatcherContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const {
+    getAllPropertiesPromise,
     currentDirectoryEntries,
     loadDirectoryContent,
     currentDirectoryPath,
@@ -189,7 +190,9 @@ export const FSWatcherContextProvider = ({
                 path,
                 currentLocation?.getDirSeparator(),
               );
-              reflectUpdateMeta(filePath);
+              getAllPropertiesPromise(filePath).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
             }
             if (path.endsWith(AppConfig.metaFolderFile)) {
               // endsWith tsm.json

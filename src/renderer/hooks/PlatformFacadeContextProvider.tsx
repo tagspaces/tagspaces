@@ -302,13 +302,14 @@ export const PlatformFacadeContextProvider = ({
     };
     return trackProgress(ioJobPromises, signal, progress).then(() => {
       if (reflect) {
-        const targetPaths = paths.map(
-          (path) =>
+        const targetPaths = paths.map((path) =>
+          getAllPropertiesPromise(
             normalizePath(targetPath) +
-            (currentLocation
-              ? currentLocation.getDirSeparator()
-              : AppConfig.dirSeparator) +
-            extractFileName(path, currentLocation?.getDirSeparator()),
+              (currentLocation
+                ? currentLocation.getDirSeparator()
+                : AppConfig.dirSeparator) +
+              extractFileName(path, currentLocation?.getDirSeparator()),
+          ),
         );
         return reflectAddEntryPath(...targetPaths);
       }

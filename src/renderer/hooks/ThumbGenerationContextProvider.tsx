@@ -409,17 +409,17 @@ export const ThumbGenerationContextProvider = ({
     )
       .then((dataURL) => {
         if (dataURL && dataURL.length) {
-          return saveThumbnailPromise(thumbFilePath, dataURL, location)
+          return saveThumbnailPromise(thumbFilePath, dataURL, location.uuid)
             .then(() => thumbFilePath)
             .catch((err) => {
-              console.warn('Thumb saving failed ' + err + ' for ' + filePath);
+              console.log('Thumb saving failed ' + err + ' for ' + filePath);
               return Promise.resolve(undefined);
             });
         }
         return undefined; // thumbFilePath;
       })
       .catch((err) => {
-        console.warn('Thumb generation failed ' + err + ' for ' + filePath);
+        console.log('Thumb generation failed ' + err + ' for ' + filePath);
         return Promise.resolve(undefined);
       });
   }
