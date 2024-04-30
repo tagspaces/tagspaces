@@ -420,7 +420,8 @@ export function cleanMetaData(
   if (metaData.perspective) {
     cleanedMeta.perspective = metaData.perspective;
   }
-  if (metaData.color && metaData.color !== 'transparent') {
+  if (metaData.color) {
+    //&& metaData.color !== 'transparent') {
     cleanedMeta.color = metaData.color;
   }
   if (metaData.description) {

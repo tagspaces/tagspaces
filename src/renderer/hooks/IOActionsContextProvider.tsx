@@ -1404,7 +1404,7 @@ export const IOActionsContextProvider = ({
     metaData: any,
   ): Promise<TS.FileSystemEntryMeta> {
     const location = findLocation(entry.locationID);
-    const cleanedMetaData = cleanMetaData(metaData);
+    //const cleanedMetaData = cleanMetaData(metaData);
     if (entry) {
       let metaFilePath;
       if (entry.isFile) {
@@ -1437,17 +1437,12 @@ export const IOActionsContextProvider = ({
           await createDirectoryPromise(metaDirectoryPath);
         }
 
-        if (!cleanedMetaData.id) {
-          // add id for directories
-          cleanedMetaData.id = getUuid();
-        }
-
         metaFilePath = getMetaFileLocationForDir(
           entry.path,
           location.getDirSeparator(),
         );
       }
-      const meta = mergeFsEntryMeta(cleanedMetaData);
+      const meta = cleanMetaData(mergeFsEntryMeta(metaData));
       const content = JSON.stringify(meta);
       return saveTextFilePromise(
         { path: metaFilePath, locationID: entry.locationID },
