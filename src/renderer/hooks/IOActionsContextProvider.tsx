@@ -1281,7 +1281,7 @@ export const IOActionsContextProvider = ({
     metaData: any,
   ): Promise<TS.FileSystemEntryMeta> {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
-    const cleanedMetaData = cleanMetaData(metaData);
+    //const cleanedMetaData = cleanMetaData(metaData);
     if (entryProperties) {
       let metaFilePath;
       if (entryProperties.isFile) {
@@ -1311,17 +1311,12 @@ export const IOActionsContextProvider = ({
           await PlatformIO.createDirectoryPromise(metaDirectoryPath);
         }
 
-        if (!cleanedMetaData.id) {
-          // add id for directories
-          cleanedMetaData.id = getUuid();
-        }
-
         metaFilePath = getMetaFileLocationForDir(
           path,
           PlatformIO.getDirSeparator(),
         );
       }
-      const meta = mergeFsEntryMeta(cleanedMetaData);
+      const meta = cleanMetaData(mergeFsEntryMeta(metaData));
       const content = JSON.stringify(meta);
       return saveTextFilePromise({ path: metaFilePath }, content, true).then(
         () => meta,
