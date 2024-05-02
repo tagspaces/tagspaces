@@ -196,7 +196,11 @@ export const CurrentLocationContextProvider = ({
     if (!locationID) {
       return currentLocation.current;
     }
-    return locations.find((l) => l.uuid === locationID);
+    const loc = locations.find((l) => l.uuid === locationID);
+    if (loc) {
+      return loc;
+    }
+    return currentLocation.current;
   }
 
   function setDefaultLocations() {

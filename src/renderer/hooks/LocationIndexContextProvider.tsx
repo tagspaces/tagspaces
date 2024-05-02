@@ -25,8 +25,6 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws3';
 import { TS } from '-/tagspaces.namespace';
 import { executePromisesInBatches } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
@@ -231,15 +229,16 @@ export const LocationIndexContextProvider = ({
       } else {
         directoryPath = param;
       }
+      const loc = findLocation(locationID);
       const dirPath = cleanTrailingDirSeparator(directoryPath);
       if (
         enableWS &&
-        !currentLocation.haveObjectStoreSupport() &&
-        !currentLocation.haveWebDavSupport() &&
+        !loc.haveObjectStoreSupport() &&
+        !loc.haveWebDavSupport() &&
         !AppConfig.isCordova
       ) {
         // Start indexing in worker if not in the object store mode
-        return currentLocation
+        return loc
           .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
           .then((result) => {
             if (result && result.success) {
@@ -263,8 +262,8 @@ export const LocationIndexContextProvider = ({
       }
       return createIndex(
         param,
-        currentLocation.listDirectoryPromise,
-        currentLocation.loadTextFilePromise,
+        loc.listDirectoryPromise,
+        loc.loadTextFilePromise,
         mode,
         ignorePatterns,
         isWalking,
@@ -393,21 +392,14 @@ export const LocationIndexContextProvider = ({
     const loc = findLocation(entry.locationID);
     if (loc) {
       const thumbFilePath = entry.isFile
-        ? getThumbFileLocationForFile(
-            entry.path,
-            currentLocation?.getDirSeparator(),
-            false,
-          )
-        : getThumbFileLocationForDirectory(
-            entry.path,
-            currentLocation?.getDirSeparator(),
-          );
+        ? getThumbFileLocationForFile(entry.path, loc.getDirSeparator(), false)
+        : getThumbFileLocationForDirectory(entry.path, loc.getDirSeparator());
       if (thumbFilePath) {
-        return checkFileExist(thumbFilePath, loc).then((exist) => {
+        return loc.checkFileExist(thumbFilePath).then((exist) => {
           if (exist) {
             const thumbPath =
               loc.type === locationType.TYPE_CLOUD
-                ? getURLforPath(thumbFilePath, loc)
+                ? loc.getURLforPath(thumbFilePath)
                 : thumbFilePath;
             return { ...entry, meta: { ...entry.meta, thumbPath } };
           }
@@ -418,16 +410,16 @@ export const LocationIndexContextProvider = ({
     return undefined;
   }
 
-  function getURLforPath(path: string, location: CommonLocation) {
+  /*function getURLforPath(path: string, location: CommonLocation) {
     const api = objectStoreAPI.getS3Api(location);
     return api.getSignedUrl('getObject', {
       Bucket: location.bucketName,
       Key: normalizePath(path),
       Expires: 900,
     });
-  }
+  }*/
 
-  function checkFileExist(
+  /*function checkFileExist(
     path: string,
     location: CommonLocation,
   ): Promise<boolean> {
@@ -450,7 +442,7 @@ export const LocationIndexContextProvider = ({
     } else if (AppConfig.isCordova) {
       return cordovaIO.checkFileExist(path);
     }
-  }
+  }*/
 
   function enhanceSearchEntries(entries: TS.FileSystemEntry[]) {
     const promises: Promise<TS.FileSystemEntry>[] = entries.map(
@@ -676,14 +668,15 @@ export const LocationIndexContextProvider = ({
     locationID,
     folderPath,
   ): TS.FileSystemEntry[] {
+    const loc = findLocation(locationID);
     return directoryIndex.map((i: TS.FileSystemEntry) => ({
       ...i,
       locationID,
       path: joinPaths(
-        AppConfig.dirSeparator,
+        loc.getDirSeparator(),
         folderPath,
         AppConfig.isWin
-          ? i.path.replaceAll('/', AppConfig.dirSeparator)
+          ? i.path.replaceAll('/', loc.getDirSeparator())
           : i.path, //toPlatformPath()
       ),
     }));
@@ -693,11 +686,12 @@ export const LocationIndexContextProvider = ({
     folderPath: string,
     locationID: string,
   ): Promise<TS.FileSystemEntry[]> {
+    const loc = findLocation(locationID);
     const folderIndexPath =
       getMetaDirectoryPath(folderPath) +
-      currentLocation?.getDirSeparator() +
+      loc.getDirSeparator() +
       AppConfig.folderIndexFile;
-    return currentLocation
+    return loc
       .loadTextFilePromise(folderIndexPath)
       .then((jsonContent) => {
         const directoryIndex = loadJSONString(
