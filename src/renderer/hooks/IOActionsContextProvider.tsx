@@ -1422,7 +1422,7 @@ export const IOActionsContextProvider = ({
         );
         const metaExist = await location.getPropertiesPromise(metaFolder);
         if (!metaExist) {
-          await createDirectoryPromise(metaFolder);
+          await createDirectoryPromise(metaFolder, location.uuid);
         }
       } else {
         // check and create meta folder if not exist
@@ -1434,7 +1434,7 @@ export const IOActionsContextProvider = ({
         const metaDirectoryProperties =
           await location.getPropertiesPromise(metaDirectoryPath);
         if (!metaDirectoryProperties) {
-          await createDirectoryPromise(metaDirectoryPath);
+          await createDirectoryPromise(metaDirectoryPath, location.uuid);
         }
 
         metaFilePath = getMetaFileLocationForDir(
@@ -1481,9 +1481,11 @@ export const IOActionsContextProvider = ({
         const metaFilePath = path.endsWith(location.getDirSeparator())
           ? getMetaFileLocationForDir(path, location.getDirSeparator())
           : getMetaFileLocationForFile(path, location.getDirSeparator());
-        return saveTextFilePromise({ path: metaFilePath }, content, true).then(
-          () => id,
-        );
+        return saveTextFilePromise(
+          { path: metaFilePath, locationID: location.uuid },
+          content,
+          true,
+        ).then(() => id);
         //return createFsEntryMeta(path, { id: id });
       });
   }

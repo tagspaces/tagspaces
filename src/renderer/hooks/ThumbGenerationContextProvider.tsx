@@ -75,7 +75,8 @@ export const ThumbGenerationContextProvider = ({
     loadCurrentDirMeta,
   } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
-  const { saveBinaryFilePromise } = usePlatformFacadeContext();
+  const { saveBinaryFilePromise, createDirectoryPromise } =
+    usePlatformFacadeContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -375,7 +376,7 @@ export const ThumbGenerationContextProvider = ({
     }
     return location.checkDirExist(metaDirectory).then((exist) => {
       if (!exist) {
-        return location.createDirectoryPromise(metaDirectory).then(() => {
+        return createDirectoryPromise(metaDirectory, location.uuid).then(() => {
           return createThumbnailSavePromise(
             filePath,
             fileSize,

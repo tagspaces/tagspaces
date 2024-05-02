@@ -265,21 +265,25 @@ function CreateEditLocationDialog(props: Props) {
     }
   }, [name, path]);
 
-  function setLocationId(path: string) {
-    loadLocationDataPromise(path, AppConfig.metaFolderFile)
+  function getMetaLocationId(
+    location: CommonLocation,
+  ): Promise<string | undefined> {
+    return loadLocationDataPromise(location, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
           const location = findLocation(meta.id);
           if (!location) {
-            setNewUuid(meta.id);
+            return meta.id;
           }
         }
-        return true;
+        return undefined;
       })
       .catch((err) => {
-        console.debug('no meta in location:' + path);
+        console.debug('no meta in location:' + location.path);
+        return undefined;
       });
   }
+
   function setNewLocationID(newId: string) {
     const location = findLocation(newId);
     if (!location) {
@@ -437,7 +441,13 @@ function CreateEditLocationDialog(props: Props) {
       }
 
       if (!selectedLocation) {
-        addLocation(new CommonLocation(loc));
+        const commonLocation = new CommonLocation(loc);
+        getMetaLocationId(commonLocation).then((uuid) => {
+          if (uuid) {
+            commonLocation.uuid = uuid;
+          }
+          addLocation(commonLocation);
+        });
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
         props.editLocation(new CommonLocation(loc));
@@ -470,10 +480,7 @@ function CreateEditLocationDialog(props: Props) {
         region={region}
         endpointURL={endpointURL}
         setStoreName={setStoreName}
-        setStorePath={(path) => {
-          setStorePath(path);
-          setLocationId(path);
-        }}
+        setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
         setSecretAccessKey={setSecretAccessKey}
         setSessionToken={setSessionToken}
@@ -509,10 +516,7 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={(path) => {
-          setPath(path);
-          setLocationId(path);
-        }}
+        setPath={setPath}
         path={path}
         name={name}
       />

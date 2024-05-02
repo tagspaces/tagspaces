@@ -255,7 +255,7 @@ export class CommonLocation implements TS.Location {
           location: this,
         });
       }
-      this.ioAPI.listMetaDirectoryPromise(param);
+      return this.ioAPI.listMetaDirectoryPromise(param);
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listMetaDirectoryPromise',
@@ -276,7 +276,7 @@ export class CommonLocation implements TS.Location {
           location: this,
         });
       }
-      this.ioAPI.getPropertiesPromise(path);
+      return this.ioAPI.getPropertiesPromise(path);
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke('getPropertiesPromise', path);
     }

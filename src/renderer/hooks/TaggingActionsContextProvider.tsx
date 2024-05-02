@@ -180,7 +180,7 @@ export const TaggingActionsContextProvider = ({
 
   function refreshTagsFromLocation() {
     if (currentLocation) {
-      getTagGroups(currentLocation.path).then((locationTagGroups) => {
+      getTagGroups(currentLocation).then((locationTagGroups) => {
         if (locationTagGroups && locationTagGroups.length > 0) {
           const oldGroups = getTagLibrary();
           if (checkTagGroupModified(locationTagGroups, oldGroups)) {
@@ -1073,7 +1073,7 @@ export const TaggingActionsContextProvider = ({
       if (Pro && entry.locationId) {
         const location: CommonLocation = findLocation(entry.locationId);
         if (location) {
-          editLocationTagGroup(location.path, modifiedEntry);
+          editLocationTagGroup(location, modifiedEntry);
         }
       }
 
@@ -1120,7 +1120,7 @@ export const TaggingActionsContextProvider = ({
     };
     saveTagLibrary([...tagGroups, newEntry]);
     if (Pro && location) {
-      return createLocationTagGroup(location.path, newEntry).then(() => true);
+      return createLocationTagGroup(location, newEntry).then(() => true);
     }
     return Promise.resolve(true);
   }
@@ -1129,7 +1129,7 @@ export const TaggingActionsContextProvider = ({
     if (Pro && entry.locationId) {
       const location: CommonLocation = findLocation(entry.locationId);
       if (location) {
-        mergeLocationTagGroup(location.path, entry);
+        mergeLocationTagGroup(location, entry);
       }
     }
     const indexForEditing = tagGroups.findIndex(
@@ -1174,7 +1174,7 @@ export const TaggingActionsContextProvider = ({
       if (Pro && tagGroup && tagGroup.locationId) {
         const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          removeLocationTagGroup(location.path, parentTagGroupUuid);
+          removeLocationTagGroup(location, parentTagGroupUuid);
         }
       }
 
@@ -1218,7 +1218,7 @@ export const TaggingActionsContextProvider = ({
         const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           tagGroup.children = newTags;
-          editLocationTagGroup(location.path, tagGroup);
+          editLocationTagGroup(location, tagGroup);
         }
       }
     }
@@ -1249,7 +1249,7 @@ export const TaggingActionsContextProvider = ({
       if (Pro && tagGroup && tagGroup.locationId) {
         const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          editLocationTagGroup(location.path, newTagGroup, true);
+          editLocationTagGroup(location, newTagGroup, true);
         }
       }
       updateTagGroup(newTagGroup);
@@ -1277,7 +1277,7 @@ export const TaggingActionsContextProvider = ({
       if (Pro && tagGroup.locationId) {
         const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          editLocationTagGroup(location.path, editedTagGroup, true);
+          editLocationTagGroup(location, editedTagGroup, true);
         }
       }
       updateTagGroup(editedTagGroup);

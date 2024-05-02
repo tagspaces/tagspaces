@@ -648,7 +648,7 @@ export const LocationIndexContextProvider = ({
     const metaDirectory = getMetaDirectoryPath(directoryPath);
     const exist = await currentLocation.checkDirExist(metaDirectory);
     if (!exist) {
-      await currentLocation.createDirectoryPromise(metaDirectory);
+      await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
     }
     const folderIndexPath =
       metaDirectory +

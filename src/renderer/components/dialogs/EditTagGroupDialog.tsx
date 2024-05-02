@@ -108,7 +108,7 @@ function EditTagGroupDialog(props: Props) {
           selectedTagGroupEntry.locationId,
         );
         if (location) {
-          removeLocationTagGroup(location.path, selectedTagGroupEntry.uuid);
+          removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
         }
       }
       updateTagGroup({

@@ -48,7 +48,7 @@ interface getLocationProps extends Omit<PlatformParms, 'path'> {
   // All the properties from PlatformParms, except 'path'
 }
 type PlatformFacadeContextData = {
-  createDirectoryPromise: (path: string) => Promise<any>;
+  createDirectoryPromise: (path: string, locationID?: string) => Promise<any>;
   copyFilePromise: (
     sourceFilePath: string,
     targetFilePath: string,
@@ -183,14 +183,19 @@ export const PlatformFacadeContextProvider = ({
     return currentLocation;
   }
 
-  function createDirectoryPromise(path: string): Promise<any> {
+  function createDirectoryPromise(
+    path: string,
+    locationID?: string,
+  ): Promise<any> {
     ignoreByWatcher(path);
 
-    return currentLocation.createDirectoryPromise(path).then((result) => {
-      reflectAddEntry(currentLocation.toFsEntry(path, false));
-      deignoreByWatcher(path);
-      return result;
-    });
+    return getLocation({ locationID })
+      .createDirectoryPromise(path)
+      .then((result) => {
+        reflectAddEntry(currentLocation.toFsEntry(path, false));
+        deignoreByWatcher(path);
+        return result;
+      });
   }
 
   /**
