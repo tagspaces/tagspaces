@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { Pro } from '-/pro';
 
 const PREFIX = 'EditDescription';
 
@@ -67,8 +68,7 @@ function EditDescription() {
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (!isEditMode) {
-            //&& !openedEntry.editMode) {
+          if (Pro && !isEditMode) {
             setEditMode(true);
           }
         }}
@@ -90,9 +90,9 @@ function EditDescription() {
             }}
           >
             {t(
-              isEditMode //openedEntry.editMode
-                ? 'core:editDisabled'
-                : 'core:addMarkdownDescription',
+              Pro
+                ? 'core:addMarkdownDescription'
+                : 'core:thisFunctionalityIsAvailableInPro',
             )}
           </Typography>
         ) : (
