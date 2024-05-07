@@ -1377,8 +1377,9 @@ export const IOActionsContextProvider = ({
         .catch((error) => {
           showNotification('Error creating duplicate: ', error);
         });
+    } else {
+      showNotification('Unable to duplicate, no file selected');
     }
-    showNotification('Unable to duplicate, no file selected');
   }
 
   function saveCurrentLocationMetaData(

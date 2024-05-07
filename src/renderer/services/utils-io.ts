@@ -831,11 +831,11 @@ export function openUrl(url: string): void {
 
 export function openURLExternally(url: string, skipConfirmation = false) {
   if (skipConfirmation) {
-    this.openUrl(url);
+    openUrl(url);
   } else if (
     window.confirm('Do you really want to open this url: ' + url + ' ?')
   ) {
-    this.openUrl(url);
+    openUrl(url);
   }
 }
 
