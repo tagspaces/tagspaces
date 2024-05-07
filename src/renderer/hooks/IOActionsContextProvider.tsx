@@ -984,14 +984,15 @@ export const IOActionsContextProvider = ({
               // handle meta files
               if (fileType === 'meta') {
                 try {
-                  // eslint-disable-next-line no-param-reassign
                   fsEntry.meta = loadJSONString(fileContent.toString());
                 } catch (e) {
                   console.debug('cannot parse entry meta');
                 }
               } else if (fileType === 'thumb') {
-                // eslint-disable-next-line no-param-reassign
-                fsEntry.meta.thumbPath = fsEntry.path;
+                fsEntry.meta = {
+                  ...(fsEntry.meta && fsEntry.meta),
+                  thumbPath: fsEntry.path,
+                };
               }
 
               return fsEntry;
@@ -1112,7 +1113,6 @@ export const IOActionsContextProvider = ({
         .then((filesProm) => {
           const arrFiles: Array<TS.FileSystemEntry> = [];
           const arrMeta: Array<TS.FileSystemEntry> = [];
-          const arrThumb: Array<TS.FileSystemEntry> = [];
 
           filesProm.map((result) => {
             if (result.status !== 'rejected') {
@@ -1120,8 +1120,6 @@ export const IOActionsContextProvider = ({
               if (file) {
                 if (file.meta) {
                   arrMeta.push(file);
-                } else if (file.thumbPath) {
-                  arrThumb.push(file);
                 } else {
                   arrFiles.push(file);
                 }
@@ -1146,33 +1144,31 @@ export const IOActionsContextProvider = ({
                 file.path,
                 AppConfig.dirSeparator,
               );
-              if (metaFilePath !== undefined) {
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  if (
-                    metaFile.path.replace(/[/\\]/g, '') ===
-                    metaFilePath.replace(/[/\\]/g, '')
-                  ) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = metaFile.meta;
-                  }
-                }
-              }
+
               const thumbFilePath = getThumbFileLocationForFile(
                 file.path,
                 AppConfig.dirSeparator,
               );
-              if (thumbFilePath !== undefined) {
-                for (let i = 0; i < arrThumb.length; i += 1) {
-                  const thumbFile = arrThumb[i];
-                  if (
-                    thumbFile.path.replace(/[/\\]/g, '') ===
-                    thumbFilePath.replace(/[/\\]/g, '')
-                  ) {
+              if (metaFilePath !== undefined) {
+                for (let i = 0; i < arrMeta.length; i += 1) {
+                  const metaFile = arrMeta[i];
+                  const metaFilePath = metaFile.path.replace(/[/\\]/g, '');
+                  if (metaFilePath === metaFilePath.replace(/[/\\]/g, '')) {
                     // eslint-disable-next-line no-param-reassign
-                    file.meta.thumbPath = currentLocation.getURLforPath(
-                      thumbFile.meta.thumbPath,
-                    );
+                    file.meta = {
+                      ...(file.meta && file.meta),
+                      ...metaFile.meta,
+                    };
+                  } else if (
+                    thumbFilePath &&
+                    metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
+                  ) {
+                    file.meta = {
+                      ...(file.meta && file.meta),
+                      thumbPath: currentLocation.getURLforPath(
+                        file.meta.thumbPath,
+                      ),
+                    };
                   }
                 }
               }
