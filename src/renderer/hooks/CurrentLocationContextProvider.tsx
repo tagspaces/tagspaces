@@ -50,7 +50,7 @@ type CurrentLocationContextData = {
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
   findLocation: (locationID: string) => CommonLocation;
-  changeLocation: (location: CommonLocation) => void;
+  changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
   editLocation: (location: CommonLocation, openAfterEdit?: boolean) => void;
   addLocation: (
     location: CommonLocation,
@@ -300,7 +300,11 @@ export const CurrentLocationContextProvider = ({
     return settingsPersistTagsInSidecarFile;
   }, [currentLocation.current, settingsPersistTagsInSidecarFile]);
 
-  function changeLocation(location: CommonLocation) {
+  function changeLocation(
+    location: CommonLocation,
+    skipInitDirList: boolean = false,
+  ) {
+    skipInitialDirList.current = skipInitDirList;
     if (
       !currentLocation.current ||
       location.uuid !== currentLocation.current.uuid

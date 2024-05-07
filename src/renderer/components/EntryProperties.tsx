@@ -234,7 +234,7 @@ function EntryProperties(props: Props) {
     saveDirectoryPerspective,
   } = useIOActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
 
   const dirProps = useRef<TS.DirProp>(undefined);
@@ -242,14 +242,12 @@ function EntryProperties(props: Props) {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
+  const location = findLocation(openedEntry.locationID);
 
   const entryName = openedEntry
     ? openedEntry.isFile
-      ? extractFileName(openedEntry.path, currentLocation?.getDirSeparator())
-      : extractDirectoryName(
-          openedEntry.path,
-          currentLocation?.getDirSeparator(),
-        )
+      ? extractFileName(openedEntry.path, location?.getDirSeparator())
+      : extractDirectoryName(openedEntry.path, location?.getDirSeparator())
     : '';
 
   const [editName, setEditName] = useState<string>(undefined);
@@ -291,9 +289,9 @@ function EntryProperties(props: Props) {
     if (editName !== undefined) {
       const path = extractContainingDirectoryPath(
         openedEntry.path,
-        currentLocation?.getDirSeparator(),
+        location?.getDirSeparator(),
       );
-      const nextPath = path + currentLocation?.getDirSeparator() + editName;
+      const nextPath = path + location.getDirSeparator() + editName;
 
       if (openedEntry.isFile) {
         renameFile(openedEntry.path, nextPath, openedEntry.locationID).catch(
@@ -364,9 +362,7 @@ function EntryProperties(props: Props) {
     } else if (dirProps.current) {
       return formatBytes(dirProps.current.totalSize);
     }
-    return t(
-      currentLocation.haveObjectStoreSupport() ? 'core:notAvailable' : '?',
-    );
+    return t(location.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
   };
 
   const toggleBackgroundColorPicker = () => {
@@ -505,7 +501,7 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
 
-  const thumbUrl = currentLocation.getThumbPath(
+  const thumbUrl = location.getThumbPath(
     openedEntry.meta?.thumbPath,
     openedEntry.meta?.lastUpdated,
   );
@@ -714,7 +710,7 @@ function EntryProperties(props: Props) {
           <Grid item xs={6}>
             <Tooltip
               title={
-                !currentLocation.haveObjectStoreSupport() &&
+                !location.haveObjectStoreSupport() &&
                 dirProps.current &&
                 !openedEntry.isFile &&
                 dirProps.current.dirsCount +
@@ -835,7 +831,7 @@ function EntryProperties(props: Props) {
                           const entryTitle = extractTitle(
                             openedEntry.name,
                             !openedEntry.isFile,
-                            currentLocation?.getDirSeparator(),
+                            location?.getDirSeparator(),
                           );
                           const clibboardItem = generateClipboardLink(
                             sharingLink,
@@ -1108,7 +1104,7 @@ function EntryProperties(props: Props) {
                             backgroundRepeat: 'no-repeat',
                             backgroundImage:
                               'url("' +
-                              currentLocation.getFolderBgndPath(
+                              location.getFolderBgndPath(
                                 openedEntry.path,
                                 openedEntry.meta?.lastUpdated,
                               ) +

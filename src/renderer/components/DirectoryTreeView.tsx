@@ -46,7 +46,7 @@ const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
-    const { currentLocation, changeLocation, getLocationPath } =
+    const { findLocation, changeLocation, getLocationPath } =
       useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
@@ -127,9 +127,12 @@ const DirectoryTreeView = forwardRef(
     };
 
     const onRowClick = (subDir) => {
-      loadSubDirectories(subDir);
-      changeLocation(subDir);
-      openDirectory(subDir.path);
+      const location = findLocation(subDir.uuid);
+      if (location) {
+        //loadSubDirectories(location);
+        changeLocation(location, true);
+        openDirectory(subDir.path, undefined, location);
+      }
     };
 
     const columns = [
@@ -207,7 +210,7 @@ const DirectoryTreeView = forwardRef(
     const getDirectoriesTree = (subFolder: SubFolder) =>
       // const { settings } = getState();
       new Promise((resolve, reject) => {
-        currentLocation
+        findLocation(subFolder.uuid)
           .listDirectoryPromise(subFolder.path, [])
           .then((dirEntries) => {
             if (dirEntries !== undefined) {
