@@ -34,6 +34,7 @@ import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
 import { setGlobalShortcuts } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'SettingsKeyBindings';
 
@@ -65,7 +66,7 @@ function SettingsKeyBindings() {
 
   return (
     <Root className={classes.keyBinding} noValidate autoComplete="off">
-      <Typography variant="body2">
+      <Typography variant="body2" style={{ marginBottom: 10 }}>
         The following key names can be used for defining key bindings:{' '}
         <Typography variant="overline">
           ctrl, command, alt, option, shift, space, backspace, escape, enter,
@@ -73,15 +74,17 @@ function SettingsKeyBindings() {
         </Typography>{' '}
         plus letters and digits from your keyboard.
       </Typography>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <ListItemText primary={t('core:enableGlobalKeyboardShortcuts')} />
-        <Switch
-          onClick={() => {
-            setGlobalKeyBinding(!globalKeyBindingEnabled);
-          }}
-          checked={globalKeyBindingEnabled}
-        />
-      </ListItem>
+      {AppConfig.isElectron && (
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:enableGlobalKeyboardShortcuts')} />
+          <Switch
+            onClick={() => {
+              setGlobalKeyBinding(!globalKeyBindingEnabled);
+            }}
+            checked={globalKeyBindingEnabled}
+          />
+        </ListItem>
+      )}
       {keyBindings.map((keyBinding) => {
         const defaultBinding = DefaultSettings.keyBindings.filter(
           (kb) => kb.name === keyBinding.name,
