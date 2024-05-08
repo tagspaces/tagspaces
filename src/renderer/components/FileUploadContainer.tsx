@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 interface Props {
   id: string;
@@ -37,6 +38,7 @@ const FileUploadContainer = forwardRef(
     const dispatch: AppDispatch = useDispatch();
     const { id, directoryPath } = props;
     const { uploadFilesAPI } = useIOActionsContext();
+    const { setReflectMetaActions } = useEditedEntryMetaContext();
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -93,11 +95,11 @@ const FileUploadContainer = forwardRef(
         onUploadProgress,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
-          /*if (directoryPath === currentDirectoryPath) {
-            addDirectoryEntries(fsEntries);
-            dispatch(AppActions.reflectCreateEntries(fsEntries));
-            setSelectedEntries(fsEntries);
-          }*/
+          const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
+            action: 'thumbGenerate',
+            entry: entry,
+          }));
+          setReflectMetaActions(...actions);
           return true;
         })
         .catch((error) => {

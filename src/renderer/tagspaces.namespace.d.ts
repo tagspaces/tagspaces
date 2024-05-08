@@ -126,6 +126,7 @@ export namespace TS {
       | 'autoSaveChange'
       | 'descriptionChange'
       | 'thumbChange'
+      | 'thumbGenerate'
       | 'bgdImgChange'
       | 'bgdColorChange';
     entry: TS.FileSystemEntry;

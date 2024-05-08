@@ -497,13 +497,7 @@ export const IOActionsContextProvider = ({
       );
       return moveDirectoryPromise(
         { path: path, total: count, locationID },
-        joinPaths(
-          currentLocation
-            ? currentLocation.getDirSeparator()
-            : AppConfig.dirSeparator,
-          targetPath,
-          dirName,
-        ),
+        joinPaths(currentLocation?.getDirSeparator(), targetPath, dirName),
         progress,
         false,
       )
@@ -655,13 +649,7 @@ export const IOActionsContextProvider = ({
       );
       return copyDirectoryPromise(
         { path: path, total: count, locationID },
-        joinPaths(
-          currentLocation
-            ? currentLocation.getDirSeparator()
-            : AppConfig.dirSeparator,
-          targetPath,
-          dirName,
-        ),
+        joinPaths(currentLocation?.getDirSeparator(), targetPath, dirName),
         progress,
         false,
       )
@@ -852,14 +840,13 @@ export const IOActionsContextProvider = ({
         try {
           fileName = decodeURIComponent(file.name);
         } catch (ex) {}
-        let filePath =
-          normalizePath(targetPath) +
-          (currentLocation
-            ? currentLocation.getDirSeparator()
-            : AppConfig.dirSeparator) +
-          fileName;
+        let filePath = joinPaths(
+          currentLocation?.getDirSeparator(),
+          targetPath,
+          fileName,
+        );
         if (
-          currentLocation.haveObjectStoreSupport() &&
+          currentLocation?.haveObjectStoreSupport() &&
           (filePath.startsWith('\\') || filePath.startsWith('/'))
         ) {
           filePath = filePath.substr(1);
@@ -1032,10 +1019,11 @@ export const IOActionsContextProvider = ({
     return new Promise((resolve, reject) => {
       const uploadJobs = [];
       paths.map((path) => {
-        let target =
-          normalizePath(targetPath) +
-          AppConfig.dirSeparator +
-          extractFileName(path, AppConfig.dirSeparator); // PlatformIO.getDirSeparator()); // with "/" dir separator cannot extractFileName on Win
+        let target = joinPaths(
+          currentLocation?.getDirSeparator(),
+          targetPath,
+          extractFileName(path, AppConfig.dirSeparator),
+        ); // with "/" dir separator cannot extractFileName on Win
         // fix for Win
         if (
           currentLocation.haveObjectStoreSupport() &&
@@ -1048,12 +1036,18 @@ export const IOActionsContextProvider = ({
           // copy meta
           uploadJobs.push([
             getMetaFileLocationForFile(path, AppConfig.dirSeparator),
-            getMetaFileLocationForFile(target, AppConfig.dirSeparator),
+            getMetaFileLocationForFile(
+              target,
+              currentLocation?.getDirSeparator(),
+            ),
             'meta',
           ]);
           uploadJobs.push([
             getThumbFileLocationForFile(path, AppConfig.dirSeparator),
-            getThumbFileLocationForFile(target, AppConfig.dirSeparator),
+            getThumbFileLocationForFile(
+              target,
+              currentLocation?.getDirSeparator(),
+            ),
             'thumb',
             path,
           ]);
@@ -1355,20 +1349,17 @@ export const IOActionsContextProvider = ({
       extractedTags.push('copy');
       extractedTags.push(formatDateTime4Tag(new Date(), true));
 
-      const newFilePath =
-        (dirPath
-          ? dirPath +
-            (currentLocation
-              ? currentLocation.getDirSeparator()
-              : AppConfig.dirSeparator)
-          : '') +
+      const newFilePath = joinPaths(
+        currentLocation?.getDirSeparator(),
+        dirPath,
         generateFileName(
           fileName,
           extractedTags,
           AppConfig.tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
-        );
+        ),
+      );
 
       copyFilePromise(selectedFilePath, newFilePath)
         /*.then(() => {

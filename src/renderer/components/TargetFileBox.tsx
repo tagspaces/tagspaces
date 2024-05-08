@@ -29,6 +29,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -45,6 +46,7 @@ function TargetFileBox(props: Props) {
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const ref = useRef<HTMLDivElement>(null);
   const { setMoveCopyDialogOpened } = props;
@@ -82,9 +84,11 @@ function TargetFileBox(props: Props) {
         false,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
-          /*addDirectoryEntries(fsEntries);
-          dispatch(AppActions.reflectCreateEntries(fsEntries));
-          setSelectedEntries(fsEntries);*/
+          const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
+            action: 'thumbGenerate',
+            entry: entry,
+          }));
+          setReflectMetaActions(...actions);
           return true;
         })
         .catch((error) => {

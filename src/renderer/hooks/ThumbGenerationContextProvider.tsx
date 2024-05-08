@@ -50,6 +50,7 @@ import {
   isWorkerAvailable,
 } from '-/services/utils-io';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -77,6 +78,7 @@ export const ThumbGenerationContextProvider = ({
   const { findLocation } = useCurrentLocationContext();
   const { saveBinaryFilePromise, createDirectoryPromise } =
     usePlatformFacadeContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -130,6 +132,27 @@ export const ThumbGenerationContextProvider = ({
       }
     }
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      const entries = [];
+      for (const action of metaActions) {
+        if (action.action === 'thumbGenerate') {
+          entries.push(action.entry);
+        }
+      }
+      if (entries.length > 0) {
+        generateThumbnails(entries).then(() => {
+          return loadCurrentDirMeta(currentDirectoryPath, entries).then(
+            (ent) => {
+              updateCurrentDirEntries(ent);
+              return true;
+            },
+          );
+        });
+      }
+    }
+  }, [metaActions]);
 
   function genThumbnailsEnabled(location: CommonLocation): boolean {
     if (
