@@ -754,7 +754,9 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
-      const reloadMeta = currentDirectoryPath.current === dirPath;
+      const reloadMeta =
+        cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+        cleanTrailingDirSeparator(dirPath);
       return loadMetaDirectoryContent(
         dirPath,
         location || currentLocation,
