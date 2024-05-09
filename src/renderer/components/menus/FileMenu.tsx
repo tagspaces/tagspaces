@@ -196,7 +196,7 @@ function FileMenu(props: Props) {
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
-        console.warn(
+        console.log(
           'Error setting Thumb for entry: ' + selectedEntries[0].path,
           error,
         );
@@ -231,7 +231,7 @@ function FileMenu(props: Props) {
       })
       .catch((error) => {
         showNotification('Background creation failed.');
-        console.warn(
+        console.log(
           'Error setting Background for entry: ' + selectedFilePath,
           error,
         );

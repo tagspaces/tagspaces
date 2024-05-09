@@ -820,7 +820,7 @@ export class CommonLocation implements TS.Location {
         promise
           .then((exists) => (exists ? path : ''))
           .catch((err) => {
-            console.warn(`Promise ${path} error:`, err);
+            console.log(`Promise ${path} error:`, err);
             return '';
           }),
     );
@@ -846,7 +846,7 @@ export class CommonLocation implements TS.Location {
         promise
           .then((exists) => (exists ? path : ''))
           .catch((err) => {
-            console.warn(`Promise ${path} error:`, err);
+            console.log(`Promise ${path} error:`, err);
             return '';
           }),
     );

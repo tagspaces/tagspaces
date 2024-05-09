@@ -804,7 +804,7 @@ export const actions = {
           return true;
         })
         .catch((error) => {
-          console.warn('Error while checking for update: ' + error);
+          console.log('Error while checking for update: ' + error);
         });
     },
 };

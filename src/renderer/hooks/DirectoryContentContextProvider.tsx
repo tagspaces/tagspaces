@@ -913,7 +913,7 @@ export const DirectoryContentContextProvider = ({
         setReflectMetaActions(action);
       })
       .catch((error) => {
-        console.warn(
+        console.log(
           'Error getting properties for entry: ' + directory + ' - ' + error,
         );
       });

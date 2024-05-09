@@ -491,7 +491,7 @@ export const TaggingActionsContextProvider = ({
                 return entry.path;
               })
               .catch((err) => {
-                console.warn(
+                console.log(
                   'Error adding tags for ' + entry.path + ' with ' + err,
                 );
                 showNotification(
@@ -512,7 +512,7 @@ export const TaggingActionsContextProvider = ({
               return entry.path;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding tags for ' + entry.path + ' with ' + error,
               );
               showNotification(
@@ -736,7 +736,7 @@ export const TaggingActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn('Error adding tags for ' + path + ' with ' + err);
+              console.log('Error adding tags for ' + path + ' with ' + err);
               showNotification(
                 t('core:addingTagsFailed' as any) as string,
                 'error',
@@ -747,7 +747,7 @@ export const TaggingActionsContextProvider = ({
         })
         .catch((error) => {
           // json metadata not exist -create the new one
-          console.warn(
+          console.log(
             'json metadata not exist create new ' + path + ' with ' + error,
           );
           // dispatch(AppActions.showNotification(t('core:addingTagsFailed'), 'error', true));
@@ -762,7 +762,7 @@ export const TaggingActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn('Error adding tags for ' + path + ' with ' + err);
+              console.log('Error adding tags for ' + path + ' with ' + err);
               showNotification(
                 t('core:addingTagsFailed' as any) as string,
                 'error',
@@ -879,7 +879,7 @@ export const TaggingActionsContextProvider = ({
         );
       })
       .catch((error) => {
-        console.warn('Error removing tags for ' + path + ' with ' + error);
+        console.log('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
         return removeTagsFromFilename(true, reflect);
       });
@@ -903,7 +903,7 @@ export const TaggingActionsContextProvider = ({
             return true;
           })
           .catch((err) => {
-            console.warn(
+            console.log(
               'Removing sidecar tags failed ' + path + ' with ' + err,
             );
             showNotification(
@@ -1326,9 +1326,7 @@ export const TaggingActionsContextProvider = ({
         ];
         return saveTagLibrary(newTagLibrary);
       }
-      console.warn(
-        'Tag with this title already exists in the target tag group',
-      );
+      console.log('Tag with this title already exists in the target tag group');
     }
   }
 

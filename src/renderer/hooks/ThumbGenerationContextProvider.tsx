@@ -319,7 +319,7 @@ export const ThumbGenerationContextProvider = ({
                 )
                   .then((tmbPath) => ({ filePath, tmbPath }))
                   .catch((err) => {
-                    console.warn('Thumb generation failed ' + err);
+                    console.log('Thumb generation failed ' + err);
                     return Promise.resolve({
                       filePath,
                       tmbPath: thumbFilePath,
@@ -346,18 +346,18 @@ export const ThumbGenerationContextProvider = ({
                   }
                 })
                 .catch((err) => {
-                  console.warn('Thumb generation failed ' + err);
+                  console.log('Thumb generation failed ' + err);
                   return Promise.resolve({ filePath });
                 });
             }
           })
           .catch((err) => {
-            console.warn('Error getting tmb properties ' + err);
+            console.log('Error getting tmb properties ' + err);
             return Promise.resolve({ filePath });
           });
       })
       .catch((err) => {
-        console.warn('Error getting file properties ' + err);
+        console.log('Error getting file properties ' + err);
         return Promise.resolve({ filePath });
       });
   }
@@ -462,7 +462,7 @@ export const ThumbGenerationContextProvider = ({
     )
       .then(() => filePath)
       .catch((error) => {
-        console.warn(
+        console.log(
           'Saving thumbnail for ' +
             filePath +
             ' failed with ' +

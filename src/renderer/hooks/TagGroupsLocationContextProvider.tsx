@@ -227,7 +227,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' +
                   location.path +
                   ' with ' +
@@ -247,7 +247,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' +
                   location.path +
                   ' with ' +
@@ -282,7 +282,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' +
                   location.path +
                   ' with ' +
@@ -328,7 +328,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' +
                   location.path +
                   ' with ' +
@@ -348,7 +348,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' +
                   location.path +
                   ' with ' +

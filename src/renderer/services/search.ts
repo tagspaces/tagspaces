@@ -305,7 +305,7 @@ function prepareIndex(
             enhancedTag.title = tag.title.toLowerCase();
           }
         } catch (e) {
-          console.warn(
+          console.log(
             'Error parsing tag ' + JSON.stringify(tag) + ' from ' + entry.path,
           );
         }

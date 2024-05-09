@@ -330,7 +330,7 @@ export const IOActionsContextProvider = ({
         return true;
       })
       .catch((error) => {
-        console.warn('Error creating directory: ' + error);
+        console.log('Error creating directory: ' + error);
         showNotification(
           `Error creating directory '${extractDirectoryName(
             directoryPath,
@@ -392,7 +392,7 @@ export const IOActionsContextProvider = ({
         return true;
       })
       .catch((error) => {
-        console.warn('Error while deleting directory: ' + error);
+        console.log('Error while deleting directory: ' + error);
         showNotification(
           t(
             'errorDeletingDirectoryAlert' as any,
@@ -455,7 +455,7 @@ export const IOActionsContextProvider = ({
           return true;
         })
         .catch((err) => {
-          console.warn('Cleaning meta file and thumb failed with ' + err);
+          console.log('Cleaning meta file and thumb failed with ' + err);
           return false;
         });
     }
@@ -473,7 +473,7 @@ export const IOActionsContextProvider = ({
         return deleteMeta(filePath, uuid).then(() => true);
       })
       .catch((error) => {
-        console.warn('Error while deleting file: ' + error);
+        console.log('Error while deleting file: ' + error);
         showNotification(
           `Error while deleting file ${filePath}`,
           'error',
@@ -511,7 +511,7 @@ export const IOActionsContextProvider = ({
           return action;
         })
         .catch((err) => {
-          console.warn('Moving dirs failed ', err);
+          console.log('Moving dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
           return undefined;
         });
@@ -587,12 +587,12 @@ export const IOActionsContextProvider = ({
                       return true;
                     })
                     .catch((err) => {
-                      console.warn('Moving revisions failed ', err);
+                      console.log('Moving revisions failed ', err);
                     });
                 }
               })
               .catch((err) => {
-                console.warn('loadFileMetaDataPromise', err);
+                console.log('loadFileMetaDataPromise', err);
               });
 
             // move meta
@@ -620,7 +620,7 @@ export const IOActionsContextProvider = ({
               return reflect && reflectMoveFiles(moveJobs);
             })
             .catch((err) => {
-              console.warn('At least one meta or thumb was not moved ' + err);
+              console.log('At least one meta or thumb was not moved ' + err);
               return reflect && reflectMoveFiles(moveJobs);
             });
         } else {
@@ -629,7 +629,7 @@ export const IOActionsContextProvider = ({
         }
       })
       .catch((err) => {
-        console.warn('Moving files failed with ' + err);
+        console.log('Moving files failed with ' + err);
         showNotification(t('core:copyingFilesFailed'));
         return false;
       });
@@ -666,7 +666,7 @@ export const IOActionsContextProvider = ({
           );
         })
         .catch((err) => {
-          console.warn('Copy dirs failed ', err);
+          console.log('Copy dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
           return undefined;
         });
@@ -728,14 +728,14 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn('At least one meta or thumb was not copied ' + err);
+              console.log('At least one meta or thumb was not copied ' + err);
               return true;
             });
         }
         return false;
       })
       .catch((err) => {
-        console.warn('Moving files failed with ' + err);
+        console.log('Moving files failed with ' + err);
         showNotification(t('core:copyingFilesFailed'));
         return false;
       });
@@ -1222,7 +1222,7 @@ export const IOActionsContextProvider = ({
         return newDirPath;
       })
       .catch((error) => {
-        console.warn('Error while renaming directory: ' + error);
+        console.log('Error while renaming directory: ' + error);
         showNotification(
           `Error renaming directory '${extractDirectoryName(
             directoryPath,
@@ -1292,7 +1292,7 @@ export const IOActionsContextProvider = ({
             return true;
           })
           .catch((err) => {
-            console.warn(
+            console.log(
               'Renaming meta file and thumb failed from ' +
                 filePath +
                 ' to:' +
@@ -1539,7 +1539,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' + entry.path + ' with ' + err,
               );
               reject();
@@ -1556,7 +1556,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' + entry.path + ' with ' + error,
               );
               reject();
@@ -1589,7 +1589,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' + path + ' with ' + err,
               );
               reject();
@@ -1608,7 +1608,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding perspective for ' + path + ' with ' + error,
               );
               reject();
@@ -1801,7 +1801,7 @@ export const IOActionsContextProvider = ({
                 setReflectKanBanActions(action);
               })
               .catch((err) => {
-                console.warn(
+                console.log(
                   'Error adding dirs for ' + currentDirPath + ' with ' + err,
                 );
               });

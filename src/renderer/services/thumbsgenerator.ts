@@ -206,7 +206,7 @@ export function generateImageThumbnail(
         return Promise.resolve('');
       });
   } catch (e) {
-    console.warn(`Error creating image thumb for : ${fileURL}`, e);
+    console.log(`Error creating image thumb for : ${fileURL}`, e);
     return Promise.resolve('');
   }
 }
@@ -326,7 +326,7 @@ export function getResizedImageThumbnail(
     };
     img.src = src;
     img.onerror = (err) => {
-      console.warn(`Error getResizedImageThumbnail`, err);
+      console.log(`Error getResizedImageThumbnail`, err);
       resolve('');
     };
   });
@@ -356,7 +356,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataurl = canvas.toDataURL(AppConfig.thumbType);
         img.onerror = (err) => {
-          console.warn(`Error loading: ${fileURL} for tmb gen with: ${err} `);
+          console.log(`Error loading: ${fileURL} for tmb gen with: ${err} `);
           resolve('');
         };
         resolve(dataurl);
@@ -365,12 +365,12 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         video = null;
       };
       video.onerror = (err) => {
-        console.warn(`Error opening: ${fileURL} for tmb gen with: ${err} `);
+        console.log(`Error opening: ${fileURL} for tmb gen with: ${err} `);
         resolve('');
       };
       video.src = fileURL;
     } catch (e) {
-      console.warn(`Error creating video thumb for : ${fileURL} with: ${e}`);
+      console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
       resolve('');
     }
   });

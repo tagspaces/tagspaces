@@ -142,7 +142,7 @@ function FilePreviewDialog(props: Props) {
             }
           })
           .catch((err) => {
-            console.warn('Error loading text content ' + err);
+            console.log('Error loading text content ' + err);
           });
         break;
     }

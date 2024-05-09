@@ -369,7 +369,7 @@ function EntryContainer() {
             return true;
           })
           .catch((err) => {
-            console.warn('Error loading text content ' + err);
+            console.log('Error loading text content ' + err);
           });
         break;
       case 'contentChangedInEditor': {

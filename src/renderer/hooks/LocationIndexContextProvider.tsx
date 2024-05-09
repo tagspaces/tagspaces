@@ -311,7 +311,7 @@ export const LocationIndexContextProvider = ({
       })
       .catch((err) => {
         //lastError.current = err;
-        console.warn('Error loading text content ' + err);
+        console.log('Error loading text content ' + err);
         return false; //switchCurrentLocationType();
       });
   }
@@ -620,7 +620,7 @@ export const LocationIndexContextProvider = ({
       })
       .catch((e) => {
         console.timeEnd('globalSearch');
-        console.warn('Global search failed!', e);
+        console.log('Global search failed!', e);
       });
   }
 

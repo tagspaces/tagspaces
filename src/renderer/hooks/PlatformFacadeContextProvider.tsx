@@ -344,7 +344,7 @@ export const PlatformFacadeContextProvider = ({
           if (progress) {
             progress(completed, path);
           }
-          console.warn('Promise ' + path + ' error:', err);
+          console.log('Promise ' + path + ' error:', err);
         }),
     );
 
@@ -354,7 +354,7 @@ export const PlatformFacadeContextProvider = ({
       .catch((err) => {
         if (abortSignal.aborted) {
           aborted = true;
-          console.warn('Promise execution aborted');
+          console.log('Promise execution aborted');
         } else {
           throw err;
         }
@@ -435,7 +435,7 @@ export const PlatformFacadeContextProvider = ({
             onProgress,
           );
         } catch (err) {
-          console.warn('Error rename file:', err);
+          console.log('Error rename file:', err);
           return false;
         }
       }),
@@ -488,7 +488,7 @@ export const PlatformFacadeContextProvider = ({
             onProgress,
           );
         } catch (err) {
-          console.warn('Error rename file:', err);
+          console.log('Error rename file:', err);
           return undefined;
         }
       }),

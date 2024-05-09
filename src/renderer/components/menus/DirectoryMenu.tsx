@@ -243,7 +243,7 @@ Do you want to continue?`)
             return tags;
           })
           .catch((err) => {
-            console.warn('Error creating tags: ' + err);
+            console.log('Error creating tags: ' + err);
           });
       };
       Pro.MacTagsImport.importTags(
@@ -262,7 +262,7 @@ Do you want to continue?`)
           return true;
         })
         .catch((err) => {
-          console.warn('Error importing tags: ' + err);
+          console.log('Error importing tags: ' + err);
           toggleProgressDialog();
         });
     } else {
@@ -385,7 +385,7 @@ Do you want to continue?`)
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.', 'default', true);
-        console.warn('Error setting Thumb for entry: ' + directoryPath, error);
+        console.log('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
       });
   }

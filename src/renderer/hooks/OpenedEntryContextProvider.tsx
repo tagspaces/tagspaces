@@ -438,7 +438,7 @@ export const OpenedEntryContextProvider = ({
           openFsEntry({ ...currentEntry.current, ...fsEntry }, undefined),
         )
         .catch((error) => {
-          console.warn(
+          console.log(
             'Error getting properties for entry: ' +
               currentEntry.current.path +
               ' - ' +
@@ -457,7 +457,7 @@ export const OpenedEntryContextProvider = ({
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
       .catch((error) => {
-        console.warn(
+        console.log(
           'Error getting properties for entry: ' + path + ' - ' + error,
         );
         return false;
@@ -482,7 +482,7 @@ export const OpenedEntryContextProvider = ({
         }
       })
       .catch((error) => {
-        console.warn(
+        console.log(
           'Error getting properties for entry: ' + fsEntry.path + ' - ' + error,
         );
         return false;
@@ -802,7 +802,7 @@ export const OpenedEntryContextProvider = ({
           return true;
         })
         .catch((err) => {
-          console.warn('File creation failed with ' + err);
+          console.log('File creation failed with ' + err);
           showNotification(t('core:errorCreatingFile'), 'warning', true);
         });
     } else {
@@ -853,7 +853,7 @@ export const OpenedEntryContextProvider = ({
         return true;
       })
       .catch((error) => {
-        console.warn('Error creating file: ' + error);
+        console.log('Error creating file: ' + error);
         showNotification(
           `Error creating file '${fileNameAndExt}'`,
           'error',
