@@ -30,14 +30,11 @@ import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
-import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
-import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -45,9 +42,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
-  location: TS.Location;
+  location: CommonLocation;
   hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
@@ -92,7 +90,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      openDirectory(currentLocationPath, location.uuid); //PlatformIO.getLocationPath(location));
+      openDirectory(currentLocationPath);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       // setSelectedEntries([]);
@@ -157,30 +155,22 @@ function LocationView(props: Props) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
-          // TODO Webdav
-          PlatformIO.enableObjectStoreSupport(targetLocation)
-            .then(() => {
-              dispatch(AppActions.resetProgress());
-              dispatch(AppActions.toggleUploadDialog());
-              return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
-                (error) => {
-                  console.log('uploadFiles', error);
-                },
-              );
-            })
-            .catch((error) => {
-              console.log('enableObjectStoreSupport', error);
-            });
+          dispatch(AppActions.resetProgress());
+          dispatch(AppActions.toggleUploadDialog());
+          return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
+            (error) => {
+              console.log('uploadFiles', error);
+            },
+          );
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          moveFiles(arrPath, targetPath);
+          moveFiles(arrPath, targetPath, targetLocation.uuid);
         }
         setSelectedEntries([]);
       }
     }
   };
 
-  let locationNameTitle = currentLocationPath; //PlatformIO.getLocationPath(location);
+  let locationNameTitle = currentLocationPath;
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -272,7 +262,7 @@ function LocationView(props: Props) {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            targetPath={currentLocationPath} //PlatformIO.getLocationPath(location)}
+            targetPath={currentLocationPath}
             targetLocation={location}
           >
             {LocationTitle}

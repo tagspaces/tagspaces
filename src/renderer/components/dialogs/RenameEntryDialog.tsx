@@ -33,13 +33,13 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -50,6 +50,7 @@ function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const { renameDirectory, renameFile } = useIOActionsContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
@@ -64,12 +65,12 @@ function RenameEntryDialog(props: Props) {
     if (isFile) {
       defaultName = extractFileName(
         lastSelectedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     } else {
       defaultName = extractDirectoryName(
         lastSelectedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     }
     originPath = lastSelectedEntry.path;
@@ -77,7 +78,7 @@ function RenameEntryDialog(props: Props) {
     isFile = false;
     defaultName = extractDirectoryName(
       currentDirectoryPath,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     originPath = currentDirectoryPath;
   } else {
@@ -139,13 +140,13 @@ function RenameEntryDialog(props: Props) {
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
-          PlatformIO.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const newFilePath =
-          fileDirectory + PlatformIO.getDirSeparator() + name.current;
-        return renameFile(originPath, newFilePath);
+          fileDirectory + currentLocation.getDirSeparator() + name.current;
+        return renameFile(originPath, newFilePath, currentLocation.uuid);
       } else {
-        return renameDirectory(originPath, name.current);
+        return renameDirectory(originPath, name.current, currentLocation.uuid);
       }
     }
   };

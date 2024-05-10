@@ -18,43 +18,39 @@
 
 import React, { createContext, useMemo } from 'react';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getDescriptionPreview,
-  loadJSONFile,
-  mergeFsEntryMeta,
-} from '-/services/utils-io';
+import { getDescriptionPreview, mergeFsEntryMeta } from '-/services/utils-io';
 import {
   getMetaDirectoryPath,
   getMetaFileLocationForDir,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import versionMeta from '-/version.json';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelector } from 'react-redux';
 import { getSaveTagInLocation } from '-/reducers/settings';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type TagGroupsLocationContextData = {
-  getTagGroups: (path: string) => Promise<TS.TagGroup[]>;
+  getTagGroups: (location: CommonLocation) => Promise<TS.TagGroup[]>;
   createLocationTagGroup: (
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
   ) => Promise<TS.FileSystemEntryMeta>;
   editLocationTagGroup: (
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
     replaceTags?,
   ) => Promise<TS.FileSystemEntryMeta>;
   removeLocationTagGroup: (
-    path: string,
+    location: CommonLocation,
     tagGroupUuid: string,
   ) => Promise<TS.FileSystemEntryMeta>;
   mergeLocationTagGroup: (
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
   ) => Promise<TS.FileSystemEntryMeta>;
   loadLocationDataPromise: (
-    path: string,
+    location: CommonLocation,
     metaFile?,
   ) => Promise<TS.FileSystemEntryMeta>;
 };
@@ -94,8 +90,8 @@ export const TagGroupsLocationContextProvider = ({
     }
   }, [currentLocation]);*/
 
-  function getTagGroups(path: string): Promise<TS.TagGroup[]> {
-    return loadLocationDataPromise(path).then(
+  function getTagGroups(location: CommonLocation): Promise<TS.TagGroup[]> {
+    return loadLocationDataPromise(location).then(
       (fsEntryMeta: TS.FileSystemEntryMeta) => {
         if (fsEntryMeta) {
           return fsEntryMeta.tagGroups;
@@ -106,37 +102,36 @@ export const TagGroupsLocationContextProvider = ({
   }
 
   async function loadLocationDataPromise(
-    path: string,
+    location: CommonLocation,
     metaFile = AppConfig.folderLocationsFile,
   ): Promise<TS.FileSystemEntryMeta> {
     if (saveTagInLocation) {
-      const entryProperties = await PlatformIO.getPropertiesPromise(path);
-      if (!entryProperties.isFile) {
-        const metaFilePath = getMetaFileLocationForDir(
-          path,
-          PlatformIO.getDirSeparator(),
-          metaFile,
-        );
-        const metaData = await loadJSONFile(metaFilePath);
-        if (metaData) {
-          return {
-            ...metaData,
-            description: getDescriptionPreview(metaData.description, 200),
-          };
-        }
+      //const entryProperties = await location.getPropertiesPromise(location.path);
+      //if (!entryProperties.isFile) {
+      const metaFilePath = getMetaFileLocationForDir(
+        location.path,
+        location.getDirSeparator(),
+        metaFile,
+      );
+      const metaData = await location.loadJSONFile(metaFilePath);
+      if (metaData) {
+        return {
+          ...metaData,
+          description: getDescriptionPreview(metaData.description, 200),
+        };
       }
     }
     return Promise.resolve(undefined);
   }
 
   function createLocationTagGroup(
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
   ): Promise<TS.FileSystemEntryMeta> {
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
-    return loadLocationDataPromise(path)
+    return loadLocationDataPromise(location)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         let tagGroups;
         if (
@@ -156,7 +151,7 @@ export const TagGroupsLocationContextProvider = ({
           ...(fsEntryMeta && fsEntryMeta),
           tagGroups,
         };
-        return saveLocationDataPromise(path, updatedEntryMeta)
+        return saveLocationDataPromise(location, updatedEntryMeta)
           .then(() => {
             return updatedEntryMeta;
           })
@@ -168,7 +163,7 @@ export const TagGroupsLocationContextProvider = ({
         const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
           tagGroups: [tagGroup],
         });
-        return saveLocationDataPromise(path, newFsEntryMeta)
+        return saveLocationDataPromise(location, newFsEntryMeta)
           .then(() => {
             return newFsEntryMeta;
           })
@@ -179,7 +174,7 @@ export const TagGroupsLocationContextProvider = ({
   }
 
   function editLocationTagGroup(
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
     replaceTags = false,
   ): Promise<TS.FileSystemEntryMeta> {
@@ -187,7 +182,7 @@ export const TagGroupsLocationContextProvider = ({
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
-      loadLocationDataPromise(path)
+      loadLocationDataPromise(location)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           const oldTagGroup = fsEntryMeta.tagGroups.find(
             (group) => group.uuid === tagGroup.uuid,
@@ -226,14 +221,17 @@ export const TagGroupsLocationContextProvider = ({
             ...fsEntryMeta,
             tagGroups,
           };
-          saveLocationDataPromise(path, updatedEntryMeta)
+          saveLocationDataPromise(location, updatedEntryMeta)
             .then(() => {
               resolve(updatedEntryMeta);
               return true;
             })
             .catch((err) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + err,
+              console.log(
+                'Error adding perspective for ' +
+                  location.path +
+                  ' with ' +
+                  err,
               );
               reject();
             });
@@ -243,14 +241,17 @@ export const TagGroupsLocationContextProvider = ({
           const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
             tagGroups: [tagGroup],
           });
-          saveLocationDataPromise(path, newFsEntryMeta)
+          saveLocationDataPromise(location, newFsEntryMeta)
             .then(() => {
               resolve(newFsEntryMeta);
               return true;
             })
             .catch((error) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + error,
+              console.log(
+                'Error adding perspective for ' +
+                  location.path +
+                  ' with ' +
+                  error,
               );
               reject();
             });
@@ -259,14 +260,14 @@ export const TagGroupsLocationContextProvider = ({
   }
 
   function removeLocationTagGroup(
-    path: string,
+    location: CommonLocation,
     tagGroupUuid: string,
   ): Promise<TS.FileSystemEntryMeta> {
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
-      loadLocationDataPromise(path)
+      loadLocationDataPromise(location)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           const tagGroups = fsEntryMeta.tagGroups.filter(
             (group) => group.uuid !== tagGroupUuid,
@@ -275,14 +276,17 @@ export const TagGroupsLocationContextProvider = ({
             ...fsEntryMeta,
             tagGroups,
           };
-          saveLocationDataPromise(path, updatedEntryMeta)
+          saveLocationDataPromise(location, updatedEntryMeta)
             .then(() => {
               resolve(updatedEntryMeta);
               return true;
             })
             .catch((err) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + err,
+              console.log(
+                'Error adding perspective for ' +
+                  location.path +
+                  ' with ' +
+                  err,
               );
               reject();
             });
@@ -295,14 +299,14 @@ export const TagGroupsLocationContextProvider = ({
   }
 
   function mergeLocationTagGroup(
-    path: string,
+    location: CommonLocation,
     tagGroup: TS.TagGroup,
   ): Promise<TS.FileSystemEntryMeta> {
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
-      loadLocationDataPromise(path)
+      loadLocationDataPromise(location)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           const oldTagGroup = fsEntryMeta.tagGroups.find(
             (group) => group.uuid === tagGroup.uuid,
@@ -318,14 +322,17 @@ export const TagGroupsLocationContextProvider = ({
             ...fsEntryMeta,
             tagGroups,
           };
-          saveLocationDataPromise(path, updatedEntryMeta)
+          saveLocationDataPromise(location, updatedEntryMeta)
             .then(() => {
               resolve(updatedEntryMeta);
               return true;
             })
             .catch((err) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + err,
+              console.log(
+                'Error adding perspective for ' +
+                  location.path +
+                  ' with ' +
+                  err,
               );
               reject();
             });
@@ -335,14 +342,17 @@ export const TagGroupsLocationContextProvider = ({
           const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
             tagGroups: [tagGroup],
           });
-          saveLocationDataPromise(path, newFsEntryMeta)
+          saveLocationDataPromise(location, newFsEntryMeta)
             .then(() => {
               resolve(newFsEntryMeta);
               return true;
             })
             .catch((error) => {
-              console.warn(
-                'Error adding perspective for ' + path + ' with ' + error,
+              console.log(
+                'Error adding perspective for ' +
+                  location.path +
+                  ' with ' +
+                  error,
               );
               reject();
             });
@@ -351,43 +361,47 @@ export const TagGroupsLocationContextProvider = ({
   }
 
   async function saveLocationDataPromise(
-    path: string,
+    location: CommonLocation,
     metaData: any,
   ): Promise<any> {
     if (!saveTagInLocation) {
       return Promise.resolve(undefined);
     }
-    const entryProperties = await PlatformIO.getPropertiesPromise(path);
-    if (entryProperties) {
-      let metaFilePath;
-      if (!entryProperties.isFile) {
-        // check and create meta folder if not exist
-        // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-        const metaDirectoryPath = getMetaDirectoryPath(
-          path,
-          PlatformIO.getDirSeparator(),
-        );
-        const metaDirectoryProperties =
-          await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-        if (!metaDirectoryProperties) {
-          await createDirectoryPromise(metaDirectoryPath);
-        }
-
-        metaFilePath = getMetaFileLocationForDir(
-          path,
-          PlatformIO.getDirSeparator(),
-          AppConfig.folderLocationsFile,
-        );
-      }
-      const content = JSON.stringify({
-        ...metaData,
-        appName: versionMeta.name,
-        appVersion: versionMeta.version,
-        lastUpdated: new Date().toJSON(),
-      });
-      return saveTextFilePromise({ path: metaFilePath }, content, true);
+    // const entryProperties = await location.getPropertiesPromise(location.path);
+    // if (entryProperties) {
+    let metaFilePath;
+    // if (!entryProperties.isFile) {
+    // check and create meta folder if not exist
+    // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
+    const metaDirectoryPath = getMetaDirectoryPath(
+      location.path,
+      location.getDirSeparator(),
+    );
+    const metaDirectoryProperties =
+      await location.getPropertiesPromise(metaDirectoryPath);
+    if (!metaDirectoryProperties) {
+      await createDirectoryPromise(metaDirectoryPath, location.uuid);
     }
-    return Promise.reject(new Error('file not found' + path));
+
+    metaFilePath = getMetaFileLocationForDir(
+      location.path,
+      location.getDirSeparator(),
+      AppConfig.folderLocationsFile,
+    );
+    //}
+    const content = JSON.stringify({
+      ...metaData,
+      appName: versionMeta.name,
+      appVersion: versionMeta.version,
+      lastUpdated: new Date().toJSON(),
+    });
+    return saveTextFilePromise(
+      { path: metaFilePath, locationID: location.uuid },
+      content,
+      true,
+    );
+    // }
+    // return Promise.reject(new Error('file not found' + path));
   }
 
   const context = useMemo(() => {

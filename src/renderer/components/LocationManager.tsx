@@ -16,19 +16,17 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
-import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -58,6 +56,8 @@ function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const {
+    locations,
+    currentLocation,
     addLocations,
     editLocation,
     selectedLocation,
@@ -65,7 +65,7 @@ function LocationManager(props: Props) {
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
 
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -114,11 +114,12 @@ function LocationManager(props: Props) {
     >
       {
         //loading &&
-        (PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()) && (
-          <>
-            <style>
-              {`
+        currentLocation &&
+          (currentLocation.haveObjectStoreSupport() ||
+            currentLocation.haveWebDavSupport()) && (
+            <>
+              <style>
+                {`
                 @keyframes hide {
                   to {
                       width: 0;
@@ -126,22 +127,22 @@ function LocationManager(props: Props) {
                 }
               }
             `}
-            </style>
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: 'calc(100% - 150px)',
-                width: 310,
-                backdropFilter: 'grayscale(1)',
-                animation: 'hide 1ms linear 5s 1 forwards',
-                // backgroundColor: 'red'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-              }}
-            />
-          </>
-        )
+              </style>
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 1000,
+                  height: 'calc(100% - 150px)',
+                  width: 310,
+                  backdropFilter: 'grayscale(1)',
+                  animation: 'hide 1ms linear 5s 1 forwards',
+                  // backgroundColor: 'red'
+                  // backdropFilter: 'blur(2px)',
+                  // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+                }}
+              />
+            </>
+          )
       }
       <LocationManagerMenu
         importLocations={() => {

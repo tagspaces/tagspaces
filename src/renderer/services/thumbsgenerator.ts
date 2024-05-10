@@ -21,7 +21,6 @@ import {
   encodeFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 import { FileTypeGroups } from '-/services/search';
 
@@ -97,16 +96,19 @@ const maxFileSize = 30 * 1024 * 1024; // 30 MB
 /**
  * return thumbFilePath: Promise<string> or empty sting on error or not supported
  */
-export function generateThumbnailPromise(fileURL: string, fileSize: number) {
-  const ext = extractFileExtension(
-    fileURL,
-    PlatformIO.getDirSeparator(),
-  ).toLowerCase();
+export function generateThumbnailPromise(
+  fileURL: string,
+  fileSize: number,
+  loadTextFilePromise,
+  getFileContentPromise,
+  dirSeparator: string,
+) {
+  const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
 
   const fileURLEscaped =
     /^https?:\/\//.test(fileURL) || AppConfig.isElectron
       ? fileURL
-      : encodeFileName(fileURL, PlatformIO.getDirSeparator());
+      : encodeFileName(fileURL, dirSeparator);
 
   if (supportedImgs.indexOf(ext) >= 0) {
     if (Pro && ext === 'tga') {
@@ -122,26 +124,44 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     } else if (Pro && ext === 'psd') {
       return Pro.ThumbsGenerator.generatePSDThumbnail(fileURLEscaped, maxSize);
     } else if (fileSize && fileSize < maxFileSize) {
-      return generateImageThumbnail(fileURL); //fileURLEscaped);
+      return generateImageThumbnail(
+        fileURL,
+        getFileContentPromise,
+        dirSeparator,
+      ); //fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
     return Pro.ThumbsGenerator.generatePDFThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'html') {
-    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURLEscaped, maxSize);
+    return Pro.ThumbsGenerator.generateHtmlThumbnail(
+      fileURLEscaped,
+      maxSize,
+      loadTextFilePromise,
+    );
   } else if (Pro && ext === 'url') {
-    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURLEscaped, maxSize);
+    return Pro.ThumbsGenerator.generateUrlThumbnail(
+      fileURLEscaped,
+      maxSize,
+      loadTextFilePromise,
+    );
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
     }
   } else if (Pro && supportedText.indexOf(ext) >= 0) {
-    return Pro.ThumbsGenerator.generateTextThumbnail(fileURLEscaped, maxSize);
+    return Pro.ThumbsGenerator.generateTextThumbnail(
+      fileURLEscaped,
+      maxSize,
+      loadTextFilePromise,
+    );
   } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
       return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(
         fileURLEscaped,
         maxSize,
         supportedImgs,
+        getFileContentPromise,
+        dirSeparator,
       );
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
@@ -154,6 +174,54 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     return generateVideoThumbnail(fileURLEscaped);
   }
   return generateDefaultThumbnail();
+}
+
+export function generateImageThumbnail(
+  fileURL: string,
+  getFileContentPromise,
+  dirSeparator,
+  maxTmbSize?: number,
+): Promise<string> {
+  try {
+    if (fileURL.startsWith('http://') || fileURL.startsWith('https://')) {
+      return getResizedImageThumbnail(fileURL, maxTmbSize);
+    }
+    return getFileContentPromise(fileURL, 'arraybuffer')
+      .then((content) => {
+        const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
+        const blob = new Blob([content], { type: getMimeType(ext) });
+        if (AppConfig.isCordova) {
+          return cordovaCreateObjectURL(blob).then((url) =>
+            getResizedImageThumbnail(url, maxTmbSize),
+          );
+        } else {
+          return getResizedImageThumbnail(
+            URL.createObjectURL(blob),
+            maxTmbSize,
+          );
+        }
+      })
+      .catch((e) => {
+        console.log(`Error get: ${fileURL}`, e);
+        return Promise.resolve('');
+      });
+  } catch (e) {
+    console.log(`Error creating image thumb for : ${fileURL}`, e);
+    return Promise.resolve('');
+  }
+}
+
+function cordovaCreateObjectURL(blob): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      const dataUrl = event.target?.result as string;
+      resolve(dataUrl);
+    };
+
+    reader.readAsDataURL(blob);
+  });
 }
 
 function generateDefaultThumbnail() {
@@ -258,58 +326,9 @@ export function getResizedImageThumbnail(
     };
     img.src = src;
     img.onerror = (err) => {
-      console.warn(`Error getResizedImageThumbnail`, err);
+      console.log(`Error getResizedImageThumbnail`, err);
       resolve('');
     };
-  });
-}
-
-export function generateImageThumbnail(
-  fileURL: string,
-  maxTmbSize?: number,
-): Promise<string> {
-  try {
-    if (fileURL.startsWith('http://') || fileURL.startsWith('https://')) {
-      return getResizedImageThumbnail(fileURL, maxTmbSize);
-    }
-    return PlatformIO.getFileContentPromise(fileURL, 'arraybuffer')
-      .then((content) => {
-        const ext = extractFileExtension(
-          fileURL,
-          PlatformIO.getDirSeparator(),
-        ).toLowerCase();
-        const blob = new Blob([content], { type: getMimeType(ext) });
-        if (AppConfig.isCordova) {
-          return cordovaCreateObjectURL(blob).then((url) =>
-            getResizedImageThumbnail(url, maxTmbSize),
-          );
-        } else {
-          return getResizedImageThumbnail(
-            URL.createObjectURL(blob),
-            maxTmbSize,
-          );
-        }
-      })
-      .catch((e) => {
-        console.log(`Error get: ${fileURL}`, e);
-        return Promise.resolve('');
-      });
-  } catch (e) {
-    console.warn(`Error creating image thumb for : ${fileURL}`, e);
-    return Promise.resolve('');
-  }
-}
-
-function cordovaCreateObjectURL(blob): Promise<string> {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-      const dataUrl = event.target?.result as string;
-      resolve(dataUrl);
-    };
-
-    reader.readAsDataURL(blob);
   });
 }
 
@@ -337,7 +356,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataurl = canvas.toDataURL(AppConfig.thumbType);
         img.onerror = (err) => {
-          console.warn(`Error loading: ${fileURL} for tmb gen with: ${err} `);
+          console.log(`Error loading: ${fileURL} for tmb gen with: ${err} `);
           resolve('');
         };
         resolve(dataurl);
@@ -346,12 +365,12 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         video = null;
       };
       video.onerror = (err) => {
-        console.warn(`Error opening: ${fileURL} for tmb gen with: ${err} `);
+        console.log(`Error opening: ${fileURL} for tmb gen with: ${err} `);
         resolve('');
       };
       video.src = fileURL;
     } catch (e) {
-      console.warn(`Error creating video thumb for : ${fileURL} with: ${e}`);
+      console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
       resolve('');
     }
   });

@@ -51,7 +51,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   prefixDataTID?: string;
@@ -86,7 +85,7 @@ function MainToolbar(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, true);
@@ -98,7 +97,7 @@ function MainToolbar(props: Props) {
         const cleanedPath = entry.path.startsWith('/')
           ? entry.path.substr(1)
           : entry.path;
-        const url = PlatformIO.generateURLforPath(cleanedPath, 900);
+        const url = currentLocation.generateURLforPath(cleanedPath, 900);
         fetch(url)
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {

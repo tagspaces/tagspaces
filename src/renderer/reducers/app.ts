@@ -18,8 +18,13 @@
 
 import AppConfig from '-/AppConfig';
 import { getURLParameter } from '-/utils/dom';
-import PlatformIO from '../services/platform-facade';
-import { mergeByProp } from '-/services/utils-io';
+import {
+  isWorkerAvailable,
+  loadExtensions,
+  mergeByProp,
+  setGlobalShortcuts,
+  setLanguage,
+} from '-/services/utils-io';
 import i18n from '../services/i18n';
 import {
   actions as SettingsActions,
@@ -669,8 +674,8 @@ export const actions = {
       dispatch(actions.toggleLicenseDialog());
     }
     setTimeout(() => {
-      PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
-      PlatformIO.loadExtensions();
+      setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+      loadExtensions();
     }, 1000);
     const langURLParam = getURLParameter('locale');
     if (
@@ -680,11 +685,11 @@ export const actions = {
     ) {
       i18n.changeLanguage(langURLParam).then(() => {
         dispatch(SettingsActions.setLanguage(langURLParam));
-        PlatformIO.setLanguage(langURLParam);
+        setLanguage(langURLParam);
         return true;
       });
     }
-    PlatformIO.isWorkerAvailable().then((workerAvailable) =>
+    isWorkerAvailable().then((workerAvailable) =>
       workerAvailable
         ? console.log('Worker is available in renderer thread')
         : console.log('Worker is not available in renderer thread'),

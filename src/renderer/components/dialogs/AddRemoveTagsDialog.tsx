@@ -34,9 +34,7 @@ import TagsSelect from '../TagsSelect';
 import {
   extractFileName,
   extractDirectoryName,
-  getMetaFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
@@ -44,7 +42,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -54,9 +52,10 @@ interface Props {
 
 function AddRemoveTagsDialog(props: Props) {
   const { t } = useTranslation();
-
   const { selectedEntries } = useSelectedEntriesContext();
   const selected = props.selected ? props.selected : selectedEntries;
+
+  const { currentLocation } = useCurrentLocationContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
@@ -155,11 +154,11 @@ function AddRemoveTagsDialog(props: Props) {
                   {entry.isFile
                     ? extractFileName(
                         entry.path || '',
-                        PlatformIO.getDirSeparator(),
+                        currentLocation?.getDirSeparator(),
                       )
                     : extractDirectoryName(
                         entry.path || '',
-                        PlatformIO.getDirSeparator(),
+                        currentLocation?.getDirSeparator(),
                       )}
                 </Typography>
               </ListItem>

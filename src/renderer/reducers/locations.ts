@@ -16,21 +16,10 @@
  *
  */
 
-import {
-  immutablySwapItems,
-  locationType,
-} from '@tagspaces/tagspaces-common/misc';
-import { actions as AppActions } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
-import { TS } from '-/tagspaces.namespace';
+import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
 
-/* import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
-
-type State = Array<TS.Location>;
-export type LocationsDispatch = ThunkDispatch<State, any, AnyAction>;
-  */
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
   MOVE_LOCATION: 'APP/MOVE_LOCATION',
@@ -42,17 +31,18 @@ export const types = {
 
 export const initialState = [];
 
-export default (state: Array<TS.Location> = initialState, action: any) => {
+export default (state: Array<CommonLocation> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       const locations = action.location.isDefault
         ? state.map((location) => ({ ...location, isDefault: false }))
         : [...state];
 
-      const newLocation = {
+      const newLocation: CommonLocation = {
         ...action.location,
         uuid: action.location.uuid || getUuid(),
-        creationDate: new Date().toJSON(),
+        creationDate: new Date().getTime(),
+        lastEditedDate: new Date().getTime(),
       };
       if (action.locationPosition) {
         locations.splice(action.locationPosition, 0, newLocation);
@@ -84,6 +74,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
                 ? action.location.newuuid
                 : action.location.uuid,
             persistTagsInSidecarFile: action.location.persistTagsInSidecarFile,
+            lastEditedDate: new Date().getTime(),
           },
           ...state.slice(indexForEditing + 1),
         ];
@@ -143,7 +134,6 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
           ...state.slice(0, indexForRemoving),
           ...state.slice(indexForRemoving + 1),
         ];
-        // return state.filter( (item, index) => index !== indexForRemoving);
       }
       return state;
     }
@@ -155,7 +145,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 
 export const actions = {
   createLocation: (
-    location: TS.Location,
+    location: CommonLocation,
     locationPosition: number = undefined,
   ) => ({
     type: types.ADD_LOCATION,
@@ -172,89 +162,34 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid,
   }),
-  /*editLocation: (location: TS.Location, openAfterEdit = true) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    dispatch(actions.changeLocation(location));
-    if (PlatformIO.haveObjectStoreSupport()) {
-      // disableObjectStoreSupport to revoke objectStoreAPI cached object
-      PlatformIO.disableObjectStoreSupport();
-    }
-    if (PlatformIO.haveWebDavSupport()) {
-      // disableWebdavSupport to revoke cached object
-      PlatformIO.disableWebdavSupport();
-    }
-    if (openAfterEdit) {
-      /!**
-       * check if location uuid is changed
-       *!/
-      if (
-        location.newuuid !== undefined &&
-        location.newuuid !== location.uuid
-      ) {
-        dispatch(
-          AppActions.openLocation({ ...location, uuid: location.newuuid })
-        );
-      } else {
-        dispatch(AppActions.openLocation(location));
-      }
-      dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
-    }
-  },*/
-  /*switchLocationType: (locationId: string) => (
-    dispatch: (actions) => Promise<string | null>,
-    getState: () => any
-  ): Promise<string | null> => {
-    const { locations } = getState();
-    const location: TS.Location = locations.find(
-      location => location.uuid === locationId
-    );
-    if (location) {
-      return dispatch(AppActions.switchLocationType(location));
-    }
-    return Promise.resolve(null);
-  },*/
-  changeLocation: (location: TS.Location) => ({
+  changeLocation: (location: CommonLocation) => ({
     type: types.EDIT_LOCATION,
     location,
   }),
-  /*removeLocation: (location: TS.Location) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    //dispatch(AppActions.closeLocation(location.uuid));
-    dispatch(actions.deleteLocation(location));
-  },*/
-  deleteLocation: (location: TS.Location) => ({
+  deleteLocation: (location: CommonLocation) => ({
     type: types.REMOVE_LOCATION,
     location,
   }),
 };
 
 // Selectors
-export const getLocations = (state: any): Array<TS.Location> => state.locations;
+export const getLocations = (state: any): Array<CommonLocation> =>
+  state.locations.map((l) => new CommonLocation(l));
 export const getLocation = (
   state: any,
   locationId: string,
-): TS.Location | null =>
+): CommonLocation | null =>
   state.locations.find((location) => location.uuid === locationId);
-/*export const getLocationPosition = (state: any, locationId: string): number =>
-  state.locations.findIndex(location => location.uuid === locationId);*/
 export const getLocationByPath = (
   state: any,
   path: string,
-): TS.Location | null =>
+): CommonLocation | null =>
   state.locations.find((location) => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
   let foundLocation = state.locations.find((location) => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;
 };
-/*export const getCurrentLocation = (state: any): TS.Location | undefined => {
-  let foundLocation = state.locations.find(
-    location => location.uuid === state.app.currentLocationId
-  );
-  return foundLocation ? foundLocation : undefined;
-};*/
-export const getFirstRWLocation = (state: any): TS.Location | undefined => {
+export const getFirstRWLocation = (state: any): CommonLocation | undefined => {
   let foundLocation = state.locations.find(
     (location) => location.isDefault && !location.isReadOnly,
   );

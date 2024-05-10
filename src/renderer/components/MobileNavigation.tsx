@@ -71,11 +71,11 @@ import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { actions as SettingsActions } from '-/reducers/settings';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { createNewInstance } from '-/services/utils-io';
 
 const PREFIX = 'MobileNavigation';
 
@@ -236,7 +236,7 @@ function MobileNavigation(props: Props) {
                           key="createWindowTID"
                           ata-tid="createWindowTID"
                           onClick={() => {
-                            PlatformIO.createNewInstance();
+                            createNewInstance();
                             setOpenCreateMenu(false);
                           }}
                         >

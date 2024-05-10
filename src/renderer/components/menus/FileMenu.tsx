@@ -41,8 +41,11 @@ import {
   generateSharingLink,
   extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
-import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
+import {
+  createNewInstance,
+  getRelativeEntryPath,
+  openDirectoryMessage,
+} from '-/services/utils-io';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
 import { useSelector } from 'react-redux';
@@ -62,7 +65,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import PlatformFacade from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
 
@@ -136,7 +138,7 @@ function FileMenu(props: Props) {
       const entryTitle = extractTitle(
         selectedEntries[0].name,
         !selectedEntries[0].isFile,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
@@ -178,10 +180,10 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
       .then((thumbPath: string) => {
-        const entry: TS.FileSystemEntry = toFsEntry(
+        const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
           extractContainingDirectoryPath(
             selectedEntries[0].path,
-            PlatformFacade.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           ),
           false,
         );
@@ -194,7 +196,7 @@ function FileMenu(props: Props) {
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
-        console.warn(
+        console.log(
           'Error setting Thumb for entry: ' + selectedEntries[0].path,
           error,
         );
@@ -205,18 +207,22 @@ function FileMenu(props: Props) {
   function setFolderBackground() {
     onClose();
     let path =
-      PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-        ? PlatformIO.generateURLforPath(selectedFilePath, 604800) // 7 days
+      currentLocation &&
+      (currentLocation.haveObjectStoreSupport() ||
+        currentLocation.haveWebDavSupport())
+        ? currentLocation.generateURLforPath(selectedFilePath, 604800) // 7 days
         : selectedFilePath;
 
     const directoryPath = extractContainingDirectoryPath(
       selectedFilePath,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
-        setBackgroundImageChange(toFsEntry(directoryPath, false));
+        setBackgroundImageChange(
+          currentLocation.toFsEntry(directoryPath, false),
+        );
         /*dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
         );*/
@@ -225,7 +231,7 @@ function FileMenu(props: Props) {
       })
       .catch((error) => {
         showNotification('Background creation failed.');
-        console.warn(
+        console.log(
           'Error setting Background for entry: ' + selectedFilePath,
           error,
         );
@@ -248,9 +254,9 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       const parentFolder = extractParentDirectoryPath(
         selectedFilePath,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
-      return openDirectory(parentFolder, currentLocation.uuid);
+      return openDirectory(parentFolder);
     }
   }
 
@@ -267,7 +273,7 @@ function FileMenu(props: Props) {
       const sharingLink = generateFileLink();
       const newInstanceLink =
         window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
+      createNewInstance(newInstanceLink);
     }
   }
 
@@ -326,8 +332,9 @@ function FileMenu(props: Props) {
   }
   if (
     !(
-      PlatformIO.haveObjectStoreSupport() ||
-      PlatformIO.haveWebDavSupport() ||
+      (currentLocation &&
+        (currentLocation.haveObjectStoreSupport() ||
+          currentLocation.haveWebDavSupport())) ||
       AppConfig.isWeb
     ) &&
     selectedEntries.length < 2
@@ -352,7 +359,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            PlatformIO.openDirectory(selectedFilePath);
+            openDirectoryMessage(selectedFilePath);
           }
         }}
       >

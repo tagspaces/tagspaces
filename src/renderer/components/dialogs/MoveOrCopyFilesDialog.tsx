@@ -22,6 +22,7 @@
  */
 
 import React from 'react';
+import { joinPaths, extractFileName } from '@tagspaces/tagspaces-common/paths';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
@@ -40,6 +41,11 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { TS } from '-/tagspaces.namespace';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { executePromisesInBatches } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -53,9 +59,23 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  function generateThumbs(filePaths: string[]) {
+    const promises: Promise<TS.EditMetaAction>[] = filePaths.map((filePath) =>
+      currentLocation.getPropertiesPromise(filePath).then((entry) => ({
+        action: 'thumbGenerate',
+        entry: entry,
+      })),
+    );
+    executePromisesInBatches(promises).then((actions) => {
+      setReflectMetaActions(...actions);
+    });
+  }
 
   return (
     <Dialog
@@ -105,10 +125,28 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
+              const filePaths = selectedFiles.map((file) => file.path);
               moveFiles(
-                selectedFiles.map((file) => file.path),
+                filePaths,
                 currentDirectoryPath,
-              );
+                currentLocation.uuid,
+              ).then((success) => {
+                if (success) {
+                  generateThumbs(
+                    filePaths.map((targetPath) =>
+                      joinPaths(
+                        currentLocation?.getDirSeparator(),
+                        currentDirectoryPath,
+                        extractFileName(
+                          targetPath,
+                          currentLocation?.getDirSeparator(),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return true;
+              });
             }
             onClose();
           }}
@@ -121,10 +159,24 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
-              copyFiles(
-                selectedFiles.map((file) => file.path),
-                currentDirectoryPath,
-              );
+              const filePaths = selectedFiles.map((file) => file.path);
+              copyFiles(filePaths, currentDirectoryPath).then((success) => {
+                if (success) {
+                  generateThumbs(
+                    filePaths.map((targetPath) =>
+                      joinPaths(
+                        currentLocation?.getDirSeparator(),
+                        currentDirectoryPath,
+                        extractFileName(
+                          targetPath,
+                          currentLocation?.getDirSeparator(),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return true;
+              });
             }
             onClose();
           }}

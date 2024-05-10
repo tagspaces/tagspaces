@@ -39,22 +39,13 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
-import PlatformIO from '-/services/platform-facade';
-import {
-  generateFileName,
-  getAllPropertiesPromise,
-  loadDirMetaDataPromise,
-  loadFileMetaDataPromise,
-  loadMetaDataPromise,
-  parseNewTags,
-} from '-/services/utils-io';
+import { generateFileName, parseNewTags } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractTags,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { getLocations } from '-/reducers/locations';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
@@ -64,6 +55,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import AppConfig from '-/AppConfig';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -88,7 +80,7 @@ type TaggingActionsContextData = {
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   createTagGroup: (
     entry: TS.TagGroup,
-    location?: TS.Location,
+    location?: CommonLocation,
   ) => Promise<boolean>;
   mergeTagGroup: (entry: TS.TagGroup) => void;
   removeTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
@@ -153,7 +145,7 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { currentLocation, persistTagsInSidecarFile } =
+  const { findLocation, currentLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
   const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
@@ -163,9 +155,11 @@ export const TaggingActionsContextProvider = ({
     removeLocationTagGroup,
     mergeLocationTagGroup,
   } = useTagGroupsLocationContext();
-  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { currentDirectoryEntries, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
-  const { renameFile, saveMetaDataPromise } = useIOActionsContext();
+  const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
+    useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
@@ -175,7 +169,7 @@ export const TaggingActionsContextProvider = ({
   const tagTextColor: string = useSelector(getTagTextColor);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
-  const locations: TS.Location[] = useSelector(getLocations);
+  //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
 
   useEffect(() => {
@@ -186,7 +180,7 @@ export const TaggingActionsContextProvider = ({
 
   function refreshTagsFromLocation() {
     if (currentLocation) {
-      getTagGroups(currentLocation.path).then((locationTagGroups) => {
+      getTagGroups(currentLocation).then((locationTagGroups) => {
         if (locationTagGroups && locationTagGroups.length > 0) {
           const oldGroups = getTagLibrary();
           if (checkTagGroupModified(locationTagGroups, oldGroups)) {
@@ -223,6 +217,7 @@ export const TaggingActionsContextProvider = ({
     showNotification('Extracting content...', 'info', false);
     return Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
+      currentLocation.getFileContentPromise,
       options,
     ).then((extracted: { [filePath: string]: TS.Tag[] }) => {
       hideNotifications();
@@ -235,25 +230,32 @@ export const TaggingActionsContextProvider = ({
       const extractedTags: string[] = extractTags(
         path,
         tagDelimiter,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       const uniqueTags = tags.filter(
         (tag) => !extractedTags.some((tagName) => tagName === tag),
       );
-      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const fileName = extractFileName(
+        path,
+        currentLocation?.getDirSeparator(),
+      );
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       return (
         (containingDirectoryPath
-          ? containingDirectoryPath + PlatformIO.getDirSeparator()
+          ? containingDirectoryPath +
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator)
           : '') +
         generateFileName(
           fileName,
           [...extractedTags, ...uniqueTags],
           tagDelimiter,
+          currentLocation?.getDirSeparator(),
           prefixTagContainer,
         )
       );
@@ -396,14 +398,6 @@ export const TaggingActionsContextProvider = ({
         files[path] = processedTags;
       });
       return addFilesTags(files);
-
-      /*return Promise.all(promises).then((editedPaths) => {
-        let sideCarChanges = editedPaths.filter((item) => paths.includes(item));
-        if (sideCarChanges.length > 0) {
-          reflectUpdateMeta(...sideCarChanges);
-        }
-        return true;
-      });*/
     }
     return Promise.resolve(false);
   }
@@ -465,8 +459,8 @@ export const TaggingActionsContextProvider = ({
       let fsEntryMeta;
       try {
         fsEntryMeta = entry.isFile
-          ? await loadFileMetaDataPromise(entry.path)
-          : await loadDirMetaDataPromise(entry.path);
+          ? await currentLocation.loadFileMetaDataPromise(entry.path)
+          : await currentLocation.loadDirMetaDataPromise(entry.path);
       } catch (error) {
         console.log('No sidecar found ' + error);
       }
@@ -476,7 +470,11 @@ export const TaggingActionsContextProvider = ({
         if (fsEntryMeta) {
           const uniqueTags = getNonExistingTags(
             tags,
-            extractTags(entry.path, tagDelimiter, PlatformIO.getDirSeparator()),
+            extractTags(
+              entry.path,
+              tagDelimiter,
+              currentLocation?.getDirSeparator(),
+            ),
             fsEntryMeta.tags,
           );
           if (uniqueTags.length > 0) {
@@ -485,15 +483,15 @@ export const TaggingActionsContextProvider = ({
               ...fsEntryMeta,
               tags: newTags,
             };
-            return saveMetaDataPromise(entry.path, updatedFsEntryMeta)
+            return saveMetaDataPromise(entry, updatedFsEntryMeta)
               .then(() => {
                 if (reflect) {
-                  reflectUpdateMeta(entry.path);
+                  reflectUpdateMeta(entry);
                 }
                 return entry.path;
               })
               .catch((err) => {
-                console.warn(
+                console.log(
                   'Error adding tags for ' + entry.path + ' with ' + err,
                 );
                 showNotification(
@@ -506,15 +504,15 @@ export const TaggingActionsContextProvider = ({
           }
         } else {
           const newFsEntryMeta = { tags };
-          return saveMetaDataPromise(entry.path, newFsEntryMeta)
+          return saveMetaDataPromise(entry, newFsEntryMeta)
             .then(() => {
               if (reflect) {
-                reflectUpdateMeta(entry.path);
+                reflectUpdateMeta(entry);
               }
               return entry.path;
             })
             .catch((error) => {
-              console.warn(
+              console.log(
                 'Error adding tags for ' + entry.path + ' with ' + error,
               );
               showNotification(
@@ -530,7 +528,7 @@ export const TaggingActionsContextProvider = ({
         const extractedTags = extractTags(
           entry.path,
           tagDelimiter,
-          PlatformIO.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         const uniqueTags = getNonExistingTags(
           tags,
@@ -543,7 +541,12 @@ export const TaggingActionsContextProvider = ({
             uniqueTags.map((tag) => tag.title),
           );
           if (entry.path !== newFilePath) {
-            return renameFile(entry.path, newFilePath, reflect).then(() => {
+            return renameFile(
+              entry.path,
+              newFilePath,
+              entry.locationID,
+              reflect,
+            ).then(() => {
               return newFilePath;
             });
           }
@@ -555,7 +558,12 @@ export const TaggingActionsContextProvider = ({
           tags.map((tag) => tag.title),
         );
         if (entry.path !== newFilePath) {
-          return renameFile(entry.path, newFilePath, reflect).then(() => {
+          return renameFile(
+            entry.path,
+            newFilePath,
+            entry.locationID,
+            reflect,
+          ).then(() => {
             return newFilePath;
           });
         }
@@ -597,9 +605,9 @@ export const TaggingActionsContextProvider = ({
     tags: Array<TS.Tag>,
     reflect: boolean = true,
   ): Promise<string> {
-    return PlatformIO.getPropertiesPromise(path).then((entry) =>
-      addTagsToFsEntry(entry, tags, reflect),
-    );
+    return currentLocation
+      .getPropertiesPromise(path)
+      .then((entry) => addTagsToFsEntry(entry, tags, reflect));
   }
 
   /**
@@ -624,7 +632,7 @@ export const TaggingActionsContextProvider = ({
     ) {
       // Work around solution
       delete tag.functionality;
-      const entryProperties = await PlatformIO.getPropertiesPromise(path);
+      const entryProperties = await currentLocation.getPropertiesPromise(path);
       if (entryProperties.isFile && !persistTagsInSidecarFile) {
         tag.type = 'plain';
       }
@@ -637,15 +645,18 @@ export const TaggingActionsContextProvider = ({
     const extractedTags: string[] = extractTags(
       path,
       tagDelimiter,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     // TODO: Handle adding already added tags
     if (extractedTags.includes(tag.title)) {
       // tag.type === 'plain') {
-      const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+      const fileName = extractFileName(
+        path,
+        currentLocation?.getDirSeparator(),
+      );
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
 
       let tagFoundPosition = -1;
@@ -669,17 +680,24 @@ export const TaggingActionsContextProvider = ({
         fileName,
         extractedTags,
         tagDelimiter,
+        currentLocation?.getDirSeparator(),
         prefixTagContainer,
       );
       if (newFileName !== fileName) {
         await renameFile(
           path,
-          containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName,
+          containingDirectoryPath +
+            (currentLocation
+              ? currentLocation.getDirSeparator()
+              : AppConfig.dirSeparator) +
+            newFileName,
+          currentLocation.uuid,
         );
       }
     } else {
       //if (tag.type === 'sidecar') {
-      loadMetaDataPromise(path)
+      currentLocation
+        .loadMetaDataPromise(path)
         .then((fsEntryMeta) => {
           let tagFoundPosition = -1;
           let newTagsArray = fsEntryMeta.tags.map((sidecarTag, index) => {
@@ -707,16 +725,18 @@ export const TaggingActionsContextProvider = ({
             (item, pos, array) =>
               array.findIndex((el) => el.title === item.title) === pos,
           );
-          saveMetaDataPromise(path, {
+          saveCurrentLocationMetaData(path, {
             ...fsEntryMeta,
             tags: newTagsArray,
           })
             .then(() => {
-              reflectUpdateMeta(path);
+              getAllPropertiesPromise(path).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
               return true;
             })
             .catch((err) => {
-              console.warn('Error adding tags for ' + path + ' with ' + err);
+              console.log('Error adding tags for ' + path + ' with ' + err);
               showNotification(
                 t('core:addingTagsFailed' as any) as string,
                 'error',
@@ -727,20 +747,22 @@ export const TaggingActionsContextProvider = ({
         })
         .catch((error) => {
           // json metadata not exist -create the new one
-          console.warn(
+          console.log(
             'json metadata not exist create new ' + path + ' with ' + error,
           );
           // dispatch(AppActions.showNotification(t('core:addingTagsFailed'), 'error', true));
           // eslint-disable-next-line no-param-reassign
           tag.title = newTagTitle;
           const fsEntryMeta = { tags: [tag] };
-          saveMetaDataPromise(path, fsEntryMeta)
+          saveCurrentLocationMetaData(path, fsEntryMeta)
             .then(() => {
-              reflectUpdateMeta(path);
+              getAllPropertiesPromise(path).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
               return true;
             })
             .catch((err) => {
-              console.warn('Error adding tags for ' + path + ' with ' + err);
+              console.log('Error adding tags for ' + path + ' with ' + err);
               showNotification(
                 t('core:addingTagsFailed' as any) as string,
                 'error',
@@ -830,7 +852,8 @@ export const TaggingActionsContextProvider = ({
     const tagTitlesForRemoving = tags
       ? tags.map((tag) => tag.title)
       : undefined;
-    return loadMetaDataPromise(path)
+    return currentLocation
+      .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         const newTags = tagTitlesForRemoving
           ? fsEntryMeta.tags.filter(
@@ -846,7 +869,9 @@ export const TaggingActionsContextProvider = ({
               newFilePath,
             ).then(() => {
               if (reflect) {
-                reflectUpdateMeta(newFilePath);
+                getAllPropertiesPromise(newFilePath).then((entry) =>
+                  reflectUpdateMeta(entry),
+                );
               }
               return newFilePath;
             });
@@ -854,7 +879,7 @@ export const TaggingActionsContextProvider = ({
         );
       })
       .catch((error) => {
-        console.warn('Error removing tags for ' + path + ' with ' + error);
+        console.log('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
         return removeTagsFromFilename(true, reflect);
       });
@@ -870,13 +895,15 @@ export const TaggingActionsContextProvider = ({
           ...fsEntryMeta,
           tags: newTags,
         };
-        return saveMetaDataPromise(path, updatedFsEntryMeta)
+        return saveCurrentLocationMetaData(path, updatedFsEntryMeta)
           .then(() => {
-            reflectUpdateMeta(newFilePath);
+            getAllPropertiesPromise(newFilePath).then((entry) =>
+              reflectUpdateMeta(entry),
+            );
             return true;
           })
           .catch((err) => {
-            console.warn(
+            console.log(
               'Removing sidecar tags failed ' + path + ' with ' + err,
             );
             showNotification(
@@ -905,13 +932,16 @@ export const TaggingActionsContextProvider = ({
         let extractedTags = extractTags(
           path,
           tagDelimiter,
-          PlatformIO.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         if (extractedTags.length > 0) {
-          const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+          const fileName = extractFileName(
+            path,
+            currentLocation?.getDirSeparator(),
+          );
           const containingDirectoryPath = extractContainingDirectoryPath(
             path,
-            PlatformIO.getDirSeparator(),
+            currentLocation?.getDirSeparator(),
           );
           if (tagTitlesForRemoving) {
             for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
@@ -929,16 +959,22 @@ export const TaggingActionsContextProvider = ({
           }
           const newFilePath =
             (containingDirectoryPath
-              ? containingDirectoryPath + PlatformIO.getDirSeparator()
+              ? containingDirectoryPath + currentLocation.getDirSeparator()
               : '') +
             generateFileName(
               fileName,
               extractedTags,
               tagDelimiter,
+              currentLocation?.getDirSeparator(),
               prefixTagContainer,
             );
           if (path !== newFilePath) {
-            const success = await renameFile(path, newFilePath, reflect);
+            const success = await renameFile(
+              path,
+              newFilePath,
+              currentLocation.uuid,
+              reflect,
+            );
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
@@ -1035,11 +1071,9 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && entry.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === entry.locationId,
-        );
+        const location: CommonLocation = findLocation(entry.locationId);
         if (location) {
-          editLocationTagGroup(location.path, modifiedEntry);
+          editLocationTagGroup(location, modifiedEntry);
         }
       }
 
@@ -1077,7 +1111,7 @@ export const TaggingActionsContextProvider = ({
 
   function createTagGroup(
     entry: TS.TagGroup,
-    location?: TS.Location,
+    location?: CommonLocation,
   ): Promise<boolean> {
     const newEntry = {
       ...entry,
@@ -1086,18 +1120,16 @@ export const TaggingActionsContextProvider = ({
     };
     saveTagLibrary([...tagGroups, newEntry]);
     if (Pro && location) {
-      return createLocationTagGroup(location.path, newEntry).then(() => true);
+      return createLocationTagGroup(location, newEntry).then(() => true);
     }
     return Promise.resolve(true);
   }
 
   function mergeTagGroup(entry: TS.TagGroup) {
-    if (Pro && entry.locationId && locations) {
-      const location: TS.Location = locations.find(
-        (l) => l.uuid === entry.locationId,
-      );
+    if (Pro && entry.locationId) {
+      const location: CommonLocation = findLocation(entry.locationId);
       if (location) {
-        mergeLocationTagGroup(location.path, entry);
+        mergeLocationTagGroup(location, entry);
       }
     }
     const indexForEditing = tagGroups.findIndex(
@@ -1140,11 +1172,9 @@ export const TaggingActionsContextProvider = ({
     if (indexForRemoving >= 0) {
       const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          removeLocationTagGroup(location.path, parentTagGroupUuid);
+          removeLocationTagGroup(location, parentTagGroupUuid);
         }
       }
 
@@ -1185,12 +1215,10 @@ export const TaggingActionsContextProvider = ({
       saveTags(newTags, tgIndex);
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
           tagGroup.children = newTags;
-          editLocationTagGroup(location.path, tagGroup);
+          editLocationTagGroup(location, tagGroup);
         }
       }
     }
@@ -1219,11 +1247,9 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          editLocationTagGroup(location.path, newTagGroup, true);
+          editLocationTagGroup(location, newTagGroup, true);
         }
       }
       updateTagGroup(newTagGroup);
@@ -1249,11 +1275,9 @@ export const TaggingActionsContextProvider = ({
       };
 
       if (Pro && tagGroup.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === tagGroup.locationId,
-        );
+        const location: CommonLocation = findLocation(tagGroup.locationId);
         if (location) {
-          editLocationTagGroup(location.path, editedTagGroup, true);
+          editLocationTagGroup(location, editedTagGroup, true);
         }
       }
       updateTagGroup(editedTagGroup);
@@ -1302,9 +1326,7 @@ export const TaggingActionsContextProvider = ({
         ];
         return saveTagLibrary(newTagLibrary);
       }
-      console.warn(
-        'Tag with this title already exists in the target tag group',
-      );
+      console.log('Tag with this title already exists in the target tag group');
     }
   }
 

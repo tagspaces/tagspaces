@@ -53,7 +53,6 @@ import {
   SearchOptionType,
   SearchQueryComposition,
 } from '-/components/SearchOptions';
-import { getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
@@ -65,6 +64,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   style?: any;
@@ -87,12 +87,8 @@ function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openEntry, openLink } = useOpenedEntryContext();
-  const {
-    currentLocation,
-    changeLocationByID,
-    switchLocationTypeByID,
-    openLocationById,
-  } = useCurrentLocationContext();
+  const { locations, currentLocation, changeLocationByID, openLocationById } =
+    useCurrentLocationContext();
   const {
     currentDirectoryPath,
     exitSearchMode,
@@ -109,7 +105,7 @@ function SearchAutocomplete(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const locations: TS.Location[] = useSelector(getLocations);
+  //const locations: CommonLocation[] = useSelector(getLocations);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);
@@ -879,10 +875,8 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
-              switchLocationTypeByID(option.id).then(() => {
-                changeLocationByID(option.id);
-                setSearchQuery(option.searchQuery);
-              });
+              changeLocationByID(option.id);
+              setSearchQuery(option.searchQuery);
             } else {
             }
           } else if (Pro && Pro.history) {

@@ -3,11 +3,8 @@ import FileSourceDnd from '-/components/FileSourceDnd';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
 import React from 'react';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
-import { getAllPropertiesPromise } from '-/services/utils-io';
 
 export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
@@ -59,13 +56,18 @@ export const renderCell = (
   openDirectory,
   setFileContextMenuAnchorEl,
   setDirContextMenuAnchorEl,
-  switchLocationTypeByID,
   showNotification: (
     text: string,
     notificationType: string,
     autohide: boolean,
   ) => void,
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>,
+  moveFiles: (
+    files: Array<string>,
+    destination: string,
+    locationID: string,
+    onProgress?,
+    reflect?: boolean,
+  ) => Promise<boolean>,
   clearSelection: () => void,
   isLast?: boolean,
 ) => {
@@ -143,23 +145,7 @@ export const renderCell = (
 
   const handleGridCellDblClick = (event, fsEntry: TS.FileSystemEntry) => {
     setSelectedEntries([]);
-    if (currentLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(currentLocation)
-        .then(() => {
-          openLocation(fsEntry);
-          return true;
-        })
-        .catch((error) => {
-          console.log('enableObjectStoreSupport', error);
-        });
-    } else if (currentLocation.type === locationType.TYPE_WEBDAV) {
-      PlatformIO.enableWebdavSupport(currentLocation);
-      openLocation(fsEntry);
-    } else if (currentLocation.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      PlatformIO.disableWebdavSupport();
-      openLocation(fsEntry);
-    }
+    openLocation(fsEntry);
   };
 
   const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
@@ -263,7 +249,7 @@ export const renderCell = (
         arrPath = [item.path];
       }
       console.log('Dropped files: ' + item.path);
-      moveFiles(arrPath, item.targetPath);
+      moveFiles(arrPath, item.targetPath, currentLocation.uuid);
       //clearSelection();
     }
   };

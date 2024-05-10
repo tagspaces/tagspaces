@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -29,17 +29,18 @@ import {
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
-import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import FileUploadContainer, {
   FileUploadContainerRef,
 } from '-/components/FileUploadContainer';
-import { TS } from '-/tagspaces.namespace';
-import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
+import {
+  createNewInstance,
+  getRelativeEntryPath,
+  openDirectoryMessage,
+  readMacOSTags,
+} from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
-import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -72,7 +73,7 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode, getLocationPath } =
+  const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const {
@@ -99,7 +100,7 @@ function DirectoryMenu(props: Props) {
     perspectiveMode,
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const dispatch: AppDispatch = useDispatch();
 
   const toggleCreateDirectoryDialog = () => {
@@ -131,12 +132,12 @@ function DirectoryMenu(props: Props) {
       }
       entryPath = selectedEntries[0].path;
     }
-    const tmpLoc = locations.find((location) => location.uuid === locationID);
+    const tmpLoc = findLocation(locationID);
     return getLocationPath(tmpLoc).then((locationPath) => {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
       const folderName = extractDirectoryName(
         selectedEntries[0].name,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return {
         url: generateSharingLink(locationID, undefined, relativePath),
@@ -164,7 +165,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function openDir() {
-    return openDirectory(directoryPath, currentLocation.uuid);
+    return openDirectory(directoryPath);
   }
 
   function showProperties() {
@@ -193,16 +194,7 @@ function DirectoryMenu(props: Props) {
 
   function showDeleteDirectoryDialog() {
     if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
-      setSelectedEntries([
-        {
-          isFile: false,
-          name: directoryPath,
-          path: directoryPath,
-          tags: [],
-          size: 0,
-          lmdt: 0,
-        },
-      ]);
+      setSelectedEntries([currentLocation.toFsEntry(directoryPath, false)]);
     }
     toggleDeleteMultipleEntriesDialog();
   }
@@ -216,14 +208,14 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    PlatformIO.openDirectory(directoryPath);
+    openDirectoryMessage(directoryPath);
   }
 
   function openInNewWindow() {
     generateFolderLink().then((sharingLink) => {
       const newInstanceLink =
         window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
+      createNewInstance(newInstanceLink);
     });
   }
 
@@ -243,7 +235,7 @@ Do you want to continue?`)
       toggleProgressDialog();
 
       const entryCallback = (entry) => {
-        PlatformFacade.readMacOSTags(entry.path)
+        readMacOSTags(entry.path)
           .then((tags) => {
             if (tags.length > 0) {
               addTags([entry.path], tags);
@@ -251,10 +243,14 @@ Do you want to continue?`)
             return tags;
           })
           .catch((err) => {
-            console.warn('Error creating tags: ' + err);
+            console.log('Error creating tags: ' + err);
           });
       };
-      Pro.MacTagsImport.importTags(directoryPath, entryCallback)
+      Pro.MacTagsImport.importTags(
+        directoryPath,
+        currentLocation.listDirectoryPromise,
+        entryCallback,
+      )
         .then(() => {
           toggleProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
@@ -266,7 +262,7 @@ Do you want to continue?`)
           return true;
         })
         .catch((err) => {
-          console.warn('Error importing tags: ' + err);
+          console.log('Error importing tags: ' + err);
           toggleProgressDialog();
         });
     } else {
@@ -303,9 +299,17 @@ Do you want to continue?`)
       AppConfig.endTagContainer +
       '.jpg';
     const newFilePath =
-      normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
+      normalizePath(directoryPath) +
+      currentLocation.getDirSeparator() +
+      fileName;
 
-    renameFilePromise(filePath, newFilePath, undefined, false)
+    renameFilePromise(
+      filePath,
+      newFilePath,
+      currentLocation.uuid,
+      undefined,
+      false,
+    )
       .then((newEntry) => {
         setReflectActions({
           action: 'add',
@@ -353,21 +357,21 @@ Do you want to continue?`)
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
       directoryPath,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const parentDirectoryName = extractDirectoryName(
       parentDirectoryPath,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     copyFilePromise(
       getThumbFileLocationForDirectory(
         directoryPath,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       ),
       getThumbFileLocationForDirectory(
         parentDirectoryPath,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       ),
       t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )
@@ -381,7 +385,7 @@ Do you want to continue?`)
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.', 'default', true);
-        console.warn('Error setting Thumb for entry: ' + directoryPath, error);
+        console.log('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
       });
   }

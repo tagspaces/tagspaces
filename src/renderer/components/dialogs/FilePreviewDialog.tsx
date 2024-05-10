@@ -29,7 +29,6 @@ import { getCurrentTheme } from '-/reducers/settings';
 import { useSelector } from 'react-redux';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -42,9 +41,7 @@ interface Props {
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
-  //const dispatch: AppDispatch = useDispatch();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
@@ -104,52 +101,49 @@ function FilePreviewDialog(props: Props) {
           fileViewer.current.contentWindow.setTheme(currentTheme);
         }*/
 
-        switchLocationTypeByID(openedFile.locationId).then(() => {
-          PlatformIO.loadTextFilePromise(
+        currentLocation
+          .loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false,
           )
-            .then((content) => {
-              const UTF8_BOM = '\ufeff';
-              if (content.indexOf(UTF8_BOM) === 0) {
-                content = content.substr(1);
-              }
-              let fileDirectory = extractContainingDirectoryPath(
-                textFilePath,
-                PlatformIO.getDirSeparator(),
+          .then((content) => {
+            const UTF8_BOM = '\ufeff';
+            if (content.indexOf(UTF8_BOM) === 0) {
+              content = content.substr(1);
+            }
+            let fileDirectory = extractContainingDirectoryPath(
+              textFilePath,
+              currentLocation?.getDirSeparator(),
+            );
+            if (AppConfig.isWeb) {
+              fileDirectory =
+                extractContainingDirectoryPath(
+                  // eslint-disable-next-line no-restricted-globals
+                  location.href,
+                  currentLocation?.getDirSeparator(),
+                ) +
+                '/' +
+                fileDirectory;
+            }
+            if (
+              fileViewer &&
+              fileViewer.current &&
+              fileViewer.current.contentWindow &&
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent
+            ) {
+              // @ts-ignore call setContent from iframe
+              fileViewer.current.contentWindow.setContent(
+                content,
+                fileDirectory,
+                !openedFile.editMode,
+                currentTheme,
               );
-              if (AppConfig.isWeb) {
-                fileDirectory =
-                  extractContainingDirectoryPath(
-                    // eslint-disable-next-line no-restricted-globals
-                    location.href,
-                    PlatformIO.getDirSeparator(),
-                  ) +
-                  '/' +
-                  fileDirectory;
-              }
-              if (
-                fileViewer &&
-                fileViewer.current &&
-                fileViewer.current.contentWindow &&
-                // @ts-ignore
-                fileViewer.current.contentWindow.setContent
-              ) {
-                // @ts-ignore call setContent from iframe
-                fileViewer.current.contentWindow.setContent(
-                  content,
-                  fileDirectory,
-                  !openedFile.editMode,
-                  currentTheme,
-                );
-              }
-              return switchCurrentLocationType();
-            })
-            .catch((err) => {
-              console.warn('Error loading text content ' + err);
-              return switchCurrentLocationType();
-            });
-        });
+            }
+          })
+          .catch((err) => {
+            console.log('Error loading text content ' + err);
+          });
         break;
     }
   };

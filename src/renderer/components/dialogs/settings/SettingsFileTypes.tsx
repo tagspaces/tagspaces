@@ -49,11 +49,12 @@ import {
   isDevMode,
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformFacade from '-/services/platform-facade';
 import { AppDispatch, getExtensions } from '-/reducers/app';
 import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
+import { getUserDataDir } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -95,7 +96,7 @@ function SettingsFileTypes() {
     useState<boolean>(false);
   const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
   const extensions = useSelector(getExtensions);
@@ -373,9 +374,9 @@ function SettingsFileTypes() {
                   (ext) => ext.extensionId === event.target.value,
                 );
                 if (extension.extensionExternal) {
-                  PlatformFacade.getUserDataDir().then((dataDir) => {
+                  getUserDataDir().then((dataDir) => {
                     const externalExtensionPath =
-                      dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
+                      dataDir + AppConfig.dirSeparator + 'tsplugins';
                     updateItems(
                       item,
                       'extensionExternalPath',

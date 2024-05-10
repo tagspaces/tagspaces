@@ -25,30 +25,31 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
 import { TS } from '-/tagspaces.namespace';
-import {
-  createDirectoryIndex,
-  executePromisesInBatches,
-  loadIndexFromDisk,
-} from '-/services/utils-io';
+import { executePromisesInBatches } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
+import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { getMetaIndexFilePath } from '@tagspaces/tagspaces-indexer';
-import PlatformIO from '-/services/platform-facade';
+import {
+  getMetaIndexFilePath,
+  createIndex,
+} from '@tagspaces/tagspaces-indexer';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
 import Search from '-/services/search';
 import {
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
+  getMetaDirectoryPath,
+  joinPaths,
+  cleanTrailingDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { Pro } from '-/pro';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -56,7 +57,7 @@ type LocationIndexContextData = {
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
   cancelDirectoryIndexing: () => void;
-  createLocationIndex: (location: TS.Location) => Promise<boolean>;
+  createLocationIndex: (location: CommonLocation) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
   clearDirectoryIndex: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
@@ -91,17 +92,16 @@ export const LocationIndexContextProvider = ({
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { currentLocation, getLocationPath } = useCurrentLocationContext();
+  const { locations, findLocation, currentLocation, getLocationPath } =
+    useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
   const { actions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
 
   const enableWS = useSelector(getEnableWS);
-  const allLocations = useSelector(getLocations);
+  //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
   let walking = true;
@@ -209,6 +209,85 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
+  function createDirectoryIndex(
+    param: string | any,
+    extractText = false,
+    ignorePatterns: Array<string> = [],
+    enableWS = true,
+    isWalking = () => true,
+    // disableIndexing = true,
+  ): Promise<TS.FileSystemEntry[]> {
+    if (isWalking()) {
+      if (Pro && Pro.Watcher) {
+        Pro.Watcher.stopWatching();
+      }
+      let directoryPath;
+      let locationID;
+      if (typeof param === 'object' && param !== null) {
+        directoryPath = param.path;
+        ({ locationID } = param);
+      } else {
+        directoryPath = param;
+      }
+      const loc = findLocation(locationID);
+      const dirPath = cleanTrailingDirSeparator(directoryPath);
+      if (
+        enableWS &&
+        !loc.haveObjectStoreSupport() &&
+        !loc.haveWebDavSupport() &&
+        !AppConfig.isCordova
+      ) {
+        // Start indexing in worker if not in the object store mode
+        return loc
+          .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
+          .then((result) => {
+            if (result && result.success) {
+              return loadIndexFromDisk(dirPath, locationID);
+            } else if (result && result.error) {
+              console.error(
+                'createDirectoryIndexInWorker failed:' + result.error,
+              );
+            } else {
+              console.error(
+                'createDirectoryIndexInWorker failed: unknown error',
+              );
+            }
+            return undefined; // todo create index not in worker
+          });
+      }
+
+      const mode = ['extractThumbPath'];
+      if (extractText) {
+        mode.push('extractTextContent');
+      }
+      return createIndex(
+        param,
+        loc.listDirectoryPromise,
+        loc.loadTextFilePromise,
+        mode,
+        ignorePatterns,
+        isWalking,
+      )
+        .then((directoryIndex) =>
+          persistIndex(param, directoryIndex).then((success) => {
+            if (success) {
+              console.log('Index generated in folder: ' + directoryPath);
+              return enhanceDirectoryIndex(
+                directoryIndex,
+                locationID,
+                directoryPath,
+              );
+              //return enhanceDirectoryIndex(param, directoryIndex, locationID);
+            }
+            return undefined;
+          }),
+        )
+        .catch((err) => {
+          console.log('Error creating index: ', err);
+        });
+    }
+  }
+
   function createDirectoryIndexWrapper(
     param: string | any,
     extractText = false,
@@ -217,31 +296,27 @@ export const LocationIndexContextProvider = ({
     // disableIndexing = true,
   ): Promise<any> {
     const indexFilePath = getMetaIndexFilePath(param.path);
-    return switchLocationTypeByID(param.locationID)
-      .then(() => {
-        ignoreByWatcher(indexFilePath);
-        return createDirectoryIndex(
-          param,
-          extractText,
-          ignorePatterns,
-          enableWS,
-          isWalking,
-        );
+
+    ignoreByWatcher(indexFilePath);
+    return createDirectoryIndex(
+      param,
+      extractText,
+      ignorePatterns,
+      enableWS,
+      isWalking,
+    )
+      .then((index) => {
+        deignoreByWatcher(indexFilePath);
+        return index;
       })
-      .then((index) =>
-        switchCurrentLocationType().then(() => {
-          deignoreByWatcher(indexFilePath);
-          return index;
-        }),
-      )
       .catch((err) => {
         //lastError.current = err;
-        console.warn('Error loading text content ' + err);
+        console.log('Error loading text content ' + err);
         return false; //switchCurrentLocationType();
       });
   }
 
-  function createLocationIndex(location: TS.Location): Promise<boolean> {
+  function createLocationIndex(location: CommonLocation): Promise<boolean> {
     if (location) {
       return getLocationPath(location).then((locationPath) => {
         const isCurrentLocation =
@@ -275,7 +350,7 @@ export const LocationIndexContextProvider = ({
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
-    for (let location of allLocations) {
+    for (let location of locations) {
       try {
         const locationPath = await getLocationPath(location);
         isIndexing.current = locationPath;
@@ -314,24 +389,17 @@ export const LocationIndexContextProvider = ({
   function enhanceSearchEntry(
     entry: TS.FileSystemEntry,
   ): Promise<TS.FileSystemEntry> {
-    const loc = allLocations.find((l) => l.uuid === entry.locationID);
+    const loc = findLocation(entry.locationID);
     if (loc) {
       const thumbFilePath = entry.isFile
-        ? getThumbFileLocationForFile(
-            entry.path,
-            PlatformIO.getDirSeparator(),
-            false,
-          )
-        : getThumbFileLocationForDirectory(
-            entry.path,
-            PlatformIO.getDirSeparator(),
-          );
+        ? getThumbFileLocationForFile(entry.path, loc.getDirSeparator(), false)
+        : getThumbFileLocationForDirectory(entry.path, loc.getDirSeparator());
       if (thumbFilePath) {
-        return checkFileExist(thumbFilePath, loc).then((exist) => {
+        return loc.checkFileExist(thumbFilePath).then((exist) => {
           if (exist) {
             const thumbPath =
               loc.type === locationType.TYPE_CLOUD
-                ? getURLforPath(thumbFilePath, loc)
+                ? loc.getURLforPath(thumbFilePath)
                 : thumbFilePath;
             return { ...entry, meta: { ...entry.meta, thumbPath } };
           }
@@ -342,18 +410,18 @@ export const LocationIndexContextProvider = ({
     return undefined;
   }
 
-  function getURLforPath(path: string, location: TS.Location) {
+  /*function getURLforPath(path: string, location: CommonLocation) {
     const api = objectStoreAPI.getS3Api(location);
     return api.getSignedUrl('getObject', {
       Bucket: location.bucketName,
       Key: normalizePath(path),
       Expires: 900,
     });
-  }
+  }*/
 
-  function checkFileExist(
+  /*function checkFileExist(
     path: string,
-    location: TS.Location,
+    location: CommonLocation,
   ): Promise<boolean> {
     if (location.type === locationType.TYPE_LOCAL) {
       return window.electronIO.ipcRenderer.invoke('checkFileExist', path);
@@ -374,7 +442,7 @@ export const LocationIndexContextProvider = ({
     } else if (AppConfig.isCordova) {
       return cordovaIO.checkFileExist(path);
     }
-  }
+  }*/
 
   function enhanceSearchEntries(entries: TS.FileSystemEntry[]) {
     const promises: Promise<TS.FileSystemEntry>[] = entries.map(
@@ -475,18 +543,12 @@ export const LocationIndexContextProvider = ({
     setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
-    // Preparing for global search
-    // setSearchResults([]);
-    /*if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.disableObjectStoreSupport();
-    }*/
-
     walking = true;
     //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
 
-    const result = allLocations.reduce(
+    const result = locations.reduce(
       (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
           // cancel search if max search result count reached
@@ -496,7 +558,6 @@ export const LocationIndexContextProvider = ({
           }
           const nextPath = await getLocationPath(location);
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-          await switchLocationTypeByID(location.uuid);
           let directoryIndex = await loadIndexFromDisk(nextPath, location.uuid);
           //console.log('Searching in: ' + nextPath);
           showNotification(
@@ -505,12 +566,6 @@ export const LocationIndexContextProvider = ({
             false,
             'TIDSearching',
           );
-
-          /*const folderIndexPath =
-            getMetaDirectoryPath(nextPath) +
-            PlatformIO.getDirSeparator() +
-            AppConfig.folderIndexFile;
-          const indexExist = await PlatformIO.checkFileExist(folderIndexPath);*/
 
           if (
             !location.disableIndexing &&
@@ -542,54 +597,6 @@ export const LocationIndexContextProvider = ({
               return true;
             },
           );
-          /*return Search.searchLocationIndex(directoryIndex, searchQuery)
-            .then((searchResults: Array<TS.FileSystemEntry>) => {
-              let enhancedSearchResult = searchResults;
-              if (isCloudLocation) {
-                enhancedSearchResult = searchResults
-                  // Excluding s3 folders from global search
-                  .filter((entry) => entry && entry.isFile)
-                  .map((entry: TS.FileSystemEntry) => {
-                    const cleanedPath = entry.path.startsWith('/')
-                      ? entry.path.substr(1)
-                      : entry.path;
-                    const url = PlatformIO.getURLforPath(cleanedPath);
-                    let thumbPath;
-                    if (
-                      entry.meta &&
-                      entry.meta.thumbPath &&
-                      entry.meta.thumbPath.length > 1 &&
-                      !entry.meta.thumbPath.startsWith('http')
-                    ) {
-                      thumbPath = PlatformIO.getURLforPath(
-                        entry.meta.thumbPath,
-                      );
-                    }
-                    return { ...entry, url, thumbPath };
-                  });
-              }
-
-              searchResultCount += enhancedSearchResult.length;
-              appendSearchResults(enhancedSearchResult);
-              hideNotifications();
-              /!*if (isCloudLocation) {
-                PlatformIO.disableObjectStoreSupport();
-              }*!/
-              return true;
-            })
-            .catch((e) => {
-              /!*if (isCloudLocation) {
-                PlatformIO.disableObjectStoreSupport();
-              }*!/
-              console.log('Searching Index failed: ', e);
-              setSearchResults([]);
-              // dispatch(AppActions.hideNotifications());
-              showNotification(
-                t('core:searchingFailed') + ' ' + e.message,
-                'warning',
-                true,
-              );
-            });*/
         }),
       Promise.resolve(),
     );
@@ -610,17 +617,91 @@ export const LocationIndexContextProvider = ({
           showNotification(t('Global search completed'), 'default', true);
         }
         console.log('Global search completed!');
-        return switchCurrentLocationType();
       })
       .catch((e) => {
-        /*if (
-          currentLocation &&
-          currentLocation.type === locationType.TYPE_CLOUD
-        ) {
-          PlatformIO.enableObjectStoreSupport(currentLocation);
-        }*/
         console.timeEnd('globalSearch');
-        console.warn('Global search failed!', e);
+        console.log('Global search failed!', e);
+      });
+  }
+
+  /**
+   * persistIndex based on location - used for S3 and cordova only
+   * for native used common-platform/indexer.js -> persistIndex instead
+   * @param param
+   * @param directoryIndex
+   */
+  async function persistIndex(param: string | any, directoryIndex: any) {
+    let directoryPath;
+    if (typeof param === 'object' && param !== null) {
+      directoryPath = param.path;
+    } else {
+      directoryPath = param;
+    }
+    const metaDirectory = getMetaDirectoryPath(directoryPath);
+    const exist = await currentLocation.checkDirExist(metaDirectory);
+    if (!exist) {
+      await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+    }
+    const folderIndexPath =
+      metaDirectory +
+      currentLocation?.getDirSeparator() +
+      AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
+    return currentLocation
+      .saveTextFilePromise(
+        { ...param, path: folderIndexPath },
+        JSON.stringify(directoryIndex), // relativeIndex),
+        true,
+      )
+      .then(() => {
+        console.log(
+          'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath,
+        );
+        return true;
+      })
+      .catch((err) => {
+        console.log('Error saving the index for ' + folderIndexPath, err);
+      });
+  }
+
+  function enhanceDirectoryIndex(
+    directoryIndex: TS.FileSystemEntry[],
+    locationID,
+    folderPath,
+  ): TS.FileSystemEntry[] {
+    const loc = findLocation(locationID);
+    return directoryIndex.map((i: TS.FileSystemEntry) => ({
+      ...i,
+      locationID,
+      path: joinPaths(
+        loc.getDirSeparator(),
+        folderPath,
+        AppConfig.isWin
+          ? i.path.replaceAll('/', loc.getDirSeparator())
+          : i.path, //toPlatformPath()
+      ),
+    }));
+  }
+
+  function loadIndexFromDisk(
+    folderPath: string,
+    locationID: string,
+  ): Promise<TS.FileSystemEntry[]> {
+    const loc = findLocation(locationID);
+    const folderIndexPath =
+      getMetaDirectoryPath(folderPath) +
+      loc.getDirSeparator() +
+      AppConfig.folderIndexFile;
+    return loc
+      .loadTextFilePromise(folderIndexPath)
+      .then((jsonContent) => {
+        const directoryIndex = loadJSONString(
+          jsonContent,
+        ) as TS.FileSystemEntry[];
+        return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
+      })
+      .catch((e) => {
+        console.log('cannot load json:' + folderPath, e);
+        return undefined;
       });
   }
 

@@ -44,12 +44,12 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
-import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { setLanguage } from '-/services/utils-io';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -128,7 +128,7 @@ function SettingsGeneral() {
             onChange={(event: any) => {
               return i18n.changeLanguage(event.target.value).then(() => {
                 dispatch(SettingsActions.setLanguage(event.target.value));
-                PlatformIO.setLanguage(event.target.value);
+                setLanguage(event.target.value);
                 return true;
               });
             }}

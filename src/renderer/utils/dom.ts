@@ -1,5 +1,6 @@
 import { TS } from '-/tagspaces.namespace';
 import { getRelativeEntryPath } from '-/services/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();
@@ -35,7 +36,7 @@ export function clearURLParam(paramName) {
 }
 
 export function updateHistory(
-  newLocation: TS.Location,
+  newLocation: CommonLocation,
   newDirectoryPath: string,
   newEntryPath?: string,
 ) {

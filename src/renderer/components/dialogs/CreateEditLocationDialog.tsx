@@ -61,7 +61,6 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { getLocations } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import WebdavForm from '-/components/dialogs/WebdavForm';
@@ -75,6 +74,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -92,7 +92,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   open: boolean;
   onClose: () => void;
-  editLocation?: (location: TS.Location) => void;
+  editLocation?: (location: CommonLocation) => void;
 }
 
 function CreateEditLocationDialog(props: Props) {
@@ -101,9 +101,10 @@ function CreateEditLocationDialog(props: Props) {
   const { showNotification } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
-  const { addLocation, selectedLocation } = useCurrentLocationContext();
+  const { addLocation, selectedLocation, findLocation } =
+    useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
@@ -264,22 +265,28 @@ function CreateEditLocationDialog(props: Props) {
     }
   }, [name, path]);
 
-  function setLocationId(path: string) {
-    loadLocationDataPromise(path, AppConfig.metaFolderFile)
+  function getMetaLocationId(
+    location: CommonLocation,
+  ): Promise<string | undefined> {
+    return loadLocationDataPromise(location, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          if (!locations.some((ln) => ln.uuid === meta.id)) {
-            setNewUuid(meta.id);
+          const location = findLocation(meta.id);
+          if (!location) {
+            return meta.id;
           }
         }
-        return true;
+        return undefined;
       })
       .catch((err) => {
-        console.debug('no meta in location:' + path);
+        console.debug('no meta in location:' + location.path);
+        return undefined;
       });
   }
+
   function setNewLocationID(newId: string) {
-    if (!locations.some((ln) => ln.uuid === newId)) {
+    const location = findLocation(newId);
+    if (!location) {
       setNewUuid(newId);
     } else {
       showNotification('Location with this ID already exists', 'error');
@@ -434,10 +441,16 @@ function CreateEditLocationDialog(props: Props) {
       }
 
       if (!selectedLocation) {
-        addLocation(loc);
+        const commonLocation = new CommonLocation(loc);
+        getMetaLocationId(commonLocation).then((uuid) => {
+          if (uuid) {
+            commonLocation.uuid = uuid;
+          }
+          addLocation(commonLocation);
+        });
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
-        props.editLocation(loc);
+        props.editLocation(new CommonLocation(loc));
       } else {
         console.log('No addLocation or editLocation props exist');
       }
@@ -467,10 +480,7 @@ function CreateEditLocationDialog(props: Props) {
         region={region}
         endpointURL={endpointURL}
         setStoreName={setStoreName}
-        setStorePath={(path) => {
-          setStorePath(path);
-          setLocationId(path);
-        }}
+        setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
         setSecretAccessKey={setSecretAccessKey}
         setSessionToken={setSessionToken}
@@ -506,10 +516,7 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={(path) => {
-          setPath(path);
-          setLocationId(path);
-        }}
+        setPath={setPath}
         path={path}
         name={name}
       />

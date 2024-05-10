@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -28,11 +27,10 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { getLocations } from '-/reducers/locations';
-import { TS } from '-/tagspaces.namespace';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   menuAnchorEl?: Element;
@@ -41,9 +39,10 @@ interface Props {
 function LocationMenu(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openLocation, currentLocation } = useCurrentLocationContext();
+  const { locations, openLocation, currentLocation } =
+    useCurrentLocationContext();
   //const dispatch: AppDispatch = useDispatch();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const [locationChooserMenuAnchorEl, setLocationChooserMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
@@ -104,7 +103,7 @@ function LocationMenu(props: Props) {
           >
             {t('core:chooseLocation')}
           </ListSubHeader>
-          {locations.map((location: TS.Location) => (
+          {locations.map((location: CommonLocation) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}

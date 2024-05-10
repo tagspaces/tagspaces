@@ -20,20 +20,18 @@ import React, {
   createContext,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
   actions as LocationActions,
   getDefaultLocationId,
   getLocations,
 } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-facade';
-import { setLocationType } from '-/services/utils-io';
 import { clearAllURLParams, getURLParameter } from '-/utils/dom';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -41,30 +39,38 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { getDevicePaths } from '-/services/utils-io';
 
 type CurrentLocationContextData = {
-  currentLocation: TS.Location;
+  locations: CommonLocation[];
+  currentLocation: CommonLocation;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
-  getLocationPath: (location: TS.Location) => Promise<string>;
-  changeLocation: (location: TS.Location) => void;
-  editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
+  getLocationPath: (location: CommonLocation) => Promise<string>;
+  findLocation: (locationID: string) => CommonLocation;
+  changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
+  editLocation: (location: CommonLocation, openAfterEdit?: boolean) => void;
   addLocation: (
-    location: TS.Location,
+    location: CommonLocation,
     openAfterCreate?: boolean,
     locationPosition?: number,
   ) => void;
-  addLocations: (arrLocations: Array<TS.Location>, override?: boolean) => void;
-  openLocation: (location: TS.Location, skipInitialDirList?: boolean) => void;
+  addLocations: (
+    arrLocations: Array<CommonLocation>,
+    override?: boolean,
+  ) => void;
+  openLocation: (
+    location: CommonLocation,
+    skipInitialDirList?: boolean,
+  ) => void;
   closeLocation: (locationId: string) => void;
   closeAllLocations: () => void;
-  switchCurrentLocationType: () => Promise<boolean>;
-  switchLocationTypeByID: (locationId: string) => Promise<boolean>;
   changeLocationByID: (locationId: string) => void;
   openLocationById: (locationId: string, skipInitialDirList?: boolean) => void;
-  selectedLocation: TS.Location;
-  setSelectedLocation: (location: TS.Location) => void;
+  selectedLocation: CommonLocation;
+  setSelectedLocation: (location: CommonLocation) => void;
   getLocationPosition: (locationId: string) => number;
   locationDirectoryContextMenuAnchorEl: null | HTMLElement;
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
@@ -72,11 +78,13 @@ type CurrentLocationContextData = {
 
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
+    locations: undefined,
     currentLocation: undefined,
     readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
+    findLocation: undefined,
     changeLocation: () => {},
     editLocation: () => {},
     addLocation: () => {},
@@ -84,12 +92,10 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     openLocation: () => {},
     closeLocation: () => {},
     closeAllLocations: () => {},
-    switchCurrentLocationType: () => Promise.resolve(false),
-    switchLocationTypeByID: () => Promise.resolve(false),
     changeLocationByID: () => {},
     openLocationById: () => {},
     selectedLocation: undefined,
-    setSelectedLocation: () => {},
+    setSelectedLocation: undefined,
     getLocationPosition: () => 0,
     locationDirectoryContextMenuAnchorEl: undefined,
     setLocationDirectoryContextMenuAnchorEl: () => {},
@@ -106,24 +112,28 @@ export const CurrentLocationContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-  const [currentLocation, setCurrentLocation] =
-    useState<TS.Location>(undefined);
-  const [selectedLocation, setSelectedLocation] =
-    useState<TS.Location>(undefined);
+  const currentLocation = useRef<CommonLocation>(undefined);
+  const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
+  const initLocations = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
 
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
     getPersistTagsInSidecarFile,
   );
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (!currentLocation && defaultLocationId && defaultLocationId.length > 0) {
+    if (
+      !currentLocation.current &&
+      defaultLocationId &&
+      defaultLocationId.length > 0
+    ) {
       const openDefaultLocation =
         !getURLParameter('tslid') &&
         !getURLParameter('tsdpath') &&
@@ -141,18 +151,19 @@ export const CurrentLocationContextProvider = ({
       setDefaultLocations();
     } else {
       // check if current location exist (or is removed)
-      if (currentLocation) {
+      if (currentLocation.current) {
         const location = locations.find(
-          (location) => location.uuid === currentLocation.uuid,
+          (location) => location.uuid === currentLocation.current.uuid,
         );
         if (!location) {
-          closeLocation(currentLocation.uuid);
+          setCurrentLocation(undefined);
+          //closeLocation(currentLocation.current.uuid);
         }
       }
     }
   }, [locations]);
 
-  function getLocationPath(location: TS.Location): Promise<string> {
+  function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
     if (location) {
       if (location.path) {
@@ -181,13 +192,25 @@ export const CurrentLocationContextProvider = ({
     return Promise.resolve(locationPath);
   }
 
+  function findLocation(locationID: string): CommonLocation {
+    if (!locationID) {
+      return currentLocation.current;
+    }
+    const loc = locations.find((l) => l.uuid === locationID);
+    if (loc) {
+      return loc;
+    }
+    return currentLocation.current;
+  }
+
   function setDefaultLocations() {
-    PlatformIO.getDevicePaths()
-      .then((devicePaths) => {
-        if (devicePaths) {
-          Object.keys(devicePaths).forEach((key) => {
-            addLocation(
-              {
+    if (!initLocations.current) {
+      initLocations.current = true;
+      getDevicePaths()
+        .then((devicePaths) => {
+          if (devicePaths) {
+            Object.keys(devicePaths).forEach((key) => {
+              const location = new CommonLocation({
                 uuid: getUuid(),
                 type: locationType.TYPE_LOCAL,
                 name: t(('core:' + key) as any) as string,
@@ -195,18 +218,18 @@ export const CurrentLocationContextProvider = ({
                 isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
                 isReadOnly: false,
                 disableIndexing: false,
-              },
-              false,
-            );
-          });
-        }
-        return true;
-      })
-      .catch((ex) => console.log(ex));
+              });
+              addLocation(location, false);
+            });
+          }
+          return true;
+        })
+        .catch((ex) => console.log(ex));
+    }
   }
 
   function addLocation(
-    location: TS.Location,
+    location: CommonLocation,
     openAfterCreate = true,
     locationPosition: number = undefined,
   ) {
@@ -219,8 +242,8 @@ export const CurrentLocationContextProvider = ({
    * @param arrLocations
    * @param override = true - if location exist override else skip
    */
-  function addLocations(arrLocations: Array<TS.Location>, override = true) {
-    arrLocations.forEach((newLocation: TS.Location, idx, array) => {
+  function addLocations(arrLocations: Array<CommonLocation>, override = true) {
+    arrLocations.forEach((newLocation: CommonLocation, idx, array) => {
       const locationExist: boolean = locations.some(
         (location) => location.uuid === newLocation.uuid,
       );
@@ -233,16 +256,18 @@ export const CurrentLocationContextProvider = ({
     });
   }
 
-  function editLocation(location: TS.Location, openAfterEdit = true) {
+  function setCurrentLocation(location) {
+    currentLocation.current = location;
+    forceUpdate();
+  }
+
+  function setSelectedLocation(location) {
+    selectedLocation.current = location;
+    forceUpdate();
+  }
+
+  function editLocation(location: CommonLocation, openAfterEdit = true) {
     dispatch(LocationActions.changeLocation(location));
-    if (PlatformIO.haveObjectStoreSupport()) {
-      // disableObjectStoreSupport to revoke objectStoreAPI cached object
-      PlatformIO.disableObjectStoreSupport();
-    }
-    if (PlatformIO.haveWebDavSupport()) {
-      // disableWebdavSupport to revoke cached object
-      PlatformIO.disableWebdavSupport();
-    }
     setCurrentLocation(location);
     if (openAfterEdit) {
       /*
@@ -261,21 +286,29 @@ export const CurrentLocationContextProvider = ({
   }
 
   const readOnlyMode: boolean = useMemo(
-    () => currentLocation && currentLocation.isReadOnly,
-    [currentLocation],
+    () => currentLocation.current && currentLocation.current.isReadOnly,
+    [currentLocation.current],
   );
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
     const locationPersistTagsInSidecarFile =
-      currentLocation && currentLocation.persistTagsInSidecarFile;
+      currentLocation.current &&
+      currentLocation.current.persistTagsInSidecarFile;
     if (locationPersistTagsInSidecarFile !== undefined) {
       return locationPersistTagsInSidecarFile;
     }
     return settingsPersistTagsInSidecarFile;
-  }, [currentLocation, settingsPersistTagsInSidecarFile]);
+  }, [currentLocation.current, settingsPersistTagsInSidecarFile]);
 
-  function changeLocation(location: TS.Location) {
-    if (!currentLocation || location.uuid !== currentLocation.uuid) {
+  function changeLocation(
+    location: CommonLocation,
+    skipInitDirList: boolean = false,
+  ) {
+    skipInitialDirList.current = skipInitDirList;
+    if (
+      !currentLocation.current ||
+      location.uuid !== currentLocation.current.uuid
+    ) {
       if (location && location.name) {
         document.title = location.name + ' | ' + versionMeta.name;
       }
@@ -284,95 +317,44 @@ export const CurrentLocationContextProvider = ({
   }
 
   function changeLocationByID(locationId: string) {
-    if (!currentLocation || locationId !== currentLocation.uuid) {
-      const location = locations.find(
-        (location) => location.uuid === locationId,
-      );
+    if (
+      !currentLocation.current ||
+      locationId !== currentLocation.current.uuid
+    ) {
+      const location = findLocation(locationId);
       if (location) {
         setCurrentLocation(location);
       }
     }
   }
 
-  function switchLocationTypeByID(locationId: string) {
-    const location = locations.find((location) => location.uuid === locationId);
-    return setLocationType(location);
-    //return switchLocationType(location);
-  }
-
-  /**
-   * @param location
-   * return Promise<currentLocationId> if location is changed or null if location and type is changed
-   */
-  /*function switchLocationType(location: TS.Location) {
-    if (location !== undefined) {
-      if (currentLocation === undefined) {
-        return setLocationType(location).then(() => null);
-      }
-      if (location.uuid !== currentLocation.uuid) {
-        if (location.type !== currentLocation.type) {
-          return setLocationType(location).then(() => null);
-        } else {
-          // handle the same location type but different location
-          return setLocationType(location).then(() => currentLocation.uuid);
-        }
-      }
-    }
-    return Promise.resolve(null);
-  }*/
-
-  function switchCurrentLocationType() {
-    return setLocationType(currentLocation);
-  }
-
   function openLocationById(locationId: string, skipInitDirList?: boolean) {
-    const location = locations.find((location) => location.uuid === locationId);
+    const location = findLocation(locationId);
     if (location) {
       openLocation(location, skipInitDirList);
     }
   }
 
   function openLocation(
-    location: TS.Location,
+    location: CommonLocation,
     skipInitDirList: boolean = false,
   ) {
-    // stopWatching();
     skipInitialDirList.current = skipInitDirList;
     if (location.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(location)
-        .then(() => {
-          showNotification(
-            t('core:connectedtoObjectStore' as any) as string,
-            'default',
-            true,
-          );
-          //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
-          changeLocation(location);
-          return true;
-        })
-        .catch((e) => {
-          console.log('connectedtoObjectStoreFailed', e);
-          showNotification(
-            t('core:connectedtoObjectStoreFailed' as any) as string,
-            'warning',
-            true,
-          );
-          PlatformIO.disableObjectStoreSupport();
-        });
-    } else {
-      if (location.type === locationType.TYPE_WEBDAV) {
-        PlatformIO.enableWebdavSupport(location);
-      } else {
-        PlatformIO.disableObjectStoreSupport();
-        PlatformIO.disableWebdavSupport();
-      }
-      //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
-      changeLocation(location);
+      showNotification(
+        t('core:connectedtoObjectStore' as any) as string,
+        'default',
+        true,
+      );
     }
+    changeLocation(location);
   }
 
   function closeLocation(locationId: string) {
-    if (currentLocation && currentLocation.uuid === locationId) {
+    if (
+      currentLocation.current &&
+      currentLocation.current.uuid === locationId
+    ) {
       locations.map((location) => {
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
@@ -398,16 +380,18 @@ export const CurrentLocationContextProvider = ({
   }
 
   function isCurrentLocation(uuid: string) {
-    return currentLocation && currentLocation.uuid === uuid;
+    return currentLocation.current && currentLocation.current.uuid === uuid;
   }
 
   const context = useMemo(() => {
     return {
-      currentLocation,
+      locations,
+      currentLocation: currentLocation.current,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
       getLocationPath,
+      findLocation,
       changeLocation,
       addLocation,
       addLocations,
@@ -415,19 +399,18 @@ export const CurrentLocationContextProvider = ({
       openLocation,
       closeLocation,
       closeAllLocations,
-      switchCurrentLocationType,
-      switchLocationTypeByID,
       changeLocationByID,
       openLocationById,
-      selectedLocation,
+      selectedLocation: selectedLocation.current,
       setSelectedLocation,
       locationDirectoryContextMenuAnchorEl,
       setLocationDirectoryContextMenuAnchorEl,
       getLocationPosition,
     };
   }, [
-    currentLocation,
-    selectedLocation,
+    locations,
+    currentLocation.current,
+    selectedLocation.current,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl,

@@ -244,8 +244,15 @@ test.describe('TST08 - File folder properties', () => {
     //await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
     //await clickOn('[data-tid=detailsTabTID]');
 
-    const propsTags = await getPropertiesTags();
-    expect(propsTags).toContain(tagName);
+    //const propsTags = await getPropertiesTags();
+    // expect(propsTags).toContain(tagName);
+    await expectElementExist(
+      '[data-tid=PropertiesTagsSelectTID] [data-tid=tagContainer_' +
+        tagName +
+        ']',
+      true,
+      4000,
+    );
   });
 
   test('TST0811 - Duplicate file [web,minio,electron]', async () => {

@@ -25,12 +25,9 @@ import {
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import PlatformIO from '-/services/platform-facade';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
-import { useSelector } from 'react-redux';
-import { getLocations } from '-/reducers/locations';
 import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
@@ -43,6 +40,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getAllTags } from '-/services/utils-io';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -74,10 +72,10 @@ function EntryContainerTitle(props: Props) {
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, sharingLink, sharingParentFolderLink } =
-    useOpenedEntryContext();
+  const { openedEntry, sharingLink } = useOpenedEntryContext();
+  const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const locations = useSelector(getLocations);
+  //const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -101,11 +99,12 @@ function EntryContainerTitle(props: Props) {
     }
   };
 
+  const currentLocation = findLocation(openedEntry.locationID);
   let fileTitle: string = openedEntry.path
     ? extractTitle(
         openedEntry.path,
         !openedEntry.isFile,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       )
     : '';
 
@@ -114,19 +113,16 @@ function EntryContainerTitle(props: Props) {
     if (openedEntry.isFile) {
       fileName = extractFileName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     } else {
       fileName = extractDirectoryName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     }
   }
   if (!fileName) {
-    const currentLocation = locations.find(
-      (location) => location.uuid === openedEntry.locationId,
-    );
     if (currentLocation) {
       fileName = currentLocation.name;
     }
@@ -189,7 +185,7 @@ function EntryContainerTitle(props: Props) {
               //'.' +
               extractFileExtension(
                 openedEntry.path,
-                PlatformIO.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               )
             }
             <MoreMenuIcon style={{ fontSize: 20 }} />

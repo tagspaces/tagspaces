@@ -30,12 +30,7 @@ import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getDescriptionPreview,
-  getFolderThumbPath,
-  getFolderBgndPath,
-} from '-/services/utils-io';
-import PlatformIO from '-/services/platform-facade';
+import { getDescriptionPreview } from '-/services/utils-io';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
@@ -102,8 +97,7 @@ function GridPagination(props: Props) {
   const { openEntryInternal } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
-  const { readOnlyMode, currentLocation, switchLocationTypeByID } =
-    useCurrentLocationContext();
+  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const { openDirectory, directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
@@ -128,7 +122,7 @@ function GridPagination(props: Props) {
 
   const folderName = extractDirectoryName(
     props.currentDirectoryPath,
-    PlatformIO.getDirSeparator(),
+    currentLocation?.getDirSeparator(),
   );
 
   const dirColor =
@@ -163,7 +157,7 @@ function GridPagination(props: Props) {
           overflowY: 'auto',
           backgroundImage:
             'url("' +
-            getFolderBgndPath(
+            currentLocation?.getFolderBgndPath(
               currentDirectoryPath,
               directoryMeta?.lastUpdated,
             ) +
@@ -276,7 +270,7 @@ function GridPagination(props: Props) {
                     width: 140,
                     backgroundImage:
                       'url("' +
-                      getFolderThumbPath(
+                      currentLocation?.getFolderThumbPath(
                         currentDirectoryPath,
                         directoryMeta?.lastUpdated,
                       ) +
@@ -336,7 +330,6 @@ function GridPagination(props: Props) {
                 openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
-                switchLocationTypeByID,
                 showNotification,
                 moveFiles,
                 clearSelection,
@@ -361,7 +354,6 @@ function GridPagination(props: Props) {
               openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
-              switchLocationTypeByID,
               showNotification,
               moveFiles,
               clearSelection,

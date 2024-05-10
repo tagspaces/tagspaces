@@ -27,10 +27,10 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -42,6 +42,7 @@ interface Props {
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
   const { createDirectory } = useIOActionsContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
 
   const [inputError, setInputError] = useState(false);
@@ -73,7 +74,7 @@ function CreateDirectoryDialog(props: Props) {
   function onConfirm() {
     if (!disableConfirmButton && name) {
       const dirPath = joinPaths(
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
         selectedDirectoryPath !== undefined
           ? selectedDirectoryPath
           : currentDirectoryPath,
