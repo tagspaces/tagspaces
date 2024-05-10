@@ -49,7 +49,6 @@ import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { overflow } from 'html2canvas/dist/types/css/property-descriptors/overflow';
 
 interface Props {
   classes: any;
