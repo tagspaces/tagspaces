@@ -375,6 +375,7 @@ function EntryContainer() {
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
           fileChanged.current = true;
+          openedEntry.editMode = true;
           // to render DOT before file name (only first time)
           forceUpdate();
         }
