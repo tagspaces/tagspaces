@@ -433,7 +433,7 @@ export function cleanMetaData(
   if (metaData.customOrder) {
     cleanedMeta.customOrder = metaData.customOrder;
   }
-  if (metaData.autoSave) {
+  if (metaData.autoSave !== undefined) {
     cleanedMeta.autoSave = metaData.autoSave;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings

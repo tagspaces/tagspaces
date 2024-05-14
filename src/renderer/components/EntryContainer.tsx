@@ -86,7 +86,7 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
-  const { findLocation } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath, currentLocationPath } =
     useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
@@ -241,7 +241,7 @@ function EntryContainer() {
   }, [openedEntry, fileChanged.current]);
 
   // editor is not loaded in this time - change theme after loadDefaultTextContent
-  /*useEffect(() => {
+  useEffect(() => {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -250,9 +250,9 @@ function EntryContainer() {
       fileViewer.current.contentWindow.setTheme
     ) {
       // @ts-ignore call setContent from iframe
-      fileViewer.current.contentWindow.setTheme(settings.currentTheme);
+      fileViewer.current.contentWindow.setTheme(theme.palette.mode);
     }
-  }, [settings.currentTheme]);*/
+  }, [theme.palette.mode]); //settings.currentTheme
 
   /*  useEffect(() => {
     // if (openedEntrys.length > 0) {
@@ -311,7 +311,6 @@ function EntryContainer() {
         }
         textFilePath = openedEntry.path;
 
-        // TODO setTheme in milkdown v6 editor only
         if (
           fileViewer &&
           fileViewer.current &&
@@ -608,6 +607,7 @@ function EntryContainer() {
     openedEntry &&
     extractFileExtension(openedEntry.path, cLocation?.getDirSeparator());
   const isEditable =
+    !readOnlyMode &&
     openedEntry &&
     openedEntry.isFile &&
     AppConfig.editableFiles.includes(fileExtension);
