@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
-import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
+import CloseIcon from '@mui/icons-material/HighlightOffOutlined';
+import PrevDocumentIcon from '@mui/icons-material/ExpandCircleDownOutlined';
+import NextDocumentIcon from '@mui/icons-material/ExpandCircleDownOutlined';
 import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
@@ -47,7 +47,7 @@ function EntryContainerNav(props: Props) {
               }}
               // size="large"
             >
-              <PrevDocumentIcon />
+              <PrevDocumentIcon style={{ transform: 'rotate(180deg)' }} />
             </IconButton>
           </Tooltip>
           <Tooltip
