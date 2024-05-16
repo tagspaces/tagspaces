@@ -115,7 +115,7 @@ function EditDescription() {
               readOnly={!isEditMode}
               lightMode={false}
               excludePlugins={
-                !isEditMode ? ['menu', 'upload', 'slash'] : ['slash']
+                !isEditMode ? ['menu', 'upload', 'slash'] : ['slash', 'block']
               }
               currentFolder={currentDirectoryPath}
             />
