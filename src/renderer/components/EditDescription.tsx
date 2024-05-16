@@ -123,7 +123,7 @@ function EditDescription() {
         )}
       </div>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-        <Typography
+        {/* <Typography
           variant="caption"
           style={{
             color: theme.palette.text.primary,
@@ -133,7 +133,7 @@ function EditDescription() {
           <b className={classes.mdHelpers}>**bold**</b>{' '}
           <span className={classes.mdHelpers}>* list item</span>{' '}
           <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography>
+        </Typography> */}
       </span>
     </EditDescriptionRoot>
   );

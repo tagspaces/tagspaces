@@ -7,21 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
-const PREFIX = 'EditDescriptionButtons';
-
-const classes = {
-  button: `${PREFIX}-button`,
-};
-
-const Root = styled('span')(({ theme }) => ({
-  float: 'right',
-  [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '4px 10px 4px 10px',
-    margin: '0',
-  },
-}));
-
 export interface DescriptionChangedRef {
   setDescriptionChanged: (changed: boolean) => void;
 }
@@ -73,15 +58,15 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
   // };
 
   return (
-    <Root>
+    <span style={{ float: 'left' }}>
       {isEditMode && (
         <Button
-          className={classes.button}
           onClick={() => {
             setEditMode(false);
           }}
         >
-          {t(isDescriptionChanged ? 'core:cancel' : 'core:close')}
+          {t('core:cancel')}
+          {/* {t(isDescriptionChanged ? 'core:cancel' : 'core:close')} */}
         </Button>
       )}
       {/* {!editMode && (
@@ -93,7 +78,6 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
         <Button
           data-tid="editDescriptionTID"
           color="primary"
-          className={classes.button}
           disabled={!Pro}
           onClick={() => {
             if (isEditMode) {
@@ -102,7 +86,7 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
             setEditMode(!isEditMode);
           }}
         >
-          {isEditMode ? t('core:confirmSaveButton') : t('core:edit')}
+          {isEditMode ? t('core:confirmSaveButton') : t('core:editDescription')}
         </Button>
       </ProTooltip>
       <ConfirmDialog
@@ -123,7 +107,7 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
         confirmDialogTID="confirmSaveDescCloseDialog"
         confirmDialogContentTID="confirmDescDialogContent"
       />
-    </Root>
+    </span>
   );
 };
 
