@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -112,6 +112,12 @@ function GridPagination(props: Props) {
     : 10;
 
   const containerEl = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
+  }, [currentDirectoryPath, containerEl.current]);
 
   const handleChange = (event, value) => {
     setCurrentPage(value);
