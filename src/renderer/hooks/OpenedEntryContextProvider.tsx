@@ -435,7 +435,11 @@ export const OpenedEntryContextProvider = ({
         currentEntry.current.locationID,
       )
         .then((fsEntry: TS.FileSystemEntry) =>
-          openFsEntry({ ...currentEntry.current, ...fsEntry }, undefined),
+          openFsEntry({
+            ...currentEntry.current,
+            ...fsEntry,
+            isNewFile: false,
+          }),
         )
         .catch((error) => {
           console.log(
