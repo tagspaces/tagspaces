@@ -332,12 +332,16 @@ function MainPage(props: Props) {
     setEntryInFullWidth,
   } = useOpenedEntryContext();
 
-  const { loadParentDirectoryContent, enterSearchMode, exitSearchMode } =
-    useDirectoryContentContext();
+  const {
+    loadParentDirectoryContent,
+    enterSearchMode,
+    exitSearchMode,
+    openCurrentDirectory,
+  } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const width =
     window.innerWidth ||
@@ -442,7 +446,10 @@ function MainPage(props: Props) {
       setDrawerOpened(true);
     },
     openSearch: () => enterSearchMode(),
-    closeSearch: () => exitSearchMode(),
+    closeSearch: () => {
+      exitSearchMode();
+      openCurrentDirectory();
+    },
     showHelp: () => {
       props.openHelpFeedbackPanel();
       setDrawerOpened(true);

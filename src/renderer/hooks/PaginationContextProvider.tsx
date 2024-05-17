@@ -42,7 +42,7 @@ export const PaginationContextProvider = ({
   children,
 }: PaginationContextProviderProps) => {
   const initPage = 1;
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { currentDirectoryPath, isSearchMode } = useDirectoryContentContext();
   const { settings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
@@ -59,7 +59,7 @@ export const PaginationContextProvider = ({
         console.debug('meta loaded')
       );
     }*/
-  }, [currentDirectoryPath]); //, isMetaFolderExist]);
+  }, [currentDirectoryPath, isSearchMode]); //, isMetaFolderExist]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     return getPageFiles(page, sortedDirContent);

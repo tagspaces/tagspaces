@@ -35,7 +35,6 @@ import {
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
-import useFirstRender from '-/utils/useFirstRender';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
 import { Autocomplete, Box, TextField } from '@mui/material';
