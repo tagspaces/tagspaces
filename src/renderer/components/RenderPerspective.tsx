@@ -37,17 +37,17 @@ const GridPerspective = React.lazy(
 function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <RendererListenerContextProvider>
-          <PaginationContextProvider>
-            <ThumbGenerationContextProvider>
-              <PerspectiveSettingsContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <SortedDirContextProvider>
+          <RendererListenerContextProvider>
+            <PaginationContextProvider>
+              <ThumbGenerationContextProvider>
                 <GridPerspective {...props} />
-              </PerspectiveSettingsContextProvider>
-            </ThumbGenerationContextProvider>
-          </PaginationContextProvider>
-        </RendererListenerContextProvider>
-      </SortedDirContextProvider>
+              </ThumbGenerationContextProvider>
+            </PaginationContextProvider>
+          </RendererListenerContextProvider>
+        </SortedDirContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
@@ -59,17 +59,17 @@ const ListPerspective = React.lazy(
 function ListPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <RendererListenerContextProvider>
-          <PaginationContextProvider>
-            <ThumbGenerationContextProvider>
-              <PerspectiveSettingsContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <SortedDirContextProvider>
+          <RendererListenerContextProvider>
+            <PaginationContextProvider>
+              <ThumbGenerationContextProvider>
                 <ListPerspective {...props} />
-              </PerspectiveSettingsContextProvider>
-            </ThumbGenerationContextProvider>
-          </PaginationContextProvider>
-        </RendererListenerContextProvider>
-      </SortedDirContextProvider>
+              </ThumbGenerationContextProvider>
+            </PaginationContextProvider>
+          </RendererListenerContextProvider>
+        </SortedDirContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }

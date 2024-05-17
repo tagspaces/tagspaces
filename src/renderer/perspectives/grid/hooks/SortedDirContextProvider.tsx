@@ -21,14 +21,12 @@ import { useSelector } from 'react-redux';
 import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
-import { Pro } from '-/pro';
-import { PerspectiveIDs } from '-/perspectives';
 import { defaultSettings } from '-/perspectives/grid';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 type SortedDirContextData = {
   sortedDirContent: TS.FileSystemEntry[];
-  settings: TS.FolderSettings;
   sortBy: string;
   orderBy: null | boolean;
   setSortBy: (sort: string) => void;
@@ -37,7 +35,6 @@ type SortedDirContextData = {
 
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
-  settings: undefined,
   sortBy: undefined,
   orderBy: undefined,
   setSortBy: () => {},
@@ -51,13 +48,12 @@ export type SortedDirContextProviderProps = {
 export const SortedDirContextProvider = ({
   children,
 }: SortedDirContextProviderProps) => {
-  const { currentDirectoryEntries, directoryMeta, perspective } =
-    useDirectoryContentContext();
+  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { settings } = usePerspectiveSettingsContext();
   const searchFilter: string = useSelector(getSearchFilter);
-
-  const settings: TS.FolderSettings = useMemo(() => {
+  /*const settings: TS.FolderSettings = useMemo(() => {
     return getSettings(directoryMeta, perspective);
-  }, [directoryMeta, perspective]);
+  }, [directoryMeta, perspective]);*/
 
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy,
@@ -68,7 +64,7 @@ export const SortedDirContextProvider = ({
       : defaultSettings.orderBy,
   );
 
-  function getSettings(meta, persp = PerspectiveIDs.GRID): TS.FolderSettings {
+  /*function getSettings(meta, persp = PerspectiveIDs.GRID): TS.FolderSettings {
     if (persp === PerspectiveIDs.UNSPECIFIED) {
       persp = PerspectiveIDs.GRID;
     }
@@ -83,17 +79,10 @@ export const SortedDirContextProvider = ({
       // loading settings for not Pro
       return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
     }
-  }
+  }*/
 
   const sortedDirContent = useMemo(() => {
     if (searchFilter) {
-      /*if (lastSearchTimestamp) {
-        return GlobalSearch.getInstance()
-          .getResults()
-          .filter(entry =>
-            entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-          );
-      } else {*/
       return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).filter(
         (entry) =>
           entry.name.toLowerCase().includes(searchFilter.toLowerCase()),
@@ -116,13 +105,12 @@ export const SortedDirContextProvider = ({
   const context = useMemo(() => {
     return {
       sortedDirContent,
-      settings,
       sortBy,
       orderBy,
       setSortBy,
       setOrderBy,
     };
-  }, [sortedDirContent, settings, sortBy, orderBy]);
+  }, [sortedDirContent, sortBy, orderBy]);
 
   return (
     <SortedDirContext.Provider value={context}>

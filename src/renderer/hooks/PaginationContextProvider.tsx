@@ -21,6 +21,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { defaultSettings } from '-/perspectives/grid';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 
 type PaginationContextData = {
   page: number;
@@ -43,7 +44,8 @@ export const PaginationContextProvider = ({
 }: PaginationContextProviderProps) => {
   const initPage = 1;
   const { currentDirectoryPath, isSearchMode } = useDirectoryContentContext();
-  const { settings, sortedDirContent } = useSortedDirContext();
+  const { settings } = usePerspectiveSettingsContext();
+  const { sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
   // const firstRender = useFirstRender();
@@ -100,7 +102,7 @@ export const PaginationContextProvider = ({
       pageFiles,
       setCurrentPage,
     };
-  }, [page, pageFiles, currentDirectoryPath]);
+  }, [page, pageFiles, currentDirectoryPath, settings]);
 
   return (
     <PaginationContext.Provider value={context}>
