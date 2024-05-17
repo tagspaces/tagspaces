@@ -725,12 +725,20 @@ export const OpenedEntryContextProvider = ({
                   showNotification(t('core:invalidLink'), 'warning', true);
                   return true;
                 }
+
                 const dirFullPath = joinPaths(
                   targetLocation.getDirSeparator(),
                   locationPath,
                   directoryPath,
                 );
-                openDirectory(dirFullPath, undefined, targetLocation);
+
+                targetLocation.checkDirExist(dirFullPath).then((exist) => {
+                  if (exist) {
+                    openDirectory(dirFullPath, undefined, targetLocation);
+                  } else {
+                    showNotification(t('core:invalidLink'), 'warning', true);
+                  }
+                });
               } else {
                 openDirectory(locationPath, undefined, targetLocation);
               }
