@@ -232,7 +232,6 @@ function OnboardingDialog(props: Props) {
                     </Typography>
                   }
                 />
-
                 <FormControlLabel
                   style={{ marginTop: 20 }}
                   value="true"
@@ -252,13 +251,13 @@ function OnboardingDialog(props: Props) {
                     </Typography>
                   }
                 />
-                <img
-                  style={{ maxHeight: 200, marginTop: 15 }}
-                  src={ChooseTagging}
-                  alt=""
-                />
               </RadioGroup>
             </FormControl>
+            <img
+              style={{ maxHeight: 200, margin: 'auto' }}
+              src={ChooseTagging}
+              alt=""
+            />
             <Typography variant="body1">
               You can always revise you decision and change the tagging method.
               But files already tagged with the renaming method will stay
