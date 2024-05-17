@@ -1055,3 +1055,10 @@ export function selectDirectoryDialog(): Promise<any> {
   }
   return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
 }
+
+export function removePrefix(str, prefix) {
+  if (str.startsWith(prefix)) {
+    return str.slice(prefix.length);
+  }
+  return str.trim();
+}

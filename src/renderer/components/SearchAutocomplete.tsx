@@ -63,7 +63,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { CommonLocation } from '-/utils/CommonLocation';
+import { removePrefix } from '-/services/utils-io';
 
 interface Props {
   style?: any;
@@ -95,16 +95,11 @@ function SearchAutocomplete(props: Props) {
     searchQuery,
     setSearchQuery,
   } = useDirectoryContentContext();
-  const {
-    // watchForChanges,
-    isIndexing,
-    searchAllLocations,
-    searchLocationIndex,
-  } = useLocationIndexContext();
+  const { isIndexing, searchAllLocations, searchLocationIndex } =
+    useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  //const locations: CommonLocation[] = useSelector(getLocations);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);
@@ -1322,27 +1317,29 @@ function SearchAutocomplete(props: Props) {
                       {option}
                     </Box>
                   ) : (
-                    <Button
-                      onClick={() => {
-                        changeOptions(action.action, false);
-                      }}
-                      data-tid={dataTidFormat('menu' + option)}
-                      size="small"
-                      style={{
-                        backgroundColor: 'transparent',
-                        textTransform: 'lowercase',
-                        padding: 0,
-                        margin: 0,
-                      }}
-                      endIcon={
-                        <ArrowDropDownIcon
-                          style={{ marginLeft: -10 }}
-                          fontSize="small"
-                        />
-                      }
-                    >
-                      {option}
-                    </Button>
+                    <Tooltip title={option}>
+                      <Button
+                        onClick={() => {
+                          changeOptions(action.action, false);
+                        }}
+                        data-tid={dataTidFormat('menu' + option)}
+                        size="small"
+                        style={{
+                          backgroundColor: 'transparent',
+                          textTransform: 'lowercase',
+                          padding: 0,
+                          margin: 0,
+                        }}
+                        endIcon={
+                          <ArrowDropDownIcon
+                            style={{ marginLeft: -10 }}
+                            fontSize="small"
+                          />
+                        }
+                      >
+                        {removePrefix(option, action.action)}
+                      </Button>
+                    </Tooltip>
                   )}
 
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
