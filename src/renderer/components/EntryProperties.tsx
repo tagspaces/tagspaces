@@ -505,6 +505,10 @@ function EntryProperties(props: Props) {
     openedEntry.meta?.thumbPath,
     openedEntry.meta?.lastUpdated,
   );
+  const backgroundUrl = location.getFolderBgndPath(
+    openedEntry.path,
+    openedEntry.meta?.lastUpdated,
+  );
 
   return (
     <Root>
@@ -1102,13 +1106,7 @@ function EntryProperties(props: Props) {
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage:
-                              'url("' +
-                              location.getFolderBgndPath(
-                                openedEntry.path,
-                                openedEntry.meta?.lastUpdated,
-                              ) +
-                              '")',
+                            backgroundImage: 'url("' + backgroundUrl + '")',
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,

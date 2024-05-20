@@ -22,7 +22,7 @@ import Menu from '@mui/material/Menu';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
-  extractContainingDirectoryPath,
+  extractParentDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
@@ -52,6 +52,8 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { TS } from '-/tagspaces.namespace';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   open: boolean;
@@ -75,6 +77,7 @@ function DirectoryMenu(props: Props) {
   const { addTags } = useTaggingActionsContext();
   const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
+  const { setThumbnailImageChange } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const {
     openDirectory,
@@ -355,11 +358,15 @@ Do you want to continue?`)
   }
 
   function setFolderThumbnail() {
-    const parentDirectoryPath = extractContainingDirectoryPath(
+    const parentDirectoryPath = extractParentDirectoryPath(
       directoryPath,
       currentLocation?.getDirSeparator(),
     );
     const parentDirectoryName = extractDirectoryName(
+      parentDirectoryPath,
+      currentLocation?.getDirSeparator(),
+    );
+    const targetThumbPath = getThumbFileLocationForDirectory(
       parentDirectoryPath,
       currentLocation?.getDirSeparator(),
     );
@@ -369,13 +376,18 @@ Do you want to continue?`)
         directoryPath,
         currentLocation?.getDirSeparator(),
       ),
-      getThumbFileLocationForDirectory(
-        parentDirectoryPath,
-        currentLocation?.getDirSeparator(),
-      ),
+      targetThumbPath,
       t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )
       .then(() => {
+        const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
+          parentDirectoryPath,
+          false,
+        );
+        setThumbnailImageChange({
+          ...entry,
+          meta: { id: entry.uuid, thumbPath: targetThumbPath },
+        });
         showNotification(
           'Thumbnail created for: ' + parentDirectoryPath,
           'default',
