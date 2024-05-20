@@ -16,9 +16,10 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
+import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -40,6 +41,8 @@ import {
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -119,12 +122,32 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   } = props;
 
   const { t } = useTranslation();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const desktopMode = useSelector(isDesktopMode);
+  const haveRevisions = useRef<boolean>(isEditable);
   const dispatch: AppDispatch = useDispatch();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (!isEditable) {
+      const location: CommonLocation = findLocation(openedEntry.locationID);
+      const backupFilePath = getBackupFileDir(
+        openedEntry.path,
+        openedEntry.uuid,
+        location.getDirSeparator(),
+      );
+      location.checkDirExist(backupFilePath).then((exist) => {
+        if (exist) {
+          haveRevisions.current = exist;
+          forceUpdate();
+        }
+      });
+    }
+  }, [isEditable]);
 
   function TsTabPanel(tprops: TabPanelProps) {
     const { children, value, index, ...other } = tprops;
@@ -208,7 +231,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
-          {isEditable && (
+          {haveRevisions.current && (
             <StyledTab
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
@@ -225,7 +248,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       <TsTabPanel value={selectedTabIndex} index={1}>
         <EditDescription />
       </TsTabPanel>
-      {isEditable && (
+      {haveRevisions.current && (
         <TsTabPanel value={selectedTabIndex} index={2}>
           <Revisions />
         </TsTabPanel>

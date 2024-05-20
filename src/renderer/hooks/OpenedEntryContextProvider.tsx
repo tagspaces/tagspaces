@@ -211,7 +211,7 @@ export const OpenedEntryContextProvider = ({
             action.oldEntryPath &&
             currentEntry.current.path === action.oldEntryPath
           ) {
-            openFsEntry(action.entry);
+            openFsEntry({ ...action.entry, uuid: currentEntry.current.uuid });
           }
         }
       }
