@@ -292,6 +292,7 @@ export default function loadMainEvents() {
         ret = await shell.trashItem(path);
       } catch (err) {
         console.error('moveToTrash ' + path + 'error:', err);
+        return false;
       }
       return ret;
     } else {
