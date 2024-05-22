@@ -8,6 +8,8 @@ import NextDocumentIcon from '@mui/icons-material/ExpandCircleDownOutlined';
 import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 interface Props {
   isFile: boolean;
@@ -16,6 +18,7 @@ interface Props {
 
 function EntryContainerNav(props: Props) {
   const { isFile, startClosingEntry } = props;
+  const { setActions } = usePerspectiveActionsContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -42,8 +45,11 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
               onClick={() => {
-                window.dispatchEvent(new Event('previous-file'));
-                //openPrevFile()
+                const action: TS.PerspectiveActions = {
+                  action: 'openPrevious',
+                };
+                setActions(action);
+                //window.dispatchEvent(new Event('previous-file'));
               }}
               // size="large"
             >
@@ -58,8 +64,9 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
               onClick={() => {
-                window.dispatchEvent(new Event('next-file'));
-                // openNextFile()
+                const action: TS.PerspectiveActions = { action: 'openNext' };
+                setActions(action);
+                //window.dispatchEvent(new Event('next-file'));
               }}
               // size="large"
             >

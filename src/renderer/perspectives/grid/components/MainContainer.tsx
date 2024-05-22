@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
@@ -49,6 +49,7 @@ import { GridCellsStyleContextProvider } from '-/perspectives/grid/hooks/GridCel
 import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -58,6 +59,7 @@ function GridPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry } = useOpenedEntryContext();
+  const { actions } = usePerspectiveActionsContext();
   const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { showDirectories } = usePerspectiveSettingsContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -108,6 +110,18 @@ function GridPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    if (actions && actions.length > 0) {
+      for (const action of actions) {
+        if (action.action === 'openNext') {
+          openNextFile();
+        } else if (action.action === 'openPrevious') {
+          openPrevFile();
+        }
+      }
+    }
+  }, [actions]);
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
