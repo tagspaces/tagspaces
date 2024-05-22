@@ -899,6 +899,8 @@ export const IOActionsContextProvider = ({
                       { path: thumbPath },
                       fileContent,
                       true,
+                      undefined,
+                      'upload',
                     ).then(() => thumbPath);
                   }
                   return undefined;
@@ -1180,6 +1182,7 @@ export const IOActionsContextProvider = ({
                 action: 'add',
                 entry: entry,
                 open: open,
+                source: 'upload',
               }),
             );
             setReflectActions(...reflectActions);

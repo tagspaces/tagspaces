@@ -112,12 +112,14 @@ export namespace TS {
   }
 
   type Uuid = string;
+  export type ActionSource = 'local' | 'upload' | 'thumbgen' | 'fsWatcher';
 
   interface EditAction {
     action: 'add' | 'delete' | 'update' | 'move';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
     open?: boolean;
+    source?: ActionSource;
   }
 
   interface EditMetaAction {

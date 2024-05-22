@@ -338,12 +338,14 @@ export const DirectoryContentContextProvider = ({
     }
   };
 
-  function reflectSelection(actions) {
+  function reflectSelection(actions: TS.EditAction[]) {
     let updated = false;
     if (actions && actions.length > 0) {
       let selected = [];
       for (const action of actions) {
         if (
+          action.source !== 'upload' &&
+          action.source !== 'thumbgen' &&
           action.entry.path.indexOf(
             currentLocation?.getDirSeparator() + AppConfig.metaFolder,
           ) === -1

@@ -20,7 +20,6 @@ import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { extractTagsAsObjects } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type EditedEntryContextData = {
   actions: TS.EditAction[];
@@ -30,7 +29,11 @@ type EditedEntryContextData = {
   reflectAddEntryPath: (
     ...entriesPromises: Promise<TS.FileSystemEntry>[]
   ) => Promise<boolean>;
-  reflectAddEntry: (entry: TS.FileSystemEntry, open?: boolean) => void;
+  reflectAddEntry: (
+    entry: TS.FileSystemEntry,
+    open?: boolean,
+    source?: TS.ActionSource,
+  ) => void;
 };
 
 export const EditedEntryContext = createContext<EditedEntryContextData>({
@@ -103,8 +106,13 @@ export const EditedEntryContextProvider = ({
    * warning: no entry.meta will be added in reflectAddEntry. To add meta use reflectAddEntryPath
    * @param entry
    * @param open
+   * @param actionSource
    */
-  function reflectAddEntry(entry: TS.FileSystemEntry, open = true) {
+  function reflectAddEntry(
+    entry: TS.FileSystemEntry,
+    open = true,
+    actionSource: TS.ActionSource = 'local',
+  ) {
     if (!entry.tags || entry.tags.length === 0) {
       entry.tags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
     }
@@ -112,6 +120,7 @@ export const EditedEntryContextProvider = ({
       action: 'add',
       entry: entry,
       open: open,
+      ...(typeof actionSource !== 'boolean' && { source: actionSource }),
     };
     actions.current = [currentAction];
     forceUpdate();

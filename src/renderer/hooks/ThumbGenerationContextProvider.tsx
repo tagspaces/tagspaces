@@ -459,6 +459,8 @@ export const ThumbGenerationContextProvider = ({
       { path: filePath, locationID },
       content, //PlatformIO.isMinio() ? content : content.buffer,
       true,
+      undefined,
+      'thumbgen',
     )
       .then(() => filePath)
       .catch((error) => {

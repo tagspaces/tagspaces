@@ -129,7 +129,7 @@ type PlatformFacadeContextData = {
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
-    reflect?,
+    reflect?: boolean | TS.ActionSource,
   ) => Promise<TS.FileSystemEntry>;
   deleteEntriesPromise: (...paths: TS.FileSystemEntry[]) => Promise<boolean>;
   setFolderThumbnailPromise: (filePath: string) => Promise<string>;
@@ -649,14 +649,18 @@ export const PlatformFacadeContextProvider = ({
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
-    reflect: boolean = true,
+    reflect: boolean | TS.ActionSource = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return getLocation(param)
       .saveBinaryFilePromise(param, content, overwrite, onUploadProgress)
       .then((fsEntry) => {
         if (reflect) {
-          reflectAddEntry(fsEntry, false);
+          reflectAddEntry(
+            fsEntry,
+            false,
+            typeof reflect === 'boolean' ? 'local' : reflect,
+          );
         }
         deignoreByWatcher(param.path);
         return fsEntry;
