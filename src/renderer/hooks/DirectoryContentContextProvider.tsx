@@ -308,7 +308,8 @@ export const DirectoryContentContextProvider = ({
           /// RENAME
         } else if (action.action === 'update') {
           let index = currentDirectoryEntries.current.findIndex(
-            (e) => e.path === action.oldEntryPath,
+            (e) =>
+              e.path === action.oldEntryPath || e.path === action.entry.path,
           );
           if (index !== -1) {
             currentDirectoryEntries.current[index] = {
@@ -372,7 +373,8 @@ export const DirectoryContentContextProvider = ({
             }
           } else if (action.action === 'update') {
             let index = selectedEntries.findIndex(
-              (e) => e.path === action.oldEntryPath,
+              (e) =>
+                e.path === action.oldEntryPath || e.path === action.entry.path,
             );
             if (index !== -1) {
               selectedEntries[index] = action.entry;

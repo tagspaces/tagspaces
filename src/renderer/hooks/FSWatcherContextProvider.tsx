@@ -160,21 +160,25 @@ export const FSWatcherContextProvider = ({
           break;
         case 'add':
           if (!path.includes(AppConfig.metaFolder)) {
-            actionsQueue.push({
-              action: 'add',
-              entry: currentLocation.toFsEntry(path, true),
-              open: false,
-            });
+            getAllPropertiesPromise(path).then((entry) =>
+              actionsQueue.push({
+                action: 'add',
+                entry: entry, //currentLocation.toFsEntry(path, true),
+                open: false,
+              }),
+            );
             // reflectAddEntry(toFsEntry(path, true, currentLocation.uuid));
           }
           break;
         case 'addDir':
           if (!path.includes(AppConfig.metaFolder)) {
-            actionsQueue.push({
-              action: 'add',
-              entry: currentLocation.toFsEntry(path, false),
-              open: false,
-            });
+            getAllPropertiesPromise(path).then((entry) =>
+              actionsQueue.push({
+                action: 'add',
+                entry: entry, //currentLocation.toFsEntry(path, false),
+                open: false,
+              }),
+            );
             //reflectAddEntry(toFsEntry(path, false, currentLocation.uuid));
           }
           break;
@@ -183,31 +187,34 @@ export const FSWatcherContextProvider = ({
 
           // watching for changed sidecar files .ts/file.jpg.json
           if (path.includes(AppConfig.metaFolder)) {
-            // todo reload meta for changed file only
-            if (path.endsWith(AppConfig.metaFileExt)) {
+            if (path.endsWith(AppConfig.metaFolderFile)) {
+              // endsWith tsm.json
+              // todo reload meta for changed file only
+              /*const directoryPath = getFileLocationFromMetaFile(
+                path,
+                currentLocation?.getDirSeparator(),
+              );
+              if(directoryPath) {
+                loadDirectoryContent(
+                  extractContainingDirectoryPath(
+                    directoryPath,
+                    currentLocation?.getDirSeparator(),
+                  ),
+                  false,
+                  true,
+                );
+              }*/
+            } else if (path.endsWith(AppConfig.metaFileExt)) {
               // endsWith json
               const filePath = getFileLocationFromMetaFile(
                 path,
                 currentLocation?.getDirSeparator(),
               );
-              getAllPropertiesPromise(filePath).then((entry) =>
-                reflectUpdateMeta(entry),
-              );
-            }
-            if (path.endsWith(AppConfig.metaFolderFile)) {
-              // endsWith tsm.json
-              const directoryPath = getFileLocationFromMetaFile(
-                path,
-                currentLocation?.getDirSeparator(),
-              );
-              loadDirectoryContent(
-                extractContainingDirectoryPath(
-                  directoryPath,
-                  currentLocation?.getDirSeparator(),
-                ),
-                false,
-                true,
-              );
+              if (filePath) {
+                getAllPropertiesPromise(filePath).then((entry) =>
+                  reflectUpdateMeta(entry),
+                );
+              }
             }
           }
           // } else { // TODO a separate watcher for the currently opened file should be created
