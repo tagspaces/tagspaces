@@ -192,8 +192,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   };
 
   // directories must be always opened
-  const selectedTabIndex =
+  let selectedTabIndex =
     !openedEntry.isFile && tabIndex === undefined ? 0 : tabIndex;
+  if (!haveRevisions.current && selectedTabIndex === 2) {
+    selectedTabIndex = 0;
+  }
 
   return (
     <div
