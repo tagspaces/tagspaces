@@ -30,6 +30,8 @@ import { TS } from '-/tagspaces.namespace';
 import {
   findExtensionPathForId,
   getDirProperties,
+  getNextFile,
+  getPrevFile,
   getRelativeEntryPath,
   openURLExternally,
 } from '-/services/utils-io';
@@ -85,6 +87,8 @@ type OpenedEntryContextData = {
     fsEntry: TS.FileSystemEntry,
     showDetails?,
   ) => Promise<boolean>;
+  openNextFile: (entries: TS.FileSystemEntry[]) => TS.FileSystemEntry;
+  openPrevFile: (entries: TS.FileSystemEntry[]) => TS.FileSystemEntry;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
   goForward: () => void;
@@ -113,6 +117,8 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openEntry: undefined,
   openFsEntry: undefined,
   openEntryInternal: undefined,
+  openNextFile: undefined,
+  openPrevFile: undefined,
   toggleEntryFullWidth: () => {},
   openLink: () => {},
   goForward: () => {},
@@ -141,7 +147,7 @@ export const OpenedEntryContextProvider = ({
     getAllPropertiesPromise,
   } = useDirectoryContentContext();
 
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
@@ -259,6 +265,40 @@ export const OpenedEntryContextProvider = ({
       forceUpdate();
     }
   }, [currentDirectoryPerspective]);*/
+
+  function openNextFile(entries: TS.FileSystemEntry[]): TS.FileSystemEntry {
+    const nextFile = getNextFile(
+      currentEntry.current?.path,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
+      entries,
+    );
+    if (nextFile !== undefined) {
+      openFsEntry(nextFile);
+      // dispatch(actions.setLastSelectedEntry(nextFile.path));
+      setSelectedEntries([nextFile]);
+      return nextFile;
+    }
+    return undefined;
+  }
+
+  function openPrevFile(entries: TS.FileSystemEntry[]): TS.FileSystemEntry {
+    const prevFile = getPrevFile(
+      currentEntry.current?.path,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
+      entries,
+    );
+    if (prevFile !== undefined) {
+      openFsEntry(prevFile);
+      // dispatch(actions.setLastSelectedEntry(prevFile.path));
+      setSelectedEntries([prevFile]);
+      return prevFile;
+    }
+    return undefined;
+  }
 
   function getOpenedDirProps(): Promise<TS.DirProp> {
     if (
@@ -949,6 +989,8 @@ export const OpenedEntryContextProvider = ({
       openEntry,
       openFsEntry,
       openEntryInternal,
+      openNextFile,
+      openPrevFile,
       toggleEntryFullWidth,
       goForward,
       goBack,
