@@ -675,10 +675,10 @@ export const PlatformFacadeContextProvider = ({
         }
         return getLocation(e).deleteDirectoryPromise(e.path, useTrashCan);
       });
-      return executePromisesInBatches(promises).then(() => {
+      return executePromisesInBatches(promises).then((success) => {
         reflectDeleteEntries(...entries);
         deignoreByWatcher(...entriesPaths);
-        return true;
+        return !success.some((element) => !element);
       });
     }
     return Promise.resolve(false);

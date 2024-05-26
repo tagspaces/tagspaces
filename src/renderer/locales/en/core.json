@@ -41,6 +41,7 @@
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Folder probably not empty.",
   "deletingDirectorySuccessfull": "Folder '{{dirPath}}' successfully deleted.",
   "deletingEntriesSuccessful": "Entries '{{dirPath}}' successfully deleted.",
+  "deletingEntriesFailed": "Deleting Entries '{{dirPath}}' failed.",
   "filePropertiesDescription": "Description",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",

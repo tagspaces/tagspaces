@@ -47,6 +47,9 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { executePromisesInBatches } from '-/services/utils-io';
+import { useSelector } from 'react-redux';
+import { getUseTrashCan } from '-/reducers/settings';
 
 const initialRowsPerPage = 10;
 
@@ -58,6 +61,7 @@ function Revisions() {
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
+  const useTrashCan = useSelector(getUseTrashCan);
   const [rowsPerPage, setRowsPerPage] =
     React.useState<number>(initialRowsPerPage);
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
@@ -115,7 +119,7 @@ function Revisions() {
   function deleteRevision(path) {
     const location = findLocation(openedEntry.locationID);
     location
-      .deleteFilePromise(path, true)
+      .deleteFilePromise(path, useTrashCan)
       .then(() => loadHistoryItems(openedEntry));
   }
 
@@ -123,9 +127,11 @@ function Revisions() {
     if (rows.length > 0) {
       const location = findLocation(openedEntry.locationID);
       const promises = rows.map((row) =>
-        location.deleteFilePromise(row.path, true),
+        location.deleteFilePromise(row.path, useTrashCan),
       );
-      Promise.all(promises).then(() => loadHistoryItems(openedEntry));
+      executePromisesInBatches(promises).then(() =>
+        loadHistoryItems(openedEntry),
+      );
     }
   }
 

@@ -348,15 +348,23 @@ export const IOActionsContextProvider = ({
     if (entries && entries.length > 0) {
       return deleteEntriesPromise(...entries)
         .then((success) => {
+          const fileNames = entries
+            .map((e) => {
+              deleteMeta(e.path, e.uuid);
+              return e.name;
+            })
+            .join(' ');
           if (success) {
-            const fileNames = entries
-              .map((e) => {
-                deleteMeta(e.path, e.uuid);
-                return e.name;
-              })
-              .join(' ');
             showNotification(
               t('deletingEntriesSuccessful', {
+                dirPath: fileNames,
+              }),
+              'default',
+              true,
+            );
+          } else {
+            showNotification(
+              t('deletingEntriesFailed', {
                 dirPath: fileNames,
               }),
               'default',
