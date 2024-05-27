@@ -69,6 +69,7 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
@@ -84,6 +85,7 @@ function EntryContainer() {
     reflectUpdateOpenedFileContent,
     addToEntryContainer,
   } = useOpenedEntryContext();
+  const { setActions } = usePerspectiveActionsContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
@@ -594,13 +596,15 @@ function EntryContainer() {
     setPanelOpened(!isPanelOpened);
   };
   const openNextFileAction = () => {
-    window.dispatchEvent(new Event('next-file'));
-    //openNextFile(openedEntry.path);
+    const action: TS.PerspectiveActions = { action: 'openNext' };
+    setActions(action);
+    // window.dispatchEvent(new Event('next-file'));
   };
 
   const openPrevFileAction = () => {
-    window.dispatchEvent(new Event('previous-file'));
-    //openPrevFile(openedEntry.path);
+    const action: TS.PerspectiveActions = { action: 'openPrevious' };
+    setActions(action);
+    //window.dispatchEvent(new Event('previous-file'));
   };
 
   const fileExtension =

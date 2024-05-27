@@ -134,6 +134,10 @@ export namespace TS {
     entry: TS.FileSystemEntry;
   }
 
+  interface PerspectiveActions {
+    action: 'openNext' | 'openPrevious';
+  }
+
   interface KanBanMetaActions {
     action: 'directoryVisibilityChange';
     meta: TS.FileSystemEntryMeta;
