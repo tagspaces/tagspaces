@@ -42,7 +42,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getAllTags } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
-import { BookmarksContext } from '../../../tagspacespro/modules/hooks/BookmarksContextProvider';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
