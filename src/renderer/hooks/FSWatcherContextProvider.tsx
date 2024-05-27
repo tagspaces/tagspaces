@@ -154,6 +154,7 @@ export const FSWatcherContextProvider = ({
             actionsQueue.push({
               action: 'delete',
               entry: currentLocation.toFsEntry(path, false),
+              source: 'fsWatcher',
             });
             //reflectDeleteEntries(toFsEntry(path, false, currentLocation.uuid));
           }
@@ -164,6 +165,7 @@ export const FSWatcherContextProvider = ({
               action: 'add',
               entry: currentLocation.toFsEntry(path, true),
               open: false,
+              source: 'fsWatcher',
             });
             // reflectAddEntry(toFsEntry(path, true, currentLocation.uuid));
           }
@@ -174,6 +176,7 @@ export const FSWatcherContextProvider = ({
               action: 'add',
               entry: currentLocation.toFsEntry(path, false),
               open: false,
+              source: 'fsWatcher',
             });
             //reflectAddEntry(toFsEntry(path, false, currentLocation.uuid));
           }
