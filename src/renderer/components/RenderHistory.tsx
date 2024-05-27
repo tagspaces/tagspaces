@@ -100,7 +100,7 @@ function RenderHistory(props: Props) {
                       </span>
                     }
                   >
-                    {historyKey === Pro.bookmarks.bookmarksKey ? (
+                    {historyKey === Pro.keys.bookmarksKey ? (
                       <BookmarkTwoToneIcon fontSize="small" />
                     ) : (
                       <HistoryIcon fontSize="small" />

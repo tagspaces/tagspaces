@@ -16,7 +16,13 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -97,6 +103,9 @@ function SearchAutocomplete(props: Props) {
   } = useDirectoryContentContext();
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
+    : undefined;
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
@@ -586,7 +595,7 @@ function SearchAutocomplete(props: Props) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
         const bookmarks: Array<TS.BookmarkItem> =
-          Pro && Pro.bookmarks && Pro.bookmarks.getBookmarks();
+          Pro && bookmarksContext && bookmarksContext.bookmarks; //getBookmarks();
 
         function getOptions(
           items: TS.BookmarkItem[],

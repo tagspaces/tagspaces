@@ -44,6 +44,7 @@ import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationConte
 import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
 import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
 import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
+import { Pro } from '-/pro';
 
 type RootType = {
   store: Store<{}>;
@@ -82,7 +83,13 @@ export default function Root({ store, persistor }: RootType) {
                                   <TagGroupsLocationContextProvider>
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
-                                        <MainPage />
+                                        {Pro ? (
+                                          <Pro.contextProviders.BookmarksContextProvider>
+                                            <MainPage />
+                                          </Pro.contextProviders.BookmarksContextProvider>
+                                        ) : (
+                                          <MainPage />
+                                        )}
                                       </DndProvider>
                                     </TaggingActionsContextProvider>
                                   </TagGroupsLocationContextProvider>

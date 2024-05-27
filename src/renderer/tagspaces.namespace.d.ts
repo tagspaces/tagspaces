@@ -239,6 +239,14 @@ export namespace TS {
 
   type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
+  type BookmarksContextData = {
+    bookmarks: TS.BookmarkItem[];
+    setBookmark: (filePath: string, url: string) => void;
+    haveBookmark: (filePath: string) => boolean;
+    delAllBookmarks: () => void;
+    delBookmark: (filePath: string) => void;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useContext, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -75,6 +75,11 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
   const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(
+        Pro?.contextProviders?.BookmarksContext,
+      )
+    : undefined;
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<TS.SearchQuery>(undefined);
   const [searchMenuAnchorEl, setSearchMenuAnchorEl] =
@@ -128,9 +133,10 @@ function StoredSearches(props: Props) {
 
   const { reduceHeightBy } = props;
 
-  const bookmarkItems: Array<TS.BookmarkItem> = Pro
-    ? Pro.bookmarks.getBookmarks()
-    : [];
+  const bookmarkItems: Array<TS.BookmarkItem> =
+    Pro && bookmarksContext
+      ? bookmarksContext.bookmarks //getBookmarks()
+      : [];
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
     ? Pro.history.getHistory(historyKeys.fileOpenKey)
     : [];
@@ -324,7 +330,7 @@ function StoredSearches(props: Props) {
         </Grid>
         {Pro && props.showBookmarks && (
           <RenderHistory
-            historyKey={Pro.bookmarks.bookmarksKey}
+            historyKey={Pro.keys.bookmarksKey}
             items={bookmarkItems}
             update={forceUpdate}
           />
@@ -479,8 +485,8 @@ function StoredSearches(props: Props) {
           onClose={() => setBookmarksMenuAnchorEl(null)}
           refresh={() => forceUpdate()}
           clearAll={() => {
-            if (Pro) {
-              Pro.bookmarks.delAllBookmarks();
+            if (Pro && bookmarksContext) {
+              bookmarksContext.delAllBookmarks();
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}

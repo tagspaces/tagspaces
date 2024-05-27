@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   extractTitle,
@@ -41,6 +41,8 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getAllTags } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { TS } from '-/tagspaces.namespace';
+import { BookmarksContext } from '../../../tagspacespro/modules/hooks/BookmarksContextProvider';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -79,15 +81,16 @@ function EntryContainerTitle(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const haveBookmark =
-    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedEntry.path);
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
+    : undefined;
 
   const bookmarkClick = () => {
-    if (Pro) {
-      if (haveBookmark) {
-        Pro.bookmarks.delBookmark(openedEntry.path);
+    if (Pro && bookmarksContext) {
+      if (bookmarksContext.haveBookmark(openedEntry.path)) {
+        bookmarksContext.delBookmark(openedEntry.path);
       } else {
-        Pro.bookmarks.setBookmark(openedEntry.path, sharingLink);
+        bookmarksContext.setBookmark(openedEntry.path, sharingLink);
       }
       forceUpdate();
     } else {
@@ -242,7 +245,8 @@ function EntryContainerTitle(props: Props) {
             WebkitAppRegion: 'no-drag',
           }}
         >
-          {haveBookmark ? (
+          {bookmarksContext &&
+          bookmarksContext.haveBookmark(openedEntry.path) ? (
             <BookmarkIcon
               style={{
                 color: theme.palette.primary.main,
