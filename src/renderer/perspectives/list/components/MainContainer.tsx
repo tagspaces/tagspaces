@@ -50,6 +50,7 @@ import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -110,9 +111,10 @@ function ListPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (actions && actions.length > 0) {
+    if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'openNext') {
           openNextFile();
