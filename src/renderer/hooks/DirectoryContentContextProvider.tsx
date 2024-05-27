@@ -344,6 +344,7 @@ export const DirectoryContentContextProvider = ({
       let selected = [];
       for (const action of actions) {
         if (
+          action.source !== 'fsWatcher' &&
           action.source !== 'upload' &&
           action.source !== 'thumbgen' &&
           action.entry.path.indexOf(
