@@ -23,9 +23,13 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
 import { FileTypeGroups } from '-/services/search';
-import pdfjsLib from 'pdfjs-dist/build/pdf.min.js';
+import * as pdfjsModule from 'pdfjs-dist/legacy/build/pdf.min.mjs';
 
-import('pdfjs-dist/build/pdf.worker.min.js');
+const pdfjs = (
+  'default' in pdfjsModule ? pdfjsModule['default'] : pdfjsModule
+) as typeof pdfjsModule;
+
+import('pdfjs-dist/build/pdf.worker.mjs');
 
 let maxSize = AppConfig.maxThumbSize;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
@@ -198,7 +202,7 @@ export function generatePDFThumbnail(
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       // ensurePDFJS().then(pdfjsLib => {
-      const loadingTask = pdfjsLib.getDocument(fileURL);
+      const loadingTask = pdfjs.getDocument(fileURL);
       loadingTask.promise
         .then((pdf) => {
           pdf
