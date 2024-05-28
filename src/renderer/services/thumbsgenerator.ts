@@ -23,6 +23,9 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
 import { FileTypeGroups } from '-/services/search';
+import pdfjsLib from 'pdfjs-dist/build/pdf.min.js';
+
+import('pdfjs-dist/build/pdf.worker.min.js');
 
 let maxSize = AppConfig.maxThumbSize;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
@@ -131,7 +134,7 @@ export function generateThumbnailPromise(
       ); //fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
-    return Pro.ThumbsGenerator.generatePDFThumbnail(fileURLEscaped, maxSize);
+    return generatePDFThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'html') {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(
       fileURLEscaped,
@@ -174,6 +177,77 @@ export function generateThumbnailPromise(
     return generateVideoThumbnail(fileURLEscaped);
   }
   return generateDefaultThumbnail();
+}
+
+export function generatePDFThumbnail(
+  fileURL: string,
+  maxSize: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      const errorHandler = (err) => {
+        console.log(
+          'Error while generating thumbnail for: ' +
+            fileURL +
+            ' - ' +
+            JSON.stringify(err),
+        );
+        resolve('');
+      };
+
+      let canvas: HTMLCanvasElement = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      // ensurePDFJS().then(pdfjsLib => {
+      const loadingTask = pdfjsLib.getDocument(fileURL);
+      loadingTask.promise
+        .then((pdf) => {
+          pdf
+            .getPage(1)
+            .then((page) => {
+              // 1 is the page number we want to retrieve
+              let scale = 1.0;
+              const unscaledViewport = page.getViewport({ scale });
+              if (unscaledViewport.width >= unscaledViewport.height) {
+                canvas.width = maxSize;
+                canvas.height =
+                  (maxSize * unscaledViewport.height) / unscaledViewport.width;
+              } else {
+                canvas.height = maxSize;
+                canvas.width =
+                  (maxSize * unscaledViewport.width) / unscaledViewport.height;
+              }
+              scale = Math.min(
+                canvas.height / unscaledViewport.height,
+                canvas.width / unscaledViewport.width,
+              );
+              const viewport = page.getViewport({ scale });
+              const renderContext = { canvasContext: ctx, viewport };
+              const renderTask = page.render(renderContext);
+              renderTask.promise
+                .then(() => {
+                  // set to draw behind current content
+                  ctx.globalCompositeOperation = 'destination-over';
+                  // set background color
+                  ctx.fillStyle = '#ffffff';
+                  // draw background / rect on entire canvas
+                  ctx.fillRect(0, 0, canvas.width, canvas.height);
+                  resolve(canvas.toDataURL(AppConfig.thumbType));
+                  canvas = null;
+                  return true;
+                })
+                .catch(errorHandler);
+              return true;
+            })
+            .catch(errorHandler);
+          return true;
+        }, errorHandler)
+        .catch(errorHandler);
+      return true;
+    } catch (e) {
+      console.log(`Error creating PDF thumb for : ${fileURL} with: ${e}`);
+      resolve('');
+    }
+  });
 }
 
 export function generateImageThumbnail(
