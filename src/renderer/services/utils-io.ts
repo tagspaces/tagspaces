@@ -1057,7 +1057,7 @@ export function selectDirectoryDialog(): Promise<any> {
 }
 
 export function removePrefix(str, prefix) {
-  if (str.startsWith(prefix)) {
+  if (str && prefix && str.length > prefix.length && str.startsWith(prefix)) {
     return str.slice(prefix.length);
   }
   return str.trim();
