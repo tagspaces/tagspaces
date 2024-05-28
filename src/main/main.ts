@@ -573,12 +573,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('activate', function () {
+app.on('activate', (event, hasVisibleWindows) => {
+  // console.log('Activate ' + hasVisibleWindows);
+  event.preventDefault();
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow(appI18N);
-  }
+  // if (BrowserWindow.getAllWindows().length === 0) {
+  //   createWindow(appI18N);
+  // }
 });
 
 app.on('quit', () => {
