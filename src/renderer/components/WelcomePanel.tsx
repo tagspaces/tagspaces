@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -83,6 +83,9 @@ const Root = styled('div')(({ theme }) => ({
 function WelcomePanel() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const dispatch: AppDispatch = useDispatch();
   const desktopMode = useSelector(getDesktopMode);
 
@@ -97,15 +100,15 @@ function WelcomePanel() {
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+  const historyKeys = Pro ? Pro.keys.historyKeys : {};
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    ? historyContext.fileOpenHistory
     : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    ? historyContext.fileEditHistory
     : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    ? historyContext.folderOpenHistory
     : [];
 
   const showDelete = false;

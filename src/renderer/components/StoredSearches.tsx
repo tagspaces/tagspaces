@@ -70,7 +70,6 @@ interface Props {
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
@@ -79,6 +78,9 @@ function StoredSearches(props: Props) {
     ? useContext<TS.BookmarksContextData>(
         Pro?.contextProviders?.BookmarksContext,
       )
+    : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<TS.SearchQuery>(undefined);
@@ -96,6 +98,7 @@ function StoredSearches(props: Props) {
   const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
+  const historyKeys = Pro ? Pro.keys.historyKeys : {};
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const ExportSearchesDialog =
@@ -138,13 +141,13 @@ function StoredSearches(props: Props) {
       ? bookmarksContext.bookmarks //getBookmarks()
       : [];
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    ? historyContext.fileOpenHistory
     : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    ? historyContext.fileEditHistory
     : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    ? historyContext.folderOpenHistory
     : [];
 
   const bookmarksAvailable = bookmarkItems && bookmarkItems.length > 0;
@@ -474,7 +477,7 @@ function StoredSearches(props: Props) {
           refreshHistory={() => forceUpdate()}
           clearAll={() => {
             if (Pro) {
-              Pro.history.delAllHistory(menuHistoryKey.current);
+              historyContext.delAllHistory(menuHistoryKey.current);
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}

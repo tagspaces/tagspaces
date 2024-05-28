@@ -115,7 +115,7 @@ export namespace TS {
   export type ActionSource = 'local' | 'upload' | 'thumbgen' | 'fsWatcher';
 
   interface EditAction {
-    action: 'add' | 'delete' | 'update' | 'move';
+    action: 'add' | 'delete' | 'update' | 'move' | 'open' | 'edit';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
     open?: boolean;
@@ -245,6 +245,17 @@ export namespace TS {
     haveBookmark: (filePath: string) => boolean;
     delAllBookmarks: () => void;
     delBookmark: (filePath: string) => void;
+  };
+
+  type HistoryContextData = {
+    fileOpenHistory: TS.HistoryItem[];
+    folderOpenHistory: TS.HistoryItem[];
+    fileEditHistory: TS.HistoryItem[];
+    searchHistory: TS.HistoryItem[];
+    saveHistory: (key, historyItem: TS.HistoryItem, limit) => void;
+    delAllHistory: (key) => void;
+    delHistory: (key, creationTimeStamp) => void;
+    openItem: (item: TS.HistoryItem) => void;
   };
 
   interface EditedEntryPath {

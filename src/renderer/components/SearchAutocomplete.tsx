@@ -106,6 +106,9 @@ function SearchAutocomplete(props: Props) {
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
@@ -155,7 +158,6 @@ function SearchAutocomplete(props: Props) {
   const isOpen = useRef<boolean>(true);
 
   // const firstRender = useFirstRender();
-  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
   useEffect(() => {
     processSearchQuery();
@@ -573,13 +575,13 @@ function SearchAutocomplete(props: Props) {
         currentOptions.current = action;
 
         const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.fileOpenKey)
+          ? historyContext.fileOpenHistory
           : [];
         const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.folderOpenKey)
+          ? historyContext.folderOpenHistory
           : [];
         const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.fileEditKey)
+          ? historyContext.fileEditHistory
           : [];
 
         searchOptions.current = [
@@ -623,7 +625,7 @@ function SearchAutocomplete(props: Props) {
       }
     } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
       const searchHistoryItems: Array<TS.HistoryItem> = Pro
-        ? Pro.history.getHistory(historyKeys.searchHistoryKey)
+        ? historyContext.searchHistory
         : [];
       searchOptions.current = getHistoryOptions(
         searchHistoryItems,
@@ -882,40 +884,28 @@ function SearchAutocomplete(props: Props) {
               setSearchQuery(option.searchQuery);
             } else {
             }
-          } else if (Pro && Pro.history) {
+          } else if (Pro && historyContext) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: option.id,
               creationTimeStamp: 0,
             };
-            Pro.history.openItem(
-              item,
-              currentLocation && currentLocation.uuid,
-              openLinkDispatch,
-              openLocationById,
-              openEntry,
-            );
+            historyContext.openItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_BOOKMARK) {
-          if (Pro && Pro.history) {
+          if (Pro && historyContext) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: undefined,
               creationTimeStamp: 0,
             };
-            Pro.history.openItem(
-              item,
-              currentLocation && currentLocation.uuid,
-              openLinkDispatch,
-              openLocationById,
-              openEntry,
-            );
+            historyContext.openItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;

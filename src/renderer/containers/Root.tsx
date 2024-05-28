@@ -85,7 +85,9 @@ export default function Root({ store, persistor }: RootType) {
                                       <DndProvider backend={HTML5Backend}>
                                         {Pro ? (
                                           <Pro.contextProviders.BookmarksContextProvider>
-                                            <MainPage />
+                                            <Pro.contextProviders.HistoryContextProvider>
+                                              <MainPage />
+                                            </Pro.contextProviders.HistoryContextProvider>
                                           </Pro.contextProviders.BookmarksContextProvider>
                                         ) : (
                                           <MainPage />

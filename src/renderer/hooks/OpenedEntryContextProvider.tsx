@@ -25,7 +25,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '-/reducers/app';
-import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import {
   findExtensionPathForId,
@@ -149,19 +148,12 @@ export const OpenedEntryContextProvider = ({
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
-  const { actions } = useEditedEntryContext();
+  const { actions, setReflectActions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   //const locations: CommonLocation[] = useSelector(getLocations);
-  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
-  const fileOpenHistory = useSelector(
-    (state: any) => state.settings[historyKeys.fileOpenKey],
-  );
-  const folderOpenHistory = useSelector(
-    (state: any) => state.settings[historyKeys.folderOpenKey],
-  );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const currentEntry = useRef<TS.OpenedEntry>(undefined);
   /* const dirProps = useRef<TS.DirProp>({
@@ -601,41 +593,12 @@ export const OpenedEntryContextProvider = ({
 
     addToEntryContainer(entryForOpening);
 
-    // save in history
-    if (currentLocation) {
-      if (Pro) {
-        const relEntryPath = getRelativeEntryPath(
-          currentLocationPath,
-          fsEntry.path,
-        );
-        const historyKeys = Pro.history.historyKeys;
-        if (fsEntry.isFile) {
-          Pro.history.saveHistory(
-            historyKeys.fileOpenKey,
-            {
-              path: fsEntry.path,
-              url: generateSharingLink(currentLocation.uuid, relEntryPath),
-              lid: currentLocation.uuid,
-            },
-            fileOpenHistory,
-          );
-        } else {
-          Pro.history.saveHistory(
-            historyKeys.folderOpenKey,
-            {
-              path: fsEntry.path,
-              url: generateSharingLink(
-                currentLocation.uuid,
-                relEntryPath,
-                relEntryPath,
-              ),
-              lid: currentLocation.uuid,
-            },
-            folderOpenHistory,
-          );
-        }
-      }
-    }
+    // send action to save in history
+    const action: TS.EditAction = {
+      action: 'open',
+      entry: fsEntry,
+    };
+    setReflectActions(action);
     return Promise.resolve(true);
   }
 
@@ -1004,8 +967,6 @@ export const OpenedEntryContextProvider = ({
     isEntryInFullWidth.current,
     currentLocation,
     currentDirectoryPath,
-    fileOpenHistory,
-    folderOpenHistory,
   ]);
 
   return (

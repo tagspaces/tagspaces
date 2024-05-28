@@ -18,6 +18,7 @@
 
 import React, {
   createContext,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -200,6 +201,9 @@ export const DirectoryContentContextProvider = ({
   const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
 
   const currentLocationPath = useRef<string>('');
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -210,7 +214,7 @@ export const DirectoryContentContextProvider = ({
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
   const searchHistoryKey = useSelector((state: any) =>
-    Pro ? state.settings[Pro.history.historyKeys.searchHistoryKey] : undefined,
+    Pro ? state.settings[Pro.keys.historyKeys.searchHistoryKey] : undefined,
   );
 
   //const enableWS = useSelector(getEnableWS);
@@ -978,12 +982,13 @@ export const DirectoryContentContextProvider = ({
       isSearchMode.current = true;
       searchQuery.current = sQuery;
       const searchTitle = defaultTitle(sQuery);
-      if (searchTitle.length > 0 && Pro && Pro.history) {
-        const historyKeys = Pro.history.historyKeys;
+      if (searchTitle.length > 0 && Pro) {
+        const historyKeys = Pro.keys.historyKeys;
         if (currentLocation) {
-          Pro.history.saveHistory(
+          historyContext.saveHistory(
             historyKeys.searchHistoryKey,
             {
+              creationTimeStamp: new Date().getTime(),
               path:
                 searchTitle +
                 ' ' +
