@@ -115,7 +115,7 @@ export namespace TS {
   export type ActionSource = 'local' | 'upload' | 'thumbgen' | 'fsWatcher';
 
   interface EditAction {
-    action: 'add' | 'delete' | 'update' | 'move' | 'open' | 'edit';
+    action: 'add' | 'delete' | 'update' | 'move' | 'edit';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
     open?: boolean;

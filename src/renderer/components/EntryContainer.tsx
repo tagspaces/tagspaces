@@ -71,6 +71,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
@@ -86,6 +87,7 @@ function EntryContainer() {
     reflectUpdateOpenedFileContent,
     addToEntryContainer,
   } = useOpenedEntryContext();
+  const { setReflectActions } = useEditedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
   const { saveDescription, description } = useDescriptionContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
@@ -95,13 +97,7 @@ function EntryContainer() {
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
     usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
-    : undefined;
   const tabIndex = useSelector(getEntryContainerTab);
-  const fileEditHistoryKey = useSelector(
-    (state: any) => state.settings[historyKeys.fileEditKey],
-  );
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
   const revisionsEnabled = useSelector(isRevisionsEnabled);
@@ -526,7 +522,13 @@ function EntryContainer() {
       )
         .then((entry) => {
           reflectUpdateOpenedFileContent(entry);
-          if (Pro) {
+          // send action to save in history
+          const action: TS.EditAction = {
+            action: 'edit',
+            entry: entry,
+          };
+          setReflectActions(action);
+          /*if (Pro) {
             const relativePath = getRelativeEntryPath(
               currentLocationPath,
               fileOpen.path,
@@ -541,7 +543,7 @@ function EntryContainer() {
               },
               fileEditHistoryKey,
             );
-          }
+          }*/
           return true;
           /*return updateOpenedFile(fileOpen.path, {
             id: '',

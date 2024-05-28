@@ -148,7 +148,7 @@ export const OpenedEntryContextProvider = ({
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
-  const { actions, setReflectActions } = useEditedEntryContext();
+  const { actions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
 
@@ -592,13 +592,6 @@ export const OpenedEntryContextProvider = ({
     );
 
     addToEntryContainer(entryForOpening);
-
-    // send action to save in history
-    const action: TS.EditAction = {
-      action: 'open',
-      entry: fsEntry,
-    };
-    setReflectActions(action);
     return Promise.resolve(true);
   }
 

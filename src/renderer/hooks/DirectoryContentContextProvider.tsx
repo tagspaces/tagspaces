@@ -18,14 +18,12 @@
 
 import React, {
   createContext,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
   useRef,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +53,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
-import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
@@ -201,9 +198,6 @@ export const DirectoryContentContextProvider = ({
   const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
-    : undefined;
 
   const currentLocationPath = useRef<string>('');
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -213,9 +207,6 @@ export const DirectoryContentContextProvider = ({
   const searches = useSelector(getSearches);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
-  const searchHistoryKey = useSelector((state: any) =>
-    Pro ? state.settings[Pro.keys.historyKeys.searchHistoryKey] : undefined,
-  );
 
   //const enableWS = useSelector(getEnableWS);
 
@@ -981,28 +972,6 @@ export const DirectoryContentContextProvider = ({
     } else {
       isSearchMode.current = true;
       searchQuery.current = sQuery;
-      const searchTitle = defaultTitle(sQuery);
-      if (searchTitle.length > 0 && Pro) {
-        const historyKeys = Pro.keys.historyKeys;
-        if (currentLocation) {
-          historyContext.saveHistory(
-            historyKeys.searchHistoryKey,
-            {
-              creationTimeStamp: new Date().getTime(),
-              path:
-                searchTitle +
-                ' ' +
-                (currentLocation.path
-                  ? currentLocation.path
-                  : currentLocation.name),
-              url: '/',
-              lid: currentLocation.uuid,
-              searchQuery: sQuery,
-            },
-            searchHistoryKey,
-          );
-        }
-      }
       forceUpdate();
     }
   }
