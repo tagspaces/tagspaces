@@ -18,7 +18,7 @@
 
 import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid';
-import React from 'react';
+import React, { useContext } from 'react';
 import Button from '@mui/material/Button';
 import ListItem from '@mui/material/ListItem';
 import { Tooltip } from '@mui/material';
@@ -47,6 +47,12 @@ function RenderHistory(props: Props) {
   // const dispatch: AppDispatch = useDispatch();
   const { openEntry, openLink } = useOpenedEntryContext();
   const { openLocationById, currentLocation } = useCurrentLocationContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
+    : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
   const openLinkDispatch = (link) => openLink(link, { fullWidth: false });
@@ -76,13 +82,7 @@ function RenderHistory(props: Props) {
                     justifyContent: 'start',
                   }}
                   onClick={() =>
-                    Pro.history.openItem(
-                      item,
-                      currentLocation && currentLocation.uuid,
-                      openLinkDispatch,
-                      openLocationById,
-                      openEntry,
-                    )
+                    historyContext.openItem(item as TS.HistoryItem)
                   }
                 >
                   <Tooltip
@@ -100,7 +100,7 @@ function RenderHistory(props: Props) {
                       </span>
                     }
                   >
-                    {historyKey === Pro.bookmarks.bookmarksKey ? (
+                    {historyKey === Pro.keys.bookmarksKey ? (
                       <BookmarkTwoToneIcon fontSize="small" />
                     ) : (
                       <HistoryIcon fontSize="small" />
@@ -124,7 +124,12 @@ function RenderHistory(props: Props) {
                   <IconButton
                     aria-label={t('core:clearHistory')}
                     onClick={() => {
-                      Pro.history.delItem(item, historyKey);
+                      if (historyKey === Pro.keys.bookmarksKey) {
+                        //del bookmarks
+                        bookmarksContext.delBookmark(item.path);
+                      } else {
+                        historyContext.delHistory(item, historyKey);
+                      }
                       update();
                     }}
                     data-tid="deleteHistoryItemTID"

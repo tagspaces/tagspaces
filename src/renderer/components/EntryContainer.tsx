@@ -19,6 +19,7 @@
 import React, {
   MutableRefObject,
   useCallback,
+  useContext,
   useEffect,
   useReducer,
   useRef,
@@ -71,7 +72,7 @@ import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -94,6 +95,9 @@ function EntryContainer() {
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
     usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const tabIndex = useSelector(getEntryContainerTab);
   const fileEditHistoryKey = useSelector(
     (state: any) => state.settings[historyKeys.fileEditKey],
@@ -527,9 +531,10 @@ function EntryContainer() {
               currentLocationPath,
               fileOpen.path,
             );
-            Pro.history.saveHistory(
+            historyContext.saveHistory(
               historyKeys.fileEditKey,
               {
+                creationTimeStamp: new Date().getTime(),
                 path: relativePath,
                 url: generateSharingLink(fileOpen.locationID, relativePath),
                 lid: fileOpen.locationID,

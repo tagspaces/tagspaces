@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useContext, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -70,11 +70,18 @@ interface Props {
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
   const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(
+        Pro?.contextProviders?.BookmarksContext,
+      )
+    : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<TS.SearchQuery>(undefined);
   const [searchMenuAnchorEl, setSearchMenuAnchorEl] =
@@ -91,6 +98,7 @@ function StoredSearches(props: Props) {
   const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
+  const historyKeys = Pro ? Pro.keys.historyKeys : {};
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const ExportSearchesDialog =
@@ -128,17 +136,18 @@ function StoredSearches(props: Props) {
 
   const { reduceHeightBy } = props;
 
-  const bookmarkItems: Array<TS.BookmarkItem> = Pro
-    ? Pro.bookmarks.getBookmarks()
-    : [];
+  const bookmarkItems: Array<TS.BookmarkItem> =
+    Pro && bookmarksContext
+      ? bookmarksContext.bookmarks //getBookmarks()
+      : [];
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    ? historyContext.fileOpenHistory
     : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    ? historyContext.fileEditHistory
     : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    ? historyContext.folderOpenHistory
     : [];
 
   const bookmarksAvailable = bookmarkItems && bookmarkItems.length > 0;
@@ -324,7 +333,7 @@ function StoredSearches(props: Props) {
         </Grid>
         {Pro && props.showBookmarks && (
           <RenderHistory
-            historyKey={Pro.bookmarks.bookmarksKey}
+            historyKey={Pro.keys.bookmarksKey}
             items={bookmarkItems}
             update={forceUpdate}
           />
@@ -468,7 +477,7 @@ function StoredSearches(props: Props) {
           refreshHistory={() => forceUpdate()}
           clearAll={() => {
             if (Pro) {
-              Pro.history.delAllHistory(menuHistoryKey.current);
+              historyContext.delAllHistory(menuHistoryKey.current);
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}
@@ -479,8 +488,8 @@ function StoredSearches(props: Props) {
           onClose={() => setBookmarksMenuAnchorEl(null)}
           refresh={() => forceUpdate()}
           clearAll={() => {
-            if (Pro) {
-              Pro.bookmarks.delAllBookmarks();
+            if (Pro && bookmarksContext) {
+              bookmarksContext.delAllBookmarks();
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}
