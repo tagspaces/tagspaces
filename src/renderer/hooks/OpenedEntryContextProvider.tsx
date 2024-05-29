@@ -732,13 +732,7 @@ export const OpenedEntryContextProvider = ({
                   directoryPath,
                 );
 
-                targetLocation.checkDirExist(dirFullPath).then((exist) => {
-                  if (exist) {
-                    openDirectory(dirFullPath, undefined, targetLocation);
-                  } else {
-                    showNotification(t('core:invalidLink'), 'warning', true);
-                  }
-                });
+                openDirectory(dirFullPath, undefined, targetLocation);
               } else {
                 openDirectory(locationPath, undefined, targetLocation);
               }
