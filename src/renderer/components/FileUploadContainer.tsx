@@ -22,6 +22,7 @@ import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 interface Props {
   id: string;
@@ -37,6 +38,7 @@ const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
     const dispatch: AppDispatch = useDispatch();
     const { id, directoryPath } = props;
+    const { openFileUploadDialog } = useFileUploadDialogContext();
     const { uploadFilesAPI } = useIOActionsContext();
     const { setReflectMetaActions } = useEditedEntryMetaContext();
 
@@ -88,7 +90,7 @@ const FileUploadContainer = forwardRef(
       // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
       // const file = selection.currentTarget.files[0];
       dispatch(AppActions.resetProgress());
-      dispatch(AppActions.toggleUploadDialog());
+      openFileUploadDialog();
       uploadFilesAPI(
         Array.from(selection.currentTarget.files),
         directoryPath,

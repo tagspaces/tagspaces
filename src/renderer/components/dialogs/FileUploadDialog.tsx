@@ -46,6 +46,7 @@ import { uploadAbort } from '-/services/utils-io';
 interface Props {
   open: boolean;
   title: string;
+  targetPath?: string;
   onClose: () => void;
 }
 
@@ -58,7 +59,7 @@ function FileUploadDialog(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
 
-  const targetPath = React.useRef<string>(getTargetPath());
+  const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -100,6 +101,9 @@ function FileUploadDialog(props: Props) {
   let haveProgress = false;
 
   function getTargetPath() {
+    if (props.targetPath) {
+      return props.targetPath;
+    }
     const pathProgress = progress.find((fileProgress) => fileProgress.path);
     if (pathProgress) {
       return pathProgress.path;
@@ -108,6 +112,9 @@ function FileUploadDialog(props: Props) {
   }
 
   function getTargetURL() {
+    if (props.targetPath) {
+      return props.targetPath;
+    }
     if (currentLocation) {
       if (currentLocation.endpointURL) {
         return (
@@ -243,7 +250,7 @@ function FileUploadDialog(props: Props) {
             data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
-              dispatch(AppActions.clearUploadDialog());
+              //dispatch(AppActions.clearUploadDialog());
             }}
             color="primary"
           >

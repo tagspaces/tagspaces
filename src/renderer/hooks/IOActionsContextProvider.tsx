@@ -116,6 +116,8 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
+    targetLocationId?: string,
+    sourceLocationId?: string,
   ) => Promise<TS.FileSystemEntry[]>;
   uploadFiles: (
     paths: Array<string>,
@@ -123,6 +125,8 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
+    targetLocationId?: string,
+    sourceLocationId?: string,
   ) => Promise<TS.FileSystemEntry[]>;
   renameDirectory: (
     directoryPath: string,
@@ -814,6 +818,8 @@ export const IOActionsContextProvider = ({
    * @param uploadMeta - try to upload meta and thumbs if available
    * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    * @param open
+   * @param targetLocationId
+   * @param sourceLocationId
    */
   function uploadFilesAPI(
     files: Array<any>,
@@ -821,6 +827,8 @@ export const IOActionsContextProvider = ({
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta = true,
     open = true,
+    targetLocationId: string = undefined,
+    sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
@@ -833,6 +841,8 @@ export const IOActionsContextProvider = ({
         onUploadProgress,
         uploadMeta,
         open,
+        targetLocationId,
+        sourceLocationId,
       );
     }
 
@@ -957,6 +967,7 @@ export const IOActionsContextProvider = ({
     fileContent: any,
     onUploadProgress?: (progress: Progress, response: any) => void,
     reflect: boolean = true,
+    locationID: string = undefined,
   ) {
     return currentLocation
       .getPropertiesPromise(filePath)
@@ -971,7 +982,7 @@ export const IOActionsContextProvider = ({
         } else {
           // dispatch(AppActions.setProgress(filePath, progress));
           return saveBinaryFilePromise(
-            { path: filePath },
+            { path: filePath, locationID: locationID },
             fileContent,
             true,
             onUploadProgress,
@@ -1018,6 +1029,8 @@ export const IOActionsContextProvider = ({
    * @param onUploadProgress
    * @param uploadMeta
    * @param open -> open files after upload
+   * @param targetLocationId
+   * @param sourceLocationId
    */
   function uploadFiles(
     paths: Array<string>,
@@ -1025,6 +1038,8 @@ export const IOActionsContextProvider = ({
     onUploadProgress?: (progress: Progress, response: any) => void,
     uploadMeta = true,
     open = true,
+    targetLocationId: string = undefined,
+    sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
       const uploadJobs = [];
@@ -1035,12 +1050,12 @@ export const IOActionsContextProvider = ({
           extractFileName(path, AppConfig.dirSeparator),
         ); // with "/" dir separator cannot extractFileName on Win
         // fix for Win
-        if (
+        /*if (
           currentLocation.haveObjectStoreSupport() &&
           (target.startsWith('\\') || target.startsWith('/'))
         ) {
           target = target.substr(1);
-        }
+        }*/
         uploadJobs.push([path, target, 'file']);
         if (uploadMeta) {
           // copy meta
@@ -1072,9 +1087,8 @@ export const IOActionsContextProvider = ({
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          // for AWS location getFileContentPromise cannot load with io-objectore
-          return currentLocation
-            .getLocalFileContentPromise(job[0])
+          return findLocation(sourceLocationId)
+            .getFileContentPromise(job[0], 'arraybuffer')
             .then((fileContent) =>
               uploadFile(
                 filePath,
@@ -1082,6 +1096,7 @@ export const IOActionsContextProvider = ({
                 fileContent,
                 onUploadProgress,
                 false,
+                targetLocationId,
               ),
             )
             .catch((err) => {
@@ -1103,6 +1118,7 @@ export const IOActionsContextProvider = ({
                       fileContent,
                       onUploadProgress,
                       false,
+                      targetLocationId,
                     );
                   }
                   return undefined;

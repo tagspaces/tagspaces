@@ -43,6 +43,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 interface Props {
   location: CommonLocation;
@@ -55,6 +56,7 @@ function LocationView(props: Props) {
   const { t } = useTranslation();
 
   const { moveFiles, uploadFiles } = useIOActionsContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
     openLocation,
     currentLocation,
@@ -137,14 +139,14 @@ function LocationView(props: Props) {
         showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }
-      if (!AppConfig.isWin && !path.startsWith('/')) {
+      /*if (!AppConfig.isWin && !path.startsWith('/')) {
         showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
         showNotification(t('Moving file not possible'), 'error', true);
         return;
-      }
+      }*/
       const targetLocation = item.targetLocation;
       let targetPath = targetLocation ? targetLocation.path : undefined;
       if (targetPath === undefined) {
@@ -154,16 +156,25 @@ function LocationView(props: Props) {
       if (targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
-        if (targetLocation.type === locationType.TYPE_CLOUD) {
+        if (targetLocation.type !== currentLocation.type) {
+          //locationType.TYPE_CLOUD) {
           dispatch(AppActions.resetProgress());
-          dispatch(AppActions.toggleUploadDialog());
-          return uploadFiles(arrPath, targetPath, onUploadProgress).catch(
-            (error) => {
-              console.log('uploadFiles', error);
-            },
-          );
+          openFileUploadDialog(targetPath);
+          return uploadFiles(
+            arrPath,
+            targetPath,
+            onUploadProgress,
+            true,
+            false,
+            targetLocation.uuid,
+          ).catch((error) => {
+            console.log('uploadFiles', error);
+          });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           moveFiles(arrPath, targetPath, targetLocation.uuid);
+        } else {
+          showNotification(t('Moving file not possible'), 'error', true);
+          return;
         }
         setSelectedEntries([]);
       }

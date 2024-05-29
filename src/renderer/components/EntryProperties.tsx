@@ -97,8 +97,6 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { generateClipboardLink } from '-/utils/dom';
 
 const PREFIX = 'EntryProperties';

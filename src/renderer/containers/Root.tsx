@@ -45,6 +45,7 @@ import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContext
 import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
 import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
 import { Pro } from '-/pro';
+import DialogsRoot from '-/containers/DialogsRoot';
 
 type RootType = {
   store: Store<{}>;
@@ -83,15 +84,17 @@ export default function Root({ store, persistor }: RootType) {
                                   <TagGroupsLocationContextProvider>
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
-                                        {Pro ? (
-                                          <Pro.contextProviders.BookmarksContextProvider>
-                                            <Pro.contextProviders.HistoryContextProvider>
-                                              <MainPage />
-                                            </Pro.contextProviders.HistoryContextProvider>
-                                          </Pro.contextProviders.BookmarksContextProvider>
-                                        ) : (
-                                          <MainPage />
-                                        )}
+                                        <DialogsRoot>
+                                          {Pro ? (
+                                            <Pro.contextProviders.BookmarksContextProvider>
+                                              <Pro.contextProviders.HistoryContextProvider>
+                                                <MainPage />
+                                              </Pro.contextProviders.HistoryContextProvider>
+                                            </Pro.contextProviders.BookmarksContextProvider>
+                                          ) : (
+                                            <MainPage />
+                                          )}
+                                        </DialogsRoot>
                                       </DndProvider>
                                     </TaggingActionsContextProvider>
                                   </TagGroupsLocationContextProvider>

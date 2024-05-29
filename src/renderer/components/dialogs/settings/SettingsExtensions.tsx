@@ -48,11 +48,13 @@ import {
   unZip,
 } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
   const { currentLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] =
     useState<TS.Extension>(undefined);
@@ -69,7 +71,7 @@ function SettingsExtensions() {
     const files: File[] = Array.from(selection.currentTarget.files);
     getUserDataDir().then((dataDir) => {
       dispatch(AppActions.resetProgress());
-      dispatch(AppActions.toggleUploadDialog());
+      openFileUploadDialog();
       const destinationPath = dataDir + AppConfig.dirSeparator + 'tsplugins';
       uploadFilesAPI(files, destinationPath, onUploadProgress, false)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {

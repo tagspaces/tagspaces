@@ -54,7 +54,6 @@ import {
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
-  isUploadDialogOpened,
   isNewEntryDialogOpened,
   isNewFileDialogOpened,
   isSettingsDialogOpened,
@@ -71,7 +70,6 @@ import {
 import TargetFileBox from '../components/TargetFileBox';
 import LoadingLazy from '../components/LoadingLazy';
 import CustomDragLayer from '-/components/CustomDragLayer';
-import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -146,11 +144,11 @@ interface Props {
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
-  isUploadProgressDialogOpened: string | undefined;
+  //isUploadProgressDialogOpened: string | undefined;
   isTruncatedConfirmDialogOpened: boolean;
   isProgressDialogOpened: boolean;
   isProTeaserVisible: boolean;
-  toggleUploadDialog: () => void;
+  //toggleUploadDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
   resetProgress: () => void;
@@ -478,7 +476,7 @@ function MainPage(props: Props) {
     toggleNewEntryDialog,
     toggleNewFileDialog,
     toggleNewAudioDialog,
-    toggleUploadDialog,
+    //toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
     toggleOpenLinkDialog,
@@ -628,13 +626,13 @@ function MainPage(props: Props) {
             onClose={toggleProTeaser}
           />
         )}
-        {props.isUploadProgressDialogOpened !== undefined && (
+        {/*{props.isUploadProgressDialogOpened !== undefined && (
           <FileUploadDialog
             open={true}
             onClose={toggleUploadDialog}
             title={props.isUploadProgressDialogOpened}
           />
-        )}
+        )}*/}
         {props.isTruncatedConfirmDialogOpened && (
           <IsTruncatedConfirmDialog
             open={true}
@@ -809,7 +807,7 @@ function mapStateToProps(state) {
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
-    isUploadProgressDialogOpened: isUploadDialogOpened(state),
+    //isUploadProgressDialogOpened: isUploadDialogOpened(state),
     isTruncatedConfirmDialogOpened: isTruncatedConfirmDialogOpened(state),
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProTeaserVisible: isProTeaserVisible(state),
@@ -832,7 +830,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
+      //toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
@@ -896,8 +894,8 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isTruncatedConfirmDialogOpened &&
   nextProp.isThirdPartyLibsDialogOpened ===
     prevProp.isThirdPartyLibsDialogOpened &&
-  nextProp.isUploadProgressDialogOpened ===
-    prevProp.isUploadProgressDialogOpened &&
+  /*nextProp.isUploadProgressDialogOpened ===
+    prevProp.isUploadProgressDialogOpened &&*/
   nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
   nextProp.mainSplitSize === prevProp.mainSplitSize;
 

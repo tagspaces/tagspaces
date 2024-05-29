@@ -706,7 +706,7 @@ export class CommonLocation implements TS.Location {
     }
   };
 
-  getLocalFileContentPromise = (
+  /*getLocalFileContentPromise = (
     filePath: string,
     type?: string,
   ): Promise<any> => {
@@ -715,7 +715,7 @@ export class CommonLocation implements TS.Location {
       filePath,
       type,
     );
-  };
+  };*/
 
   loadTextFilePromise = (param: any, isPreview?: boolean): Promise<string> => {
     let filePath = this.getPath(param);

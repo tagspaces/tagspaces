@@ -88,10 +88,10 @@ export const types = {
   TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
-  TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  //TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   TOGGLE_TRUNCATED_DIALOG: 'APP/TOGGLE_TRUNCATED_DIALOG',
   //SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
-  CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
+  //CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
   OPEN_TAGLIBRARY_PANEL: 'APP/OPEN_TAGLIBRARY_PANEL',
@@ -397,7 +397,7 @@ export default (state: any = initialState, action: any) => {
           state.createDirectoryDialogOpened !== null ? null : action.props,
       };
     }
-    case types.TOGGLE_UPLOAD_DIALOG: {
+    /*case types.TOGGLE_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
       // upload dialog have objectStore support only
       return {
@@ -408,7 +408,7 @@ export default (state: any = initialState, action: any) => {
       };
       //}
       // return state;
-    }
+    }*/
     case types.TOGGLE_TRUNCATED_DIALOG: {
       return {
         ...state,
@@ -427,7 +427,7 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }*/
-    case types.CLEAR_UPLOAD_DIALOG: {
+    /*case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
       // upload dialog have objectStore support only
       return {
@@ -437,7 +437,7 @@ export default (state: any = initialState, action: any) => {
       };
       // }
       // return state;
-    }
+    }*/
     case types.TOGGLE_PROGRESS_DIALOG: {
       return {
         ...state,
@@ -818,10 +818,10 @@ export const actions = {
   toggleImportKanBanDialog: () => ({
     type: types.TOGGLE_IMPORT_KANBAN_DIALOG,
   }),
-  toggleUploadDialog: (title = '') => ({
+  /*toggleUploadDialog: (title = '') => ({
     type: types.TOGGLE_UPLOAD_DIALOG,
     title,
-  }),
+  }),*/
   toggleTruncatedConfirmDialog: () => ({
     type: types.TOGGLE_TRUNCATED_DIALOG,
   }),
@@ -829,9 +829,9 @@ export const actions = {
     type: types.SET_CURRENT_DIRECTORY_DIRS,
     dirs
   }),*/
-  clearUploadDialog: () => ({
+  /*clearUploadDialog: () => ({
     type: types.CLEAR_UPLOAD_DIALOG,
-  }),
+  }),*/
   toggleProgressDialog: () => ({
     type: types.TOGGLE_PROGRESS_DIALOG,
   }),
@@ -1013,8 +1013,8 @@ export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
   state.app.deleteMultipleEntriesDialogOpened;
 export const isImportKanBanDialogOpened = (state: any) =>
   state.app.importKanBanDialogOpened;
-export const isUploadDialogOpened = (state: any) =>
-  state.app.uploadDialogOpened;
+/*export const isUploadDialogOpened = (state: any) =>
+  state.app.uploadDialogOpened;*/
 export const isTruncatedConfirmDialogOpened = (state: any) =>
   state.app.isTruncatedConfirmDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
