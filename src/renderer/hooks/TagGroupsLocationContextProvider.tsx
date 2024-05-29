@@ -113,13 +113,14 @@ export const TagGroupsLocationContextProvider = ({
         location.getDirSeparator(),
         metaFile,
       );
-      const metaData = await location.loadJSONFile(metaFilePath);
+      return location.loadJSONFile(metaFilePath);
+      /*const metaData = await location.loadJSONFile(metaFilePath);
       if (metaData) {
         return {
           ...metaData,
           description: getDescriptionPreview(metaData.description, 200),
         };
-      }
+      }*/
     }
     return Promise.resolve(undefined);
   }

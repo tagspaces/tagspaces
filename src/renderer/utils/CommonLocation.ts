@@ -860,16 +860,13 @@ export class CommonLocation implements TS.Location {
    * @param path
    * @param fullDescription
    */
-  loadMetaDataPromise = (
-    path: string,
-    fullDescription = false,
-  ): Promise<TS.FileSystemEntryMeta> => {
+  loadMetaDataPromise = (path: string): Promise<TS.FileSystemEntryMeta> => {
     return this.getPropertiesPromise(path).then((entryProperties) => {
       if (entryProperties) {
         if (entryProperties.isFile) {
-          return this.loadFileMetaDataPromise(path, fullDescription);
+          return this.loadFileMetaDataPromise(path);
         }
-        return this.loadDirMetaDataPromise(path, fullDescription);
+        return this.loadDirMetaDataPromise(path);
       }
       throw new Error('loadMetaDataPromise not exist' + path);
     });
@@ -877,7 +874,7 @@ export class CommonLocation implements TS.Location {
 
   loadFileMetaDataPromise = (
     path: string,
-    fullDescription = false,
+    //fullDescription = true,
   ): Promise<TS.FileSystemEntryMeta> => {
     const metaFilePath = getMetaFileLocationForFile(
       path,
@@ -898,16 +895,13 @@ export class CommonLocation implements TS.Location {
         appVersion: '',
         // lastUpdated: 0,
         ...metaData,
-        description: fullDescription
-          ? metaData.description
-          : getDescriptionPreview(metaData.description, 200),
       };
     });
   };
 
   loadDirMetaDataPromise = (
     path: string,
-    fullDescription = false,
+    //fullDescription = false,
   ): Promise<TS.FileSystemEntryMeta> => {
     const metaDirPath = getMetaFileLocationForDir(path, this.getDirSeparator());
     return this.loadJSONFile(metaDirPath).then((metaData) => {
@@ -924,9 +918,9 @@ export class CommonLocation implements TS.Location {
         appVersion: '',
         // lastUpdated: 0,
         ...metaData,
-        description: fullDescription
+        /*description: fullDescription
           ? metaData.description
-          : getDescriptionPreview(metaData.description, 200),
+          : getDescriptionPreview(metaData.description, 200),*/
       };
     });
   };

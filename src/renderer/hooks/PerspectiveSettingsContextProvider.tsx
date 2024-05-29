@@ -190,7 +190,7 @@ export const PerspectiveSettingsContextProvider = ({
     folderSettings?: TS.FolderSettings,
   ): Promise<TS.FileSystemEntryMeta> {
     return currentLocation
-      .loadMetaDataPromise(path, true)
+      .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         return {
           ...(fsEntryMeta && fsEntryMeta),

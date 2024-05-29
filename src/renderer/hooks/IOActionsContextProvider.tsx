@@ -1582,7 +1582,7 @@ export const IOActionsContextProvider = ({
   ): Promise<TS.FileSystemEntryMeta> {
     return new Promise((resolve, reject) => {
       currentLocation
-        .loadMetaDataPromise(path, true)
+        .loadMetaDataPromise(path)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           let updatedFsEntryMeta: TS.FileSystemEntryMeta = {
             ...(fsEntryMeta && fsEntryMeta),
