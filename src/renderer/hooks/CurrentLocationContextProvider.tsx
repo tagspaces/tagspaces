@@ -50,6 +50,7 @@ type CurrentLocationContextData = {
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
   findLocation: (locationID: string) => CommonLocation;
+  findLocalLocation: () => CommonLocation;
   changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
   editLocation: (location: CommonLocation, openAfterEdit?: boolean) => void;
   addLocation: (
@@ -85,6 +86,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
     findLocation: undefined,
+    findLocalLocation: undefined,
     changeLocation: () => {},
     editLocation: () => {},
     addLocation: () => {},
@@ -201,6 +203,14 @@ export const CurrentLocationContextProvider = ({
       return loc;
     }
     return currentLocation.current;
+  }
+
+  function findLocalLocation(): CommonLocation {
+    const loc = locations.find((l) => l.type === locationType.TYPE_LOCAL);
+    if (loc) {
+      return loc;
+    }
+    return undefined;
   }
 
   function setDefaultLocations() {
@@ -392,6 +402,7 @@ export const CurrentLocationContextProvider = ({
       persistTagsInSidecarFile,
       getLocationPath,
       findLocation,
+      findLocalLocation,
       changeLocation,
       addLocation,
       addLocations,

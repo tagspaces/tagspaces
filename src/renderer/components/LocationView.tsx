@@ -165,7 +165,7 @@ function LocationView(props: Props) {
             targetPath,
             onUploadProgress,
             true,
-            true,
+            false,
             targetLocation.uuid,
           ).catch((error) => {
             console.log('uploadFiles', error);

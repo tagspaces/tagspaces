@@ -45,7 +45,8 @@ function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode, findLocalLocation } =
+    useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
@@ -84,6 +85,8 @@ function TargetFileBox(props: Props) {
         onUploadProgress,
         true,
         false,
+        undefined,
+        findLocalLocation().uuid,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
