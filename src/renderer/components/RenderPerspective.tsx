@@ -29,6 +29,7 @@ import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const GridPerspective = React.lazy(
   () =>
@@ -156,8 +157,8 @@ interface Props {
 
 function RenderPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
-  const { currentDirectoryEntries, currentDirectoryPath, perspective } =
-    useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
+  const { perspective } = useDirectoryContentContext();
 
   /*const defaultPerspective = useSelector(getDefaultPerspective);
 
@@ -168,8 +169,8 @@ function RenderPerspective(props: Props) {
     currentPerspective = defaultPerspective;
   }*/
 
-  const showWelcomePanel =
-    !currentDirectoryPath && currentDirectoryEntries.length < 1;
+  const showWelcomePanel = !currentLocation;
+  //!currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
