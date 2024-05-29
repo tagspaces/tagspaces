@@ -123,6 +123,7 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
+    targetLocationId?: string,
   ) => Promise<TS.FileSystemEntry[]>;
   renameDirectory: (
     directoryPath: string,
@@ -957,6 +958,7 @@ export const IOActionsContextProvider = ({
     fileContent: any,
     onUploadProgress?: (progress: Progress, response: any) => void,
     reflect: boolean = true,
+    locationID: string = undefined,
   ) {
     return currentLocation
       .getPropertiesPromise(filePath)
@@ -971,7 +973,7 @@ export const IOActionsContextProvider = ({
         } else {
           // dispatch(AppActions.setProgress(filePath, progress));
           return saveBinaryFilePromise(
-            { path: filePath },
+            { path: filePath, locationID: locationID },
             fileContent,
             true,
             onUploadProgress,
@@ -1018,6 +1020,7 @@ export const IOActionsContextProvider = ({
    * @param onUploadProgress
    * @param uploadMeta
    * @param open -> open files after upload
+   * @param targetLocationId
    */
   function uploadFiles(
     paths: Array<string>,
@@ -1025,6 +1028,7 @@ export const IOActionsContextProvider = ({
     onUploadProgress?: (progress: Progress, response: any) => void,
     uploadMeta = true,
     open = true,
+    targetLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
       const uploadJobs = [];
@@ -1035,12 +1039,12 @@ export const IOActionsContextProvider = ({
           extractFileName(path, AppConfig.dirSeparator),
         ); // with "/" dir separator cannot extractFileName on Win
         // fix for Win
-        if (
+        /*if (
           currentLocation.haveObjectStoreSupport() &&
           (target.startsWith('\\') || target.startsWith('/'))
         ) {
           target = target.substr(1);
-        }
+        }*/
         uploadJobs.push([path, target, 'file']);
         if (uploadMeta) {
           // copy meta
@@ -1072,9 +1076,8 @@ export const IOActionsContextProvider = ({
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          // for AWS location getFileContentPromise cannot load with io-objectore
           return currentLocation
-            .getLocalFileContentPromise(job[0])
+            .getFileContentPromise(job[0], 'arraybuffer')
             .then((fileContent) =>
               uploadFile(
                 filePath,
@@ -1082,6 +1085,7 @@ export const IOActionsContextProvider = ({
                 fileContent,
                 onUploadProgress,
                 false,
+                targetLocationId,
               ),
             )
             .catch((err) => {
@@ -1103,6 +1107,7 @@ export const IOActionsContextProvider = ({
                       fileContent,
                       onUploadProgress,
                       false,
+                      targetLocationId,
                     );
                   }
                   return undefined;

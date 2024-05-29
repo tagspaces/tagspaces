@@ -28,6 +28,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getDirProperties } from '-/services/utils-io';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 interface Props {
   open: boolean;
@@ -43,6 +44,7 @@ function MoveCopyFilesDialog(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
 
   const [targetPath, setTargetPath] = useState(
     currentDirectoryPath ? currentDirectoryPath : '',
@@ -147,7 +149,7 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopyFiles() {
     dispatch(AppActions.resetProgress());
-    dispatch(AppActions.toggleUploadDialog('copyEntriesTitle'));
+    openFileUploadDialog(undefined, 'copyEntriesTitle');
     if (selectedFiles.length > 0) {
       copyFiles(selectedFiles, targetPath, onUploadProgress);
       setTargetPath('');
@@ -179,7 +181,7 @@ function MoveCopyFilesDialog(props: Props) {
     }
     if (selectedDirs.length > 0) {
       dispatch(AppActions.resetProgress());
-      dispatch(AppActions.toggleUploadDialog('moveEntriesTitle'));
+      openFileUploadDialog(undefined, 'moveEntriesTitle');
       moveDirs(
         getEntriesCount(selectedDirs),
         targetPath,

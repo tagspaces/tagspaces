@@ -30,6 +30,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -43,6 +44,7 @@ interface Props {
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -75,7 +77,7 @@ function TargetFileBox(props: Props) {
         );
       }
       dispatch(AppActions.resetProgress());
-      dispatch(AppActions.toggleUploadDialog());
+      openFileUploadDialog();
       return uploadFilesAPI(
         files,
         currentDirectoryPath,

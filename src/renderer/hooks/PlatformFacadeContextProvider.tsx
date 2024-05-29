@@ -652,18 +652,20 @@ export const PlatformFacadeContextProvider = ({
     reflect: boolean | TS.ActionSource = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return getLocation(param)
+    const location = getLocation(param);
+    return location
       .saveBinaryFilePromise(param, content, overwrite, onUploadProgress)
-      .then((fsEntry) => {
+      .then((fsEntry: TS.FileSystemEntry) => {
+        const entry = { ...fsEntry, locationID: location.uuid };
         if (reflect) {
           reflectAddEntry(
-            fsEntry,
+            entry,
             false,
             typeof reflect === 'boolean' ? 'local' : reflect,
           );
         }
         deignoreByWatcher(param.path);
-        return fsEntry;
+        return entry;
       });
   }
 

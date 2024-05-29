@@ -38,6 +38,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -63,6 +64,7 @@ function CreateDirectory(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const { downloadFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -122,7 +124,7 @@ function CreateDirectory(props: Props) {
         }
         if (currentLocation?.haveObjectStoreSupport() || AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
-          dispatch(AppActions.toggleUploadDialog());
+          openFileUploadDialog();
           downloadFile(
             fileUrl.current,
             targetDirectoryPath + '/' + decodeURIComponent(fileName),

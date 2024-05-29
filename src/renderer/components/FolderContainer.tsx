@@ -49,6 +49,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -63,8 +64,8 @@ function FolderContainer(props: Props) {
     props;
 
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -289,7 +290,7 @@ function FolderContainer(props: Props) {
                 id="progressButton"
                 title={t('core:progress')}
                 data-tid="uploadProgress"
-                onClick={() => dispatch(AppActions.toggleUploadDialog())}
+                onClick={() => openFileUploadDialog()}
                 style={{
                   position: 'relative',
                   padding: '8px 12px 6px 8px',
