@@ -342,6 +342,7 @@ export const DirectoryContentContextProvider = ({
           action.source !== 'fsWatcher' &&
           action.source !== 'upload' &&
           action.source !== 'thumbgen' &&
+          action.entry &&
           action.entry.path.indexOf(
             currentLocation?.getDirSeparator() + AppConfig.metaFolder,
           ) === -1
