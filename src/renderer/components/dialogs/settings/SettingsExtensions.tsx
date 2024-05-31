@@ -30,28 +30,22 @@ import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getExtensions,
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import {
-  getUserDataDir,
-  loadExtensions,
-  removeExtension,
-  unZip,
-} from '-/services/utils-io';
+import { getUserDataDir, loadExtensions, unZip } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
+  const { extensions, removeExtension, updateExtension } =
+    useExtensionsContext();
   const { findLocalLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
@@ -59,7 +53,7 @@ function SettingsExtensions() {
   const [removeExtDialogOpened, setRemoveExtDialogOpened] =
     useState<TS.Extension>(undefined);
 
-  const extension = useSelector(getExtensions);
+  //const extension = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -124,8 +118,8 @@ function SettingsExtensions() {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {extension &&
-              extension
+            {extensions &&
+              extensions
                 .filter((ext) => !ext.extensionExternal)
                 .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
@@ -149,8 +143,8 @@ function SettingsExtensions() {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {extension &&
-              extension
+            {extensions &&
+              extensions
                 .filter((ext) => ext.extensionExternal)
                 .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
@@ -161,32 +155,26 @@ function SettingsExtensions() {
                       name="enableExtension"
                       checked={ext.extensionEnabled}
                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        const extId = ext.extensionId.endsWith('/build')
+                          ? ext.extensionId.slice(0, -'/build'.length)
+                          : ext.extensionId;
+
                         if (event.target.checked) {
+                          updateExtension({
+                            ...ext,
+                            extensionEnabled: true,
+                          });
                           dispatch(
-                            AppActions.updateExtension({
-                              ...ext,
-                              extensionEnabled: true,
-                            }),
-                          );
-                          dispatch(
-                            SettingsActions.enableExtension(
-                              ext.extensionId,
-                              true,
-                            ),
+                            SettingsActions.enableExtension(extId, true),
                           );
                           loadExtensions();
                         } else {
+                          updateExtension({
+                            ...ext,
+                            extensionEnabled: false,
+                          });
                           dispatch(
-                            AppActions.updateExtension({
-                              ...ext,
-                              extensionEnabled: false,
-                            }),
-                          );
-                          dispatch(
-                            SettingsActions.enableExtension(
-                              ext.extensionId,
-                              false,
-                            ),
+                            SettingsActions.enableExtension(extId, false),
                           );
                           dispatch(
                             SettingsActions.removeSupportedFileTypes(
@@ -223,9 +211,6 @@ function SettingsExtensions() {
             confirmCallback={(result) => {
               if (result) {
                 dispatch(
-                  AppActions.removeExtension(removeExtDialogOpened.extensionId),
-                );
-                dispatch(
                   SettingsActions.removeSupportedFileTypes(
                     removeExtDialogOpened.extensionId,
                   ),
@@ -237,8 +222,8 @@ function SettingsExtensions() {
             confirmDialogTID="confirmRemoveExtDialogTID"
             confirmDialogContentTID="confirmRemoveExtDialogContentTID"
           />
-          {extension &&
-            extension.filter((ext) => ext.extensionExternal).length < 1 && (
+          {extensions &&
+            extensions.filter((ext) => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>
             )}
           {devMode && (

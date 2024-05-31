@@ -49,12 +49,13 @@ import {
   isDevMode,
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { AppDispatch, getExtensions } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 import { getUserDataDir } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
+import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -86,6 +87,7 @@ const Root = styled('div')(({ theme: any }) => ({
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
+  const { extensions } = useExtensionsContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
@@ -99,7 +101,7 @@ function SettingsFileTypes() {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
-  const extensions = useSelector(getExtensions);
+  //const extensions = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
 

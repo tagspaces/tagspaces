@@ -1015,13 +1015,13 @@ export function unZip(filePath, targetPath): Promise<string> {
   }
 }
 
-export function removeExtension(extensionId: string) {
+/*export function removeExtension(extensionId: string) {
   if (AppConfig.isElectron) {
     window.electronIO.ipcRenderer.sendMessage('removeExtension', extensionId);
   } else {
     console.error('remove extensions is supported only on Electron.');
   }
-}
+}*/
 
 export function quitApp(): void {
   if (AppConfig.isElectron) {

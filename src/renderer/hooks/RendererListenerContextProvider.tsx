@@ -23,7 +23,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
 import { actions as SettingsActions } from '-/reducers/settings';
-import { Extensions } from '../../main/types';
 import { getNextFile, getPrevFile } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -177,13 +176,13 @@ export const RendererListenerContextProvider = ({
         window.dispatchEvent(audioEvent);
       });
 
-      window.electronIO.ipcRenderer.on('set_extensions', (arg: Extensions) => {
+      /* window.electronIO.ipcRenderer.on('set_extensions', (arg: Extensions) => {
         const { extensions, supportedFileTypes } = arg;
         dispatch(AppActions.addExtensions(extensions));
         dispatch(SettingsActions.addSupportedFileTypes(supportedFileTypes));
         //console.debug('extensions', extensions);
         //console.debug('supportedFileTypes', supportedFileTypes);
-      });
+      });*/
 
       /*ipcRenderer.on('start_ws', (event, arg) => {
         const { port } = arg;
@@ -207,7 +206,7 @@ export const RendererListenerContextProvider = ({
     if (window.electronIO.ipcRenderer) {
       window.electronIO.ipcRenderer.removeAllListeners('cmd');
       window.electronIO.ipcRenderer.removeAllListeners('play-pause');
-      window.electronIO.ipcRenderer.removeAllListeners('set_extensions');
+      //window.electronIO.ipcRenderer.removeAllListeners('set_extensions');
       window.electronIO.ipcRenderer.removeAllListeners('start_ws');
     }
   }

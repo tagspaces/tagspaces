@@ -46,6 +46,7 @@ import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContext
 import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
 import { Pro } from '-/pro';
 import DialogsRoot from '-/containers/DialogsRoot';
+import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -84,17 +85,19 @@ export default function Root({ store, persistor }: RootType) {
                                   <TagGroupsLocationContextProvider>
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
-                                        <DialogsRoot>
-                                          {Pro ? (
-                                            <Pro.contextProviders.BookmarksContextProvider>
-                                              <Pro.contextProviders.HistoryContextProvider>
-                                                <MainPage />
-                                              </Pro.contextProviders.HistoryContextProvider>
-                                            </Pro.contextProviders.BookmarksContextProvider>
-                                          ) : (
-                                            <MainPage />
-                                          )}
-                                        </DialogsRoot>
+                                        <ExtensionsContextProvider>
+                                          <DialogsRoot>
+                                            {Pro ? (
+                                              <Pro.contextProviders.BookmarksContextProvider>
+                                                <Pro.contextProviders.HistoryContextProvider>
+                                                  <MainPage />
+                                                </Pro.contextProviders.HistoryContextProvider>
+                                              </Pro.contextProviders.BookmarksContextProvider>
+                                            ) : (
+                                              <MainPage />
+                                            )}
+                                          </DialogsRoot>
+                                        </ExtensionsContextProvider>
                                       </DndProvider>
                                     </TaggingActionsContextProvider>
                                   </TagGroupsLocationContextProvider>
