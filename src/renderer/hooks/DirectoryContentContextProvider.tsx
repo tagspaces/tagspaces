@@ -353,12 +353,18 @@ export const DirectoryContentContextProvider = ({
                 (entry) => entry.path === action.entry.path,
               )
             ) {
-              if (selectedEntries.length > 0) {
-                selected = [...selectedEntries, action.entry];
-              } else {
-                selected.push(action.entry);
+              if (
+                !selectedEntries.some(
+                  (entry) => entry.path === action.entry.path,
+                )
+              ) {
+                if (selectedEntries.length > 0) {
+                  selected = [...selectedEntries, action.entry];
+                } else {
+                  selected.push(action.entry);
+                }
+                updated = true;
               }
-              updated = true;
             }
           } else if (action.action === 'delete') {
             let index = selectedEntries.findIndex(

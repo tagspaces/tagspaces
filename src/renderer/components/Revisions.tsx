@@ -57,7 +57,7 @@ function Revisions() {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { getMetadataID } = useIOActionsContext();
-  const { openedEntry } = useOpenedEntryContext();
+  const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
@@ -143,15 +143,9 @@ function Revisions() {
       location.getDirSeparator(),
     );
     return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
-      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() => {
-        /*const fsMeta = {
-          id: '',
-          ...openedEntry,
-          editMode: false,
-          shouldReload: !openedEntry.shouldReload,
-        };
-        updateOpenedFile(openedEntry.path, fsMeta);*/
-      }),
+      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() =>
+        reloadOpenedFile(),
+      ),
     );
   }
   function titleFormat(lmdt) {
