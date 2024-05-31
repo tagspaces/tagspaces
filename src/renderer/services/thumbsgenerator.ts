@@ -137,7 +137,7 @@ export function generateThumbnailPromise(
         dirSeparator,
       ); //fileURLEscaped);
     }
-  } else if (Pro && ext === 'pdf') {
+  } else if (ext === 'pdf') {
     return generatePDFThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'html') {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(
