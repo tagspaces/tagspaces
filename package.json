@@ -24,6 +24,7 @@
   },
   "main": "./src/main/main.ts",
   "scripts": {
+    "nmp:install:windows": "npm install && rimraf node_modules/canvas",
     "browserslist:update": "npx browserslist@latest --update-db",
     "bs": "npm run build && npm run run-electron",
     "bs-dev": "npx cross-env DEBUG_PROD=true npm run build && npm run run-electron",
@@ -54,7 +55,7 @@
     "dev-open-file": "git apply run-with-args.patch && npm run dev",
     "generate-extensions": "node -r ts-node/register scripts/generateExtensionsConfig.ts",
     "generate-jwt": "node scripts/jwt_generate.js",
-    "postinstall": "electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "install-ext-node": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../.. && npm run generate-extensions",
     "install-ext-node-check": "npx cross-env PD_PLATFORM=node node scripts/checkWSinstalled.js",
     "install-ext-node-linux": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=linux --arch=x64 && npm run generate-extensions",

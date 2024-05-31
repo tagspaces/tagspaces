@@ -32,7 +32,7 @@ jobs:
         run: |
           # fix flaky python installation on github actions:
           python -m pip install --upgrade pip setuptools
-          npm install
+          npm run npm:install:windows
           npm run prettier-check
           npm run type-check
         env:
