@@ -969,7 +969,7 @@ export const IOActionsContextProvider = ({
     reflect: boolean = true,
     locationID: string = undefined,
   ) {
-    return currentLocation
+    return findLocation(locationID)
       .getPropertiesPromise(filePath)
       .then((entryProps) => {
         if (entryProps) {

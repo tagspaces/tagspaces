@@ -52,7 +52,7 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 
 function SettingsExtensions() {
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocalLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +73,16 @@ function SettingsExtensions() {
       dispatch(AppActions.resetProgress());
       openFileUploadDialog();
       const destinationPath = dataDir + AppConfig.dirSeparator + 'tsplugins';
-      uploadFilesAPI(files, destinationPath, onUploadProgress, false)
+      const location = findLocalLocation();
+      uploadFilesAPI(
+        files,
+        destinationPath,
+        onUploadProgress,
+        false,
+        false,
+        location.uuid,
+        location.uuid,
+      )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const targetPath =
             destinationPath +
@@ -86,7 +95,7 @@ function SettingsExtensions() {
           );
           return Promise.all(promises).then((paths) => {
             loadExtensions();
-            paths.forEach((path) => currentLocation.deleteFilePromise(path));
+            paths.forEach((path) => location.deleteFilePromise(path));
             return true;
           });
         })
