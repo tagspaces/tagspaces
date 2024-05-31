@@ -936,6 +936,8 @@ export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
 export const getNewHTMLFileContent = (state: any) =>
   state.settings.newHTMLFileContent;
+export const getEnabledExtensions = (state: any) =>
+  state.settings.enabledExtensions;
 export const getTagGroupCollapsed = (state: any) =>
   state.settings.tagGroupCollapsed;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;

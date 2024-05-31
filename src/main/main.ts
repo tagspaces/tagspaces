@@ -665,6 +665,7 @@ app
               extensions,
               supportedFileTypes,
             };
+            console.log('set_extensions' + JSON.stringify(setExtensions));
             mainWindow?.webContents.send('set_extensions', setExtensions);
             // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
           })

@@ -34,7 +34,7 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
-import { extensionsFound } from '-/extension-config';
+//import { extensionsFound } from '-/extension-config';
 
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
@@ -109,9 +109,9 @@ export const types = {
   //UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   //REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   // SET_ISLOADING: 'APP/SET_ISLOADING',
-  ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
-  REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
-  UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION',
+  //ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
+  //REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
+  //UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION',
 };
 
 /*export type OpenedEntry = {
@@ -164,7 +164,7 @@ if (window.ExtDefaultVerticalPanel === 'none') {
 }
 
 export const initialState = {
-  extensions: extensionsFound,
+  //extensions: extensionsFound,
   //isLoading: false,
   error: null,
   loggedIn: false,
@@ -547,7 +547,7 @@ export default (state: any = initialState, action: any) => {
         helpFeedbackPanelOpened: true,
       };
     }
-    case types.ADD_EXTENSIONS: {
+    /*case types.ADD_EXTENSIONS: {
       const extensions = mergeByProp(
         state.extensions,
         action.extensions,
@@ -562,8 +562,8 @@ export default (state: any = initialState, action: any) => {
           return ext;
         }),
       };
-    }
-    case types.UPDATE_EXTENSION: {
+    }*/
+    /*case types.UPDATE_EXTENSION: {
       return {
         ...state,
         extensions: mergeByProp(
@@ -572,15 +572,15 @@ export default (state: any = initialState, action: any) => {
           'extensionId',
         ), // updateExtensions(state.extensions, action.extension)
       };
-    }
-    case types.REMOVE_EXTENSIONS: {
+    }*/
+    /*case types.REMOVE_EXTENSIONS: {
       return {
         ...state,
         extensions: state.extensions.filter(
           (ext) => ext.extensionId !== action.extensionId,
         ),
       };
-    }
+    }*/
     default: {
       return state;
     }
@@ -601,7 +601,7 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
-  addExtensions:
+  /*addExtensions:
     (extensions: Array<TS.Extension>) =>
     (dispatch: (action) => void, getState: () => any) => {
       const { settings } = getState();
@@ -616,15 +616,15 @@ export const actions = {
     type: types.ADD_EXTENSIONS,
     extensions,
     enabledExtensions,
-  }),
-  removeExtension: (extensionId: string) => ({
+  }),*/
+  /*removeExtension: (extensionId: string) => ({
     type: types.REMOVE_EXTENSIONS,
     extensionId,
-  }),
-  updateExtension: (extension: TS.Extension) => ({
+  }),*/
+  /*updateExtension: (extension: TS.Extension) => ({
     type: types.UPDATE_EXTENSION,
     extension,
-  }),
+  }),*/
   /*setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
     folderPath,
@@ -983,7 +983,7 @@ export const isTagLibraryChanged = (state: any) => state.app.tagLibraryChanged;
   state.app.selectedEntries ? state.app.selectedEntries : [];*/
 /*export const getSelectedEntriesLength = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries.length : 0;*/
-export const getExtensions = (state: any) => state.app.extensions;
+//export const getExtensions = (state: any) => state.app.extensions;
 // export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 // export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 // export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
