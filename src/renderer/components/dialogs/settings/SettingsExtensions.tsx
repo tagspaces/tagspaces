@@ -91,7 +91,10 @@ function SettingsExtensions() {
             AppConfig.dirSeparator +
             'extensions';
           const promises = fsEntries.map((fsEntry) =>
-            unZip(fsEntry.path, targetPath),
+            unZip(
+              fsEntry.path,
+              targetPath + AppConfig.dirSeparator + fsEntry.name,
+            ),
           );
           return Promise.all(promises).then((paths) => {
             loadExtensions();
