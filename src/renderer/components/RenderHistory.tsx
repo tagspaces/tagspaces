@@ -32,8 +32,7 @@ import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   historyKey: string;
@@ -44,9 +43,6 @@ interface Props {
 }
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
-  // const dispatch: AppDispatch = useDispatch();
-  const { openEntry, openLink } = useOpenedEntryContext();
-  const { openLocationById, currentLocation } = useCurrentLocationContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
@@ -55,18 +51,13 @@ function RenderHistory(props: Props) {
     : undefined;
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
-  const openLinkDispatch = (link) => openLink(link, { fullWidth: false });
-
-  if (!currentLocation) {
-    return null;
-  }
   return (
     <>
       {items &&
         items.slice(0, maxItems || items.length).map((item) => {
-          const itemName = item.path.endsWith(currentLocation.getDirSeparator())
-            ? extractDirectoryName(item.path, currentLocation.getDirSeparator())
-            : extractFileName(item.path, currentLocation.getDirSeparator());
+          const itemName = item.path.endsWith(AppConfig.dirSeparator)
+            ? extractDirectoryName(item.path, AppConfig.dirSeparator)
+            : extractFileName(item.path, AppConfig.dirSeparator);
           return (
             <ListItem
               dense
