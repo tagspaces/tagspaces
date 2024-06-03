@@ -1273,7 +1273,7 @@ export const IOActionsContextProvider = ({
       newFilePath,
       locationID,
       undefined,
-      reflect,
+      false,
     )
       .then(() => {
         // const newFilePathFromPromise = result[1];
@@ -1310,6 +1310,20 @@ export const IOActionsContextProvider = ({
           false,
         )
           .then(() => {
+            if (reflect) {
+              getAllPropertiesPromise(newFilePath).then(
+                (fsEntry: TS.FileSystemEntry) => {
+                  if (reflect) {
+                    setReflectActions({
+                      action: 'update',
+                      entry: fsEntry,
+                      oldEntryPath: filePath,
+                    });
+                  }
+                  return fsEntry;
+                },
+              );
+            }
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
