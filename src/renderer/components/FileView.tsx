@@ -50,8 +50,10 @@ function FileView(props: Props) {
   const fileOpenerURL = useRef<string>(getFileOpenerURL());
 
   useEffect(() => {
-    fileOpenerURL.current = getFileOpenerURL();
-  }, [openedEntry, searchQuery]);
+    if (!openedEntry.editMode && !isSearchMode) {
+      fileOpenerURL.current = getFileOpenerURL();
+    }
+  }, [openedEntry, isSearchMode]);
 
   useEventListener('toggle-resume', () => {
     if (
