@@ -46,6 +46,7 @@ import { TS } from '-/tagspaces.namespace';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { executePromisesInBatches } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   open: boolean;
@@ -59,6 +60,8 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
@@ -75,6 +78,25 @@ function MoveOrCopyFilesDialog(props: Props) {
     executePromisesInBatches(promises).then((actions) => {
       setReflectMetaActions(...actions);
     });
+  }
+
+  function handleMove(filePaths: string[]) {
+    moveFiles(filePaths, currentDirectoryPath, currentLocation.uuid).then(
+      (success) => {
+        if (success) {
+          generateThumbs(
+            filePaths.map((targetPath) =>
+              joinPaths(
+                currentLocation?.getDirSeparator(),
+                currentDirectoryPath,
+                extractFileName(targetPath, currentLocation?.getDirSeparator()),
+              ),
+            ),
+          );
+        }
+        return true;
+      },
+    );
   }
 
   return (
@@ -125,28 +147,17 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
-              const filePaths = selectedFiles.map((file) => file.path);
-              moveFiles(
-                filePaths,
-                currentDirectoryPath,
-                currentLocation.uuid,
-              ).then((success) => {
-                if (success) {
-                  generateThumbs(
-                    filePaths.map((targetPath) =>
-                      joinPaths(
-                        currentLocation?.getDirSeparator(),
-                        currentDirectoryPath,
-                        extractFileName(
-                          targetPath,
-                          currentLocation?.getDirSeparator(),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return true;
-              });
+              handleEntryExist(selectedFiles, currentDirectoryPath).then(
+                (exist) => {
+                  if (exist) {
+                    openEntryExistDialog(exist, () => {
+                      handleMove(selectedFiles.map((file) => file.path));
+                    });
+                  } else {
+                    handleMove(selectedFiles.map((file) => file.path));
+                  }
+                },
+              );
             }
             onClose();
           }}

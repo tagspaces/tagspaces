@@ -5,6 +5,7 @@ import DragItemTypes from '-/components/DragItemTypes';
 import React from 'react';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
@@ -68,6 +69,8 @@ export const renderCell = (
     onProgress?,
     reflect?: boolean,
   ) => Promise<boolean>,
+  handleEntryExist,
+  openEntryExistDialog,
   clearSelection: () => void,
   isLast?: boolean,
 ) => {
@@ -249,8 +252,15 @@ export const renderCell = (
         arrPath = [item.path];
       }
       console.log('Dropped files: ' + item.path);
-      moveFiles(arrPath, item.targetPath, currentLocation.uuid);
-      //clearSelection();
+      handleEntryExist(item.selectedEntries, item.targetPath).then((exist) => {
+        if (exist) {
+          openEntryExistDialog(exist, () => {
+            moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+          });
+        } else {
+          moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+        }
+      });
     }
   };
 

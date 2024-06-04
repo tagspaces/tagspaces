@@ -18,6 +18,7 @@
 
 import React from 'react';
 import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
+import { EntryExistDialogContextProvider } from '-/components/dialogs/hooks/EntryExistDialogContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -25,9 +26,11 @@ export type DialogsRootProps = {
 
 function DialogsRoot({ children }: DialogsRootProps) {
   return (
-    <FileUploadDialogContextProvider>
-      {children}
-    </FileUploadDialogContextProvider>
+    <EntryExistDialogContextProvider>
+      <FileUploadDialogContextProvider>
+        {children}
+      </FileUploadDialogContextProvider>
+    </EntryExistDialogContextProvider>
   );
 }
 
