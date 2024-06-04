@@ -976,7 +976,8 @@ export const TaggingActionsContextProvider = ({
               reflect,
             );
             if (!success) {
-              reject(new Error('Error renaming file'));
+              resolve(undefined);
+              //reject(new Error('Error renaming file'));
               return;
             }
           }
