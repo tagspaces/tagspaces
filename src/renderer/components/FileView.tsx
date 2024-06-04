@@ -51,7 +51,7 @@ function FileView(props: Props) {
 
   useEffect(() => {
     fileOpenerURL.current = getFileOpenerURL();
-  }, [openedEntry]);
+  }, [openedEntry, searchQuery]);
 
   useEventListener('toggle-resume', () => {
     if (
