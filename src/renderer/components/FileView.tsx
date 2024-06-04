@@ -26,6 +26,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   isFullscreen?: boolean;
+  isFileChanged: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   toggleFullScreen?: () => void;
@@ -40,6 +41,7 @@ function FileView(props: Props) {
   const {
     fileViewer,
     isFullscreen,
+    isFileChanged,
     fileViewerContainer,
     toggleFullScreen,
     height,
@@ -50,10 +52,10 @@ function FileView(props: Props) {
   const fileOpenerURL = useRef<string>(getFileOpenerURL());
 
   useEffect(() => {
-    if (!openedEntry.editMode && !isSearchMode) {
+    if (!isFileChanged) {
       fileOpenerURL.current = getFileOpenerURL();
     }
-  }, [openedEntry, isSearchMode]);
+  }, [openedEntry, isFileChanged, isSearchMode]);
 
   useEventListener('toggle-resume', () => {
     if (

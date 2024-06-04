@@ -189,6 +189,7 @@ function FilePreviewDialog(props: Props) {
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
           eventID={eventID.current}
+          isFileChanged={false}
         />
       </DialogContent>
     </Dialog>
