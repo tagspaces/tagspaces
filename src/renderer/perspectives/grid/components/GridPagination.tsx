@@ -44,6 +44,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -93,6 +94,8 @@ function GridPagination(props: Props) {
     gridPageLimit,
     singleClickAction,
   } = usePerspectiveSettingsContext();
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
   const { openEntryInternal } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -338,6 +341,8 @@ function GridPagination(props: Props) {
                 setDirContextMenuAnchorEl,
                 showNotification,
                 moveFiles,
+                handleEntryExist,
+                openEntryExistDialog,
                 clearSelection,
               ),
             )}
@@ -362,6 +367,8 @@ function GridPagination(props: Props) {
               setDirContextMenuAnchorEl,
               showNotification,
               moveFiles,
+              handleEntryExist,
+              openEntryExistDialog,
               clearSelection,
               index === dArray.length - 1,
             ),

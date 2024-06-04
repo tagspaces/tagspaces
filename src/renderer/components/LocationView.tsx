@@ -44,6 +44,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   location: CommonLocation;
@@ -64,6 +65,8 @@ function LocationView(props: Props) {
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -71,12 +74,7 @@ function LocationView(props: Props) {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const {
-    location,
-    hideDrawer,
-    setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened,
-  } = props;
+  const { location, hideDrawer } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
   const handleLocationIconClick = (
@@ -171,7 +169,15 @@ function LocationView(props: Props) {
             console.log('uploadFiles', error);
           });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          moveFiles(arrPath, targetPath, targetLocation.uuid);
+          handleEntryExist(selectedEntries, targetPath).then((exist) => {
+            if (exist) {
+              openEntryExistDialog(exist, () => {
+                moveFiles(arrPath, targetPath, targetLocation.uuid);
+              });
+            } else {
+              moveFiles(arrPath, targetPath, targetLocation.uuid);
+            }
+          });
         } else {
           showNotification(t('Moving file not possible'), 'error', true);
           return;
