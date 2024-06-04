@@ -66,7 +66,7 @@ test.beforeEach(async () => {
 
 test.describe('TST51 - Perspective Grid', () => {
   test('TST0501 - Create HTML file [electron,web]', async () => {
-    await global.client.waitForLoadState('networkidle');
+    // await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
