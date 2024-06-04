@@ -226,7 +226,7 @@ function SettingsExtensions() {
             extensions.filter((ext) => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>
             )}
-          {devMode && (
+          {devMode && AppConfig.isElectron && (
             <Box style={{ textAlign: 'center' }}>
               <Button
                 data-tid="installExtensionTID"
