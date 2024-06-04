@@ -46,7 +46,7 @@ function FileView(props: Props) {
     eventID,
   } = props;
 
-  const { searchQuery } = useDirectoryContentContext();
+  const { searchQuery, isSearchMode } = useDirectoryContentContext();
   const fileOpenerURL = useRef<string>(getFileOpenerURL());
 
   useEffect(() => {
