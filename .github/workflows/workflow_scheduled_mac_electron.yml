@@ -23,14 +23,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
       - name: Running npm install, prettier and type checks
         run: |
-          # fix flaky python installation on github actions:
-          python -m pip install --upgrade pip setuptools
           npm install
           npm run prettier-check
           npm run type-check
