@@ -6,6 +6,7 @@ const {
   extractFileExtension,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
+  getMetaFileLocationForDir,
 } = require('@tagspaces/tagspaces-common/paths');
 
 const dirSeparatorUnix = '/';
@@ -53,14 +54,20 @@ function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
   });
 
   test(platform + ' getMetaFileLocationForFile ' + filepath, () => {
-    expect(getMetaFileLocationForFile(filepath, dirSeparator)).toBe(
+    const isDir = filepath.endsWith(dirSeparator);
+    const metaFilePath = isDir
+      ? getMetaFileLocationForDir(filepath, dirSeparator)
+      : getMetaFileLocationForFile(filepath, dirSeparator);
+    expect(metaFilePath).toBe(
       dirPath +
         dirSeparator +
         AppConfig.metaFolder +
         dirSeparator +
-        fileName +
-        (fileExtension ? '.' + fileExtension : '') +
-        AppConfig.metaFileExt,
+        (isDir
+          ? AppConfig.metaFolderFile
+          : fileName +
+            (fileExtension ? '.' + fileExtension : '') +
+            AppConfig.metaFileExt),
     );
   });
 }
