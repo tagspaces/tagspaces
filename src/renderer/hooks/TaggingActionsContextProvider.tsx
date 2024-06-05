@@ -107,7 +107,6 @@ type TaggingActionsContextData = {
   sortTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
   updateTagGroup: (tg: TS.TagGroup) => void;
   importTagGroups: (newEntries: Array<TS.TagGroup>, replace?: boolean) => void;
-  refreshTagsFromLocation: () => void;
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
@@ -134,7 +133,6 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   sortTagGroup: undefined,
   updateTagGroup: undefined,
   importTagGroups: undefined,
-  refreshTagsFromLocation: undefined,
 });
 
 export type TaggingActionsContextProviderProps = {
@@ -149,7 +147,6 @@ export const TaggingActionsContextProvider = ({
     useCurrentLocationContext();
   const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
-    getTagGroups,
     createLocationTagGroup,
     editLocationTagGroup,
     removeLocationTagGroup,
@@ -171,36 +168,6 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-
-  useEffect(() => {
-    if (Pro && saveTagInLocation) {
-      refreshTagsFromLocation();
-    }
-  }, [saveTagInLocation, currentLocation]);
-
-  function refreshTagsFromLocation() {
-    if (currentLocation) {
-      getTagGroups(currentLocation).then((locationTagGroups) => {
-        if (locationTagGroups && locationTagGroups.length > 0) {
-          const oldGroups = getTagLibrary();
-          if (checkTagGroupModified(locationTagGroups, oldGroups)) {
-            importTagGroups(locationTagGroups, false);
-          }
-        }
-      });
-    }
-  }
-
-  function checkTagGroupModified(
-    newGroups: Array<TS.TagGroup>,
-    oldGroups: Array<TS.TagGroup>,
-  ) {
-    return !oldGroups.some((group) =>
-      newGroups.some(
-        (newGroup) => newGroup.modified_date === group.modified_date,
-      ),
-    );
-  }
 
   function extractContent(
     options: extractOptions = {
@@ -1482,7 +1449,6 @@ export const TaggingActionsContextProvider = ({
       sortTagGroup,
       updateTagGroup,
       importTagGroups,
-      refreshTagsFromLocation,
     };
   }, [
     tagGroups,
