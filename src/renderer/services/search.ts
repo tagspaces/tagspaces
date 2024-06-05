@@ -159,26 +159,32 @@ const fuseOptions = {
   keys: [
     {
       name: 'name',
+      getFn: (entry) => entry.name,
       weight: 0.2,
     },
     {
+      name: 'id',
+      getFn: (entry) => entry.meta?.id,
+      weight: 0.1,
+    },
+    {
       name: 'description',
+      getFn: (entry) => entry.meta?.description,
       weight: 0.2,
     },
     {
       name: 'textContent',
+      getFn: (entry) => entry.textContent,
       weight: 0.2,
     },
     {
       name: 'tags',
+      getFn: (entry) => entry.tags?.title,
       weight: 0.2,
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
-      weight: 0.1,
-    },
-    {
-      name: 'uuid',
+      getFn: (entry) => entry.path,
       weight: 0.1,
     },
   ],
@@ -406,26 +412,31 @@ export default class Search {
               ? searchQuery.textQuery.toLowerCase()
               : searchQuery.textQuery;
             // const name = ignoreCase ? entry.name && entry.name.toLowerCase() : entry.name;
-            const description =
-              ignoreCase && entry.description
-                ? entry.description.toLowerCase()
-                : entry.description;
-            const textContent =
-              ignoreCase && entry.textContent
-                ? entry.textContent.toLowerCase()
-                : entry.textContent;
-            const uuid =
-              ignoreCase && entry.uuid ? entry.uuid.toLowerCase() : entry.uuid;
-            const path = ignoreCase
-              ? entry.path && entry.path.toLowerCase()
-              : entry.path;
+            let description = entry.meta?.description;
+            if (ignoreCase && description) {
+              description = description.toLowerCase();
+            }
+            let metaId = entry.meta?.id;
+            if (ignoreCase && metaId) {
+              metaId = metaId.toLowerCase();
+            }
+            let textContent = entry.textContent;
+            if (ignoreCase && textContent) {
+              textContent = textContent.toLowerCase();
+            }
+            let path = entry.path;
+            if (ignoreCase && path) {
+              path = path.toLowerCase();
+            }
             // const foundInName = name && name.includes(textQuery);
             const foundInDescr = description && description.includes(textQuery);
-            const foundInUuid = uuid && uuid.includes(textQuery);
+            const foundInMetaId = metaId && metaId.includes(textQuery);
             const foundInContent =
               textContent && textContent.includes(textQuery);
             const foundInPath = path && path.includes(textQuery);
-            return foundInPath || foundInDescr || foundInContent || foundInUuid; // || foundInName;
+            return (
+              foundInPath || foundInDescr || foundInContent || foundInMetaId
+            ); // || foundInName;
           });
         } else {
           const fuse = new Fuse(results, fuseOptions);
