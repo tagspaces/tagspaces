@@ -40,7 +40,6 @@ import {
   extractContainingDirectoryPath,
   getBackupFileLocation,
   extractFileExtension,
-  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';

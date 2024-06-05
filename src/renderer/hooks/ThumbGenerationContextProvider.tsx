@@ -23,6 +23,7 @@ import {
   extractFileName,
   normalizePath,
   getMetaDirectoryPath,
+  extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import {
   getEnableWS,
@@ -211,24 +212,27 @@ export const ThumbGenerationContextProvider = ({
       if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
         return true;
       }
+      const extension = entry.extension
+        ? entry.extension
+        : extractFileExtension(entry.name, location.getDirSeparator());
       if (
         isWorkerAvailable &&
         enableWS &&
-        supportedImgsWS.includes(entry.extension) &&
+        supportedImgsWS.includes(extension) &&
         !location.haveObjectStoreSupport() &&
         !location.haveWebDavSupport()
       ) {
         workerEntries.push(entry.path);
       } else if (
-        supportedImgs.includes(entry.extension) ||
-        supportedContainers.includes(entry.extension) ||
-        supportedText.includes(entry.extension) ||
-        supportedMisc.includes(entry.extension) ||
-        supportedVideos.includes(entry.extension)
+        supportedImgs.includes(extension) ||
+        supportedContainers.includes(extension) ||
+        supportedText.includes(extension) ||
+        supportedMisc.includes(extension) ||
+        supportedVideos.includes(extension)
       ) {
         mainEntries.push(entry.path);
       } else {
-        console.log('Unsupported thumb generation ext:' + entry.extension);
+        console.log('Unsupported thumb generation ext:' + extension);
       }
       return true;
     });
