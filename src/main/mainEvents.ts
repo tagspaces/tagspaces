@@ -152,6 +152,15 @@ export default function loadMainEvents() {
   });
   ipcMain.handle('createDirectoryPromise', async (event, dirPath) => {
     const result = await createDirectoryPromise(dirPath);
+    if (process.platform === 'win32' && dirPath.endsWith('\\.ts')) {
+      // hide .ts folder on Windows
+      const wssPost = await postRequest(
+        JSON.stringify({ path: dirPath }),
+        '/hide-folder',
+      );
+      // @ts-ignore
+      console.log('Hide folder: ' + dirPath + ' - ' + wssPost.success);
+    }
     return result;
   });
   ipcMain.handle(
