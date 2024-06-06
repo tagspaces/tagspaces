@@ -636,7 +636,7 @@ function SearchPopover(props: Props) {
               <Tooltip title={t('searchInAllLocationTooltip')}>
                 <div>{t('globalSearch')}</div>
               </Tooltip>
-              {Pro ? <BetaLabel /> : <ProLabel />}
+              <ProLabel />
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
