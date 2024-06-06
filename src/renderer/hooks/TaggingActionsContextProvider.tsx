@@ -1401,7 +1401,7 @@ export const TaggingActionsContextProvider = ({
         if (exist) {
           arr = arr.map((tGroup) => {
             if (tGroup.uuid === tagGroup.uuid) {
-              return tGroup;
+              return tagGroup;
             }
             return tGroup;
           });

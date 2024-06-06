@@ -140,9 +140,11 @@ function TagLibrary(props: Props) {
     newGroups: Array<TS.TagGroup>,
     oldGroups: Array<TS.TagGroup>,
   ) {
-    return !newGroups.every((group) =>
+    return !newGroups.every((newGroup) =>
       oldGroups.some(
-        (newGroup) => newGroup.modified_date === group.modified_date,
+        (oldGroup) =>
+          newGroup.uuid === oldGroup.uuid &&
+          newGroup.modified_date === oldGroup.modified_date,
       ),
     );
   }
