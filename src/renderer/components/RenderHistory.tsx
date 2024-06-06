@@ -119,7 +119,10 @@ function RenderHistory(props: Props) {
                         //del bookmarks
                         bookmarksContext.delBookmark(item.path);
                       } else {
-                        historyContext.delHistory(item, historyKey);
+                        historyContext.delHistory(
+                          historyKey,
+                          item.creationTimeStamp,
+                        );
                       }
                       update();
                     }}
