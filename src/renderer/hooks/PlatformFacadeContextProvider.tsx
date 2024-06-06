@@ -168,7 +168,8 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
-  const { currentLocation, findLocation } = useCurrentLocationContext();
+  const { currentLocation, locations, findLocation } =
+    useCurrentLocationContext();
   const { getAllPropertiesPromise } = useDirectoryContentContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
@@ -734,7 +735,7 @@ export const PlatformFacadeContextProvider = ({
       deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
-  }, [ignored, currentLocation]); //watcher
+  }, [ignored, currentLocation, locations]); //watcher
 
   return (
     <PlatformFacadeContext.Provider value={context}>

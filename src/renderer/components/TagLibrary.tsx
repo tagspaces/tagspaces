@@ -128,7 +128,7 @@ function TagLibrary(props: Props) {
           if (locationTagGroups && locationTagGroups.length > 0) {
             const oldGroups = getTagLibrary();
             if (checkTagGroupModified(locationTagGroups, oldGroups)) {
-              importTagGroups(locationTagGroups, false);
+              importTagGroups(locationTagGroups, false, location);
             }
           }
         });
@@ -140,8 +140,8 @@ function TagLibrary(props: Props) {
     newGroups: Array<TS.TagGroup>,
     oldGroups: Array<TS.TagGroup>,
   ) {
-    return !oldGroups.some((group) =>
-      newGroups.some(
+    return !newGroups.every((group) =>
+      oldGroups.some(
         (newGroup) => newGroup.modified_date === group.modified_date,
       ),
     );
