@@ -79,6 +79,8 @@ function TargetFileBox(props: Props) {
       }
       dispatch(AppActions.resetProgress());
       openFileUploadDialog();
+      const localLocation = findLocalLocation();
+      const sourceLocationId = localLocation ? localLocation.uuid : undefined;
       return uploadFilesAPI(
         files,
         currentDirectoryPath,
@@ -86,7 +88,7 @@ function TargetFileBox(props: Props) {
         true,
         false,
         undefined,
-        findLocalLocation().uuid,
+        sourceLocationId,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
