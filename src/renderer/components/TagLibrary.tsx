@@ -78,7 +78,7 @@ function TagLibrary(props: Props) {
   const { getTagGroups } = useTagGroupsLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { readOnlyMode, findLocation, locations } = useCurrentLocationContext();
-  const { tagGroups } = useEditedTagLibraryContext();
+  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -129,6 +129,8 @@ function TagLibrary(props: Props) {
             const oldGroups = getTagLibrary();
             if (checkTagGroupModified(locationTagGroups, oldGroups)) {
               importTagGroups(locationTagGroups, false, location);
+            } else {
+              reflectTagLibraryChanged(oldGroups);
             }
           }
         });

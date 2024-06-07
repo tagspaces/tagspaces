@@ -117,6 +117,7 @@ function EditTagGroupDialog(props: Props) {
         color,
         textcolor,
         locationId,
+        modified_date: new Date().getTime(),
         children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
           color: applyChanges ? color : tag.color,
