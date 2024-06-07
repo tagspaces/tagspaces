@@ -25,14 +25,11 @@ import React, {
 } from 'react';
 import { AppDispatch } from '-/reducers/app';
 import AppConfig from '-/AppConfig';
-import {
-  actions as SettingsActions,
-  getEnabledExtensions,
-} from '-/reducers/settings';
+import { actions as SettingsActions } from '-/reducers/settings';
 import { Extensions } from '../../main/types';
 import { TS } from '-/tagspaces.namespace';
 import { extensionsFound } from '-/extension-config';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { mergeByProp } from '-/services/utils-io';
 
 type ExtensionsContextData = {
@@ -40,6 +37,7 @@ type ExtensionsContextData = {
   addExtensions: (newExt: TS.Extension[]) => void;
   removeExtension: (extensionId: string) => void;
   updateExtension: (extension: TS.Extension) => void;
+  enableExtension: (extensionId: string, enabled: boolean) => void;
 };
 
 export const ExtensionsContext = createContext<ExtensionsContextData>({
@@ -47,6 +45,7 @@ export const ExtensionsContext = createContext<ExtensionsContextData>({
   addExtensions: undefined,
   removeExtension: undefined,
   updateExtension: undefined,
+  enableExtension: undefined,
 });
 
 export type ExtensionsContextProviderProps = {
@@ -57,9 +56,9 @@ export const ExtensionsContextProvider = ({
   children,
 }: ExtensionsContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
-  const enabledExtensions = useSelector(getEnabledExtensions);
   const extensions = useRef<TS.Extension[]>(extensionsFound);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const enableExtensionsKey = 'ENABLE_EXTENSION';
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -74,14 +73,54 @@ export const ExtensionsContextProvider = ({
     }
   }, []);
 
-  function addExtensions(newExt: TS.Extension[]) {
-    const ext = mergeByProp(extensions.current, newExt, 'extensionId');
+  function getEnabledExtensions(): string[] {
+    const item = localStorage.getItem(enableExtensionsKey);
+    if (item) {
+      return JSON.parse(item);
+    }
+    return [];
+  }
+
+  function enableExtension(extensionId: string, enabled: boolean): void {
+    let enabledExtensions = getEnabledExtensions();
+    if (enabled) {
+      if (!enabledExtensions.includes(extensionId)) {
+        enabledExtensions.push(extensionId);
+      }
+      // todo dispatch(SettingsActions.addSupportedFileTypes(extensionId));
+    } else {
+      enabledExtensions = enabledExtensions.filter(
+        (extId) => extId !== extensionId,
+      );
+      dispatch(SettingsActions.removeSupportedFileTypes(extensionId));
+    }
+    localStorage.setItem(
+      enableExtensionsKey,
+      JSON.stringify(enabledExtensions),
+    );
+    updateEnabledExtensions(extensions.current);
+    forceUpdate();
+  }
+
+  function updateEnabledExtensions(ext) {
     extensions.current = ext.map((ex) => {
-      if (enabledExtensions.includes(ex.extensionId)) {
+      if (
+        getEnabledExtensions().some((enabledExtension) =>
+          ex.extensionId.startsWith(enabledExtension),
+        )
+      ) {
         return { ...ex, extensionEnabled: true };
+      }
+      if (ex.extensionExternal) {
+        return { ...ex, extensionEnabled: false };
       }
       return ex;
     });
+  }
+
+  function addExtensions(newExt: TS.Extension[]) {
+    const ext = mergeByProp(extensions.current, newExt, 'extensionId');
+    updateEnabledExtensions(ext);
     forceUpdate();
   }
 
@@ -112,6 +151,7 @@ export const ExtensionsContextProvider = ({
       addExtensions,
       removeExtension,
       updateExtension,
+      enableExtension,
     };
   }, [extensions.current]);
 

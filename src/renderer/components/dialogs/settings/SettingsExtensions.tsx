@@ -44,7 +44,7 @@ import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
-  const { extensions, removeExtension, updateExtension } =
+  const { extensions, removeExtension, enableExtension } =
     useExtensionsContext();
   const { findLocalLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
@@ -160,27 +160,10 @@ function SettingsExtensions() {
                           : ext.extensionId;
 
                         if (event.target.checked) {
-                          updateExtension({
-                            ...ext,
-                            extensionEnabled: true,
-                          });
-                          dispatch(
-                            SettingsActions.enableExtension(extId, true),
-                          );
+                          enableExtension(extId, true);
                           loadExtensions();
                         } else {
-                          updateExtension({
-                            ...ext,
-                            extensionEnabled: false,
-                          });
-                          dispatch(
-                            SettingsActions.enableExtension(extId, false),
-                          );
-                          dispatch(
-                            SettingsActions.removeSupportedFileTypes(
-                              ext.extensionId,
-                            ),
-                          );
+                          enableExtension(extId, false);
                         }
                       }}
                     />
