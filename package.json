@@ -143,7 +143,7 @@
     "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd ../../..",
     "type-check": "npm run typescript-clean && tsc --noEmit",
     "typescript-clean": "tsc --build --clean",
-    "update-changelog": "git log v5.7.13..HEAD --no-merges --format=%B > CHANGELOG.TXT",
+    "update-changelog": "git log v5.8.3..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd tagspacespro && git log v5.6.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "./tx pull -a -f",
     "version-meta": "node scripts/versionmeta.js"
