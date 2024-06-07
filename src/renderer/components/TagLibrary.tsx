@@ -130,6 +130,7 @@ function TagLibrary(props: Props) {
             if (checkTagGroupModified(locationTagGroups, oldGroups)) {
               importTagGroups(locationTagGroups, false, location);
             } else {
+              // refresh if localStorage is changed - from new instance
               reflectTagLibraryChanged(oldGroups);
             }
           }
@@ -146,7 +147,7 @@ function TagLibrary(props: Props) {
       oldGroups.some(
         (oldGroup) =>
           newGroup.uuid === oldGroup.uuid &&
-          newGroup.modified_date === oldGroup.modified_date,
+          newGroup.modified_date <= oldGroup.modified_date,
       ),
     );
   }
