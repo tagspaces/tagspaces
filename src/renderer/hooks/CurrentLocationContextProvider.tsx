@@ -357,7 +357,7 @@ export const CurrentLocationContextProvider = ({
         true,
       );
     }
-    changeLocation(location);
+    changeLocation(location, skipInitDirList);
   }
 
   function closeLocation(locationId: string) {
