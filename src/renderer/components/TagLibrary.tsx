@@ -129,9 +129,9 @@ function TagLibrary(props: Props) {
             const oldGroups = getTagLibrary();
             if (checkTagGroupModified(locationTagGroups, oldGroups)) {
               importTagGroups(locationTagGroups, false, location);
-            } else {
-              // refresh if localStorage is changed - from new instance
-              reflectTagLibraryChanged(oldGroups);
+              // } else {
+              //   // refresh if localStorage is changed - from new instance
+              //   reflectTagLibraryChanged(oldGroups);
             }
           }
         });
