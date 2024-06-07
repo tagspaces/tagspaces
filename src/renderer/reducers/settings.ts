@@ -85,7 +85,7 @@ export const types = {
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
   REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
-  ENABLE_EXTENSION: 'SETTINGS/ENABLE_EXTENSION',
+  //ENABLE_EXTENSION: 'SETTINGS/ENABLE_EXTENSION',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -358,7 +358,7 @@ export default (state: any = defaultSettings, action: any) => {
         ),
       };
     }
-    case types.ENABLE_EXTENSION: {
+    /*case types.ENABLE_EXTENSION: {
       let enabledExtensions;
       let supportedFileTypes;
       if (action.enabled) {
@@ -385,7 +385,7 @@ export default (state: any = defaultSettings, action: any) => {
         enabledExtensions: enabledExtensions,
         ...(supportedFileTypes && { supportedFileTypes: supportedFileTypes }),
       };
-    }
+    }*/
     case types.REMOVE_SUPPORTED_FILE_TYPES: {
       const supportedFileTypes = state.supportedFileTypes.map(
         (fType: TS.FileTypes) => ({
@@ -726,11 +726,11 @@ export const actions = {
     type: types.REMOVE_SUPPORTED_FILE_TYPES,
     extensionId,
   }),
-  enableExtension: (extensionId: string, enabled: boolean) => ({
+  /*enableExtension: (extensionId: string, enabled: boolean) => ({
     type: types.ENABLE_EXTENSION,
     extensionId,
     enabled,
-  }),
+  }),*/
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes,
@@ -936,8 +936,8 @@ export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
 export const getNewHTMLFileContent = (state: any) =>
   state.settings.newHTMLFileContent;
-export const getEnabledExtensions = (state: any) =>
-  state.settings.enabledExtensions;
+/*export const getEnabledExtensions = (state: any) =>
+  state.settings.enabledExtensions;*/
 export const getTagGroupCollapsed = (state: any) =>
   state.settings.tagGroupCollapsed;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
