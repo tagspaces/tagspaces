@@ -1630,9 +1630,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.log(
-                'Error adding perspective for ' + path + ' with ' + err,
-              );
+              console.log('Error ' + path + ' with ' + err);
               reject();
             });
           return true;
@@ -1649,9 +1647,7 @@ export const IOActionsContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.log(
-                'Error adding perspective for ' + path + ' with ' + error,
-              );
+              console.log('Error ' + path + ' with ' + error);
               reject();
             });
         });

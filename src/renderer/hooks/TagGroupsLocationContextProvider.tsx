@@ -228,12 +228,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.log(
-                'Error adding perspective for ' +
-                  location.path +
-                  ' with ' +
-                  err,
-              );
+              console.log('Error ' + location.path + ' with ' + err);
               reject();
             });
           return true;
@@ -248,12 +243,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.log(
-                'Error adding perspective for ' +
-                  location.path +
-                  ' with ' +
-                  error,
-              );
+              console.log('Error ' + location.path + ' with ' + error);
               reject();
             });
         });
@@ -270,27 +260,27 @@ export const TagGroupsLocationContextProvider = ({
     return new Promise((resolve, reject) => {
       loadLocationDataPromise(location)
         .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          const tagGroups = fsEntryMeta.tagGroups.filter(
-            (group) => group.uuid !== tagGroupUuid,
-          );
-          const updatedEntryMeta: TS.FileSystemEntryMeta = {
-            ...fsEntryMeta,
-            tagGroups,
-          };
-          saveLocationDataPromise(location, updatedEntryMeta)
-            .then(() => {
-              resolve(updatedEntryMeta);
-              return true;
-            })
-            .catch((err) => {
-              console.log(
-                'Error adding perspective for ' +
-                  location.path +
-                  ' with ' +
-                  err,
-              );
-              reject();
-            });
+          if (fsEntryMeta) {
+            const tagGroups = fsEntryMeta.tagGroups?.filter(
+              (group) => group.uuid !== tagGroupUuid,
+            );
+            if (tagGroups) {
+              const updatedEntryMeta: TS.FileSystemEntryMeta = {
+                ...fsEntryMeta,
+                tagGroups,
+              };
+              return saveLocationDataPromise(location, updatedEntryMeta)
+                .then(() => {
+                  resolve(updatedEntryMeta);
+                  return true;
+                })
+                .catch((err) => {
+                  console.log('Error ' + location.path + ' with ' + err);
+                  reject();
+                  return false;
+                });
+            }
+          }
           return true;
         })
         .catch((err) => {
@@ -329,12 +319,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((err) => {
-              console.log(
-                'Error adding perspective for ' +
-                  location.path +
-                  ' with ' +
-                  err,
-              );
+              console.log('Error ' + location.path + ' with ' + err);
               reject();
             });
           return true;
@@ -349,12 +334,7 @@ export const TagGroupsLocationContextProvider = ({
               return true;
             })
             .catch((error) => {
-              console.log(
-                'Error adding perspective for ' +
-                  location.path +
-                  ' with ' +
-                  error,
-              );
+              console.log('Error ' + location.path + ' with ' + error);
               reject();
             });
         });

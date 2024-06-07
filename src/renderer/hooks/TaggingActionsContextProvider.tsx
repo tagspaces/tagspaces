@@ -105,9 +105,12 @@ type TaggingActionsContextData = {
   moveTagGroupDown: (parentTagGroupUuid: TS.Uuid) => void;
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
   sortTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
-  updateTagGroup: (tg: TS.TagGroup) => void;
-  importTagGroups: (newEntries: Array<TS.TagGroup>, replace?: boolean) => void;
-  refreshTagsFromLocation: () => void;
+  updateTagGroup: (tg: TS.TagGroup, replaceTags?: boolean) => void;
+  importTagGroups: (
+    newEntries: Array<TS.TagGroup>,
+    replace?: boolean,
+    location?: CommonLocation,
+  ) => void;
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
@@ -134,7 +137,6 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   sortTagGroup: undefined,
   updateTagGroup: undefined,
   importTagGroups: undefined,
-  refreshTagsFromLocation: undefined,
 });
 
 export type TaggingActionsContextProviderProps = {
@@ -149,7 +151,6 @@ export const TaggingActionsContextProvider = ({
     useCurrentLocationContext();
   const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
-    getTagGroups,
     createLocationTagGroup,
     editLocationTagGroup,
     removeLocationTagGroup,
@@ -171,36 +172,6 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-
-  useEffect(() => {
-    if (Pro && saveTagInLocation) {
-      refreshTagsFromLocation();
-    }
-  }, [saveTagInLocation, currentLocation]);
-
-  function refreshTagsFromLocation() {
-    if (currentLocation) {
-      getTagGroups(currentLocation).then((locationTagGroups) => {
-        if (locationTagGroups && locationTagGroups.length > 0) {
-          const oldGroups = getTagLibrary();
-          if (checkTagGroupModified(locationTagGroups, oldGroups)) {
-            importTagGroups(locationTagGroups, false);
-          }
-        }
-      });
-    }
-  }
-
-  function checkTagGroupModified(
-    newGroups: Array<TS.TagGroup>,
-    oldGroups: Array<TS.TagGroup>,
-  ) {
-    return !oldGroups.some((group) =>
-      newGroups.some(
-        (newGroup) => newGroup.modified_date === group.modified_date,
-      ),
-    );
-  }
 
   function extractContent(
     options: extractOptions = {
@@ -1059,7 +1030,7 @@ export const TaggingActionsContextProvider = ({
     }
   }
 
-  function updateTagGroup(entry: TS.TagGroup) {
+  function updateTagGroup(entry: TS.TagGroup, replaceTags = false) {
     let indexForEditing = tagGroups.findIndex(
       (tagGroup) => tagGroup.uuid === entry.uuid,
     );
@@ -1070,11 +1041,10 @@ export const TaggingActionsContextProvider = ({
         ...(!entry.created_date && { created_date: new Date().getTime() }),
         ...(!entry.modified_date && { modified_date: new Date().getTime() }),
       };
-
       if (Pro && entry.locationId) {
         const location: CommonLocation = findLocation(entry.locationId);
         if (location) {
-          editLocationTagGroup(location, modifiedEntry);
+          editLocationTagGroup(location, modifiedEntry, replaceTags);
         }
       }
 
@@ -1246,14 +1216,7 @@ export const TaggingActionsContextProvider = ({
           return t;
         }),
       };
-
-      if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = findLocation(tagGroup.locationId);
-        if (location) {
-          editLocationTagGroup(location, newTagGroup, true);
-        }
-      }
-      updateTagGroup(newTagGroup);
+      updateTagGroup(newTagGroup, true);
     }
   }
 
@@ -1275,13 +1238,7 @@ export const TaggingActionsContextProvider = ({
         ],
       };
 
-      if (Pro && tagGroup.locationId) {
-        const location: CommonLocation = findLocation(tagGroup.locationId);
-        if (location) {
-          editLocationTagGroup(location, editedTagGroup, true);
-        }
-      }
-      updateTagGroup(editedTagGroup);
+      updateTagGroup(editedTagGroup, true);
     }
   }
 
@@ -1409,8 +1366,12 @@ export const TaggingActionsContextProvider = ({
     }
   }
 
-  function importTagGroups(newEntries: Array<TS.TagGroup>, replace = false) {
-    const arr = replace ? [] : [...tagGroups];
+  function importTagGroups(
+    newEntries: Array<TS.TagGroup>,
+    replace = false,
+    location: CommonLocation = undefined,
+  ) {
+    let arr = replace ? [] : [...tagGroups];
     // console.log(arr);
     // @ts-ignore
     if (newEntries[0] && newEntries[0].key) {
@@ -1420,6 +1381,7 @@ export const TaggingActionsContextProvider = ({
         // @ts-ignore
         if (newTg.key === tagGroups.uuid || newTg.key !== tagGroups.uuid) {
           newTg = {
+            ...(location && { locationId: location.uuid }),
             title: newTg.title,
             // @ts-ignore
             uuid: newTg.key,
@@ -1435,7 +1397,23 @@ export const TaggingActionsContextProvider = ({
       });
     } else {
       newEntries.forEach((tagGroup) => {
-        const index = arr.findIndex((obj) => obj.uuid === tagGroup.uuid);
+        const exist = arr.some((obj) => obj.uuid === tagGroup.uuid);
+        if (exist) {
+          arr = arr.map((tGroup) => {
+            if (tGroup.uuid === tagGroup.uuid) {
+              return tagGroup;
+            }
+            return tGroup;
+          });
+        } else {
+          arr.push({
+            ...tagGroup,
+            ...(location && {
+              locationId: location.uuid,
+            }),
+          });
+        }
+        /*const index = arr.findIndex((obj) => obj.uuid === tagGroup.uuid);
         if (index > -1) {
           tagGroup.children.forEach((tag) => {
             const stateTag = arr[index].children.find(
@@ -1449,8 +1427,13 @@ export const TaggingActionsContextProvider = ({
             arr[index].locationId = tagGroup.locationId;
           }
         } else {
-          arr.push(tagGroup);
-        }
+          arr.push({
+            ...tagGroup,
+            ...(location && {
+              locationId: location.uuid,
+            }),
+          });
+        }*/
       });
     }
 
@@ -1482,7 +1465,6 @@ export const TaggingActionsContextProvider = ({
       sortTagGroup,
       updateTagGroup,
       importTagGroups,
-      refreshTagsFromLocation,
     };
   }, [
     tagGroups,

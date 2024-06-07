@@ -44,13 +44,13 @@ interface Props {
   open: boolean;
   onClose: () => void;
   showCreateTagGroupDialog: () => void;
+  refreshTagsFromLocation: () => void;
 }
 
 function TagLibraryMenu(props: Props) {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const { tagGroups } = useEditedTagLibraryContext();
-  const { refreshTagsFromLocation } = useTaggingActionsContext();
 
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -132,7 +132,7 @@ function TagLibraryMenu(props: Props) {
             disabled={!Pro || !saveTagInLocation}
             data-tid="refreshTagGroups"
             onClick={() => {
-              refreshTagsFromLocation();
+              props.refreshTagsFromLocation();
               props.onClose();
             }}
           >
