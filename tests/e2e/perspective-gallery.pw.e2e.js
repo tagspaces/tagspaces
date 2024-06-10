@@ -11,6 +11,7 @@ import {
 import {
   clickOn,
   expectElementExist,
+  expectElementSelected,
   getGridFileSelector,
   takeScreenshot,
 } from './general.helpers';
@@ -43,31 +44,15 @@ test.beforeEach(async () => {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await clickOn('[data-tid=openKanbanPerspective]');
+  await clickOn('[data-tid=openGalleryPerspective]');
 });
 
-test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
-    const fileName = 'sample.bmp';
-
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'fileMenuMoveCopyFile',
-    );
-    await clickOn('[data-tid=MoveTargetempty_folder]');
-    await clickOn('[data-tid=confirmMoveFiles]');
-    await expectElementExist(getGridFileSelector(fileName), false);
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'openDirectory',
-    );
-    await expectElementExist(getGridFileSelector(fileName), true);
-  });
-
-  test('TST4910 - prev/next button [web,minio,electron,_pro]', async () => {
-    const fileName = 'sample.3gp';
-    const nextFileName = 'sample.avif';
+test.describe('TST51 - Perspective openGalleryPerspective', () => {
+  test('TST5120 - prev/next button [web,minio,electron,_pro]', async () => {
+    const fileName = 'sample.svg';
+    const nextFileName = 'sample.tga';
     await clickOn(getGridFileSelector(fileName));
+    await clickOn('[data-tid=perspectiveGalleryOpenFileButton]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,

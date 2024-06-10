@@ -38,9 +38,18 @@ export async function getElementScreenshot(
   },
 ) {
   try {
-    const buffer = await global.client
-      .locator(selector)
-      .screenshot({ ...options });
+    /*const el = await global.client.$(selector);
+    await el.waitForElementState('visible');
+    const boundingBox = await el.boundingBox();*/
+    const buffer = await global.client.locator(selector).screenshot({
+      ...options,
+      /*clip: {
+          x: boundingBox.x + 5,
+          y: boundingBox.y + 5,
+          width: boundingBox.width - 10,
+          height: boundingBox.height -10
+        }*/
+    });
     //const buffer = await el.screenshot({ ...options/*, clip: boundingBox*/ });
     return buffer.toString('base64');
   } catch (e) {

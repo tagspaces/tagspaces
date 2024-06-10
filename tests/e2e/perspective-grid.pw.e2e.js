@@ -244,6 +244,16 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
+  test('TST5048 - prev/next button [web,minio,electron]', async () => {
+    const fileName = 'sample.svg';
+    const nextFileName = 'sample.tga';
+    await clickOn(getGridFileSelector(fileName));
+    //await expectElementExist('[data-tid=fileContainerNextFile]', true, 5000);
+    await clickOn('[data-tid=fileContainerNextFile]');
+    await expectElementSelected(nextFileName, true);
+    await clickOn('[data-tid=fileContainerPrevFile]');
+    await expectElementSelected(fileName, true);
+  });
   /* test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'

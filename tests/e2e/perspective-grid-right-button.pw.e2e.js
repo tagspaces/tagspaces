@@ -30,10 +30,14 @@ import {
   showFilesWithTag,
   frameLocator,
   takeScreenshot,
+  expectMetaFilesExist,
+  getElementScreenshot,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import AppConfig from '../../src/renderer/AppConfig';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
@@ -114,29 +118,36 @@ test.describe('TST50** - Right button on a file', () => {
     expect(containTID).toBe(true);*/
   });
 
-  test('TST5017 - Rename file [web,minio,electron]', async () => {
+  test('TST5017 - Rename file and check thumbnail exist [web,minio,electron]', async () => {
     const newFileName = 'newFileName';
     const fileExtension = '.txt';
     // await searchEngine('txt');
-    const sampleFileName = 'sample.txt';
+    const sampleFileName = 'sample';
+
     const oldName = await renameFileFromMenu(
       newFileName,
-      getGridFileSelector(sampleFileName),
+      getGridFileSelector(sampleFileName + fileExtension),
     );
-    expect(oldName).toBe(sampleFileName);
+    expect(oldName).toBe(sampleFileName + fileExtension);
 
     await expectElementExist(getGridFileSelector(newFileName + fileExtension));
     await expectElementExist(getGridFileSelector(oldName), false);
 
-    // const fileNameTxt = await getFirstFileName();
-    // expect(fileNameTxt).toContain(newFileName);
+    /*const fileRenamedScreenshot = await getElementScreenshot(
+      '[data-tid=fsEntryName_'+dataTidFormat(newFileName + fileExtension)+'] img',
+    );*/
 
     // rename back to oldName
     const fileName = await renameFileFromMenu(
-      oldName,
+      sampleFileName,
       getGridFileSelector(newFileName + fileExtension),
     );
     expect(fileName).toBe(newFileName + fileExtension);
+    /*const initScreenshot = await getElementScreenshot(
+      '[data-tid=fsEntryName_'+dataTidFormat(oldName)+'] img',
+    );
+    expect(initScreenshot).toBe(fileRenamedScreenshot);*/
+    await expectMetaFilesExist([oldName + '.jpg']);
   });
 
   test('TST5018 - Delete file [web,minio,electron]', async () => {
