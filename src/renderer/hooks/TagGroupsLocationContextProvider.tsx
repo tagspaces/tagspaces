@@ -370,12 +370,16 @@ export const TagGroupsLocationContextProvider = ({
       AppConfig.folderLocationsFile,
     );
     //}
-    const content = JSON.stringify({
-      ...metaData,
-      appName: versionMeta.name,
-      appVersion: versionMeta.version,
-      lastUpdated: new Date().toJSON(),
-    });
+    const content = JSON.stringify(
+      {
+        ...metaData,
+        appName: versionMeta.name,
+        appVersion: versionMeta.version,
+        lastUpdated: new Date().toJSON(),
+      },
+      null,
+      2,
+    );
     return saveTextFilePromise(
       { path: metaFilePath, locationID: location.uuid },
       content,
