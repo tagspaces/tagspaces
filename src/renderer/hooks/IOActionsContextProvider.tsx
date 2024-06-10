@@ -154,10 +154,6 @@ type IOActionsContextData = {
     id: string,
     location: CommonLocation,
   ) => Promise<string>;
-  createFsEntryMeta: (
-    entry: TS.FileSystemEntry,
-    props?: any,
-  ) => Promise<string>;
   saveFsEntryMeta: (
     entry: TS.FileSystemEntry,
     meta: any,
@@ -234,7 +230,6 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   saveCurrentLocationMetaData: undefined,
   saveMetaDataPromise: undefined,
   getMetadataID: undefined,
-  createFsEntryMeta: undefined,
   saveFsEntryMeta: undefined,
   savePerspective: undefined,
   removeFolderCustomSettings: undefined,
@@ -1498,10 +1493,10 @@ export const IOActionsContextProvider = ({
         if (fsEntryMeta.id) {
           return fsEntryMeta.id;
         } else {
-          return createFsEntryMeta(
-            location.toFsEntry(path, fsEntryMeta.isFile),
-            { ...fsEntryMeta, id: id },
-          );
+          return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
+            ...fsEntryMeta,
+            id: id,
+          }).then((fsEntryMeta) => fsEntryMeta.id);
         }
       })
       .catch(() => {
@@ -1515,11 +1510,10 @@ export const IOActionsContextProvider = ({
           content,
           true,
         ).then(() => id);
-        //return createFsEntryMeta(path, { id: id });
       });
   }
 
-  function createFsEntryMeta(
+  /*function createFsEntryMeta(
     entry: TS.FileSystemEntry,
     props: any = {},
   ): Promise<string> {
@@ -1536,7 +1530,7 @@ export const IOActionsContextProvider = ({
         );
         return newFsEntryMeta.id;
       });
-  }
+  }*/
 
   function saveFsEntryMeta(
     entry: TS.FileSystemEntry,
@@ -2011,7 +2005,6 @@ export const IOActionsContextProvider = ({
       saveCurrentLocationMetaData,
       saveMetaDataPromise,
       getMetadataID,
-      createFsEntryMeta,
       saveFsEntryMeta,
       savePerspective,
       removeFolderCustomSettings,
