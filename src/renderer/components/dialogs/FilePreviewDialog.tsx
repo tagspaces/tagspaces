@@ -41,7 +41,7 @@ interface Props {
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
@@ -100,9 +100,10 @@ function FilePreviewDialog(props: Props) {
           // @ts-ignore call setContent from iframe
           fileViewer.current.contentWindow.setTheme(currentTheme);
         }*/
+        const openLocation = findLocation(openedFile.locationID);
 
-        currentLocation
-          .loadTextFilePromise(
+        openLocation
+          ?.loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false,
           )
@@ -113,14 +114,14 @@ function FilePreviewDialog(props: Props) {
             }
             let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
-              currentLocation?.getDirSeparator(),
+              openLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
               fileDirectory =
                 extractContainingDirectoryPath(
                   // eslint-disable-next-line no-restricted-globals
                   location.href,
-                  currentLocation?.getDirSeparator(),
+                  openLocation?.getDirSeparator(),
                 ) +
                 '/' +
                 fileDirectory;
