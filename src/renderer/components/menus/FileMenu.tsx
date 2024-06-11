@@ -20,14 +20,12 @@ import React from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ShareIcon from '@mui/icons-material/Share';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import { Menu, MenuList, MenuItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
 import OpenFileNatively from '@mui/icons-material/Launch';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import OpenFolderInternally from '@mui/icons-material/Folder';
-import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
 import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
@@ -54,6 +52,7 @@ import {
   OpenNewWindowIcon,
   DeleteIcon,
   LinkIcon,
+  TagIcon,
 } from '-/components/CommonIcons';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
@@ -379,7 +378,7 @@ function FileMenu(props: Props) {
         onClick={showAddRemoveTagsDialog}
       >
         <ListItemIcon>
-          <AddRemoveTags />
+          <TagIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
         <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
@@ -562,7 +561,7 @@ function FileMenu(props: Props) {
       open={open}
       onClose={onClose}
     >
-      {menuItems}
+      <MenuList>{menuItems}</MenuList>
     </Menu>
   );
 }

@@ -72,7 +72,7 @@ export { default as OpenNewWindowIcon } from '@mui/icons-material/OpenInBrowser'
 
 export { default as ReloadIcon } from '@mui/icons-material/Refresh';
 
-export { default as DeleteIcon } from '@mui/icons-material/DeleteForever';
+export { default as DeleteIcon } from '@mui/icons-material/Delete';
 
 export { default as LinkIcon } from '@mui/icons-material/Link';
 
@@ -135,3 +135,5 @@ export { default as PauseIcon } from '@mui/icons-material/Pause';
 export { default as SaveIcon } from '@mui/icons-material/Save';
 
 export { default as DownloadIcon } from '@mui/icons-material/DownloadForOffline';
+
+export { default as TagIcon } from '@mui/icons-material/LocalOffer';

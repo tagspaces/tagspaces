@@ -8,7 +8,6 @@ import ListItemText from '@mui/material/ListItemText';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
-import AddRemoveTags from '@mui/icons-material/Loyalty';
 import Divider from '@mui/material/Divider';
 import { Pro } from '-/pro';
 import ImageIcon from '@mui/icons-material/Image';
@@ -25,6 +24,7 @@ import {
   NewFileIcon,
   NewFolderIcon,
   AddExistingFileIcon,
+  TagIcon,
 } from '-/components/CommonIcons';
 import { getKeyBindingObject } from '-/reducers/settings';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
@@ -203,8 +203,8 @@ export function getDirectoryMenuItems(
       </MenuItem>,
     );
   }
+  menuItems.push(<Divider key="divider1" />);
   if (!isReadOnlyMode && !perspectiveMode) {
-    menuItems.push(<Divider key="divider1" />);
     if (createNewFile) {
       menuItems.push(
         <MenuItem
@@ -334,7 +334,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <AddRemoveTags />
+          <TagIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
         <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
