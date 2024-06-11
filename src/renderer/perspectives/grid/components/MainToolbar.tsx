@@ -24,15 +24,15 @@ import { Toolbar, Box, Divider, Badge } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
-import TagIcon from '@mui/icons-material/LocalOffer';
 import ShareIcon from '@mui/icons-material/Share';
 import {
   SelectedIcon,
   UnSelectedIcon,
   DownloadIcon,
+  TagIcon,
+  DeleteIcon,
 } from '-/components/CommonIcons';
 import CopyIcon from '@mui/icons-material/FileCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import {
   ParentFolderIcon,

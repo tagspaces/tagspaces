@@ -18,7 +18,7 @@
 
 import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import Menu from '@mui/material/Menu';
+import { Menu, MenuList } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -440,24 +440,22 @@ Do you want to continue?`)
   );
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={onClose}
-        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
-        anchorPosition={
-          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
-        }
-      >
-        {menuItems}
-      </Menu>
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
+      anchorPosition={
+        mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
+      }
+    >
+      <MenuList>{menuItems}</MenuList>
       <FileUploadContainer
         id="dirMenuId"
         ref={fileUploadContainerRef}
         directoryPath={directoryPath}
       />
-    </div>
+    </Menu>
   );
 }
 
