@@ -25,6 +25,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { AppDispatch } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
+import Tooltip from '-/components/Tooltip';
 import EntryProperties from '-/components/EntryProperties';
 import {
   actions as SettingsActions,
@@ -72,21 +73,29 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 }));
 
 interface StyledTabProps {
-  label: string;
+  title: string;
+  desktopMode: any;
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
 
 const StyledTab = styled((props: StyledTabProps) => (
-  <Tab disableRipple iconPosition="start" {...props} />
+  <Tooltip title={!props.desktopMode && props.title}>
+    <Tab
+      label={props.desktopMode && props.title}
+      disableRipple
+      iconPosition="start"
+      {...props}
+    />
+  </Tooltip>
 ))(({ theme }) => ({
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightRegular,
   fontSize: theme.typography.pxToRem(15),
-  marginRight: theme.spacing(1),
   minHeight: 50,
   maxHeight: 50,
   minWidth: 40,
+  padding: 5,
 }));
 
 function a11yProps(index: number) {
@@ -216,12 +225,13 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         <StyledTabs
           value={selectedTabIndex}
           onChange={handleChange}
-          aria-label="basic tabs example"
+          aria-label="Switching among description, revisions entry properties"
         >
           <StyledTab
             data-tid="detailsTabTID"
             icon={<FolderPropertiesIcon />}
-            label={desktopMode && t('core:details')}
+            title={t('core:details')}
+            desktopMode={desktopMode}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
@@ -230,7 +240,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             icon={
               haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
             }
-            label={desktopMode && t('core:filePropertiesDescription')}
+            title={t('core:filePropertiesDescription')}
+            desktopMode={desktopMode}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
@@ -238,7 +249,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             <StyledTab
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
-              label={desktopMode && t('core:revisions')}
+              title={t('core:revisions')}
+              desktopMode={desktopMode}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />
