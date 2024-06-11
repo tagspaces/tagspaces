@@ -120,7 +120,7 @@ test.describe('TST50** - Right button on a file', () => {
 
   test('TST5017 - Rename file and check thumbnail exist [web,minio,electron]', async () => {
     const newFileName = 'newFileName';
-    const fileExtension = '.txt';
+    const fileExtension = '.jpeg';
     // await searchEngine('txt');
     const sampleFileName = 'sample';
 
