@@ -25,7 +25,7 @@ import {
   isDisplayed,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 
 export const firstFile = '/span';
@@ -37,7 +37,7 @@ const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
+  await startTestingApp(global.isMinio ? undefined : 'extconfig.js');
   // await clearDataStorage();
 });
 
@@ -55,6 +55,7 @@ test.afterEach(async ({ page }, testInfo) => {
 
 test.beforeEach(async () => {
   if (global.isMinio) {
+    await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -65,7 +66,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST51 - Perspective Grid', () => {
-  test('TST0501 - Create HTML file [electron,web]', async () => {
+  test('TST0501 - Create HTML file [web,electron,minio]', async () => {
     // await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
@@ -91,7 +92,7 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0501 after deleteDirectory');
   });
 
-  test('TST0502 - Create MD file [electron,web]', async () => {
+  test('TST0502 - Create MD file [web,electron,minio]', async () => {
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -116,7 +117,7 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0502 after deleteDirectory');
   });
 
-  test('TST0503 - Create TEXT file [electron,web]', async () => {
+  test('TST0503 - Create TEXT file [web,electron,minio]', async () => {
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -141,9 +142,13 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
-  test('TST0510 - Generate thumbnail from Images [electron]', async () => {
+  test('TST0510 - Generate thumbnail from Images [electron,minio]', async () => {
+    const filtered = ['ico', 'tiff', 'tif'];
+    if (global.isMinio) {
+      filtered.push('svg');
+    }
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image
-      .filter((ext) => ext !== 'ico' && ext !== 'tiff' && ext !== 'tif') // ico file thumbnail generation not work TODO in not PRO version tiff tif is not generated in tests environment only
+      .filter((ext) => !filtered.includes(ext)) // ico file thumbnail generation not work TODO in not PRO version tiff tif is not generated in tests environment only
       .map((imgExt) => 'sample.' + imgExt + '.jpg');
 
     await expectMetaFilesExist(metaFiles);
@@ -167,7 +172,7 @@ test.describe('TST51 - Perspective Grid', () => {
     expect(latExists).toBeTruthy();
   });
 
-  test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
+  test('TST0511 - Generate thumbnail from Videos [electron,minio]', async () => {
     if (global.isWin) {
       // todo in github thumbnails not generated for videos on MacOS
       const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video.map(
@@ -177,7 +182,7 @@ test.describe('TST51 - Perspective Grid', () => {
     }
   });
 
-  test('TST0516 - Generate thumbnail from PDF [electron,_pro]', async () => {
+  test('TST0516 - Generate thumbnail from PDF [electron]', async () => {
     await expectMetaFilesExist(['sample.pdf.jpg']);
   });
 
@@ -193,20 +198,20 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 
-  test.skip('TST0520 - Generate thumbnail from PSD [electron,_pro]', async () => {
+  test.skip('TST0520 - Generate thumbnail from PSD [electron,minio,_pro]', async () => {
     // TODO fix
     await expectMetaFilesExist(['sample.psd.jpg']);
   });
 
-  test('TST0522 - Generate thumbnail from URL [electron,_pro]', async () => {
+  test('TST0522 - Generate thumbnail from URL [electron,minio,_pro]', async () => {
     await expectMetaFilesExist(['sample.url.jpg']);
   });
 
-  test('TST0523 - Generate thumbnail from HTML [electron,_pro]', async () => {
+  test('TST0523 - Generate thumbnail from HTML [electron,minio,_pro]', async () => {
     await expectMetaFilesExist(['sample.html.jpg']);
   });
 
-  test('TST0524 - Generate thumbnail from TXT,MD [electron,_pro]', async () => {
+  test('TST0524 - Generate thumbnail from TXT,MD [electron,minio,_pro]', async () => {
     // MD thumbs generation is stopped
     await expectMetaFilesExist(['sample.txt.jpg']);
   });

@@ -59,7 +59,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST01 - Folder management', () => {
-  test('TST0101 - Create subfolder [web,minio,electron]', async () => {
+  test('TST0101 - Create subfolder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
@@ -74,7 +74,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0102 - Reload folder [web,minio,electron]', async () => {
+  test('TST0102 - Reload folder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
@@ -86,7 +86,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0103 - Rename folder [web,minio,electron]', async () => {
+  test('TST0103 - Rename folder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
@@ -108,7 +108,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0104 - Delete empty folder by disabled trashcan [web,minio,electron]', async () => {
+  test('TST0104 - Delete empty folder by disabled trashcan [web,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
@@ -121,14 +121,14 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0105 - Open subfolder [web,minio,electron]', async () => {
+  test('TST0105 - Open subfolder [web,electron]', async () => {
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + emptyFolderName + ']',
     );
     await expectElementExist(selectorFile, false, 5000);
   });
 
-  test('TST0106 - Show folder tags [web,minio,electron]', async () => {
+  test('TST0106 - Show folder tags [web,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'showProperties',
@@ -149,7 +149,7 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  test('TST0108 - Move folder [web,minio,electron]', async () => {
+  test('TST0108 - Move folder [web,electron]', async () => {
     await createFile('file_to_move.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
@@ -173,7 +173,7 @@ test.describe('TST01 - Folder management', () => {
     await testDataRefresh();
   });
 
-  test('TST0109 - Copy folder [web,minio,electron]', async () => {
+  test('TST0109 - Copy folder [web,electron]', async () => {
     await createFile('file_to_copy.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
@@ -193,13 +193,13 @@ test.describe('TST01 - Folder management', () => {
     await testDataRefresh();
   });
 
-  test('TST0110 - Tag folder [web,minio,electron]', async () => {
+  test('TST0110 - Tag folder [web,electron]', async () => {
     await clickOn('[data-tid=fsEntryName_empty_folder]');
     await AddRemoveTagsToSelectedFiles('grid', ['test-tag1']);
     await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
   });
 
-  test('TST0111 - Open folder properties [web,minio,electron]', async () => {
+  test('TST0111 - Open folder properties [web,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'showProperties',
@@ -212,7 +212,7 @@ test.describe('TST01 - Folder management', () => {
     expect(divText).toEqual('empty_folder');*/
   });
 
-  test('TST0112 - Delete non empty folder by disabled trashcan [web,minio,electron]', async () => {
+  test('TST0112 - Delete non empty folder by disabled trashcan [web,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'deleteDirectory',
@@ -227,7 +227,7 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0113 - Delete not empty folder to trashcan [electron]', async () => {});
 
-  test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
+  test('TST0114 - Use as thumbnail for parent folder [web,electron,_pro]', async () => {
     const fileName = 'sample.jpg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -265,7 +265,7 @@ test.describe('TST01 - Folder management', () => {
     expect(initScreenshot).toBe(thumbRemovedScreenshot);
   });
 
-  test('TST0116 - Switch to Grid Perspective [web,minio,electron]', async () => {
+  test('TST0116 - Switch to Grid Perspective [web,electron]', async () => {
     await clickOn('[data-tid=openListPerspective]');
     await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
     await clickOn('[data-tid=openDefaultPerspective]');
@@ -280,7 +280,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=closePerspectiveSettingsTID]');
   });
 
-  test('TST0117 - Switch to List Perspective [web,minio,electron]', async () => {
+  test('TST0117 - Switch to List Perspective [web,electron]', async () => {
     await clickOn('[data-tid=openListPerspective]');
     await expectElementExist('[data-tid=gridPerspectiveContainer]', false);
     await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
@@ -291,7 +291,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0118 - Switch to Gallery Perspective [web,minio,electron,_pro]', async () => {
+  test('TST0118 - Switch to Gallery Perspective [web,electron,_pro]', async () => {
     await clickOn('[data-tid=openGalleryPerspective]');
     //await clickOn('[data-tid=openGalleryPerspective]');
     await expectElementExist(
@@ -302,7 +302,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=perspectiveGalleryHelp]', true, 5000);
   });
 
-  test('TST0119 - Switch to Mapique Perspective [web,minio,electron,_pro]', async () => {
+  test('TST0119 - Switch to Mapique Perspective [web,electron,_pro]', async () => {
     await clickOn('[data-tid=openMapiquePerspective]');
     //await clickOn('[data-tid=openMapiquePerspective]');
     await expectElementExist(
@@ -313,7 +313,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=perspectiveMapiqueHelp]', true, 5000);
   });
 
-  test('TST0120 - Switch to Kanban Perspective [web,minio,electron,_pro]', async () => {
+  test('TST0120 - Switch to Kanban Perspective [web,electron,_pro]', async () => {
     await clickOn('[data-tid=openKanbanPerspective]');
     //await clickOn('[data-tid=openKanbanPerspective]');
     await expectElementExist(

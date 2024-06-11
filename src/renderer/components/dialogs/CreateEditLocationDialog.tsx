@@ -575,7 +575,7 @@ function CreateEditLocationDialog(props: Props) {
                 </InputLabel>
                 <Select
                   labelId="locationLabelID"
-                  id="locationTypeID"
+                  data-tid="locationTypeTID"
                   value={type}
                   label={t('core:locationType')}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -583,17 +583,26 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 >
                   {!AppConfig.isWeb && (
-                    <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
+                    <MenuItem
+                      key="TYPE_LOCAL"
+                      value={locationType.TYPE_LOCAL}
+                      data-tid="localLocationTID"
+                    >
                       {t('core:localLocation')}
                     </MenuItem>
                   )}
-                  <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
+                  <MenuItem
+                    key="TYPE_CLOUD"
+                    value={locationType.TYPE_CLOUD}
+                    data-tid="cloudLocationTID"
+                  >
                     {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
                   {Pro && devMode && (
                     <MenuItem
                       key="TYPE_WEBDAV"
                       value={locationType.TYPE_WEBDAV}
+                      data-tid="webdavLocationTID"
                     >
                       {t('core:webdavLocation') + ' (experimental)'}
                     </MenuItem>

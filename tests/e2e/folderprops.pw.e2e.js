@@ -60,7 +60,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST02 - Folder properties', () => {
-  test('TST0201 - Open in main area [web,minio,electron]', async () => {
+  test('TST0201 - Open in main area [web,electron]', async () => {
     const testFile = 'file_in_empty_folder.txt';
     await createFile(testFile);
     await clickOn('[data-tid=propsActionsMenuTID]');
@@ -68,7 +68,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
   });
 
-  test('TST0204 - Reload folder from toolbar [web,minio,electron]', async () => {
+  test('TST0204 - Reload folder from toolbar [web,electron]', async () => {
     let propsTags = await getPropertiesTags();
     expect(propsTags).toHaveLength(0);
     const tagTitle = 'test-tag';
@@ -114,7 +114,7 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test('TST0205 - Delete folder from toolbar [web,minio,electron]', async () => {
+  test('TST0205 - Delete folder from toolbar [web,electron]', async () => {
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteFolderTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
@@ -123,7 +123,7 @@ test.describe('TST02 - Folder properties', () => {
     await testDataRefresh();
   });
 
-  test('TST0206 - Rename folder [web,minio,electron]', async () => {
+  test('TST0206 - Rename folder [web,electron]', async () => {
     const newTile = 'folderRenamed';
 
     const propsFolderName = await getPropertiesFileName();
@@ -152,7 +152,7 @@ test.describe('TST02 - Folder properties', () => {
     expect(propsOldFileName).toEqual(propsFolderName);*/
   });
 
-  test('TST0207 - Move folder [web,minio,electron]', async () => {
+  test('TST0207 - Move folder [web,electron]', async () => {
     const newFolder = await createNewDirectory('targetFolder');
     // select folder to move
     await clickOn(getGridFileSelector('empty_folder'));
@@ -167,10 +167,10 @@ test.describe('TST02 - Folder properties', () => {
     await testDataRefresh();
   });
 
-  test('TST0210 - Add and remove tag to folder with dropdown menu [web,minio,electron]', async () => {
+  test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
-  test('TST0211 - Add tag folder with DnD from tag library [web,minio,electron]', async () => {
+  test('TST0211 - Add tag folder with DnD from tag library [web,electron]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
     await dnd(
@@ -188,7 +188,7 @@ test.describe('TST02 - Folder properties', () => {
     expect(propsTags).toContain(tagName);
   });
 
-  test('TST0213 - Add description to folder [web,minio,electron,_pro]', async () => {
+  test('TST0213 - Add description to folder [web,electron,_pro]', async () => {
     const desc = 'test description';
 
     await clickOn('[data-tid=descriptionTabTID]');
@@ -213,7 +213,7 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test('TST0215 - Link for internal sharing + copy [web,minio,electron]', async () => {
+  test('TST0215 - Link for internal sharing + copy [web,electron]', async () => {
     // await clickOn('[data-tid=copyLinkToClipboardTID]');
     const sharingLink = await global.client.waitForSelector(
       '[data-tid=sharingLinkTID] input',
@@ -246,7 +246,7 @@ test.describe('TST02 - Folder properties', () => {
     */
   });
 
-  test('TST0216 - Set gallery perspective as default for folder [web,minio,electron,_pro]', async () => {
+  test('TST0216 - Set gallery perspective as default for folder [web,electron,_pro]', async () => {
     const fileName = 'sample.jpg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -286,7 +286,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0218 - Set and remove predefined background gradient for folder [web,minio,electron,_pro]', async () => {
+  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
@@ -316,7 +316,7 @@ test.describe('TST02 - Folder properties', () => {
     expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 
-  test('TST0219 - Set and remove predefined folder thumbnail [web,minio,electron,_pro]', async () => {
+  test('TST0219 - Set and remove predefined folder thumbnail [web,electron,_pro]', async () => {
     const screenshotSelector = '[data-tid=fsEntryName_empty_folder]'; // > div
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
@@ -349,7 +349,7 @@ test.describe('TST02 - Folder properties', () => {
     //todo check if tsb.jpg not exist
   });
 
-  test('TST0220 - Set and remove predefined folder background [web,minio,electron,_pro]', async () => {
+  test('TST0220 - Set and remove predefined folder background [web,electron,_pro]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
