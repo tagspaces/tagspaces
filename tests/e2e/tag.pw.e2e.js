@@ -53,17 +53,17 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST04 - Testing the tag library:', () => {
-  test('TST0401 - Should create a tag group [web,minio,electron]', async () => {
+  test('TST0401 - Should create a tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0402 - Should delete tag group [web,minio,electron]', async () => {
+  test('TST0402 - Should delete tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0403 - Rename tag group [web,minio,electron]', async () => {
+  test('TST0403 - Rename tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
@@ -76,7 +76,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(editedGroupName);
   });
 
-  test.skip('TST0404 - Change default tag group tag colors [web,minio,electron]', async () => {
+  test.skip('TST0404 - Change default tag group tag colors [web,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
@@ -105,7 +105,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0405 - Should add tag to a tag group [web,minio,electron]', async () => {
+  test('TST0405 - Should add tag to a tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await addTags([newTagName]);
@@ -118,7 +118,7 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0406 - Import tag groups [manual]', async () => {});
 
-  test('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,minio,electron]', async () => {
+  test('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await addTags(arrTags);
@@ -131,7 +131,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0407 - Should rename tag [web,minio,electron]', async () => {
+  test('TST0407 - Should rename tag [web,electron]', async () => {
     await tagMenu('done', 'editTagDialog');
     await setInputValue('[data-tid=editTagInput] input', testTagName);
     await clickOn('[data-tid=editTagConfirm]');
@@ -141,13 +141,13 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0408 - Should delete tag from a tag group [web,minio,electron]', async () => {
+  test('TST0408 - Should delete tag from a tag group [web,electron]', async () => {
     await tagMenu('next', 'deleteTagDialog');
     await clickOn('[data-tid=confirmDeleteTagDialogTagMenu]');
     await expectElementExist('[data-tid=tagContainer_next]', false);
   });
 
-  test.skip('TST0409 - Should sort tags in a tag group lexicographically [web,minio,electron]', async () => {
+  test.skip('TST0409 - Should sort tags in a tag group lexicographically [web,electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_ToDo_Workflow]');
     await clickOn('[data-tid=sortTagGroup]'); // TODO no validation, expect
     // const tagGroupElements = await global.client.getText('//button[contains(., "' + testTagName + '")]');
@@ -155,7 +155,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     // expect(editedTag).toBe(testTagName);
   });
 
-  test.skip('TST0410 - Default colors for tags from settings [web,minio,electron]', async () => {
+  test.skip('TST0410 - Default colors for tags from settings [web,electron]', async () => {
     await clickOn('[data-tid=settings]');
     await clickOn('[data-tid=settingsToggleDefaultTagBackgroundColor]');
     const inputElem = await global.client.$(
@@ -254,7 +254,7 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
 
-  test('TST0419 - Create location based tag group [web,minio,electron, _pro]', async () => {
+  test('TST0419 - Create location based tag group [web,electron, _pro]', async () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
@@ -268,7 +268,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0420 - Load tag groups from location [web,minio,electron, _pro]', async () => {
+  test('TST0420 - Load tag groups from location [web,electron, _pro]', async () => {
     const tslContent =
       '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
     await createFile('tsl.json', tslContent, '.ts');
@@ -288,7 +288,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await expectElementExist('[data-tid=tagContainer_Stanimir]', true);
   });
 
-  test('TST0421 - Move tag to another tag group with DnD [web,minio,electron]', async () => {
+  test('TST0421 - Move tag to another tag group with DnD [web,electron]', async () => {
     const tagName = '1star';
     const sourceTagGroup = 'Ratings';
     const destinationTagGroup = 'Priorities';

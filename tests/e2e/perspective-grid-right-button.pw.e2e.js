@@ -71,7 +71,7 @@ test.beforeEach(async () => {
 // Test the functionality of the right button on a file on a grid perspective table
 // Scenarios for right button on a file
 test.describe('TST50** - Right button on a file', () => {
-  test('TST5016 - Open file [web,minio,electron]', async () => {
+  test('TST5016 - Open file [web,electron]', async () => {
     // await searchEngine('txt');
     await openContextEntryMenu(
       getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
@@ -118,7 +118,7 @@ test.describe('TST50** - Right button on a file', () => {
     expect(containTID).toBe(true);*/
   });
 
-  test('TST5017 - Rename file and check thumbnail exist [web,minio,electron]', async () => {
+  test('TST5017 - Rename file and check thumbnail exist [web,electron]', async () => {
     const newFileName = 'newFileName';
     const fileExtension = '.jpeg';
     // await searchEngine('txt');
@@ -150,7 +150,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectMetaFilesExist([oldName + '.jpg']);
   });
 
-  test('TST5018 - Delete file [web,minio,electron]', async () => {
+  test('TST5018 - Delete file [web,electron]', async () => {
     // await createTxtFile();
     // await searchEngine('note'); //select new created file - note[date_created].txt
     const fileName = 'sample.html'; // await getGridFileName(-1);
@@ -164,7 +164,7 @@ test.describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe(undefined); */
   });
 
-  test('TST5019 - Rename tag in file [web,minio,electron]', async () => {
+  test('TST5019 - Rename tag in file [web,electron]', async () => {
     // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
@@ -214,7 +214,7 @@ test.describe('TST50** - Right button on a file', () => {
     );*/
   });
 
-  test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
+  test('TST5023 - Remove tag from file (tag menu) [web,electron]', async () => {
     // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
@@ -284,7 +284,7 @@ test.describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles([testTagName], false); */
   });
 
-  test('TST5025 - Add - Remove tags (file menu) [web,minio,electron]', async () => {
+  test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
     // await searchEngine('desktop');
     const fileName = 'sample';
     const fileExt = 'desktop';
@@ -328,7 +328,7 @@ test.describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [web,minio,electron]', async () => {
+  test('TST5027 - Open containing folder [web,electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -354,7 +354,7 @@ test.describe('TST50** - Right button on a file', () => {
   /**
    * todo web: io-actions.ts:120 Moving files failed with Renaming file failedSignatureDoesNotMatch
    */
-  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [electron]', async () => {
     // Move file in child folder
     const fileName = 'sample.pdf';
     const folderName = 'empty_folder';
@@ -400,7 +400,7 @@ test.describe('TST50** - Right button on a file', () => {
 
   test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
-  test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5033 - Open directory (directory menu) [web,electron]', async () => {
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
     // await global.client.screenshot({ path: 'screenshotTST5033.png' });
@@ -409,7 +409,7 @@ test.describe('TST50** - Right button on a file', () => {
     // expect(firstFileName).toBe(undefined); //'sample.eml');
   });
 
-  test('TST5034 - Rename directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5034 - Rename directory (directory menu) [web,electron]', async () => {
     const newDirName = 'new_dir_name';
     await openContextEntryMenu(selectorFolder, 'renameDirectory');
     const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
@@ -425,7 +425,7 @@ test.describe('TST50** - Right button on a file', () => {
   /**
    * delete dir is not supported on minio
    */
-  test('TST5035 - Delete directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5035 - Delete directory (directory menu) [web,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
     await global.client.dblclick(selectorFolder);
@@ -443,12 +443,12 @@ test.describe('TST50** - Right button on a file', () => {
     // await expectElementExist(selectorFolder, true);
   });
 
-  test('TST5036 - Open directory properties (directory menu) [web,minio,electron]', async () => {
+  test('TST5036 - Open directory properties (directory menu) [web,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await expectElementExist('[data-tid=fileNameProperties]', true, 5000);
   });
 
-  test('TST5037 - Show sub folders [web,minio,electron]', async () => {
+  test('TST5037 - Show sub folders [web,electron]', async () => {
     // click on hide directories
     await setGridOptions('grid', false);
 
@@ -466,7 +466,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFolder, true);
   });
 
-  test.skip('TST5038 - Return directory back [web,minio,electron]', async () => {
+  test.skip('TST5038 - Return directory back [web,electron]', async () => {
     // TODO
     // expect(received).toBe(expected) // Object.is equality
     // Expected: true
@@ -490,7 +490,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFolder);
   });
 
-  test('TST5039 - Changing the Perspective View [web,minio,electron]', async () => {
+  test('TST5039 - Changing the Perspective View [web,electron]', async () => {
     // await isDisplayed('[data-tid=perspectiveGridFileTable]', true);
     // await global.client.screenshot({ path: 'screenshotTST5039.png' });
 
@@ -520,7 +520,7 @@ test.describe('TST50** - Right button on a file', () => {
     );
   });
 
-  test('TST5040 - Create file [web,minio,electron]', async () => {
+  test('TST5040 - Create file [web,electron]', async () => {
     // Open empty folder
     await global.client.dblclick(selectorFolder);
 

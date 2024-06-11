@@ -48,7 +48,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST51 - Perspective openGalleryPerspective', () => {
-  test('TST5120 - prev/next button [web,minio,electron,_pro]', async () => {
+  test('TST5120 - prev/next button [web,electron,_pro]', async () => {
     const fileName = 'sample.svg';
     const nextFileName = 'sample.tga';
     await clickOn(getGridFileSelector(fileName));

@@ -47,7 +47,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
+  test('TST4909 - move with copy/move file dialog [web,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
 
     await openContextEntryMenu(
@@ -64,7 +64,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(getGridFileSelector(fileName), true);
   });
 
-  test('TST4910 - prev/next button [web,minio,electron,_pro]', async () => {
+  test('TST4910 - prev/next button [web,electron,_pro]', async () => {
     const fileName = 'sample.3gp';
     const nextFileName = 'sample.avif';
     await clickOn(getGridFileSelector(fileName));

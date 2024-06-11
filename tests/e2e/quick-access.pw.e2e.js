@@ -13,6 +13,7 @@ import {
   createNewDirectory,
   expectElementExist,
   getGridFileSelector,
+  isDisplayed,
   rightClickOn,
   setInputKeys,
   takeScreenshot,
@@ -54,7 +55,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST09 - Quick access', () => {
-  test('TST0901 - Create, rename and delete stored search [electron,_pro]', async () => {
+  test('TST0901 - Create, rename and delete stored search [electron,minio,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
     //await expectElementExist('[data-tid=quickAccessButton]');
@@ -79,7 +80,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0902 - Create, execute and delete stored search [electron,_pro]', async () => {
+  test('TST0902 - Create, execute and delete stored search [electron,minio,_pro]', async () => {
     const storedSearchTitle = 'jpgExecutedSearch';
     const textQuery = 'jpg';
     await createSavedSearch({ title: storedSearchTitle, textQuery });
@@ -102,7 +103,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0905 - Create, open and remove bookmark to file in properties [electron,web,_pro]', async () => {
+  test('TST0905 - Create, open and remove bookmark to file in properties [web,minio,electron,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
@@ -127,8 +128,8 @@ test.describe('TST09 - Quick access', () => {
     //await clickOn('[data-tid=fileContainerCloseOpenedFile]');
     //await clickOn('[id=mobileMenuButton]');
 
-    await clickOn('[data-tid=BookmarksMenuTID]');
-    await clickOn('[data-tid=refreshBookmarksTID]');
+    //await clickOn('[data-tid=BookmarksMenuTID]');
+    //await clickOn('[data-tid=refreshBookmarksTID]');
 
     await expectElementExist(
       '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']',
@@ -136,7 +137,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [electron,web,_pro]', async () => {
+  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [web,minio,electron,_pro]', async () => {
     const testFolder = 'empty_folder';
     await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await clickOn('[data-tid=showProperties]');
@@ -157,8 +158,8 @@ test.describe('TST09 - Quick access', () => {
 
     //Delete
     await clickOn('[data-tid=toggleBookmarkTID]');
-    await clickOn('[data-tid=BookmarksMenuTID]');
-    await clickOn('[data-tid=refreshBookmarksTID]');
+    //await clickOn('[data-tid=BookmarksMenuTID]');
+    //await clickOn('[data-tid=refreshBookmarksTID]');
 
     await expectElementExist(
       '[data-tid=tsBookmarksTID' + testFolder + ']',
@@ -166,7 +167,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0907 - Create 2 local bookmarks and delete all bookmarks [electron,_pro]', async () => {
+  test('TST0907 - Create 2 local bookmarks and delete all bookmarks [electron,minio,_pro]', async () => {
     await clickOn('[data-tid=quickAccessButton]');
     const bookmarks = ['sample.txt', 'sample.jpg'];
     for (let i = 0; i < bookmarks.length; i++) {
@@ -179,8 +180,8 @@ test.describe('TST09 - Quick access', () => {
       await clickOn('[data-tid=toggleBookmarkTID]');
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
       // Refresh bookmarks
-      await clickOn('[data-tid=BookmarksMenuTID]');
-      await clickOn('[data-tid=refreshBookmarksTID]');
+      //await clickOn('[data-tid=BookmarksMenuTID]');
+      //await clickOn('[data-tid=refreshBookmarksTID]');
 
       await expectElementExist(
         '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']',
@@ -197,7 +198,7 @@ test.describe('TST09 - Quick access', () => {
       );
     }
   });
-  test('TST0908 - Add, open and remove recently opened file [web,electron,_pro]', async () => {
+  test('TST0908 - Add, open and remove recently opened file [web,minio,electron,_pro]', async () => {
     // Add
     const fileTitle = 'sample.jpg';
     const fileTid = dataTidFormat(fileTitle);
@@ -209,7 +210,9 @@ test.describe('TST09 - Quick access', () => {
 
     // Open
     await clickOn('[data-tid=quickAccessButton]');
-    await clickOn('[data-tid=fileOpenHistoryTID]');
+    if (!(await isDisplayed('[data-tid=fileCloseHistoryTID]'))) {
+      await clickOn('[data-tid=fileOpenHistoryTID]');
+    }
     await expectElementExist(
       '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
     );
@@ -225,9 +228,11 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0909 - Add 2 recently opened files and clear history [electron,_pro]', async () => {
+  test('TST0909 - Add 2 recently opened files and clear history [electron,minio,_pro]', async () => {
     await clickOn('[data-tid=quickAccessButton]');
-    await clickOn('[data-tid=fileOpenHistoryTID]');
+    if (!(await isDisplayed('[data-tid=fileCloseHistoryTID]'))) {
+      await clickOn('[data-tid=fileOpenHistoryTID]');
+    }
 
     const files = ['sample.txt', 'sample.jpg'];
     for (let i = 0; i < files.length; i++) {
@@ -239,8 +244,8 @@ test.describe('TST09 - Quick access', () => {
       );
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
       // Refresh opened files
-      await clickOn('[data-tid=fileOpenMenuTID]');
-      await clickOn('[data-tid=refreshHistoryTID]');
+      //await clickOn('[data-tid=fileOpenMenuTID]');
+      //await clickOn('[data-tid=refreshHistoryTID]');
       await expectElementExist(
         '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
       );
@@ -257,7 +262,7 @@ test.describe('TST09 - Quick access', () => {
     }
   });
 
-  test.skip('TST0910 - Add, open and remove recently edited file [web,electron,_pro]', async () => {
+  test.skip('TST0910 - Add, open and remove recently edited file [web,minio,electron,_pro]', async () => {
     // Add
     const fileTitle = 'sample.txt';
     const fileTid = dataTidFormat(fileTitle);
@@ -287,7 +292,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0912 - Add, open and remove recently opened folder properties [web,electron,_pro]', async () => {
+  test('TST0912 - Add, open and remove recently opened folder properties [web,minio,electron,_pro]', async () => {
     // Add
     const testFolder = 'empty_folder';
     await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
@@ -298,7 +303,9 @@ test.describe('TST09 - Quick access', () => {
 
     // Open
     await clickOn('[data-tid=quickAccessButton]');
-    await clickOn('[data-tid=folderOpenHistoryTID]');
+    if (!(await isDisplayed('[data-tid=folderCloseHistoryTID]'))) {
+      await clickOn('[data-tid=folderOpenHistoryTID]');
+    }
     await expectElementExist(
       '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
       true,
@@ -321,7 +328,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0913 - Add 2 recently opened folders and clear history [web,electron,_pro]', async () => {
+  test('TST0913 - Add 2 recently opened folders and clear history [web,minio,electron,_pro]', async () => {
     const folders = ['new_folder', 'new_folder1'];
     for (let i = 0; i < folders.length; i++) {
       const testFolder = await createNewDirectory(folders[i]);
@@ -332,11 +339,13 @@ test.describe('TST09 - Quick access', () => {
       await clickOn('[data-tid=folderContainerOpenDirMenu]');
       await clickOn('[data-tid=showProperties]');*/
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
-      await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+      //await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     }
 
     await clickOn('[data-tid=quickAccessButton]');
-    await clickOn('[data-tid=folderOpenHistoryTID]');
+    if (!(await isDisplayed('[data-tid=folderCloseHistoryTID]'))) {
+      await clickOn('[data-tid=folderOpenHistoryTID]');
+    }
     for (let i = 0; i < folders.length; i++) {
       // Open
       const testFolder = folders[i];
@@ -367,7 +376,7 @@ test.describe('TST09 - Quick access', () => {
     }
   });
 
-  test.skip('TST0914 - Add search to search history and search [web,electron]', async () => {
+  test.skip('TST0914 - Add search to search history and search [web,minio,electron]', async () => {
     await searchEngine('txt');
     await clickOn('#clearSearchID');
 

@@ -341,7 +341,11 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
-              data-tid="fileOpenHistoryTID"
+              data-tid={
+                props.fileOpenHistory
+                  ? 'fileCloseHistoryTID'
+                  : 'fileOpenHistoryTID'
+              }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
               size="large"
@@ -436,7 +440,11 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
-              data-tid="folderOpenHistoryTID"
+              data-tid={
+                props.folderOpenHistory
+                  ? 'folderCloseHistoryTID'
+                  : 'folderOpenHistoryTID'
+              }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)

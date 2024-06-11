@@ -43,8 +43,8 @@ test.beforeEach(async () => {
 });
 
 // Scenarios for sorting files in grid perspective
-test.describe('TST5003 - Testing sort files in the grid perspective [web,minio,electron]', () => {
-  test('TST10xx - Sort by name [web,minio,electron]', async () => {
+test.describe('TST5003 - Testing sort files in the grid perspective [web,electron]', () => {
+  test('TST10xx - Sort by name [web,electron]', async () => {
     // DESC
     await clickOn('[data-tid=gridPerspectiveSortByName]');
     let sorted = getDirEntries('byName', false);
@@ -64,7 +64,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,minio,e
     }
   });
 
-  test('TST10xx - Sort by size [web,minio,electron]', async () => {
+  test('TST10xx - Sort by size [web,electron]', async () => {
     await clickOn('[data-tid=gridPerspectiveSortBySize]');
     // DESC
     let sorted = getDirEntries('byFileSize', true);
@@ -83,7 +83,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,minio,e
     }
   });
 
-  test('TST10xx - Sort by date [web,minio,electron]', async () => {
+  test('TST10xx - Sort by date [web,electron]', async () => {
     await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
     let sorted = getDirEntries('byDateModified', true);
@@ -103,7 +103,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,minio,e
     }
   });
 
-  test('TST10xx - Sort by extension [web,minio,electron]', async () => {
+  test('TST10xx - Sort by extension [web,electron]', async () => {
     await clickOn('[data-tid=gridPerspectiveSortByExt]');
     let sorted = getDirEntries('byExtension', true);
     for (let i = 0; i < sorted.length; i += 1) {
@@ -120,7 +120,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,minio,e
     }
   });
 
-  test('TST10xx - Sort by tags [web,minio,electron]', async () => {
+  test('TST10xx - Sort by tags [web,electron]', async () => {
     await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
     let sorted = getDirEntries('byFirstTag', true);
     for (let i = 0; i < sorted.length; i += 1) {

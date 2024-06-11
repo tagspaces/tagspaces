@@ -135,7 +135,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
+  test('TST0609 - Show thumbnails of image files in the search results [web,electron]', async () => {
     const searchQuery = 'sample_exif.jpg'; //'jpg';
     await addSearchCommand(searchQuery, true);
     await global.client.waitForSelector('img[alt="thumbnail image"]', {
