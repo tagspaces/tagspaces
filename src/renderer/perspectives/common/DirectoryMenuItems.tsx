@@ -240,7 +240,7 @@ export function getDirectoryMenuItems(
             primary={
               <>
                 {t('core:newAudioRecording')}
-                {Pro ? <BetaLabel /> : <ProLabel />}
+                {!Pro && <ProLabel />}
               </>
             }
           />
@@ -364,7 +364,7 @@ export function getDirectoryMenuItems(
           primary={
             <>
               {t('core:importMacTags')}
-              {Pro ? <BetaLabel /> : <ProLabel />}
+              {!Pro && <ProLabel />}
             </>
           }
         />
@@ -397,10 +397,7 @@ export function getDirectoryMenuItems(
       if (!Pro && perspective.pro) {
         badge = <ProLabel />;
       }
-      if (!Pro && perspective.beta) {
-        badge = <BetaLabel />;
-      }
-      if (Pro && perspective.beta) {
+      if (perspective.beta) {
         badge = <BetaLabel />;
       }
       menuItems.push(

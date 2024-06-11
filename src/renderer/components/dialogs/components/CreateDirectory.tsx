@@ -210,7 +210,7 @@ function CreateDirectory(props: Props) {
           data-tid={tid('newSubDirTID')}
         >
           {t('core:newAudioRecording')}
-          {Pro ? <BetaLabel /> : <ProLabel />}
+          {!Pro && <ProLabel />}
         </Button>
       </Grid>
       <Grid style={{ marginTop: 20 }} item xs={12}>

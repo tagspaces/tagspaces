@@ -303,7 +303,7 @@ function MobileNavigation(props: Props) {
                         primary={
                           <>
                             {t('core:newAudioRecording')}
-                            {Pro ? <BetaLabel /> : <ProLabel />}
+                            {!Pro && <ProLabel />}
                           </>
                         }
                       />
