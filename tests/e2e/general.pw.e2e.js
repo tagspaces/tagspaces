@@ -172,7 +172,7 @@ test.describe('TST51 - Perspective Grid', () => {
     expect(latExists).toBeTruthy();
   });
 
-  test('TST0511 - Generate thumbnail from Videos [electron,minio]', async () => {
+  test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
     if (global.isWin) {
       // todo in github thumbnails not generated for videos on MacOS
       const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video.map(
