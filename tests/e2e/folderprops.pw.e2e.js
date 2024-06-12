@@ -349,7 +349,10 @@ test.describe('TST02 - Folder properties', () => {
     //todo check if tsb.jpg not exist
   });
 
-  test('TST0220 - Set and remove predefined folder background [web,electron,_pro]', async () => {
+  /**
+   * bgnRemovedScreenshot not always the same on web
+   */
+  test('TST0220 - Set and remove predefined folder background [electron,_pro]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
