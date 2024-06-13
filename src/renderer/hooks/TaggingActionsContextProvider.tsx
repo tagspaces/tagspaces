@@ -838,6 +838,7 @@ export const TaggingActionsContextProvider = ({
               fsEntryMeta,
               newTags,
               newFilePath,
+              reflect,
             ).then(() => {
               if (reflect) {
                 getAllPropertiesPromise(newFilePath).then((entry) =>
@@ -859,23 +860,27 @@ export const TaggingActionsContextProvider = ({
       fsEntryMeta: TS.FileSystemEntryMeta,
       newTags,
       newFilePath,
+      reflect,
     ): Promise<boolean> {
-      if (newFilePath === path) {
+      if (JSON.stringify(fsEntryMeta.tags) !== JSON.stringify(newTags)) {
+        //newFilePath === path) {
         // no file rename - only sidecar tags removed
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
           tags: newTags,
         };
-        return saveCurrentLocationMetaData(path, updatedFsEntryMeta)
+        return saveCurrentLocationMetaData(newFilePath, updatedFsEntryMeta)
           .then(() => {
-            getAllPropertiesPromise(newFilePath).then((entry) =>
-              reflectUpdateMeta(entry),
-            );
+            if (reflect) {
+              getAllPropertiesPromise(newFilePath).then((entry) =>
+                reflectUpdateMeta(entry),
+              );
+            }
             return true;
           })
           .catch((err) => {
             console.log(
-              'Removing sidecar tags failed ' + path + ' with ' + err,
+              'Removing sidecar tags failed ' + newFilePath + ' with ' + err,
             );
             showNotification(
               t('core:removingSidecarTagsFailed' as any) as string,
