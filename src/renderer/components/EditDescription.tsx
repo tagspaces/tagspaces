@@ -41,21 +41,6 @@ function EditDescription() {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]);
 
-  useEffect(() => {
-    if (fileDescriptionRef.current) {
-      const timeoutId = setTimeout(() => {
-        const div = document.querySelector('div[contenteditable="true"]');
-        if (div) {
-          // @ts-ignore
-          div.focus();
-        }
-      }, 100);
-
-      // Cleanup timeout if the component unmounts before the timeout completes
-      return () => clearTimeout(timeoutId);
-    }
-  }, [fileDescriptionRef.current]);
-
   /*const keyBindingHandlers = {
     saveDocument: () => {
       //setEditMode(!editMode);
