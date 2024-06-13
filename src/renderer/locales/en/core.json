@@ -822,5 +822,11 @@
   "newVersionAvailable": "New version available",
   "urlNotSupported": "URL not supported",
   "indexing": "Indexing",
+  "fileNameTagSetting": "Place of the tags in the file name",
+  "fileNameTagPlaceTitle": "Choose File name tag place",
+  "atTheBeginningOfFileName": "Beginning",
+  "atTheEndOfFileName": "End",
+  "fileNameBeginTagPlaceExplanation": "Tags will appears at start of the file name",
+  "fileNameEndTagPlaceExplanation": "Tags will appears at end of the file name",
   "-": "-"
 }

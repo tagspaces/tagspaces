@@ -32,6 +32,7 @@ import { getTagLibrary, setTagLibrary } from '-/services/taglibrary-utils';
 import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
+  getFileNameTagPlace,
   getGeoTaggingFormat,
   getPrefixTagContainer,
   getSaveTagInLocation,
@@ -172,6 +173,7 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const atTheEndOfFileName = useSelector(getFileNameTagPlace);
 
   function extractContent(
     options: extractOptions = {
@@ -228,6 +230,7 @@ export const TaggingActionsContextProvider = ({
           tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
+          atTheEndOfFileName,
         )
       );
     }
@@ -653,6 +656,7 @@ export const TaggingActionsContextProvider = ({
         tagDelimiter,
         currentLocation?.getDirSeparator(),
         prefixTagContainer,
+        atTheEndOfFileName,
       );
       if (newFileName !== fileName) {
         await renameFile(
@@ -938,6 +942,7 @@ export const TaggingActionsContextProvider = ({
               tagDelimiter,
               currentLocation?.getDirSeparator(),
               prefixTagContainer,
+              atTheEndOfFileName,
             );
           if (path !== newFilePath) {
             const success = await renameFile(

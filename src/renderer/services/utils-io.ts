@@ -312,6 +312,7 @@ export function generateFileName(
   tagDelimiter: string,
   dirSeparator: string = AppConfig.dirSeparator,
   prefixTagContainer = AppConfig.prefixTagContainer,
+  atTheEndOfFileName = true,
 ) {
   let tagsString = '';
   // Creating the string will all the tags by more that 0 tags
@@ -341,27 +342,50 @@ export function generateFileName(
     // Filename does not contains tags.
     if (lastDotPosition < 0) {
       // File does not have an extension
-      newFileName = fileName.trim() + tagsString;
+      newFileName = atTheEndOfFileName
+        ? fileName.trim() + tagsString
+        : tagsString + fileName.trim();
     } else {
       // File has an extension
-      newFileName =
-        cleanFileName(
-          fileName.substring(0, lastDotPosition),
-          prefixTagContainer,
-        ) +
-        (tagsString ? prefixTagContainer + tagsString : '') +
-        '.' +
-        fileExt;
+      if (atTheEndOfFileName) {
+        newFileName =
+          cleanFileName(
+            fileName.substring(0, lastDotPosition),
+            prefixTagContainer,
+          ) +
+          (tagsString ? prefixTagContainer + tagsString : '') +
+          '.' +
+          fileExt;
+      } else {
+        newFileName =
+          (tagsString ? tagsString + prefixTagContainer : '') +
+          cleanFileName(
+            fileName.substring(0, lastDotPosition),
+            prefixTagContainer,
+          ) +
+          '.' +
+          fileExt;
+      }
     }
   } else {
     // File does not have an extension
-    newFileName =
-      cleanFileName(
-        fileName.substring(0, beginTagContainer),
-        prefixTagContainer,
-      ) +
-      (tagsString ? prefixTagContainer + tagsString : '') +
-      fileName.substring(endTagContainer + 1, fileName.length).trim();
+    if (atTheEndOfFileName) {
+      newFileName =
+        cleanFileName(
+          fileName.substring(0, beginTagContainer),
+          prefixTagContainer,
+        ) +
+        (tagsString ? prefixTagContainer + tagsString : '') +
+        fileName.substring(endTagContainer + 1, fileName.length).trim();
+    } else {
+      newFileName =
+        (tagsString ? tagsString + prefixTagContainer : '') +
+        cleanFileName(
+          fileName.substring(0, beginTagContainer),
+          prefixTagContainer,
+        ) +
+        fileName.substring(endTagContainer + 1, fileName.length).trim();
+    }
   }
   if (newFileName.length < 1) {
     throw new Error('Generated filename is invalid');

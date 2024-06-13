@@ -69,6 +69,7 @@ export default {
   lastOpenedLocation: '',
   useDefaultLocation: false, // TODO for remove
   persistTagsInSidecarFile: false, // old name writeMetaToSidecarFile -> persistTagsInSidecarFile
+  atTheEndOfFileName: true,
   addTagsToLibrary: true,
   interfaceLanguage: 'en',
   useTrashCan: true,
