@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@elife/pm2": "3.6.1",
-    "@tagspaces/extensions": "1.0.115",
+    "@tagspaces/extensions": "1.0.118",
     "@tagspaces/tagspaces-common-node": "4.3.18",
-    "@tagspaces/tagspaces-ws": "4.3.18",
+    "@tagspaces/tagspaces-ws": "4.3.19",
     "sharp": "0.32.6",
     "ws": "8.16.0"
   },
