@@ -312,7 +312,7 @@ export function generateFileName(
   tagDelimiter: string,
   dirSeparator: string = AppConfig.dirSeparator,
   prefixTagContainer = AppConfig.prefixTagContainer,
-  atTheEndOfFileName = true,
+  filenameTagPlacedAtEnd = true,
 ) {
   let tagsString = '';
   // Creating the string will all the tags by more that 0 tags
@@ -342,12 +342,12 @@ export function generateFileName(
     // Filename does not contains tags.
     if (lastDotPosition < 0) {
       // File does not have an extension
-      newFileName = atTheEndOfFileName
+      newFileName = filenameTagPlacedAtEnd
         ? fileName.trim() + tagsString
         : tagsString + fileName.trim();
     } else {
       // File has an extension
-      if (atTheEndOfFileName) {
+      if (filenameTagPlacedAtEnd) {
         newFileName =
           cleanFileName(
             fileName.substring(0, lastDotPosition),
@@ -369,7 +369,7 @@ export function generateFileName(
     }
   } else {
     // File does not have an extension
-    if (atTheEndOfFileName) {
+    if (filenameTagPlacedAtEnd) {
       newFileName =
         cleanFileName(
           fileName.substring(0, beginTagContainer),

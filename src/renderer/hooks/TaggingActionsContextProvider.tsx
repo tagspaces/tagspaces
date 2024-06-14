@@ -173,7 +173,7 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-  const atTheEndOfFileName = useSelector(getFileNameTagPlace);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   function extractContent(
     options: extractOptions = {
@@ -230,7 +230,7 @@ export const TaggingActionsContextProvider = ({
           tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
-          atTheEndOfFileName,
+          filenameTagPlacedAtEnd,
         )
       );
     }
@@ -656,7 +656,7 @@ export const TaggingActionsContextProvider = ({
         tagDelimiter,
         currentLocation?.getDirSeparator(),
         prefixTagContainer,
-        atTheEndOfFileName,
+        filenameTagPlacedAtEnd,
       );
       if (newFileName !== fileName) {
         await renameFile(
@@ -942,7 +942,7 @@ export const TaggingActionsContextProvider = ({
               tagDelimiter,
               currentLocation?.getDirSeparator(),
               prefixTagContainer,
-              atTheEndOfFileName,
+              filenameTagPlacedAtEnd,
             );
           if (path !== newFilePath) {
             const success = await renameFile(

@@ -284,7 +284,7 @@ export const IOActionsContextProvider = ({
     getWarningOpeningFilesExternally,
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
-  const atTheEndOfFileName = useSelector(getFileNameTagPlace);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   useEffect(() => {
     if (actions && actions.length > 0) {
@@ -1396,7 +1396,7 @@ export const IOActionsContextProvider = ({
           AppConfig.tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
-          atTheEndOfFileName,
+          filenameTagPlacedAtEnd,
         ),
       );
 

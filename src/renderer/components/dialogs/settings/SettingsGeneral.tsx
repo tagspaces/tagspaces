@@ -87,7 +87,7 @@ function SettingsGeneral() {
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
-  const atTheEndOfFileName = useSelector(getFileNameTagPlace);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   const toggleDefaultTagBackgroundColorPicker = () => {
     setDisplayColorPicker(!displayColorPicker);
@@ -279,7 +279,7 @@ function SettingsGeneral() {
           >
             <ListItemText primary={t('core:fileNameTagSetting')} />
             <ToggleButtonGroup
-              value={atTheEndOfFileName}
+              value={filenameTagPlacedAtEnd}
               size="small"
               exclusive
             >
@@ -298,7 +298,7 @@ function SettingsGeneral() {
                   }
                 >
                   <div style={{ display: 'flex' }}>
-                    {!atTheEndOfFileName && <CheckIcon />}
+                    {!filenameTagPlacedAtEnd && <CheckIcon />}
                     &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
                     <InfoMuiIcon />
                   </div>
@@ -319,8 +319,8 @@ function SettingsGeneral() {
                   }
                 >
                   <div style={{ display: 'flex' }}>
-                    {atTheEndOfFileName && <CheckIcon />}
-                    &nbsp;{t('core:atTheEndOfFileName')}&nbsp;&nbsp;
+                    {filenameTagPlacedAtEnd && <CheckIcon />}
+                    &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
                     <InfoMuiIcon />
                   </div>
                 </Tooltip>
