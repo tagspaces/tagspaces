@@ -38,7 +38,7 @@ import {
   extractTags,
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
-  extractFileExtension,
+  generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -46,7 +46,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   cleanMetaData,
   executePromisesInBatches,
-  generateFileName,
   mergeFsEntryMeta,
   openDirectoryMessage,
   openFileMessage,
@@ -65,6 +64,7 @@ import {
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
+  getFileNameTagPlace,
   getPrefixTagContainer,
   getWarningOpeningFilesExternally,
 } from '-/reducers/settings';
@@ -283,6 +283,7 @@ export const IOActionsContextProvider = ({
     getWarningOpeningFilesExternally,
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   useEffect(() => {
     if (actions && actions.length > 0) {
@@ -1394,6 +1395,7 @@ export const IOActionsContextProvider = ({
           AppConfig.tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
+          filenameTagPlacedAtEnd,
         ),
       );
 
@@ -2020,7 +2022,11 @@ export const IOActionsContextProvider = ({
       getFilesOrder,
       pushFileOrder,
     };
-  }, [warningOpeningFilesExternally, currentDirectoryPath]);
+  }, [
+    warningOpeningFilesExternally,
+    currentDirectoryPath,
+    filenameTagPlacedAtEnd,
+  ]);
 
   return (
     <IOActionsContext.Provider value={context}>

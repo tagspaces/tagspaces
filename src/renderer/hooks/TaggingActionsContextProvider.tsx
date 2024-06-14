@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
@@ -32,6 +32,7 @@ import { getTagLibrary, setTagLibrary } from '-/services/taglibrary-utils';
 import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
+  getFileNameTagPlace,
   getGeoTaggingFormat,
   getPrefixTagContainer,
   getSaveTagInLocation,
@@ -39,11 +40,12 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
-import { generateFileName, parseNewTags } from '-/services/utils-io';
+import { parseNewTags } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractTags,
+  generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -172,6 +174,7 @@ export const TaggingActionsContextProvider = ({
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   function extractContent(
     options: extractOptions = {
@@ -228,6 +231,7 @@ export const TaggingActionsContextProvider = ({
           tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
+          filenameTagPlacedAtEnd,
         )
       );
     }
@@ -653,6 +657,7 @@ export const TaggingActionsContextProvider = ({
         tagDelimiter,
         currentLocation?.getDirSeparator(),
         prefixTagContainer,
+        filenameTagPlacedAtEnd,
       );
       if (newFileName !== fileName) {
         await renameFile(
@@ -943,6 +948,7 @@ export const TaggingActionsContextProvider = ({
               tagDelimiter,
               currentLocation?.getDirSeparator(),
               prefixTagContainer,
+              filenameTagPlacedAtEnd,
             );
           if (path !== newFilePath) {
             const success = await renameFile(
@@ -1477,6 +1483,7 @@ export const TaggingActionsContextProvider = ({
     addTagsToLibrary,
     currentDirectoryEntries,
     saveTagInLocation,
+    filenameTagPlacedAtEnd,
   ]);
 
   return (

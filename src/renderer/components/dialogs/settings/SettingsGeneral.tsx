@@ -36,6 +36,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 import {
   actions as SettingsActions,
+  getFileNameTagPlace,
   getPersistTagsInSidecarFile,
   //getCurrentLanguage,
   getSettings,
@@ -86,6 +87,7 @@ function SettingsGeneral() {
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   const toggleDefaultTagBackgroundColorPicker = () => {
     setDisplayColorPicker(!displayColorPicker);
@@ -270,6 +272,63 @@ function SettingsGeneral() {
             </ToggleButtonGroup>
           )}
         </ListItem>
+        {!persistTagsInSidecarFile && (
+          <ListItem
+            className={classes.listItem}
+            title={t('core:fileNameTagPlaceTitle')}
+          >
+            <ListItemText primary={t('core:fileNameTagSetting')} />
+            <ToggleButtonGroup
+              value={filenameTagPlacedAtEnd}
+              size="small"
+              exclusive
+            >
+              <ToggleButton
+                value={false}
+                data-tid="fileNameBeginningTagTID"
+                onClick={() =>
+                  dispatch(SettingsActions.setFileNameTagPlace(false))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {t('core:fileNameBeginTagPlaceExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {!filenameTagPlacedAtEnd && <CheckIcon />}
+                    &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton
+                value={true}
+                data-tid="fileNameEndTagTID"
+                onClick={() =>
+                  dispatch(SettingsActions.setFileNameTagPlace(true))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {t('core:fileNameEndTagPlaceExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {filenameTagPlacedAtEnd && <CheckIcon />}
+                    &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </ListItem>
+        )}
+
         <ListItem className={classes.listItem}>
           <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
           <Switch

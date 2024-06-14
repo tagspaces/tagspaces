@@ -63,6 +63,7 @@ export const types = {
   SET_CALCULATETAGS: 'SETTINGS/SET_CALCULATETAGS',
   SET_USETRASHCAN: 'SETTINGS/SET_USETRASHCAN',
   SET_PERSISTTAGSINSIDECARFILE: 'SETTINGS/SET_PERSISTTAGSINSIDECARFILE',
+  SET_FILENAMETAGPLACEDATEND: 'SETTINGS/SET_FILENAMETAGPLACEDATEND',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
@@ -233,6 +234,12 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         persistTagsInSidecarFile: action.persistTagsInSidecarFile,
+      };
+    }
+    case types.SET_FILENAMETAGPLACEDATEND: {
+      return {
+        ...state,
+        filenameTagPlacedAtEnd: action.filenameTagPlacedAtEnd,
       };
     }
     case types.SET_ADDTAGSTOLIBRARY: {
@@ -642,6 +649,10 @@ export const actions = {
     type: types.SET_PERSISTTAGSINSIDECARFILE,
     persistTagsInSidecarFile,
   }),
+  setFileNameTagPlace: (filenameTagPlacedAtEnd: boolean) => ({
+    type: types.SET_FILENAMETAGPLACEDATEND,
+    filenameTagPlacedAtEnd,
+  }),
   setAddTagsToLibrary: (addTagsToLibrary: boolean) => ({
     type: types.SET_ADDTAGSTOLIBRARY,
     addTagsToLibrary,
@@ -912,6 +923,8 @@ export const getPersistTagsInSidecarFile = (state: any): boolean =>
   AppConfig.useSidecarsForFileTaggingDisableSetting
     ? AppConfig.useSidecarsForFileTagging
     : state.settings.persistTagsInSidecarFile;
+export const getFileNameTagPlace = (state: any): boolean =>
+  state.settings.filenameTagPlacedAtEnd;
 export const getUseGenerateThumbnails = (state: any) =>
   state.settings.useGenerateThumbnails;
 export const getUseTextExtraction = (state: any) =>

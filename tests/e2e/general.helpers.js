@@ -668,55 +668,6 @@ export function getGridFileSelector(fileName) {
   return '[data-tid="fsEntryName_' + dataTidFormat(fileName) + '"]';
 }
 
-export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
-  let tagsString = '';
-  let beginTagContainer = AppConfig.beginTagContainer;
-  let endTagContainer = AppConfig.endTagContainer;
-  const prefixTagContainer = AppConfig.prefixTagContainer;
-  // Creating the string will all the tags by more that 0 tags
-  if (tags && tags.length > 0) {
-    tagsString = beginTagContainer;
-    for (let i = 0; i < tags.length; i += 1) {
-      if (i === tags.length - 1) {
-        tagsString += tags[i].trim();
-      } else {
-        tagsString += tags[i].trim() + tagDelimiter;
-      }
-    }
-    tagsString = tagsString.trim() + endTagContainer;
-  }
-  // Assembling the new filename with the tags
-  let newFileName = '';
-  beginTagContainer = fileName.indexOf(beginTagContainer);
-  endTagContainer = fileName.indexOf(endTagContainer);
-  if (
-    beginTagContainer < 0 ||
-    endTagContainer < 0 ||
-    beginTagContainer >= endTagContainer
-  ) {
-    // File does not have an extension
-    newFileName =
-      fileName.trim() +
-      (tagsString ? prefixTagContainer + tagsString : '') +
-      '.' +
-      fileExt;
-  } else {
-    // File does not have an extension
-    newFileName =
-      fileName.substring(0, beginTagContainer).trim() +
-      (tagsString ? prefixTagContainer + tagsString : '') +
-      fileName.substring(endTagContainer + 1, fileName.length).trim();
-  }
-  if (newFileName.length < 1) {
-    throw new Error('Generated filename is invalid');
-  }
-  // Removing double prefix
-  newFileName = newFileName
-    .split(prefixTagContainer + '' + prefixTagContainer)
-    .join(prefixTagContainer);
-  return newFileName;
-}
-
 /**
  * @deprecated view expectTagsExist
  * @param selector

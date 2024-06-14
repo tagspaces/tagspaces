@@ -57,6 +57,7 @@ declare interface Window {
   ExtPrivacyURL?: string;
   ExtImprintURL?: string;
   ExtCheckForUpdatesOnStartup?: boolean;
+  ExtFilenameTagPlacedAtEnd?: boolean;
   ExtRevisionsEnabled?: boolean;
   ExtAutoSaveEnabled?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
