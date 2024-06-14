@@ -194,12 +194,14 @@ function TagContainer(props: Props) {
           style={{
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
+            fontWeight: 'normal',
+            lineHeight: '10px',
             textTransform: 'none',
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
             color: textColor,
             backgroundColor,
-            minHeight: 0,
+            minHeight: 18,
             minWidth: 0,
             margin: 2,
             paddingTop: 0,
@@ -209,15 +211,19 @@ function TagContainer(props: Props) {
             borderRadius: 5,
           }}
         >
-          <span style={{ flexGrow: 1 }}>
+          <span
+            style={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {(isTagGeo || isGeoSmartTag) && (
               <PlaceIcon
                 style={{
                   color: textColor,
-                  height: 20,
-                  marginBottom: -5,
+                  height: 16,
                   marginLeft: -5,
-                  marginRight: 0,
                 }}
               />
             )}
@@ -225,14 +231,12 @@ function TagContainer(props: Props) {
               <DateIcon
                 style={{
                   color: textColor,
-                  height: 20,
-                  marginBottom: -5,
+                  height: 16,
                   marginLeft: -5,
-                  marginRight: 0,
                 }}
               />
             )}
-            {!isTagGeo && title}
+            {!isTagGeo && <span>{title}</span>}
           </span>
           <TagContainerMenu
             handleRemoveTag={handleRemoveTag}

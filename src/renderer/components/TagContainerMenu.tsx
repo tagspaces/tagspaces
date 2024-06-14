@@ -60,7 +60,6 @@ function TagContainerMenu(props: Props) {
         marginLeft: -5,
         marginRight: -5,
         height: 20,
-        top: 0,
       }}
     />
   );
