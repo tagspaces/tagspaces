@@ -95,6 +95,7 @@ const StyledTab = styled((props: StyledTabProps) => (
   minHeight: 50,
   maxHeight: 50,
   minWidth: 40,
+  marginRight: 5,
   padding: 5,
 }));
 
