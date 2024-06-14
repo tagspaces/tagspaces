@@ -84,18 +84,14 @@ function TagContainer(props: Props) {
     () => !isTagGeo && !tagGroup && isDateTimeTag(title),
     [isTagGeo, title, tagGroup],
   );
-  if (tag.color && tag.textcolor) {
-    textColor = tag.textcolor;
-    backgroundColor = tag.color;
-  } else {
-    const tagColors = getTagColors(
-      title,
-      defaultTextColor,
-      defaultBackgroundColor,
-    );
-    textColor = tagColors.textcolor;
-    backgroundColor = tagColors.color;
-  }
+
+  const tagColors = getTagColors(
+    title,
+    tag.textcolor || defaultTextColor,
+    tag.color || defaultBackgroundColor,
+  );
+  textColor = tagColors.textcolor;
+  backgroundColor = tagColors.color;
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
