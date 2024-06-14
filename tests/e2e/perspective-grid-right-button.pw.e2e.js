@@ -3,6 +3,7 @@
  */
 
 import { expect, test } from '@playwright/test';
+import { generateFileName } from '@tagspaces/tagspaces-common/paths';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -11,6 +12,7 @@ import {
   createPwMinioLocation,
   createPwLocation,
 } from './location.helpers';
+import AppConfig from '../../src/renderer/AppConfig';
 import { searchEngine } from './search.helpers';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 import {
@@ -18,7 +20,6 @@ import {
   createNewDirectory,
   createTxtFile,
   expectElementExist,
-  generateFileName,
   getGridFileSelector,
   reloadDirectory,
   removeTagFromTagMenu,
@@ -31,13 +32,11 @@ import {
   frameLocator,
   takeScreenshot,
   expectMetaFilesExist,
-  getElementScreenshot,
+  setSettings,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
-import AppConfig from '../../src/renderer/AppConfig';
-import { dataTidFormat } from '../../src/renderer/services/test';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
@@ -286,15 +285,16 @@ test.describe('TST50** - Right button on a file', () => {
 
   test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
     // await searchEngine('desktop');
-    const fileName = 'sample';
-    const fileExt = 'desktop';
+    const fileName = 'sample.desktop';
     const tags = [testTagName, testTagName + '2'];
     // select file
-    await clickOn(getGridFileSelector(fileName + '.' + fileExt));
+    await clickOn(getGridFileSelector(fileName));
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(
-      getGridFileSelector(generateFileName(fileName, fileExt, tags, ' ')),
+      getGridFileSelector(
+        generateFileName(fileName, tags, AppConfig.tagDelimiter),
+      ),
     );
     gridElement = await gridElement.$('..');
     for (let i = 0; i < tags.length; i++) {
@@ -532,5 +532,43 @@ test.describe('TST50** - Right button on a file', () => {
     // await deleteFirstFile();
     // const firstFileName = await getGridFileName(0);
     // expect(firstFileName).toBe(undefined);
+  });
+
+  test('TST5049 - Add/remove filename tags Placed at Start [web,electron]', async () => {
+    await setSettings('[data-tid=settingsSetPersistTagsInFileName]', true);
+    await setSettings('[data-tid=fileNameBeginningTagTID]', true);
+
+    const fileName = 'sample.txt';
+    const tags = [testTagName, testTagName + '2'];
+    // select file
+    await clickOn(getGridFileSelector(fileName));
+    await AddRemoveTagsToSelectedFiles('grid', tags, true);
+
+    let gridElement = await global.client.waitForSelector(
+      getGridFileSelector(
+        generateFileName(
+          fileName,
+          tags,
+          AppConfig.tagDelimiter,
+          AppConfig.dirSeparator,
+          AppConfig.prefixTagContainer,
+          false,
+        ),
+      ),
+    );
+    gridElement = await gridElement.$('..');
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', true);
+    }
+
+    // remove tags
+    await gridElement.click();
+    await AddRemoveTagsToSelectedFiles('grid', tags, false);
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        false,
+      );
+    }
   });
 });

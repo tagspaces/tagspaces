@@ -38,7 +38,7 @@ import {
   extractTags,
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
-  extractFileExtension,
+  generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -46,7 +46,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   cleanMetaData,
   executePromisesInBatches,
-  generateFileName,
   mergeFsEntryMeta,
   openDirectoryMessage,
   openFileMessage,
@@ -2023,7 +2022,11 @@ export const IOActionsContextProvider = ({
       getFilesOrder,
       pushFileOrder,
     };
-  }, [warningOpeningFilesExternally, currentDirectoryPath]);
+  }, [
+    warningOpeningFilesExternally,
+    currentDirectoryPath,
+    filenameTagPlacedAtEnd,
+  ]);
 
   return (
     <IOActionsContext.Provider value={context}>

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
@@ -40,11 +40,12 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
-import { generateFileName, parseNewTags } from '-/services/utils-io';
+import { parseNewTags } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractTags,
+  generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -1477,6 +1478,7 @@ export const TaggingActionsContextProvider = ({
     addTagsToLibrary,
     currentDirectoryEntries,
     saveTagInLocation,
+    filenameTagPlacedAtEnd,
   ]);
 
   return (
