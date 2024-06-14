@@ -32,6 +32,10 @@ let checkForUpdates = true;
 if (window.ExtCheckForUpdatesOnStartup !== undefined) {
   checkForUpdates = window.ExtCheckForUpdatesOnStartup;
 }
+let filenameTagPlacedAtEnd = true;
+if (window.ExtFilenameTagPlacedAtEnd !== undefined) {
+  filenameTagPlacedAtEnd = window.ExtFilenameTagPlacedAtEnd;
+}
 
 export default {
   //isLoading: false,
@@ -69,7 +73,7 @@ export default {
   lastOpenedLocation: '',
   useDefaultLocation: false, // TODO for remove
   persistTagsInSidecarFile: false, // old name writeMetaToSidecarFile -> persistTagsInSidecarFile
-  filenameTagPlacedAtEnd: true,
+  filenameTagPlacedAtEnd,
   addTagsToLibrary: true,
   interfaceLanguage: 'en',
   useTrashCan: true,
