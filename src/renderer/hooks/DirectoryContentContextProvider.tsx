@@ -60,6 +60,7 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useCancelable } from '-/utils/useCancelable';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -198,6 +199,7 @@ export const DirectoryContentContextProvider = ({
   const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const { signal, abort } = useCancelable();
 
   const currentLocationPath = useRef<string>('');
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -222,6 +224,7 @@ export const DirectoryContentContextProvider = ({
    * undefined means no .ts folder exist
    */
   const isMetaLoaded = useRef<boolean>(undefined);
+  const isLoading = useRef<boolean>(false);
   //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -235,7 +238,16 @@ export const DirectoryContentContextProvider = ({
       getLocationPath(currentLocation).then((locationPath) => {
         currentLocationPath.current = locationPath;
         if (!skipInitialDirList) {
-          return openDirectory(locationPath);
+          if (isLoading.current) {
+            abort();
+          }
+          isLoading.current = true;
+          openDirectory(locationPath)
+            .then((success) => {
+              isLoading.current = false;
+              return success;
+            })
+            .catch((ex) => console.log(ex));
         }
       });
       manualPerspective.current = 'unspecified';
@@ -680,6 +692,9 @@ export const DirectoryContentContextProvider = ({
         } else {
           directoryMeta.current = getDefaultDirMeta();
         }
+        if (signal.aborted) {
+          return [];
+        }
         return loadDirectoryContentInt(
           directoryPath,
           currentLocation,
@@ -702,6 +717,10 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation,
     showHiddenEntries = undefined,
   ): Promise<TS.FileSystemEntry[]> {
+    const uploadCancelled = new Promise((_resolve, reject) => {
+      signal.addEventListener('abort', () => reject());
+    });
+
     showNotification(t('core:loading'), 'info', false);
     const resultsLimit = {
       maxLoops:
@@ -710,7 +729,7 @@ export const DirectoryContentContextProvider = ({
           : AppConfig.maxLoops,
       IsTruncated: false,
     };
-    return location
+    const promise = location
       .listDirectoryPromise(
         directoryPath,
         [],
@@ -718,6 +737,9 @@ export const DirectoryContentContextProvider = ({
         resultsLimit,
       )
       .then((results) => {
+        if (signal.aborted) {
+          return [];
+        }
         if (resultsLimit.IsTruncated) {
           //OPEN ISTRUNCATED dialog
           dispatch(AppActions.toggleTruncatedConfirmDialog());
@@ -737,6 +759,12 @@ export const DirectoryContentContextProvider = ({
         // console.timeEnd('listDirectoryPromise');
         return loadDirectoryFailure(error);
       });
+    return Promise.race([promise, uploadCancelled]).then(() => {
+      // useCancelable will call abort when unmounted. After listDirectoryPromise succeeded,
+      // we no longer care about that method of cancellation. Catch here to avoid an unhandled promise rejection.
+      uploadCancelled.catch(() => {});
+      return promise;
+    });
   }
 
   function clearDirectoryContent() {
