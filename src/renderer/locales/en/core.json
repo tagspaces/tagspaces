@@ -823,10 +823,9 @@
   "urlNotSupported": "URL not supported",
   "indexing": "Indexing",
   "fileNameTagSetting": "Place of the tags in the file name",
-  "fileNameTagPlaceTitle": "Choose File name tag place",
-  "atTheBeginningOfFileName": "Beginning",
-  "filenameTagPlacedAtEnd": "End",
-  "fileNameBeginTagPlaceExplanation": "Tags will appears at start of the file name",
-  "fileNameEndTagPlaceExplanation": "Tags will appears at end of the file name",
+  "atTheBeginningOfFileName": "Filename Begin",
+  "filenameTagPlacedAtEnd": "Filename End",
+  "fileNameBeginTagPlaceExplanation": "Tags will be placed at the begin of the file name -> [tag1 tag2] filename.ext",
+  "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the file name -> filename [tag1 tag2].ext",
   "-": "-"
 }

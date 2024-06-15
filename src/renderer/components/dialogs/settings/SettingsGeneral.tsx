@@ -241,7 +241,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {!persistTagsInSidecarFile && <CheckIcon />}
                     &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
@@ -262,7 +262,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {persistTagsInSidecarFile && <CheckIcon />}
                     &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
@@ -273,10 +273,7 @@ function SettingsGeneral() {
           )}
         </ListItem>
         {!persistTagsInSidecarFile && (
-          <ListItem
-            className={classes.listItem}
-            title={t('core:fileNameTagPlaceTitle')}
-          >
+          <ListItem className={classes.listItem}>
             <ListItemText primary={t('core:fileNameTagSetting')} />
             <ToggleButtonGroup
               value={filenameTagPlacedAtEnd}
@@ -297,7 +294,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {!filenameTagPlacedAtEnd && <CheckIcon />}
                     &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
                     <InfoMuiIcon />
@@ -318,7 +315,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {filenameTagPlacedAtEnd && <CheckIcon />}
                     &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
                     <InfoMuiIcon />
