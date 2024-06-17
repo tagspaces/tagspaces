@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   open: boolean;
@@ -44,6 +45,7 @@ function CreateDirectoryDialog(props: Props) {
   const { createDirectory } = useIOActionsContext();
   const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
 
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
@@ -80,11 +82,18 @@ function CreateDirectoryDialog(props: Props) {
           : currentDirectoryPath,
         name,
       );
-      createDirectory(dirPath).then(() => {
-        if (props.callback) {
-          props.callback(dirPath);
+      currentLocation.checkDirExist(dirPath).then((exist) => {
+        if (!exist) {
+          createDirectory(dirPath).then(() => {
+            if (props.callback) {
+              props.callback(dirPath);
+            }
+          });
+        } else {
+          showNotification('Directory ' + dirPath + ' exist!');
         }
       });
+
       resetState();
       props.onClose();
     }
