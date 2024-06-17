@@ -84,7 +84,7 @@ test.describe('TST69 - Markdown editor', () => {
     await frame.click('[data-tid=settingsTID]');
 
     let settingsExists = await isDisplayed(
-      '#settings-dialog-title',
+      '#md-editor-settings-title',
       true,
       2000,
       frame,
@@ -94,7 +94,7 @@ test.describe('TST69 - Markdown editor', () => {
     await frame.click('[data-tid=settingsOkTID]');
 
     settingsExists = await isDisplayed(
-      '#settings-dialog-title',
+      '#md-editor-settings-title',
       false,
       2000,
       frame,
