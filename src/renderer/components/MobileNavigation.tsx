@@ -76,6 +76,8 @@ import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { createNewInstance } from '-/services/utils-io';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -104,6 +106,8 @@ function MobileNavigation(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const { setSelectedLocation } = useCurrentLocationContext();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const isLocationManagerPanelOpenedSelector = useSelector(
     isLocationManagerPanelOpened,
@@ -270,7 +274,7 @@ function MobileNavigation(props: Props) {
                       key="createNewFolderTID"
                       ata-tid="createNewFolderTID"
                       onClick={() => {
-                        dispatch(AppActions.toggleCreateDirectoryDialog());
+                        openCreateDirectoryDialog();
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();
@@ -314,7 +318,7 @@ function MobileNavigation(props: Props) {
                       ata-tid="createNewFolderTID"
                       onClick={() => {
                         setSelectedLocation(undefined);
-                        dispatch(AppActions.toggleLocationDialog());
+                        openCreateEditLocationDialog();
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();

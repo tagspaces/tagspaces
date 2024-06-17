@@ -52,6 +52,7 @@ import { openURLExternally } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 
 const PREFIX = 'WelcomePanel';
 
@@ -83,6 +84,7 @@ const Root = styled('div')(({ theme }) => ({
 function WelcomePanel() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const historyContext = Pro?.contextProviders?.HistoryContext
     ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
@@ -91,8 +93,6 @@ function WelcomePanel() {
 
   const toggleNewFileDialogDispatch = () =>
     dispatch(AppActions.toggleNewFileDialog());
-  const toggleLocationDialogDispatch = () =>
-    dispatch(AppActions.toggleLocationDialog());
   const toggleOpenLinkDialogDispatch = () =>
     dispatch(AppActions.toggleOpenLinkDialog());
   const toggleKeysDialogDispatch = () =>
@@ -229,7 +229,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleLocationDialogDispatch}>
+        <ListItem onClick={() => openCreateEditLocationDialog()}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>

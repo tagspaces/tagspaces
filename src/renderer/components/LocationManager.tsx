@@ -24,18 +24,18 @@ import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 
-const CreateEditLocationDialog = React.lazy(
+/*const CreateEditLocationDialog = React.lazy(
   () =>
     import(
-      /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
+      /!* webpackChunkName: "CreateEditLocationDialog" *!/ './dialogs/CreateEditLocationDialog'
     ),
 );
 function CreateEditLocationDialogAsync(props) {
@@ -44,7 +44,7 @@ function CreateEditLocationDialogAsync(props) {
       <CreateEditLocationDialog {...props} />
     </React.Suspense>
   );
-}
+}*/
 
 interface Props {
   style?: any;
@@ -59,18 +59,18 @@ function LocationManager(props: Props) {
     locations,
     currentLocation,
     addLocations,
-    editLocation,
     selectedLocation,
     setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
 
   //const locations: Array<CommonLocation> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
-    useState<boolean>(false);
+  /*const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
+    useState<boolean>(false);*/
   const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
     useState<boolean>(false);
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
@@ -153,13 +153,12 @@ function LocationManager(props: Props) {
         classes={classes}
         showCreateLocationDialog={() => {
           setSelectedLocation(undefined);
-          dispatch(AppActions.toggleLocationDialog());
+          openCreateEditLocationDialog();
         }}
         toggleOpenLinkDialog={() => dispatch(AppActions.toggleOpenLinkDialog())}
       />
       {locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu
-          setEditLocationDialogOpened={setEditLocationDialogOpened}
           setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
         />
       )}
@@ -200,9 +199,6 @@ function LocationManager(props: Props) {
                         <LocationView
                           key={location.uuid}
                           location={location}
-                          setEditLocationDialogOpened={
-                            setEditLocationDialogOpened
-                          }
                           setDeleteLocationDialogOpened={
                             setDeleteLocationDialogOpened
                           }
@@ -224,13 +220,13 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isEditLocationDialogOpened && (
+      {/*{isEditLocationDialogOpened && (
         <CreateEditLocationDialogAsync
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
           editLocation={(location) => editLocation(location)}
         />
-      )}
+      )}*/}
       {isDeleteLocationDialogOpened && (
         <ConfirmDialog
           open={isDeleteLocationDialogOpened}

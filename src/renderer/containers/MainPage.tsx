@@ -33,7 +33,6 @@ import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
-import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
 import NewEntryDialog from '../components/dialogs/NewEntryDialog';
 import {
   getDesktopMode,
@@ -53,7 +52,7 @@ import {
   isSearchPanelOpened,
   isHelpFeedbackPanelOpened,
   isEditTagDialogOpened,
-  isCreateDirectoryOpened,
+  //isCreateDirectoryOpened,
   isNewEntryDialogOpened,
   isNewFileDialogOpened,
   isSettingsDialogOpened,
@@ -62,7 +61,6 @@ import {
   isDeleteMultipleEntriesDialogOpened,
   isImportKanBanDialogOpened,
   currentUser,
-  isLocationDialogOpened,
   isProTeaserVisible,
   isTruncatedConfirmDialogOpened,
   isNewAudioDialogOpened,
@@ -75,7 +73,7 @@ import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
-import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+//import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
 import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
@@ -136,10 +134,10 @@ interface Props {
   isNewEntryDialogOpened: boolean;
   isNewFileDialogOpened: boolean;
   isNewAudioDialogOpened: boolean;
-  isCreateDirectoryOpened: any;
-  toggleCreateDirectoryDialog: () => void;
+  //isCreateDirectoryOpened: any;
+  //toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
-  isLocationDialogOpened: boolean;
+  //isLocationDialogOpened: boolean;
   isKeysDialogOpened: boolean;
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
@@ -164,7 +162,7 @@ interface Props {
   toggleImportKanBanDialog: () => void;
   toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
   toggleAboutDialog: () => void; // needed by electron-menus
-  toggleLocationDialog: () => void; // needed by electron-menus
+  //toggleLocationDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
   toggleProTeaser: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
@@ -191,10 +189,10 @@ interface Props {
   user: CognitoUserInterface;
 }
 
-const CreateEditLocationDialog = React.lazy(
+/*const CreateEditLocationDialog = React.lazy(
   () =>
     import(
-      /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
+      /!* webpackChunkName: "CreateEditLocationDialog" *!/ '../components/dialogs/CreateEditLocationDialog'
     ),
 );
 function CreateEditLocationDialogAsync(props) {
@@ -203,7 +201,7 @@ function CreateEditLocationDialogAsync(props) {
       <CreateEditLocationDialog {...props} />
     </React.Suspense>
   );
-}
+}*/
 
 const AboutDialog = React.lazy(
   () =>
@@ -341,22 +339,22 @@ function MainPage(props: Props) {
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const width =
+  /*const width =
     window.innerWidth ||
     document.documentElement.clientWidth ||
     body.clientWidth;
   const height =
     window.innerHeight ||
     document.documentElement.clientHeight ||
-    body.clientHeight;
-  const [dimensions, setDimensions] = useState<any>({
+    body.clientHeight;*/
+  /*const [dimensions, setDimensions] = useState<any>({
     width,
     height,
-  });
+  });*/
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
-  const [moveCopyDialogOpened, setMoveCopyDialogOpened] =
-    useState<any>(undefined);
+  /*const [moveCopyDialogOpened, setMoveCopyDialogOpened] =
+    useState<any>(undefined);*/
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
@@ -418,7 +416,7 @@ function MainPage(props: Props) {
       body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
-    setDimensions({ width: w, height: h });
+    //setDimensions({ width: w, height: h });
 
     if (openedEntry && !isEntryInFullWidth) {
       const isFillWidth = h > w;
@@ -471,12 +469,9 @@ function MainPage(props: Props) {
     toggleLicenseDialog,
     toggleThirdPartyLibsDialog,
     toggleAboutDialog,
-    toggleLocationDialog,
-    toggleCreateDirectoryDialog,
     toggleNewEntryDialog,
     toggleNewFileDialog,
     toggleNewAudioDialog,
-    //toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
     toggleOpenLinkDialog,
@@ -557,19 +552,19 @@ function MainPage(props: Props) {
         keyMap={keyMap}
         style={{ height: '100%' }}
       >
-        <MoveOrCopyFilesDialog
+        {/*<MoveOrCopyFilesDialog
           open={moveCopyDialogOpened !== undefined}
           onClose={() => {
             setMoveCopyDialogOpened(undefined);
           }}
           selectedFiles={moveCopyDialogOpened}
-        />
-        {props.isLocationDialogOpened && (
+        />*/}
+        {/*{props.isLocationDialogOpened && (
           <CreateEditLocationDialogAsync
             open={props.isLocationDialogOpened}
             onClose={toggleLocationDialog}
           />
-        )}
+        )}*/}
         {props.isAboutDialogOpened && (
           <AboutDialogAsync
             open={props.isAboutDialogOpened}
@@ -645,14 +640,14 @@ function MainPage(props: Props) {
             onClose={toggleProgressDialog}
           />
         )}
-        {props.isCreateDirectoryOpened !== null && (
+        {/*{props.isCreateDirectoryOpened !== null && (
           <CreateDirectoryDialog
             open={true}
             onClose={toggleCreateDirectoryDialog}
             selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
             callback={props.isCreateDirectoryOpened?.callback}
           />
-        )}
+        )}*/}
         <NewEntryDialog
           open={props.isNewEntryDialogOpened}
           onClose={(event, reason) => {
@@ -753,10 +748,7 @@ function MainPage(props: Props) {
           `}
           </style>
           {isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-            <TargetFileBox
-              accepts={[FILE]}
-              setMoveCopyDialogOpened={setMoveCopyDialogOpened}
-            >
+            <TargetFileBox accepts={[FILE]}>
               <CustomDragLayer />
               <Drawer variant="persistent" anchor="left" open={drawerOpened}>
                 <MobileNavigation width={drawerWidth} />
@@ -796,13 +788,13 @@ function MainPage(props: Props) {
 function mapStateToProps(state) {
   return {
     isEditTagDialogOpened: isEditTagDialogOpened(state),
-    isCreateDirectoryOpened: isCreateDirectoryOpened(state),
+    //isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isNewEntryDialogOpened: isNewEntryDialogOpened(state),
     isNewFileDialogOpened: isNewFileDialogOpened(state),
     isNewAudioDialogOpened: isNewAudioDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
-    isLocationDialogOpened: isLocationDialogOpened(state),
+    //isLocationDialogOpened: isLocationDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
@@ -829,7 +821,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
+      //toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       //toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
@@ -845,7 +837,7 @@ function mapDispatchToProps(dispatch) {
       toggleImportKanBanDialog: AppActions.toggleImportKanBanDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
-      toggleLocationDialog: AppActions.toggleLocationDialog,
+      //toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
@@ -868,8 +860,8 @@ const areEqual = (prevProp, nextProp) =>
   /* JSON.stringify(nextProp.theme.palette) ===
     JSON.stringify(prevProp.theme.palette) && */
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
-  JSON.stringify(nextProp.isCreateDirectoryOpened) ===
-    JSON.stringify(prevProp.isCreateDirectoryOpened) &&
+  /*JSON.stringify(nextProp.isCreateDirectoryOpened) ===
+    JSON.stringify(prevProp.isCreateDirectoryOpened) &&*/
   nextProp.isNewEntryDialogOpened === prevProp.isNewEntryDialogOpened &&
   nextProp.isNewFileDialogOpened === prevProp.isNewFileDialogOpened &&
   nextProp.isNewAudioDialogOpened === prevProp.isNewAudioDialogOpened &&
@@ -880,7 +872,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
   nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
   nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
-  nextProp.isLocationDialogOpened === prevProp.isLocationDialogOpened &&
+  // nextProp.isLocationDialogOpened === prevProp.isLocationDialogOpened &&
   nextProp.isLocationManagerPanelOpened ===
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&

@@ -54,6 +54,7 @@ import { generateClipboardLink } from '-/utils/dom';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 
 interface Props {
   open: boolean;
@@ -79,6 +80,7 @@ function DirectoryMenu(props: Props) {
     useCurrentLocationContext();
   const { setThumbnailImageChange } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const {
     openDirectory,
     currentDirectoryPath,
@@ -105,10 +107,6 @@ function DirectoryMenu(props: Props) {
   const directoryPath = props.directoryPath || currentDirectoryPath;
   //const locations: Array<CommonLocation> = useSelector(getLocations);
   const dispatch: AppDispatch = useDispatch();
-
-  const toggleCreateDirectoryDialog = () => {
-    dispatch(AppActions.toggleCreateDirectoryDialog());
-  };
 
   const toggleNewFileDialog = () => {
     dispatch(AppActions.toggleNewFileDialog());
@@ -427,7 +425,7 @@ Do you want to continue?`)
     showInFileManager,
     createNewFile,
     createNewAudio,
-    toggleCreateDirectoryDialog,
+    openCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
     copySharingLink,

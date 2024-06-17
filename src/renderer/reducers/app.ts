@@ -73,7 +73,7 @@ export const types = {
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
-  TOGGLE_LOCATION_DIALOG: 'APP/TOGGLE_LOCATION_DIALOG',
+  //TOGGLE_LOCATION_DIALOG: 'APP/TOGGLE_LOCATION_DIALOG',
   TOGGLE_ONBOARDING_DIALOG: 'APP/TOGGLE_ONBOARDING_DIALOG',
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
@@ -81,7 +81,7 @@ export const types = {
   TOGGLE_OPEN_PRO_TEASER_DIALOG: 'APP/TOGGLE_OPEN_PRO_TEASER_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
-  TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
+  //TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_NEW_ENTRY_DIALOG: 'APP/TOGGLE_NEW_ENTRY_DIALOG',
   TOGGLE_NEW_FILE_DIALOG: 'APP/TOGGLE_NEW_FILE_DIALOG',
   TOGGLE_NEW_AUDIO_DIALOG: 'APP/TOGGLE_NEW_AUDIO_DIALOG',
@@ -189,7 +189,7 @@ export const initialState = {
   },
   editTagDialogOpened: false,
   aboutDialogOpened: false,
-  locationDialogOpened: false,
+  //locationDialogOpened: false,
   openLinkDialogOpened: false,
   proTeaserIndex: -1,
   onboardingDialogOpened: false,
@@ -315,9 +315,9 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_ABOUT_DIALOG: {
       return { ...state, aboutDialogOpened: !state.aboutDialogOpened };
     }
-    case types.TOGGLE_LOCATION_DIALOG: {
+    /*case types.TOGGLE_LOCATION_DIALOG: {
       return { ...state, locationDialogOpened: !state.locationDialogOpened };
-    }
+    }*/
     case types.TOGGLE_ONBOARDING_DIALOG: {
       return {
         ...state,
@@ -389,14 +389,14 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_SETTINGS_DIALOG: {
       return { ...state, settingsDialogOpened: !state.settingsDialogOpened };
     }
-    case types.TOGGLE_CREATE_DIRECTORY_DIALOG: {
+    /*case types.TOGGLE_CREATE_DIRECTORY_DIALOG: {
       // dialog closed = null
       return {
         ...state,
         createDirectoryDialogOpened:
           state.createDirectoryDialogOpened !== null ? null : action.props,
       };
-    }
+    }*/
     /*case types.TOGGLE_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
       // upload dialog have objectStore support only
@@ -757,21 +757,10 @@ export const actions = {
         actions.setProgress(progress.key, progressPercentage, abort, fileName),
       );
     },
-  showCreateDirectoryDialog:
+  /*showCreateDirectoryDialog:
     () => (dispatch: (action) => void, getState: () => any) => {
-      /* const { app } = getState();
-    if (!app.currentDirectoryPath) {
-      dispatch(
-        actions.showNotification(
-          i18n.t('core:firstOpenaFolder'),
-          'warning',
-          true
-        )
-      );
-    } else {*/
       dispatch(actions.toggleCreateDirectoryDialog());
-      //}
-    },
+    },*/
   showCreateFileDialog:
     () => (dispatch: (action) => void, getState: () => any) => {
       /*const { app } = getState();
@@ -792,7 +781,7 @@ export const actions = {
     tag,
   }),
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
-  toggleLocationDialog: () => ({ type: types.TOGGLE_LOCATION_DIALOG }),
+  //toggleLocationDialog: () => ({ type: types.TOGGLE_LOCATION_DIALOG }),
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
   toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
@@ -805,10 +794,10 @@ export const actions = {
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG,
   }),
   toggleSettingsDialog: () => ({ type: types.TOGGLE_SETTINGS_DIALOG }),
-  toggleCreateDirectoryDialog: (props = undefined) => ({
+  /*toggleCreateDirectoryDialog: (props = undefined) => ({
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG,
     props,
-  }),
+  }),*/
   toggleNewEntryDialog: () => ({ type: types.TOGGLE_NEW_ENTRY_DIALOG }),
   toggleNewFileDialog: () => ({ type: types.TOGGLE_NEW_FILE_DIALOG }),
   toggleNewAudioDialog: () => ({ type: types.TOGGLE_NEW_AUDIO_DIALOG }),
@@ -992,8 +981,8 @@ export const isOnboardingDialogOpened = (state: any) =>
 export const isEditTagDialogOpened = (state: any) =>
   state.app.editTagDialogOpened;
 export const isAboutDialogOpened = (state: any) => state.app.aboutDialogOpened;
-export const isLocationDialogOpened = (state: any) =>
-  state.app.locationDialogOpened;
+/*export const isLocationDialogOpened = (state: any) =>
+  state.app.locationDialogOpened;*/
 export const isKeysDialogOpened = (state: any) => state.app.keysDialogOpened;
 export const isLicenseDialogOpened = (state: any) =>
   state.app.licenseDialogOpened;
@@ -1001,8 +990,8 @@ export const isThirdPartyLibsDialogOpened = (state: any) =>
   state.app.thirdPartyLibsDialogOpened;
 export const isSettingsDialogOpened = (state: any) =>
   state.app.settingsDialogOpened;
-export const isCreateDirectoryOpened = (state: any) =>
-  state.app.createDirectoryDialogOpened;
+/*export const isCreateDirectoryOpened = (state: any) =>
+  state.app.createDirectoryDialogOpened;*/
 export const isNewEntryDialogOpened = (state: any) =>
   state.app.isNewEntryDialogOpened;
 export const isNewFileDialogOpened = (state: any) =>

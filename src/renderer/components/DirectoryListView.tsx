@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,7 +13,6 @@ import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/path
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
   ParentFolderIcon,
   NewFolderIcon,
@@ -23,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import Typography from '@mui/material/Typography';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -33,6 +33,7 @@ function DirectoryListView(props: Props) {
   const { t } = useTranslation();
   const { currentLocation, findLocation, locations } =
     useCurrentLocationContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   // const locations: Array<CommonLocation> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
@@ -55,8 +56,6 @@ function DirectoryListView(props: Props) {
       listDirectory(path);
     }
   }, [chosenLocationId.current]);
-
-  const dispatch: AppDispatch = useDispatch();
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
@@ -184,18 +183,11 @@ function DirectoryListView(props: Props) {
         style={{ margin: 5 }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
-          //stopWatching();
-          dispatch(
-            AppActions.toggleCreateDirectoryDialog({
-              rootDirPath: chosenDirectory.current,
-              callback: (newDirPath) => {
-                listDirectory(chosenDirectory.current);
-                setTargetDir(newDirPath);
-                //watchForChanges();
-              },
-              reflect: false,
-            }),
-          );
+          openCreateDirectoryDialog(chosenDirectory.current, (newDirPath) => {
+            listDirectory(chosenDirectory.current);
+            setTargetDir(newDirPath);
+          });
+          //reflect: false,
         }}
       >
         {t('core:newSubdirectory')}

@@ -27,6 +27,7 @@ import { getNextFile, getPrevFile } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import useEventListener from '-/utils/useEventListener';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 
 type RendererListenerContextData = {
   openNextFile: (path?: string) => void;
@@ -56,6 +57,7 @@ export const RendererListenerContextProvider = ({
   const { setSearchQuery } = useDirectoryContentContext();
   const { goForward, goBack, openFsEntry } = useOpenedEntryContext();
   const { sortedDirContent } = useSortedDirContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -91,7 +93,7 @@ export const RendererListenerContextProvider = ({
             break;
           }
           case 'show-create-directory-dialog': {
-            dispatch(AppActions.showCreateDirectoryDialog());
+            openCreateDirectoryDialog();
             break;
           }
           case 'toggle-open-link-dialog': {
