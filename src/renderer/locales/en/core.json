@@ -444,7 +444,6 @@
   "searchingFailed": "Search failed.",
   "addingTagsFailed": "Adding tags failed",
   "removingSidecarTagsFailed": "Removing sidecar tags failed",
-  "removingTagsInSidecarFileFailed": "Removing tags in sidecar file failed",
   "fileCreatedSuccessfully": "File created successfully",
   "tagTitleHelper": "Tags should be at least 1 character long and should not contain: spaces, \\, / #",
   "toggleThumbnailMode": "Toggle thumbnail modes",
