@@ -14,6 +14,7 @@ export type Channels =
   | 'focus-window'
   | 'getDevicePaths'
   | 'readMacOSTags'
+  | 'reloadWindow'
   | 'watchFolder'
   | 'postRequest'
   | 'listDirectoryPromise'

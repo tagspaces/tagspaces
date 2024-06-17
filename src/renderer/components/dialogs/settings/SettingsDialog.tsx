@@ -40,6 +40,7 @@ import Links from 'assets/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'SettingsDialog';
 
@@ -121,7 +122,11 @@ function SettingsDialog(props: Props) {
               clearAllURLParams();
               localStorage.clear();
               // eslint-disable-next-line no-restricted-globals
-              location.reload();
+              if (AppConfig.isElectron) {
+                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+              } else {
+                window.location.reload();
+              }
 
               /* const electron = window.require('electron');
               const webContents = electron.remote.getCurrentWebContents();

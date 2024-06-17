@@ -42,6 +42,13 @@ const progress = {};
 let wsc;
 
 export default function loadMainEvents() {
+  ipcMain.on('reloadWindow', () => {
+    const mainWindow = BrowserWindow.getAllWindows();
+    if (mainWindow.length > 0) {
+      mainWindow.map((window) => window.reload());
+    }
+  });
+
   ipcMain.on('watchFolder', async (e, path: string, depth) => {
     try {
       const wssPort = await postRequest(

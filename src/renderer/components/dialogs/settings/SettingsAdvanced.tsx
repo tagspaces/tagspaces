@@ -149,7 +149,11 @@ function SettingsAdvanced(props: Props) {
           <Button
             data-tid="reloadAppTID"
             onClick={() => {
-              window.location.reload();
+              if (AppConfig.isElectron) {
+                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+              } else {
+                window.location.reload();
+              }
             }}
             color="secondary"
           >
