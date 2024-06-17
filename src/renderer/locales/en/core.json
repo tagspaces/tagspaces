@@ -822,10 +822,10 @@
   "newVersionAvailable": "New version available",
   "urlNotSupported": "URL not supported",
   "indexing": "Indexing",
-  "fileNameTagSetting": "Place of the tags in the file name",
+  "fileNameTagSetting": "Place of the tags in the filename",
   "atTheBeginningOfFileName": "Filename Begin",
   "filenameTagPlacedAtEnd": "Filename End",
-  "fileNameBeginTagPlaceExplanation": "Tags will be placed at the begin of the file name -> [tag1 tag2] filename.ext",
-  "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the file name -> filename [tag1 tag2].ext",
+  "fileNameBeginTagPlaceExplanation": "Tags will be placed at the begin of the filename, like this '[tag1 tag2] filename.ext'",
+  "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the filename, like this 'filename [tag1 tag2].ext'",
   "-": "-"
 }
