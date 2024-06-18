@@ -51,6 +51,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -66,7 +67,8 @@ function ListPerspective(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useIOActionsContext();
-  const dispatch: AppDispatch = useDispatch();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
 
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
     useSortedDirContext();
@@ -199,10 +201,6 @@ function ListPerspective(props: Props) {
     }
   };
 
-  const openDeleteFileDialog = () => {
-    dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
-  };
-
   const openAddRemoveTagsDialog = () => {
     setIsAddRemoveTagsDialogOpened(true);
   };
@@ -246,7 +244,7 @@ function ListPerspective(props: Props) {
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
       if (fileOperationsEnabled(selectedEntries)) {
-        openDeleteFileDialog();
+        openDeleteMultipleEntriesDialog();
       }
     },
     addRemoveTags: () => {
@@ -432,7 +430,6 @@ function ListPerspective(props: Props) {
           mouseY={mouseY}
           open={Boolean(fileContextMenuAnchorEl)}
           onClose={() => setFileContextMenuAnchorEl(null)}
-          openDeleteFileDialog={openDeleteFileDialog}
           openRenameFileDialog={openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
           openShareFilesDialog={openShareFilesDialog}

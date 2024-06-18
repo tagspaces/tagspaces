@@ -41,6 +41,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
+import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -69,6 +70,7 @@ function CreateDirectory(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
+  const { openNewAudioDialog } = useNewAudioDialogContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -208,7 +210,7 @@ function CreateDirectory(props: Props) {
           disabled={!Pro || noSuitableLocation}
           onClick={() => {
             onClose();
-            dispatch(AppActions.toggleNewAudioDialog());
+            openNewAudioDialog();
           }}
           className={classes.createButton}
           data-tid={tid('newSubDirTID')}

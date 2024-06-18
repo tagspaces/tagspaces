@@ -155,7 +155,6 @@ function LocationManager(props: Props) {
           setSelectedLocation(undefined);
           openCreateEditLocationDialog();
         }}
-        toggleOpenLinkDialog={() => dispatch(AppActions.toggleOpenLinkDialog())}
       />
       {locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu

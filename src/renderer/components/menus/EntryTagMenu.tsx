@@ -35,6 +35,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditEntryTagDialogContext } from '-/components/dialogs/hooks/useEditEntryTagDialogContext';
 
 interface Props {
   open: boolean;
@@ -61,19 +62,15 @@ function EntryTagMenu(props: Props) {
   const { setSearchQuery } = useDirectoryContentContext();
   const { removeTags } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
+  const { openEditEntryTagDialog } = useEditEntryTagDialogContext();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
-  const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
-
-  const toggleEditTagDialog = (tag) => {
-    dispatch(AppActions.toggleEditTagDialog(tag));
-  };
 
   function showEditTagDialog() {
     onClose();
     const tag = selectedTag;
     tag.path = currentEntryPath;
-    toggleEditTagDialog(tag);
+    openEditEntryTagDialog(tag);
   }
 
   function showDeleteTagDialog() {

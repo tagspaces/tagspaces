@@ -258,6 +258,11 @@ export namespace TS {
     openItem: (item: TS.HistoryItem) => void;
   };
 
+  type KanBanImportDialogContextData = {
+    openKanBanImportDialog: () => void;
+    closeKanBanImportDialog: () => void;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;

@@ -38,11 +38,11 @@ import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
+import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
 
 interface Props {
   open: boolean;
-  toggleLicenseDialog: () => void;
-  toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
 }
 
@@ -56,6 +56,8 @@ document.title = productName + ' ' + versionMeta.version;
 
 function AboutDialog(props: Props) {
   const { t } = useTranslation();
+  const { openLicenseDialog } = useLicenseDialogContext();
+  const { openThirdPartyLibsDialog } = useThirdPartyLibsDialogContext();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose } = props;
@@ -163,7 +165,7 @@ function AboutDialog(props: Props) {
             size="small"
             color="primary"
             style={{ marginLeft: -5 }}
-            onClick={props.toggleThirdPartyLibsDialog}
+            onClick={() => openThirdPartyLibsDialog()}
           >
             Software Acknowledgements
           </Button>
@@ -217,7 +219,7 @@ function AboutDialog(props: Props) {
             size="small"
             color="primary"
             data-tid="openLicenseDialog"
-            onClick={props.toggleLicenseDialog}
+            onClick={() => openLicenseDialog()}
           >
             License Agreement
           </Button>

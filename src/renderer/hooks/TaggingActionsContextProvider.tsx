@@ -58,6 +58,7 @@ import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext
 import AppConfig from '-/AppConfig';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useEditEntryTagDialogContext } from '-/components/dialogs/hooks/useEditEntryTagDialogContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -161,6 +162,7 @@ export const TaggingActionsContextProvider = ({
   const { currentDirectoryEntries, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
+  const { openEditEntryTagDialog } = useEditEntryTagDialogContext();
   const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
@@ -301,7 +303,7 @@ export const TaggingActionsContextProvider = ({
           if (Pro) {
             tag.path = paths[0]; // todo rethink and remove this!
             tag.title = defaultTagLocation;
-            dispatch(AppActions.toggleEditTagDialog(tag));
+            openEditEntryTagDialog(tag);
           } else {
             showNotification(
               t('core:thisFunctionalityIsAvailableInPro' as any) as string,
@@ -312,7 +314,7 @@ export const TaggingActionsContextProvider = ({
             tag.path = paths[0]; // todo rethink and remove this!
             // delete tag.functionality;
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
-            dispatch(AppActions.toggleEditTagDialog(tag));
+            openEditEntryTagDialog(tag);
           } else {
             showNotification(
               t('core:thisFunctionalityIsAvailableInPro' as any) as string,

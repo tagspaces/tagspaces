@@ -10,11 +10,13 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useUserContext } from '-/hooks/useUserContext';
 
 function HandleAuth() {
   const username = useRef(undefined);
   const { addLocations } = useCurrentLocationContext();
   const { importTagGroups } = useTaggingActionsContext();
+  const { loggedIn } = useUserContext();
   const dispatch: AppDispatch = useDispatch();
 
   React.useEffect(() => {
@@ -53,10 +55,10 @@ function HandleAuth() {
         }
         // @ts-ignore
         username.current = authData.username;
-        dispatch(AppActions.loggedIn(authData));
+        loggedIn(authData);
       } else if (nextAuthState === AuthState.SignedOut) {
         username.current = undefined;
-        dispatch(AppActions.loggedIn(undefined));
+        loggedIn(undefined);
       }
     });
   }, []);

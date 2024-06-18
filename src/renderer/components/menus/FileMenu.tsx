@@ -66,6 +66,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   anchorEl: Element;
@@ -73,7 +74,6 @@ interface Props {
   mouseY?: number;
   open: boolean;
   onClose: () => void;
-  openDeleteFileDialog: () => void;
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
@@ -86,7 +86,6 @@ interface Props {
 
 function FileMenu(props: Props) {
   const {
-    openDeleteFileDialog,
     openRenameFileDialog,
     openMoveCopyFilesDialog,
     openShareFilesDialog,
@@ -104,6 +103,8 @@ function FileMenu(props: Props) {
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
   const {
     setBackgroundImageChange,
     setThumbnailImageChange,
@@ -157,7 +158,7 @@ function FileMenu(props: Props) {
 
   function showDeleteFileDialog() {
     onClose();
-    openDeleteFileDialog();
+    openDeleteMultipleEntriesDialog();
   }
 
   function showRenameFileDialog() {

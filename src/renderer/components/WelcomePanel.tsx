@@ -53,6 +53,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 
 const PREFIX = 'WelcomePanel';
 
@@ -85,20 +89,16 @@ function WelcomePanel() {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  const { openNewFileDialog } = useNewFileDialogContext();
+  const { openAboutDialog } = useAboutDialogContext();
+  const { openKeyboardDialog } = useKeyboardDialogContext();
+  const { openLinkDialog } = useLinkDialogContext();
   const historyContext = Pro?.contextProviders?.HistoryContext
     ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
-  const dispatch: AppDispatch = useDispatch();
   const desktopMode = useSelector(getDesktopMode);
 
-  const toggleNewFileDialogDispatch = () =>
-    dispatch(AppActions.toggleNewFileDialog());
-  const toggleOpenLinkDialogDispatch = () =>
-    dispatch(AppActions.toggleOpenLinkDialog());
-  const toggleKeysDialogDispatch = () =>
-    dispatch(AppActions.toggleKeysDialog());
-
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const historyKeys = Pro ? Pro.keys.historyKeys : {};
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
@@ -207,7 +207,7 @@ function WelcomePanel() {
           role="button"
           aria-hidden="true"
           tabIndex={0}
-          onClick={() => dispatch(AppActions.toggleAboutDialog())}
+          onClick={() => openAboutDialog()}
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
@@ -220,7 +220,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem> */}
-        <ListItem onClick={toggleNewFileDialogDispatch}>
+        <ListItem onClick={() => openNewFileDialog()}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -238,7 +238,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleOpenLinkDialogDispatch}>
+        <ListItem onClick={() => openLinkDialog()}>
           <ListItemIcon>
             <OpenLinkIcon />
           </ListItemIcon>
@@ -258,7 +258,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleKeysDialogDispatch}>
+        <ListItem onClick={() => openKeyboardDialog()}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>

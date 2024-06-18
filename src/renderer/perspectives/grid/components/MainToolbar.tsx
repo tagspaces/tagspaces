@@ -51,6 +51,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -86,6 +87,8 @@ function MainToolbar(props: Props) {
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, true);
@@ -214,9 +217,7 @@ function MainToolbar(props: Props) {
               <IconButton
                 aria-label={t('core:deleteSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-                onClick={() =>
-                  dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
-                }
+                onClick={() => openDeleteMultipleEntriesDialog()}
                 // </span>size="large"
               >
                 <DeleteIcon />

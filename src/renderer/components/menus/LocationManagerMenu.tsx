@@ -41,13 +41,13 @@ import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 
 interface Props {
   classes: any;
   exportLocations: () => void;
   importLocations: () => void;
   showCreateLocationDialog: () => void;
-  toggleOpenLinkDialog: () => void;
 }
 
 function LocationManagerMenu(props: Props) {
@@ -56,12 +56,12 @@ function LocationManagerMenu(props: Props) {
     exportLocations,
     importLocations,
     showCreateLocationDialog,
-    toggleOpenLinkDialog,
   } = props;
   const { t } = useTranslation();
 
   const { createLocationsIndexes } = useLocationIndexContext();
   const { closeAllLocations } = useCurrentLocationContext();
+  const { openLinkDialog } = useLinkDialogContext();
   const [locationManagerMenuAnchorEl, setLocationManagerMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const menuItems = [];
@@ -89,7 +89,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuOpenLink"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        toggleOpenLinkDialog();
+        openLinkDialog();
       }}
     >
       <ListItemIcon>

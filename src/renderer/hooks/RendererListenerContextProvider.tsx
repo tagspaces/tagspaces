@@ -28,6 +28,15 @@ import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirConte
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import useEventListener from '-/utils/useEventListener';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
+import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
+import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
+import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
+import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
+import { usePanelsContext } from '-/hooks/usePanelsContext';
 
 type RendererListenerContextData = {
   openNextFile: (path?: string) => void;
@@ -58,6 +67,15 @@ export const RendererListenerContextProvider = ({
   const { goForward, goBack, openFsEntry } = useOpenedEntryContext();
   const { sortedDirContent } = useSortedDirContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
+  const { openNewFileDialog } = useNewFileDialogContext();
+  const { openLicenseDialog } = useLicenseDialogContext();
+  const { openThirdPartyLibsDialog } = useThirdPartyLibsDialogContext();
+  const { openAboutDialog } = useAboutDialogContext();
+  const { openOnboardingDialog } = useOnboardingDialogContext();
+  const { openKeyboardDialog } = useKeyboardDialogContext();
+  const { openLinkDialog } = useLinkDialogContext();
+  const { openSettingsDialog } = useSettingsDialogContext();
+  const { showPanel } = usePanelsContext();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -70,16 +88,16 @@ export const RendererListenerContextProvider = ({
         // console.log('Global events: ' + arg);
         switch (arg) {
           case 'new-text-file':
-            dispatch(AppActions.toggleNewFileDialog());
+            openNewFileDialog();
             break;
           case 'open-search':
             setSearchQuery({ textQuery: '' });
             break;
           case 'open-location-manager-panel':
-            dispatch(AppActions.openLocationManagerPanel());
+            showPanel('locationManagerPanel');
             break;
           case 'open-tag-library-panel':
-            dispatch(AppActions.openTagLibraryPanel());
+            showPanel('tagLibraryPanel');
             break;
           case 'audio':
             // console.log('showAudioRecordingDialog');
@@ -97,7 +115,7 @@ export const RendererListenerContextProvider = ({
             break;
           }
           case 'toggle-open-link-dialog': {
-            dispatch(AppActions.toggleOpenLinkDialog());
+            openLinkDialog();
             break;
           }
           case 'go-back': {
@@ -131,19 +149,19 @@ export const RendererListenerContextProvider = ({
             break;
           }
           case 'toggle-settings-dialog': {
-            dispatch(AppActions.toggleSettingsDialog());
+            openSettingsDialog();
             break;
           }
           case 'open-help-feedback-panel': {
-            dispatch(AppActions.openHelpFeedbackPanel());
+            showPanel('helpFeedbackPanel');
             break;
           }
           case 'toggle-keys-dialog': {
-            dispatch(AppActions.toggleKeysDialog());
+            openKeyboardDialog();
             break;
           }
           case 'toggle-onboarding-dialog': {
-            dispatch(AppActions.toggleOnboardingDialog());
+            openOnboardingDialog();
             break;
           }
           /*case 'open-url-externally': {
@@ -151,15 +169,15 @@ export const RendererListenerContextProvider = ({
             break;
           }*/
           case 'toggle-license-dialog': {
-            dispatch(AppActions.toggleLicenseDialog());
+            openLicenseDialog();
             break;
           }
           case 'toggle-third-party-libs-dialog': {
-            dispatch(AppActions.toggleThirdPartyLibsDialog());
+            openThirdPartyLibsDialog();
             break;
           }
           case 'toggle-about-dialog': {
-            dispatch(AppActions.toggleAboutDialog());
+            openAboutDialog();
             break;
           }
           default:

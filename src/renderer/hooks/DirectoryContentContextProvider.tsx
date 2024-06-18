@@ -61,6 +61,7 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCancelable } from '-/utils/useCancelable';
+import { useIsTruncatedConfirmDialogContext } from '-/components/dialogs/hooks/useIsTruncatedConfirmDialogContext';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -199,6 +200,7 @@ export const DirectoryContentContextProvider = ({
   const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const { openIsTruncatedConfirmDialog } = useIsTruncatedConfirmDialogContext();
   const { signal, abort } = useCancelable();
 
   const currentLocationPath = useRef<string>('');
@@ -741,8 +743,7 @@ export const DirectoryContentContextProvider = ({
           return [];
         }
         if (resultsLimit.IsTruncated) {
-          //OPEN ISTRUNCATED dialog
-          dispatch(AppActions.toggleTruncatedConfirmDialog());
+          openIsTruncatedConfirmDialog();
         }
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);

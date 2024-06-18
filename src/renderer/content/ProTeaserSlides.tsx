@@ -25,13 +25,6 @@ export const slidesNames = [
   'enterprise',
 ];
 
-export function getProTeaserSlideIndex(slideName: string): number {
-  if (!slideName) {
-    return -1;
-  }
-  return slidesNames.findIndex((key) => key === slideName);
-}
-
 export function getProTeaserSlides(t) {
   const slidesEN = [];
   slidesEN[slidesNames['general']] = {

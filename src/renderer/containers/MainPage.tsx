@@ -19,73 +19,33 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
-import { Progress } from 'aws-sdk/clients/s3';
-import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
-import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
-import NewEntryDialog from '../components/dialogs/NewEntryDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
   getMainVerticalSplitSize,
   actions as SettingsActions,
 } from '../reducers/settings';
-import {
-  actions as AppActions,
-  isAboutDialogOpened,
-  isOnboardingDialogOpened,
-  isKeysDialogOpened,
-  isLicenseDialogOpened,
-  isThirdPartyLibsDialogOpened,
-  isLocationManagerPanelOpened,
-  isTagLibraryPanelOpened,
-  isSearchPanelOpened,
-  isHelpFeedbackPanelOpened,
-  isEditTagDialogOpened,
-  //isCreateDirectoryOpened,
-  isNewEntryDialogOpened,
-  isNewFileDialogOpened,
-  isSettingsDialogOpened,
-  isOpenLinkDialogOpened,
-  isProgressOpened,
-  isDeleteMultipleEntriesDialogOpened,
-  isImportKanBanDialogOpened,
-  currentUser,
-  isProTeaserVisible,
-  isTruncatedConfirmDialogOpened,
-  isNewAudioDialogOpened,
-} from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
-import LoadingLazy from '../components/LoadingLazy';
 import CustomDragLayer from '-/components/CustomDragLayer';
-import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import useEventListener from '-/utils/useEventListener';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
-//import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
-import { Pro } from '-/pro';
-import NewFileDialog from '-/components/dialogs/NewFileDialog';
-import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
 import { styled, useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import NewAudioDialog from '-/components/dialogs/NewAudioDialog';
+import { usePanelsContext } from '-/hooks/usePanelsContext';
+import { useUserContext } from '-/hooks/useUserContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -93,8 +53,6 @@ const bufferedLeftSplitResize = buffer({
   timeout: 300,
   id: 'buffered-leftsplit-resize',
 });
-
-const KanBanImportDialog = Pro && Pro.UI ? Pro.UI.KanBanImportDialog : false;
 
 const PREFIX = 'MainPage';
 
@@ -127,198 +85,16 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 interface Props {
-  //isFirstRun: boolean;
-  setFirstRun: (isFirstRun: boolean) => void;
-  isDesktopMode: boolean;
-  isSettingsDialogOpened: boolean;
-  isNewEntryDialogOpened: boolean;
-  isNewFileDialogOpened: boolean;
-  isNewAudioDialogOpened: boolean;
-  //isCreateDirectoryOpened: any;
-  //toggleCreateDirectoryDialog: () => void;
-  isAboutDialogOpened: boolean;
-  //isLocationDialogOpened: boolean;
-  isKeysDialogOpened: boolean;
-  isLicenseDialogOpened: boolean;
-  isThirdPartyLibsDialogOpened: boolean;
-  isOnboardingDialogOpened: boolean;
-  //isUploadProgressDialogOpened: string | undefined;
-  isTruncatedConfirmDialogOpened: boolean;
-  isProgressDialogOpened: boolean;
-  isProTeaserVisible: boolean;
-  //toggleUploadDialog: () => void;
-  toggleOpenLinkDialog: () => void;
-  toggleProgressDialog: () => void;
-  resetProgress: () => void;
-  isEditTagDialogOpened: boolean;
-  keyBindings: any;
-  toggleEditTagDialog: (tag: TS.Tag) => void;
-  toggleNewEntryDialog: () => void; // needed by electron-menus
-  toggleNewFileDialog: () => void; // needed by electron-menus
-  toggleNewAudioDialog: () => void; // needed by electron-menus
-  toggleSettingsDialog: () => void; // needed by electron-menus
-  toggleKeysDialog: () => void; // needed by electron-menus
-  toggleLicenseDialog: () => void; // needed by electron-menus
-  toggleImportKanBanDialog: () => void;
-  toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
-  toggleAboutDialog: () => void; // needed by electron-menus
-  //toggleLocationDialog: () => void; // needed by electron-menus
-  toggleOnboardingDialog: () => void; // needed by electron-menus
-  toggleProTeaser: () => void; // needed by electron-menus
-  // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
-  // setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
-  openLocationManagerPanel: () => void;
-  openTagLibraryPanel: () => void;
-  // openSearchPanel: () => void;
-  openHelpFeedbackPanel: () => void;
-  // closeAllVerticalPanels: () => void;
-  //leftSplitSize: number;
-  mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
-  toggleTruncatedConfirmDialog: () => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
-  isLocationManagerPanelOpened: boolean;
-  isOpenLinkDialogOpened: boolean;
+  /*isLocationManagerPanelOpened: boolean;
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
-  isHelpFeedbackPanelOpened: boolean;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  isDeleteMultipleEntriesDialogOpened: boolean;
-  isImportKanBanDialogOpened: boolean;
-  toggleDeleteMultipleEntriesDialog: () => void;
-  user: CognitoUserInterface;
-}
-
-/*const CreateEditLocationDialog = React.lazy(
-  () =>
-    import(
-      /!* webpackChunkName: "CreateEditLocationDialog" *!/ '../components/dialogs/CreateEditLocationDialog'
-    ),
-);
-function CreateEditLocationDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <CreateEditLocationDialog {...props} />
-    </React.Suspense>
-  );
-}*/
-
-const AboutDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
-    ),
-);
-function AboutDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <AboutDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const LicenseDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
-    ),
-);
-function LicenseDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <LicenseDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const KeyboardDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
-    ),
-);
-function KeyboardDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <KeyboardDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const ThirdPartyLibsDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
-    ),
-);
-function ThirdPartyLibsDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ThirdPartyLibsDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const OnboardingDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
-    ),
-);
-function OnboardingDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <OnboardingDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const EditEntryTagDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
-    ),
-);
-function EditEntryTagDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <EditEntryTagDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const OpenLinkDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
-    ),
-);
-function OpenLinkDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <OpenLinkDialog {...props} />
-    </React.Suspense>
-  );
-}
-
-const ProTeaserDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "ProTeaserDialog" */ '../components/dialogs/ProTeaserDialog'
-    ),
-);
-function ProTeaserDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ProTeaserDialog {...props} />
-    </React.Suspense>
-  );
+  isHelpFeedbackPanelOpened: boolean;*/
+  //user: CognitoUserInterface;
 }
 
 function MainPage(props: Props) {
-  const { t } = useTranslation();
-  const { deleteEntries } = useIOActionsContext();
-  const { selectedEntries } = useSelectedEntriesContext();
   const {
     openLink,
     openedEntry,
@@ -334,27 +110,16 @@ function MainPage(props: Props) {
     exitSearchMode,
     openCurrentDirectory,
   } = useDirectoryContentContext();
-  const { showNotification } = useNotificationContext();
+  const { showPanel } = usePanelsContext();
+  const { isLoggedIn } = useUserContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  /*const width =
-    window.innerWidth ||
-    document.documentElement.clientWidth ||
-    body.clientWidth;
-  const height =
-    window.innerHeight ||
-    document.documentElement.clientHeight ||
-    body.clientHeight;*/
-  /*const [dimensions, setDimensions] = useState<any>({
-    width,
-    height,
-  });*/
-
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
-  /*const [moveCopyDialogOpened, setMoveCopyDialogOpened] =
-    useState<any>(undefined);*/
+  const isDesktopMode: boolean = useSelector(getDesktopMode);
+  const keyBindings = useSelector(getKeyBindingObject);
+  const mainSplitSize = useSelector(getMainVerticalSplitSize);
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
@@ -434,11 +199,11 @@ function MainPage(props: Props) {
     openParentDirectory: loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
     showLocationManager: () => {
-      props.openLocationManagerPanel();
+      showPanel('locationManagerPanel');
       setDrawerOpened(true);
     },
     showTagLibrary: () => {
-      props.openTagLibraryPanel();
+      showPanel('tagLibraryPanel');
       setDrawerOpened(true);
     },
     openSearch: () => enterSearchMode(),
@@ -447,39 +212,20 @@ function MainPage(props: Props) {
       openCurrentDirectory();
     },
     showHelp: () => {
-      props.openHelpFeedbackPanel();
+      showPanel('helpFeedbackPanel');
       setDrawerOpened(true);
     },
   };
 
   const keyMap = {
-    openParentDirectory: props.keyBindings.openParentDirectory,
-    toggleShowHiddenEntries: props.keyBindings.toggleShowHiddenEntries,
-    showLocationManager: props.keyBindings.showLocationManager,
-    showTagLibrary: props.keyBindings.showTagLibrary,
-    openSearch: props.keyBindings.openSearch,
-    closeSearch: props.keyBindings.Escape,
-    showHelp: props.keyBindings.showHelp,
+    openParentDirectory: keyBindings.openParentDirectory,
+    toggleShowHiddenEntries: keyBindings.toggleShowHiddenEntries,
+    showLocationManager: keyBindings.showLocationManager,
+    showTagLibrary: keyBindings.showTagLibrary,
+    openSearch: keyBindings.openSearch,
+    closeSearch: keyBindings.Escape,
+    showHelp: keyBindings.showHelp,
   };
-
-  const {
-    toggleOnboardingDialog,
-    toggleSettingsDialog,
-    toggleKeysDialog,
-    toggleLicenseDialog,
-    toggleThirdPartyLibsDialog,
-    toggleAboutDialog,
-    toggleNewEntryDialog,
-    toggleNewFileDialog,
-    toggleNewAudioDialog,
-    toggleProgressDialog,
-    toggleEditTagDialog,
-    toggleOpenLinkDialog,
-    toggleProTeaser,
-    setFirstRun,
-    isDesktopMode,
-    mainSplitSize,
-  } = props;
 
   const { FILE } = NativeTypes;
 
@@ -528,7 +274,6 @@ function MainPage(props: Props) {
       >
         <FolderContainer
           toggleDrawer={toggleDrawer}
-          toggleProTeaser={toggleProTeaser}
           drawerOpened={drawerOpened}
           goBack={goBack}
           goForward={goForward}
@@ -552,166 +297,6 @@ function MainPage(props: Props) {
         keyMap={keyMap}
         style={{ height: '100%' }}
       >
-        {/*<MoveOrCopyFilesDialog
-          open={moveCopyDialogOpened !== undefined}
-          onClose={() => {
-            setMoveCopyDialogOpened(undefined);
-          }}
-          selectedFiles={moveCopyDialogOpened}
-        />*/}
-        {/*{props.isLocationDialogOpened && (
-          <CreateEditLocationDialogAsync
-            open={props.isLocationDialogOpened}
-            onClose={toggleLocationDialog}
-          />
-        )}*/}
-        {props.isAboutDialogOpened && (
-          <AboutDialogAsync
-            open={props.isAboutDialogOpened}
-            toggleLicenseDialog={toggleLicenseDialog}
-            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-            onClose={toggleAboutDialog}
-          />
-        )}
-        {props.isKeysDialogOpened && (
-          <KeyboardDialogAsync
-            open={props.isKeysDialogOpened}
-            onClose={toggleKeysDialog}
-          />
-        )}
-        {props.isLicenseDialogOpened && (
-          <LicenseDialogAsync
-            open={props.isLicenseDialogOpened}
-            onClose={(event, reason) => {
-              if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
-                return true;
-              }
-              setFirstRun(false);
-              toggleLicenseDialog();
-            }}
-          />
-        )}
-        {props.isOnboardingDialogOpened && (
-          <OnboardingDialogAsync
-            open={props.isOnboardingDialogOpened}
-            onClose={toggleOnboardingDialog}
-          />
-        )}
-        {props.isThirdPartyLibsDialogOpened && (
-          <ThirdPartyLibsDialogAsync
-            open={props.isThirdPartyLibsDialogOpened}
-            onClose={toggleThirdPartyLibsDialog}
-          />
-        )}
-        {props.isEditTagDialogOpened && (
-          <EditEntryTagDialogAsync
-            open={props.isEditTagDialogOpened}
-            onClose={() => toggleEditTagDialog(undefined)}
-          />
-        )}
-        {props.isOpenLinkDialogOpened && (
-          <OpenLinkDialogAsync
-            open={props.isOpenLinkDialogOpened}
-            onClose={toggleOpenLinkDialog}
-          />
-        )}
-        {props.isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={props.isProTeaserVisible}
-            onClose={toggleProTeaser}
-          />
-        )}
-        {/*{props.isUploadProgressDialogOpened !== undefined && (
-          <FileUploadDialog
-            open={true}
-            onClose={toggleUploadDialog}
-            title={props.isUploadProgressDialogOpened}
-          />
-        )}*/}
-        {props.isTruncatedConfirmDialogOpened && (
-          <IsTruncatedConfirmDialog
-            open={true}
-            onClose={props.toggleTruncatedConfirmDialog}
-          />
-        )}
-        {props.isProgressDialogOpened && (
-          <ProgressDialog
-            open={props.isProgressDialogOpened}
-            onClose={toggleProgressDialog}
-          />
-        )}
-        {/*{props.isCreateDirectoryOpened !== null && (
-          <CreateDirectoryDialog
-            open={true}
-            onClose={toggleCreateDirectoryDialog}
-            selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
-            callback={props.isCreateDirectoryOpened?.callback}
-          />
-        )}*/}
-        <NewEntryDialog
-          open={props.isNewEntryDialogOpened}
-          onClose={(event, reason) => {
-            if (reason !== 'backdropClick') {
-              toggleNewEntryDialog();
-            }
-          }}
-        />
-        {props.isNewFileDialogOpened && (
-          <NewFileDialog
-            open={props.isNewFileDialogOpened}
-            onClose={(event, reason) => {
-              if (reason !== 'backdropClick') {
-                toggleNewFileDialog();
-              }
-            }}
-          />
-        )}
-        {props.isNewAudioDialogOpened && (
-          <NewAudioDialog
-            open={props.isNewAudioDialogOpened}
-            onClose={toggleNewAudioDialog}
-          />
-        )}
-        <SettingsDialog
-          open={props.isSettingsDialogOpened}
-          onClose={toggleSettingsDialog}
-        />
-        {KanBanImportDialog && selectedEntries[0] && (
-          <KanBanImportDialog
-            open={props.isImportKanBanDialogOpened}
-            onClose={props.toggleImportKanBanDialog}
-          />
-        )}
-        {props.isDeleteMultipleEntriesDialogOpened && (
-          <ConfirmDialog
-            open={props.isDeleteMultipleEntriesDialogOpened}
-            onClose={() => props.toggleDeleteMultipleEntriesDialog()}
-            title={t('core:deleteConfirmationTitle')}
-            content={t('core:deleteConfirmationContent')}
-            list={selectedEntries.map((fsEntry) => fsEntry.name)}
-            confirmCallback={(result) => {
-              if (result && selectedEntries) {
-                deleteEntries(...selectedEntries).then(
-                  (success) =>
-                    success &&
-                    selectedEntries.length > 1 &&
-                    showNotification(
-                      t('core:deletingEntriesSuccessful', {
-                        dirPath: selectedEntries
-                          .map((fsEntry) => fsEntry.name)
-                          .toString(),
-                      }),
-                      'default',
-                      true,
-                    ),
-                );
-              }
-            }}
-            cancelDialogTID="cancelDeleteFileDialog"
-            confirmDialogTID="confirmDeleteFileDialog"
-            confirmDialogContentTID="confirmDeleteDialogContent"
-          />
-        )}
         <PageNotification />
         <div
           style={{
@@ -747,7 +332,7 @@ function MainPage(props: Props) {
               }
           `}
           </style>
-          {isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+          {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
             <TargetFileBox accepts={[FILE]}>
               <CustomDragLayer />
               <Drawer variant="persistent" anchor="left" open={drawerOpened}>
@@ -787,111 +372,25 @@ function MainPage(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    isEditTagDialogOpened: isEditTagDialogOpened(state),
-    //isCreateDirectoryOpened: isCreateDirectoryOpened(state),
-    isNewEntryDialogOpened: isNewEntryDialogOpened(state),
-    isNewFileDialogOpened: isNewFileDialogOpened(state),
-    isNewAudioDialogOpened: isNewAudioDialogOpened(state),
-    isSettingsDialogOpened: isSettingsDialogOpened(state),
-    isAboutDialogOpened: isAboutDialogOpened(state),
-    //isLocationDialogOpened: isLocationDialogOpened(state),
-    isKeysDialogOpened: isKeysDialogOpened(state),
-    isOnboardingDialogOpened: isOnboardingDialogOpened(state),
-    isLicenseDialogOpened: isLicenseDialogOpened(state),
-    isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
-    //isUploadProgressDialogOpened: isUploadDialogOpened(state),
-    isTruncatedConfirmDialogOpened: isTruncatedConfirmDialogOpened(state),
-    isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
-    isProTeaserVisible: isProTeaserVisible(state),
-    isProgressDialogOpened: isProgressOpened(state),
-    isDesktopMode: getDesktopMode(state),
-    keyBindings: getKeyBindingObject(state),
-    mainSplitSize: getMainVerticalSplitSize(state),
-    isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
+    /*isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
-    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    isDeleteMultipleEntriesDialogOpened:
-      isDeleteMultipleEntriesDialogOpened(state),
-    isImportKanBanDialogOpened: isImportKanBanDialogOpened(state),
-    user: currentUser(state),
+    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),*/
+    //user: currentUser(state),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      //toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      //toggleUploadDialog: AppActions.toggleUploadDialog,
-      toggleProgressDialog: AppActions.toggleProgressDialog,
-      resetProgress: AppActions.resetProgress,
-      toggleEditTagDialog: AppActions.toggleEditTagDialog,
-      toggleTruncatedConfirmDialog: AppActions.toggleTruncatedConfirmDialog,
-      onUploadProgress: AppActions.onUploadProgress,
-      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
-      toggleNewFileDialog: AppActions.toggleNewFileDialog,
-      toggleNewAudioDialog: AppActions.toggleNewAudioDialog,
-      toggleSettingsDialog: AppActions.toggleSettingsDialog,
-      toggleKeysDialog: AppActions.toggleKeysDialog,
-      toggleLicenseDialog: AppActions.toggleLicenseDialog,
-      toggleImportKanBanDialog: AppActions.toggleImportKanBanDialog,
-      toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
-      toggleAboutDialog: AppActions.toggleAboutDialog,
-      //toggleLocationDialog: AppActions.toggleLocationDialog,
-      toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
-      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      toggleProTeaser: AppActions.toggleProTeaser,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
-      openLocationManagerPanel: AppActions.openLocationManagerPanel,
-      openTagLibraryPanel: AppActions.openTagLibraryPanel,
-      // openSearchPanel: AppActions.openSearchPanel,
-      openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
-      toggleDeleteMultipleEntriesDialog:
-        AppActions.toggleDeleteMultipleEntriesDialog,
-      setFirstRun: SettingsActions.setFirstRun,
     },
     dispatch,
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
-  /* JSON.stringify(nextProp.theme.palette) ===
-    JSON.stringify(prevProp.theme.palette) && */
-  nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
-  /*JSON.stringify(nextProp.isCreateDirectoryOpened) ===
-    JSON.stringify(prevProp.isCreateDirectoryOpened) &&*/
-  nextProp.isNewEntryDialogOpened === prevProp.isNewEntryDialogOpened &&
-  nextProp.isNewFileDialogOpened === prevProp.isNewFileDialogOpened &&
-  nextProp.isNewAudioDialogOpened === prevProp.isNewAudioDialogOpened &&
-  nextProp.isDeleteMultipleEntriesDialogOpened ===
-    prevProp.isDeleteMultipleEntriesDialogOpened &&
-  nextProp.isDesktopMode === prevProp.isDesktopMode &&
-  nextProp.isEditTagDialogOpened === prevProp.isEditTagDialogOpened &&
-  nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
-  nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
-  nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
-  // nextProp.isLocationDialogOpened === prevProp.isLocationDialogOpened &&
-  nextProp.isLocationManagerPanelOpened ===
-    prevProp.isLocationManagerPanelOpened &&
-  nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
-  nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
-  nextProp.isProTeaserVisible === prevProp.isProTeaserVisible &&
-  nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
-  nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
-  nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
-  nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
-  nextProp.isTruncatedConfirmDialogOpened ===
-    prevProp.isTruncatedConfirmDialogOpened &&
-  nextProp.isThirdPartyLibsDialogOpened ===
-    prevProp.isThirdPartyLibsDialogOpened &&
-  /*nextProp.isUploadProgressDialogOpened ===
-    prevProp.isUploadProgressDialogOpened &&*/
-  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
-  nextProp.mainSplitSize === prevProp.mainSplitSize;
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(React.memo(MainPage, areEqual));
+)(React.memo(MainPage));

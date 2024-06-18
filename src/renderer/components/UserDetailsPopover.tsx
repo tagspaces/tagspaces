@@ -18,7 +18,6 @@
 
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
@@ -31,9 +30,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useSelector } from 'react-redux';
 import { clearAllURLParams } from '-/utils/dom';
 import { Pro } from '-/pro';
-import { currentUser } from '-/reducers/app';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useUserContext } from '-/hooks/useUserContext';
 
 const PREFIX = 'UserDetailsPopover';
 
@@ -72,14 +71,15 @@ function UserDetailsPopover(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { onClose } = props;
-  const cognitoUser: CognitoUserInterface = useSelector(currentUser);
+  const { currentUser } = useUserContext();
+
   const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
   const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
 
   let email;
   let initials;
-  if (cognitoUser && cognitoUser.attributes && cognitoUser.attributes.email) {
-    ({ email } = cognitoUser.attributes);
+  if (currentUser && currentUser.attributes && currentUser.attributes.email) {
+    ({ email } = currentUser.attributes);
     const fullName = email.split('@')[0].split('.');
     const firstName = fullName[0];
     const lastName = fullName[fullName.length - 1];
@@ -140,7 +140,7 @@ function UserDetailsPopover(props: Props) {
               <SetupTOTPDialog
                 open={isSetupTOTPOpened}
                 onClose={() => setSetupTOTPOpened(false)}
-                user={cognitoUser}
+                user={currentUser}
                 confirmCallback={(result) => {
                   if (result) {
                     window.location.reload(); // TODO SOFTWARE_TOKEN_MFA is not refreshed in signed user without window.reload()
@@ -149,7 +149,7 @@ function UserDetailsPopover(props: Props) {
                 }}
               />
             )}
-            {'SOFTWARE_TOKEN_MFA'.indexOf(cognitoUser.preferredMFA) === -1 ? (
+            {'SOFTWARE_TOKEN_MFA'.indexOf(currentUser.preferredMFA) === -1 ? (
               <Tooltip title={t('core:setupTOTPHelp')}>
                 <Button
                   data-tid="setupTOTP"
@@ -174,7 +174,7 @@ function UserDetailsPopover(props: Props) {
                   className={classes.mainActionButton}
                   onClick={async () => {
                     try {
-                      await Auth.setPreferredMFA(cognitoUser, 'NOMFA');
+                      await Auth.setPreferredMFA(currentUser, 'NOMFA');
                       signOut();
                     } catch (error) {
                       console.log(error);
