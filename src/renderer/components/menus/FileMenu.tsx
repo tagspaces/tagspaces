@@ -358,7 +358,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            openDirectoryMessage(selectedFilePath);
+            openFileNatively(selectedFilePath);
           }
         }}
       >

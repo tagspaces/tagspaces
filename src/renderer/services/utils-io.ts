@@ -907,6 +907,7 @@ export function openFileMessage(
   ) {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('openFile', filePath);
+    } else if (AppConfig.isCordova) {
     } else {
       console.error('Is supported only in Electron');
     }
@@ -994,4 +995,31 @@ export function removePrefix(str, prefix) {
     return str.slice(prefix.length);
   }
   return str.trim();
+}
+
+export function getMimeType(extension: string): string | undefined {
+  const mimeTypes: { [key: string]: string } = {
+    txt: 'text/plain',
+    html: 'text/html',
+    htm: 'text/html',
+    css: 'text/css',
+    js: 'application/javascript',
+    json: 'application/json',
+    xml: 'application/xml',
+    pdf: 'application/pdf',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    bmp: 'image/bmp',
+    webp: 'image/webp',
+    mp3: 'audio/mpeg',
+    wav: 'audio/wav',
+    mp4: 'video/mp4',
+    avi: 'video/x-msvideo',
+    mov: 'video/quicktime',
+    zip: 'application/zip',
+    rar: 'application/x-rar-compressed',
+  };
+  return mimeTypes[extension.toLowerCase()];
 }

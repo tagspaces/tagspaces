@@ -20,6 +20,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   getDescriptionPreview,
   getFulfilledResults,
+  getMimeType,
 } from '-/services/utils-io';
 
 export class CommonLocation implements TS.Location {
@@ -923,5 +924,11 @@ export class CommonLocation implements TS.Location {
           : getDescriptionPreview(metaData.description, 200),*/
       };
     });
+  };
+
+  openFile = (file: TS.FileSystemEntry): void => {
+    if (AppConfig.isCordova) {
+      this.ioAPI.openFile(file.path, getMimeType(file.extension));
+    }
   };
 }

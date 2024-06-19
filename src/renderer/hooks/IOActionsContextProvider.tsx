@@ -1351,18 +1351,25 @@ export const IOActionsContextProvider = ({
   }
 
   function openFileNatively(selectedFile?: string) {
-    // todo reload selectedEntries or find better place for this function
     if (selectedFile === undefined) {
       if (selectedEntries && selectedEntries.length > 0) {
         const fsEntry = selectedEntries[selectedEntries.length - 1];
-        if (fsEntry.isFile) {
-          openFileMessage(fsEntry.path, warningOpeningFilesExternally);
-        } else {
-          openDirectoryMessage(fsEntry.path);
-        }
+        openFsEntryNatively(fsEntry);
       }
     } else {
-      openFileMessage(selectedFile, warningOpeningFilesExternally);
+      openFsEntryNatively(currentLocation.toFsEntry(selectedFile, true));
+    }
+  }
+
+  function openFsEntryNatively(fsEntry: TS.FileSystemEntry) {
+    if (fsEntry.isFile) {
+      if (AppConfig.isCordova) {
+        currentLocation.openFile(fsEntry);
+      } else {
+        openFileMessage(fsEntry.path, warningOpeningFilesExternally);
+      }
+    } else {
+      openDirectoryMessage(fsEntry.path);
     }
   }
 
