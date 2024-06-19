@@ -69,7 +69,7 @@ export const SelectedEntryContextProvider = ({
     return undefined;
   }*/
   const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
-    selectedEntries.current = entries;
+    selectedEntries.current = entries ? entries : [];
     forceUpdate();
   };
 
