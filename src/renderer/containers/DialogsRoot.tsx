@@ -36,6 +36,7 @@ import { KeyboardDialogContextProvider } from '-/components/dialogs/hooks/Keyboa
 import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialogContextProvider';
 import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTeaserDialogContextProvider';
 import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
+import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -44,43 +45,45 @@ export type DialogsRootProps = {
 function DialogsRoot({ children }: DialogsRootProps) {
   return (
     <EntryExistDialogContextProvider>
-      <FileUploadDialogContextProvider>
-        <CreateEditLocationDialogContextProvider>
-          <MoveOrCopyFilesDialogContextProvider>
-            <CreateDirectoryDialogContextProvider>
-              <ProgressDialogContextProvider>
-                <EditEntryTagDialogContextProvider>
-                  <NewEntryDialogContextProvider>
-                    <IsTruncatedConfirmDialogContextProvider>
-                      <NewFileDialogContextProvider>
-                        <NewAudioDialogContextProvider>
-                          <LicenseDialogContextProvider>
-                            <ThirdPartyLibsDialogContextProvider>
-                              <AboutDialogContextProvider>
-                                <OnboardingDialogContextProvider>
-                                  <KeyboardDialogContextProvider>
-                                    <LinkDialogContextProvider>
-                                      <ProTeaserDialogContextProvider>
-                                        <SettingsDialogContextProvider>
-                                          {children}
-                                        </SettingsDialogContextProvider>
-                                      </ProTeaserDialogContextProvider>
-                                    </LinkDialogContextProvider>
-                                  </KeyboardDialogContextProvider>
-                                </OnboardingDialogContextProvider>
-                              </AboutDialogContextProvider>
-                            </ThirdPartyLibsDialogContextProvider>
-                          </LicenseDialogContextProvider>
-                        </NewAudioDialogContextProvider>
-                      </NewFileDialogContextProvider>
-                    </IsTruncatedConfirmDialogContextProvider>
-                  </NewEntryDialogContextProvider>
-                </EditEntryTagDialogContextProvider>
-              </ProgressDialogContextProvider>
-            </CreateDirectoryDialogContextProvider>
-          </MoveOrCopyFilesDialogContextProvider>
-        </CreateEditLocationDialogContextProvider>
-      </FileUploadDialogContextProvider>
+      <DeleteMultipleEntriesDialogContextProvider>
+        <FileUploadDialogContextProvider>
+          <CreateEditLocationDialogContextProvider>
+            <MoveOrCopyFilesDialogContextProvider>
+              <CreateDirectoryDialogContextProvider>
+                <ProgressDialogContextProvider>
+                  <EditEntryTagDialogContextProvider>
+                    <NewEntryDialogContextProvider>
+                      <IsTruncatedConfirmDialogContextProvider>
+                        <NewFileDialogContextProvider>
+                          <NewAudioDialogContextProvider>
+                            <LicenseDialogContextProvider>
+                              <ThirdPartyLibsDialogContextProvider>
+                                <AboutDialogContextProvider>
+                                  <OnboardingDialogContextProvider>
+                                    <KeyboardDialogContextProvider>
+                                      <LinkDialogContextProvider>
+                                        <ProTeaserDialogContextProvider>
+                                          <SettingsDialogContextProvider>
+                                            {children}
+                                          </SettingsDialogContextProvider>
+                                        </ProTeaserDialogContextProvider>
+                                      </LinkDialogContextProvider>
+                                    </KeyboardDialogContextProvider>
+                                  </OnboardingDialogContextProvider>
+                                </AboutDialogContextProvider>
+                              </ThirdPartyLibsDialogContextProvider>
+                            </LicenseDialogContextProvider>
+                          </NewAudioDialogContextProvider>
+                        </NewFileDialogContextProvider>
+                      </IsTruncatedConfirmDialogContextProvider>
+                    </NewEntryDialogContextProvider>
+                  </EditEntryTagDialogContextProvider>
+                </ProgressDialogContextProvider>
+              </CreateDirectoryDialogContextProvider>
+            </MoveOrCopyFilesDialogContextProvider>
+          </CreateEditLocationDialogContextProvider>
+        </FileUploadDialogContextProvider>
+      </DeleteMultipleEntriesDialogContextProvider>
     </EntryExistDialogContextProvider>
   );
 }
