@@ -227,8 +227,8 @@ test.describe('TST02 - Folder properties', () => {
     );
     expect(clipboardContent.length > 0).toBe(true);*/
     //await setInputKeys('directoryName', clipboardContent);
-    await setInputValue('[data-tid=directoryName] input', sharingLinkValue);
-    await clickOn('[data-tid=directoryName] input');
+    await setInputValue('[data-tid=openLinkTID] input', sharingLinkValue);
+    await clickOn('[data-tid=openLinkTID] input');
     await clickOn('[data-tid=confirmOpenLink]');
     await expectElementExist('[data-tid=currentDir_empty_folder]', true, 5000);
     /*
