@@ -18,6 +18,6 @@
 
 import { useContext } from 'react';
 
-import { DescriptionContext } from './DescriptionContextProvider';
+import { FilePropertiesContext } from './FilePropertiesContextProvider';
 
-export const useDescriptionContext = () => useContext(DescriptionContext);
+export const useFilePropertiesContext = () => useContext(FilePropertiesContext);

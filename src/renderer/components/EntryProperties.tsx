@@ -98,6 +98,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -225,6 +226,7 @@ function EntryProperties(props: Props) {
   const theme = useTheme();
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   const {
     renameDirectory,
     renameFile,
@@ -339,7 +341,7 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!openedEntry.editMode && editName === undefined) {
+    if (!isEditMode && editName === undefined) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
   };
@@ -349,7 +351,7 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!openedEntry.editMode && editName === undefined) {
+    if (!isEditMode && editName === undefined) {
       setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
   };
@@ -521,7 +523,7 @@ function EntryProperties(props: Props) {
               readOnly: editName === undefined,
               endAdornment: (
                 <InputAdornment position="end">
-                  {!readOnlyMode && !openedEntry.editMode && (
+                  {!readOnlyMode && !isEditMode && (
                     <div style={{ textAlign: 'right' }}>
                       {editName !== undefined ? (
                         <div>
@@ -561,7 +563,7 @@ function EntryProperties(props: Props) {
             defaultValue={entryName} // openedEntry.current.name}
             inputRef={fileNameRef}
             onClick={() => {
-              if (!openedEntry.editMode && editName === undefined) {
+              if (!isEditMode && editName === undefined) {
                 activateEditNameField();
               }
             }}
@@ -776,17 +778,15 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    {!readOnlyMode &&
-                      !openedEntry.editMode &&
-                      editName === undefined && (
-                        <Button
-                          data-tid="moveCopyEntryTID"
-                          color="primary"
-                          onClick={toggleMoveCopyFilesDialog}
-                        >
-                          {t('core:move')}
-                        </Button>
-                      )}
+                    {!readOnlyMode && !isEditMode && editName === undefined && (
+                      <Button
+                        data-tid="moveCopyEntryTID"
+                        color="primary"
+                        onClick={toggleMoveCopyFilesDialog}
+                      >
+                        {t('core:move')}
+                      </Button>
+                    )}
                   </InputAdornment>
                 ),
               }}
@@ -1034,7 +1034,7 @@ function EntryProperties(props: Props) {
                       style={{ alignItems: 'center' }}
                     >
                       {!readOnlyMode &&
-                        !openedEntry.editMode &&
+                        !isEditMode &&
                         editName === undefined && (
                           <ProTooltip tooltip={t('changeThumbnail')}>
                             <Button
@@ -1085,7 +1085,7 @@ function EntryProperties(props: Props) {
                         style={{ alignItems: 'center' }}
                       >
                         {!readOnlyMode &&
-                          !openedEntry.editMode &&
+                          !isEditMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeBackgroundImage')}>
                               <Button

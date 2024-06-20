@@ -54,7 +54,6 @@ const FileBadge = styled('span')(({ theme }) => ({
 }));
 
 interface Props {
-  isFileChanged: boolean;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
   startClosingEntry: (event) => void;
@@ -64,7 +63,6 @@ interface Props {
 
 function EntryContainerTitle(props: Props) {
   const {
-    isFileChanged,
     reloadDocument,
     toggleFullScreen,
     startClosingEntry,
@@ -73,7 +71,7 @@ function EntryContainerTitle(props: Props) {
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, sharingLink } = useOpenedEntryContext();
+  const { openedEntry, sharingLink, fileChanged } = useOpenedEntryContext();
   const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   //const locations = useSelector(getLocations);
@@ -149,7 +147,7 @@ function EntryContainerTitle(props: Props) {
     >
       {openedEntry.isFile ? (
         <>
-          {isFileChanged ? (
+          {fileChanged ? (
             <Tooltip title={t('core:fileChanged')}>
               <span
                 style={{

@@ -32,7 +32,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
-type DescriptionContextData = {
+type FilePropertiesContextData = {
   description: string;
   isSaveDescriptionConfirmOpened: boolean;
   isEditMode: boolean;
@@ -42,7 +42,7 @@ type DescriptionContextData = {
   saveDescription: () => void;
 };
 
-export const DescriptionContext = createContext<DescriptionContextData>({
+export const FilePropertiesContext = createContext<FilePropertiesContextData>({
   description: undefined,
   isSaveDescriptionConfirmOpened: false,
   isEditMode: false,
@@ -52,13 +52,13 @@ export const DescriptionContext = createContext<DescriptionContextData>({
   saveDescription: undefined,
 });
 
-export type DescriptionContextProviderProps = {
+export type FilePropertiesContextProviderProps = {
   children: React.ReactNode;
 };
 
-export const DescriptionContextProvider = ({
+export const FilePropertiesContextProvider = ({
   children,
-}: DescriptionContextProviderProps) => {
+}: FilePropertiesContextProviderProps) => {
   const { t } = useTranslation();
   const { openedEntry } = useOpenedEntryContext();
   const { findLocation } = useCurrentLocationContext();
@@ -134,10 +134,12 @@ export const DescriptionContextProvider = ({
   }
 
   function setEditMode(editMode: boolean) {
-    isEditMode.current = editMode;
-    isChanged.current = false;
-    lastOpenedFile.current = { ...openedEntry };
-    forceUpdate();
+    if (isEditMode.current !== editMode) {
+      isEditMode.current = editMode;
+      isChanged.current = false;
+      lastOpenedFile.current = { ...openedEntry };
+      forceUpdate();
+    }
   }
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
@@ -165,8 +167,8 @@ export const DescriptionContextProvider = ({
   ]);
 
   return (
-    <DescriptionContext.Provider value={context}>
+    <FilePropertiesContext.Provider value={context}>
       {children}
-    </DescriptionContext.Provider>
+    </FilePropertiesContext.Provider>
   );
 };

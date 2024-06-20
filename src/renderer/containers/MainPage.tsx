@@ -41,7 +41,7 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import useEventListener from '-/utils/useEventListener';
 import PageNotification from '-/containers/PageNotification';
 import { styled, useTheme } from '@mui/material/styles';
-import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
+import { FilePropertiesContextProvider } from '-/hooks/FilePropertiesContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
@@ -282,9 +282,9 @@ function MainPage(props: Props) {
           }*/
         />
         {openedEntry && (
-          <DescriptionContextProvider>
+          <FilePropertiesContextProvider>
             <EntryContainer key="EntryContainerID" />
-          </DescriptionContextProvider>
+          </FilePropertiesContextProvider>
         )}
       </Split>
     );

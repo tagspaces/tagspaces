@@ -3,7 +3,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
-import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { Pro } from '-/pro';
@@ -30,7 +30,7 @@ function EditDescription() {
   // const { openedEntry } = useOpenedEntryContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { description, setDescription, isEditMode, setEditMode } =
-    useDescriptionContext();
+    useFilePropertiesContext();
 
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   //const [editMode, setEditMode] = useState<boolean>(false);

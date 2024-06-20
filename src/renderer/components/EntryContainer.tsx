@@ -19,7 +19,6 @@
 import React, {
   MutableRefObject,
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useRef,
@@ -60,23 +59,21 @@ import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
-import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { getRelativeEntryPath } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
-const historyKeys = Pro ? Pro.keys.historyKeys : {};
+//const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
 function EntryContainer() {
   const { t } = useTranslation();
-  // const dispatch: AppDispatch = useDispatch();
   const {
     openedEntry,
     closeAllFiles,
@@ -84,15 +81,16 @@ function EntryContainer() {
     toggleEntryFullWidth,
     isEntryInFullWidth,
     reflectUpdateOpenedFileContent,
-    addToEntryContainer,
+    fileChanged,
+    setFileChanged,
   } = useOpenedEntryContext();
   const { setReflectActions } = useEditedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { saveDescription, description } = useDescriptionContext();
+  const { saveDescription, description, isEditMode, setEditMode } =
+    useFilePropertiesContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
-  const { openDirectory, currentDirectoryPath, currentLocationPath } =
-    useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
     usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
@@ -133,7 +131,6 @@ function EntryContainer() {
     useRef<HTMLIFrameElement>(null);
   const fileViewerContainer: MutableRefObject<HTMLDivElement> =
     useRef<HTMLDivElement>(null);
-  const fileChanged = useRef<boolean>(false);
   const eventID = useRef<string>(getUuid());
   const cLocation = findLocation(openedEntry.locationID);
 
@@ -221,9 +218,9 @@ function EntryContainer() {
 
   useEffect(() => {
     if (openedEntry && openedEntry.meta && openedEntry.meta.autoSave) {
-      if (fileChanged.current) {
+      if (fileChanged) {
         timer.current = setInterval(() => {
-          if (openedEntry.meta.autoSave && fileChanged.current) {
+          if (openedEntry.meta.autoSave && fileChanged) {
             startSavingFile();
             console.debug('autosave');
           }
@@ -239,7 +236,7 @@ function EntryContainer() {
         clearInterval(timer.current);
       }
     };
-  }, [openedEntry, fileChanged.current]);
+  }, [openedEntry, fileChanged]);
 
   // editor is not loaded in this time - change theme after loadDefaultTextContent
   useEffect(() => {
@@ -362,7 +359,7 @@ function EntryContainer() {
               fileViewer.current.contentWindow.setContent(
                 content,
                 fileDirectory,
-                !openedEntry.editMode,
+                !isEditMode,
                 theme.palette.mode,
               );
             }
@@ -373,12 +370,7 @@ function EntryContainer() {
           });
         break;
       case 'contentChangedInEditor': {
-        if (!fileChanged.current) {
-          fileChanged.current = true;
-          openedEntry.editMode = true;
-          // to render DOT before file name (only first time)
-          forceUpdate();
-        }
+        setFileChanged(true);
         break;
       }
       default:
@@ -391,10 +383,11 @@ function EntryContainer() {
 
   const reloadDocument = () => {
     if (openedEntry) {
-      if (openedEntry.editMode && fileChanged.current) {
+      if (isEditMode && fileChanged) {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
+        setEditMode(false);
         reloadOpenedFile();
       }
     }
@@ -405,7 +398,7 @@ function EntryContainer() {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (openedEntry && fileChanged.current && openedEntry.editMode) {
+    if (openedEntry && fileChanged && isEditMode) {
       // openedEntry.changed
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
@@ -419,7 +412,7 @@ function EntryContainer() {
   };
 
   const startSavingFile = () => {
-    if (openedEntry.editMode) {
+    if (isEditMode) {
       savingFile();
     } else {
       saveDescription();
@@ -436,11 +429,11 @@ function EntryContainer() {
     ) {
       try {
         //check if file is changed
-        if (fileChanged.current || force) {
+        if (fileChanged || force) {
           setSavingInProgress(true);
           save(openedEntry).then((success) => {
             if (success) {
-              fileChanged.current = false;
+              setFileChanged(false);
               // showNotification(
               //   t('core:fileSavedSuccessfully'),
               //   NotificationTypes.default
@@ -561,15 +554,8 @@ function EntryContainer() {
   }
 
   const editOpenedFile = () => {
-    addToEntryContainer({ ...openedEntry, editMode: true });
-    /* switchLocationTypeByID(openedEntry.locationId).then(() => {
-      updateOpenedFile(openedEntry.path, {
-        id: '',
-        ...openedEntry,
-        editMode: true,
-        shouldReload: undefined,
-      }).then(() => switchCurrentLocationType());
-    });*/
+    // addToEntryContainer(openedEntry);
+    setEditMode(true);
   };
 
   /*const setPercent = (p: number | undefined) => {
@@ -672,28 +658,24 @@ function EntryContainer() {
 
     let closeCancelIcon;
     if (desktopMode) {
-      closeCancelIcon = fileChanged.current ? (
-        <CancelIcon />
-      ) : (
-        <CloseEditIcon />
-      );
+      closeCancelIcon = fileChanged ? <CancelIcon /> : <CloseEditIcon />;
     }
 
     let editFile = null;
     if (editingSupported) {
-      if (openedEntry.editMode) {
+      if (isEditMode) {
         editFile = (
           <ButtonGroup>
             <Tooltip title={t('core:cancelEditing')}>
               <Button
-                onClick={reloadDocument}
+                onClick={() => setEditMode(false) /*reloadDocument*/}
                 aria-label={t('core:cancelEditing')}
                 size="small"
                 variant="outlined"
                 color="primary"
                 startIcon={closeCancelIcon}
               >
-                {fileChanged.current ? t('core:cancel') : t('core:closeButton')}
+                {fileChanged ? t('core:cancel') : t('core:closeButton')}
               </Button>
             </Tooltip>
             <Tooltip
@@ -840,7 +822,6 @@ function EntryContainer() {
             }}
           >
             <EntryContainerTitle
-              isFileChanged={fileChanged.current}
               reloadDocument={reloadDocument}
               toggleFullScreen={toggleFullScreen}
               startClosingEntry={startClosingEntry}
@@ -884,7 +865,6 @@ function EntryContainer() {
             fileViewerContainer={fileViewerContainer}
             toggleFullScreen={toggleFullScreen}
             eventID={eventID.current}
-            isFileChanged={fileChanged.current}
             height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
           />
         )}
@@ -924,14 +904,7 @@ function EntryContainer() {
               startSavingFile();
             } else {
               setSaveBeforeReloadConfirmDialogOpened(false);
-              /*updateOpenedFile(openedEntry.path, {
-                id: '',
-                ...openedEntry,
-                editMode: false,
-                // changed: false,
-                shouldReload: true,
-              });*/
-              fileChanged.current = false;
+              setFileChanged(false);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"

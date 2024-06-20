@@ -219,7 +219,7 @@ export namespace TS {
     viewingExtensionId: string;
     editingExtensionPath?: string;
     editingExtensionId?: string;
-    editMode?: boolean; // TODO move in DescriptionContextProvider
+    //editMode?: boolean; // TODO move in FilePropertiesContextProvider
     focused?: boolean; // TODO make it mandatory once support for multiple files is added
   }
 
