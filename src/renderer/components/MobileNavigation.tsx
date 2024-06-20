@@ -202,6 +202,7 @@ function MobileNavigation(props: Props) {
                 }
                 aria-expanded={openedCreateMenu ? 'true' : undefined}
                 aria-haspopup="menu"
+                data-tid="createNewDropdownButtonTID"
                 onClick={handleToggle}
               >
                 <ArrowDropDownIcon />
