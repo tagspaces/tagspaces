@@ -351,7 +351,7 @@ function FileMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
-    if (!AppConfig.isAndroid) {
+    if (AppConfig.isElectron) {
       menuItems.push(
         <MenuItem
           key="fileMenuOpenContainingFolder"
