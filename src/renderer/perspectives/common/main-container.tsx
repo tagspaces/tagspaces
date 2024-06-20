@@ -160,7 +160,7 @@ export const renderCell = (
     } = props;*/
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
-      let lastSelectedIndex;
+      let lastSelectedIndex = -1;
       if (lastSelectedEntryPath) {
         lastSelectedIndex = directoryContent.findIndex(
           (entry) => entry.path === lastSelectedEntryPath,

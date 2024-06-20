@@ -352,23 +352,25 @@ function FileMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
-    menuItems.push(
-      <MenuItem
-        key="fileMenuOpenContainingFolder"
-        data-tid="fileMenuOpenContainingFolder"
-        onClick={() => {
-          onClose();
-          if (selectedFilePath) {
-            openDirectoryMessage(selectedFilePath);
-          }
-        }}
-      >
-        <ListItemIcon>
-          <OpenFolderInternally />
-        </ListItemIcon>
-        <ListItemText primary={t('core:showInFileManager')} />
-      </MenuItem>,
-    );
+    if (!AppConfig.isAndroid) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuOpenContainingFolder"
+          data-tid="fileMenuOpenContainingFolder"
+          onClick={() => {
+            onClose();
+            if (selectedFilePath) {
+              openDirectoryMessage(selectedFilePath);
+            }
+          }}
+        >
+          <ListItemIcon>
+            <OpenFolderInternally />
+          </ListItemIcon>
+          <ListItemText primary={t('core:showInFileManager')} />
+        </MenuItem>,
+      );
+    }
     menuItems.push(<Divider key="fmDivider" />);
   }
   if (!readOnlyMode) {
