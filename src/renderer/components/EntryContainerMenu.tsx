@@ -330,7 +330,8 @@ function EntryContainerMenu(props: Props) {
         currentLocation?.haveObjectStoreSupport() ||
         currentLocation?.haveWebDavSupport() ||
         AppConfig.isWeb
-      )
+      ) &&
+      !(AppConfig.isAndroid && !openedEntry.isFile)
     ) {
       menuItems.push(
         <MenuItem
@@ -342,7 +343,13 @@ function EntryContainerMenu(props: Props) {
           <ListItemIcon>
             <OpenNativelyIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:openFileExternally')} />
+          <ListItemText
+            primary={t(
+              openedEntry.isFile
+                ? 'core:openFileNatively'
+                : 'core:openDirectoryExternally',
+            )}
+          />
         </MenuItem>,
       );
     }
