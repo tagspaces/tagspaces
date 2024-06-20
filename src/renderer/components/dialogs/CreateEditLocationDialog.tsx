@@ -904,7 +904,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={false}
-                        data-tid="settingsSetPersistTagsInFileName"
+                        data-tid="locationSetPersistTagsInFileName"
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
                         <Tooltip
@@ -923,7 +923,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={true}
-                        data-tid="settingsSetPersistTagsInSidecarFile"
+                        data-tid="locationSetPersistTagsInSidecarFile"
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
                         <Tooltip
