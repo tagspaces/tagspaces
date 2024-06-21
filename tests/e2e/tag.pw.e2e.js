@@ -1,5 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { expect, test } from '@playwright/test';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {
   checkSettings,
   clickOn,
@@ -29,6 +30,7 @@ import {
   testGroup,
   testTagName,
 } from './tag.helpers';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -308,6 +310,33 @@ test.describe('TST04 - Testing the tag library:', () => {
       true,
       3000,
       '[data-tid=tagGroupContainer_' + destinationTagGroup + ']',
+    );
+  });
+
+  test('TST0422 - Add custom date smarttag [web,electron]', async () => {
+    const tagName = 'custom-date';
+    const sourceTagGroup = 'Smart Tags';
+
+    await clickOn('[data-tid=locationManager]');
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      3000,
+      '[data-tid=tagGroupContainer_' + dataTidFormat(sourceTagGroup) + ']',
+    );
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      getGridFileSelector('sample.txt'),
+    );
+    await clickOn('[data-tid=confirmEditTagEntryDialog]');
+
+    await expectElementExist(
+      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), true) + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]',
     );
   });
 });
