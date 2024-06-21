@@ -16,11 +16,18 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '-/reducers/settings';
 import { AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
 
 type LicenseDialogContextData = {
   openLicenseDialog: () => void;
@@ -48,6 +55,22 @@ export const LicenseDialogContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'toggle-license-dialog') {
+          openDialog();
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   function openDialog() {
     open.current = true;

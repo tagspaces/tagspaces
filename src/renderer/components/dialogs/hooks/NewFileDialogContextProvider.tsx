@@ -16,8 +16,16 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
+import AppConfig from '-/AppConfig';
+import { actions as SettingsActions } from '-/reducers/settings';
 
 type NewFileDialogContextData = {
   openNewFileDialog: () => void;
@@ -43,6 +51,22 @@ export const NewFileDialogContextProvider = ({
   const open = useRef<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'new-text-file') {
+          openDialog();
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   function openDialog() {
     open.current = true;

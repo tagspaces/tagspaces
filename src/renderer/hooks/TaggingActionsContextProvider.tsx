@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
@@ -58,7 +58,7 @@ import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext
 import AppConfig from '-/AppConfig';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { useEditEntryTagDialogContext } from '-/components/dialogs/hooks/useEditEntryTagDialogContext';
+import LoadingLazy from '-/components/LoadingLazy';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -114,6 +114,8 @@ type TaggingActionsContextData = {
     replace?: boolean,
     location?: CommonLocation,
   ) => void;
+  openEditEntryTagDialog: (tag: TS.Tag) => void;
+  closeEditEntryTagDialog: () => void;
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
@@ -140,11 +142,20 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   sortTagGroup: undefined,
   updateTagGroup: undefined,
   importTagGroups: undefined,
+  openEditEntryTagDialog: undefined,
+  closeEditEntryTagDialog: undefined,
 });
 
 export type TaggingActionsContextProviderProps = {
   children: React.ReactNode;
 };
+
+const EditEntryTagDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
+    ),
+);
 
 export const TaggingActionsContextProvider = ({
   children,
@@ -162,12 +173,14 @@ export const TaggingActionsContextProvider = ({
   const { currentDirectoryEntries, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { getIndex } = useLocationIndexContext();
-  const { openEditEntryTagDialog } = useEditEntryTagDialogContext();
   const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const dispatch: AppDispatch = useDispatch();
+
+  const open = useRef<boolean>(false);
+  const selectedTag = useRef<TS.Tag>(undefined);
+
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
   const tagBackgroundColor: string = useSelector(getTagColor);
@@ -177,6 +190,7 @@ export const TaggingActionsContextProvider = ({
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   function extractContent(
     options: extractOptions = {
@@ -1453,6 +1467,25 @@ export const TaggingActionsContextProvider = ({
     saveTagLibrary(arr);
   }
 
+  function openEditEntryTagDialog(tag: TS.Tag) {
+    open.current = true;
+    selectedTag.current = tag;
+    forceUpdate();
+  }
+
+  function closeEditEntryTagDialog() {
+    open.current = false;
+    forceUpdate();
+  }
+
+  function EditEntryTagDialogAsync(props) {
+    return (
+      <React.Suspense fallback={<LoadingLazy />}>
+        <EditEntryTagDialog {...props} />
+      </React.Suspense>
+    );
+  }
+
   const context = useMemo(() => {
     return {
       extractContent,
@@ -1478,6 +1511,8 @@ export const TaggingActionsContextProvider = ({
       sortTagGroup,
       updateTagGroup,
       importTagGroups,
+      openEditEntryTagDialog,
+      closeEditEntryTagDialog,
     };
   }, [
     tagGroups,
@@ -1490,6 +1525,11 @@ export const TaggingActionsContextProvider = ({
 
   return (
     <TaggingActionsContext.Provider value={context}>
+      <EditEntryTagDialogAsync
+        open={open.current}
+        onClose={closeEditEntryTagDialog}
+        tag={selectedTag.current}
+      />
       {children}
     </TaggingActionsContext.Provider>
   );

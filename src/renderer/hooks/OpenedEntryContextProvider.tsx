@@ -193,6 +193,21 @@ export const OpenedEntryContextProvider = ({
         }, 1000);
       }
     }
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'go-back') {
+          goBack();
+        } else if (arg === 'go-forward') {
+          goForward();
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
   }, []);
 
   useEffect(() => {

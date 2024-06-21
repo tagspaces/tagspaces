@@ -23,9 +23,7 @@ import { CreateEditLocationDialogContextProvider } from '-/components/dialogs/ho
 import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks/MoveOrCopyFilesDialogContextProvider';
 import { CreateDirectoryDialogContextProvider } from '-/components/dialogs/hooks/CreateDirectoryDialogContextProvider';
 import { ProgressDialogContextProvider } from '-/components/dialogs/hooks/ProgressDialogContextProvider';
-import { EditEntryTagDialogContextProvider } from '-/components/dialogs/hooks/EditEntryTagDialogContextProvider';
 import { NewEntryDialogContextProvider } from '-/components/dialogs/hooks/NewEntryDialogContextProvider';
-import { IsTruncatedConfirmDialogContextProvider } from '-/components/dialogs/hooks/IsTruncatedConfirmDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
@@ -51,33 +49,29 @@ function DialogsRoot({ children }: DialogsRootProps) {
             <MoveOrCopyFilesDialogContextProvider>
               <CreateDirectoryDialogContextProvider>
                 <ProgressDialogContextProvider>
-                  <EditEntryTagDialogContextProvider>
-                    <NewEntryDialogContextProvider>
-                      <IsTruncatedConfirmDialogContextProvider>
-                        <NewFileDialogContextProvider>
-                          <NewAudioDialogContextProvider>
-                            <LicenseDialogContextProvider>
-                              <ThirdPartyLibsDialogContextProvider>
-                                <AboutDialogContextProvider>
-                                  <OnboardingDialogContextProvider>
-                                    <KeyboardDialogContextProvider>
-                                      <LinkDialogContextProvider>
-                                        <ProTeaserDialogContextProvider>
-                                          <SettingsDialogContextProvider>
-                                            {children}
-                                          </SettingsDialogContextProvider>
-                                        </ProTeaserDialogContextProvider>
-                                      </LinkDialogContextProvider>
-                                    </KeyboardDialogContextProvider>
-                                  </OnboardingDialogContextProvider>
-                                </AboutDialogContextProvider>
-                              </ThirdPartyLibsDialogContextProvider>
-                            </LicenseDialogContextProvider>
-                          </NewAudioDialogContextProvider>
-                        </NewFileDialogContextProvider>
-                      </IsTruncatedConfirmDialogContextProvider>
-                    </NewEntryDialogContextProvider>
-                  </EditEntryTagDialogContextProvider>
+                  <NewEntryDialogContextProvider>
+                    <NewFileDialogContextProvider>
+                      <NewAudioDialogContextProvider>
+                        <LicenseDialogContextProvider>
+                          <ThirdPartyLibsDialogContextProvider>
+                            <AboutDialogContextProvider>
+                              <OnboardingDialogContextProvider>
+                                <KeyboardDialogContextProvider>
+                                  <LinkDialogContextProvider>
+                                    <ProTeaserDialogContextProvider>
+                                      <SettingsDialogContextProvider>
+                                        {children}
+                                      </SettingsDialogContextProvider>
+                                    </ProTeaserDialogContextProvider>
+                                  </LinkDialogContextProvider>
+                                </KeyboardDialogContextProvider>
+                              </OnboardingDialogContextProvider>
+                            </AboutDialogContextProvider>
+                          </ThirdPartyLibsDialogContextProvider>
+                        </LicenseDialogContextProvider>
+                      </NewAudioDialogContextProvider>
+                    </NewFileDialogContextProvider>
+                  </NewEntryDialogContextProvider>
                 </ProgressDialogContextProvider>
               </CreateDirectoryDialogContextProvider>
             </MoveOrCopyFilesDialogContextProvider>

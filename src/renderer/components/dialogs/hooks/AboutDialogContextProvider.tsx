@@ -16,8 +16,15 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
+import AppConfig from '-/AppConfig';
 
 type AboutDialogContextData = {
   openAboutDialog: () => void;
@@ -43,6 +50,22 @@ export const AboutDialogContextProvider = ({
   const open = useRef<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'toggle-about-dialog') {
+          openDialog();
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   function openDialog() {
     open.current = true;

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { MutableRefObject } from 'react';
+import React, { MutableRefObject, useEffect } from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import useEventListener from '-/utils/useEventListener';
@@ -24,6 +24,8 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import AppConfig from '-/AppConfig';
+import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   isFullscreen?: boolean;
@@ -49,26 +51,29 @@ function FileView(props: Props) {
   } = props;
 
   const { searchQuery } = useDirectoryContentContext();
-  //const fileOpenerURL = useRef<string>(getFileOpenerURL());
 
-  /*useEffect(() => {
-    if (!fileChanged) {
-      fileOpenerURL.current = getFileOpenerURL();
-    }
-  }, [openedEntry, fileChanged, isSearchMode, isEditMode]);*/
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('play-pause', (arg) => {
+        if (
+          fileViewer &&
+          fileViewer.current &&
+          fileViewer.current.contentWindow &&
+          // @ts-ignore
+          fileViewer.current.contentWindow.togglePlay
+        ) {
+          // @ts-ignore
+          fileViewer.current.contentWindow.togglePlay();
+        }
+      });
 
-  useEventListener('toggle-resume', () => {
-    if (
-      fileViewer &&
-      fileViewer.current &&
-      fileViewer.current.contentWindow &&
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay
-    ) {
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay();
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+        }
+      };
     }
-  });
+  }, []);
 
   function getFileOpenerURL(): string {
     if (openedEntry && openedEntry.path) {

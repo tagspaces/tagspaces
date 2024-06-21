@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import FileMenu from '-/components/menus/FileMenu';
@@ -26,7 +26,6 @@ import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import RowCell from '-/perspectives/list/components/RowCell';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid/components/SortingMenu';
@@ -46,7 +45,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
-import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
@@ -60,9 +58,8 @@ interface Props {
 function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const { actions } = usePerspectiveActionsContext();
-  const { openPrevFile, openNextFile } = useRendererListenerContext();
   const { showDirectories } = usePerspectiveSettingsContext();
   const { currentLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
@@ -119,9 +116,9 @@ function ListPerspective(props: Props) {
     if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'openNext') {
-          openNextFile();
+          openNextFile(sortedDirContent);
         } else if (action.action === 'openPrevious') {
-          openPrevFile();
+          openPrevFile(sortedDirContent);
         }
       }
     }
@@ -239,8 +236,8 @@ function ListPerspective(props: Props) {
   };
 
   const keyBindingHandlers = {
-    nextDocument: () => openNextFile(),
-    prevDocument: () => openPrevFile(),
+    nextDocument: () => openNextFile(sortedDirContent),
+    prevDocument: () => openPrevFile(sortedDirContent),
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
       if (fileOperationsEnabled(selectedEntries)) {

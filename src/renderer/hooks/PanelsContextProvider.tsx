@@ -16,7 +16,8 @@
  *
  */
 
-import React, { createContext, useMemo, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import AppConfig from '-/AppConfig';
 
 type PanelType =
   | 'locationManagerPanel'
@@ -42,6 +43,26 @@ export const PanelsContextProvider = ({
 }: PanelsContextProviderProps) => {
   const currentOpenedPanel = useRef<PanelType>('locationManagerPanel');
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'open-location-manager-panel') {
+          showPanel('locationManagerPanel');
+        } else if (arg === 'open-tag-library-panel') {
+          showPanel('tagLibraryPanel');
+        } else if (arg === 'open-help-feedback-panel') {
+          showPanel('helpFeedbackPanel');
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   function showPanel(panel: PanelType) {
     currentOpenedPanel.current = panel;
