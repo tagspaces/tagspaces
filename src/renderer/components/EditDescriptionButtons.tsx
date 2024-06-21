@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
-import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 export interface DescriptionChangedRef {
@@ -23,7 +23,7 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
     saveDescription,
     isEditMode,
     setEditMode,
-  } = useDescriptionContext();
+  } = useFilePropertiesContext();
   const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   React.useImperativeHandle(buttonsRef, () => ({

@@ -42,6 +42,7 @@ import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
 import {
+  actions as SettingsActions,
   getDefaultPerspective,
   getShowUnixHiddenEntries,
   getTagColor,
@@ -61,6 +62,7 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCancelable } from '-/utils/useCancelable';
+import LoadingLazy from '-/components/LoadingLazy';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -133,6 +135,8 @@ type DirectoryContentContextData = {
     dirEntries: TS.FileSystemEntry[],
     pageFiles?: TS.FileSystemEntry[],
   ) => Promise<TS.FileSystemEntry[]>;
+  openIsTruncatedConfirmDialog: () => void;
+  closeIsTruncatedConfirmDialog: () => void;
 };
 
 export const DirectoryContentContext =
@@ -176,11 +180,20 @@ export const DirectoryContentContext =
     getPerspective: undefined,
     getAllPropertiesPromise: undefined,
     loadCurrentDirMeta: undefined,
+    openIsTruncatedConfirmDialog: undefined,
+    closeIsTruncatedConfirmDialog: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
   children: React.ReactNode;
 };
+
+const IsTruncatedConfirmDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "IsTruncatedConfirmDialog" */ '../components/dialogs/IsTruncatedConfirmDialog'
+    ),
+);
 
 export const DirectoryContentContextProvider = ({
   children,
@@ -218,6 +231,7 @@ export const DirectoryContentContextProvider = ({
   //const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
   const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
   const directoryMeta = useRef<TS.FileSystemEntryMeta>(getDefaultDirMeta());
+  const open = useRef<boolean>(false);
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
    * is using why directoryMeta can be loaded but empty
@@ -231,6 +245,36 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   // const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'open-search') {
+          setSearchQuery({ textQuery: '' });
+        } else if (arg === 'exit-fullscreen') {
+          try {
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+          } catch (e) {
+            console.log('Failed to exit fullscreen mode:', e);
+          }
+        } else if (arg === 'set-zoom-reset-app') {
+          dispatch(SettingsActions.setZoomResetApp());
+        } else if (arg === 'set-zoom-in-app') {
+          dispatch(SettingsActions.setZoomInApp());
+        } else if (arg === 'set-zoom-out-app') {
+          dispatch(SettingsActions.setZoomOutApp());
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (currentLocation) {
@@ -741,8 +785,7 @@ export const DirectoryContentContextProvider = ({
           return [];
         }
         if (resultsLimit.IsTruncated) {
-          //OPEN ISTRUNCATED dialog
-          dispatch(AppActions.toggleTruncatedConfirmDialog());
+          openIsTruncatedConfirmDialog();
         }
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
@@ -1362,6 +1405,24 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
+  function openIsTruncatedConfirmDialog() {
+    open.current = true;
+    forceUpdate();
+  }
+
+  function closeIsTruncatedConfirmDialog() {
+    open.current = false;
+    forceUpdate();
+  }
+
+  function IsTruncatedConfirmDialogAsync(props) {
+    return (
+      <React.Suspense fallback={<LoadingLazy />}>
+        <IsTruncatedConfirmDialog {...props} />
+      </React.Suspense>
+    );
+  }
+
   const context = useMemo(() => {
     return {
       currentLocationPath: currentLocationPath.current,
@@ -1403,6 +1464,8 @@ export const DirectoryContentContextProvider = ({
       getDefaultPerspectiveSettings,
       getAllPropertiesPromise,
       loadCurrentDirMeta,
+      openIsTruncatedConfirmDialog,
+      closeIsTruncatedConfirmDialog,
     };
   }, [
     currentLocation,
@@ -1420,6 +1483,10 @@ export const DirectoryContentContextProvider = ({
 
   return (
     <DirectoryContentContext.Provider value={context}>
+      <IsTruncatedConfirmDialogAsync
+        open={open.current}
+        onClose={closeIsTruncatedConfirmDialog}
+      />
       {children}
     </DirectoryContentContext.Provider>
   );

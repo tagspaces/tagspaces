@@ -18,6 +18,6 @@
 
 import { useContext } from 'react';
 
-import { DescriptionContext } from './DescriptionContextProvider';
+import { UserContext } from './UserContextProvider';
 
-export const useDescriptionContext = () => useContext(DescriptionContext);
+export const useUserContext = () => useContext(UserContext);

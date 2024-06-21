@@ -183,8 +183,8 @@ test.describe('TST50** - Right button on a file', () => {
     }); */
     await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
     await clickOn('[data-tid=editTagDialogMenu]');
-    await global.client.dblclick('[data-tid=editTagEntryDialog_input] input');
-    await setInputKeys('editTagEntryDialog_input', testTagName + 'Edited');
+    //await global.client.dblclick('[data-tid=editTagEntryDialog_input] input');
+    await setInputKeys('editTagEntryDialog_input', 'Edited');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
     // await waitForNotification();
 

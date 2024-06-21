@@ -29,10 +29,11 @@ import versionMeta from '../version.json';
 import { actions, isUpdateAvailable } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { Badge, Typography } from '@mui/material';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 
 function CustomLogo() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { openAboutDialog } = useAboutDialogContext();
   const updateAvailable = useSelector(isUpdateAvailable);
   const tsType = Pro ? 'PRO' : 'LITE';
 
@@ -49,7 +50,7 @@ function CustomLogo() {
 
   return (
     <div
-      onClick={() => dispatch(actions.toggleAboutDialog())}
+      onClick={() => openAboutDialog()}
       style={{
         width: '100%',
         textAlign: 'center',

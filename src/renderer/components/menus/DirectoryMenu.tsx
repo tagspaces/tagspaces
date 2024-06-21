@@ -54,6 +54,12 @@ import { generateClipboardLink } from '-/utils/dom';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
+import { useProgressDialogContext } from '-/components/dialogs/hooks/useProgressDialogContext';
+import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   open: boolean;
@@ -75,10 +81,13 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
+  const { openProgressDialog } = useProgressDialogContext();
+  const { openNewFileDialog } = useNewFileDialogContext();
   const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
   const { setThumbnailImageChange } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const {
     openDirectory,
     currentDirectoryPath,
@@ -89,6 +98,10 @@ function DirectoryMenu(props: Props) {
   const { generateThumbnails } = useThumbGenerationContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
   const { setReflectActions } = useEditedEntryContext();
+  const { openNewAudioDialog } = useNewAudioDialogContext();
+  const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -103,28 +116,6 @@ function DirectoryMenu(props: Props) {
     perspectiveMode,
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
-  const dispatch: AppDispatch = useDispatch();
-
-  const toggleCreateDirectoryDialog = () => {
-    dispatch(AppActions.toggleCreateDirectoryDialog());
-  };
-
-  const toggleNewFileDialog = () => {
-    dispatch(AppActions.toggleNewFileDialog());
-  };
-
-  const toggleProgressDialog = () => {
-    dispatch(AppActions.toggleProgressDialog());
-  };
-
-  const toggleDeleteMultipleEntriesDialog = () => {
-    dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
-  };
-
-  const toggleProTeaser = (slidePage) => {
-    dispatch(AppActions.toggleProTeaser(slidePage));
-  };
 
   function generateFolderLink(): Promise<any> {
     let locationID = currentLocation.uuid;
@@ -187,11 +178,11 @@ function DirectoryMenu(props: Props) {
         setManualDirectoryPerspective(perspectiveId);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      toggleProTeaser(PerspectiveIDs.GALLERY);
+      openProTeaserDialog(PerspectiveIDs.GALLERY);
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+      openProTeaserDialog(PerspectiveIDs.MAPIQUE);
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      toggleProTeaser(PerspectiveIDs.KANBAN);
+      openProTeaserDialog(PerspectiveIDs.KANBAN);
     }
   }
 
@@ -199,15 +190,15 @@ function DirectoryMenu(props: Props) {
     if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
       setSelectedEntries([currentLocation.toFsEntry(directoryPath, false)]);
     }
-    toggleDeleteMultipleEntriesDialog();
+    openDeleteMultipleEntriesDialog();
   }
 
   function createNewFile() {
-    toggleNewFileDialog();
+    openNewFileDialog();
   }
 
   function createNewAudio() {
-    dispatch(AppActions.toggleNewAudioDialog());
+    openNewAudioDialog();
   }
 
   function showInFileManager() {
@@ -235,7 +226,7 @@ Do you want to continue?`)
       ) {
         return false;
       }
-      toggleProgressDialog();
+      openProgressDialog();
 
       const entryCallback = (entry) => {
         readMacOSTags(entry.path)
@@ -255,7 +246,7 @@ Do you want to continue?`)
         entryCallback,
       )
         .then(() => {
-          toggleProgressDialog();
+          openProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
           showNotification(
             'Tags from ' + directoryPath + ' are imported successfully.',
@@ -266,7 +257,7 @@ Do you want to continue?`)
         })
         .catch((err) => {
           console.log('Error importing tags: ' + err);
-          toggleProgressDialog();
+          openProgressDialog();
         });
     } else {
       showNotification(
@@ -427,7 +418,7 @@ Do you want to continue?`)
     showInFileManager,
     createNewFile,
     createNewAudio,
-    toggleCreateDirectoryDialog,
+    openCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
     copySharingLink,

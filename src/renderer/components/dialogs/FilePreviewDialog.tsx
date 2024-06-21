@@ -32,6 +32,7 @@ import useEventListener from '-/utils/useEventListener';
 import AppConfig from '-/AppConfig';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 interface Props {
   open: boolean;
@@ -43,6 +44,7 @@ function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -58,7 +60,7 @@ function FilePreviewDialog(props: Props) {
           ...(fsEntry.uuid && { uuid: fsEntry.uuid }),
           path: fsEntry.path,
           isFile: fsEntry.isFile,
-          editMode: false,
+          // editMode: false,
         }
       : undefined;
 
@@ -137,7 +139,7 @@ function FilePreviewDialog(props: Props) {
               fileViewer.current.contentWindow.setContent(
                 content,
                 fileDirectory,
-                !openedFile.editMode,
+                !isEditMode,
                 currentTheme,
               );
             }
@@ -190,7 +192,6 @@ function FilePreviewDialog(props: Props) {
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
           eventID={eventID.current}
-          isFileChanged={false}
         />
       </DialogContent>
     </Dialog>

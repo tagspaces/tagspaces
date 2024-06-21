@@ -25,8 +25,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getProTeaserIndex } from '-/reducers/app';
-import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
@@ -37,6 +35,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 interface Props {
   open: boolean;
+  slideIndex: number;
   onClose: () => void;
 }
 
@@ -157,11 +156,11 @@ function Slide(props: SlideProps) {
 function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
   //const swiperElRef = useRef(null); //<SwiperRef>
-  const slideIndex = useSelector(getProTeaserIndex);
+  //const slideIndex = useSelector(getProTeaserIndex);
 
   const slidesEN = getProTeaserSlides(t);
 
-  const { open, onClose } = props;
+  const { open, onClose, slideIndex } = props;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));

@@ -31,6 +31,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -38,7 +39,7 @@ type DragProps = { isActive: boolean; handlerId: Identifier | null };
 interface Props {
   children: ReactNode;
   accepts: Array<string>;
-  setMoveCopyDialogOpened: (files: Array<File>) => void;
+  //setMoveCopyDialogOpened: (files: Array<File>) => void;
 }
 
 function TargetFileBox(props: Props) {
@@ -51,8 +52,9 @@ function TargetFileBox(props: Props) {
   const { showNotification } = useNotificationContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
   const ref = useRef<HTMLDivElement>(null);
-  const { setMoveCopyDialogOpened } = props;
+  //const { setMoveCopyDialogOpened } = props;
 
   const onUploadProgress = (progress, abort, fileName) => {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -115,7 +117,7 @@ function TargetFileBox(props: Props) {
             !currentLocation.haveObjectStoreSupport() &&
             !currentLocation.haveWebDavSupport()
           ) {
-            return setMoveCopyDialogOpened(files);
+            return openMoveOrCopyFilesDialog(files);
           } else {
             return handleCopyFiles(files);
           }

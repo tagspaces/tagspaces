@@ -65,13 +65,16 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
+  fileChanged: boolean;
   isEntryInFullWidth: boolean;
   sharingLink: string;
   sharingParentFolderLink: string;
   setEntryInFullWidth: (fullWidth: boolean) => void;
+  setFileChanged: (isChanged: boolean) => void;
   addToEntryContainer: (fsEntry: TS.OpenedEntry) => void;
   closeAllFiles: () => void;
   reflectUpdateOpenedFileContent: (entry: TS.FileSystemEntry) => void;
@@ -104,10 +107,12 @@ type OpenedEntryContextData = {
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openedEntry: undefined,
+  fileChanged: false,
   isEntryInFullWidth: false,
   sharingLink: undefined,
   sharingParentFolderLink: undefined,
-  setEntryInFullWidth: () => {},
+  setEntryInFullWidth: undefined,
+  setFileChanged: undefined,
   addToEntryContainer: () => {},
   closeAllFiles: () => {},
   reflectUpdateOpenedFileContent: () => {},
@@ -151,6 +156,7 @@ export const OpenedEntryContextProvider = ({
   const { actions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
+  const { setEditMode, isEditMode } = useFilePropertiesContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   //const locations: CommonLocation[] = useSelector(getLocations);
@@ -161,6 +167,7 @@ export const OpenedEntryContextProvider = ({
     filesCount: undefined,
     dirsCount: undefined,
   });*/
+  const fileChanged = useRef<boolean>(false);
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
@@ -185,6 +192,21 @@ export const OpenedEntryContextProvider = ({
           openLink('ts://?cmdopen=' + cmdOpen, { fullWidth: true });
         }, 1000);
       }
+    }
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'go-back') {
+          goBack();
+        } else if (arg === 'go-forward') {
+          goForward();
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
     }
   }, []);
 
@@ -460,7 +482,7 @@ export const OpenedEntryContextProvider = ({
 
   function reloadOpenedFile(): Promise<boolean> {
     if (currentEntry.current) {
-      currentEntry.current.editMode = false;
+      //currentEntry.current.editMode = false;
       //return openEntry(currentEntry.current.path); //true);
       return getAllPropertiesPromise(
         currentEntry.current.path,
@@ -547,7 +569,7 @@ export const OpenedEntryContextProvider = ({
     if (currentEntry.current) {
       //openedEntries.length > 0) {
       const openFile = currentEntry.current; //openedEntries[0];
-      if (openFile.editMode) {
+      if (isEditMode) {
         entryForOpening = {
           ...openFile,
         }; // false };
@@ -577,7 +599,7 @@ export const OpenedEntryContextProvider = ({
       fsEntry.isNewFile &&
       AppConfig.editableFiles.includes(fsEntry.extension)
     ) {
-      entryForOpening.editMode = true;
+      setEditMode(true);
     }
 
     const locationName = loc ? loc.name : 'TagSpaces'; // TODO get it later from app config
@@ -603,6 +625,13 @@ export const OpenedEntryContextProvider = ({
   function setEntryInFullWidth(fullWidth) {
     isEntryInFullWidth.current = fullWidth;
     forceUpdate();
+  }
+
+  function setFileChanged(isChanged) {
+    if (fileChanged.current !== isChanged) {
+      fileChanged.current = isChanged;
+      forceUpdate();
+    }
   }
 
   function goForward() {
@@ -927,10 +956,12 @@ export const OpenedEntryContextProvider = ({
   const context = useMemo(() => {
     return {
       openedEntry: currentEntry.current,
+      fileChanged: fileChanged.current,
       isEntryInFullWidth: isEntryInFullWidth.current,
       sharingLink: sharingLink.current,
       sharingParentFolderLink: sharingParentFolderLink.current,
       setEntryInFullWidth,
+      setFileChanged,
       addToEntryContainer,
       closeAllFiles,
       reflectUpdateOpenedFileContent,
@@ -950,6 +981,7 @@ export const OpenedEntryContextProvider = ({
       getOpenedDirProps,
     };
   }, [
+    fileChanged.current,
     currentEntry.current,
     isEntryInFullWidth.current,
     currentLocation,

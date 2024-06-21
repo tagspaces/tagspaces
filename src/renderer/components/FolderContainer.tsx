@@ -50,22 +50,22 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 
 interface Props {
   toggleDrawer?: () => void;
-  toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
   goBack: () => void;
   goForward: () => void;
 }
 
 function FolderContainer(props: Props) {
-  const { toggleDrawer, toggleProTeaser, goBack, goForward, drawerOpened } =
-    props;
+  const { toggleDrawer, goBack, goForward, drawerOpened } = props;
 
   const { t } = useTranslation();
   const theme = useTheme();
   const { openFileUploadDialog } = useFileUploadDialogContext();
+  const { openProTeaserDialog } = useProTeaserDialogContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -142,13 +142,13 @@ function FolderContainer(props: Props) {
     ) {
       setManualDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      toggleProTeaser(PerspectiveIDs.GALLERY);
+      openProTeaserDialog(PerspectiveIDs.GALLERY);
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+      openProTeaserDialog(PerspectiveIDs.MAPIQUE);
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      toggleProTeaser(PerspectiveIDs.KANBAN);
+      openProTeaserDialog(PerspectiveIDs.KANBAN);
     } else if (perspectiveId === PerspectiveIDs.FOLDERVIZ) {
-      toggleProTeaser(PerspectiveIDs.FOLDERVIZ);
+      openProTeaserDialog(PerspectiveIDs.FOLDERVIZ);
     }
   };
 

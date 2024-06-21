@@ -47,6 +47,8 @@ import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsCon
 import { Pro } from '-/pro';
 import DialogsRoot from '-/containers/DialogsRoot';
 import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
+import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
+import { UserContextProvider } from '-/hooks/UserContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -86,17 +88,23 @@ export default function Root({ store, persistor }: RootType) {
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
                                         <ExtensionsContextProvider>
-                                          <DialogsRoot>
-                                            {Pro ? (
-                                              <Pro.contextProviders.BookmarksContextProvider>
-                                                <Pro.contextProviders.HistoryContextProvider>
+                                          <PanelsContextProvider>
+                                            <UserContextProvider>
+                                              <DialogsRoot>
+                                                {Pro ? (
+                                                  <Pro.contextProviders.BookmarksContextProvider>
+                                                    <Pro.contextProviders.HistoryContextProvider>
+                                                      <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                        <MainPage />
+                                                      </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                    </Pro.contextProviders.HistoryContextProvider>
+                                                  </Pro.contextProviders.BookmarksContextProvider>
+                                                ) : (
                                                   <MainPage />
-                                                </Pro.contextProviders.HistoryContextProvider>
-                                              </Pro.contextProviders.BookmarksContextProvider>
-                                            ) : (
-                                              <MainPage />
-                                            )}
-                                          </DialogsRoot>
+                                                )}
+                                              </DialogsRoot>
+                                            </UserContextProvider>
+                                          </PanelsContextProvider>
                                         </ExtensionsContextProvider>
                                       </DndProvider>
                                     </TaggingActionsContextProvider>

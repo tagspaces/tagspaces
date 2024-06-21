@@ -16,8 +16,16 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { TS } from '-/tagspaces.namespace';
+import { getURLParameter } from '-/utils/dom';
+import AppConfig from '-/AppConfig';
 
 type PerspectiveActionsContextData = {
   actions: TS.PerspectiveActions[];
@@ -40,6 +48,30 @@ export const PerspectiveActionsContextProvider = ({
   const actions = useRef<TS.PerspectiveActions[]>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'next-file') {
+          const action: TS.PerspectiveActions = {
+            action: 'openNext',
+          };
+          setActions(action);
+        } else if (arg === 'previous-file') {
+          const action: TS.PerspectiveActions = {
+            action: 'openPrevious',
+          };
+          setActions(action);
+        }
+      });
+
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+        }
+      };
+    }
+  }, []);
 
   function setActions(...actionsArray: TS.PerspectiveActions[]) {
     actions.current = actionsArray;

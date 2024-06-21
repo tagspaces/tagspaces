@@ -16,17 +16,19 @@
  *
  */
 
-import React, { MutableRefObject, useEffect, useRef } from 'react';
+import React, { MutableRefObject, useEffect } from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import useEventListener from '-/utils/useEventListener';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import AppConfig from '-/AppConfig';
+import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   isFullscreen?: boolean;
-  isFileChanged: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   toggleFullScreen?: () => void;
@@ -38,37 +40,40 @@ function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
   const { openedEntry } = useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   const {
     fileViewer,
     isFullscreen,
-    isFileChanged,
     fileViewerContainer,
     toggleFullScreen,
     height,
     eventID,
   } = props;
 
-  const { searchQuery, isSearchMode } = useDirectoryContentContext();
-  const fileOpenerURL = useRef<string>(getFileOpenerURL());
+  const { searchQuery } = useDirectoryContentContext();
 
   useEffect(() => {
-    if (!isFileChanged) {
-      fileOpenerURL.current = getFileOpenerURL();
-    }
-  }, [openedEntry, isFileChanged, isSearchMode]);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('play-pause', (arg) => {
+        if (
+          fileViewer &&
+          fileViewer.current &&
+          fileViewer.current.contentWindow &&
+          // @ts-ignore
+          fileViewer.current.contentWindow.togglePlay
+        ) {
+          // @ts-ignore
+          fileViewer.current.contentWindow.togglePlay();
+        }
+      });
 
-  useEventListener('toggle-resume', () => {
-    if (
-      fileViewer &&
-      fileViewer.current &&
-      fileViewer.current.contentWindow &&
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay
-    ) {
-      // @ts-ignore
-      fileViewer.current.contentWindow.togglePlay();
+      return () => {
+        if (window.electronIO.ipcRenderer) {
+          window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+        }
+      };
     }
-  });
+  }, []);
 
   function getFileOpenerURL(): string {
     if (openedEntry && openedEntry.path) {
@@ -108,7 +113,7 @@ function FileView(props: Props) {
         extTextColor +
         extBgndColor;
 
-      if (openedEntry.editMode && openedEntry.editingExtensionPath) {
+      if (isEditMode && openedEntry.editingExtensionPath) {
         return (
           openedEntry.editingExtensionPath +
           '/index.html?file=' +
@@ -180,7 +185,7 @@ function FileView(props: Props) {
             border: 0,
           }}
           allow="clipboard-write *"
-          src={fileOpenerURL.current}
+          src={getFileOpenerURL() /*fileOpenerURL.current*/}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
           id={'FileViewer' + eventID}

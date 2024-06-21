@@ -41,16 +41,16 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 
 interface Props {
-  setEditLocationDialogOpened: (open: boolean) => void;
+  //setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
   //closeLocationTree: () => void;
 }
 
 function LocationContextMenu(props: Props) {
   const {
-    setEditLocationDialogOpened,
     setDeleteLocationDialogOpened,
     //closeLocationTree
   } = props;
@@ -66,6 +66,7 @@ function LocationContextMenu(props: Props) {
     getLocationPath,
   } = useCurrentLocationContext();
   const { createLocationIndex } = useLocationIndexContext();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const dispatch: AppDispatch = useDispatch();
 
   const moveLocationUp = (locationId) => {
@@ -83,7 +84,7 @@ function LocationContextMenu(props: Props) {
 
   const showEditLocationDialog = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    setEditLocationDialogOpened(true);
+    openCreateEditLocationDialog();
   };
 
   const duplicateLocation = () => {

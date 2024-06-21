@@ -49,7 +49,6 @@ import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryE
 interface Props {
   location: CommonLocation;
   hideDrawer?: () => void;
-  setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
 }
 

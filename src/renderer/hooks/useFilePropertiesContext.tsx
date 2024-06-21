@@ -18,7 +18,6 @@
 
 import { useContext } from 'react';
 
-import { RendererListenerContext } from './RendererListenerContextProvider';
+import { FilePropertiesContext } from './FilePropertiesContextProvider';
 
-export const useRendererListenerContext = () =>
-  useContext(RendererListenerContext);
+export const useFilePropertiesContext = () => useContext(FilePropertiesContext);

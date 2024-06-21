@@ -34,7 +34,6 @@ import Dialog from '@mui/material/Dialog';
 import EditIcon from '@mui/icons-material/Edit';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
-import { getSelectedTag } from '-/reducers/app';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
@@ -43,10 +42,10 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
+  tag: TS.Tag;
   onClose: () => void;
 }
 
@@ -56,10 +55,12 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
 
+  const { onClose, open, tag } = props;
+
   const { addTagsToEntry, editTagForEntry } = useTaggingActionsContext();
-  const selectedTag: TS.Tag = useSelector(getSelectedTag);
+  // const selectedTag: TS.Tag = useSelector(getSelectedTag);
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
-  const [title, setTitle] = useState(selectedTag && selectedTag.title);
+  const [title, setTitle] = useState(tag && tag.title);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
@@ -83,7 +84,6 @@ function EditEntryTagDialog(props: Props) {
     isShowDatePeriodEditor,
   );
   const { setError, haveError } = useValidation();
-  const { onClose, open } = props;
 
   useEffect(() => {
     if (titleRef && titleRef.current) {
@@ -105,11 +105,11 @@ function EditEntryTagDialog(props: Props) {
 
   function onConfirm() {
     if (handleValidation() && !haveError()) {
-      const isNew = selectedTag.functionality === 'geoTagging'; //path.includes(props.selectedTag.title);
+      const isNew = tag.functionality === 'geoTagging'; //path.includes(props.selectedTag.title);
       if (isNew) {
-        addTagsToEntry(selectedTag.path, [{ ...selectedTag, title }]);
+        addTagsToEntry(tag.path, [{ ...tag, title }]);
       } else {
-        editTagForEntry(selectedTag.path, selectedTag, title);
+        editTagForEntry(tag.path, tag, title);
       }
       props.onClose();
     }
@@ -171,10 +171,7 @@ function EditEntryTagDialog(props: Props) {
           />
         )}
         {editDisabled && isShowDatePeriodEditor && (
-          <DateTagEditor
-            datePeriodTag={selectedTag && selectedTag.title}
-            onChange={setTitle}
-          />
+          <DateTagEditor datePeriodTag={tag && tag.title} onChange={setTitle} />
         )}
       </DialogContent>
     );

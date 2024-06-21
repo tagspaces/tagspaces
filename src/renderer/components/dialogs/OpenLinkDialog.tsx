@@ -117,7 +117,7 @@ function OpenLinkDialog(props: Props) {
               setLinkURL(target.value);
             }}
             value={linkURL}
-            data-tid="directoryName"
+            data-tid="openLinkTID"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="start">

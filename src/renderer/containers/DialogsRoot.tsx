@@ -19,6 +19,22 @@
 import React from 'react';
 import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
 import { EntryExistDialogContextProvider } from '-/components/dialogs/hooks/EntryExistDialogContextProvider';
+import { CreateEditLocationDialogContextProvider } from '-/components/dialogs/hooks/CreateEditLocationDialogContextProvider';
+import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks/MoveOrCopyFilesDialogContextProvider';
+import { CreateDirectoryDialogContextProvider } from '-/components/dialogs/hooks/CreateDirectoryDialogContextProvider';
+import { ProgressDialogContextProvider } from '-/components/dialogs/hooks/ProgressDialogContextProvider';
+import { NewEntryDialogContextProvider } from '-/components/dialogs/hooks/NewEntryDialogContextProvider';
+import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
+import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
+import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
+import { ThirdPartyLibsDialogContextProvider } from '-/components/dialogs/hooks/ThirdPartyLibsDialogContextProvider';
+import { AboutDialogContextProvider } from '-/components/dialogs/hooks/AboutDialogContextProvider';
+import { OnboardingDialogContextProvider } from '-/components/dialogs/hooks/OnboardingDialogContextProvider';
+import { KeyboardDialogContextProvider } from '-/components/dialogs/hooks/KeyboardDialogContextProvider';
+import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialogContextProvider';
+import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTeaserDialogContextProvider';
+import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
+import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -27,9 +43,41 @@ export type DialogsRootProps = {
 function DialogsRoot({ children }: DialogsRootProps) {
   return (
     <EntryExistDialogContextProvider>
-      <FileUploadDialogContextProvider>
-        {children}
-      </FileUploadDialogContextProvider>
+      <DeleteMultipleEntriesDialogContextProvider>
+        <FileUploadDialogContextProvider>
+          <CreateEditLocationDialogContextProvider>
+            <MoveOrCopyFilesDialogContextProvider>
+              <CreateDirectoryDialogContextProvider>
+                <ProgressDialogContextProvider>
+                  <NewEntryDialogContextProvider>
+                    <NewFileDialogContextProvider>
+                      <NewAudioDialogContextProvider>
+                        <LicenseDialogContextProvider>
+                          <ThirdPartyLibsDialogContextProvider>
+                            <AboutDialogContextProvider>
+                              <OnboardingDialogContextProvider>
+                                <KeyboardDialogContextProvider>
+                                  <LinkDialogContextProvider>
+                                    <ProTeaserDialogContextProvider>
+                                      <SettingsDialogContextProvider>
+                                        {children}
+                                      </SettingsDialogContextProvider>
+                                    </ProTeaserDialogContextProvider>
+                                  </LinkDialogContextProvider>
+                                </KeyboardDialogContextProvider>
+                              </OnboardingDialogContextProvider>
+                            </AboutDialogContextProvider>
+                          </ThirdPartyLibsDialogContextProvider>
+                        </LicenseDialogContextProvider>
+                      </NewAudioDialogContextProvider>
+                    </NewFileDialogContextProvider>
+                  </NewEntryDialogContextProvider>
+                </ProgressDialogContextProvider>
+              </CreateDirectoryDialogContextProvider>
+            </MoveOrCopyFilesDialogContextProvider>
+          </CreateEditLocationDialogContextProvider>
+        </FileUploadDialogContextProvider>
+      </DeleteMultipleEntriesDialogContextProvider>
     </EntryExistDialogContextProvider>
   );
 }

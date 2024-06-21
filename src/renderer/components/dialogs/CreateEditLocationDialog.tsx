@@ -92,7 +92,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   open: boolean;
   onClose: () => void;
-  editLocation?: (location: CommonLocation) => void;
+  //editLocation?: (location: CommonLocation) => void;
 }
 
 function CreateEditLocationDialog(props: Props) {
@@ -101,7 +101,7 @@ function CreateEditLocationDialog(props: Props) {
   const { showNotification } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
-  const { addLocation, selectedLocation, findLocation } =
+  const { addLocation, editLocation, selectedLocation, findLocation } =
     useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   //const locations: Array<CommonLocation> = useSelector(getLocations);
@@ -448,12 +448,12 @@ function CreateEditLocationDialog(props: Props) {
           }
           addLocation(commonLocation);
         });
-      } else if (props.editLocation) {
-        loc.newuuid = newuuid;
-        props.editLocation(new CommonLocation(loc));
       } else {
+        loc.newuuid = newuuid;
+        editLocation(new CommonLocation(loc));
+      } /*else {
         console.log('No addLocation or editLocation props exist');
-      }
+      }*/
       onClose();
       // this.props.resetState('createLocationDialogKey');
     }
@@ -904,7 +904,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={false}
-                        data-tid="settingsSetPersistTagsInFileName"
+                        data-tid="locationSetPersistTagsInFileName"
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
                         <Tooltip
@@ -923,7 +923,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={true}
-                        data-tid="settingsSetPersistTagsInSidecarFile"
+                        data-tid="locationSetPersistTagsInSidecarFile"
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
                         <Tooltip
