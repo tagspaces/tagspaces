@@ -85,7 +85,9 @@ export const FilePropertiesContextProvider = ({
         // handle not saved changes
         saveDescriptionConfirmOpened(true);
       } else {
+        isEditMode.current = false;
         lastOpenedFile.current = { ...openedEntry };
+        forceUpdate();
         //description.current = openedEntry.meta?.description;
       }
     } else {
