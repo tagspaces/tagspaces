@@ -86,8 +86,13 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { setReflectActions } = useEditedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { saveDescription, description, isEditMode, setEditMode } =
-    useFilePropertiesContext();
+  const {
+    saveDescription,
+    description,
+    isEditMode,
+    setEditMode,
+    isEditDescriptionMode,
+  } = useFilePropertiesContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
@@ -706,7 +711,7 @@ function EntryContainer() {
         editFile = (
           <Tooltip title={t('core:editFile')}>
             <Button
-              disabled={false}
+              disabled={isEditDescriptionMode}
               size="small"
               variant="outlined"
               color="primary"

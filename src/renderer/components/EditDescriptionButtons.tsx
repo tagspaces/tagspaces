@@ -22,7 +22,8 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
     setSaveDescriptionConfirmOpened,
     saveDescription,
     isEditMode,
-    setEditMode,
+    isEditDescriptionMode,
+    setEditDescriptionMode,
   } = useFilePropertiesContext();
   const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
@@ -33,10 +34,10 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
   }));
 
   useEffect(() => {
-    if (!isEditMode && isDescriptionChanged) {
+    if (!isEditDescriptionMode && isDescriptionChanged) {
       descriptionChanged(false);
     }
-  }, [isEditMode]);
+  }, [isEditDescriptionMode]);
 
   // const printHTML = () => {
   //   const sanitizedDescription = description
@@ -59,10 +60,10 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
 
   return (
     <span style={{ float: 'left' }}>
-      {isEditMode && (
+      {isEditDescriptionMode && (
         <Button
           onClick={() => {
-            setEditMode(false);
+            setEditDescriptionMode(false);
           }}
         >
           {t('core:cancel')}
@@ -78,15 +79,17 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
         <Button
           data-tid="editDescriptionTID"
           color="primary"
-          disabled={!Pro}
+          disabled={!Pro || isEditMode}
           onClick={() => {
-            if (isEditMode) {
+            if (isEditDescriptionMode) {
               saveDescription();
             }
-            setEditMode(!isEditMode);
+            setEditDescriptionMode(!isEditDescriptionMode);
           }}
         >
-          {isEditMode ? t('core:confirmSaveButton') : t('core:editDescription')}
+          {isEditDescriptionMode
+            ? t('core:confirmSaveButton')
+            : t('core:editDescription')}
         </Button>
       </ProTooltip>
       <ConfirmDialog

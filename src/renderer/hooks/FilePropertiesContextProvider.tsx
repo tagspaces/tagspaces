@@ -37,6 +37,8 @@ type FilePropertiesContextData = {
   isSaveDescriptionConfirmOpened: boolean;
   isEditMode: boolean;
   setEditMode: (editMode: boolean) => void;
+  isEditDescriptionMode: boolean;
+  setEditDescriptionMode: (editMode: boolean) => void;
   setSaveDescriptionConfirmOpened: (open: boolean) => void;
   setDescription: (description: string) => void;
   saveDescription: () => void;
@@ -47,6 +49,8 @@ export const FilePropertiesContext = createContext<FilePropertiesContextData>({
   isSaveDescriptionConfirmOpened: false,
   isEditMode: false,
   setEditMode: () => {},
+  isEditDescriptionMode: undefined,
+  setEditDescriptionMode: undefined,
   setSaveDescriptionConfirmOpened: () => {},
   setDescription: () => {},
   saveDescription: undefined,
@@ -68,6 +72,7 @@ export const FilePropertiesContextProvider = ({
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isChanged = useRef<boolean>(false);
   const isEditMode = useRef<boolean>(false);
+  const isEditDescriptionMode = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -78,21 +83,17 @@ export const FilePropertiesContextProvider = ({
         isChanged.current &&
         lastOpenedFile.current !== undefined &&
         lastOpenedFile.current.path !== openedEntry.path
-        //lastOpenedFile.current.meta &&
-        //openedEntry.meta &&
-        //lastOpenedFile.current.meta.description !== openedEntry.meta.description
       ) {
         // handle not saved changes
         saveDescriptionConfirmOpened(true);
       } else {
         isEditMode.current = false;
+        isChanged.current = false;
         lastOpenedFile.current = { ...openedEntry };
         forceUpdate();
-        //description.current = openedEntry.meta?.description;
       }
     } else {
       lastOpenedFile.current = undefined;
-      //description.current = undefined;
     }
   }, [openedEntry]);
 
@@ -143,6 +144,12 @@ export const FilePropertiesContextProvider = ({
       forceUpdate();
     }
   }
+  function setEditDescriptionMode(editMode: boolean) {
+    if (isEditDescriptionMode.current !== editMode) {
+      isEditDescriptionMode.current = editMode;
+      forceUpdate();
+    }
+  }
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
@@ -161,10 +168,14 @@ export const FilePropertiesContextProvider = ({
       saveDescription,
       isEditMode: isEditMode.current,
       setEditMode,
+      isEditDescriptionMode: isEditDescriptionMode.current,
+      setEditDescriptionMode,
     };
   }, [
+    openedEntry,
     lastOpenedFile.current,
     isEditMode.current,
+    isEditDescriptionMode.current,
     isSaveDescriptionConfirmOpened,
   ]);
 

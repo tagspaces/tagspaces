@@ -29,11 +29,15 @@ function EditDescription() {
   const theme = useTheme();
   // const { openedEntry } = useOpenedEntryContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { description, setDescription, isEditMode, setEditMode } =
-    useFilePropertiesContext();
+  const {
+    description,
+    setDescription,
+    isEditDescriptionMode,
+    setEditDescriptionMode,
+    isEditMode,
+  } = useFilePropertiesContext();
 
   const fileDescriptionRef = useRef<MilkdownRef>(null);
-  //const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
   const descriptionButtonsRef = useRef(null);
 
@@ -43,7 +47,7 @@ function EditDescription() {
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
-      //setEditMode(!editMode);
+      //setEditDescriptionMode(!editMode);
       toggleEditDescriptionField();
     } /!*dispatch(AppActions.openNextFile())*!/
   };*/
@@ -68,8 +72,8 @@ function EditDescription() {
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (Pro && !isEditMode) {
-            setEditMode(true);
+          if (Pro && !isEditDescriptionMode && !isEditMode) {
+            setEditDescriptionMode(true);
           }
         }}
         style={{
@@ -80,7 +84,7 @@ function EditDescription() {
           overflowY: 'auto',
         }}
       >
-        {noDescription && !isEditMode ? (
+        {noDescription && !isEditDescriptionMode ? (
           <Typography
             variant="caption"
             style={{
@@ -112,10 +116,12 @@ function EditDescription() {
               content={description || ''}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}
-              readOnly={!isEditMode}
+              readOnly={!isEditDescriptionMode}
               lightMode={false}
               excludePlugins={
-                !isEditMode ? ['menu', 'upload', 'slash'] : ['slash', 'block']
+                !isEditDescriptionMode
+                  ? ['menu', 'upload', 'slash']
+                  : ['slash', 'block']
               }
               currentFolder={currentDirectoryPath}
             />
