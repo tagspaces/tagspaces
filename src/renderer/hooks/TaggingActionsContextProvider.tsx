@@ -252,18 +252,20 @@ export const TaggingActionsContextProvider = ({
         const promiseReflect: Promise<TS.EditAction>[] = [];
         for (let i = 0; i < editedPaths.length; i++) {
           const { filePath, newPath } = editedPaths[i];
-          promiseReflect.push(
-            getAllPropertiesPromise(newPath).then(
-              (fsEntry: TS.FileSystemEntry) => {
-                const currentAction: TS.EditAction = {
-                  action: 'update',
-                  entry: fsEntry,
-                  oldEntryPath: filePath,
-                };
-                return currentAction;
-              },
-            ),
-          );
+          if (newPath !== undefined) {
+            promiseReflect.push(
+              getAllPropertiesPromise(newPath).then(
+                (fsEntry: TS.FileSystemEntry) => {
+                  const currentAction: TS.EditAction = {
+                    action: 'update',
+                    entry: fsEntry,
+                    oldEntryPath: filePath,
+                  };
+                  return currentAction;
+                },
+              ),
+            );
+          }
         }
         return Promise.all(promiseReflect).then((actionsArray) => {
           setReflectActions(...actionsArray);
@@ -521,8 +523,8 @@ export const TaggingActionsContextProvider = ({
               newFilePath,
               entry.locationID,
               reflect,
-            ).then(() => {
-              return newFilePath;
+            ).then((success) => {
+              return success ? newFilePath : undefined;
             });
           }
         }
@@ -538,8 +540,8 @@ export const TaggingActionsContextProvider = ({
             newFilePath,
             entry.locationID,
             reflect,
-          ).then(() => {
-            return newFilePath;
+          ).then((success) => {
+            return success ? newFilePath : undefined;
           });
         }
       }
@@ -794,18 +796,20 @@ export const TaggingActionsContextProvider = ({
     return Promise.all(promises).then((editedPaths) => {
       const promiseReflect: Promise<TS.EditAction>[] = [];
       for (let i = 0; i < editedPaths.length; i++) {
-        promiseReflect.push(
-          getAllPropertiesPromise(editedPaths[i]).then(
-            (fsEntry: TS.FileSystemEntry) => {
-              const currentAction: TS.EditAction = {
-                action: 'update',
-                entry: fsEntry,
-                oldEntryPath: paths[i],
-              };
-              return currentAction;
-            },
-          ),
-        );
+        if (editedPaths[i]) {
+          promiseReflect.push(
+            getAllPropertiesPromise(editedPaths[i]).then(
+              (fsEntry: TS.FileSystemEntry) => {
+                const currentAction: TS.EditAction = {
+                  action: 'update',
+                  entry: fsEntry,
+                  oldEntryPath: paths[i],
+                };
+                return currentAction;
+              },
+            ),
+          );
+        }
       }
       return Promise.all(promiseReflect).then((actionsArray) => {
         setReflectActions(...actionsArray);
