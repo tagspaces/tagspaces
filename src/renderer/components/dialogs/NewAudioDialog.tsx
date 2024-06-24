@@ -80,7 +80,7 @@ function NewAudioDialog(props: Props) {
           }}
           data-tid="keyboardShortCutsDialog"
         >
-          <CreateAudio onClose={intOnClose} />
+          {CreateAudio && <CreateAudio onClose={intOnClose} />}
         </DialogContent>
       </Dialog>
     </TargetPathContextProvider>
