@@ -17,7 +17,11 @@
  */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import LoadingLazy from '-/components/LoadingLazy';
+import { TS } from '-/tagspaces.namespace';
+import AppConfig from '-/AppConfig';
 
 type MoveOrCopyFilesDialogContextData = {
   openMoveOrCopyFilesDialog: (files: Array<File>) => void;
@@ -45,14 +49,35 @@ export const MoveOrCopyFilesDialogContextProvider = ({
   children,
 }: MoveOrCopyFilesDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
-  const files = useRef<Array<File>>(undefined);
+  const files = useRef<TS.FileSystemEntry[]>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   function openDialog(selectedFiles: Array<File>) {
     open.current = true;
-    files.current = selectedFiles;
+    isDirs(selectedFiles).then((isDirsArray) => {
+      files.current = selectedFiles.map((file, index) => ({
+        uuid: getUuid(),
+        name: file.name,
+        path: file.path,
+        isFile: !isDirsArray[index],
+        extension: extractFileExtension(file.path),
+        size: file.size,
+        lmdt: file.lastModified,
+      }));
+      forceUpdate();
+    });
     forceUpdate();
+  }
+
+  function isDirs(files: Array<File>): Promise<boolean[]> {
+    if (AppConfig.isElectron) {
+      const filesPromises = files.map((file) =>
+        window.electronIO.ipcRenderer.invoke('isDirectory', file.path),
+      );
+      return Promise.all(filesPromises);
+    }
+    return Promise.resolve(files.map(() => true));
   }
 
   function closeDialog() {
@@ -80,7 +105,7 @@ export const MoveOrCopyFilesDialogContextProvider = ({
       <MoveOrCopyFilesDialogAsync
         open={open.current}
         onClose={closeDialog}
-        selectedFiles={files.current}
+        selectedFiles={files.current?.filter((file) => file.isFile)} // todo enable for dir
       />
       {children}
     </MoveOrCopyFilesDialogContext.Provider>
