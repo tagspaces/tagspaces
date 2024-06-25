@@ -34,6 +34,7 @@ const GridPerspective = React.lazy(
   () =>
     import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid'),
 );
+
 function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
