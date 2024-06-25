@@ -313,7 +313,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0422 - Add custom date smarttag [web,electron]', async () => {
+  test('TST0422 - Add custom date smarttag [web,electron,_pro]', async () => {
     const tagName = 'custom-date';
     const sourceTagGroup = 'Smart Tags';
 
