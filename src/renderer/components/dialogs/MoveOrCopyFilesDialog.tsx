@@ -51,6 +51,7 @@ interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   selectedFiles: Array<TS.FileSystemEntry>;
+  targetDir?: string;
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
@@ -66,6 +67,7 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { moveFiles, copyFiles } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const targetDir = props.targetDir ? props.targetDir : currentDirectoryPath;
 
   function generateThumbs(filePaths: string[]) {
     const promises: Promise<TS.EditMetaAction>[] = filePaths.map((filePath) =>
@@ -80,32 +82,30 @@ function MoveOrCopyFilesDialog(props: Props) {
   }
 
   function handleMove(filePaths: string[]) {
-    moveFiles(filePaths, currentDirectoryPath, currentLocation.uuid).then(
-      (success) => {
-        if (success) {
-          generateThumbs(
-            filePaths.map((targetPath) =>
-              joinPaths(
-                currentLocation?.getDirSeparator(),
-                currentDirectoryPath,
-                extractFileName(targetPath, currentLocation?.getDirSeparator()),
-              ),
-            ),
-          );
-        }
-        return true;
-      },
-    );
-  }
-
-  function handleCopy(filePaths: string[]) {
-    copyFiles(filePaths, currentDirectoryPath).then((success) => {
+    moveFiles(filePaths, targetDir, currentLocation.uuid).then((success) => {
       if (success) {
         generateThumbs(
           filePaths.map((targetPath) =>
             joinPaths(
               currentLocation?.getDirSeparator(),
-              currentDirectoryPath,
+              targetDir,
+              extractFileName(targetPath, currentLocation?.getDirSeparator()),
+            ),
+          ),
+        );
+      }
+      return true;
+    });
+  }
+
+  function handleCopy(filePaths: string[]) {
+    copyFiles(filePaths, targetDir).then((success) => {
+      if (success) {
+        generateThumbs(
+          filePaths.map((targetPath) =>
+            joinPaths(
+              currentLocation?.getDirSeparator(),
+              targetDir,
               extractFileName(targetPath, currentLocation?.getDirSeparator()),
             ),
           ),
@@ -138,6 +138,9 @@ function MoveOrCopyFilesDialog(props: Props) {
           overflowY: 'auto',
         }}
       >
+        <Typography variant="subtitle2">
+          {t('core:moveCopyToPath') + ': ' + targetDir}
+        </Typography>
         <Typography variant="subtitle2">{t('selectedFiles')}</Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
           {selectedFiles &&
@@ -163,17 +166,15 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
-              handleEntryExist(selectedFiles, currentDirectoryPath).then(
-                (exist) => {
-                  if (exist) {
-                    openEntryExistDialog(exist, () => {
-                      handleMove(selectedFiles.map((file) => file.path));
-                    });
-                  } else {
+              handleEntryExist(selectedFiles, targetDir).then((exist) => {
+                if (exist) {
+                  openEntryExistDialog(exist, () => {
                     handleMove(selectedFiles.map((file) => file.path));
-                  }
-                },
-              );
+                  });
+                } else {
+                  handleMove(selectedFiles.map((file) => file.path));
+                }
+              });
             }
             onClose();
           }}
@@ -186,17 +187,15 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
-              handleEntryExist(selectedFiles, currentDirectoryPath).then(
-                (exist) => {
-                  if (exist) {
-                    openEntryExistDialog(exist, () => {
-                      handleCopy(selectedFiles.map((file) => file.path));
-                    });
-                  } else {
+              handleEntryExist(selectedFiles, targetDir).then((exist) => {
+                if (exist) {
+                  openEntryExistDialog(exist, () => {
                     handleCopy(selectedFiles.map((file) => file.path));
-                  }
-                },
-              );
+                  });
+                } else {
+                  handleCopy(selectedFiles.map((file) => file.path));
+                }
+              });
             }
             onClose();
           }}

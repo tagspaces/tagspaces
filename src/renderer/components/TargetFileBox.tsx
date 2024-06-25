@@ -16,9 +16,8 @@
  *
  */
 
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { classes, DnD } from '-/components/DnD.css';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,12 +33,15 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
-type DragProps = { isActive: boolean; handlerId: Identifier | null };
+type DragProps = {
+  isActive: boolean;
+  handlerId: Identifier | null;
+};
 
 interface Props {
   children: ReactNode;
   accepts: Array<string>;
-  //setMoveCopyDialogOpened: (files: Array<File>) => void;
+  directoryPath?: string;
 }
 
 function TargetFileBox(props: Props) {
@@ -53,8 +55,9 @@ function TargetFileBox(props: Props) {
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
-  const ref = useRef<HTMLDivElement>(null);
-  //const { setMoveCopyDialogOpened } = props;
+  //const ref = useRef<HTMLDivElement>(null);
+  const { children, accepts, directoryPath } = props;
+  const dirPath = directoryPath ? directoryPath : currentDirectoryPath;
 
   const onUploadProgress = (progress, abort, fileName) => {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -67,7 +70,7 @@ function TargetFileBox(props: Props) {
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
-      if (currentDirectoryPath === undefined) {
+      if (dirPath === undefined) {
         showNotification(
           'Importing files failed, because no folder is opened in TagSpaces!',
           'error',
@@ -85,7 +88,7 @@ function TargetFileBox(props: Props) {
       const sourceLocationId = localLocation ? localLocation.uuid : undefined;
       return uploadFilesAPI(
         files,
-        currentDirectoryPath,
+        dirPath,
         onUploadProgress,
         true,
         false,
@@ -109,15 +112,20 @@ function TargetFileBox(props: Props) {
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
-      accept: props.accepts,
-      drop: ({ files }) => {
+      accept: accepts,
+      drop: ({ files }, m) => {
+        const didDrop = m.didDrop();
+        if (didDrop) {
+          return;
+        }
+
         if (files && files.length) {
           if (
             AppConfig.isElectron &&
             !currentLocation.haveObjectStoreSupport() &&
             !currentLocation.haveWebDavSupport()
           ) {
-            return openMoveOrCopyFilesDialog(files);
+            return openMoveOrCopyFilesDialog(files, dirPath);
           } else {
             return handleCopyFiles(files);
           }
@@ -125,24 +133,34 @@ function TargetFileBox(props: Props) {
       },
       collect: (m: DropTargetMonitor) => ({
         handlerId: m.getHandlerId(),
+        /*isOver: m.isOver(),*/
         isActive: m.isOver({ shallow: true }) && m.canDrop(),
       }),
     }),
-    [currentDirectoryPath],
+    [dirPath],
   );
 
-  drop(ref);
+  //drop(ref);
 
-  const { isActive } = collectedProps;
-  const { children } = props;
-  const dragContent = isActive ? (
-    <div className={classes.dropzone}>{t('core:releaseToDrop')}</div>
-  ) : undefined;
+  const { isActive, handlerId } = collectedProps;
+  //console.log(handlerId+' isActive:'+isActive);
+  /*const dragContent = isActive ? (
+    <div>{t('core:releaseToDrop')}</div>
+  ) : undefined;*/
   return (
-    <DnD ref={ref} style={{ height: '100%' }}>
-      {dragContent}
-      {children}
-    </DnD>
+    <div
+      ref={drop}
+      style={{
+        height: '100%',
+        ...(isActive && {
+          border: '3px dashed white',
+          backgroundColor: '#1dd19f40',
+        }),
+      }}
+    >
+      {/*{dragContent}*/}
+      <div>{children}</div>
+    </div>
   );
 }
 

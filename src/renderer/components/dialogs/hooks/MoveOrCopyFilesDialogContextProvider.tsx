@@ -24,7 +24,10 @@ import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
 
 type MoveOrCopyFilesDialogContextData = {
-  openMoveOrCopyFilesDialog: (files: Array<File>) => void;
+  openMoveOrCopyFilesDialog: (
+    files: Array<File>,
+    targetDirectory?: string,
+  ) => void;
   closeMoveOrCopyFilesDialog: () => void;
 };
 
@@ -50,11 +53,13 @@ export const MoveOrCopyFilesDialogContextProvider = ({
 }: MoveOrCopyFilesDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
   const files = useRef<TS.FileSystemEntry[]>(undefined);
+  const targetDir = useRef<string>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog(selectedFiles: Array<File>) {
+  function openDialog(selectedFiles: Array<File>, targetDirectory?: string) {
     open.current = true;
+    targetDir.current = targetDirectory;
     isDirs(selectedFiles).then((isDirsArray) => {
       files.current = selectedFiles.map((file, index) => ({
         uuid: getUuid(),
@@ -106,6 +111,7 @@ export const MoveOrCopyFilesDialogContextProvider = ({
         open={open.current}
         onClose={closeDialog}
         selectedFiles={files.current?.filter((file) => file.isFile)} // todo enable for dir
+        targetDir={targetDir.current}
       />
       {children}
     </MoveOrCopyFilesDialogContext.Provider>
