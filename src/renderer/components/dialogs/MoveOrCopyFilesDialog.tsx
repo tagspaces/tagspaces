@@ -45,13 +45,12 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { executePromisesInBatches } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  selectedFiles: Array<any>;
+  selectedFiles: Array<TS.FileSystemEntry>;
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
@@ -99,9 +98,26 @@ function MoveOrCopyFilesDialog(props: Props) {
     );
   }
 
+  function handleCopy(filePaths: string[]) {
+    copyFiles(filePaths, currentDirectoryPath).then((success) => {
+      if (success) {
+        generateThumbs(
+          filePaths.map((targetPath) =>
+            joinPaths(
+              currentLocation?.getDirSeparator(),
+              currentDirectoryPath,
+              extractFileName(targetPath, currentLocation?.getDirSeparator()),
+            ),
+          ),
+        );
+      }
+      return true;
+    });
+  }
+
   return (
     <Dialog
-      open={open}
+      open={open && selectedFiles && selectedFiles.length > 0}
       onClose={onClose}
       keepMounted
       scroll="paper"
@@ -170,24 +186,17 @@ function MoveOrCopyFilesDialog(props: Props) {
         <Button
           onClick={() => {
             if (selectedFiles) {
-              const filePaths = selectedFiles.map((file) => file.path);
-              copyFiles(filePaths, currentDirectoryPath).then((success) => {
-                if (success) {
-                  generateThumbs(
-                    filePaths.map((targetPath) =>
-                      joinPaths(
-                        currentLocation?.getDirSeparator(),
-                        currentDirectoryPath,
-                        extractFileName(
-                          targetPath,
-                          currentLocation?.getDirSeparator(),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return true;
-              });
+              handleEntryExist(selectedFiles, currentDirectoryPath).then(
+                (exist) => {
+                  if (exist) {
+                    openEntryExistDialog(exist, () => {
+                      handleCopy(selectedFiles.map((file) => file.path));
+                    });
+                  } else {
+                    handleCopy(selectedFiles.map((file) => file.path));
+                  }
+                },
+              );
             }
             onClose();
           }}
