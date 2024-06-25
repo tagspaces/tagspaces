@@ -151,15 +151,15 @@ function TargetFileBox(props: Props) {
     <div
       ref={drop}
       style={{
-        height: '100%',
+        minHeight: '100%',
+        width: '100%',
         ...(isActive && {
           border: '3px dashed white',
           backgroundColor: '#1dd19f40',
         }),
       }}
     >
-      {/*{dragContent}*/}
-      <div>{children}</div>
+      {children}
     </div>
   );
 }

@@ -29,15 +29,11 @@ import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import CustomDragLayer from '-/components/CustomDragLayer';
-import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
 
 const GridPerspective = React.lazy(
   () =>
     import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid'),
 );
-const { FILE } = NativeTypes;
 
 function GridPerspectiveAsync(props) {
   return (
@@ -46,10 +42,7 @@ function GridPerspectiveAsync(props) {
         <SortedDirContextProvider>
           <PaginationContextProvider>
             <ThumbGenerationContextProvider>
-              <TargetFileBox accepts={[FILE]}>
-                <CustomDragLayer />
-                <GridPerspective {...props} />
-              </TargetFileBox>
+              <GridPerspective {...props} />
             </ThumbGenerationContextProvider>
           </PaginationContextProvider>
         </SortedDirContextProvider>
@@ -69,10 +62,7 @@ function ListPerspectiveAsync(props) {
         <SortedDirContextProvider>
           <PaginationContextProvider>
             <ThumbGenerationContextProvider>
-              <TargetFileBox accepts={[FILE]}>
-                <CustomDragLayer />
-                <ListPerspective {...props} />
-              </TargetFileBox>
+              <ListPerspective {...props} />
             </ThumbGenerationContextProvider>
           </PaginationContextProvider>
         </SortedDirContextProvider>
@@ -91,10 +81,7 @@ function GalleryPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <ThumbGenerationContextProvider>
-        <TargetFileBox accepts={[FILE]}>
-          <CustomDragLayer />
-          <GalleryPerspective {...props} />
-        </TargetFileBox>
+        <GalleryPerspective {...props} />
       </ThumbGenerationContextProvider>
     </React.Suspense>
   );
@@ -109,10 +96,7 @@ function MapiquePerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <ThumbGenerationContextProvider>
-        <TargetFileBox accepts={[FILE]}>
-          <CustomDragLayer />
-          <MapiquePerspective {...props} />
-        </TargetFileBox>
+        <MapiquePerspective {...props} />
       </ThumbGenerationContextProvider>
     </React.Suspense>
   );
@@ -144,10 +128,7 @@ function FolderVizPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <ThumbGenerationContextProvider>
-        <TargetFileBox accepts={[FILE]}>
-          <CustomDragLayer />
-          <FolderVizPerspective {...props} />
-        </TargetFileBox>
+        <FolderVizPerspective {...props} />
       </ThumbGenerationContextProvider>
     </React.Suspense>
   );

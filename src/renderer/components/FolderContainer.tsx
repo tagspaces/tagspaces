@@ -51,6 +51,9 @@ import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -188,6 +191,8 @@ function FolderContainer(props: Props) {
     : '';
   // keyBindings['openSearch'].toUpperCase()
 
+  const { FILE } = NativeTypes;
+
   return (
     <div
       style={{
@@ -310,12 +315,8 @@ function FolderContainer(props: Props) {
           </>
         )}
       </div>
-      <div
-        style={{
-          minHeight: '100%',
-          width: '100%',
-        }}
-      >
+      <TargetFileBox accepts={[FILE]}>
+        <CustomDragLayer />
         {/*<LoadingAnimation />*/}
         <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
         {isRenameEntryDialogOpened && (
@@ -324,7 +325,7 @@ function FolderContainer(props: Props) {
             onClose={() => setRenameEntryDialogOpened(false)}
           />
         )}
-      </div>
+      </TargetFileBox>
       {isDesktopMode && (
         <ToggleButtonGroup
           value={perspective}
