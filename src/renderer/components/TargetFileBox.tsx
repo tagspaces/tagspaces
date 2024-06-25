@@ -18,6 +18,7 @@
 
 import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
+import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,6 +47,7 @@ interface Props {
 
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { currentLocation, readOnlyMode, findLocalLocation } =
@@ -140,13 +142,7 @@ function TargetFileBox(props: Props) {
     [dirPath],
   );
 
-  //drop(ref);
-
   const { isActive, handlerId } = collectedProps;
-  //console.log(handlerId+' isActive:'+isActive);
-  /*const dragContent = isActive ? (
-    <div>{t('core:releaseToDrop')}</div>
-  ) : undefined;*/
   return (
     <div
       ref={drop}
@@ -154,8 +150,9 @@ function TargetFileBox(props: Props) {
         minHeight: '100%',
         width: '100%',
         ...(isActive && {
-          border: '3px dashed white',
-          backgroundColor: '#1dd19f40',
+          boxShadow: 'inset 0px 2px 0 5px ' + theme.palette.primary.main,
+          borderRadius: 5,
+          backgroundColor: theme.palette.primary.main,
         }),
       }}
     >
