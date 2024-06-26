@@ -26,6 +26,7 @@ type EntryExistDialogContextData = {
   handleEntryExist: (
     entries: TS.FileSystemEntry[],
     targetPath: string,
+    targetLocationId?: string,
   ) => Promise<string[]>;
   openEntryExistDialog: (
     existPath: string[],
@@ -47,7 +48,7 @@ export const EntryExistDialogContextProvider = ({
   children,
 }: EntryExistDialogContextProviderProps) => {
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const confirmOverride = useRef<() => void>(undefined);
   const entriesExistPath = useRef<string[]>([]);
 
@@ -56,14 +57,16 @@ export const EntryExistDialogContextProvider = ({
   async function handleEntryExist(
     entries: TS.FileSystemEntry[],
     targetPath: string,
+    targetLocationId?: string,
   ): Promise<string[]> {
     if (entries) {
       let arrExist = [];
+      const location = findLocation(targetLocationId);
       const selectedFiles = entries
         .filter((fsEntry) => fsEntry.isFile)
         .map((fsentry) => fsentry.path);
       if (selectedFiles.length > 0) {
-        const exist = await currentLocation.checkFilesExistPromise(
+        const exist = await location.checkFilesExistPromise(
           selectedFiles,
           targetPath,
         );
@@ -76,7 +79,7 @@ export const EntryExistDialogContextProvider = ({
         .map((fsentry) => fsentry.path);
 
       if (selectedDirs.length > 0) {
-        const exist = await currentLocation.checkDirsExistPromise(
+        const exist = await location.checkDirsExistPromise(
           selectedDirs,
           targetPath,
         );
@@ -115,7 +118,7 @@ export const EntryExistDialogContextProvider = ({
       openEntryExistDialog: openDialog,
       closeEntryExistDialog: closeDialog,
     };
-  }, [currentLocation]);
+  }, []);
 
   return (
     <EntryExistDialogContext.Provider value={context}>

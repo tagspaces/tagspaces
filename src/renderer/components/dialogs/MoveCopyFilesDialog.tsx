@@ -115,7 +115,12 @@ function MoveCopyFilesDialog(props: Props) {
     dispatch(AppActions.resetProgress());
     openFileUploadDialog(undefined, 'copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      copyFiles(selectedFiles, targetPath, onUploadProgress);
+      copyFiles(
+        selectedFiles,
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {

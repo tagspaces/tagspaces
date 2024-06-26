@@ -103,6 +103,7 @@ type IOActionsContextData = {
   copyFiles: (
     paths: Array<string>,
     targetPath: string,
+    locationID: string,
     onProgress?,
   ) => Promise<boolean>;
   downloadFile: (
@@ -702,12 +703,13 @@ export const IOActionsContextProvider = ({
   function copyFiles(
     paths: Array<string>,
     targetPath: string,
+    locationID: string,
     onProgress,
   ): Promise<boolean> {
     return copyFilesWithProgress(
       paths,
       targetPath,
-      undefined,
+      locationID,
       paths.length > 10 ? undefined : onProgress,
     )
       .then((success) => {
@@ -728,7 +730,7 @@ export const IOActionsContextProvider = ({
           return copyFilesWithProgress(
             metaPaths,
             getMetaDirectoryPath(targetPath),
-            undefined, //metaPaths.length > 10 ? undefined : onProgress,
+            locationID, //metaPaths.length > 10 ? undefined : onProgress,
             false,
           )
             .then(() => {
@@ -743,7 +745,7 @@ export const IOActionsContextProvider = ({
         return false;
       })
       .catch((err) => {
-        console.log('Moving files failed with ' + err);
+        console.log('Copy files failed', err);
         showNotification(t('core:copyingFilesFailed'));
         return false;
       });

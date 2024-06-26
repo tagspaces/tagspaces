@@ -27,6 +27,7 @@ type MoveOrCopyFilesDialogContextData = {
   openMoveOrCopyFilesDialog: (
     files: Array<File>,
     targetDirectory?: string,
+    targetLocationId?: string,
   ) => void;
   closeMoveOrCopyFilesDialog: () => void;
 };
@@ -54,12 +55,18 @@ export const MoveOrCopyFilesDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const files = useRef<TS.FileSystemEntry[]>(undefined);
   const targetDir = useRef<string>(undefined);
+  const targetLocationId = useRef<string>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog(selectedFiles: Array<File>, targetDirectory?: string) {
+  function openDialog(
+    selectedFiles: Array<File>,
+    targetDirectory?: string,
+    targetLocationID?: string,
+  ) {
     open.current = true;
     targetDir.current = targetDirectory;
+    targetLocationId.current = targetLocationID;
     isDirs(selectedFiles).then((isDirsArray) => {
       files.current = selectedFiles.map((file, index) => ({
         uuid: getUuid(),
@@ -112,6 +119,7 @@ export const MoveOrCopyFilesDialogContextProvider = ({
         onClose={closeDialog}
         selectedFiles={files.current?.filter((file) => file.isFile)} // todo enable for dir
         targetDir={targetDir.current}
+        targetLocationId={targetLocationId.current}
       />
       {children}
     </MoveOrCopyFilesDialogContext.Provider>

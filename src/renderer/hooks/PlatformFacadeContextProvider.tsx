@@ -277,14 +277,13 @@ export const PlatformFacadeContextProvider = ({
   ): Promise<boolean> {
     const controller = new AbortController();
     const signal = controller.signal;
+    const location = findLocation(locationID);
 
     const ioJobPromises = paths.map((path) => {
       const targetFile =
         normalizePath(targetPath) +
-        (currentLocation
-          ? currentLocation.getDirSeparator()
-          : AppConfig.dirSeparator) +
-        extractFileName(path, currentLocation?.getDirSeparator());
+        (location ? location.getDirSeparator() : AppConfig.dirSeparator) +
+        extractFileName(path, location?.getDirSeparator());
       return {
         promise: copyFilePromiseOverwrite(path, targetFile, locationID, false),
         path: path,
@@ -311,10 +310,9 @@ export const PlatformFacadeContextProvider = ({
         const targetPaths = paths.map((path) =>
           getAllPropertiesPromise(
             normalizePath(targetPath) +
-              (currentLocation
-                ? currentLocation.getDirSeparator()
-                : AppConfig.dirSeparator) +
-              extractFileName(path, currentLocation?.getDirSeparator()),
+              (location ? location.getDirSeparator() : AppConfig.dirSeparator) +
+              extractFileName(path, location?.getDirSeparator()),
+            locationID,
           ),
         );
         return reflectAddEntryPath(...targetPaths);

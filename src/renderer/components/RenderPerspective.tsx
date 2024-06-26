@@ -29,6 +29,9 @@ import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 const GridPerspective = React.lazy(
   () =>
@@ -154,42 +157,45 @@ function RenderPerspective(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const { perspective } = useDirectoryContentContext();
 
-  /*const defaultPerspective = useSelector(getDefaultPerspective);
-
-  let currentPerspective =
-    currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
-
-  if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
-    currentPerspective = defaultPerspective;
-  }*/
-
   const showWelcomePanel = !currentLocation;
   //!currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
   }
-  if (perspective === PerspectiveIDs.LIST) {
-    return (
-      <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
-  }
-  if (Pro && perspective === PerspectiveIDs.GALLERY) {
-    return <GalleryPerspectiveAsync />;
-  }
-  if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
-    return <MapiquePerspectiveAsync />;
-  }
-  if (Pro && perspective === PerspectiveIDs.KANBAN) {
-    return (
-      <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
-  }
-  if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
-    return <FolderVizPerspectiveAsync />;
-  }
 
-  return <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />;
+  function getPerspective() {
+    if (perspective === PerspectiveIDs.LIST) {
+      return (
+        <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+      );
+    }
+    if (Pro && perspective === PerspectiveIDs.GALLERY) {
+      return <GalleryPerspectiveAsync />;
+    }
+    if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
+      return <MapiquePerspectiveAsync />;
+    }
+    if (Pro && perspective === PerspectiveIDs.KANBAN) {
+      return (
+        <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+      );
+    }
+    if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
+      return <FolderVizPerspectiveAsync />;
+    }
+
+    return (
+      <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+    );
+  }
+  const { FILE } = NativeTypes;
+  return (
+    <TargetFileBox style={{ height: '100%' }} accepts={[FILE]}>
+      <CustomDragLayer />
+      {getPerspective()}
+    </TargetFileBox>
+  );
 }
 
 export default RenderPerspective;

@@ -171,7 +171,11 @@ function LocationView(props: Props) {
             console.log('uploadFiles', error);
           });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          handleEntryExist(selectedEntries, targetPath).then((exist) => {
+          handleEntryExist(
+            selectedEntries,
+            targetPath,
+            targetLocation.uuid,
+          ).then((exist) => {
             if (exist) {
               openEntryExistDialog(exist, () => {
                 moveFiles(arrPath, targetPath, targetLocation.uuid);
@@ -234,7 +238,11 @@ function LocationView(props: Props) {
           closeLocationTree={closeLocationTree}
         />
       )}*/}
-      <TargetFileBox accepts={[FILE]} directoryPath={location.path}>
+      <TargetFileBox
+        accepts={[FILE]}
+        directoryPath={location.path}
+        locationId={location.uuid}
+      >
         <CustomDragLayer />
         <ListItem
           data-tid={'location_' + location.name.replace(/ /g, '_')}

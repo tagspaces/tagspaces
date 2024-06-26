@@ -315,11 +315,7 @@ function FolderContainer(props: Props) {
           </>
         )}
       </div>
-      <TargetFileBox
-        style={{ minHeight: '100%', width: '100%' }}
-        accepts={[FILE]}
-      >
-        <CustomDragLayer />
+      <div style={{ minHeight: '100%', width: '100%' }}>
         {/*<LoadingAnimation />*/}
         <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
         {isRenameEntryDialogOpened && (
@@ -328,7 +324,7 @@ function FolderContainer(props: Props) {
             onClose={() => setRenameEntryDialogOpened(false)}
           />
         )}
-      </TargetFileBox>
+      </div>
       {isDesktopMode && (
         <ToggleButtonGroup
           value={perspective}

@@ -80,7 +80,11 @@ const DirectoryTreeView = forwardRef(
       if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
-          <TargetFileBox accepts={[FILE]} directoryPath={props.location.path}>
+          <TargetFileBox
+            accepts={[FILE]}
+            directoryPath={props.location.path}
+            locationId={location.uuid}
+          >
             <CustomDragLayer />
             <TargetTableMoveFileBox
               accepts={[DragItemTypes.FILE]}

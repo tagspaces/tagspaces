@@ -21,7 +21,7 @@ import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { Identifier } from 'dnd-core';
@@ -43,6 +43,7 @@ interface Props {
   children: ReactNode;
   accepts: Array<string>;
   directoryPath?: string;
+  locationId?: string;
   style?: React.CSSProperties;
 }
 
@@ -51,7 +52,7 @@ function TargetFileBox(props: Props) {
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
-  const { currentLocation, readOnlyMode, findLocalLocation } =
+  const { readOnlyMode, findLocalLocation, findLocation } =
     useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -59,7 +60,7 @@ function TargetFileBox(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
   //const ref = useRef<HTMLDivElement>(null);
-  const { children, accepts, directoryPath, style } = props;
+  const { children, accepts, directoryPath, style, locationId } = props;
   const dirPath = directoryPath ? directoryPath : currentDirectoryPath;
 
   const onUploadProgress = (progress, abort, fileName) => {
@@ -123,8 +124,13 @@ function TargetFileBox(props: Props) {
         }
 
         if (files && files.length) {
-          if (AppConfig.isElectron) {
-            return openMoveOrCopyFilesDialog(files, dirPath);
+          const location = findLocation(locationId);
+          if (
+            AppConfig.isElectron &&
+            !location.haveObjectStoreSupport() &&
+            !location.haveWebDavSupport()
+          ) {
+            return openMoveOrCopyFilesDialog(files, dirPath, location.uuid);
           } else {
             return handleCopyFiles(files);
           }
