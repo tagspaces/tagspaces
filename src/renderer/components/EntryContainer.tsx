@@ -129,7 +129,7 @@ function EntryContainer() {
     useState<boolean>(false);
   const [isConflictDialogOpen, setConflictDialogOpen] =
     useState<boolean>(false);
-  const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
+  const isSavingInProgress = useRef<boolean>(false);
   const [entryPropertiesHeight, setEntryPropertiesHeight] =
     useState<number>(100);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -435,7 +435,7 @@ function EntryContainer() {
       try {
         //check if file is changed
         if (fileChanged || force) {
-          setSavingInProgress(true);
+          isSavingInProgress.current = true;
           save(openedEntry).then((success) => {
             if (success) {
               setFileChanged(false);
@@ -445,11 +445,11 @@ function EntryContainer() {
               // );
             }
             // change state will not render DOT before file name too
-            setSavingInProgress(false);
+            isSavingInProgress.current = false;
           });
         }
       } catch (e) {
-        setSavingInProgress(false);
+        isSavingInProgress.current = false;
         console.debug('function getContent not exist for video file:', e);
       }
     }
@@ -700,7 +700,7 @@ function EntryContainer() {
                 variant="outlined"
                 color="primary"
                 startIcon={desktopMode && <SaveIcon />}
-                loading={isSavingInProgress}
+                loading={isSavingInProgress.current}
               >
                 {t('core:save')}
               </LoadingButton>

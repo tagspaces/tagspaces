@@ -31,9 +31,11 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 type FilePropertiesContextData = {
   description: string;
+  isDescriptionChanged: boolean;
   isSaveDescriptionConfirmOpened: boolean;
   isEditMode: boolean;
   setEditMode: (editMode: boolean) => void;
@@ -46,6 +48,7 @@ type FilePropertiesContextData = {
 
 export const FilePropertiesContext = createContext<FilePropertiesContextData>({
   description: undefined,
+  isDescriptionChanged: false,
   isSaveDescriptionConfirmOpened: false,
   isEditMode: false,
   setEditMode: () => {},
@@ -70,7 +73,7 @@ export const FilePropertiesContextProvider = ({
   const { setDescriptionChange } = useIOActionsContext();
   //const description = useRef<string>(openedEntry.meta?.description);
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
-  const isChanged = useRef<boolean>(false);
+  const isDescriptionChanged = useRef<boolean>(false);
   const isEditMode = useRef<boolean>(false);
   const isEditDescriptionMode = useRef<boolean>(false);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
@@ -79,16 +82,16 @@ export const FilePropertiesContextProvider = ({
 
   useEffect(() => {
     if (openedEntry) {
-      if (
-        isChanged.current &&
-        lastOpenedFile.current !== undefined &&
-        lastOpenedFile.current.path !== openedEntry.path
-      ) {
+      if (isDescriptionChanged.current) {
         // handle not saved changes
         saveDescriptionConfirmOpened(true);
       } else {
-        isEditMode.current = false;
-        isChanged.current = false;
+        if (
+          lastOpenedFile.current !== undefined &&
+          lastOpenedFile.current.path !== openedEntry.path
+        ) {
+          isEditMode.current = false;
+        }
         lastOpenedFile.current = { ...openedEntry };
         forceUpdate();
       }
@@ -109,7 +112,7 @@ export const FilePropertiesContextProvider = ({
       }
       // to reload description
       lastOpenedFile.current = { ...lastOpenedFile.current };
-      isChanged.current = false;
+      isDescriptionChanged.current = false;
       isEditMode.current = false;
       forceUpdate();
       setDescriptionChange(
@@ -133,13 +136,13 @@ export const FilePropertiesContextProvider = ({
         description: d,
       },
     };
-    isChanged.current = true;
+    isDescriptionChanged.current = true;
   }
 
   function setEditMode(editMode: boolean) {
     if (isEditMode.current !== editMode) {
       isEditMode.current = editMode;
-      isChanged.current = false;
+      isDescriptionChanged.current = false;
       lastOpenedFile.current = { ...openedEntry };
       forceUpdate();
     }
@@ -153,8 +156,9 @@ export const FilePropertiesContextProvider = ({
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
-      isChanged.current = false;
-      // reloadOpenedFile();
+      isDescriptionChanged.current = false;
+      isEditDescriptionMode.current = false;
+      lastOpenedFile.current = { ...openedEntry };
     }
     saveDescriptionConfirmOpened(isOpened);
   }
@@ -162,6 +166,7 @@ export const FilePropertiesContextProvider = ({
   const context = useMemo(() => {
     return {
       description: lastOpenedFile.current?.meta?.description,
+      isDescriptionChanged: isDescriptionChanged.current,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,
@@ -173,6 +178,7 @@ export const FilePropertiesContextProvider = ({
     };
   }, [
     openedEntry,
+    isDescriptionChanged.current,
     lastOpenedFile.current,
     isEditMode.current,
     isEditDescriptionMode.current,
@@ -182,6 +188,24 @@ export const FilePropertiesContextProvider = ({
   return (
     <FilePropertiesContext.Provider value={context}>
       {children}
+      <ConfirmDialog
+        open={isSaveDescriptionConfirmOpened}
+        onClose={() => {
+          setSaveDescriptionConfirmOpened(false);
+        }}
+        title={t('core:confirm')}
+        content={t('core:saveFileBeforeClosingFile')}
+        confirmCallback={(result) => {
+          if (result) {
+            saveDescription();
+          } else {
+            setSaveDescriptionConfirmOpened(false);
+          }
+        }}
+        cancelDialogTID="cancelSaveDescCloseDialog"
+        confirmDialogTID="confirmSaveDescCloseDialog"
+        confirmDialogContentTID="confirmDescDialogContent"
+      />
     </FilePropertiesContext.Provider>
   );
 };

@@ -1,33 +1,29 @@
-import React, { ForwardedRef, useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
+import React from 'react';
 import Button from '@mui/material/Button';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
-export interface DescriptionChangedRef {
+/*export interface DescriptionChangedRef {
   setDescriptionChanged: (changed: boolean) => void;
 }
 
 type Props = {
   buttonsRef: ForwardedRef<DescriptionChangedRef>;
-};
+};*/
 
-const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
+const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();
   const {
-    isSaveDescriptionConfirmOpened,
-    setSaveDescriptionConfirmOpened,
     saveDescription,
     isEditMode,
     isEditDescriptionMode,
     setEditDescriptionMode,
   } = useFilePropertiesContext();
-  const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
+  //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
-  React.useImperativeHandle(buttonsRef, () => ({
+  /*React.useImperativeHandle(buttonsRef, () => ({
     setDescriptionChanged: (changed) => {
       descriptionChanged(changed);
     },
@@ -37,7 +33,7 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
     if (!isEditDescriptionMode && isDescriptionChanged) {
       descriptionChanged(false);
     }
-  }, [isEditDescriptionMode]);
+  }, [isEditDescriptionMode]);*/
 
   // const printHTML = () => {
   //   const sanitizedDescription = description
@@ -92,24 +88,6 @@ const EditDescriptionButtons: React.FC<Props> = ({ buttonsRef }) => {
             : t('core:editDescription')}
         </Button>
       </ProTooltip>
-      <ConfirmDialog
-        open={isSaveDescriptionConfirmOpened}
-        onClose={() => {
-          setSaveDescriptionConfirmOpened(false);
-        }}
-        title={t('core:confirm')}
-        content={t('core:saveFileBeforeClosingFile')}
-        confirmCallback={(result) => {
-          if (result) {
-            saveDescription();
-          } else {
-            setSaveDescriptionConfirmOpened(false);
-          }
-        }}
-        cancelDialogTID="cancelSaveDescCloseDialog"
-        confirmDialogTID="confirmSaveDescCloseDialog"
-        confirmDialogContentTID="confirmDescDialogContent"
-      />
     </span>
   );
 };

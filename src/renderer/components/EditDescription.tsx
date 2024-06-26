@@ -39,7 +39,7 @@ function EditDescription() {
 
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const descriptionFocus = useRef<boolean>(false);
-  const descriptionButtonsRef = useRef(null);
+  // const descriptionButtonsRef = useRef(null);
 
   useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
@@ -59,16 +59,16 @@ function EditDescription() {
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
       setDescription(markdown);
-      if (descriptionButtonsRef.current) {
+      /*if (descriptionButtonsRef.current) {
         descriptionButtonsRef.current.setDescriptionChanged(true);
-      }
+      }*/
     }
   }, []);
 
   const noDescription = !description || description.length < 1;
   return (
     <EditDescriptionRoot>
-      <EditDescriptionButtons buttonsRef={descriptionButtonsRef} />
+      <EditDescriptionButtons />
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
