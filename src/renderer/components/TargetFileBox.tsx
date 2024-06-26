@@ -43,6 +43,7 @@ interface Props {
   children: ReactNode;
   accepts: Array<string>;
   directoryPath?: string;
+  style?: React.CSSProperties;
 }
 
 function TargetFileBox(props: Props) {
@@ -58,7 +59,7 @@ function TargetFileBox(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
   //const ref = useRef<HTMLDivElement>(null);
-  const { children, accepts, directoryPath } = props;
+  const { children, accepts, directoryPath, style } = props;
   const dirPath = directoryPath ? directoryPath : currentDirectoryPath;
 
   const onUploadProgress = (progress, abort, fileName) => {
@@ -147,8 +148,7 @@ function TargetFileBox(props: Props) {
     <div
       ref={drop}
       style={{
-        minHeight: '100%',
-        width: '100%',
+        ...style,
         ...(isActive && {
           boxShadow: 'inset 0px 0px 0 5px ' + theme.palette.primary.main,
           borderRadius: 5,

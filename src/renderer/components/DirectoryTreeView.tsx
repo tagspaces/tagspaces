@@ -28,6 +28,9 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 interface Props {
   classes: any;
@@ -71,15 +74,20 @@ const DirectoryTreeView = forwardRef(
       },
     }));
 
+    const { FILE } = NativeTypes;
+
     const renderBodyRow = (props) => {
       if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
-          <TargetTableMoveFileBox
-            accepts={[DragItemTypes.FILE]}
-            onDrop={handleFileMoveDrop}
-            {...props}
-          />
+          <TargetFileBox accepts={[FILE]} directoryPath={props.location.path}>
+            <CustomDragLayer />
+            <TargetTableMoveFileBox
+              accepts={[DragItemTypes.FILE]}
+              onDrop={handleFileMoveDrop}
+              {...props}
+            />
+          </TargetFileBox>
         );
       }
       return <tr {...props} />;

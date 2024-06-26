@@ -315,7 +315,10 @@ function FolderContainer(props: Props) {
           </>
         )}
       </div>
-      <TargetFileBox accepts={[FILE]}>
+      <TargetFileBox
+        style={{ minHeight: '100%', width: '100%' }}
+        accepts={[FILE]}
+      >
         <CustomDragLayer />
         {/*<LoadingAnimation />*/}
         <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
