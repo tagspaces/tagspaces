@@ -86,8 +86,13 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { setReflectActions } = useEditedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { saveDescription, description, isEditMode, setEditMode } =
-    useFilePropertiesContext();
+  const {
+    saveDescription,
+    description,
+    isEditMode,
+    setEditMode,
+    isEditDescriptionMode,
+  } = useFilePropertiesContext();
   const { setAutoSave, getMetadataID } = useIOActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
@@ -124,7 +129,7 @@ function EntryContainer() {
     useState<boolean>(false);
   const [isConflictDialogOpen, setConflictDialogOpen] =
     useState<boolean>(false);
-  const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
+  const isSavingInProgress = useRef<boolean>(false);
   const [entryPropertiesHeight, setEntryPropertiesHeight] =
     useState<number>(100);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -430,7 +435,7 @@ function EntryContainer() {
       try {
         //check if file is changed
         if (fileChanged || force) {
-          setSavingInProgress(true);
+          isSavingInProgress.current = true;
           save(openedEntry).then((success) => {
             if (success) {
               setFileChanged(false);
@@ -440,11 +445,11 @@ function EntryContainer() {
               // );
             }
             // change state will not render DOT before file name too
-            setSavingInProgress(false);
+            isSavingInProgress.current = false;
           });
         }
       } catch (e) {
-        setSavingInProgress(false);
+        isSavingInProgress.current = false;
         console.debug('function getContent not exist for video file:', e);
       }
     }
@@ -695,7 +700,7 @@ function EntryContainer() {
                 variant="outlined"
                 color="primary"
                 startIcon={desktopMode && <SaveIcon />}
-                loading={isSavingInProgress}
+                loading={isSavingInProgress.current}
               >
                 {t('core:save')}
               </LoadingButton>
@@ -706,7 +711,7 @@ function EntryContainer() {
         editFile = (
           <Tooltip title={t('core:editFile')}>
             <Button
-              disabled={false}
+              disabled={isEditDescriptionMode}
               size="small"
               variant="outlined"
               color="primary"
