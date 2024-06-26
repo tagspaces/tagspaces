@@ -24,7 +24,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '-/components/Tooltip';
-import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import DraggablePaper from '-/components/DraggablePaper';
 import LogoIcon from '-/assets/images/icon100x100.svg';
@@ -40,6 +39,7 @@ import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
 import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
+import TranslucentDialog from './TranslucentDialog';
 
 interface Props {
   open: boolean;
@@ -117,7 +117,7 @@ function AboutDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <TranslucentDialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -271,7 +271,7 @@ function AboutDialog(props: Props) {
           {t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </TranslucentDialog>
   );
 }
 

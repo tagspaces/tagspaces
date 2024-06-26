@@ -5,7 +5,9 @@ import DragItemTypes from '-/components/DragItemTypes';
 import React from 'react';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
@@ -281,6 +283,7 @@ export const renderCell = (
       </FileSourceDnd>
     );
   }
+  const { FILE } = NativeTypes;
 
   return (
     <div
@@ -289,21 +292,24 @@ export const renderCell = (
       }}
       key={key}
     >
-      <TargetMoveFileBox
-        accepts={[DragItemTypes.FILE]}
-        targetPath={fsEntry.path}
-        onDrop={handleFileMoveDrop}
-      >
-        {cellContent(
-          fsEntry,
-          selectedEntries,
-          index,
-          handleGridContextMenu,
-          handleGridCellClick,
-          handleGridCellDblClick,
-          isLast,
-        )}
-      </TargetMoveFileBox>
+      <TargetFileBox accepts={[FILE]} directoryPath={fsEntry.path}>
+        <CustomDragLayer />
+        <TargetMoveFileBox
+          accepts={[DragItemTypes.FILE]}
+          targetPath={fsEntry.path}
+          onDrop={handleFileMoveDrop}
+        >
+          {cellContent(
+            fsEntry,
+            selectedEntries,
+            index,
+            handleGridContextMenu,
+            handleGridCellClick,
+            handleGridCellDblClick,
+            isLast,
+          )}
+        </TargetMoveFileBox>
+      </TargetFileBox>
     </div>
   );
 };

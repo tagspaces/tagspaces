@@ -25,6 +25,7 @@ import {
   deleteDirectoryPromise,
   unZip,
   getDirProperties,
+  isDirectory,
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
 import path from 'path';
@@ -81,6 +82,10 @@ export default function loadMainEvents() {
   });
   ipcMain.handle('isWorkerAvailable', async () => {
     const results = await isWorkerAvailable();
+    return results;
+  });
+  ipcMain.handle('isDirectory', async (event, path) => {
+    const results = await isDirectory(path);
     return results;
   });
   ipcMain.handle('resolveRelativePaths', (event, relativePath) => {

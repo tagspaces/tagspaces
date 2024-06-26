@@ -23,7 +23,6 @@ import { connect, useSelector } from 'react-redux';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
-import { NativeTypes } from 'react-dnd-html5-backend';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -36,8 +35,6 @@ import {
   getMainVerticalSplitSize,
   actions as SettingsActions,
 } from '../reducers/settings';
-import TargetFileBox from '../components/TargetFileBox';
-import CustomDragLayer from '-/components/CustomDragLayer';
 import useEventListener from '-/utils/useEventListener';
 import PageNotification from '-/containers/PageNotification';
 import { styled, useTheme } from '@mui/material/styles';
@@ -227,8 +224,6 @@ function MainPage(props: Props) {
     showHelp: keyBindings.showHelp,
   };
 
-  const { FILE } = NativeTypes;
-
   const setPercent = (p: number | undefined) => {
     percent.current = p;
     if (p !== undefined) {
@@ -333,8 +328,7 @@ function MainPage(props: Props) {
           `}
           </style>
           {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
-            <TargetFileBox accepts={[FILE]}>
-              <CustomDragLayer />
+            <>
               <Drawer variant="persistent" anchor="left" open={drawerOpened}>
                 <MobileNavigation width={drawerWidth} />
               </Drawer>
@@ -345,7 +339,7 @@ function MainPage(props: Props) {
               >
                 {renderContainers()}
               </main>
-            </TargetFileBox>
+            </>
           ) : (
             <>
               <SwipeableDrawer

@@ -16,9 +16,9 @@
  *
  */
 
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { classes, DnD } from '-/components/DnD.css';
+import { alpha, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,16 +34,21 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
-type DragProps = { isActive: boolean; handlerId: Identifier | null };
+type DragProps = {
+  isActive: boolean;
+  handlerId: Identifier | null;
+};
 
 interface Props {
   children: ReactNode;
   accepts: Array<string>;
-  //setMoveCopyDialogOpened: (files: Array<File>) => void;
+  directoryPath?: string;
+  style?: React.CSSProperties;
 }
 
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { currentLocation, readOnlyMode, findLocalLocation } =
@@ -53,8 +58,9 @@ function TargetFileBox(props: Props) {
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
-  const ref = useRef<HTMLDivElement>(null);
-  //const { setMoveCopyDialogOpened } = props;
+  //const ref = useRef<HTMLDivElement>(null);
+  const { children, accepts, directoryPath, style } = props;
+  const dirPath = directoryPath ? directoryPath : currentDirectoryPath;
 
   const onUploadProgress = (progress, abort, fileName) => {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -67,7 +73,7 @@ function TargetFileBox(props: Props) {
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
-      if (currentDirectoryPath === undefined) {
+      if (dirPath === undefined) {
         showNotification(
           'Importing files failed, because no folder is opened in TagSpaces!',
           'error',
@@ -85,7 +91,7 @@ function TargetFileBox(props: Props) {
       const sourceLocationId = localLocation ? localLocation.uuid : undefined;
       return uploadFilesAPI(
         files,
-        currentDirectoryPath,
+        dirPath,
         onUploadProgress,
         true,
         false,
@@ -109,15 +115,20 @@ function TargetFileBox(props: Props) {
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
-      accept: props.accepts,
-      drop: ({ files }) => {
+      accept: accepts,
+      drop: ({ files }, m) => {
+        const didDrop = m.didDrop();
+        if (didDrop) {
+          return;
+        }
+
         if (files && files.length) {
           if (
             AppConfig.isElectron &&
             !currentLocation.haveObjectStoreSupport() &&
             !currentLocation.haveWebDavSupport()
           ) {
-            return openMoveOrCopyFilesDialog(files);
+            return openMoveOrCopyFilesDialog(files, dirPath);
           } else {
             return handleCopyFiles(files);
           }
@@ -125,24 +136,28 @@ function TargetFileBox(props: Props) {
       },
       collect: (m: DropTargetMonitor) => ({
         handlerId: m.getHandlerId(),
+        /*isOver: m.isOver(),*/
         isActive: m.isOver({ shallow: true }) && m.canDrop(),
       }),
     }),
-    [currentDirectoryPath],
+    [dirPath],
   );
 
-  drop(ref);
-
-  const { isActive } = collectedProps;
-  const { children } = props;
-  const dragContent = isActive ? (
-    <div className={classes.dropzone}>{t('core:releaseToDrop')}</div>
-  ) : undefined;
+  const { isActive, handlerId } = collectedProps;
   return (
-    <DnD ref={ref} style={{ height: '100%' }}>
-      {dragContent}
+    <div
+      ref={drop}
+      style={{
+        ...style,
+        ...(isActive && {
+          boxShadow: 'inset 0px 0px 0 5px ' + theme.palette.primary.main,
+          borderRadius: 5,
+          backgroundColor: alpha(theme.palette.primary.main, 0.5),
+        }),
+      }}
+    >
       {children}
-    </DnD>
+    </div>
   );
 }
 

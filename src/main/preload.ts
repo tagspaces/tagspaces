@@ -4,6 +4,7 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels =
   | 'isWorkerAvailable'
+  | 'isDirectory'
   | 'resolveRelativePaths'
   | 'set-language'
   | 'setZoomFactor'

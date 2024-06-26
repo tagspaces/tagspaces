@@ -45,6 +45,9 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 interface Props {
   location: CommonLocation;
@@ -220,7 +223,7 @@ function LocationView(props: Props) {
       </div>
     </Tooltip>
   );
-
+  const { FILE } = NativeTypes;
   return (
     /* <div key={location.uuid}> */
     <SidePanel>
@@ -231,80 +234,85 @@ function LocationView(props: Props) {
           closeLocationTree={closeLocationTree}
         />
       )}*/}
-      <ListItem
-        data-tid={'location_' + location.name.replace(/ /g, '_')}
-        className={
-          currentLocation && currentLocation.uuid === location.uuid
-            ? classes.listItemSelected
-            : classes.listItem
-        }
-        onClick={handleLocationClick}
-        onContextMenu={(event) =>
-          handleLocationContextMenuClick(event, location)
-        }
-      >
-        <ListItemIcon
-          // onClick={(e) => {
-          //   e.preventDefault();
-          //   this.loadSubDirectories(location, 1);
-          // }}
-          style={{
-            minWidth: 'auto',
-            cursor: 'pointer',
-          }}
-          onClick={handleLocationIconClick}
+      <TargetFileBox accepts={[FILE]} directoryPath={location.path}>
+        <CustomDragLayer />
+        <ListItem
+          data-tid={'location_' + location.name.replace(/ /g, '_')}
+          className={
+            currentLocation && currentLocation.uuid === location.uuid
+              ? classes.listItemSelected
+              : classes.listItem
+          }
+          onClick={handleLocationClick}
+          onContextMenu={(event) =>
+            handleLocationContextMenuClick(event, location)
+          }
         >
-          <Tooltip title={t('clickToExpand')}>
-            {isCloudLocation ? (
-              <CloudLocationIcon
-                style={{
-                  cursor: 'pointer',
-                }}
-                className={classes.icon}
-              />
-            ) : (
-              <LocalLocationIcon
-                style={{
-                  cursor: 'pointer',
-                }}
-                className={classes.icon}
-              />
-            )}
-          </Tooltip>
-        </ListItemIcon>
-        {isCloudLocation && !AppConfig.isElectron ? (
-          <>{LocationTitle}</>
-        ) : (
-          <TargetMoveFileBox
-            accepts={[DragItemTypes.FILE]}
-            onDrop={handleFileMoveDrop}
-            targetPath={currentLocationPath}
-            targetLocation={location}
+          <ListItemIcon
+            // onClick={(e) => {
+            //   e.preventDefault();
+            //   this.loadSubDirectories(location, 1);
+            // }}
+            style={{
+              minWidth: 'auto',
+              cursor: 'pointer',
+            }}
+            onClick={handleLocationIconClick}
           >
-            {LocationTitle}
-          </TargetMoveFileBox>
-        )}
-        <ListItemSecondaryAction>
-          <IconButton
-            aria-label={t('core:options')}
-            aria-haspopup="true"
-            edge="end"
-            data-tid={'locationMoreButton_' + location.name}
-            onClick={(event) => handleLocationContextMenuClick(event, location)}
-            onContextMenu={(event) =>
-              handleLocationContextMenuClick(event, location)
-            }
-            size="large"
-          >
-            {location.isDefault && (
-              <Tooltip title={t('core:thisIsStartupLocation')}>
-                <DefaultLocationIcon data-tid="startupIndication" />
-              </Tooltip>
-            )}
-            <MoreVertIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
+            <Tooltip title={t('clickToExpand')}>
+              {isCloudLocation ? (
+                <CloudLocationIcon
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  className={classes.icon}
+                />
+              ) : (
+                <LocalLocationIcon
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  className={classes.icon}
+                />
+              )}
+            </Tooltip>
+          </ListItemIcon>
+          {isCloudLocation && !AppConfig.isElectron ? (
+            <>{LocationTitle}</>
+          ) : (
+            <TargetMoveFileBox
+              accepts={[DragItemTypes.FILE]}
+              onDrop={handleFileMoveDrop}
+              targetPath={currentLocationPath}
+              targetLocation={location}
+            >
+              {LocationTitle}
+            </TargetMoveFileBox>
+          )}
+          <ListItemSecondaryAction>
+            <IconButton
+              aria-label={t('core:options')}
+              aria-haspopup="true"
+              edge="end"
+              data-tid={'locationMoreButton_' + location.name}
+              onClick={(event) =>
+                handleLocationContextMenuClick(event, location)
+              }
+              onContextMenu={(event) =>
+                handleLocationContextMenuClick(event, location)
+              }
+              size="large"
+            >
+              {location.isDefault && (
+                <Tooltip title={t('core:thisIsStartupLocation')}>
+                  <DefaultLocationIcon data-tid="startupIndication" />
+                </Tooltip>
+              )}
+              <MoreVertIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      </TargetFileBox>
       <DirectoryTreeView
         key={'tree_' + location.uuid}
         ref={directoryTreeRef}

@@ -34,7 +34,6 @@ function DirectoryListView(props: Props) {
   const { currentLocation, findLocation, locations } =
     useCurrentLocationContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
-  // const locations: Array<CommonLocation> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
     currentLocation ? currentLocation.uuid : undefined,
