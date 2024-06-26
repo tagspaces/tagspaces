@@ -18,7 +18,7 @@
 
 import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import { useDispatch, useSelector } from 'react-redux';
@@ -150,9 +150,9 @@ function TargetFileBox(props: Props) {
         minHeight: '100%',
         width: '100%',
         ...(isActive && {
-          boxShadow: 'inset 0px 2px 0 5px ' + theme.palette.primary.main,
+          boxShadow: 'inset 0px 0px 0 5px ' + theme.palette.primary.main,
           borderRadius: 5,
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: alpha(theme.palette.primary.main, 0.5),
         }),
       }}
     >
