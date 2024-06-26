@@ -123,11 +123,7 @@ function TargetFileBox(props: Props) {
         }
 
         if (files && files.length) {
-          if (
-            AppConfig.isElectron &&
-            !currentLocation.haveObjectStoreSupport() &&
-            !currentLocation.haveWebDavSupport()
-          ) {
+          if (AppConfig.isElectron) {
             return openMoveOrCopyFilesDialog(files, dirPath);
           } else {
             return handleCopyFiles(files);
