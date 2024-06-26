@@ -57,15 +57,6 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           type: 'separator',
         },
-        // {
-        //   label: i18n.t('print'),
-        //   accelerator: 'CmdOrCtrl+p',
-        //   click: (item, focusedWindow) => {
-        //     if (focusedWindow.webContents && focusedWindow.webContents.print) {
-        //       focusedWindow.webContents.print();
-        //     }
-        //   },
-        // },
         {
           type: 'separator',
         },
@@ -132,16 +123,14 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('showDevTools'),
           click: (item, focusedWindow) => {
-            if (focusedWindow) {
-              focusedWindow.toggleDevTools();
-            }
+            focusedWindow?.toggleDevTools();
           },
         },
         {
           label: i18n.t('reloadApplication'),
           accelerator: 'Alt+Shift+R',
           click: (item, focusedWindow) => {
-            focusedWindow.webContents.reload();
+            focusedWindow?.webContents.reload();
           },
         },
         {
@@ -180,11 +169,11 @@ export default function buildDesktopMenu(props: any, i18n) {
           accelerator: 'F11',
           click: (item, focusedWindow) => {
             // props.toggleFullScreen
-            if (focusedWindow.isFullScreen()) {
+            if (focusedWindow?.isFullScreen()) {
               props.exitFullscreen();
-              focusedWindow.setFullScreen(false);
+              focusedWindow?.setFullScreen(false);
             } else {
-              focusedWindow.setFullScreen(true);
+              focusedWindow?.setFullScreen(true);
             }
           },
         },

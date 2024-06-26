@@ -159,6 +159,25 @@ function getSpellcheckLanguage(i18n) {
 }
 
 function showApp() {
+  var windows = BrowserWindow.getAllWindows();
+  windows.forEach((win, i) => {
+    if (win) {
+      if (win.isMinimized()) {
+        win.restore();
+      } else {
+        win.show();
+      }
+    }
+  });
+  // if (mainWindow) {
+  //   if (mainWindow.isMinimized()) {
+  //     mainWindow.restore();
+  //   }
+  //   mainWindow?.show();
+  // }
+}
+
+function showMainWindow() {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -168,119 +187,148 @@ function showApp() {
 }
 
 function openLocationManagerPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-location-manager-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-location-manager-panel');
 }
 
 function openTagLibraryPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-tag-library-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-tag-library-panel');
 }
 
 function goBack() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'go-back');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'go-back');
 }
 
 function goForward() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'go-forward');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'go-forward');
 }
 
 function setZoomResetApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-reset-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-reset-app');
 }
 
 function setZoomInApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-in-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-in-app');
 }
 
 function setZoomOutApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-out-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-out-app');
 }
 
 function exitFullscreen() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'exit-fullscreen');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'exit-fullscreen');
 }
 
 function toggleSettingsDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-settings-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-settings-dialog');
 }
 
 function openHelpFeedbackPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-help-feedback-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-help-feedback-panel');
 }
 
 function toggleKeysDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-keys-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-keys-dialog');
 }
 
 function toggleOnboardingDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
 }
 
 function openURLExternally(data) {
-  showApp();
-  mainWindow?.webContents.send('open-url-externally', data);
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('open-url-externally', data);
 }
 
 function toggleLicenseDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-license-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-license-dialog');
 }
 
 function toggleThirdPartyLibsDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
 }
 
 function toggleAboutDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-about-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-about-dialog');
 }
 
 function showSearch() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-search');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'open-search');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'open-search');
+  }
 }
 
 function newTextFile() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'new-text-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'new-text-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'new-text-file');
+  }
 }
 
 function getNextFile() {
-  mainWindow?.webContents.send('cmd', 'next-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'next-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'next-file');
+  }
 }
 
 function getPreviousFile() {
-  mainWindow?.webContents.send('cmd', 'previous-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'previous-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'previous-file');
+  }
 }
 
 function showCreateDirectoryDialog() {
-  mainWindow?.webContents.send('cmd', 'show-create-directory-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'show-create-directory-dialog');
 }
 
 function toggleOpenLinkDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
 }
 
 function resumePlayback() {
-  mainWindow?.webContents.send('play-pause', true);
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'play-pause');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'play-pause');
+  }
 }
 
 function reloadApp() {
-  showApp();
-  mainWindow?.loadURL(resolveHtmlPath('index.html'));
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.loadURL(resolveHtmlPath('index.html'));
 }
 
 function createNewWindowInstance(url?) {
@@ -697,7 +745,8 @@ app
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
-        mainWindow?.webContents.setZoomFactor(zoomLevel);
+        var focusedWindow = BrowserWindow.getFocusedWindow();
+        focusedWindow?.webContents.setZoomFactor(zoomLevel);
       });
 
       ipcMain.on('global-shortcuts-enabled', (e, globalShortcuts) => {
