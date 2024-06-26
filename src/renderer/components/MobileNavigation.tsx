@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { alpha, useTheme, styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import Box from '@mui/material/Box';
@@ -100,6 +100,7 @@ interface Props {
 
 function MobileNavigation(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
 
   const { setSelectedLocation } = useCurrentLocationContext();
@@ -157,6 +158,8 @@ function MobileNavigation(props: Props) {
     <Root
       style={{
         // backgroundColor: theme.palette.background.default,
+        background: alpha(theme.palette.background.default, 0.85),
+        backdropFilter: 'blur(5px)',
         height: '100%',
         overflow: 'hidden',
         width: width || 320,

@@ -329,7 +329,12 @@ function MainPage(props: Props) {
           </style>
           {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
             <>
-              <Drawer variant="persistent" anchor="left" open={drawerOpened}>
+              <Drawer
+                style={{ backgroundColor: 'unset' }}
+                variant="persistent"
+                anchor="left"
+                open={drawerOpened}
+              >
                 <MobileNavigation width={drawerWidth} />
               </Drawer>
               <main
