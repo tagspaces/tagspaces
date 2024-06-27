@@ -46,9 +46,9 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     const isMac = /^darwin/.test(process.platform);
     await clickOn(selectorFile);
     if (isMac) {
-      await global.client.keyboard.press('Meta+KeyF');
+      await global.client.keyboard.press('Meta+KeyK');
     } else {
-      await global.client.keyboard.press('Control+KeyF');
+      await global.client.keyboard.press('Control+KeyK');
     }
     await expectElementExist('#textQuery', true, 2000);
   });
