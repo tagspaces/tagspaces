@@ -317,13 +317,16 @@ function toggleOpenLinkDialog() {
 }
 
 function resumePlayback() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('cmd', 'play-pause');
-  } else {
-    showMainWindow();
-    mainWindow?.webContents.send('cmd', 'play-pause');
-  }
+  // var focusedWindow = BrowserWindow.getFocusedWindow();
+  // if (focusedWindow) {
+  //   focusedWindow?.webContents.send('cmd', 'play-pause');
+  // } else {
+  //   mainWindow?.webContents.send('cmd', 'play-pause');
+  // }
+  var windows = BrowserWindow.getAllWindows();
+  windows.forEach((win, i) => {
+    win?.webContents.send('cmd', 'play-pause');
+  });
 }
 
 function reloadApp() {
