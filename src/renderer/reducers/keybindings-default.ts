@@ -78,7 +78,7 @@ export default function keyBindings(isMacLike) {
     },
     {
       name: 'openSearch',
-      command: (isMacLike ? 'command' : 'ctrl') + '+f',
+      command: (isMacLike ? 'command' : 'ctrl') + '+k',
     },
     {
       name: 'renameFile',

@@ -27,7 +27,7 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-import { getDesktopMode } from '-/reducers/settings';
+import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import {
   actions as AppActions,
   AppDispatch,
@@ -67,6 +67,7 @@ function FolderContainer(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const keyBindings = useSelector(getKeyBindingObject);
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const {
@@ -182,14 +183,7 @@ function FolderContainer(props: Props) {
     enterSearchMode();
   };
 
-  const openSearchKeyBinding = AppConfig.isElectron
-    ? ' (' +
-      adjustKeyBinding(
-        AppConfig.isMacLike ? 'Command+Shift+F' : 'Ctrl+Shift+F',
-      ) +
-      ')'
-    : '';
-  // keyBindings['openSearch'].toUpperCase()
+  const openSearchKeyBinding = ` (${adjustKeyBinding(keyBindings.openSearch)})`;
 
   const { FILE } = NativeTypes;
 
@@ -278,7 +272,7 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column',
               }}
             />
-            <Tooltip title={t('core:searchTitle') + openSearchKeyBinding}>
+            <Tooltip title={t('core:openSearch') + openSearchKeyBinding}>
               <IconButton
                 data-tid="toggleSearch"
                 onClick={openSearchMode}
