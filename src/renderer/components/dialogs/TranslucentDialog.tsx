@@ -18,13 +18,30 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { alpha, useTheme, styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
 
-const TranslucentDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-paper': {
-    background: alpha(theme.palette.background.default, 0.85),
-    backdropFilter: 'blur(5px)',
-  },
-})) as typeof Dialog;
+// const TranslucentDialog1 = styled(Dialog)(({ theme }) => ({
+//   '& .MuiDialog-paper': {
+//     background: alpha(theme.palette.background.default, 0.85),
+//     backdropFilter: 'blur(5px)',
+//   },
+// })) as typeof Dialog;
+
+const TranslucentDialog = (props: DialogProps) => {
+  const theme = useTheme();
+  return (
+    <Dialog
+      {...props}
+      sx={{
+        '& .MuiDialog-paper': {
+          background: props.fullScreen
+            ? theme.palette.background.default
+            : alpha(theme.palette.background.default, 0.85),
+          backdropFilter: props.fullScreen ? 'unset' : 'blur(5px)',
+        },
+      }}
+    />
+  );
+};
 
 export default TranslucentDialog;
