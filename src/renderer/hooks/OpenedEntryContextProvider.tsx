@@ -156,7 +156,7 @@ export const OpenedEntryContextProvider = ({
   const { actions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
-  const { setEditMode, isEditMode } = useFilePropertiesContext();
+  const { setEditMode } = useFilePropertiesContext();
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   //const locations: CommonLocation[] = useSelector(getLocations);
@@ -569,7 +569,7 @@ export const OpenedEntryContextProvider = ({
     if (currentEntry.current) {
       //openedEntries.length > 0) {
       const openFile = currentEntry.current; //openedEntries[0];
-      if (isEditMode) {
+      if (fileChanged.current) {
         entryForOpening = {
           ...openFile,
         }; // false };

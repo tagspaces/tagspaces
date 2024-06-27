@@ -673,7 +673,10 @@ function EntryContainer() {
           <ButtonGroup>
             <Tooltip title={t('core:cancelEditing')}>
               <Button
-                onClick={() => setEditMode(false) /*reloadDocument*/}
+                onClick={() => {
+                  setEditMode(false);
+                  setFileChanged(false);
+                }}
                 aria-label={t('core:cancelEditing')}
                 size="small"
                 variant="outlined"
