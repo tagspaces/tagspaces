@@ -541,9 +541,9 @@ export function convertToDateTime(dateTime: string) {
         return time;
       }
     }
-    if (dateTime.includes('~')) {
+    if (dateTime.includes('-')) {
       // for compatibility
-      time = dateTime.split('~');
+      time = dateTime.split('-');
       if (parseInt(time[0], 10) && parseInt(time[1], 10)) {
         firstTime = time[0];
         secondTime = time[1];
