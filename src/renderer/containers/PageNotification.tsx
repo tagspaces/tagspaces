@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';

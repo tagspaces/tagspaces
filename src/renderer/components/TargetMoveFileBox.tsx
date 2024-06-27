@@ -71,7 +71,11 @@ const TargetMoveFileBox = (props: Props) => {
   });
   return (
     <div ref={drop}>
-      {canDrop && isOver && <DnD className={classes.dropzone} />}
+      {canDrop && isOver && (
+        <DnD>
+          <div className={classes.dropzone}></div>
+        </DnD>
+      )}
       {children}
     </div>
   );
