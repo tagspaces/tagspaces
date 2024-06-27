@@ -22,7 +22,7 @@ import Dialog from '@mui/material/Dialog';
 
 const TranslucentDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
-    background: alpha(theme.palette.background.default, 0.8),
+    background: alpha(theme.palette.background.default, 0.85),
     backdropFilter: 'blur(5px)',
   },
 })) as typeof Dialog;
