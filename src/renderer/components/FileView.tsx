@@ -56,16 +56,8 @@ function FileView(props: Props) {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('cmd', (arg) => {
         if (arg === 'play-pause') {
-          if (
-            fileViewer &&
-            fileViewer.current &&
-            fileViewer.current.contentWindow &&
-            // @ts-ignore
-            fileViewer.current.contentWindow.togglePlay
-          ) {
-            // @ts-ignore
-            fileViewer.current.contentWindow.togglePlay();
-          }
+          // @ts-ignore
+          fileViewer?.current?.contentWindow?.togglePlay();
         }
       });
 
