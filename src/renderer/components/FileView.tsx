@@ -54,22 +54,24 @@ function FileView(props: Props) {
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('play-pause', (arg) => {
-        if (
-          fileViewer &&
-          fileViewer.current &&
-          fileViewer.current.contentWindow &&
-          // @ts-ignore
-          fileViewer.current.contentWindow.togglePlay
-        ) {
-          // @ts-ignore
-          fileViewer.current.contentWindow.togglePlay();
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+        if (arg === 'play-pause') {
+          if (
+            fileViewer &&
+            fileViewer.current &&
+            fileViewer.current.contentWindow &&
+            // @ts-ignore
+            fileViewer.current.contentWindow.togglePlay
+          ) {
+            // @ts-ignore
+            fileViewer.current.contentWindow.togglePlay();
+          }
         }
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+          window.electronIO.ipcRenderer.removeAllListeners('cmd');
         }
       };
     }
