@@ -304,10 +304,13 @@ export default (state: any = initialState, action: any) => {
       };
     }*/
     case types.SET_SEARCH_FILTER: {
-      return {
-        ...state,
-        searchFilter: action.searchFilter,
-      };
+      if (action.searchFilter !== state.searchFilter) {
+        return {
+          ...state,
+          searchFilter: action.searchFilter,
+        };
+      }
+      return state;
     }
     /*case types.OPEN_LOCATIONMANAGER_PANEL: {
       return {

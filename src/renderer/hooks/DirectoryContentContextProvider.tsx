@@ -867,6 +867,11 @@ export const DirectoryContentContextProvider = ({
   ): TS.FileSystemEntry[] {
     hideNotifications(['error']);
 
+    if (isSearchMode.current) {
+      isSearchMode.current = false;
+      dispatch(AppActions.setSearchFilter(undefined));
+    }
+
     if (directoryMeta.current) {
       /*if (directoryMeta.current.perspective) {
         currentPerspective.current = directoryMeta.current
@@ -893,8 +898,6 @@ export const DirectoryContentContextProvider = ({
       undefined,
       showHiddenEntries,
     );
-
-    isSearchMode.current = false;
 
     setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
