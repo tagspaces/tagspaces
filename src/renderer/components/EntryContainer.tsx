@@ -490,7 +490,13 @@ function EntryContainer() {
     const textContent = fileViewer.current.contentWindow.getContent();
     const location = findLocation(fileOpen.locationID);
     if (location) {
-      if (Pro && revisionsEnabled) {
+      if (
+        Pro &&
+        revisionsEnabled &&
+        fileOpen.path.indexOf(
+          location.getDirSeparator() + AppConfig.metaFolder,
+        ) === -1
+      ) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
         const targetPath = getBackupFileLocation(
           fileOpen.path,
