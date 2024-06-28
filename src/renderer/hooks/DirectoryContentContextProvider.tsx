@@ -999,9 +999,7 @@ export const DirectoryContentContextProvider = ({
         setReflectMetaActions(action);
       })
       .catch((error) => {
-        console.log(
-          'Error getting properties for entry: ' + directory + ' - ' + error,
-        );
+        console.log('Error getting properties for entry: ' + directory, error);
       });
 
     /*return new Promise((resolve) => {
@@ -1307,7 +1305,7 @@ export const DirectoryContentContextProvider = ({
       );
     }
     if (entry.name === AppConfig.metaFolder) {
-      return Promise.resolve(undefined);
+      return Promise.resolve(entry);
     }
     const location = findLocation(entry.locationID);
     return getDirMeta(entry.path, location).then((meta) => ({
