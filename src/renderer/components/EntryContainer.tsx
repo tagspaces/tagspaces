@@ -494,7 +494,9 @@ function EntryContainer() {
         Pro &&
         revisionsEnabled &&
         fileOpen.path.indexOf(
-          location.getDirSeparator() + AppConfig.metaFolder,
+          location.getDirSeparator() +
+            AppConfig.metaFolder +
+            location.getDirSeparator(),
         ) === -1
       ) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
