@@ -945,8 +945,6 @@ function EntryContainer() {
         saveAs={saveAs}
         override={override}
       />
-      {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
-      <a href="#" id="downloadFile" />
     </GlobalHotKeys>
   );
 }

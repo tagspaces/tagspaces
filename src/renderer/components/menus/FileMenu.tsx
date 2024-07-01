@@ -24,7 +24,7 @@ import { Menu, MenuList, MenuItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
 import OpenFileNatively from '@mui/icons-material/Launch';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import { ParentFolderIcon, DownloadIcon } from '-/components/CommonIcons';
 import OpenFolderInternally from '@mui/icons-material/Folder';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -41,6 +41,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import {
   createNewInstance,
+  downloadFile,
   getRelativeEntryPath,
   openDirectoryMessage,
 } from '-/services/utils-io';
@@ -533,6 +534,32 @@ function FileMenu(props: Props) {
           <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:copySharingLink')} />
+      </MenuItem>,
+    );
+
+    menuItems.push(
+      <MenuItem
+        key="downloadFileUrl"
+        data-tid="downloadFileUrlTID"
+        onClick={() => {
+          const url = currentLocation.haveObjectStoreSupport()
+            ? currentLocation.generateURLforPath(selectedFilePath, 86400)
+            : undefined;
+          const downloadResult = downloadFile(
+            selectedFilePath,
+            url,
+            currentLocation?.getDirSeparator(),
+          );
+          if (downloadResult === -1) {
+            showNotification(t('core:cantDownloadLocalFile'));
+          }
+          onClose();
+        }}
+      >
+        <ListItemIcon>
+          <DownloadIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>,
     );
   }
