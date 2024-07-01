@@ -22,6 +22,7 @@
     "@tagspaces/tagspaces-common-node": "4.3.25",
     "@tagspaces/tagspaces-ws": "4.3.25",
     "sharp": "0.32.6",
+    "node-fetch": "3.3.2",
     "ws": "8.16.0"
   },
   "optionalDependencies": {

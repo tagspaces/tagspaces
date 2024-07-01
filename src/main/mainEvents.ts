@@ -352,6 +352,58 @@ export default function loadMainEvents() {
   ipcMain.on('openUrl', async (event, url) => {
     await shell.openExternal(url);
   });
+  ipcMain.on('downloadFile', async (event, param, url, withProgress) => {
+    try {
+      const fetch = await import('node-fetch').then((module) => module.default);
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      let onUploadProgress = undefined;
+      if (withProgress) {
+        progress['downloadFile'] = newProgress(
+          'downloadFile',
+          1, // param.total,
+        );
+        onUploadProgress = getOnProgress('downloadFile', progress);
+      }
+
+      const succeeded = await saveBinaryFilePromise(
+        param,
+        response.body,
+        false,
+      );
+      if (succeeded && onUploadProgress) {
+        onUploadProgress({ key: param.path, loaded: 1, total: 1 }, undefined);
+      }
+      return succeeded;
+      /*const reader = response.body.getReader();
+      const chunks = [];
+      let totalBytes = 0;
+      let done = false;
+
+      while (!done) {
+        const { done: doneReading, value } = await reader.read();
+        if (doneReading) {
+          done = true;
+        } else {
+          chunks.push(value);
+          totalBytes += value.length;
+        }
+      }
+
+      const fileBuffer = Buffer.concat(chunks);
+      fs.writeFileSync(outputPath, fileBuffer);
+
+      console.log(`Total bytes downloaded: ${totalBytes}`);
+      return totalBytes;*/
+    } catch (error) {
+      console.error('Error downloading the file:', error);
+    }
+
+    return false;
+  });
   ipcMain.handle('selectDirectoryDialog', async () => {
     const options = {
       properties: ['openDirectory', 'createDirectory'],

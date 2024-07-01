@@ -39,6 +39,7 @@ export type Channels =
   | 'openDirectory'
   | 'openFile'
   | 'openUrl'
+  | 'downloadFile'
   | 'selectDirectoryDialog'
   | 'load-extensions'
   | 'removeExtension'

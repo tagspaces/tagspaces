@@ -106,7 +106,16 @@ export const FileUploadDialogContextProvider = ({
               const selectedPath = decodeURI(selectedPaths[0]);
               dispatch(AppActions.resetProgress());
               openDialog();
-              const onUploadProgress = (progress, abort, fileName) => {
+              window.electronIO.ipcRenderer
+                .invoke(
+                  'downloadFile',
+                  { path: selectedPath + '/' + decodeURIComponent(fileName) },
+                  fileUrl,
+                  true,
+                )
+                .then((success) => console.log('downloadFile:' + success));
+
+              /*const onUploadProgress = (progress, abort, fileName) => {
                 dispatch(
                   AppActions.onUploadProgress(progress, abort, fileName),
                 );
@@ -134,7 +143,7 @@ export const FileUploadDialogContextProvider = ({
                     'error',
                     true,
                   );
-                });
+                });*/
             })
             .catch((err) => {
               console.log('selectDirectoryDialog failed with: ' + err);
