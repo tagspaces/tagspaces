@@ -752,7 +752,7 @@ export const IOActionsContextProvider = ({
   }
 
   /**
-   * S3 TODO work for test files only
+   * S3 TODO deprecated fetch must be moved in main thread
    * @param url
    * @param targetPath
    * @param onDownloadProgress

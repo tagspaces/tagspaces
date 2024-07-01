@@ -1198,6 +1198,9 @@ export const DirectoryContentContextProvider = ({
     dirEntries: TS.FileSystemEntry[],
     pageFiles?: TS.FileSystemEntry[],
   ): Promise<TS.FileSystemEntry[]> {
+    if (!currentLocation) {
+      return Promise.resolve([]);
+    }
     return currentLocation
       .listMetaDirectoryPromise(directoryPath)
       .then((meta) => {

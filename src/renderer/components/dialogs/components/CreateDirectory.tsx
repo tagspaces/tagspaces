@@ -256,7 +256,7 @@ function CreateDirectory(props: Props) {
           }}
         >
           <Button
-            data-tid={tid('cancelRenameEntryTID')}
+            data-tid={tid('downloadFileUrlTID')}
             className={classes.createButton}
             onClick={() => downloadURL()}
           >

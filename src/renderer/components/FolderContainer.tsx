@@ -311,6 +311,8 @@ function FolderContainer(props: Props) {
       </div>
       <div style={{ minHeight: '100%', width: '100%' }}>
         {/*<LoadingAnimation />*/}
+        {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
+        <a href="#" id="downloadFile" />
         <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
         {isRenameEntryDialogOpened && (
           <RenameEntryDialog

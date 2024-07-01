@@ -19,7 +19,8 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
 import {
-  extractFileExtension,
+  baseName,
+  extractFileName,
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
@@ -978,6 +979,92 @@ export function getDevicePaths(): Promise<any> {
     console.log('getDevicePaths not supported');
     return Promise.resolve(undefined);
   }
+}
+
+/**
+ * @param filePath
+ * @param fileUrl
+ * @param dirSeparator
+ * return 0- succeeded; -1 -error cantDownloadLocalFile; 1 - unknown error
+ */
+export function downloadFile(
+  filePath: string,
+  fileUrl: string,
+  dirSeparator: string,
+): number {
+  const entryName = `${baseName(filePath, dirSeparator)}`;
+  const fileName = extractFileName(entryName, dirSeparator);
+
+  if (AppConfig.isCordova) {
+    if (fileUrl) {
+      const downloadCordova = (uri, filename) => {
+        const { Downloader } = window.plugins;
+
+        const downloadSuccessCallback = (result) => {
+          // result is an object
+          /* {
+            path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
+            file: "My Pdf.pdf", // Returns Filename
+            folder: "documents" // Returns folder name
+          } */
+          console.log(result.file); // My Pdf.pdf
+        };
+
+        const downloadErrorCallback = (error) => {
+          console.log(error);
+        };
+
+        const options = {
+          title: 'Downloading File:' + filename, // Download Notification Title
+          url: uri, // File Url
+          path: filename, // The File Name with extension
+          description: 'The file is downloading', // Download description Notification String
+          visible: true, // This download is visible and shows in the notifications while in progress and after completion.
+          folder: 'documents', // Folder to save the downloaded file, if not exist it will be created
+        };
+
+        Downloader.download(
+          options,
+          downloadSuccessCallback,
+          downloadErrorCallback,
+        );
+      };
+      downloadCordova(fileUrl, entryName);
+    } else {
+      console.log('Can only download HTTP/HTTPS URIs');
+      return -1;
+      //showNotification(t('core:cantDownloadLocalFile'));
+    }
+  } else {
+    const downloadLink = document.getElementById('downloadFile');
+    if (downloadLink) {
+      if (AppConfig.isWeb) {
+        // eslint-disable-next-line no-restricted-globals
+        const { protocol } = location;
+        // eslint-disable-next-line no-restricted-globals
+        const { hostname } = location;
+        // eslint-disable-next-line no-restricted-globals
+        const { port } = location;
+        const link = `${protocol}//${hostname}${
+          port !== '' ? `:${port}` : ''
+        }/${filePath}`;
+        downloadLink.setAttribute('href', link);
+      } else {
+        downloadLink.setAttribute('href', `file:///${filePath}`);
+      }
+
+      if (fileUrl) {
+        // mostly the s3 case
+        downloadLink.setAttribute('target', '_blank');
+        downloadLink.setAttribute('href', fileUrl);
+      }
+
+      downloadLink.setAttribute('download', fileName); // works only for same origin
+      downloadLink.click();
+      return 0;
+    }
+  }
+  return 1;
 }
 
 export function selectDirectoryDialog(): Promise<any> {
