@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
@@ -54,6 +54,15 @@ export const SortedDirContextProvider = ({
   /*const settings: TS.FolderSettings = useMemo(() => {
     return getSettings(directoryMeta, perspective);
   }, [directoryMeta, perspective]);*/
+
+  useEffect(() => {
+    if (settings.sortBy !== sortBy) {
+      setSortBy(settings.sortBy);
+    }
+    if (settings.orderBy !== orderBy) {
+      setOrderBy(settings.orderBy);
+    }
+  }, [settings]);
 
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy,
