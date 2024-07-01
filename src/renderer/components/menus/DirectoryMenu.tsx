@@ -207,9 +207,13 @@ function DirectoryMenu(props: Props) {
 
   function openInNewWindow() {
     generateFolderLink().then((sharingLink) => {
-      const newInstanceLink =
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      createNewInstance(newInstanceLink);
+      if (sharingLink && sharingLink.url !== undefined) {
+        const newInstanceLink =
+          window.location.href.split('?')[0] +
+          '?' +
+          sharingLink.url.split('?')[1];
+        createNewInstance(newInstanceLink);
+      }
     });
   }
 
