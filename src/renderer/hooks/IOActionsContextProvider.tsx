@@ -109,6 +109,7 @@ type IOActionsContextData = {
   downloadFile: (
     url: string,
     targetPath: string,
+    targetLocationId: string,
     onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
   uploadFilesAPI: (
@@ -755,35 +756,42 @@ export const IOActionsContextProvider = ({
    * S3 TODO work for test files only
    * @param url
    * @param targetPath
+   * @param targetLocationId
    * @param onDownloadProgress
    */
   function downloadFile(
     url: string,
     targetPath: string,
+    targetLocationId: string,
     onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
   ): Promise<TS.FileSystemEntry> {
+    const location = findLocation(targetLocationId);
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
-      if (AppConfig.isElectron && !currentLocation.haveObjectStoreSupport()) {
+      if (AppConfig.isElectron && !location.haveObjectStoreSupport()) {
         return saveBinaryFilePromise(
-          { path: targetPath },
+          { path: targetPath, locationID: targetLocationId },
           response.body,
           true,
           onDownloadProgress,
         );
       }
       return response.arrayBuffer().then((arrayBuffer) => {
-        return saveFilePromise({ path: targetPath }, arrayBuffer, true);
+        return saveFilePromise(
+          { path: targetPath, locationID: targetLocationId },
+          arrayBuffer,
+          true,
+        );
       });
     }
     return fetch(url)
       .then((response) => saveFile(response))
       .then((fsEntry: TS.FileSystemEntry) => {
         return generateThumbnailPromise(
-          currentLocation.haveObjectStoreSupport() ? url : fsEntry.path,
+          location.haveObjectStoreSupport() ? url : fsEntry.path,
           fsEntry.size,
-          currentLocation.loadTextFilePromise,
-          currentLocation.getFileContentPromise,
-          currentLocation?.getDirSeparator(),
+          location.loadTextFilePromise,
+          location.getFileContentPromise,
+          location.getDirSeparator(),
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
@@ -792,7 +800,7 @@ export const IOActionsContextProvider = ({
               {
                 path: getThumbFileLocationForFile(
                   targetPath,
-                  currentLocation?.getDirSeparator(),
+                  location.getDirSeparator(),
                   false,
                 ),
               },
@@ -800,7 +808,7 @@ export const IOActionsContextProvider = ({
               true,
             ).then((thumb: TS.FileSystemEntry) => ({
               ...fsEntry,
-              thumbPath: currentLocation.getThumbPath(thumb.path),
+              thumbPath: location.getThumbPath(thumb.path),
             }));
           }
           return fsEntry;

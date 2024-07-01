@@ -64,7 +64,7 @@ interface Props {
 function CreateDirectory(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation, findLocalLocation } = useCurrentLocationContext();
   const { downloadFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
@@ -134,6 +134,7 @@ function CreateDirectory(props: Props) {
           downloadFile(
             fileUrl.current,
             targetDirectoryPath + '/' + decodeURIComponent(fileName),
+            findLocalLocation().uuid,
             onUploadProgress,
           )
             .then(() => {
@@ -256,7 +257,7 @@ function CreateDirectory(props: Props) {
           }}
         >
           <Button
-            data-tid={tid('cancelRenameEntryTID')}
+            data-tid={tid('downloadFileUrlTID')}
             className={classes.createButton}
             onClick={() => downloadURL()}
           >

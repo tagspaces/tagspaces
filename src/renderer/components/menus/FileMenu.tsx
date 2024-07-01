@@ -67,6 +67,7 @@ import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 interface Props {
   anchorEl: Element;
@@ -112,6 +113,7 @@ function FileMenu(props: Props) {
     duplicateFile,
     setFolderBackgroundPromise,
   } = useIOActionsContext();
+  const { downloadFileURL } = useFileUploadDialogContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -535,6 +537,25 @@ function FileMenu(props: Props) {
         <ListItemText primary={t('core:copySharingLink')} />
       </MenuItem>,
     );
+    if (currentLocation && currentLocation.haveObjectStoreSupport()) {
+      menuItems.push(
+        <MenuItem
+          key="downloadFileUrl"
+          data-tid="downloadFileUrlTID"
+          onClick={() => {
+            downloadFileURL(
+              currentLocation.generateURLforPath(selectedFilePath, 86400),
+            ); // 1 day
+            onClose();
+          }}
+        >
+          <ListItemIcon>
+            <LinkIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:downloadFile')} />
+        </MenuItem>,
+      );
+    }
   }
 
   if (selectedEntries.length < 2) {
