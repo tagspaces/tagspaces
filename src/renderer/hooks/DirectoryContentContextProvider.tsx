@@ -409,7 +409,9 @@ export const DirectoryContentContextProvider = ({
                 (entry) => entry.path === action.entry.path,
               )
             ) {
-              if (
+              selected.push(action.entry);
+              updated = true;
+              /*if (
                 !selectedEntries.some(
                   (entry) => entry.path === action.entry.path,
                 )
@@ -420,7 +422,7 @@ export const DirectoryContentContextProvider = ({
                   selected.push(action.entry);
                 }
                 updated = true;
-              }
+              }*/
             }
           } else if (action.action === 'delete') {
             let index = selectedEntries.findIndex(
