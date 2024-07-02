@@ -634,7 +634,6 @@ export const TaggingActionsContextProvider = ({
     delete tag.functionality;
     delete tag.path;
     delete tag.id;
-
     const extractedTags: string[] = extractTags(
       path,
       tagDelimiter,
@@ -642,7 +641,8 @@ export const TaggingActionsContextProvider = ({
     );
     // TODO: Handle adding already added tags
     if (extractedTags.includes(tag.title)) {
-      // tag.type === 'plain') {
+      //tag.type === 'plain') {
+
       const fileName = extractFileName(
         path,
         currentLocation?.getDirSeparator(),
