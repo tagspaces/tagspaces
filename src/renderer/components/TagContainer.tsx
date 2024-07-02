@@ -127,7 +127,7 @@ function TagContainer(props: Props) {
         const haveTime1 = timeArr[1].length > 8;
         tagTitle =
           formatDateTime(firstTime, haveTime0) +
-          ' - ' +
+          ' <-> ' +
           formatDateTime(secondTime, haveTime1);
       }
     } else if (tag.title.length > 8) {
