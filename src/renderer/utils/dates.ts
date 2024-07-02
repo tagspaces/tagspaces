@@ -501,8 +501,13 @@ export function convertToTimestamp(dateStr: string): number {
     'yyyy',
     'yyyyMM',
     'yyyyMMdd',
-    //'yyyyMMdd HHmmss',
+    'yyyyMMdd~HHmmss',
+    'yyyyMMdd-HHmmss',
+    'yyyyMMdd HHmmss',
     "yyyyMMdd'T'HHmmss",
+    'yyyy-MM',
+    'yyyy-MM-dd',
+    'yyyy-MM-dd HH:mm:ss',
   ];
 
   // Try to parse the date string using each format
@@ -520,7 +525,9 @@ export function convertToTimestamp(dateStr: string): number {
   }
 
   // If none of the formats worked, throw an error
-  throw new Error('Invalid date string or format.' + dateStr);
+  //throw new Error('Invalid date string or format.' + dateStr);
+  console.log('Invalid date string or format.' + dateStr);
+  return new Date().getTime();
 }
 
 /**

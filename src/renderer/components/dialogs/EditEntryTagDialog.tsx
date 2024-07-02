@@ -105,7 +105,9 @@ function EditEntryTagDialog(props: Props) {
 
   function onConfirm() {
     if (handleValidation() && !haveError()) {
-      const isNew = tag.functionality === 'geoTagging'; //path.includes(props.selectedTag.title);
+      const isNew =
+        tag.functionality === 'geoTagging' ||
+        tag.functionality === 'dateTagging'; //path.includes(props.selectedTag.title);
       if (isNew) {
         addTagsToEntry(tag.path, [{ ...tag, title }]);
       } else {
