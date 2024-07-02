@@ -29,6 +29,7 @@ import { Pro } from '-/pro';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { mergeFsEntryMeta } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type PerspectiveSettingsContextData = {
   settings: TS.FolderSettings;
@@ -87,12 +88,12 @@ export const PerspectiveSettingsContextProvider = ({
   const { currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryPath,
-    perspective,
     directoryMeta,
     setDirectoryMeta,
     getDefaultPerspectiveSettings,
     getPerspective,
   } = useDirectoryContentContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { removeFolderCustomSettings, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -100,10 +101,21 @@ export const PerspectiveSettingsContextProvider = ({
     getSettings(getPerspective(), directoryMeta),
   );
 
-  useEffect(() => {
+  /*useEffect(() => {
     settings.current = getSettings(getPerspective(), directoryMeta);
     forceUpdate();
-  }, [perspective, directoryMeta]);
+  }, [perspective, directoryMeta]);*/
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (action.action === 'perspectiveChange') {
+          settings.current = getSettings(getPerspective(), directoryMeta);
+          forceUpdate();
+        }
+      }
+    }
+  }, [metaActions]);
 
   function getSettings(
     persp: string,

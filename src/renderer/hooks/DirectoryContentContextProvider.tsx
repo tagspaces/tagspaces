@@ -107,7 +107,7 @@ type DirectoryContentContextData = {
   ) => Promise<boolean>;
   openCurrentDirectory: (showHiddenEntries?: boolean) => Promise<boolean>;
   clearDirectoryContent: () => void;
-  perspective: TS.PerspectiveType;
+  //perspective: TS.PerspectiveType;
   setManualDirectoryPerspective: (perspective: string, dir?: string) => void;
   setCurrentDirectoryColor: (color: string) => void;
   setCurrentDirectoryDirs: (dirs: TS.OrderVisibilitySettings[]) => void;
@@ -162,7 +162,7 @@ export const DirectoryContentContext =
     openDirectory: undefined,
     openCurrentDirectory: undefined,
     clearDirectoryContent: () => {},
-    perspective: undefined,
+    //perspective: undefined,
     setManualDirectoryPerspective: undefined,
     setCurrentDirectoryColor: () => {},
     setCurrentDirectoryDirs: () => {},
@@ -228,7 +228,6 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
-  //const currentPerspective = useRef<TS.PerspectiveType>('unspecified');
   const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
   const directoryMeta = useRef<TS.FileSystemEntryMeta>(getDefaultDirMeta());
   const open = useRef<boolean>(false);
@@ -288,13 +287,13 @@ export const DirectoryContentContextProvider = ({
           isLoading.current = true;
           openDirectory(locationPath)
             .then((success) => {
+              manualPerspective.current = 'unspecified';
               isLoading.current = false;
               return success;
             })
             .catch((ex) => console.log(ex));
         }
       });
-      manualPerspective.current = 'unspecified';
     } else {
       currentLocationPath.current = '';
       clearDirectoryContent();
@@ -310,11 +309,13 @@ export const DirectoryContentContextProvider = ({
           cleanTrailingDirSeparator(action.entry.path)
         ) {
           if (action.action === 'perspectiveChange') {
-            manualPerspective.current =
-              action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
-                ? defaultPerspective
-                : action.entry.meta.perspective;
-            forceUpdate();
+            if (action.entry.meta.perspective !== undefined) {
+              manualPerspective.current =
+                action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
+                  ? defaultPerspective
+                  : action.entry.meta.perspective;
+              forceUpdate();
+            }
             //setManualDirectoryPerspective(action.entry.meta.perspective);
           } else if (
             action.action === 'bgdColorChange' ||
@@ -966,10 +967,10 @@ export const DirectoryContentContextProvider = ({
     return directoryContent;
   }
 
-  const perspective = useMemo(
+  /*const perspective = useMemo(
     () => getPerspective(),
     [directoryMeta.current?.perspective, manualPerspective.current],
-  );
+  );*/
 
   function getPerspective(): TS.PerspectiveType {
     if (manualPerspective.current === 'unspecified') {
@@ -1006,30 +1007,6 @@ export const DirectoryContentContextProvider = ({
       .catch((error) => {
         console.log('Error getting properties for entry: ' + directory, error);
       });
-
-    /*return new Promise((resolve) => {
-      if (isManual) {
-        //&& currentPerspective.current === 'unspecified') {
-        manualPerspective.current = perspective;
-        resolve(null);
-      } else {
-        if (
-          directory === undefined ||
-          directory === currentDirectoryPath.current
-        ) {
-          currentPerspective.current = perspective;
-          manualPerspective.current = isManual ? perspective : 'unspecified';
-        }
-        savePerspective(
-          directory ? directory : currentDirectoryPath.current,
-          perspective,
-        ).then((entryMeta: TS.FileSystemEntryMeta) => resolve(entryMeta));
-      }
-      setSelectedEntries([]);
-      if (reload) {
-        forceUpdate();
-      }
-    });*/
   }
 
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
@@ -1452,7 +1429,6 @@ export const DirectoryContentContextProvider = ({
       openCurrentDirectory,
       clearDirectoryContent,
       setManualDirectoryPerspective,
-      perspective,
       setCurrentDirectoryColor,
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
@@ -1479,8 +1455,6 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryEntries.current,
     currentDirectoryPath.current,
     directoryMeta.current,
-    //currentPerspective.current,
-    perspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     isSearchMode.current,
