@@ -25,7 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag } from '-/utils/geo';
-import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
+import { isDateTimeTag, convertToTimestamp } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import { getTagColors } from '-/services/taglibrary-utils';
 import TagContainerMenu from '-/components/TagContainerMenu';
@@ -118,12 +118,25 @@ function TagContainer(props: Props) {
   let tagTitle = ''; // tag.title;
   if (isTagDate) {
     let date;
-    if (tag.title.length > 8) {
-      date = new Date(convertToDateTime(tag.title)).getTime();
+    if (tag.title.includes('-')) {
+      const timeArr = tag.title.split('-');
+      if (parseInt(timeArr[0], 10) && parseInt(timeArr[1], 10)) {
+        const firstTime = convertToTimestamp(timeArr[0]);
+        const secondTime = convertToTimestamp(timeArr[1]);
+        const haveTime0 = timeArr[0].length > 8;
+        const haveTime1 = timeArr[1].length > 8;
+        tagTitle =
+          formatDateTime(firstTime, haveTime0) +
+          ' - ' +
+          formatDateTime(secondTime, haveTime1);
+      }
+    } else if (tag.title.length > 8) {
+      date = convertToTimestamp(tag.title); //new Date(convertToDateTime(tag.title)).getTime();
+      tagTitle = formatDateTime(date, true);
     } else {
-      date = new Date(convertToDate(tag.title)).getTime();
+      date = convertToTimestamp(tag.title); //new Date(convertToDate(tag.title)).getTime();
+      tagTitle = formatDateTime(date, false);
     }
-    tagTitle = formatDateTime(date, true);
   }
 
   if (tag.description) {
