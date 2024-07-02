@@ -74,7 +74,7 @@ function FolderContainer(props: Props) {
     setSearchQuery,
     currentDirectoryEntries,
     currentDirectoryPath,
-    perspective,
+    getPerspective,
     setManualDirectoryPerspective,
     enterSearchMode,
     isSearchMode,
@@ -85,13 +85,6 @@ function FolderContainer(props: Props) {
 
   const isDesktopMode = useSelector(getDesktopMode);
   const progress = useSelector(getProgress);
-
-  //let currentPerspective = getPerspective();
-  // currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
-
-  /*if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
-    currentPerspective = defaultPerspective;
-  }*/
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -184,8 +177,6 @@ function FolderContainer(props: Props) {
   };
 
   const openSearchKeyBinding = ` (${adjustKeyBinding(keyBindings.openSearch)})`;
-
-  const { FILE } = NativeTypes;
 
   return (
     <div
@@ -323,7 +314,7 @@ function FolderContainer(props: Props) {
       </div>
       {isDesktopMode && (
         <ToggleButtonGroup
-          value={perspective}
+          value={getPerspective()}
           size="small"
           data-tid="floatingPerspectiveSwitcher"
           disabled={showWelcomePanel}

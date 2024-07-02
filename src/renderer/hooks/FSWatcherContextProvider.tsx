@@ -65,7 +65,7 @@ export const FSWatcherContextProvider = ({
     currentDirectoryEntries,
     loadDirectoryContent,
     currentDirectoryPath,
-    perspective,
+    getPerspective,
   } = useDirectoryContentContext();
   const { setReflectActions, reflectUpdateMeta } = useEditedEntryContext();
   const ignored = useRef<string[]>([]);
@@ -80,7 +80,7 @@ export const FSWatcherContextProvider = ({
       currentLocation.type !== locationType.TYPE_CLOUD
     ) {
       if (currentDirectoryPath && currentDirectoryPath.length > 0) {
-        const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
+        const depth = getPerspective() === PerspectiveIDs.KANBAN ? 3 : 1;
 
         watchFolder(currentDirectoryPath, depth);
       }

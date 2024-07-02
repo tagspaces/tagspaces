@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 import AppConfig from '-/AppConfig';
 
@@ -32,6 +32,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 const GridPerspective = React.lazy(
   () =>
@@ -155,7 +156,19 @@ interface Props {
 function RenderPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
   const { currentLocation } = useCurrentLocationContext();
-  const { perspective } = useDirectoryContentContext();
+  const { getPerspective } = useDirectoryContentContext();
+  const { metaActions } = useEditedEntryMetaContext();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (action.action === 'perspectiveChange') {
+          forceUpdate();
+        }
+      }
+    }
+  }, [metaActions]);
 
   const showWelcomePanel = !currentLocation;
   //!currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -164,7 +177,8 @@ function RenderPerspective(props: Props) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
   }
 
-  function getPerspective() {
+  function getPerspectiveComponent() {
+    const perspective = getPerspective();
     if (perspective === PerspectiveIDs.LIST) {
       return (
         <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
@@ -193,7 +207,7 @@ function RenderPerspective(props: Props) {
   return (
     <TargetFileBox style={{ height: '100%' }} accepts={[FILE]}>
       <CustomDragLayer />
-      {getPerspective()}
+      {getPerspectiveComponent()}
     </TargetFileBox>
   );
 }
