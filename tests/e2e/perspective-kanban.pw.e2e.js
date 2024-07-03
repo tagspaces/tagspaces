@@ -12,6 +12,7 @@ import {
   clickOn,
   expectElementExist,
   getGridFileSelector,
+  isDisplayed,
   takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -49,7 +50,9 @@ test.beforeEach(async () => {
 test.describe('TST49 - Perspective KanBan', () => {
   test('TST4909 - move with copy/move file dialog [web,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
-    await clickOn('[data-tid=folderContentTID]');
+    if (await isDisplayed('[data-tid=showFolderContentTID]')) {
+      await clickOn('[data-tid=showFolderContentTID]');
+    }
     await openContextEntryMenu(
       getGridFileSelector(fileName),
       'fileMenuMoveCopyFile',
@@ -66,7 +69,9 @@ test.describe('TST49 - Perspective KanBan', () => {
   test('TST4910 - prev/next button [web,electron,_pro]', async () => {
     const fileName = 'sample.3gp';
     const nextFileName = 'sample.avif';
-    await clickOn('[data-tid=folderContentTID]');
+    if (await isDisplayed('[data-tid=showFolderContentTID]')) {
+      await clickOn('[data-tid=showFolderContentTID]');
+    }
     await clickOn(getGridFileSelector(fileName));
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
