@@ -3579,7 +3579,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.51-alpha.3
+ - @tagspacespro/tagspacespro@5.0.57
 
 This package contains the following license and notice below:
 
@@ -17267,10 +17267,10 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.3.24
- - @tagspaces/tagspaces-common-cordova@4.3.24
- - @tagspaces/tagspaces-common@4.3.24
- - @tagspaces/tagspaces-indexer@4.3.24
+ - @tagspaces/tagspaces-common-aws3@4.3.25
+ - @tagspaces/tagspaces-common-cordova@4.3.25
+ - @tagspaces/tagspaces-common@4.3.25
+ - @tagspaces/tagspaces-indexer@4.3.25
  - @tagspaces/tagspaces-md@4.3.21
 
 These packages each contain the following license and notice below:
