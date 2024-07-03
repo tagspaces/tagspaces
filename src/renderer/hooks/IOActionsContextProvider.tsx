@@ -39,6 +39,7 @@ import {
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
   generateFileName,
+  extractParentDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -197,6 +198,7 @@ type IOActionsContextData = {
     dir: TS.OrderVisibilitySettings,
     parentDirPath?,
   ) => void;
+  reflectRenameVisibility: (oldDirPath: string, newDirPath: string) => void;
   getDirectoryOrder: (
     path: string,
     dirs: Array<TS.FileSystemEntry>,
@@ -242,6 +244,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   setThumbnailImageChange: undefined,
   setFolderBackgroundPromise: undefined,
   toggleDirVisibility: undefined,
+  reflectRenameVisibility: undefined,
   getDirectoryOrder: undefined,
   getFilesOrder: undefined,
   pushFileOrder: undefined,
@@ -305,6 +308,21 @@ export const IOActionsContextProvider = ({
                 { name: action.entry.name, uuid: action.entry.uuid },
                 dirPath,
               );
+            }
+          }
+        } else if (action.action === 'update') {
+          // reflect visibility change on renamed KanBan column
+          if (!action.entry.isFile) {
+            const dirPath = extractContainingDirectoryPath(
+              action.entry.path,
+              currentLocation?.getDirSeparator(),
+            );
+            if (
+              cleanTrailingDirSeparator(
+                cleanFrontDirSeparator(currentDirectoryPath),
+              ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
+            ) {
+              reflectRenameVisibility(action.oldEntryPath, action.entry.path);
             }
           }
         }
@@ -1895,6 +1913,66 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  function reflectRenameVisibility(
+    oldDirPath: string,
+    newDirPath: string,
+  ): void {
+    const parentDirectory = extractContainingDirectoryPath(
+      //extractParentDirectoryPath(
+      oldDirPath,
+      currentLocation?.getDirSeparator(),
+    );
+    const oldDir = extractDirectoryName(
+      oldDirPath,
+      currentLocation?.getDirSeparator(),
+    );
+    currentLocation
+      .loadMetaDataPromise(parentDirectory)
+      .then((fsEntryMeta) => {
+        const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
+          ? fsEntryMeta.customOrder
+          : {};
+
+        //let dirs: TS.OrderVisibilitySettings[] = [dir];
+        if (customOrder.folders && customOrder.folders.length > 0) {
+          const index = customOrder.folders.findIndex(
+            (col) => col.name === oldDir,
+          );
+          if (index !== -1) {
+            const newDir = extractDirectoryName(
+              newDirPath,
+              currentLocation?.getDirSeparator(),
+            );
+            customOrder.folders[index] = {
+              ...customOrder.folders[index],
+              name: newDir,
+            };
+            const updatedFsEntryMeta = {
+              ...fsEntryMeta,
+              customOrder: { ...customOrder, folders: customOrder.folders },
+            };
+
+            saveCurrentLocationMetaData(parentDirectory, updatedFsEntryMeta)
+              .then(() => {
+                const action: TS.KanBanMetaActions = {
+                  action: 'directoryVisibilityChange',
+                  meta: updatedFsEntryMeta,
+                };
+                setReflectKanBanActions(action);
+              })
+              .catch((err) => {
+                console.log(
+                  'Error adding dirs for ' + parentDirectory + ' with ' + err,
+                );
+              });
+          }
+        }
+      })
+      .catch((ex) => {
+        console.log(ex);
+      });
+  }
+
   function getDirectoryOrder(
     path: string,
     dirs: Array<TS.FileSystemEntry>,
@@ -2027,6 +2105,7 @@ export const IOActionsContextProvider = ({
       setThumbnailImageChange,
       setFolderBackgroundPromise,
       toggleDirVisibility,
+      reflectRenameVisibility,
       getDirectoryOrder,
       getFilesOrder,
       pushFileOrder,
