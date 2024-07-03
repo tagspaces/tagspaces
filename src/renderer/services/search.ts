@@ -156,6 +156,7 @@ const fuseOptions = {
   distance: 1000,
   tokenize: true,
   minMatchCharLength: 2,
+  useExtendedSearch: true,
   keys: [
     {
       name: 'name',
