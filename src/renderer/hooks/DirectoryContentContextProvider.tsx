@@ -471,14 +471,6 @@ export const DirectoryContentContextProvider = ({
         ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
       ) {
         currentDirectoryEntries.current.push(entry);
-        // reflect add KanBan folders visibility todo move in IOActionContext
-        /*if (!entry.isFile) {
-          await toggleDirVisibility(
-            { name: entry.name, uuid: entry.uuid },
-            dirPath,
-            false,
-          );
-        }*/
       }
     }
   }
