@@ -2,6 +2,7 @@
   "compilerOptions": {
     "incremental": true,
     "target": "es2022",
+    "ignoreDeprecations": "5.0",
     "module": "commonjs",
     "lib": ["dom", "dom.iterable", "es2022"],
     "jsx": "react-jsx",
