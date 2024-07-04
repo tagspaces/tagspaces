@@ -39,7 +39,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
-import IdIcon from '@mui/icons-material/Abc';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
@@ -67,7 +66,7 @@ import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon, FolderIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -217,6 +216,9 @@ function CreateEditLocationDialog(props: Props) {
   const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
     selectedLocation ? selectedLocation.uuid : getUuid(),
+  );
+  const [autoOpenedFilename, setAutoOpenedFilename] = useState<string>(
+    selectedLocation ? selectedLocation.autoOpenedFilename : undefined,
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
@@ -391,6 +393,7 @@ function CreateEditLocationDialog(props: Props) {
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
@@ -410,6 +413,7 @@ function CreateEditLocationDialog(props: Props) {
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -433,6 +437,7 @@ function CreateEditLocationDialog(props: Props) {
           maxIndexAge,
           maxLoops,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       }
       if (persistTagsInSidecarFile !== null) {
@@ -693,7 +698,7 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:watchForChangesInLocation')}
-                    {Pro ? <BetaLabel /> : <ProLabel />}
+                    {!Pro && <ProLabel />}
                   </>
                 }
               />
@@ -737,12 +742,28 @@ function CreateEditLocationDialog(props: Props) {
                             }}
                             size="large"
                           >
-                            <IdIcon />
+                            <IDIcon />
                           </IconButton>
                         </Tooltip>
                       </InputAdornment>
                     ),
                   }}
+                />
+              </FormControl>
+              <FormControl fullWidth={true}>
+                <TextField
+                  margin="dense"
+                  name="autoOpenedFilename"
+                  fullWidth={true}
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
                 />
               </FormControl>
               <FormControlLabel

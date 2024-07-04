@@ -54,6 +54,7 @@ export class CommonLocation implements TS.Location {
   bucketName?: string;
   region?: string;
   endpointURL?: string;
+  autoOpenedFilename?: string;
   ioAPI?: any; //AWS.S3; //common API for IO operations interface
   urlCache = {};
 
@@ -84,6 +85,7 @@ export class CommonLocation implements TS.Location {
     this.maxLoops = location.maxLoops;
     this.persistTagsInSidecarFile = location.persistTagsInSidecarFile;
     this.ignorePatternPaths = location.ignorePatternPaths;
+    this.autoOpenedFilename = location.autoOpenedFilename;
     if (location.type === locationType.TYPE_CLOUD) {
       this.accessKeyId = (location as TS.S3Location).accessKeyId;
       this.secretAccessKey = (location as TS.S3Location).secretAccessKey;
