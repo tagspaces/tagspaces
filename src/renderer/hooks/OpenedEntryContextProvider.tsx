@@ -267,18 +267,24 @@ export const OpenedEntryContextProvider = ({
     }
   }, [metaActions]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (
-      currentEntry.current &&
-      currentEntry.current.path === currentDirectoryPath
+      currentLocation &&
+      currentLocation.autoOpenedFilename &&
+      currentLocation.autoOpenedFilename.length > 0
     ) {
-      currentEntry.current = {
-        ...currentEntry.current,
-        perspective: currentDirectoryPerspective,
-      };
-      forceUpdate();
+      const autoOpenedFilePath = joinPaths(
+        currentLocation?.getDirSeparator(),
+        currentDirectoryPath,
+        currentLocation.autoOpenedFilename,
+      );
+      currentLocation.checkFileExist(autoOpenedFilePath).then((exist) => {
+        if (exist) {
+          openEntry(autoOpenedFilePath);
+        }
+      });
     }
-  }, [currentDirectoryPerspective]);*/
+  }, [currentDirectoryPath]);
 
   function openNextFile(entries: TS.FileSystemEntry[]): TS.FileSystemEntry {
     const nextFile = getNextFile(

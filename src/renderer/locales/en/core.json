@@ -826,5 +826,7 @@
   "filenameTagPlacedAtEnd": "Filename End",
   "fileNameBeginTagPlaceExplanation": "Tags will be placed at the beginning of the filename, like this '[tag1 tag2] filename.ext'",
   "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the filename, like this 'filename [tag1 tag2].ext'",
+  "autoOpenedFilename": "File to open on navigation to a folder",
+  "forExample": "For example",
   "-": "-"
 }

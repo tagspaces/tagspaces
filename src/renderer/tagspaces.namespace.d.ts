@@ -45,6 +45,7 @@ export namespace TS {
     maxLoops?: number;
     persistTagsInSidecarFile?: boolean;
     ignorePatternPaths?: Array<string>;
+    autoOpenedFilename?: string;
   }
 
   interface S3Location extends Location {

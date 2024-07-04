@@ -218,6 +218,9 @@ function CreateEditLocationDialog(props: Props) {
   const [newuuid, setNewUuid] = useState<string>(
     selectedLocation ? selectedLocation.uuid : getUuid(),
   );
+  const [autoOpenedFilename, setAutoOpenedFilename] = useState<string>(
+    selectedLocation ? selectedLocation.autoOpenedFilename : undefined,
+  );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
   const [cloudErrorAccessKey, setCloudErrorAccessKey] =
@@ -391,6 +394,7 @@ function CreateEditLocationDialog(props: Props) {
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
@@ -410,6 +414,7 @@ function CreateEditLocationDialog(props: Props) {
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -433,6 +438,7 @@ function CreateEditLocationDialog(props: Props) {
           maxIndexAge,
           maxLoops,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       }
       if (persistTagsInSidecarFile !== null) {
@@ -743,6 +749,21 @@ function CreateEditLocationDialog(props: Props) {
                       </InputAdornment>
                     ),
                   }}
+                />
+              </FormControl>
+              <FormControl fullWidth={true}>
+                <TextField
+                  required
+                  margin="dense"
+                  name="autoOpenedFilename"
+                  fullWidth={true}
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={t('core:forExample') + ': index.md'}
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
                 />
               </FormControl>
               <FormControlLabel
