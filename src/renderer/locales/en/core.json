@@ -828,5 +828,9 @@
   "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the filename, like this 'filename [tag1 tag2].ext'",
   "autoOpenedFilename": "File to be opened on navigation to a folder",
   "forExample": "For example",
+  "entryId": "Entry ID",
+  "copyIdToClipboard": "Copy entry ID to the clipboard",
+  "entryIdCopied": "Entry ID copied",
+  "entryIdTooltip": "Entry ID is used for sharing links",
   "-": "-"
 }

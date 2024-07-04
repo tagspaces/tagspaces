@@ -39,7 +39,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
-import IdIcon from '@mui/icons-material/Abc';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
@@ -67,7 +66,7 @@ import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon, FolderIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -699,7 +698,7 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:watchForChangesInLocation')}
-                    {Pro ? <BetaLabel /> : <ProLabel />}
+                    {!Pro && <ProLabel />}
                   </>
                 }
               />
@@ -743,7 +742,7 @@ function CreateEditLocationDialog(props: Props) {
                             }}
                             size="large"
                           >
-                            <IdIcon />
+                            <IDIcon />
                           </IconButton>
                         </Tooltip>
                       </InputAdornment>
@@ -753,12 +752,13 @@ function CreateEditLocationDialog(props: Props) {
               </FormControl>
               <FormControl fullWidth={true}>
                 <TextField
-                  required
                   margin="dense"
                   name="autoOpenedFilename"
                   fullWidth={true}
                   data-tid="autoOpenedFilenameTID"
-                  placeholder={t('core:forExample') + ': index.md'}
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
                   onChange={(event) =>
                     setAutoOpenedFilename(event.target.value)
                   }

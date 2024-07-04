@@ -46,13 +46,14 @@ import {
   LinkIcon,
   LocalLocationIcon,
   CloudLocationIcon,
+  IDIcon,
 } from '-/components/CommonIcons';
+import InfoIcon from '-/components/InfoIcon';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import ColorPaletteIcon from '@mui/icons-material/ColorLens';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import InfoIcon from '-/components/InfoIcon';
 import {
   AttributionControl,
   MapContainer,
@@ -1120,6 +1121,63 @@ function EntryProperties(props: Props) {
               />
             </Grid>
           )}
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        spacing={1}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Grid item xs={12}>
+          <TextField
+            data-tid="entryIDTID"
+            margin="dense"
+            name="path"
+            label={
+              <>
+                {t('core:entryId')}
+                <InfoIcon tooltip={t('core:entryIdTooltip')} />
+              </>
+            }
+            fullWidth={true}
+            value={openedEntry?.meta?.id}
+            InputProps={{
+              readOnly: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IDIcon style={{ color: theme.palette.text.secondary }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title={t('core:copyIdToClipboard')}>
+                    <Button
+                      data-tid="copyIdToClipboardTID"
+                      color="primary"
+                      disabled={!openedEntry?.meta?.id}
+                      onClick={() => {
+                        const entryId = openedEntry?.meta?.id;
+                        if (entryId) {
+                          const clibboardItem = generateClipboardLink(
+                            entryId,
+                            entryId,
+                          );
+                          const promise =
+                            navigator.clipboard.write(clibboardItem);
+                          showNotification(t('core:entryIdCopied'));
+                        }
+                      }}
+                    >
+                      {t('core:copy')}
+                    </Button>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
+          />
         </Grid>
       </Grid>
       {isConfirmResetColorDialogOpened && (
