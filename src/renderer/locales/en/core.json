@@ -826,5 +826,9 @@
   "filenameTagPlacedAtEnd": "Filename End",
   "fileNameBeginTagPlaceExplanation": "Tags will be placed at the beginning of the filename, like this '[tag1 tag2] filename.ext'",
   "fileNameEndTagPlaceExplanation": "Tags will be placed at end of the filename, like this 'filename [tag1 tag2].ext'",
+  "entryId": "Entry ID",
+  "copyIdToClipboard": "Copy entry ID to the clipboard",
+  "entryIdCopied": "Entry ID copied",
+  "entryIdTooltip": "Entry ID is used for sharing links",
   "-": "-"
 }
