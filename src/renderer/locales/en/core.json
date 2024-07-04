@@ -832,5 +832,6 @@
   "copyIdToClipboard": "Copy entry ID to the clipboard",
   "entryIdCopied": "Entry ID copied",
   "entryIdTooltip": "Entry ID is used for sharing links",
+  "searchQueryInfo": "Query - see tooltip of the info icon for help",
   "-": "-"
 }
