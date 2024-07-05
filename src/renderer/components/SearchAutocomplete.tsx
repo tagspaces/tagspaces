@@ -1238,7 +1238,7 @@ function SearchAutocomplete(props: Props) {
         <style>
           {`
           #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 0 5px 0 5px !important;
+            padding: 1px 5px 0 5px !important;
           }
           .MuiAutocomplete-popper {
             min-width: 350px;

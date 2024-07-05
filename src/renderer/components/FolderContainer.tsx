@@ -19,7 +19,9 @@
 import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
@@ -176,7 +178,8 @@ function FolderContainer(props: Props) {
     enterSearchMode();
   };
 
-  const openSearchKeyBinding = ` (${adjustKeyBinding(keyBindings.openSearch)})`;
+  const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
+  const isTinyMode = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <div
@@ -236,7 +239,7 @@ function FolderContainer(props: Props) {
             <GoBackIcon />
           </IconButton>
         </Tooltip>
-        {isDesktopMode && (
+        {isTinyMode && (
           <Tooltip title={t('core:goforward') + ' - BETA'}>
             <IconButton
               id="goForwardButton"
@@ -263,18 +266,41 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column',
               }}
             />
-            <Tooltip title={t('core:openSearch') + openSearchKeyBinding}>
-              <IconButton
+            {isTinyMode ? (
+              <Tooltip
+                title={t('core:openSearch') + ' (' + openSearchKeyBinding + ')'}
+              >
+                <IconButton
+                  data-tid="toggleSearch"
+                  onClick={openSearchMode}
+                  style={{
+                    // @ts-ignore
+                    WebkitAppRegion: 'no-drag',
+                  }}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="outlined"
+                size="small"
                 data-tid="toggleSearch"
                 onClick={openSearchMode}
+                startIcon={<SearchIcon />}
                 style={{
                   // @ts-ignore
                   WebkitAppRegion: 'no-drag',
+                  marginRight: 5,
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <SearchIcon />
-              </IconButton>
-            </Tooltip>
+                {t('core:searchTitle')}
+                <span style={{ width: 10 }} />
+                {openSearchKeyBinding}
+              </Button>
+            )}
+
             {progress?.length > 0 && (
               <IconButton
                 id="progressButton"
