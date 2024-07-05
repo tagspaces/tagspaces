@@ -477,9 +477,9 @@ export const TaggingActionsContextProvider = ({
               tags: newTags,
             };
             return saveMetaDataPromise(entry, updatedFsEntryMeta)
-              .then(() => {
+              .then((meta) => {
                 if (reflect) {
-                  reflectUpdateMeta(entry);
+                  reflectUpdateMeta({ ...entry, meta });
                 }
                 return entry.path;
               })
@@ -498,9 +498,9 @@ export const TaggingActionsContextProvider = ({
         } else {
           const newFsEntryMeta = { tags };
           return saveMetaDataPromise(entry, newFsEntryMeta)
-            .then(() => {
+            .then((meta) => {
               if (reflect) {
-                reflectUpdateMeta(entry);
+                reflectUpdateMeta({ ...entry, meta });
               }
               return entry.path;
             })
