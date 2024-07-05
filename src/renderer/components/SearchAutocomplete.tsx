@@ -23,6 +23,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import Fuse from 'fuse.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -91,7 +92,7 @@ interface Props {
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openEntry, openLink } = useOpenedEntryContext();
+  const { openLink } = useOpenedEntryContext();
   const { locations, currentLocation, changeLocationByID, openLocationById } =
     useCurrentLocationContext();
   const {
@@ -1260,7 +1261,25 @@ function SearchAutocomplete(props: Props) {
           onInputChange={handleInputChange}
           open={isOpen.current}
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
-            const filteredOptions = options.filter((option) => {
+            if ((state.inputValue ?? '').trim() === '') {
+              return options;
+            }
+            const fuseOptions = {
+              keys: [
+                {
+                  name: 'label',
+                  getFn: (entry) => entry.label,
+                  weight: 0.2,
+                },
+              ],
+              threshold: 0.3,
+              shouldSort: true,
+              minMatchCharLength: 1,
+            };
+            const fuse = new Fuse(options, fuseOptions);
+            const result = fuse.search(state.inputValue);
+            const filteredOptions = result.map(({ item }) => item);
+            /*const filteredOptions = options.filter((option) => {
               if (option.filter === false) {
                 return true;
               }
@@ -1269,7 +1288,7 @@ function SearchAutocomplete(props: Props) {
                   .toLowerCase()
                   .indexOf(state.inputValue.toLowerCase()) > -1
               );
-            });
+            });*/
             if (filteredOptions.length === 0 && !haveEmptyAction()) {
               isOpen.current = false;
             }
