@@ -179,7 +179,9 @@ export const CurrentLocationContextProvider = ({
       if (
         locationPath &&
         (locationPath.startsWith('.' + AppConfig.dirSeparator) ||
-          locationPath.startsWith('./')) && // location paths are not with platform dirSeparator
+          locationPath.startsWith('./') ||
+          locationPath.startsWith('..' + AppConfig.dirSeparator) ||
+          locationPath.startsWith('../')) && // location paths are not with platform dirSeparator
         AppConfig.isElectron
       ) {
         // TODO test relative path (Directory Back) with other platforms
