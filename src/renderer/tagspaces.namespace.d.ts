@@ -248,6 +248,19 @@ export namespace TS {
     delBookmark: (filePath: string) => void;
   };
 
+  type extractOptions = {
+    EXIFGeo?: boolean;
+    EXIFDateTime?: boolean;
+    IPTCDescription?: boolean;
+    IPTCTags?: boolean;
+  };
+
+  type ExifExtractionContextData = {
+    extractContent: (
+      options: extractOptions,
+    ) => Promise<{ [filePath: string]: TS.Tag[] }>;
+  };
+
   type HistoryContextData = {
     fileOpenHistory: TS.HistoryItem[];
     folderOpenHistory: TS.HistoryItem[];
