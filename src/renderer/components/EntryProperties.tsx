@@ -497,7 +497,7 @@ function EntryProperties(props: Props) {
   }
 
   const geoLocation: any = getGeoLocation(
-    openedEntry.isFile ? openedEntry.tags : openedEntry.meta.tags,
+    openedEntry.isFile ? openedEntry.tags : openedEntry.meta?.tags,
   );
 
   const isCloudLocation = openedEntry.url && openedEntry.url.length > 5;
