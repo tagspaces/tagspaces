@@ -17,8 +17,7 @@
  */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useSelector } from 'react-redux';
 import mgrs from 'mgrs';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
@@ -60,15 +59,7 @@ import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import LoadingLazy from '-/components/LoadingLazy';
 
-type extractOptions = {
-  EXIFGeo?: boolean;
-  EXIFDateTime?: boolean;
-  IPTCDescription?: boolean;
-  IPTCTags?: boolean;
-};
-
 type TaggingActionsContextData = {
-  extractContent: (options?: extractOptions) => Promise<boolean>;
   addFilesTags: (files: { [filePath: string]: TS.Tag[] }) => Promise<boolean>;
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
   addTagsToEntry: (
@@ -119,7 +110,6 @@ type TaggingActionsContextData = {
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
-  extractContent: undefined,
   addFilesTags: undefined,
   addTags: undefined,
   addTagsToEntry: undefined,
@@ -176,7 +166,7 @@ export const TaggingActionsContextProvider = ({
   const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
-  const { showNotification, hideNotifications } = useNotificationContext();
+  const { showNotification } = useNotificationContext();
 
   const open = useRef<boolean>(false);
   const selectedTag = useRef<TS.Tag>(undefined);
@@ -191,29 +181,6 @@ export const TaggingActionsContextProvider = ({
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
-  function extractContent(
-    options: extractOptions = {
-      EXIFGeo: true,
-      EXIFDateTime: true,
-      IPTCDescription: true,
-      IPTCTags: true,
-    },
-  ): Promise<boolean> {
-    if (!Pro || !Pro.ContentExtractor) {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-      return Promise.resolve(false);
-    }
-    showNotification('Extracting content...', 'info', false);
-    return Pro.ContentExtractor.extractContent(
-      currentDirectoryEntries,
-      currentLocation.getFileContentPromise,
-      options,
-    ).then((extracted: { [filePath: string]: TS.Tag[] }) => {
-      hideNotifications();
-      return addFilesTags(extracted);
-    });
-  }
 
   function addTagsToFilePath(path: string, tags: string[]) {
     if (tags && tags.length > 0) {
@@ -1492,7 +1459,6 @@ export const TaggingActionsContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      extractContent,
       addFilesTags,
       addTags,
       addTagsToEntry,
