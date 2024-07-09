@@ -176,7 +176,6 @@ type IOActionsContextData = {
   setDescriptionChange: (
     entry: TS.FileSystemEntry,
     description: string,
-    locationID?,
   ) => Promise<boolean>;
   saveDirectoryPerspective: (
     entry: TS.FileSystemEntry,

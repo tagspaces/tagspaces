@@ -833,5 +833,11 @@
   "entryIdCopied": "Entry ID copied",
   "entryIdTooltip": "Entry ID is used for sharing links",
   "searchQueryInfo": "Query - see tooltip of the info icon for help",
+  "make": "Make",
+  "model": "Model",
+  "author": "Author",
+  "title": "Title",
+  "copyright": "Copyright",
+  "modificationDate": "Modification Date",
   "-": "-"
 }
