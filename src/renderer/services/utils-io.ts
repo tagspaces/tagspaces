@@ -507,7 +507,7 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
-  return preview.replaceAll('\n', ' ').replaceAll('|', '');
+  return preview.replaceAll('\n', ' ').replaceAll('|', '').replaceAll('\\', '');
   // .replaceAll('\\\\', '');
   // return preview.replace(/[#*!_\[\]()`]/g, '');
 }
