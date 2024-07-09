@@ -256,9 +256,7 @@ export namespace TS {
   };
 
   type ExifExtractionContextData = {
-    extractContent: (
-      options: extractOptions,
-    ) => Promise<{ [filePath: string]: TS.Tag[] }>;
+    extractAndSaveContent: (options: extractOptions) => Promise<boolean>;
   };
 
   type HistoryContextData = {
