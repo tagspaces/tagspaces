@@ -293,6 +293,7 @@ function FolderContainer(props: Props) {
                   WebkitAppRegion: 'no-drag',
                   marginRight: 5,
                   whiteSpace: 'nowrap',
+                  overflow: 'hidden',
                 }}
               >
                 {t('core:searchTitle')}
