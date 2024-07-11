@@ -100,8 +100,9 @@ function MainToolbar(props: Props) {
         const cleanedPath = entry.path.startsWith('/')
           ? entry.path.substr(1)
           : entry.path;
-        const url = currentLocation.generateURLforPath(cleanedPath, 900);
-        fetch(url)
+        currentLocation
+          .generateURLforPath(cleanedPath, 900)
+          .then((url) => fetch(url))
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {
             saveAs(blob, entry.name);

@@ -134,15 +134,29 @@ function GridCell(props: Props) {
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
-  //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
-  // const desktopMode = useSelector(isDesktopMode);
+  const thumbPath = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
   const maxHeight = calculateEntryHeight(entrySize);
   const entryPath = fsEntry.path;
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
+  const gridCellLocation = findLocation(fsEntry.locationID);
+
+  useEffect(() => {
+    if (gridCellLocation && fsEntry.meta) {
+      if (fsEntry.meta.thumbPath) {
+        gridCellLocation
+          .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta?.lastUpdated)
+          .then((tmbPath) => {
+            if (tmbPath !== thumbPath.current) {
+              thumbPath.current = tmbPath;
+              forceUpdate();
+            }
+          });
+      }
+    }
+  }, [fsEntry]);
 
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
@@ -183,7 +197,6 @@ function GridCell(props: Props) {
     }
   }, [metaActions]);
 
-  const gridCellLocation = findLocation(fsEntry.locationID);
   if (!gridCellLocation && fsEntry.locationID) {
     // location not exist in locationManager (maybe removed)
     return null;
@@ -414,7 +427,7 @@ function GridCell(props: Props) {
             <TagsPreview tags={entryTags} />
           )}
         </Box>
-        {fsEntry.meta && fsEntry.meta.thumbPath ? (
+        {fsEntry.meta && fsEntry.meta.thumbPath && thumbPath.current ? (
           <CardMedia
             component="img"
             loading="lazy"
@@ -422,10 +435,7 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={gridCellLocation.getThumbPath(
-              fsEntry.meta.thumbPath,
-              fsEntry.meta?.lastUpdated,
-            )}
+            src={thumbPath.current}
             style={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,

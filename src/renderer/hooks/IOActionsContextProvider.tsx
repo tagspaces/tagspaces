@@ -815,10 +815,12 @@ export const IOActionsContextProvider = ({
               },
               fileContent,
               true,
-            ).then((thumb: TS.FileSystemEntry) => ({
-              ...fsEntry,
-              thumbPath: currentLocation.getThumbPath(thumb.path),
-            }));
+            ).then((thumb: TS.FileSystemEntry) =>
+              currentLocation.getThumbPath(thumb.path).then((thumbPath) => ({
+                ...fsEntry,
+                thumbPath: thumbPath,
+              })),
+            );
           }
           return fsEntry;
         });
@@ -912,8 +914,9 @@ export const IOActionsContextProvider = ({
             );
             if (fsEntry) {
               // Generate Thumbnail
+              const url = await currentLocation.getURLforPath(fileTargetPath);
               const thumbPath = await generateThumbnailPromise(
-                currentLocation.getURLforPath(fileTargetPath),
+                url,
                 fsEntry.size,
                 currentLocation.loadTextFilePromise,
                 currentLocation.getFileContentPromise,
@@ -942,8 +945,8 @@ export const IOActionsContextProvider = ({
                   console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
-                fsEntry.meta.thumbPath =
-                  currentLocation.getURLforPath(thumbPath);
+                const tmbPath = await currentLocation.getURLforPath(thumbPath);
+                fsEntry.meta.thumbPath = tmbPath;
               }
               fsEntries.push(fsEntry);
               showNotification(
@@ -1174,58 +1177,61 @@ export const IOActionsContextProvider = ({
             );
 
             // Enhance entries
-            const entriesEnhanced = arrFiles.map((file: TS.FileSystemEntry) => {
-              const metaFilePath = getMetaFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator,
-              );
+            const entriesEnhanced = arrFiles.map(
+              async (file: TS.FileSystemEntry) => {
+                const metaFilePath = getMetaFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator,
+                );
 
-              const thumbFilePath = getThumbFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator,
-              );
-              if (metaFilePath !== undefined) {
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  const metaFilePath = metaFile.path.replace(/[/\\]/g, '');
-                  if (metaFilePath === metaFilePath.replace(/[/\\]/g, '')) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = {
-                      ...(file.meta && file.meta),
-                      ...metaFile.meta,
-                    };
-                  } else if (
-                    thumbFilePath &&
-                    metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
-                  ) {
-                    file.meta = {
-                      ...(file.meta && file.meta),
-                      thumbPath: currentLocation.getURLforPath(
+                const thumbFilePath = getThumbFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator,
+                );
+                if (metaFilePath !== undefined) {
+                  for (let i = 0; i < arrMeta.length; i += 1) {
+                    const metaFile = arrMeta[i];
+                    const metaFilePath = metaFile.path.replace(/[/\\]/g, '');
+                    if (metaFilePath === metaFilePath.replace(/[/\\]/g, '')) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.meta = {
+                        ...(file.meta && file.meta),
+                        ...metaFile.meta,
+                      };
+                    } else if (
+                      thumbFilePath &&
+                      metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      const thumbPath = await currentLocation.getURLforPath(
                         file.meta.thumbPath,
-                      ),
-                    };
+                      );
+                      file.meta = {
+                        ...(file.meta && file.meta),
+                        thumbPath: thumbPath,
+                      };
+                    }
                   }
                 }
-              }
-              if (file.meta) {
-                return enhanceEntry(
-                  file,
-                  AppConfig.tagDelimiter,
-                  currentLocation?.getDirSeparator(),
-                );
-              }
-              return file;
-            });
-            const reflectActions: TS.EditAction[] = entriesEnhanced.map(
-              (entry) => ({
+                if (file.meta) {
+                  return enhanceEntry(
+                    file,
+                    AppConfig.tagDelimiter,
+                    currentLocation?.getDirSeparator(),
+                  );
+                }
+                return file;
+              },
+            );
+            Promise.all(entriesEnhanced).then((entries) => {
+              const reflectActions: TS.EditAction[] = entries.map((entry) => ({
                 action: 'add',
                 entry: entry,
                 open: open,
                 source: 'upload',
-              }),
-            );
-            setReflectActions(...reflectActions);
-            resolve(entriesEnhanced);
+              }));
+              setReflectActions(...reflectActions);
+              resolve(entries);
+            });
           } else {
             // eslint-disable-next-line prefer-promise-reject-errors
             reject('Upload failed');

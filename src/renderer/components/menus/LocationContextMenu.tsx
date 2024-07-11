@@ -42,6 +42,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   //setEditLocationDialogOpened: (open: boolean) => void;

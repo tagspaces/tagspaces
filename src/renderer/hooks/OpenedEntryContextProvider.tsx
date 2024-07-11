@@ -553,7 +553,7 @@ export const OpenedEntryContextProvider = ({
       });
   }
 
-  function openFsEntry(
+  async function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
     showDetails = undefined,
   ): Promise<boolean> {
@@ -597,7 +597,7 @@ export const OpenedEntryContextProvider = ({
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
-      entryForOpening.url = loc.getURLforPath(cleanedPath);
+      entryForOpening.url = await loc.getURLforPath(cleanedPath);
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
@@ -614,7 +614,8 @@ export const OpenedEntryContextProvider = ({
 
     // update history window.location.href - used for shared link generation
     updateHistory(
-      { ...currentLocation, path: currentLocationPath },
+      currentLocation.uuid,
+      currentLocationPath,
       currentDirectoryPath,
       fsEntry.path,
     );

@@ -264,6 +264,9 @@ function EntryProperties(props: Props) {
     useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
+  const backgroundImage = useRef<string>('none');
+  const thumbImage = useRef<string>('none');
+
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const [popoverAnchorEl, setPopoverAnchorEl] =
@@ -279,6 +282,32 @@ function EntryProperties(props: Props) {
   const handlePopoverClose = () => {
     setPopoverAnchorEl(null);
   };
+
+  useEffect(() => {
+    if (location) {
+      location
+        .getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated)
+        .then((bgPath) => {
+          const bgImage = 'url("' + bgPath + '")';
+          if (bgImage !== backgroundImage.current) {
+            backgroundImage.current = bgImage;
+            forceUpdate();
+          }
+        });
+      location
+        .getThumbPath(
+          openedEntry.meta?.thumbPath,
+          openedEntry.meta?.lastUpdated,
+        )
+        .then((thumbPath) => {
+          const thbImage = 'url("' + thumbPath + '")';
+          if (thbImage !== thumbImage.current) {
+            thumbImage.current = thbImage;
+            forceUpdate();
+          }
+        });
+    }
+  }, [location]);
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -504,14 +533,14 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
 
-  const thumbUrl = location.getThumbPath(
+  /*const thumbUrl = location.getThumbPath(
     openedEntry.meta?.thumbPath,
     openedEntry.meta?.lastUpdated,
   );
   const backgroundUrl = location.getFolderBgndPath(
     openedEntry.path,
     openedEntry.meta?.lastUpdated,
-  );
+  );*/
 
   return (
     <Root>
@@ -1055,9 +1084,7 @@ function EntryProperties(props: Props) {
                         style={{
                           backgroundSize: 'cover',
                           backgroundRepeat: 'no-repeat',
-                          backgroundImage: thumbUrl
-                            ? 'url("' + thumbUrl + '")'
-                            : '',
+                          backgroundImage: thumbImage.current,
                           backgroundPosition: 'center',
                           borderRadius: 8,
                           minHeight: 150,
@@ -1107,7 +1134,7 @@ function EntryProperties(props: Props) {
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: 'url("' + backgroundUrl + '")',
+                            backgroundImage: backgroundImage.current,
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,

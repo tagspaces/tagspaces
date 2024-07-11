@@ -896,10 +896,7 @@ export const DirectoryContentContextProvider = ({
 
     setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
-    updateHistory(
-      { ...location, path: currentLocationPath.current },
-      directoryPath,
-    );
+    updateHistory(location.uuid, currentLocationPath.current, directoryPath);
     return directoryContent;
   }
 

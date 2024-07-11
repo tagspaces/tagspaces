@@ -68,11 +68,12 @@ function LinkGeneratorDialog(props: Props) {
   }, []);
 
   function setSignedLink() {
-    signedLink.current = location.generateURLforPath(
-      gPath,
-      linkValidityDuration.current,
-    );
-    forceUpdate();
+    location
+      .generateURLforPath(gPath, linkValidityDuration.current)
+      .then((url) => {
+        signedLink.current = url;
+        forceUpdate();
+      });
   }
 
   return (
