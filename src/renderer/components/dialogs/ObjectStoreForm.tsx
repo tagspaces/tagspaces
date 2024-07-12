@@ -134,10 +134,11 @@ function ObjectStoreForm(props: Props) {
   function handleRegionChange(inputValue: any, value: string, reason: string) {
     if (reason === 'input') {
       setRegion(value);
-    } else if (reason === 'select-option') {
+    } else if (reason === 'selectOption') {
       setRegion(value);
     }
     if (reason === 'clear') {
+      //|| reason === 'reset') {
       setRegion('');
     }
   }

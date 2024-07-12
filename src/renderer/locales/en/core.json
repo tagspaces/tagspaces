@@ -840,5 +840,6 @@
   "title": "Title",
   "copyright": "Copyright",
   "modificationDate": "Modification Date",
+  "noSelectedEntryError": "No Selected Entries",
   "-": "-"
 }
