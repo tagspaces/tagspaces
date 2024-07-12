@@ -1237,10 +1237,10 @@ export const DirectoryContentContextProvider = ({
     );
   }
 
-  function setThumbForEntry(
+  async function setThumbForEntry(
     entry: TS.FileSystemEntry,
     meta: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
-  ): TS.FileSystemEntry {
+  ): Promise<TS.FileSystemEntry> {
     const thumbEntry = { ...entry, tags: [] };
     let thumbPath = getThumbFileLocationForFile(
       entry.path,
@@ -1258,7 +1258,7 @@ export const DirectoryContentContextProvider = ({
           thumbPath = thumbPath.substring(1);
         }
 
-        thumbPath = currentLocation.generateURLforPath(thumbPath, 604800);
+        thumbPath = await currentLocation.generateURLforPath(thumbPath, 604800);
         if (thumbPath) {
           thumbEntry.meta = { id: getUuid(), thumbPath };
         }
@@ -1347,7 +1347,7 @@ export const DirectoryContentContextProvider = ({
     dirPath: string,
     location: CommonLocation,
   ): Promise<TS.FileSystemEntryMeta> {
-    return location.listMetaDirectoryPromise(dirPath).then((meta) => {
+    return location.listMetaDirectoryPromise(dirPath).then(async (meta) => {
       const metaFilePath = getMetaFileLocationForDir(
         dirPath,
         location?.getDirSeparator(),
@@ -1360,7 +1360,7 @@ export const DirectoryContentContextProvider = ({
       if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
         thumbPath =
           location.haveObjectStoreSupport() || location.haveWebDavSupport()
-            ? location.getURLforPath(thumbDirPath)
+            ? await location.getURLforPath(thumbDirPath)
             : thumbDirPath;
       }
       if (

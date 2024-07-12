@@ -39,7 +39,6 @@ import {
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
   generateFileName,
-  extractParentDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
