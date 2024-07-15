@@ -51,7 +51,6 @@ import {
   openFileMessage,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Progress } from 'aws-sdk/clients/s3';
 import AppConfig from '-/AppConfig';
 import {
   generateImageThumbnail,
@@ -109,12 +108,12 @@ type IOActionsContextData = {
   downloadFile: (
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
+    onDownloadProgress?: (progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
   uploadFilesAPI: (
     files: Array<any>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
     targetLocationId?: string,
@@ -123,7 +122,7 @@ type IOActionsContextData = {
   uploadFiles: (
     paths: Array<string>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
     targetLocationId?: string,
@@ -776,7 +775,7 @@ export const IOActionsContextProvider = ({
   function downloadFile(
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
+    onDownloadProgress?: (progress, abort, fileName?) => void,
   ): Promise<TS.FileSystemEntry> {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !currentLocation.haveObjectStoreSupport()) {
@@ -840,7 +839,7 @@ export const IOActionsContextProvider = ({
   function uploadFilesAPI(
     files: Array<any>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta = true,
     open = true,
     targetLocationId: string = undefined,
@@ -982,7 +981,7 @@ export const IOActionsContextProvider = ({
     filePath: string,
     fileType: string,
     fileContent: any,
-    onUploadProgress?: (progress: Progress, response: any) => void,
+    onUploadProgress?: (progress, response) => void,
     reflect: boolean = true,
     locationID: string = undefined,
   ) {
@@ -1052,7 +1051,7 @@ export const IOActionsContextProvider = ({
   function uploadFiles(
     paths: Array<string>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, response: any) => void,
+    onUploadProgress?: (progress, response) => void,
     uploadMeta = true,
     open = true,
     targetLocationId: string = undefined,

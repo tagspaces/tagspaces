@@ -614,7 +614,7 @@ export const OpenedEntryContextProvider = ({
 
     // update history window.location.href - used for shared link generation
     updateHistory(
-      currentLocation.uuid,
+      currentLocation?.uuid,
       currentLocationPath,
       currentDirectoryPath,
       fsEntry.path,
