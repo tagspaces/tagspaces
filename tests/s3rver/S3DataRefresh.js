@@ -47,7 +47,7 @@ function getS3Client() {
     },
     // Force path style required for local S3rver
     forcePathStyle: true,
-    logger: console,
+    //logger: console,
   });
 }
 
@@ -55,9 +55,8 @@ async function deleteAllObjects(bucketName) {
   try {
     // List objects in the bucket
     const listParams = {
-      Delimiter: '/',
-      Prefix: '',
       Bucket: bucketName,
+      MaxKeys: 10, // Limit the number of keys to 10 per request
     };
 
     const s3Client = getS3Client();
