@@ -55,6 +55,8 @@ async function deleteAllObjects(bucketName) {
   try {
     // List objects in the bucket
     const listParams = {
+      Delimiter: '/',
+      Prefix: '',
       Bucket: bucketName,
     };
 
