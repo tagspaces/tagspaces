@@ -16,6 +16,7 @@ import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
   createPwMinioLocation,
+  createS3Location,
   defaultLocationName,
   defaultLocationPath,
 } from './location.helpers';
@@ -33,8 +34,12 @@ import {
 import { dataTidFormat } from '../../src/renderer/services/test';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  //await clearDataStorage();
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
@@ -282,6 +287,8 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=locationManager]');
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);
+    } else if (global.isS3) {
+      await createS3Location('', defaultLocationName, true);
     } else {
       await createPwLocation(defaultLocationPath, defaultLocationName, true);
     }

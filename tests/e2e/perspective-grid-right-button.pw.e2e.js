@@ -11,6 +11,7 @@ import {
   deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import AppConfig from '../../src/renderer/AppConfig';
 import { searchEngine } from './search.helpers';
@@ -36,13 +37,17 @@ import {
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
@@ -60,6 +65,8 @@ test.afterEach(async ({ page }, testInfo) => {
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }

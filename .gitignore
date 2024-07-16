@@ -110,7 +110,7 @@ tests/*
 !tests/create-1000files-nothumbs.sh
 !tests/create-1000files.js
 !tests/create-1000folders.js
-
+!tests/s3rver
 builds/*
 web/sw-con
 .ycache/*

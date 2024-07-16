@@ -7,6 +7,8 @@ import {
   getPwLocationTid,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
+  defaultLocationName,
 } from './location.helpers';
 import {
   clickOn,
@@ -44,6 +46,8 @@ test.beforeEach(async () => {
 
   if (global.isMinio) {
     await createPwMinioLocation('', testLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, testLocationName, true);
   }

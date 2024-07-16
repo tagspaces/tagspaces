@@ -70,6 +70,39 @@ export async function createPwMinioLocation(
   }
 }
 
+export async function createS3Location(
+  locationPath,
+  locationName,
+  isDefault = false,
+) {
+  const lastLocationTID = await getPwLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if (locationName !== lastLocationTID) {
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuCreateLocation]');
+    await clickOn('[data-tid=locationTypeTID]');
+    await clickOn('[data-tid=cloudLocationTID]');
+
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime(),
+      20,
+    );
+    await setInputKeys('locationPath', locationPath, 20);
+    await setInputKeys('accessKeyId', 'S3RVER', 20);
+    await setInputKeys('secretAccessKey', 'S3RVER', 20);
+    await setInputKeys('bucketName', locationName, 20);
+    await setInputKeys('endpointURL', 'http://localhost:4569', 20);
+    //await setInputKeys('regionTID', 'eu-central-1', 20);
+
+    if (isDefault) {
+      await clickOn('[data-tid=switchAdvancedModeTID]');
+      await global.client.check('[data-tid=locationIsDefault] input');
+    }
+    await clickOn('[data-tid=confirmLocationCreation]');
+  }
+}
+
 export async function createPwLocation(
   locationPath,
   locationName,

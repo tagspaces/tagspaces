@@ -22,6 +22,7 @@ import {
   closeLocation,
   createPwLocation,
   createPwMinioLocation,
+  createS3Location,
   defaultLocationName,
   defaultLocationPath,
   getPwLocationTid,
@@ -69,6 +70,8 @@ test.beforeEach(async () => {
   // await closeWelcomePlaywright();
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }

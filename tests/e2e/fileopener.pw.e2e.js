@@ -4,6 +4,7 @@ import {
   createPwLocation,
   defaultLocationName,
   defaultLocationPath,
+  createS3Location,
 } from './location.helpers';
 import {
   checkSettings,
@@ -31,7 +32,7 @@ import {
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
 
 /*test.beforeAll(async () => {
@@ -54,9 +55,15 @@ test.afterEach(async ({ page }, testInfo) => {
 });
 
 test.beforeEach(async () => {
-  await startTestingApp('extconfig.js');
+  await startTestingApp(
+    global.isMinio || global.isS3 ? undefined : 'extconfig.js',
+  );
   if (global.isMinio) {
+    await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await closeWelcomePlaywright();
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
@@ -66,7 +73,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST08 - File folder properties', () => {
-  test('TST0801 - Arrow keys select next prev file (keybindings) [web,electron]', async () => {
+  test('TST0801 - Arrow keys select next prev file (keybindings) [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties

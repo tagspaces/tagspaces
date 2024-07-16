@@ -1,19 +1,16 @@
 import { defineConfig } from '@playwright/test';
 import pwConfig from './playwright.config.common';
-//const dotenv = require('dotenv');
-//dotenv.config({ path: path.resolve(__dirname, 'tests', 'env', 'web.env') });
 
-global.isWeb = true;
+global.isWeb = false;
 global.isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 global.isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 global.isMinio = false;
 global.isS3 = true;
-global.isElectron = false;
+global.isElectron = true;
 global.isUnitTest = false;
 
-const config = defineConfig({
+export default defineConfig({
   ...pwConfig,
-  globalSetup: './tests/global-setup-web.js',
-  globalTeardown: './tests/global-teardown-web.js',
+  globalSetup: './tests/s3rver/S3rverStart.js',
+  globalTeardown: './tests/s3rver/S3rverStop.js',
 });
-export default config;

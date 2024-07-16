@@ -1,4 +1,5 @@
-import { startMinio, startWebServer } from './setup-functions';
+import { startWebServer, runS3Server } from './setup-functions';
+import { uploadDirectory } from './s3rver/S3DataRefresh';
 import { removeExtConfig } from './e2e/hook';
 
 module.exports = async function () {
@@ -6,5 +7,7 @@ module.exports = async function () {
 
   global.webserver = await startWebServer();
   // global.chromeDriver = await startChromeDriver();
-  global.minio = await startMinio();
+  //global.minio = await startMinio();
+  await runS3Server();
+  await uploadDirectory();
 };

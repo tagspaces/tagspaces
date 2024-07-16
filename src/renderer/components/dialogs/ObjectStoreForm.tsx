@@ -295,6 +295,7 @@ function ObjectStoreForm(props: Props) {
               <TextField
                 {...params}
                 label={t('core:regionSearch')}
+                data-tid="regionTID"
                 placeholder={t('core:regionSearch')}
                 margin="normal"
               />

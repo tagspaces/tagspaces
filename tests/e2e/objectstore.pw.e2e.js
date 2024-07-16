@@ -7,6 +7,7 @@ import {
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
@@ -25,7 +26,12 @@ import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { startMinio } from '../setup-functions';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-objectstore-location.js');
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig-objectstore-location.js');
+  }
   //await clearDataStorage();
 });
 
@@ -42,9 +48,13 @@ test.afterEach(async ({ page }, testInfo) => {
 });
 
 test.beforeEach(async () => {
-  await closeWelcomePlaywright();
-  await clickOn('[data-tid=locationManager]');
-  await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
+  if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
+  } else {
+    await closeWelcomePlaywright();
+    await clickOn('[data-tid=locationManager]');
+    await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
+  }
 });
 
 test.describe('TST09 - ObjectStore location', () => {

@@ -8,6 +8,7 @@ import {
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   createNewDirectory,
@@ -37,8 +38,12 @@ const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
 test.beforeAll(async () => {
-  await startTestingApp(global.isMinio ? undefined : 'extconfig.js');
-  // await clearDataStorage();
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
@@ -57,6 +62,9 @@ test.beforeEach(async () => {
   if (global.isMinio) {
     await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await closeWelcomePlaywright();
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
@@ -144,7 +152,7 @@ test.describe('TST51 - Perspective Grid', () => {
 
   test('TST0510 - Generate thumbnail from Images [electron,minio]', async () => {
     const filtered = ['ico', 'tiff', 'tif'];
-    if (global.isMinio) {
+    if (global.isMinio || global.isS3) {
       filtered.push('svg');
     }
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image

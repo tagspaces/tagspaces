@@ -1,5 +1,8 @@
 import pathLib from 'path';
+import fs from 'fs';
 import sh from 'shelljs';
+const S3rver = require('s3rver');
+//const corsConfig = require.resolve('./s3rver/cors.xml');
 
 export async function globalSetup() {
   // global.isWin = /^win/.test(process.platform);
@@ -95,4 +98,28 @@ export async function startWebServer() {
 export async function stopWebServer(app) {
   await app.server.close();
   app = null;
+}
+
+export function runS3Server() {
+  const directoryTargetPath = pathLib.resolve(
+    __dirname,
+    'testdata-tmp',
+    'file-structure',
+  );
+  const corsConfig = pathLib.resolve(__dirname, 's3rver', 'cors.xml');
+  global.S3instance = new S3rver({
+    port: 4569,
+    address: 'localhost',
+    silent: false,
+    directory: directoryTargetPath,
+    //cors: true, // Enable CORS
+    configureBuckets: [
+      {
+        name: 'supported-filestypes',
+        configs: [fs.readFileSync(corsConfig)],
+      },
+    ],
+  });
+
+  return global.S3instance.run();
 }

@@ -7,6 +7,7 @@ import {
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
@@ -21,7 +22,7 @@ import {
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
@@ -29,7 +30,12 @@ import {
 } from './file.properties.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
   // await clearDataStorage();
 });
 
@@ -48,15 +54,18 @@ test.afterEach(async ({ page }, testInfo) => {
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-
-  await openContextEntryMenu(
-    '[data-tid=fsEntryName_empty_folder]',
-    'showProperties',
-  );
+  if (!global.isS3) {
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'showProperties',
+    );
+  }
 });
 
 test.describe('TST02 - Folder properties', () => {
