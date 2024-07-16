@@ -57,6 +57,7 @@ test.beforeEach(async () => {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (global.isS3) {
     await createS3Location('', defaultLocationName, true);
+    await closeWelcomePlaywright();
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }

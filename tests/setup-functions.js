@@ -110,7 +110,7 @@ export function runS3Server() {
   global.S3instance = new S3rver({
     port: 4569,
     address: 'localhost',
-    silent: false,
+    silent: true,
     directory: directoryTargetPath,
     //cors: true, // Enable CORS
     configureBuckets: [

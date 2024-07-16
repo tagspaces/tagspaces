@@ -322,6 +322,9 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(newFileContent, 15000);
   });
 
+  /**
+   * in web (S3 location)
+   */
   test('TST0813 - Delete file and check meta and thumbnails deleted [web,electron]', async () => {
     const fileName = 'new_file.svg';
     const svg = `<svg

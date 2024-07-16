@@ -1,7 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
-import { uploadDirectory, deleteAllObjects } from '../s3rver/S3DataRefresh';
+import { refreshS3testData, uploadFile } from '../s3rver/S3DataRefresh';
 // import { execSync } from 'child_process';
 
 // Spectron API https://github.com/electron/spectron
@@ -197,8 +197,7 @@ export async function stopApp() {
 
 export async function testDataRefresh() {
   if (global.isS3) {
-    await deleteAllObjects();
-    await uploadDirectory();
+    await refreshS3testData();
   } else {
     const src = pathLib.join(
       __dirname,
@@ -229,16 +228,19 @@ export async function createFile(
     rootFolder,
     fileName,
   );
-
-  try {
-    if (fileContent) {
-      await fse.outputFile(filePath, fileContent);
-    } else {
-      await fse.createFile(filePath);
-      console.log('Empty file created!');
+  if (global.isS3) {
+    await uploadFile(filePath, fileContent);
+  } else {
+    try {
+      if (fileContent) {
+        await fse.outputFile(filePath, fileContent);
+      } else {
+        await fse.createFile(filePath);
+        console.log('Empty file created!');
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
   }
 }
 

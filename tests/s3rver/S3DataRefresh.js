@@ -63,7 +63,7 @@ async function deleteAllObjects(bucketName) {
     do {
       listedObjects = await s3Client.send(new ListObjectsV2Command(listParams));
 
-      if (listedObjects.Contents.length === 0) break;
+      if (!listedObjects.Contents || listedObjects.Contents.length === 0) break;
 
       // Prepare the list of objects to delete
       const deleteParams = {
@@ -88,8 +88,8 @@ async function deleteAllObjects(bucketName) {
   }
 }
 
-function uploadFile(filePath) {
-  const fileContent = fs.readFileSync(filePath);
+function uploadFile(filePath, content = undefined) {
+  const fileContent = content ? content : fs.readFileSync(filePath);
 
   const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
 
@@ -100,7 +100,7 @@ function uploadFile(filePath) {
   };
 
   try {
-    console.log(`Uploaded ${filePath} to ${bucketName}/${key}`);
+    //console.log(`Uploaded ${filePath} to ${bucketName}/${key}`);
     const s3Client = getS3Client();
     return s3Client.send(new PutObjectCommand(params));
   } catch (err) {
@@ -119,7 +119,12 @@ function uploadDirectory() {
   }
 }
 
+async function refreshS3testData() {
+  await deleteAllObjects('supported-filestypes');
+  await uploadDirectory();
+}
+
 module.exports = {
-  uploadDirectory,
-  deleteAllObjects,
+  refreshS3testData,
+  uploadFile,
 };
