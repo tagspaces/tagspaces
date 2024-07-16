@@ -47,7 +47,7 @@ function getS3Client() {
     },
     // Force path style required for local S3rver
     forcePathStyle: true,
-    //logger: console,
+    logger: console,
   });
 }
 

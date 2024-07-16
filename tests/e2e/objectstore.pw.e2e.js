@@ -19,11 +19,9 @@ import {
   takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { createSavedSearch, searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { startMinio } from '../setup-functions';
 
 test.beforeAll(async () => {
   if (global.isS3) {

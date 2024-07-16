@@ -1,4 +1,4 @@
-const { runS3Server } = require('./setup-functions');
+const { runS3Server } = require('../setup-functions');
 const { refreshS3testData } = require('./S3DataRefresh');
 
 module.exports = async function () {
