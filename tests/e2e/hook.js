@@ -229,7 +229,7 @@ export async function createFile(
     fileName,
   );
   if (global.isS3) {
-    await uploadFile(filePath, fileContent);
+    await uploadFile(filePath, fileContent || 'test content');
   } else {
     try {
       if (fileContent) {

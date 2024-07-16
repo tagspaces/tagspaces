@@ -49,9 +49,9 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
+  await testDataRefresh();
   await clearDataStorage();
   await stopApp();
-  await testDataRefresh();
 });
 
 test.beforeEach(async () => {

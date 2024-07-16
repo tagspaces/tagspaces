@@ -51,8 +51,8 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  await stopApp();
   await testDataRefresh();
+  await stopApp();
 });
 
 test.afterEach(async ({ page }, testInfo) => {

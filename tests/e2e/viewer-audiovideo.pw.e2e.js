@@ -27,9 +27,9 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
+  await testDataRefresh();
   await clearDataStorage();
   await stopApp();
-  await testDataRefresh();
 });
 test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {

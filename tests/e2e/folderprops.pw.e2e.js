@@ -40,8 +40,8 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  await stopApp();
   await testDataRefresh();
+  await stopApp();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
@@ -60,12 +60,11 @@ test.beforeEach(async () => {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  if (!global.isS3) {
-    await openContextEntryMenu(
-      '[data-tid=fsEntryName_empty_folder]',
-      'showProperties',
-    );
-  }
+
+  await openContextEntryMenu(
+    '[data-tid=fsEntryName_empty_folder]',
+    'showProperties',
+  );
 });
 
 test.describe('TST02 - Folder properties', () => {

@@ -38,8 +38,8 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await clearDataStorage();
   await testDataRefresh();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {
