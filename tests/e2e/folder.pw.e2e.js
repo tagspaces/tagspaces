@@ -34,10 +34,12 @@ import { stopServices } from '../setup-functions';
 
 let s3ServerInstance;
 let webServerInstance;
+let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer }) => {
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
+  minioServerInstance = minioServer;
 
   if (global.isS3) {
     await startTestingApp();
@@ -48,8 +50,8 @@ test.beforeAll(async ({ s3Server, webServer }) => {
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance);
-  await testDataRefresh();
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -186,7 +188,7 @@ test.describe('TST01 - Folder management', () => {
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0109 - Copy folder [web,electron]', async () => {
@@ -206,7 +208,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToCopy + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0110 - Tag folder [web,electron]', async () => {

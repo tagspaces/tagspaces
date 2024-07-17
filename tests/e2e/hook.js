@@ -93,15 +93,17 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
 }
 
 export async function removeExtConfig() {
-  await fse.remove(
-    pathLib.join(
-      __dirname,
-      '..',
-      '..',
-      global.isWeb ? 'web' : 'release/app/dist/renderer',
-      'extconfig.js',
-    ),
-  );
+  if (!global.isWeb) {
+    await fse.remove(
+      pathLib.join(
+        __dirname,
+        '..',
+        '..',
+        global.isWeb ? 'web' : 'release/app/dist/renderer',
+        'extconfig.js',
+      ),
+    );
+  }
 }
 
 export async function startTestingApp(extconfig) {
@@ -196,20 +198,11 @@ export async function stopApp() {
   }
 }
 
-export async function testDataRefresh() {
+export async function testDataRefresh(s3ServerInstance) {
   if (global.isS3) {
-    //await refreshS3testData();
-    //if(global.S3instance) {
-    // global.S3instance.reset();
-    /*await global.S3instance.close(async () => {
-        await deleteTestData();
-        await runS3Server();
-        await uploadTestDirectory();
-      });*/
-    /* } else {
-      await deleteTestData();
-      //await runS3Server();
-      await uploadTestDirectory();
+    /*if(s3ServerInstance) {
+      s3ServerInstance.reset();
+     await uploadTestDirectory();
     }*/
   } else {
     const src = pathLib.join(

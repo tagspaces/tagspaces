@@ -43,10 +43,12 @@ export async function startMinio() {
   return minioProcess;
 }
 export function stopMinio(process) {
-  // Send SIGHUP to process.
-  console.log('stopMinio');
-  process.stdin.pause();
-  process.kill(); //'SIGHUP');
+  if (process) {
+    // Send SIGHUP to process.
+    console.log('stopMinio');
+    process.stdin.pause();
+    process.kill(); //'SIGHUP');
+  }
 }
 
 export async function startChromeDriver() {
@@ -95,9 +97,10 @@ export async function startWebServer() {
   return app;
 }
 
-export async function stopServices(s3Server, webServer) {
+export async function stopServices(s3Server, webServer, minioServer) {
   await stopS3Server(s3Server);
   await stopWebServer(webServer);
+  await stopMinio(minioServer);
 }
 
 export async function stopWebServer(app) {

@@ -10,6 +10,6 @@ global.isUnitTest = false;
 
 export default defineConfig({
   ...pwConfig,
-  globalSetup: './tests/global-setup-minio.js',
-  globalTeardown: './tests/global-teardown-minio.js',
+  //globalSetup: './tests/global-setup-minio.js',
+  //globalTeardown: './tests/global-teardown-minio.js',
 });

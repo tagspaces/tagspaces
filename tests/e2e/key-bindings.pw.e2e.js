@@ -16,10 +16,12 @@ import { stopServices } from '../setup-functions';
 
 let s3ServerInstance;
 let webServerInstance;
+let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer }) => {
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
+  minioServerInstance = minioServer;
   if (global.isS3) {
     await startTestingApp();
     await closeWelcomePlaywright();
@@ -29,8 +31,8 @@ test.beforeAll(async ({ s3Server, webServer }) => {
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance);
-  await testDataRefresh();
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 

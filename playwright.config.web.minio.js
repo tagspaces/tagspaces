@@ -13,7 +13,7 @@ global.isUnitTest = false;
 
 const config = defineConfig({
   ...pwConfig,
-  globalSetup: './tests/global-setup-web-minio.js',
-  globalTeardown: './tests/global-teardown-web-minio.js',
+  //globalSetup: './tests/global-setup-web-minio.js',
+  //globalTeardown: './tests/global-teardown-web-minio.js',
 });
 export default config;

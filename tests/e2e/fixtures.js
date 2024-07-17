@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { runS3Server, startWebServer } from '../setup-functions';
+import { runS3Server, startMinio, startWebServer } from '../setup-functions';
 import { uploadTestDirectory } from '../s3rver/S3DataRefresh';
 import { removeExtConfig } from './hook';
 
@@ -27,13 +27,10 @@ const test = base.extend({
       await use(null);
     }
   },
-  minoServer: async ({}, use, testInfo) => {
-    if (global.isS3) {
-      //testInfo.title.includes('web')) {
-      const s3Server = await runS3Server();
-      await uploadTestDirectory();
-      await use(s3Server);
-      //await s3Server.close();
+  minioServer: async ({}, use, testInfo) => {
+    if (global.isMinio) {
+      const minioProcess = await startMinio();
+      await use(minioProcess);
     } else {
       // If the test does not require the S3 server, just use a dummy value
       await use(null);

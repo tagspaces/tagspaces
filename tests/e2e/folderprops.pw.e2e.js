@@ -32,10 +32,12 @@ import { stopServices } from '../setup-functions';
 
 let s3ServerInstance;
 let webServerInstance;
+let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer }) => {
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
+  minioServerInstance = minioServer;
   if (global.isS3) {
     await startTestingApp();
     await closeWelcomePlaywright();
@@ -46,8 +48,8 @@ test.beforeAll(async ({ s3Server, webServer }) => {
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance);
-  await testDataRefresh();
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -135,7 +137,7 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await expectElementExist('OpenedTIDempty_folder', false, 5000);
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0206 - Rename folder [web,electron]', async () => {
@@ -151,7 +153,7 @@ test.describe('TST02 - Folder properties', () => {
     );
     const propsNewFolderName = await getPropertiesFileName();
     expect(propsFolderName).not.toBe(propsNewFolderName);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
 
     //turn folderName back
     /*await clickOn('[data-tid=fileNameProperties] input');
@@ -179,7 +181,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + newFolder + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {
