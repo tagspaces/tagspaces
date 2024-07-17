@@ -164,7 +164,7 @@
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.4.6",
-    "@tagspaces/tagspaces-common-aws3": "4.4.7",
+    "@tagspaces/tagspaces-common-aws3": "4.4.8",
     "@tagspaces/tagspaces-common-cordova": "4.4.6",
     "@tagspaces/tagspaces-indexer": "4.4.6",
     "@tagspaces/tagspaces-md": "4.3.26",
