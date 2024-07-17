@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+// import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   createPwMinioLocation,
   createPwLocation,
@@ -34,16 +35,19 @@ import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { stopServices } from '../setup-functions';
 
-/*test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
 });
 
 test.afterAll(async () => {
-  await stopApp();
-  // await testDataRefresh();
-});*/
+  await stopServices(s3ServerInstance, webServerInstance);
+});
 
 test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {

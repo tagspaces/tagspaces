@@ -87,7 +87,7 @@ jobs:
             tests/test-pages/
             tests/test-reports/
   e2eTestsWebWin:
-    name: Test web pro app on Windows
+    name: Test web pro app on Windows with Minio
     runs-on: windows-latest
     env:
       PD_PLATFORM: web

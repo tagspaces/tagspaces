@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   clickOn,
   expectElementExist,
@@ -39,8 +39,14 @@ import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
+let s3ServerInstance;
+let webServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
   await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
@@ -48,6 +54,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance);
   await testDataRefresh();
   await stopApp();
 });

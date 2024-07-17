@@ -95,24 +95,39 @@ export async function startWebServer() {
   return app;
 }
 
-export async function stopWebServer(app) {
-  await app.server.close();
-  app = null;
+export async function stopServices(s3Server, webServer) {
+  await stopS3Server(s3Server);
+  await stopWebServer(webServer);
 }
 
-export function runS3Server() {
+export async function stopWebServer(app) {
+  if (app) {
+    await app.server.close();
+    app = null;
+  }
+}
+
+export async function stopS3Server(server) {
+  if (server) {
+    await server.close();
+    server = null;
+  }
+}
+
+export async function runS3Server() {
   const directoryTargetPath = pathLib.resolve(
     __dirname,
     'testdata-tmp',
     'file-structure',
   );
   const corsConfig = pathLib.resolve(__dirname, 's3rver', 'cors.xml');
-  global.S3instance = new S3rver({
+  const instance = new S3rver({
     port: 4569,
     address: 'localhost',
     silent: true,
     directory: directoryTargetPath,
-    //cors: true, // Enable CORS
+    resetOnClose: true,
+    sslEnabled: false,
     configureBuckets: [
       {
         name: 'supported-filestypes',
@@ -121,5 +136,6 @@ export function runS3Server() {
     ],
   });
 
-  return global.S3instance.run();
+  await instance.run();
+  return instance;
 }

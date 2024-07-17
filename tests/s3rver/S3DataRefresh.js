@@ -110,7 +110,7 @@ function uploadFile(filePath, content = undefined) {
   }
 }
 
-function uploadDirectory() {
+function uploadTestDirectory() {
   try {
     const files = getFilesRecursive(directoryPath);
     console.log(`All files in ${directoryPath} uploaded to ${bucketName}`);
@@ -122,10 +122,11 @@ function uploadDirectory() {
 
 async function refreshS3testData() {
   await deleteAllObjects('supported-filestypes');
-  await uploadDirectory();
+  await uploadTestDirectory();
 }
 
 module.exports = {
-  refreshS3testData,
+  uploadTestDirectory,
+  //refreshS3testData,
   uploadFile,
 };

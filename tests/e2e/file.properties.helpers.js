@@ -1,9 +1,12 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { expect } from '@playwright/test';
 import {
+  clickOn,
   expectElementExist,
   getElementText,
+  isDisplayed,
   removeTagFromTagMenu,
+  selectorFile,
   setInputKeys,
 } from './general.helpers';
 
@@ -84,10 +87,11 @@ export async function AddRemovePropertiesTags(
 
 export async function getPropertiesFileName() {
   let fileName;
-
-  fileName = await global.client.inputValue(
-    '[data-tid=fileNameProperties] input',
-  ); // https://github.com/microsoft/playwright/issues/3265
+  const selectorFileProps = '[data-tid=fileNameProperties] input';
+  if (await isDisplayed(selectorFileProps, false, 3000)) {
+    await clickOn('[data-tid=detailsTabTID]');
+  }
+  fileName = await global.client.inputValue(selectorFileProps); // https://github.com/microsoft/playwright/issues/3265
   /*.getAttribute(
       '[data-tid=fileNameProperties] input',
       'value'

@@ -13,7 +13,7 @@ global.isUnitTest = false;
 
 const config = defineConfig({
   ...pwConfig,
-  globalSetup: './tests/global-setup-web.js',
-  globalTeardown: './tests/global-teardown-web.js',
+  // globalSetup: './tests/global-setup-web.js',
+  // globalTeardown: './tests/global-teardown-web.js',
 });
 export default config;

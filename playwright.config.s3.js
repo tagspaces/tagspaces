@@ -11,6 +11,6 @@ global.isUnitTest = false;
 
 export default defineConfig({
   ...pwConfig,
-  globalSetup: './tests/s3rver/S3rverStart.js',
-  globalTeardown: './tests/s3rver/S3rverStop.js',
+  //globalSetup: './tests/s3rver/S3rverStart.js',
+  //globalTeardown: './tests/s3rver/S3rverStop.js',
 });

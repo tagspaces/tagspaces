@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {
   checkSettings,
@@ -32,8 +32,14 @@ import {
   testTagName,
 } from './tag.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
+let s3ServerInstance;
+let webServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
   if (global.isS3) {
     await startTestingApp();
     await closeWelcomePlaywright();
@@ -43,6 +49,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance);
   await testDataRefresh();
   await stopApp();
 });

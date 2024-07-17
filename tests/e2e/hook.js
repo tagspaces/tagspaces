@@ -1,7 +1,8 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
-import { refreshS3testData, uploadFile } from '../s3rver/S3DataRefresh';
+import { uploadFile, uploadTestDirectory } from '../s3rver/S3DataRefresh';
+import { runS3Server } from '../setup-functions';
 // import { execSync } from 'child_process';
 
 // Spectron API https://github.com/electron/spectron
@@ -197,7 +198,19 @@ export async function stopApp() {
 
 export async function testDataRefresh() {
   if (global.isS3) {
-    await refreshS3testData();
+    //await refreshS3testData();
+    //if(global.S3instance) {
+    // global.S3instance.reset();
+    /*await global.S3instance.close(async () => {
+        await deleteTestData();
+        await runS3Server();
+        await uploadTestDirectory();
+      });*/
+    /* } else {
+      await deleteTestData();
+      //await runS3Server();
+      await uploadTestDirectory();
+    }*/
   } else {
     const src = pathLib.join(
       __dirname,
@@ -212,6 +225,18 @@ export async function testDataRefresh() {
     await fse.emptyDir(newPath);
     await fse.copy(src, newPath); //, { overwrite: true });
   }
+}
+
+export async function deleteTestData() {
+  await fse.emptyDir(
+    pathLib.join(
+      __dirname,
+      '..',
+      'testdata-tmp',
+      'file-structure',
+      'supported-filestypes',
+    ),
+  );
 }
 
 export async function createFile(

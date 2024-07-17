@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   openLocationMenu,
@@ -18,18 +18,25 @@ import {
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { stopServices } from '../setup-functions';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
 
 let testLocationName;
 
-test.beforeAll(async () => {
+let s3ServerInstance;
+let webServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
   await startTestingApp('extconfig-without-locations.js');
   //await clearDataStorage();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance);
   await testDataRefresh();
   await stopApp();
 });
