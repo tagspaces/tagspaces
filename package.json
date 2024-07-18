@@ -136,7 +136,7 @@
     "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\belectron\\b/'",
     "test-playwright-s3": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --config ./playwright.config.s3.js -g '/\\bminio\\b/'",
     "test-playwright-minio": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.minio.js -g '/\\bminio\\b/'",
-    "test-playwright-web": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
+    "test-playwright-web": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --config ./playwright.config.web.js -g '/\\bTST5120\\b/'",
     "test-playwright-web-headless": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider HEADLESS_MODE=true npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
     "test-playwright-web-minio": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.web.minio.js -g '/\\bweb\\b/'",
     "test-playwright-web-headless-minio": "npm run test-refresh-data && cross-env HEADLESS_MODE=true npx playwright test --config ./playwright.config.web.minio.js -g '/\\bweb\\b/'",

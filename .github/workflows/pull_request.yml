@@ -42,6 +42,7 @@ jobs:
         with:
           name: test-artifacts-TST0601n
           path: |
+            test-results/
             tests/test-pages/
             tests/test-reports/
   e2eTestsWinS3:
@@ -84,8 +85,9 @@ jobs:
         with:
           name: test-artifacts-desktop-s3-win
           path: |
-            tests/test-pages/
+            test-results/
             tests/test-reports/
+            playwright-report/
   e2eTestsWebWin:
     name: Test web pro app on Windows with Minio
     runs-on: windows-latest
@@ -134,6 +136,7 @@ jobs:
         with:
           name: test-artifacts-web-minio-win
           path: |
+            test-results/
             tests/test-reports/
             playwright-report/
   e2eTestsWebMac:
@@ -177,6 +180,7 @@ jobs:
         with:
           name: test-artifacts-web-mac-s3
           path: |
+            test-results/
             tests/test-reports/
             playwright-report/
   # gitHubActionForNpmMac:

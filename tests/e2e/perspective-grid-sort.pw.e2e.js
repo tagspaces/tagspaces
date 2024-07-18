@@ -38,11 +38,11 @@ test.afterAll(async () => {
   await stopApp();
 });
 
-test.afterEach(async ({ page }, testInfo) => {
+/*test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-});
+});*/
 
 test.beforeEach(async () => {
   if (global.isMinio) {

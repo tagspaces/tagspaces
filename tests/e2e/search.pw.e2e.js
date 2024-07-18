@@ -62,7 +62,7 @@ test.afterAll(async () => {
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
     const localStorage = await global.client.evaluate(() =>
       JSON.stringify(window.localStorage),
@@ -71,7 +71,7 @@ test.afterEach(async ({ page }, testInfo) => {
       testInfo.outputPath(testInfo.title + '_localstorage.json'),
       localStorage,
     );
-  }
+  }*/
   await clearDataStorage();
 });
 
