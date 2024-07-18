@@ -1,9 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
-import { uploadFile, uploadTestDirectory } from '../s3rver/S3DataRefresh';
-import { runS3Server } from '../setup-functions';
-// import { execSync } from 'child_process';
+import { uploadFile } from '../s3rver/S3DataRefresh';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
