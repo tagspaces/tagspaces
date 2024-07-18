@@ -49,7 +49,7 @@ test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
+  await startTestingApp('extconfig-two-locations.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
   await createFile();

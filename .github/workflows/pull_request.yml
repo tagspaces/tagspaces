@@ -40,7 +40,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts
+          name: test-artifacts-TST0601n
           path: |
             tests/test-pages/
             tests/test-reports/
@@ -82,7 +82,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts
+          name: test-artifacts-desktop-s3-win
           path: |
             tests/test-pages/
             tests/test-reports/
@@ -132,7 +132,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts-pr
+          name: test-artifacts-web-minio-win
           path: |
             tests/test-reports/
             playwright-report/
@@ -175,7 +175,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts-pr
+          name: test-artifacts-web-mac-s3
           path: |
             tests/test-reports/
             playwright-report/

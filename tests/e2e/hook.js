@@ -74,7 +74,13 @@ export async function clearLocalStorage() {
 export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
   let srcDir;
   if (global.isWeb) {
-    srcDir = pathLib.join(__dirname, '..', '..', 'scripts', 'web' + extconfig);
+    srcDir = pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      'scripts',
+      'web' + (global.isS3 ? 's3' : '') + extconfig,
+    );
 
     if (!fse.existsSync(srcDir)) {
       srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
