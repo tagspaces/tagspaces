@@ -185,7 +185,7 @@ export class CommonLocation implements TS.Location {
         return Promise.resolve(thumbPath);
       }
 
-      return this.getURLforPath(thumbPath);
+      return this.getURLforPathInt(thumbPath);
     }
 
     const normalizedUrl = this.normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
@@ -226,7 +226,7 @@ export class CommonLocation implements TS.Location {
         return Promise.resolve(bgndPath);
       }
 
-      return this.getURLforPath(bgndPath);
+      return this.getURLforPathInt(bgndPath);
     }
 
     const normalizedUrl = this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
@@ -352,7 +352,7 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('checkDirExist: not implemented'));
   };
 
-  getURLforPath = async (
+  getURLforPathInt = async (
     path: string,
     expirationInSeconds: number = 900,
   ): Promise<string> => {

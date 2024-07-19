@@ -597,7 +597,7 @@ export const OpenedEntryContextProvider = ({
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
-      entryForOpening.url = await loc.getURLforPath(cleanedPath);
+      entryForOpening.url = await loc.getURLforPathInt(cleanedPath);
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }

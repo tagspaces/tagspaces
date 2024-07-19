@@ -398,7 +398,7 @@ export const LocationIndexContextProvider = ({
         return loc.checkFileExist(thumbFilePath).then((exist) => {
           if (exist) {
             if (loc.type === locationType.TYPE_CLOUD) {
-              return loc.getURLforPath(thumbFilePath).then((thumbPath) => ({
+              return loc.getURLforPathInt(thumbFilePath).then((thumbPath) => ({
                 ...entry,
                 meta: { ...entry.meta, thumbPath },
               }));

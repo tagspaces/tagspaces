@@ -912,7 +912,8 @@ export const IOActionsContextProvider = ({
             );
             if (fsEntry) {
               // Generate Thumbnail
-              const url = await currentLocation.getURLforPath(fileTargetPath);
+              const url =
+                await currentLocation.getURLforPathInt(fileTargetPath);
               const thumbPath = await generateThumbnailPromise(
                 url,
                 fsEntry.size,
@@ -943,7 +944,8 @@ export const IOActionsContextProvider = ({
                   console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
-                const tmbPath = await currentLocation.getURLforPath(thumbPath);
+                const tmbPath =
+                  await currentLocation.getURLforPathInt(thumbPath);
                 fsEntry.meta.thumbPath = tmbPath;
               }
               fsEntries.push(fsEntry);
@@ -1200,7 +1202,7 @@ export const IOActionsContextProvider = ({
                       thumbFilePath &&
                       metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
                     ) {
-                      const thumbPath = await currentLocation.getURLforPath(
+                      const thumbPath = await currentLocation.getURLforPathInt(
                         file.meta.thumbPath,
                       );
                       file.meta = {

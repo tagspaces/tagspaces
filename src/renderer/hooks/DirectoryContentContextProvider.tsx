@@ -1360,7 +1360,7 @@ export const DirectoryContentContextProvider = ({
       if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
         thumbPath =
           location.haveObjectStoreSupport() || location.haveWebDavSupport()
-            ? await location.getURLforPath(thumbDirPath)
+            ? await location.getURLforPathInt(thumbDirPath)
             : thumbDirPath;
       }
       if (
