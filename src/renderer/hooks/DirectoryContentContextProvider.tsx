@@ -63,6 +63,7 @@ import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCancelable } from '-/utils/useCancelable';
 import LoadingLazy from '-/components/LoadingLazy';
+import useFirstRender from '-/utils/useFirstRender';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -242,7 +243,7 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
-  // const firstRender = useFirstRender();
+  const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -302,7 +303,7 @@ export const DirectoryContentContextProvider = ({
   }, [currentLocation]);
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (
           cleanTrailingDirSeparator(currentDirectoryPath.current) ===
@@ -346,8 +347,10 @@ export const DirectoryContentContextProvider = ({
   }, [kanbanActions]);
 
   useEffect(() => {
-    reflectActions(actions).catch(console.error);
-    reflectSelection(actions);
+    if (!firstRender) {
+      reflectActions(actions).catch(console.error);
+      reflectSelection(actions);
+    }
   }, [actions]);
 
   const reflectActions = async (actions) => {
@@ -686,26 +689,37 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function loadMetaDirectoryContent(
+  async function loadMetaDirectoryContent(
     directoryPath: string,
     location: CommonLocation,
-    showHiddenEntries = undefined,
+    showHiddenEntries: boolean | undefined = undefined,
   ): Promise<TS.FileSystemEntry[]> {
+    // Ensure selectedEntries is cleared if not empty
     if (selectedEntries.length > 0) {
       setSelectedEntries([]);
     }
-    return getDirMeta(directoryPath, location).then((meta) => {
-      if (meta) {
-        directoryMeta.current = meta;
-      } else {
-        directoryMeta.current = getDefaultDirMeta();
-      }
-      return loadDirectoryContentInt(
-        directoryPath,
-        location,
-        showHiddenEntries,
-      );
-    });
+
+    // Fetch directory metadata
+    const meta = await getDirMeta(directoryPath, location);
+
+    // Load directory content
+    const entries = await loadDirectoryContentInt(
+      directoryPath,
+      location,
+      showHiddenEntries,
+    );
+
+    // Update directory metadata
+    if (meta) {
+      directoryMeta.current = meta;
+    } else {
+      directoryMeta.current = getDefaultDirMeta();
+    }
+
+    // Set current directory entries
+    setCurrentDirectoryEntries(entries);
+
+    return entries;
   }
 
   /**
@@ -738,7 +752,10 @@ export const DirectoryContentContextProvider = ({
           directoryPath,
           currentLocation,
           showHiddenEntries,
-        );
+        ).then((entries) => {
+          setCurrentDirectoryEntries(entries);
+          return entries;
+        });
       });
     } else {
       isMetaLoaded.current = false;
@@ -747,7 +764,10 @@ export const DirectoryContentContextProvider = ({
         directoryPath,
         currentLocation,
         showHiddenEntries,
-      );
+      ).then((entries) => {
+        setCurrentDirectoryEntries(entries);
+        return entries;
+      });
     }
   }
 
@@ -894,7 +914,7 @@ export const DirectoryContentContextProvider = ({
       showHiddenEntries,
     );
 
-    setCurrentDirectoryEntries(directoryContent);
+    //setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
     updateHistory(location.uuid, currentLocationPath.current, directoryPath);
     return directoryContent;

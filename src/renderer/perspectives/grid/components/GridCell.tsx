@@ -63,6 +63,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -136,6 +137,7 @@ function GridCell(props: Props) {
   const reorderTags: boolean = useSelector(isReorderTags);
   const thumbPath = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
   const maxHeight = calculateEntryHeight(entrySize);
@@ -159,7 +161,7 @@ function GridCell(props: Props) {
   }, [fsEntry]);
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (fsEntry.path === action.entry.path) {
           /*if (action.action === 'thumbChange') {

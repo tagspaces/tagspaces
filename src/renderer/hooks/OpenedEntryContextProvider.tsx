@@ -211,7 +211,7 @@ export const OpenedEntryContextProvider = ({
   }, []);
 
   useEffect(() => {
-    if (actions && actions.length > 0) {
+    if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
           if (action.open && action.entry.isFile) {
@@ -239,7 +239,7 @@ export const OpenedEntryContextProvider = ({
   }, [actions]);
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       let isChanged = false;
       for (const action of metaActions) {
         if (
