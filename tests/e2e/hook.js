@@ -209,6 +209,7 @@ export async function testDataRefresh(s3ServerInstance) {
      await uploadTestDirectory();
     }*/
   } else {
+    await deleteTestData();
     const src = pathLib.join(
       __dirname,
       '..',
@@ -217,9 +218,7 @@ export async function testDataRefresh(s3ServerInstance) {
       'supported-filestypes',
     );
     const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
-
     let newPath = pathLib.join(dst, pathLib.basename(src));
-    await fse.emptyDir(newPath);
     await fse.copy(src, newPath); //, { overwrite: true });
   }
 }

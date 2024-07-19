@@ -40,7 +40,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts-TST0601n
+          name: test-artifacts-desktop-win
           path: |
             test-results/
             tests/test-pages/

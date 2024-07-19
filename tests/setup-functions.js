@@ -117,7 +117,7 @@ export async function stopS3Server(server) {
   }
 }
 
-export async function runS3Server() {
+export async function runS3Server(silent = true) {
   const directoryTargetPath = pathLib.resolve(
     __dirname,
     'testdata-tmp',
@@ -127,7 +127,7 @@ export async function runS3Server() {
   const instance = new S3rver({
     port: 4569,
     address: 'localhost',
-    silent: true,
+    silent: silent,
     directory: directoryTargetPath,
     resetOnClose: true,
     sslEnabled: false,

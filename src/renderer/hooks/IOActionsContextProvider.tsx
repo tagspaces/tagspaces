@@ -1747,8 +1747,15 @@ export const IOActionsContextProvider = ({
         entry.path,
         currentLocation?.getDirSeparator(),
       );
-      currentLocation.generateURLforPath(folderBgndPath, 604800);
+      currentLocation
+        .generateURLforPath(folderBgndPath, 604800)
+        .then(() => setBackgroundImageChangeAction(entry));
+    } else {
+      setBackgroundImageChangeAction(entry);
     }
+  }
+
+  function setBackgroundImageChangeAction(entry: TS.FileSystemEntry) {
     const action: TS.EditMetaAction = {
       action: 'bgdImgChange',
       entry: {
@@ -1792,8 +1799,14 @@ export const IOActionsContextProvider = ({
         entry.path,
         currentLocation?.getDirSeparator(),
       );
-      currentLocation.generateURLforPath(folderThumbPath, 604800);
+      currentLocation
+        .generateURLforPath(folderThumbPath, 604800)
+        .then(() => setThumbnailImageChangeAction(entry));
     }
+    setThumbnailImageChangeAction(entry);
+  }
+
+  function setThumbnailImageChangeAction(entry: TS.FileSystemEntry) {
     const action: TS.EditMetaAction = {
       action: 'thumbChange',
       entry: {
