@@ -23,6 +23,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   getMetaFileLocationForFile,
@@ -78,6 +79,7 @@ import {
   openUrl,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { isDesktopMode } from '-/reducers/settings';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
@@ -225,6 +227,7 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const desktopMode = useSelector(isDesktopMode);
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
@@ -590,6 +593,7 @@ function EntryProperties(props: Props) {
             }}
             margin="dense"
             name="name"
+            size={desktopMode ? 'small' : 'medium'}
             fullWidth={true}
             data-tid="fileNameProperties"
             defaultValue={entryName} // openedEntry.current.name}
@@ -736,6 +740,7 @@ function EntryProperties(props: Props) {
             <TextField
               margin="dense"
               fullWidth={true}
+              size={desktopMode ? 'small' : 'medium'}
               value={ldtm}
               label={t('core:fileLDTM')}
               InputProps={{
@@ -762,6 +767,7 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 fullWidth={true}
                 value={fileSize()}
+                size={desktopMode ? 'small' : 'medium'}
                 label={t('core:fileSize')}
                 InputProps={{
                   readOnly: true,
@@ -791,6 +797,7 @@ function EntryProperties(props: Props) {
               title={openedEntry.url || openedEntry.path}
               fullWidth={true}
               label={t('core:filePath')}
+              size={desktopMode ? 'small' : 'medium'}
               data-tid="filePathProperties"
               value={openedEntry.path || ''}
               InputProps={{
@@ -838,7 +845,8 @@ function EntryProperties(props: Props) {
             <TextField
               data-tid="sharingLinkTID"
               margin="dense"
-              name="path"
+              name="sharinglink"
+              size={desktopMode ? 'small' : 'medium'}
               label={
                 <>
                   {t('core:sharingLink')}
@@ -890,6 +898,7 @@ function EntryProperties(props: Props) {
               <TextField
                 margin="dense"
                 name="downloadLink"
+                size={desktopMode ? 'small' : 'medium'}
                 label={
                   <>
                     {t('core:downloadLink')}
@@ -1164,7 +1173,8 @@ function EntryProperties(props: Props) {
           <TextField
             data-tid="entryIDTID"
             margin="dense"
-            name="path"
+            name="entryid"
+            size={desktopMode ? 'small' : 'medium'}
             label={
               <>
                 {t('core:entryId')}

@@ -43,6 +43,7 @@ import TagsSelect from './TagsSelect';
 import {
   getMaxSearchResults,
   getShowUnixHiddenEntries,
+  isDesktopMode,
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
@@ -88,6 +89,7 @@ interface Props {
 
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
+  const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const {
     openCurrentDirectory,
@@ -554,6 +556,7 @@ function SearchPopover(props: Props) {
                   name="savedSearch"
                   labelId="saved-searches"
                   disabled={isIndexing !== undefined || !Pro}
+                  size={desktopMode ? 'small' : 'medium'}
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
@@ -608,6 +611,7 @@ function SearchPopover(props: Props) {
               label={t('core:searchQueryInfo')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
+              size={desktopMode ? 'small' : 'medium'}
               onKeyDown={startSearch}
               style={{ width: '100%' }}
               InputProps={{
@@ -794,6 +798,7 @@ function SearchPopover(props: Props) {
               fullWidth
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
+              size={desktopMode ? 'small' : 'medium'}
               input={
                 <OutlinedInput
                   name="fileTypes"
@@ -923,6 +928,7 @@ function SearchPopover(props: Props) {
               fullWidth
               value={fileSize.current}
               onChange={handleFileSizeChange}
+              size={desktopMode ? 'small' : 'medium'}
               input={
                 <OutlinedInput
                   name="fileSize"
@@ -977,6 +983,7 @@ function SearchPopover(props: Props) {
               fullWidth
               value={lastModified.current}
               onChange={handleLastModifiedChange}
+              size={desktopMode ? 'small' : 'medium'}
               input={
                 <OutlinedInput
                   name="lastModified"

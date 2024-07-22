@@ -61,8 +61,8 @@ function SearchBox(props: Props) {
               style: {
                 overflow: 'hidden',
                 height: 720,
-                background: alpha(theme.palette.background.default, 0.9),
-                backdropFilter: 'blur(5px)',
+                // background: alpha(theme.palette.background.default, 0.95),
+                // backdropFilter: 'blur(5px)',
               },
             },
           }}
