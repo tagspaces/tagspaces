@@ -1190,13 +1190,13 @@ function SearchAutocomplete(props: Props) {
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
-          style={{ maxHeight: 35 }}
+          size="small"
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorSearch(event.currentTarget);
           }}
         >
-          <AdvancedSearchIcon />
-          <DropDownIcon />
+          <AdvancedSearchIcon fontSize="small" />
+          {/* <DropDownIcon /> */}
         </IconButton>
       </Tooltip>
       <Tooltip title={t('clearSearch') + ' (ESC)'}>
@@ -1208,7 +1208,7 @@ function SearchAutocomplete(props: Props) {
           size="small"
           edge="end"
         >
-          <ClearSearchIcon />
+          <ClearSearchIcon fontSize="small" />
         </IconButton>
       </Tooltip>
     </>
