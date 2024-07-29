@@ -315,7 +315,7 @@ export const DirectoryContentContextProvider = ({
                 action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
                   ? defaultPerspective
                   : action.entry.meta.perspective;
-              forceUpdate();
+              setDirectoryMeta(action.entry.meta);
             }
             //setManualDirectoryPerspective(action.entry.meta.perspective);
           } else if (
@@ -336,11 +336,7 @@ export const DirectoryContentContextProvider = ({
     if (kanbanActions && kanbanActions.length > 0) {
       for (const action of kanbanActions) {
         if (action.action === 'directoryVisibilityChange') {
-          directoryMeta.current = action.meta;
-          currentDirectoryDirs.current = [
-            ...directoryMeta.current.customOrder.folders,
-          ];
-          forceUpdate();
+          setDirectoryMeta(action.meta);
         }
       }
     }
@@ -712,6 +708,8 @@ export const DirectoryContentContextProvider = ({
     // Update directory metadata
     if (meta) {
       directoryMeta.current = meta;
+      currentDirectoryDirs.current = meta.customOrder?.folders || [];
+      currentDirectoryFiles.current = meta.customOrder?.files || [];
     } else {
       directoryMeta.current = getDefaultDirMeta();
     }
@@ -887,25 +885,6 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setSearchFilter(undefined));
     }
 
-    if (directoryMeta.current) {
-      /*if (directoryMeta.current.perspective) {
-        currentPerspective.current = directoryMeta.current
-          .perspective as TS.PerspectiveType;
-      } else {
-        currentPerspective.current = 'unspecified';
-      }*/
-      if (directoryMeta.current.customOrder) {
-        if (directoryMeta.current.customOrder.files) {
-          currentDirectoryFiles.current =
-            directoryMeta.current.customOrder.files;
-        }
-        if (directoryMeta.current.customOrder.folders) {
-          currentDirectoryDirs.current =
-            directoryMeta.current.customOrder.folders;
-        }
-      }
-    }
-
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
       location,
@@ -1038,6 +1017,10 @@ export const DirectoryContentContextProvider = ({
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
     isMetaLoaded.current = true;
+    currentDirectoryDirs.current =
+      directoryMeta.current?.customOrder?.folders || [];
+    currentDirectoryFiles.current =
+      directoryMeta.current?.customOrder?.files || [];
     forceUpdate();
   }
 
