@@ -114,7 +114,8 @@ function FileMenu(props: Props) {
     setFolderBackgroundPromise,
   } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
-  const { openDirectory, currentLocationPath } = useDirectoryContentContext();
+  const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
@@ -237,14 +238,10 @@ function FileMenu(props: Props) {
     );
 
     setFolderBackgroundPromise(path, directoryPath)
-      .then((directoryPath: string) => {
-        setBackgroundImageChange(
-          currentLocation.toFsEntry(directoryPath, false),
-        );
-        /*dispatch(
-          AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
-        );*/
-        showNotification('Background created for: ' + directoryPath);
+      .then((dirPath: string) => getAllPropertiesPromise(dirPath))
+      .then((fsEntry: TS.FileSystemEntry) => {
+        setBackgroundImageChange(fsEntry);
+        showNotification('Background created for: ' + fsEntry.path);
         return true;
       })
       .catch((error) => {

@@ -144,7 +144,7 @@ function GridPagination(props: Props) {
           }
         });
     }
-  }, [currentDirectoryPath, containerEl.current]);
+  }, [currentDirectoryPath, containerEl.current, directoryMeta]);
 
   const handleChange = (event, value) => {
     setCurrentPage(value);

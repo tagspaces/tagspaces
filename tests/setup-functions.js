@@ -118,6 +118,9 @@ export async function stopS3Server(server) {
 }
 
 export async function runS3Server(silent = true) {
+  // Set NODE_OPTIONS environment variable to use openssl-legacy-provider
+  process.env.NODE_OPTIONS = '--openssl-legacy-provider';
+
   const directoryTargetPath = pathLib.resolve(
     __dirname,
     'testdata-tmp',

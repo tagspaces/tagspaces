@@ -738,15 +738,19 @@ function EntryContainer() {
       }
     }
     const haveDescription = description?.length > 0;
-    const tabsComponent = (marginRight = undefined) => (
-      <EntryContainerTabs
-        isEditable={isEditable}
-        isPanelOpened={isPanelOpened}
-        openPanel={openPanel}
-        toggleProperties={toggleProperties}
-        haveDescription={haveDescription}
-        marginRight={marginRight}
-      />
+
+    const tabsComponent = useCallback(
+      (marginRight: string | undefined = undefined) => (
+        <EntryContainerTabs
+          isEditable={isEditable}
+          isPanelOpened={isPanelOpened}
+          openPanel={openPanel}
+          toggleProperties={toggleProperties}
+          haveDescription={haveDescription}
+          marginRight={marginRight}
+        />
+      ),
+      [isEditable, isPanelOpened, haveDescription],
     );
 
     if (!autoSave && !editFile) {

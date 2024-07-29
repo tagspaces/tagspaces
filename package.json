@@ -73,7 +73,7 @@
     "linux-fix-sandbox": "sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox",
     "minio-start": "./tests/bin/minio server ./tests/testdata-tmp/file-structure",
     "minio-start-windows": ".\\tests\\bin\\minio.exe server ./tests/testdata-tmp/file-structure",
-    "s3server-start": "ts-node ./scripts/startS3server.js",
+    "s3server-start": "cross-env NODE_OPTIONS=--openssl-legacy-provider ts-node ./scripts/startS3server.js",
     "scope-login": "npm login --scope=@tagspacespro --registry=https://npm.pkg.github.com",
     "package": "ts-node ./.erb/scripts/clean.js && npm run build && electron-builder build --publish never && npm run build:dll",
     "package-android": "npm run build:cordova && cd cordova && npm install && cordova build --release android",

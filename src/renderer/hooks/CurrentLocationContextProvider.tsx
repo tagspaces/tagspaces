@@ -114,7 +114,7 @@ export const CurrentLocationContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-  const currentLocation = useRef<CommonLocation>(undefined);
+  const currentLocation = useRef<string>(undefined);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const initLocations = useRef<boolean>(false);
@@ -155,7 +155,7 @@ export const CurrentLocationContextProvider = ({
       // check if current location exist (or is removed)
       if (currentLocation.current) {
         const location = locations.find(
-          (location) => location.uuid === currentLocation.current.uuid,
+          (location) => location.uuid === currentLocation.current,
         );
         if (!location) {
           setCurrentLocation(undefined);
@@ -196,15 +196,15 @@ export const CurrentLocationContextProvider = ({
     return Promise.resolve(locationPath);
   }
 
-  function findLocation(locationID: string): CommonLocation {
+  function findLocation(locationID: string = undefined): CommonLocation {
     if (!locationID) {
-      return currentLocation.current;
+      locationID = currentLocation.current;
     }
     const loc = locations.find((l) => l.uuid === locationID);
     if (loc) {
       return loc;
     }
-    return currentLocation.current;
+    return undefined;
   }
 
   function findLocalLocation(): CommonLocation {
@@ -269,7 +269,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function setCurrentLocation(location) {
-    currentLocation.current = location;
+    currentLocation.current = location.uuid;
     forceUpdate();
   }
 
@@ -297,15 +297,18 @@ export const CurrentLocationContextProvider = ({
     }
   }
 
-  const readOnlyMode: boolean = useMemo(
-    () => currentLocation.current && currentLocation.current.isReadOnly,
-    [currentLocation.current],
-  );
+  const readOnlyMode: boolean = useMemo(() => {
+    const location = findLocation();
+    if (location) {
+      return location.isReadOnly;
+    }
+    return true;
+  }, [currentLocation.current]);
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
+    const location = findLocation();
     const locationPersistTagsInSidecarFile =
-      currentLocation.current &&
-      currentLocation.current.persistTagsInSidecarFile;
+      location && location.persistTagsInSidecarFile;
     if (locationPersistTagsInSidecarFile !== undefined) {
       return locationPersistTagsInSidecarFile;
     }
@@ -317,10 +320,7 @@ export const CurrentLocationContextProvider = ({
     skipInitDirList: boolean = false,
   ) {
     skipInitialDirList.current = skipInitDirList;
-    if (
-      !currentLocation.current ||
-      location.uuid !== currentLocation.current.uuid
-    ) {
+    if (!currentLocation.current || location.uuid !== currentLocation.current) {
       if (location && location.name) {
         document.title = location.name + ' | ' + versionMeta.name;
       }
@@ -329,10 +329,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function changeLocationByID(locationId: string) {
-    if (
-      !currentLocation.current ||
-      locationId !== currentLocation.current.uuid
-    ) {
+    if (!currentLocation.current || locationId !== currentLocation.current) {
       const location = findLocation(locationId);
       if (location) {
         setCurrentLocation(location);
@@ -363,10 +360,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function closeLocation(locationId: string) {
-    if (
-      currentLocation.current &&
-      currentLocation.current.uuid === locationId
-    ) {
+    if (currentLocation.current && currentLocation.current === locationId) {
       locations.map((location) => {
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
@@ -392,13 +386,13 @@ export const CurrentLocationContextProvider = ({
   }
 
   function isCurrentLocation(uuid: string) {
-    return currentLocation.current && currentLocation.current.uuid === uuid;
+    return currentLocation.current && currentLocation.current === uuid;
   }
 
   const context = useMemo(() => {
     return {
       locations,
-      currentLocation: currentLocation.current,
+      currentLocation: findLocation(),
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,

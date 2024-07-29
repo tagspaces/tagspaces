@@ -102,6 +102,8 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import useFirstRender from '-/utils/useFirstRender';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -237,6 +239,7 @@ function EntryProperties(props: Props) {
     setBackgroundColorChange,
     saveDirectoryPerspective,
   } = useIOActionsContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
@@ -271,6 +274,7 @@ function EntryProperties(props: Props) {
   const thumbImage = useRef<string>('none');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   const [popoverAnchorEl, setPopoverAnchorEl] =
     React.useState<HTMLElement | null>(null);
@@ -287,6 +291,25 @@ function EntryProperties(props: Props) {
   };
 
   useEffect(() => {
+    if (openedEntry) {
+      reloadBackground();
+      reloadThumbnails();
+    }
+  }, [openedEntry]);
+
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (action.action === 'bgdImgChange') {
+          reloadBackground(); //todo rethink this duplicate from openedEntry changes
+        } else if (action.action === 'thumbChange') {
+          reloadThumbnails();
+        }
+      }
+    }
+  }, [metaActions]);
+
+  function reloadBackground() {
     if (location) {
       location
         .getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated)
@@ -297,6 +320,11 @@ function EntryProperties(props: Props) {
             forceUpdate();
           }
         });
+    }
+  }
+
+  function reloadThumbnails() {
+    if (location) {
       location
         .getThumbPath(
           openedEntry.meta?.thumbPath,
@@ -310,7 +338,7 @@ function EntryProperties(props: Props) {
           }
         });
     }
-  }, [location]);
+  }
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
