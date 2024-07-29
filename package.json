@@ -233,7 +233,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.64-alpha.6"
+    "@tagspacespro/tagspacespro": "5.0.64-alpha.7"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
