@@ -23,6 +23,7 @@ import {
   waitForNotification,
   expectAllFileSelected,
   selectAllFiles,
+  openFolder,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -106,7 +107,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0103 - Rename folder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await openFolder(testFolder);
     const newDirectoryName = await renameFolder();
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(
@@ -115,9 +116,7 @@ test.describe('TST01 - Folder management', () => {
       5000,
     );
     // cleanup
-    await global.client.dblclick(
-      '[data-tid=fsEntryName_' + newDirectoryName + ']',
-    );
+    await openFolder(newDirectoryName);
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',

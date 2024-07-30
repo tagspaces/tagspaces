@@ -417,22 +417,21 @@ test.describe('TST50** - Right button on a file', () => {
   test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
   test('TST5033 - Open directory (directory menu) [web,electron]', async () => {
+    await expectElementExist(selectorFile, true, 5000);
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
-    // await global.client.screenshot({ path: 'screenshotTST5033.png' });
-    await expectElementExist(selectorFile, false);
-    // const firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(undefined); //'sample.eml');
+    await expectElementExist(selectorFile, false, 5000);
   });
 
   test('TST5034 - Rename directory (directory menu) [web,electron]', async () => {
     const newDirName = 'new_dir_name';
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    const folder = getGridFileSelector('empty_folder');
+    await openContextEntryMenu(folder, 'renameDirectory');
     const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    await openContextEntryMenu(folder, 'renameDirectory');
     const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);

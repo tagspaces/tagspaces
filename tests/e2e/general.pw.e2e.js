@@ -23,6 +23,7 @@ import {
   expectMetaFilesExist,
   getGridFileSelector,
   isDisplayed,
+  openFolder,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
@@ -88,9 +89,9 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      2000,
+      4000,
     );
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await openFolder(testFolder);
     // create new file
     await newHTMLFile();
     await closeOpenedFile();

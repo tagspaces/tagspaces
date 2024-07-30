@@ -346,10 +346,11 @@ test.describe('TST04 - Testing the tag library:', () => {
       '[data-tid=tagContainer_' + tagName + ']',
       getGridFileSelector('sample.txt'),
     );
+    await clickOn('[data-tid=showTimeTID]');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
 
     await expectElementExist(
-      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), true) + ']',
+      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), false) + ']',
       true,
       8000,
       '[data-tid=perspectiveGridFileTable]',

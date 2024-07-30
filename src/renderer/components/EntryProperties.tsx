@@ -296,7 +296,7 @@ function EntryProperties(props: Props) {
   }, [location]);
 
   useEffect(() => {
-    if (!firstRender && metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0 && openedEntry) {
       for (const action of metaActions) {
         if (action.action === 'bgdImgChange') {
           reloadBackground(); //todo rethink this duplicate from openedEntry changes
@@ -305,14 +305,14 @@ function EntryProperties(props: Props) {
         }
       }
     }
-  }, [metaActions]);
+  }, [metaActions, openedEntry]);
 
   function reloadBackground() {
     if (location) {
       location
         .getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated)
         .then((bgPath) => {
-          const bgImage = 'url("' + bgPath + '")';
+          const bgImage = bgPath ? 'url("' + bgPath + '")' : 'none';
           if (bgImage !== backgroundImage.current) {
             backgroundImage.current = bgImage;
             forceUpdate();
@@ -329,7 +329,7 @@ function EntryProperties(props: Props) {
           openedEntry.meta?.lastUpdated,
         )
         .then((thumbPath) => {
-          const thbImage = 'url("' + thumbPath + '")';
+          const thbImage = thumbPath ? 'url("' + thumbPath + '")' : 'none';
           if (thbImage !== thumbImage.current) {
             thumbImage.current = thbImage;
             forceUpdate();

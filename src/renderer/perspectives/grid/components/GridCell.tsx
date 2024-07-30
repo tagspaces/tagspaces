@@ -145,54 +145,41 @@ function GridCell(props: Props) {
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
   const gridCellLocation = findLocation(fsEntry.locationID);
 
-  useEffect(() => {
+  function setThumbPath(update = true): Promise<boolean> {
     if (gridCellLocation && fsEntry.meta) {
       if (fsEntry.meta.thumbPath) {
-        gridCellLocation
+        return gridCellLocation
           .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta?.lastUpdated)
           .then((tmbPath) => {
             if (tmbPath !== thumbPath.current) {
               thumbPath.current = tmbPath;
-              forceUpdate();
+              if (update) {
+                forceUpdate();
+              }
+              return true;
             }
+            return false;
           });
       }
     }
+    return Promise.resolve(false);
+  }
+
+  useEffect(() => {
+    setThumbPath();
   }, [fsEntry]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (fsEntry.path === action.entry.path) {
-          /*if (action.action === 'thumbChange') {
-            if (action.entry.meta.thumbPath) {
-              thumbUrl.current = getThumbPath(
-                action.entry.meta.thumbPath,
-                action.entry.meta?.lastUpdated,
-              );
-            } else {
-              //thumbnail deleted
-              thumbUrl.current = undefined;
-              if (fsEntry.meta) {
-                const { thumbPath, ...meta } = fsEntry.meta;
-                fsEntry.meta = meta;
-              }
-            }
-            forceUpdate();
-          } else*/
-          /*if (action.action === 'bgdColorChange') {
-            fileSystemEntryBgColor.current = findBackgroundColorForFolder(
-              action.entry,
-            );
-            forceUpdate();
-          } else*/
           if (
             action.action === 'thumbChange' ||
             action.action === 'bgdColorChange' ||
             action.action === 'descriptionChange'
           ) {
             fsEntry.meta = { ...action.entry.meta };
-            forceUpdate();
+            setThumbPath(false).then(() => forceUpdate());
           }
         }
       }
