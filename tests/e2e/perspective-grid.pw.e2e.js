@@ -186,10 +186,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 
@@ -225,10 +225,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 

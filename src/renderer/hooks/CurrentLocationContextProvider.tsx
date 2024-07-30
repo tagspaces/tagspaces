@@ -269,7 +269,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function setCurrentLocation(location) {
-    currentLocation.current = location.uuid;
+    currentLocation.current = location?.uuid;
     forceUpdate();
   }
 
@@ -297,16 +297,19 @@ export const CurrentLocationContextProvider = ({
     }
   }
 
+  const location: CommonLocation = useMemo(
+    () => findLocation(),
+    [currentLocation.current],
+  );
+
   const readOnlyMode: boolean = useMemo(() => {
-    const location = findLocation();
     if (location) {
       return location.isReadOnly;
     }
-    return true;
+    return false;
   }, [currentLocation.current]);
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
-    const location = findLocation();
     const locationPersistTagsInSidecarFile =
       location && location.persistTagsInSidecarFile;
     if (locationPersistTagsInSidecarFile !== undefined) {
@@ -392,7 +395,7 @@ export const CurrentLocationContextProvider = ({
   const context = useMemo(() => {
     return {
       locations,
-      currentLocation: findLocation(),
+      currentLocation: location,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,

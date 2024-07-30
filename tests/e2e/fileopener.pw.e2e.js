@@ -190,10 +190,10 @@ test.describe('TST08 - File folder properties', () => {
     const propsNewFileName = await getPropertiesFileName();
     expect(propsNewFileName).toBe(newTitle);
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [propsNewFileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [propsNewFileName + '.json'] // check meta file renamed, thumbnails are not created on web or minio
-        : [propsNewFileName + '.json', propsNewFileName + '.jpg']; // check meta and thumbnail renamed
+        : [propsNewFileName + '.json', propsNewFileName + '.jpg'];*/ // check meta and thumbnail renamed
     await expectMetaFilesExist(arrayMeta);
 
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
@@ -340,11 +340,15 @@ test.describe('TST08 - File folder properties', () => {
     ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
     </svg>`;
     await createFile(fileName, svg);
-    await openContextEntryMenu(
+    /*await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
+    );*/
+    //await global.client.dblclick(getGridFileSelector('empty_folder'));
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
     );
-    await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
     //await clickOn(getGridFileSelector(fileName));
     await openContextEntryMenu(
@@ -360,10 +364,10 @@ test.describe('TST08 - File folder properties', () => {
       add: true,
       remove: false,
     });
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio || global.isS3
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 

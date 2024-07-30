@@ -291,11 +291,9 @@ function EntryProperties(props: Props) {
   };
 
   useEffect(() => {
-    if (openedEntry) {
-      reloadBackground();
-      reloadThumbnails();
-    }
-  }, [openedEntry]);
+    reloadBackground();
+    reloadThumbnails();
+  }, [location]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
