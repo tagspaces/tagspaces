@@ -19,6 +19,9 @@ import {
   dnd,
   setInputKeys,
   getElementScreenshot,
+  checkSettings,
+  openFolder,
+  waitUntilChanged,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -308,15 +311,19 @@ test.describe('TST02 - Folder properties', () => {
       getGridFileSelector('empty_folder'),
       'showProperties',
     );
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'openDirectory',
-    );
+    await openFolder('empty_folder');
+    await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
     const initScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
     await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
+
+    await waitUntilChanged(
+      '[data-tid=backgroundTID]',
+      'height: 100%; background: rgba(0, 0, 0, 0.267);',
+      'style',
+    );
 
     const withBgnColorScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
@@ -326,6 +333,12 @@ test.describe('TST02 - Folder properties', () => {
     // remove background
     await clickOn('[data-tid=backgroundClearTID]');
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
+
+    await waitUntilChanged(
+      '[data-tid=backgroundTID]',
+      'height: 100%; background: transparent;',
+      'style',
+    );
 
     const bgnRemovedScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',

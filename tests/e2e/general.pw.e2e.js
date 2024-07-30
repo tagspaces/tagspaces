@@ -19,7 +19,6 @@ import {
   clickOn,
   expectElementExist,
   selectorFile,
-  takeScreenshot,
   createTxtFile,
   expectMetaFilesExist,
   getGridFileSelector,
@@ -56,7 +55,7 @@ test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
 
 test.afterAll(async () => {
   await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
+  //await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 

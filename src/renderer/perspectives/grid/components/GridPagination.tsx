@@ -45,6 +45,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { dataTidFormat } from '-/services/test';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -172,6 +173,7 @@ function GridPagination(props: Props) {
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
+      data-tid="backgroundTID"
       style={{
         height: '100%',
         background: `${dirColor}`,
@@ -230,7 +232,7 @@ function GridPagination(props: Props) {
                   >
                     <Tooltip title={t('core:renameDirectory')}>
                       <ButtonBase
-                        data-tid={'currentDir_' + folderName}
+                        data-tid={'currentDir_' + dataTidFormat(folderName)}
                         style={{
                           fontSize: '1.5rem',
                           filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,

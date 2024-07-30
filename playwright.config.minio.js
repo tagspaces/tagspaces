@@ -5,6 +5,7 @@ global.isWeb = false;
 global.isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 global.isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 global.isMinio = true;
+global.isS3 = false;
 global.isElectron = true;
 global.isUnitTest = false;
 
