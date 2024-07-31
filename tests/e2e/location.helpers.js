@@ -91,7 +91,7 @@ export async function createS3Location(
     await setInputKeys('locationPath', locationPath, 20);
     await setInputKeys('accessKeyId', 'S3RVER', 20);
     await setInputKeys('secretAccessKey', 'S3RVER', 20);
-    await setInputKeys('bucketName', locationName, 20);
+    await setInputKeys('bucketName', 'supported-filestypes', 20);
     await setInputKeys('endpointURL', 'http://localhost:4569', 20);
     //await setInputKeys('regionTID', 'eu-central-1', 20);
 

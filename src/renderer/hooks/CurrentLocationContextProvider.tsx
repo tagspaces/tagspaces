@@ -41,6 +41,7 @@ import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { getDevicePaths } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
   locations: CommonLocation[];
@@ -75,6 +76,7 @@ type CurrentLocationContextData = {
   getLocationPosition: (locationId: string) => number;
   locationDirectoryContextMenuAnchorEl: null | HTMLElement;
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
+  getFirstRWLocation: () => CommonLocation | undefined;
 };
 
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
@@ -101,6 +103,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     getLocationPosition: () => 0,
     locationDirectoryContextMenuAnchorEl: undefined,
     setLocationDirectoryContextMenuAnchorEl: () => {},
+    getFirstRWLocation: undefined,
   },
 );
 
@@ -114,7 +117,17 @@ export const CurrentLocationContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-  const currentLocation = useRef<string>(undefined);
+
+  const locations: TS.Location[] = useSelector(getLocations);
+  const defaultLocationId = useSelector(getDefaultLocationId);
+  const settingsPersistTagsInSidecarFile: boolean = useSelector(
+    getPersistTagsInSidecarFile,
+  );
+
+  const allLocations = useRef<CommonLocation[]>(
+    locations.map((l) => new CommonLocation(l)),
+  );
+  const currentLocation = useRef<string>(defaultLocationId);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const initLocations = useRef<boolean>(false);
@@ -123,11 +136,6 @@ export const CurrentLocationContextProvider = ({
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
 
-  const locations: CommonLocation[] = useSelector(getLocations);
-  const defaultLocationId = useSelector(getDefaultLocationId);
-  const settingsPersistTagsInSidecarFile: boolean = useSelector(
-    getPersistTagsInSidecarFile,
-  );
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -148,13 +156,13 @@ export const CurrentLocationContextProvider = ({
   }, []);
 
   useEffect(() => {
-    if (locations.length < 1) {
+    if (allLocations.current.length < 1) {
       // init locations
       setDefaultLocations();
     } else {
       // check if current location exist (or is removed)
       if (currentLocation.current) {
-        const location = locations.find(
+        const location = allLocations.current.find(
           (location) => location.uuid === currentLocation.current,
         );
         if (!location) {
@@ -163,7 +171,7 @@ export const CurrentLocationContextProvider = ({
         }
       }
     }
-  }, [locations]);
+  }, [allLocations.current]);
 
   function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
@@ -200,7 +208,7 @@ export const CurrentLocationContextProvider = ({
     if (!locationID) {
       locationID = currentLocation.current;
     }
-    const loc = locations.find((l) => l.uuid === locationID);
+    const loc = allLocations.current.find((l) => l.uuid === locationID);
     if (loc) {
       return loc;
     }
@@ -208,7 +216,9 @@ export const CurrentLocationContextProvider = ({
   }
 
   function findLocalLocation(): CommonLocation {
-    const loc = locations.find((l) => l.type === locationType.TYPE_LOCAL);
+    const loc = allLocations.current.find(
+      (l) => l.type === locationType.TYPE_LOCAL,
+    );
     if (loc) {
       return loc;
     }
@@ -232,6 +242,7 @@ export const CurrentLocationContextProvider = ({
                 disableIndexing: false,
               });
               addLocation(location, false);
+              allLocations.current = [...allLocations.current, location];
             });
           }
           return true;
@@ -256,21 +267,28 @@ export const CurrentLocationContextProvider = ({
    */
   function addLocations(arrLocations: Array<CommonLocation>, override = true) {
     arrLocations.forEach((newLocation: CommonLocation, idx, array) => {
-      const locationExist: boolean = locations.some(
+      const locationExist: boolean = allLocations.current.some(
         (location) => location.uuid === newLocation.uuid,
       );
       const isLast = idx === array.length - 1;
       if (!locationExist) {
         addLocation(newLocation, isLast);
+        allLocations.current = [...allLocations.current, newLocation];
       } else if (override) {
         editLocation(newLocation, isLast);
+        allLocations.current = allLocations.current.map((location) =>
+          location.uuid === newLocation.uuid ? newLocation : location,
+        );
       }
     });
   }
 
   function setCurrentLocation(location) {
-    currentLocation.current = location?.uuid;
-    forceUpdate();
+    const newLocationId = location?.uuid;
+    if (currentLocation.current !== newLocationId) {
+      currentLocation.current = newLocationId;
+      forceUpdate();
+    }
   }
 
   function setSelectedLocation(location) {
@@ -295,6 +313,18 @@ export const CurrentLocationContextProvider = ({
       }
       // dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
+  }
+
+  function getFirstRWLocation(): CommonLocation | undefined {
+    let foundLocation = allLocations.current.find(
+      (location) => location.isDefault && !location.isReadOnly,
+    );
+    if (!foundLocation) {
+      foundLocation = allLocations.current.find(
+        (location) => !location.isReadOnly,
+      );
+    }
+    return foundLocation;
   }
 
   const location: CommonLocation = useMemo(
@@ -394,7 +424,7 @@ export const CurrentLocationContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      locations,
+      locations: allLocations.current,
       currentLocation: location,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
@@ -416,9 +446,10 @@ export const CurrentLocationContextProvider = ({
       locationDirectoryContextMenuAnchorEl,
       setLocationDirectoryContextMenuAnchorEl,
       getLocationPosition,
+      getFirstRWLocation,
     };
   }, [
-    locations,
+    allLocations.current,
     currentLocation.current,
     selectedLocation.current,
     persistTagsInSidecarFile,
