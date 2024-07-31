@@ -22,8 +22,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationActions } from '-/reducers/locations';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { classes, SidePanel } from '-/components/SidePanels.css';
@@ -54,11 +53,12 @@ interface Props {
 
 function LocationManager(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const {
     locations,
     currentLocation,
     addLocations,
+    moveLocation,
+    deleteLocation,
     selectedLocation,
     setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
@@ -95,13 +95,13 @@ function LocationManager(props: Props) {
     if (!result.destination) {
       return;
     }
-
-    dispatch(
+    moveLocation(result.draggableId, result.destination.index);
+    /*dispatch(
       LocationActions.moveLocation(
         result.draggableId,
         result.destination.index,
       ),
-    );
+    );*/
   };
 
   const { reduceHeightBy, show } = props;
@@ -236,7 +236,8 @@ function LocationManager(props: Props) {
           })}
           confirmCallback={(result) => {
             if (result && selectedLocation) {
-              dispatch(LocationActions.deleteLocation(selectedLocation));
+              deleteLocation(selectedLocation);
+              //dispatch(LocationActions.deleteLocation(selectedLocation));
             }
           }}
           cancelDialogTID="cancelDeleteLocationDialog"

@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import ListItemText from '@mui/material/ListItemText';
@@ -35,14 +34,11 @@ import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { actions as LocationActions } from '-/reducers/locations';
-import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   //setEditLocationDialogOpened: (open: boolean) => void;
@@ -60,6 +56,8 @@ function LocationContextMenu(props: Props) {
   const {
     addLocation,
     closeLocation,
+    moveLocationUp,
+    moveLocationDown,
     getLocationPosition,
     selectedLocation,
     locationDirectoryContextMenuAnchorEl,
@@ -68,15 +66,15 @@ function LocationContextMenu(props: Props) {
   } = useCurrentLocationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
 
-  const moveLocationUp = (locationId) => {
+  /*const moveLocationUp = (locationId) => {
     dispatch(LocationActions.moveLocationUp(locationId));
   };
 
   const moveLocationDown = (locationId) => {
     dispatch(LocationActions.moveLocationDown(locationId));
-  };
+  };*/
 
   const indexLocation = () => {
     setLocationDirectoryContextMenuAnchorEl(null);

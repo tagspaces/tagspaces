@@ -63,6 +63,10 @@ type CurrentLocationContextData = {
     arrLocations: Array<CommonLocation>,
     override?: boolean,
   ) => void;
+  deleteLocation: (location: CommonLocation) => void;
+  moveLocationUp: (locationUUID: string) => void;
+  moveLocationDown: (locationUUID: string) => void;
+  moveLocation: (locationUUID: string, newIndex: number) => void;
   openLocation: (
     location: CommonLocation,
     skipInitialDirList?: boolean,
@@ -93,6 +97,10 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     editLocation: () => {},
     addLocation: () => {},
     addLocations: () => {},
+    deleteLocation: undefined,
+    moveLocationUp: undefined,
+    moveLocationDown: undefined,
+    moveLocation: undefined,
     openLocation: () => {},
     closeLocation: () => {},
     closeAllLocations: () => {},
@@ -262,6 +270,92 @@ export const CurrentLocationContextProvider = ({
       openLocation(location);
     }
   }
+
+  function deleteLocation(location: CommonLocation) {
+    dispatch(LocationActions.deleteLocation(location));
+    allLocations.current = allLocations.current.filter(
+      (l) => l.uuid !== location.uuid,
+    );
+  }
+
+  function moveLocationUp(locationUUID) {
+    const currentIndex = allLocations.current.findIndex(
+      (l) => l.uuid === locationUUID,
+    );
+
+    // If location is not found or is already at the top, do nothing
+    if (currentIndex <= 0) {
+      return;
+    }
+
+    // Create a copy of the array
+    const newArray = [...allLocations.current];
+
+    // Swap the location with the one above it
+    const temp = newArray[currentIndex];
+    newArray[currentIndex] = newArray[currentIndex - 1];
+    newArray[currentIndex - 1] = temp;
+
+    allLocations.current = newArray;
+
+    dispatch(LocationActions.moveLocationUp(locationUUID));
+  }
+
+  function moveLocationDown(locationUUID) {
+    const currentIndex = allLocations.current.findIndex(
+      (l) => l.uuid === locationUUID,
+    );
+
+    // If location is not found or is already at the bottom, return the original array
+    if (
+      currentIndex === -1 ||
+      currentIndex >= allLocations.current.length - 1
+    ) {
+      return;
+    }
+
+    // Create a copy of the array
+    const newArray = [...allLocations.current];
+
+    // Swap the location with the one below it
+    const temp = newArray[currentIndex];
+    newArray[currentIndex] = newArray[currentIndex + 1];
+    newArray[currentIndex + 1] = temp;
+
+    allLocations.current = newArray;
+
+    dispatch(LocationActions.moveLocationDown(locationUUID));
+  }
+
+  function moveLocation(locationUUID: string, newIndex: number) {
+    // Check if allLocations.current is an array and newIndex is within bounds
+    if (
+      !Array.isArray(allLocations.current) ||
+      newIndex < 0 ||
+      newIndex >= allLocations.current.length
+    ) {
+      throw new Error('Invalid input');
+    }
+
+    // Find the index of the location with the given UUID
+    const currentIndex = allLocations.current.findIndex(
+      (l) => l.uuid === locationUUID,
+    );
+
+    // If the location is not found, throw an error
+    if (currentIndex === -1) {
+      throw new Error('Location not found');
+    }
+
+    // Remove the location from its current position
+    const [location] = allLocations.current.splice(currentIndex, 1);
+
+    // Insert the location at the specified new index
+    allLocations.current.splice(newIndex, 0, location);
+    allLocations.current = [...allLocations.current];
+    dispatch(LocationActions.moveLocation(locationUUID, newIndex));
+  }
+
   /**
    * @param arrLocations
    * @param override = true - if location exist override else skip
@@ -435,6 +529,10 @@ export const CurrentLocationContextProvider = ({
       changeLocation,
       addLocation,
       addLocations,
+      deleteLocation,
+      moveLocationUp,
+      moveLocationDown,
+      moveLocation,
       editLocation,
       openLocation,
       closeLocation,
