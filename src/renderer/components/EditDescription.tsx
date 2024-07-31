@@ -123,6 +123,7 @@ function EditDescription() {
                   ? ['menu', 'upload', 'slash']
                   : ['slash', 'block']
               }
+              mode="description"
               currentFolder={currentDirectoryPath}
             />
           </>

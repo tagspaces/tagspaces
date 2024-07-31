@@ -168,7 +168,7 @@
     "@tagspaces/tagspaces-common-aws3": "4.4.8",
     "@tagspaces/tagspaces-common-cordova": "4.4.6",
     "@tagspaces/tagspaces-indexer": "4.4.6",
-    "@tagspaces/tagspaces-md": "4.3.26",
+    "@tagspaces/tagspaces-md": "4.3.30",
     "aws-amplify": "^4.3.8",
     "classnames": "^2.3.1",
     "clone": "^2.1.2",

@@ -251,7 +251,6 @@ function FileUploadDialog(props: Props) {
             onClick={() => {
               onClose();
               dispatch(AppActions.resetProgress());
-              //dispatch(AppActions.clearUploadDialog());
             }}
             color="primary"
           >
