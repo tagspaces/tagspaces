@@ -141,7 +141,10 @@ export async function runS3Server(silent = true) {
       },
     ],
   });
-
-  await instance.run();
+  try {
+    await instance.run();
+  } catch (e) {
+    console.log('S3rver run', e);
+  }
   return instance;
 }

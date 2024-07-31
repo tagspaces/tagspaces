@@ -431,7 +431,10 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
-    await openContextEntryMenu(folder, 'renameDirectory');
+    await openContextEntryMenu(
+      getGridFileSelector(newDirName),
+      'renameDirectory',
+    );
     const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);

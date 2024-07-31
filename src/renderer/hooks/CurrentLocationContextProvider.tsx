@@ -227,6 +227,7 @@ export const CurrentLocationContextProvider = ({
 
   function setDefaultLocations() {
     if (!initLocations.current) {
+      // setDefaultLocations first time only
       initLocations.current = true;
       getDevicePaths()
         .then((devicePaths) => {
@@ -242,7 +243,6 @@ export const CurrentLocationContextProvider = ({
                 disableIndexing: false,
               });
               addLocation(location, false);
-              allLocations.current = [...allLocations.current, location];
             });
           }
           return true;
@@ -257,6 +257,7 @@ export const CurrentLocationContextProvider = ({
     locationPosition: number = undefined,
   ) {
     dispatch(LocationActions.createLocation(location, locationPosition));
+    allLocations.current = [...allLocations.current, location];
     if (openAfterCreate) {
       openLocation(location);
     }
@@ -273,12 +274,8 @@ export const CurrentLocationContextProvider = ({
       const isLast = idx === array.length - 1;
       if (!locationExist) {
         addLocation(newLocation, isLast);
-        allLocations.current = [...allLocations.current, newLocation];
       } else if (override) {
         editLocation(newLocation, isLast);
-        allLocations.current = allLocations.current.map((location) =>
-          location.uuid === newLocation.uuid ? newLocation : location,
-        );
       }
     });
   }
@@ -298,6 +295,9 @@ export const CurrentLocationContextProvider = ({
 
   function editLocation(location: CommonLocation, openAfterEdit = true) {
     dispatch(LocationActions.changeLocation(location));
+    allLocations.current = allLocations.current.map((l) =>
+      l.uuid === location.uuid ? location : l,
+    );
     setCurrentLocation(location);
     if (openAfterEdit) {
       /*

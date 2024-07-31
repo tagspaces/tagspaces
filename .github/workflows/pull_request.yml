@@ -43,8 +43,8 @@ jobs:
           name: test-artifacts-desktop-win
           path: |
             test-results/
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/
   e2eTestsWinS3:
     name: Test desktop pro app on Windows with S3 bucket
     runs-on: windows-latest
