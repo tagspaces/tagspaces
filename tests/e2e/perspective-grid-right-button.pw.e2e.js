@@ -34,6 +34,8 @@ import {
   takeScreenshot,
   expectMetaFilesExist,
   setSettings,
+  openFolder,
+  openFile,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -87,16 +89,11 @@ test.beforeEach(async () => {
 // Scenarios for right button on a file
 test.describe('TST50** - Right button on a file', () => {
   test('TST5016 - Open file [web,electron]', async () => {
-    // await searchEngine('txt');
-    await openContextEntryMenu(
-      getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
-      'fileMenuOpenFile',
-    );
-    // await takeScreenshot('fileMenuOpenFile');
+    await openFile('sample.txt');
     await expect
       .poll(
         async () => {
-          const fLocator = await frameLocator();
+          const fLocator = await frameLocator('#root iframe');
           const bodyTxt = await fLocator.locator('body').innerText();
           return toContainTID(bodyTxt);
         },
@@ -107,30 +104,6 @@ test.describe('TST50** - Right button on a file', () => {
         },
       )
       .toBe(true);
-    // await takeScreenshot('bodyTxt_fileMenuOpenFile');
-
-    /*const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
-    // Check if the file is opened
-    // await delay(1500);
-    /*await expectElementExist('#FileViewer', true, 2000);
-    const webViewer = await global.client.waitForSelector('#FileViewer');
-    // await webViewer.waitForDisplayed();
-    // await delay(5000);
-    // expect(await webViewer.isDisplayed()).toBe(true);
-    const iframe = await webViewer.contentFrame();
-    // await global.client.switchToFrame(webViewer);
-    // await isElementDisplayed(iframeBody,'body');
-    const iframeBody = await iframe.waitForSelector('body');
-    const bodyTxt = await iframeBody.innerText();
-    const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
   });
 
   test('TST5017 - Rename file and check thumbnail exist [web,electron]', async () => {
