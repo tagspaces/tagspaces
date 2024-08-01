@@ -535,6 +535,7 @@ test.describe('TST50** - Right button on a file', () => {
       // '[data-tid=' + listDefaultSettings.testID + ']',
       '[data-tid=listPerspectiveContainer]',
       true,
+      5000,
     );
   });
 

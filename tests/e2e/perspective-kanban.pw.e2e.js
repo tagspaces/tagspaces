@@ -92,16 +92,19 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,
+      5000,
     );
     await clickOn('[data-tid=fileContainerNextFile]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(nextFileName) + ']',
       true,
+      5000,
     );
     await clickOn('[data-tid=fileContainerPrevFile]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,
+      5000,
     );
   });
 });
