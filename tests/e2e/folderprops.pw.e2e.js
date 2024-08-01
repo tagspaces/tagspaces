@@ -173,18 +173,19 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0207 - Move folder [web,electron]', async () => {
-    const newFolder = await createNewDirectory('targetFolder');
+    const targetFolder = 'empty_folder';
+    const newFolder = await createNewDirectory('srcFolder');
     // select folder to move
-    await clickOn(getGridFileSelector('empty_folder'));
+    //await clickOn(getGridFileSelector('empty_folder'));
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]'); //todo moveCopyEntryTID
-    await clickOn('[data-tid=MoveTarget' + newFolder + ']');
-    await clickOn('[data-tid=MoveTarget' + newFolder + ']'); // todo double clickOn
+    await clickOn('[data-tid=MoveTarget' + targetFolder + ']');
+    //await clickOn('[data-tid=MoveTarget' + targetFolder + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
-    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
-    await global.client.dblclick('[data-tid=fsEntryName_' + newFolder + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
-    await testDataRefresh(s3ServerInstance);
+    await expectElementExist(getGridFileSelector(newFolder), false, 5000);
+    await global.client.dblclick('[data-tid=fsEntryName_' + targetFolder + ']');
+    await expectElementExist(getGridFileSelector(newFolder), true, 5000);
+    //await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {

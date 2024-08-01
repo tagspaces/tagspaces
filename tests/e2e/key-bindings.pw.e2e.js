@@ -1,14 +1,15 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+import { extractFileNameWithoutExt } from '@tagspaces/tagspaces-common/paths';
 import { test, expect } from './fixtures';
 import { defaultLocationName } from './location.helpers';
 import {
   clickOn,
   expectElementExist,
+  getGridFileSelector,
   selectorFile,
-  setInputValue,
-  takeScreenshot,
+  setInputKeys,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
@@ -17,6 +18,8 @@ import { stopServices } from '../setup-functions';
 let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
+const testFileName = 'sample.pdf';
+const isMac = /^darwin/.test(process.platform);
 
 test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
@@ -56,7 +59,6 @@ test.beforeEach(async () => {
 
 test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1311 - Test show search [electron]', async () => {
-    const isMac = /^darwin/.test(process.platform);
     await clickOn(selectorFile);
     if (isMac) {
       await global.client.keyboard.press('Meta+KeyK');
@@ -67,28 +69,41 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
   });
 
   test('TST1312 - Test rename file [electron]', async () => {
-    const newTitle = 'renamed.txt';
-    await clickOn(selectorFile);
+    const newTitle = 'renamed';
+    await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('F2');
-    await setInputValue('[data-tid=renameEntryDialogInput] input', newTitle);
-    await clickOn('[data-tid=closeRenameEntryDialog]');
+    //await setInputValue('[data-tid=renameEntryDialogInput] input', newTitle);
+    const oldName = await setInputKeys('renameEntryDialogInput', newTitle);
+    await clickOn('[data-tid=confirmRenameEntry]');
+    //await expectElementExist('[data-tid=detailsTabTID]', true);
+    await expectElementExist(getGridFileSelector(newTitle + '.pdf'));
+    //rename back
+    const name = extractFileNameWithoutExt(oldName, '/');
+    await global.client.keyboard.press('F2');
+    await setInputKeys('renameEntryDialogInput', name);
+    await clickOn('[data-tid=confirmRenameEntry]');
+    await expectElementExist(getGridFileSelector(oldName));
   });
 
   test('TST1313 - Test open file [electron]', async () => {
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('Enter');
     await expectElementExist('[data-tid=detailsTabTID]', true);
   });
 
   test('TST1315 - Test delete file [electron]', async () => {
-    await clickOn(selectorFile);
-    await global.client.keyboard.press('Delete');
+    await clickOn(getGridFileSelector(testFileName));
+    if (isMac) {
+      await global.client.keyboard.press('F8');
+    } else {
+      await global.client.keyboard.press('Delete');
+    }
     await clickOn('[data-tid=confirmDeleteFileDialog]');
-    // await expectElementExist('[data-tid=confirmDeleteFileDialog]', true);
+    await expectElementExist(getGridFileSelector(testFileName), false);
   });
 
   test('TST1316 - Show help and feedback panel in the left [electron]', async () => {
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector('sample.txt'));
     await global.client.keyboard.press('F1');
     await expectElementExist('[data-tid=aboutDialog]', true);
   });

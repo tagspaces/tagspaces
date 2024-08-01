@@ -911,6 +911,7 @@ export async function createNewDirectory(dirName = testFolder) {
   // set new dir name
   await setInputKeys('directoryName', dirName);
   await clickOn('[data-tid=confirmCreateNewDirectory]');
+  await expectElementExist(getGridFileSelector(dirName), true, 5000);
   // await waitForNotification();
   return dirName;
 }
