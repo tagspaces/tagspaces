@@ -11,6 +11,7 @@ import {
 } from './location.helpers';
 import {
   clickOn,
+  expectElementExist,
   frameLocator,
   getGridFileSelector,
   isDisplayed,
@@ -56,6 +57,7 @@ test.beforeEach(async () => {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });

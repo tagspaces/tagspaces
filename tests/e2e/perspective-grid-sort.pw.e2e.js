@@ -9,7 +9,13 @@ import {
   createPwLocation,
   createS3Location,
 } from './location.helpers';
-import { clickOn, getGridFileName, takeScreenshot } from './general.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  getGridFileName,
+  getGridFileSelector,
+  takeScreenshot,
+} from './general.helpers';
 
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { closeWelcomePlaywright } from './welcome.helpers';
@@ -53,6 +59,7 @@ test.beforeEach(async () => {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
   await clickOn('[data-tid=gridPerspectiveSortMenu]');

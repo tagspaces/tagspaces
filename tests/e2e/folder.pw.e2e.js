@@ -73,6 +73,7 @@ test.beforeEach(async () => {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -180,11 +181,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(
-      '[data-tid=fsEntryName_empty_folder]',
-      false,
-      5000,
-    );
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
     await testDataRefresh(s3ServerInstance);
@@ -204,9 +201,9 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await global.client.dblclick('[data-tid=fsEntryName_' + folderToCopy + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    await global.client.dblclick(getGridFileSelector(folderToCopy));
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await testDataRefresh(s3ServerInstance);
   });
 
