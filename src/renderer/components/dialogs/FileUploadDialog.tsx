@@ -250,7 +250,7 @@ function FileUploadDialog(props: Props) {
             data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
-              //dispatch(AppActions.clearUploadDialog());
+              dispatch(AppActions.resetProgress());
             }}
             color="primary"
           >
