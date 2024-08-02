@@ -74,6 +74,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import useFirstRender from '-/utils/useFirstRender';
 
 type IOActionsContextData = {
@@ -281,6 +282,7 @@ export const IOActionsContextProvider = ({
   const { currentDirectoryPath, openDirectory, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { currentLocation, findLocation } = useCurrentLocationContext();
+  const { reflectUpdateSidecarMeta } = useLocationIndexContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
@@ -1508,7 +1510,10 @@ export const IOActionsContextProvider = ({
         { path: metaFilePath, locationID: entry.locationID },
         content,
         true,
-      ).then(() => meta);
+      ).then(() => {
+        reflectUpdateSidecarMeta(entry.path, meta);
+        return meta;
+      });
     }
     return Promise.reject(new Error('file not found' + entry.path));
   }

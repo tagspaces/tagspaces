@@ -24,6 +24,7 @@ import { parseGeoLocation } from '-/utils/geo';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import { getAllTags } from '-/services/utils-io';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -290,7 +291,7 @@ function prepareIndex(
     );
   }
   const enhancedIndex = filteredIndex.map((entry: any) => {
-    const tags = [...entry.tags];
+    const tags = getAllTags(entry);
     let lat = null;
     let lon = null;
     let fromTime = null;

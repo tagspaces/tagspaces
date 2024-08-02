@@ -53,7 +53,7 @@ import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 
 type LocationIndexContextData = {
-  index: TS.FileSystemEntry[];
+  //index: TS.FileSystemEntry[];
   indexLoadedOn: number;
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
@@ -63,13 +63,13 @@ type LocationIndexContextData = {
   clearDirectoryIndex: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  setIndex: (i: TS.FileSystemEntry[]) => void;
-  indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
+  setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
+  //indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
 };
 
 export const LocationIndexContext = createContext<LocationIndexContextData>({
-  index: [],
+  //index: [],
   indexLoadedOn: undefined,
   isIndexing: undefined,
   getIndex: undefined,
@@ -80,7 +80,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   searchLocationIndex: () => {},
   searchAllLocations: () => {},
   setIndex: () => {},
-  indexUpdateSidecarTags: () => {},
+  //indexUpdateSidecarTags: () => {},
   reflectUpdateSidecarMeta: () => {},
 });
 
@@ -124,23 +124,32 @@ export const LocationIndexContextProvider = ({
         } else if (action.action === 'delete') {
           reflectDeleteEntry(action.entry.path);
         } else if (action.action === 'update') {
-          let i = index.current.findIndex(
+          reflectUpdateEntry(action.oldEntryPath, action.entry);
+          /*let i = index.current.findIndex(
             (e) => e.path === action.oldEntryPath,
           );
           if (i !== -1) {
             index.current[i] = action.entry;
-          }
+          }*/
         }
       }
     }
   }, [actions]);
 
-  function setIndex(i) {
+  function setIndex(i, location: CommonLocation = undefined) {
     index.current = i;
     if (index.current && index.current.length > 0) {
       indexLoadedOn.current = new Date().getTime();
     } else {
       indexLoadedOn.current = undefined;
+    }
+    if (location) {
+      persistIndex(
+        { path: location.path, locationID: location.uuid },
+        index.current,
+      ).then(() => {
+        console.log('index persisted');
+      });
     }
   }
 
@@ -154,8 +163,9 @@ export const LocationIndexContextProvider = ({
     }
     for (let i = 0; i < index.current.length; i += 1) {
       if (index.current[i].path === path) {
-        index.current = index.current.splice(i, 1);
-        i -= 1;
+        setIndex(index.current.splice(i, 1), currentLocation);
+        //i -= 1;
+        break;
       }
     }
   }
@@ -168,12 +178,30 @@ export const LocationIndexContextProvider = ({
       (entry) => entry.path === newEntry.path,
     );
     if (!entryFound) {
-      index.current.push(newEntry);
+      setIndex([...index.current, newEntry], currentLocation);
+      //index.current.push(newEntry);
     }
     // else todo update index entry ?
   }
 
-  function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
+  function reflectUpdateEntry(path: string, newEntry: TS.FileSystemEntry) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    if (index.current.some((i) => i.path === path)) {
+      setIndex(
+        index.current.map((i) => {
+          if (i.path === path) {
+            return newEntry;
+          }
+          return i;
+        }),
+        currentLocation,
+      );
+    }
+  }
+
+  /*function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
     if (!index.current || index.current.length < 1) {
       return;
     }
@@ -185,20 +213,32 @@ export const LocationIndexContextProvider = ({
         ];
       }
     }
-  }
+  }*/
 
   function reflectUpdateSidecarMeta(path: string, entryMeta: Object) {
     if (!index.current || index.current.length < 1) {
       return;
     }
-    for (let i = 0; i < index.current.length; i += 1) {
+    setIndex(
+      index.current.map((i) => {
+        if (i.path === path) {
+          return {
+            ...i,
+            meta: { ...(i.meta && i.meta), ...entryMeta },
+          };
+        }
+        return i;
+      }),
+      currentLocation,
+    );
+    /*for (let i = 0; i < index.current.length; i += 1) {
       if (index.current[i].path === path) {
         index.current[i] = {
           ...index.current[i],
-          ...entryMeta,
+          meta: {...(index.current[i].meta && index.current[i].meta), ...entryMeta},
         };
       }
-    }
+    }*/
   }
 
   function isWalking() {
@@ -375,7 +415,7 @@ export const LocationIndexContextProvider = ({
 
   function clearDirectoryIndex() {
     isIndexing.current = undefined;
-    setIndex([]);
+    setIndex([], currentLocation);
     forceUpdate();
   }
 
@@ -499,9 +539,8 @@ export const LocationIndexContextProvider = ({
     );
     setTimeout(async () => {
       const currentPath = await getLocationPath(currentLocation);
-      let directoryIndex = getIndex();
-      if (!directoryIndex || directoryIndex.length < 1) {
-        directoryIndex = await loadIndexFromDisk(
+      if (!index.current || index.current.length < 1) {
+        const directoryIndex = await loadIndexFromDisk(
           currentPath,
           currentLocation.uuid,
         );
@@ -519,8 +558,8 @@ export const LocationIndexContextProvider = ({
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
-          (!directoryIndex ||
-            directoryIndex.length < 1 ||
+          (!index.current ||
+            index.current.length < 1 ||
             indexAge > maxIndexAge))
       ) {
         console.log('Start creating index for : ' + currentPath);
@@ -536,7 +575,7 @@ export const LocationIndexContextProvider = ({
         );
         setIndex(newIndex);
       }
-      getSearchResults(getIndex(), searchQuery).then((results) => {
+      getSearchResults(index.current, searchQuery).then((results) => {
         setSearchResults(results);
         enhanceSearchEntries(results);
       });
@@ -712,9 +751,9 @@ export const LocationIndexContextProvider = ({
       });
   }
 
-  const context = useMemo(() => {
+  /*const context = useMemo(() => {
     return {
-      index: index.current,
+      //index: index.current,
       indexLoadedOn: indexLoadedOn.current,
       isIndexing: isIndexing.current,
       cancelDirectoryIndexing,
@@ -729,10 +768,24 @@ export const LocationIndexContextProvider = ({
       //reflectDeleteEntries,
       //reflectCreateEntry,
       //reflectRenameEntry,
-      indexUpdateSidecarTags,
+      //indexUpdateSidecarTags,
       reflectUpdateSidecarMeta,
     };
-  }, [currentLocation, index.current, isIndexing.current, enableWS]);
+  }, [currentLocation, index.current, isIndexing.current, enableWS]);*/
+
+  const context = {
+    indexLoadedOn: indexLoadedOn.current,
+    isIndexing: isIndexing.current,
+    cancelDirectoryIndexing,
+    createLocationIndex,
+    createLocationsIndexes,
+    clearDirectoryIndex,
+    searchLocationIndex,
+    searchAllLocations,
+    setIndex,
+    getIndex,
+    reflectUpdateSidecarMeta,
+  };
 
   return (
     <LocationIndexContext.Provider value={context}>
