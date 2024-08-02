@@ -43,6 +43,7 @@ interface PlatformParms {
   lmdt?: number;
   locationID?: string;
   total?: number;
+  encryptionKey?: string;
 }
 interface getLocationProps extends Omit<PlatformParms, 'path'> {
   // All the properties from PlatformParms, except 'path'

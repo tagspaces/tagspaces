@@ -48,6 +48,7 @@ export class CommonLocation implements TS.Location {
   secretAccessKey?: string;
   sessionToken?: string;
   bucketName?: string;
+  encryptionKey?: string;
   region?: string;
   endpointURL?: string;
   autoOpenedFilename?: string;
@@ -87,6 +88,7 @@ export class CommonLocation implements TS.Location {
       this.secretAccessKey = (location as TS.S3Location).secretAccessKey;
       this.sessionToken = (location as TS.S3Location).sessionToken;
       this.bucketName = (location as TS.S3Location).bucketName;
+      this.encryptionKey = '12345678901234567890123456789012'; //(location as TS.S3Location).encryptionKey;
       this.region = (location as TS.S3Location).region;
       this.endpointURL = (location as TS.S3Location).endpointURL;
       this.ioAPI = require('@tagspaces/tagspaces-common-aws3'); //objectStoreAPI.getS3Api(location);
@@ -298,6 +300,7 @@ export class CommonLocation implements TS.Location {
           path,
           bucketName: this.bucketName,
           location: this,
+          ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
         });
       }
       return this.ioAPI.getPropertiesPromise(path);
@@ -317,6 +320,7 @@ export class CommonLocation implements TS.Location {
           path: file,
           bucketName: this.bucketName,
           location: this,
+          ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
         });
       } else if (AppConfig.isCordova) {
         return this.ioAPI.checkFileExist(file);
@@ -446,6 +450,7 @@ export class CommonLocation implements TS.Location {
             path: sourceFilePath,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           targetFilePath,
         );
@@ -475,6 +480,7 @@ export class CommonLocation implements TS.Location {
             path: filePath,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           newFilePath,
           onProgress,
@@ -503,6 +509,7 @@ export class CommonLocation implements TS.Location {
             path: dirPath,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           newDirName,
         );
@@ -530,6 +537,7 @@ export class CommonLocation implements TS.Location {
             ...param,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           newDirPath,
           onProgress,
@@ -559,6 +567,7 @@ export class CommonLocation implements TS.Location {
             ...param,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           newDirPath,
           onProgress,
@@ -588,6 +597,7 @@ export class CommonLocation implements TS.Location {
             ...param,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           content,
           overwrite,
@@ -617,6 +627,7 @@ export class CommonLocation implements TS.Location {
             ...param,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           content,
           overwrite,
@@ -650,6 +661,7 @@ export class CommonLocation implements TS.Location {
             ...param,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           content,
           overwrite,
@@ -757,6 +769,7 @@ export class CommonLocation implements TS.Location {
             path: filePath,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           isPreview,
         );
@@ -780,6 +793,7 @@ export class CommonLocation implements TS.Location {
             path: filePath,
             bucketName: this.bucketName,
             location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
           },
           type,
         );
