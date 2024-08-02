@@ -435,22 +435,24 @@ Do you want to continue?`)
   );
 
   return (
-    <Menu
-      anchorEl={anchorEl}
-      open={open}
-      onClose={onClose}
-      anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
-      anchorPosition={
-        mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
-      }
-    >
-      <MenuList>{menuItems}</MenuList>
+    <>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
+        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
+        anchorPosition={
+          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
+        }
+      >
+        <MenuList>{menuItems}</MenuList>
+      </Menu>
       <FileUploadContainer
-        id="dirMenuId"
+        /*id="dirMenuId"*/
         ref={fileUploadContainerRef}
         directoryPath={directoryPath}
       />
-    </Menu>
+    </>
   );
 }
 
