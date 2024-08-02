@@ -17,6 +17,7 @@ import {
   getGridFileName,
   getGridFileSelector,
   getRevision,
+  openFolder,
   selectorFile,
   selectorFolder,
   setInputKeys,
@@ -340,16 +341,9 @@ test.describe('TST08 - File folder properties', () => {
       stroke="#bbbbbb22"
     ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
     </svg>`;
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await createFile(fileName, svg);
-    /*await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'showProperties',
-    );*/
-    //await global.client.dblclick(getGridFileSelector('empty_folder'));
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'openDirectory',
-    );
+    await openFolder('empty_folder');
     await expectElementExist(getGridFileSelector(fileName));
     //await clickOn(getGridFileSelector(fileName));
     await openContextEntryMenu(
@@ -357,10 +351,7 @@ test.describe('TST08 - File folder properties', () => {
       'showPropertiesTID', //'fileMenuOpenFile'
     );
 
-    //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
     // add meta json to file
-    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
       remove: false,

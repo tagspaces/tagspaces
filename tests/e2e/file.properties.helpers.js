@@ -41,7 +41,7 @@ export async function AddRemovePropertiesTags(
       const tagName = tagNames[i];
       const propsTags = await getPropertiesTags();
       expect(propsTags.includes(tagName)).toBe(false);
-      await setInputKeys('PropertiesTagsSelectTID', tagName);
+      await setInputKeys('PropertiesTagsSelectTID', tagName, 20);
       //await setInputValue('[data-tid=PropertiesTagsSelectTID] input', tagName);
       // await clickOn('[data-tid=PropertiesTagsSelectTID]');
       await global.client.keyboard.press('Enter');
@@ -49,13 +49,13 @@ export async function AddRemovePropertiesTags(
         '[data-tid=tagContainer_' + tagName + ']',
         true,
         8000,
-        '[data-tid=perspectiveGridFileTable]',
+        '[data-tid=PropertiesTagsSelectTID]',
       );
       await expectElementExist(
         '[data-tid=tagContainer_' + tagName + ']',
         true,
         8000,
-        '[data-tid=PropertiesTagsSelectTID]',
+        '[data-tid=perspectiveGridFileTable]',
       );
       //const propsNewTags = await getPropertiesTags();
       //expect(propsNewTags.includes(tagName)).toBe(true);
