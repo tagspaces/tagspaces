@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ShareIcon from '@mui/icons-material/Share';
@@ -114,10 +114,24 @@ function FileMenu(props: Props) {
     setFolderBackgroundPromise,
   } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
-  const { openDirectory, currentLocationPath } = useDirectoryContentContext();
+  const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const downloadFileUrl = useRef<string>(undefined);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (currentLocation.haveObjectStoreSupport()) {
+      currentLocation
+        .generateURLforPath(selectedFilePath, 86400)
+        .then((url) => {
+          downloadFileUrl.current = url;
+          forceUpdate();
+        });
+    }
+  }, [currentLocation, selectedFilePath]);
 
   function generateFileLink() {
     const entryPath = selectedEntries[0].path;
@@ -205,14 +219,18 @@ function FileMenu(props: Props) {
       });
   }
 
-  function setFolderBackground() {
+  async function setFolderBackground() {
     onClose();
-    let path =
+    let path;
+    if (
       currentLocation &&
       (currentLocation.haveObjectStoreSupport() ||
         currentLocation.haveWebDavSupport())
-        ? currentLocation.generateURLforPath(selectedFilePath, 604800) // 7 days
-        : selectedFilePath;
+    ) {
+      path = await currentLocation.generateURLforPath(selectedFilePath, 604800); // 7 days
+    } else {
+      path = selectedFilePath;
+    }
 
     const directoryPath = extractContainingDirectoryPath(
       selectedFilePath,
@@ -220,14 +238,10 @@ function FileMenu(props: Props) {
     );
 
     setFolderBackgroundPromise(path, directoryPath)
-      .then((directoryPath: string) => {
-        setBackgroundImageChange(
-          currentLocation.toFsEntry(directoryPath, false),
-        );
-        /*dispatch(
-          AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
-        );*/
-        showNotification('Background created for: ' + directoryPath);
+      .then((dirPath: string) => getAllPropertiesPromise(dirPath))
+      .then((fsEntry: TS.FileSystemEntry) => {
+        setBackgroundImageChange(fsEntry);
+        showNotification('Background created for: ' + fsEntry.path);
         return true;
       })
       .catch((error) => {
@@ -511,7 +525,7 @@ function FileMenu(props: Props) {
           <MenuItem
             key="setAsBgndTID"
             data-tid="setAsBgndTID"
-            onClick={setFolderBackground}
+            onClick={() => setFolderBackground()}
           >
             <ListItemIcon>
               <ImageIcon />
@@ -542,12 +556,9 @@ function FileMenu(props: Props) {
         key="downloadFileUrl"
         data-tid="downloadFileUrlTID"
         onClick={() => {
-          const url = currentLocation.haveObjectStoreSupport()
-            ? currentLocation.generateURLforPath(selectedFilePath, 86400)
-            : undefined;
           const downloadResult = downloadFile(
             selectedFilePath,
-            url,
+            downloadFileUrl.current,
             currentLocation?.getDirSeparator(),
           );
           if (downloadResult === -1) {

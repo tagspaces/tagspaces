@@ -23,6 +23,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   getMetaFileLocationForFile,
@@ -78,6 +79,7 @@ import {
   openUrl,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { isDesktopMode } from '-/reducers/settings';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import TagsSelect from './TagsSelect';
@@ -100,6 +102,8 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { generateClipboardLink } from '-/utils/dom';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import useFirstRender from '-/utils/useFirstRender';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -225,6 +229,7 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const desktopMode = useSelector(isDesktopMode);
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
@@ -234,6 +239,7 @@ function EntryProperties(props: Props) {
     setBackgroundColorChange,
     saveDirectoryPerspective,
   } = useIOActionsContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
@@ -264,7 +270,11 @@ function EntryProperties(props: Props) {
     useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
+  const backgroundImage = useRef<string>('none');
+  const thumbImage = useRef<string>('none');
+
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   const [popoverAnchorEl, setPopoverAnchorEl] =
     React.useState<HTMLElement | null>(null);
@@ -279,6 +289,54 @@ function EntryProperties(props: Props) {
   const handlePopoverClose = () => {
     setPopoverAnchorEl(null);
   };
+
+  useEffect(() => {
+    reloadBackground();
+    reloadThumbnails();
+  }, [location]);
+
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0 && openedEntry) {
+      for (const action of metaActions) {
+        if (action.action === 'bgdImgChange') {
+          reloadBackground(); //todo rethink this duplicate from openedEntry changes
+        } else if (action.action === 'thumbChange') {
+          reloadThumbnails();
+        }
+      }
+    }
+  }, [metaActions, openedEntry]);
+
+  function reloadBackground() {
+    if (location) {
+      location
+        .getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated)
+        .then((bgPath) => {
+          const bgImage = bgPath ? 'url("' + bgPath + '")' : 'none';
+          if (bgImage !== backgroundImage.current) {
+            backgroundImage.current = bgImage;
+            forceUpdate();
+          }
+        });
+    }
+  }
+
+  function reloadThumbnails() {
+    if (location) {
+      location
+        .getThumbPath(
+          openedEntry.meta?.thumbPath,
+          openedEntry.meta?.lastUpdated,
+        )
+        .then((thumbPath) => {
+          const thbImage = thumbPath ? 'url("' + thumbPath + '")' : 'none';
+          if (thbImage !== thumbImage.current) {
+            thumbImage.current = thbImage;
+            forceUpdate();
+          }
+        });
+    }
+  }
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -504,14 +562,14 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
 
-  const thumbUrl = location.getThumbPath(
+  /*const thumbUrl = location.getThumbPath(
     openedEntry.meta?.thumbPath,
     openedEntry.meta?.lastUpdated,
   );
   const backgroundUrl = location.getFolderBgndPath(
     openedEntry.path,
     openedEntry.meta?.lastUpdated,
-  );
+  );*/
 
   return (
     <Root>
@@ -561,6 +619,7 @@ function EntryProperties(props: Props) {
             }}
             margin="dense"
             name="name"
+            size={desktopMode ? 'small' : 'medium'}
             fullWidth={true}
             data-tid="fileNameProperties"
             defaultValue={entryName} // openedEntry.current.name}
@@ -707,6 +766,7 @@ function EntryProperties(props: Props) {
             <TextField
               margin="dense"
               fullWidth={true}
+              size={desktopMode ? 'small' : 'medium'}
               value={ldtm}
               label={t('core:fileLDTM')}
               InputProps={{
@@ -733,6 +793,7 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 fullWidth={true}
                 value={fileSize()}
+                size={desktopMode ? 'small' : 'medium'}
                 label={t('core:fileSize')}
                 InputProps={{
                   readOnly: true,
@@ -762,6 +823,7 @@ function EntryProperties(props: Props) {
               title={openedEntry.url || openedEntry.path}
               fullWidth={true}
               label={t('core:filePath')}
+              size={desktopMode ? 'small' : 'medium'}
               data-tid="filePathProperties"
               value={openedEntry.path || ''}
               InputProps={{
@@ -809,7 +871,8 @@ function EntryProperties(props: Props) {
             <TextField
               data-tid="sharingLinkTID"
               margin="dense"
-              name="path"
+              name="sharinglink"
+              size={desktopMode ? 'small' : 'medium'}
               label={
                 <>
                   {t('core:sharingLink')}
@@ -861,6 +924,7 @@ function EntryProperties(props: Props) {
               <TextField
                 margin="dense"
                 name="downloadLink"
+                size={desktopMode ? 'small' : 'medium'}
                 label={
                   <>
                     {t('core:downloadLink')}
@@ -1055,9 +1119,7 @@ function EntryProperties(props: Props) {
                         style={{
                           backgroundSize: 'cover',
                           backgroundRepeat: 'no-repeat',
-                          backgroundImage: thumbUrl
-                            ? 'url("' + thumbUrl + '")'
-                            : '',
+                          backgroundImage: thumbImage.current,
                           backgroundPosition: 'center',
                           borderRadius: 8,
                           minHeight: 150,
@@ -1107,7 +1169,7 @@ function EntryProperties(props: Props) {
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: 'url("' + backgroundUrl + '")',
+                            backgroundImage: backgroundImage.current,
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,
@@ -1137,7 +1199,8 @@ function EntryProperties(props: Props) {
           <TextField
             data-tid="entryIDTID"
             margin="dense"
-            name="path"
+            name="entryid"
+            size={desktopMode ? 'small' : 'medium'}
             label={
               <>
                 {t('core:entryId')}

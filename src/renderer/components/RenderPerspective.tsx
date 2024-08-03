@@ -33,6 +33,7 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 const GridPerspective = React.lazy(
   () =>
@@ -159,9 +160,10 @@ function RenderPerspective(props: Props) {
   const { getPerspective } = useDirectoryContentContext();
   const { metaActions } = useEditedEntryMetaContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (action.action === 'perspectiveChange') {
           forceUpdate();

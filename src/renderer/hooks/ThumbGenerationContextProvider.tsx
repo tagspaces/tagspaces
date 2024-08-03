@@ -52,6 +52,7 @@ import {
 } from '-/services/utils-io';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -86,6 +87,7 @@ export const ThumbGenerationContextProvider = ({
   const enableWS = useSelector(getEnableWS);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const isGeneratingThumbs = useRef(false);
+  const firstRender = useFirstRender();
 
   function setGenThumbs(isGen: boolean) {
     isGeneratingThumbs.current = isGen;
@@ -135,7 +137,7 @@ export const ThumbGenerationContextProvider = ({
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       const entries = [];
       for (const action of metaActions) {
         if (action.action === 'thumbGenerate') {

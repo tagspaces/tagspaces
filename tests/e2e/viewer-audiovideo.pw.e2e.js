@@ -2,16 +2,18 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
   expectAudioPlay,
+  expectElementExist,
   getGridFileSelector,
   isDisplayed,
   takeScreenshot,
@@ -19,29 +21,42 @@ import {
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+
   await startTestingApp();
   await closeWelcomePlaywright();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
   await stopApp();
-  await testDataRefresh();
 });
-test.afterEach(async ({ page }, testInfo) => {
+/*test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-});
+});*/
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });

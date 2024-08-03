@@ -16,8 +16,9 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import Tabs from '@mui/material/Tabs';
@@ -31,7 +32,6 @@ import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDesktopMode,
 } from '-/reducers/settings';
 import {
   FolderPropertiesIcon,
@@ -44,6 +44,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import TsTabPanel from '-/components/TsTabPanel';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -74,15 +75,15 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 
 interface StyledTabProps {
   title: string;
-  desktopMode: any;
+  tinyMode: any;
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
 
 const StyledTab = styled((props: StyledTabProps) => (
-  <Tooltip title={!props.desktopMode && props.title}>
+  <Tooltip title={!props.tinyMode && props.title}>
     <Tab
-      label={props.desktopMode && props.title}
+      label={!props.tinyMode && props.title}
       disableRipple
       iconPosition="start"
       {...props}
@@ -115,12 +116,6 @@ interface EntryContainerTabsProps {
   marginRight: string;
 }
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
 function EntryContainerTabs(props: EntryContainerTabsProps) {
   const {
     openPanel,
@@ -137,10 +132,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
-  const desktopMode = useSelector(isDesktopMode);
   const haveRevisions = useRef<boolean>(isEditable);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     if (!isEditable) {
@@ -158,30 +153,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       });
     }
   }, [isEditable]);
-
-  function TsTabPanel(tprops: TabPanelProps) {
-    const { children, value, index, ...other } = tprops;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-        style={{
-          height: '100%',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          paddingTop: 5,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}
-      >
-        {value === index && children}
-      </div>
-    );
-  }
 
   // Create functions that dispatch actions
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -232,7 +203,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             data-tid="detailsTabTID"
             icon={<FolderPropertiesIcon />}
             title={t('core:details')}
-            desktopMode={desktopMode}
+            tinyMode={isTinyMode}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
@@ -242,7 +213,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
             }
             title={t('core:filePropertiesDescription')}
-            desktopMode={desktopMode}
+            tinyMode={isTinyMode}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
@@ -251,21 +222,21 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
               title={t('core:revisions')}
-              desktopMode={desktopMode}
+              tinyMode={isTinyMode}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />
           )}
         </StyledTabs>
       </Box>
-      <TsTabPanel value={selectedTabIndex} index={0}>
+      <TsTabPanel key="propertiesTab" value={selectedTabIndex} index={0}>
         <EntryProperties key={openedEntry.path} tileServer={tileServer} />
       </TsTabPanel>
-      <TsTabPanel value={selectedTabIndex} index={1}>
+      <TsTabPanel key="descriptionTab" value={selectedTabIndex} index={1}>
         <EditDescription />
       </TsTabPanel>
       {haveRevisions.current && (
-        <TsTabPanel value={selectedTabIndex} index={2}>
+        <TsTabPanel key="revisionsTab" value={selectedTabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
       )}

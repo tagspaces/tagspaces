@@ -17,11 +17,7 @@ import AppConfig from '-/AppConfig';
 //import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getDescriptionPreview,
-  getFulfilledResults,
-  getMimeType,
-} from '-/services/utils-io';
+import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 
 export class CommonLocation implements TS.Location {
   uuid: string;
@@ -133,14 +129,20 @@ export class CommonLocation implements TS.Location {
     return this.ioAPI ? '/' : AppConfig.dirSeparator;
   };
 
-  getEntryThumbPath = (entry: TS.FileSystemEntry, dt = undefined) => {
+  getEntryThumbPath = (
+    entry: TS.FileSystemEntry,
+    dt = undefined,
+  ): Promise<string | undefined> => {
     if (entry) {
       return this.getThumbPath(this.getThumbEntryPath(entry), dt);
     }
-    return undefined;
+    return Promise.resolve(undefined);
   };
 
-  getThumbEntryPath = (entry: TS.FileSystemEntry, encoded = false) => {
+  getThumbEntryPath = (
+    entry: TS.FileSystemEntry,
+    encoded = false,
+  ): string | undefined => {
     if (!entry) {
       return undefined;
     }
@@ -152,14 +154,17 @@ export class CommonLocation implements TS.Location {
    * @param path
    * @param dt
    */
-  getFolderThumbPath = (path: string, dt = undefined) => {
+  getFolderThumbPath = (
+    path: string,
+    dt = undefined,
+  ): Promise<string | undefined> => {
     if (path) {
       return this.getThumbPath(
         getThumbFileLocationForDirectory(path, this.getDirSeparator()),
         dt,
       );
     }
-    return undefined;
+    return Promise.resolve(undefined);
   };
 
   /**
@@ -170,21 +175,24 @@ export class CommonLocation implements TS.Location {
   getThumbPath = (
     thumbPath: string,
     dt = undefined,
-    // isLocalFile = false, // todo rethink this
-  ) => {
+  ): Promise<string | undefined> => {
     if (!thumbPath) {
-      return undefined;
+      return Promise.resolve(undefined);
     }
+
     if (this.haveObjectStoreSupport() || this.haveWebDavSupport()) {
       if (this.isSignedURL(thumbPath)) {
-        return thumbPath;
+        return Promise.resolve(thumbPath);
       }
-      return this.getURLforPath(thumbPath);
+
+      return this.getURLforPathInt(thumbPath);
     }
-    return this.normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
+
+    const normalizedUrl = this.normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
+    return Promise.resolve(normalizedUrl);
   };
 
-  isSignedURL = (signedUrl) => {
+  isSignedURL = (signedUrl): boolean => {
     try {
       // const query = url.parse(signedUrl, true).query;
       return signedUrl.indexOf('Signature=') !== -1;
@@ -192,24 +200,37 @@ export class CommonLocation implements TS.Location {
     return false;
   };
 
-  getFolderBgndPath = (path: string, dt = undefined) => {
+  getFolderBgndPath = (
+    path: string,
+    dt = undefined,
+  ): Promise<string | undefined> => {
     if (path !== undefined) {
       return this.getBgndPath(
         getBgndFileLocationForDirectory(path, this.getDirSeparator()),
         dt,
       );
     }
-    return undefined;
+    return Promise.resolve(undefined);
   };
 
-  getBgndPath = (bgndPath: string, dt = undefined) => {
+  getBgndPath = (
+    bgndPath: string,
+    dt = undefined,
+  ): Promise<string | undefined> => {
     if (!bgndPath) {
-      return undefined;
+      return Promise.resolve(undefined);
     }
+
     if (this.haveObjectStoreSupport() || this.haveWebDavSupport()) {
-      return this.getURLforPath(bgndPath);
+      if (this.isSignedURL(bgndPath)) {
+        return Promise.resolve(bgndPath);
+      }
+
+      return this.getURLforPathInt(bgndPath);
     }
-    return this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
+
+    const normalizedUrl = this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
+    return Promise.resolve(normalizedUrl);
   };
 
   listDirectoryPromise = (
@@ -331,7 +352,10 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('checkDirExist: not implemented'));
   };
 
-  getURLforPath = (path: string, expirationInSeconds: number = 900): string => {
+  getURLforPathInt = async (
+    path: string,
+    expirationInSeconds: number = 900,
+  ): Promise<string> => {
     const currentTime = new Date().getTime();
 
     // Check if URL is cached and not expired
@@ -342,11 +366,12 @@ export class CommonLocation implements TS.Location {
       return this.urlCache[path].url;
     } else {
       // Generate new URL and cache it with expiration time
-      return this.generateURLforPath(path, expirationInSeconds);
+      const url = await this.generateURLforPath(path, expirationInSeconds);
+      return url;
     }
   };
 
-  generateURLforPath = (path, expirationInSeconds) => {
+  generateURLforPath = async (path, expirationInSeconds) => {
     let url;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
@@ -355,7 +380,7 @@ export class CommonLocation implements TS.Location {
           bucketName: this.bucketName,
           location: this,
         };
-        url = this.ioAPI.getURLforPath(param, expirationInSeconds);
+        url = await this.ioAPI.getURLforPath(param, expirationInSeconds);
       } else if (this.haveWebDavSupport()) {
         url = this.ioAPI.getURLforPath(path);
       }

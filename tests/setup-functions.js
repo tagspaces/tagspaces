@@ -1,5 +1,8 @@
 import pathLib from 'path';
+import fs from 'fs';
 import sh from 'shelljs';
+const S3rver = require('s3rver');
+//const corsConfig = require.resolve('./s3rver/cors.xml');
 
 export async function globalSetup() {
   // global.isWin = /^win/.test(process.platform);
@@ -40,10 +43,12 @@ export async function startMinio() {
   return minioProcess;
 }
 export function stopMinio(process) {
-  // Send SIGHUP to process.
-  console.log('stopMinio');
-  process.stdin.pause();
-  process.kill(); //'SIGHUP');
+  if (process) {
+    // Send SIGHUP to process.
+    console.log('stopMinio');
+    process.stdin.pause();
+    process.kill(); //'SIGHUP');
+  }
 }
 
 export async function startChromeDriver() {
@@ -92,7 +97,54 @@ export async function startWebServer() {
   return app;
 }
 
+export async function stopServices(s3Server, webServer, minioServer) {
+  await stopS3Server(s3Server);
+  await stopWebServer(webServer);
+  await stopMinio(minioServer);
+}
+
 export async function stopWebServer(app) {
-  await app.server.close();
-  app = null;
+  if (app) {
+    await app.server.close();
+    app = null;
+  }
+}
+
+export async function stopS3Server(server) {
+  if (server) {
+    await server.close();
+    server = null;
+  }
+}
+
+export async function runS3Server(silent = true) {
+  // Set NODE_OPTIONS environment variable to use openssl-legacy-provider
+  process.env.NODE_OPTIONS = '--openssl-legacy-provider';
+
+  const directoryTargetPath = pathLib.resolve(
+    __dirname,
+    'testdata-tmp',
+    'file-structure',
+  );
+  const corsConfig = pathLib.resolve(__dirname, 's3rver', 'cors.xml');
+  const instance = new S3rver({
+    port: 4569,
+    address: 'localhost',
+    silent: silent,
+    directory: directoryTargetPath,
+    resetOnClose: true,
+    sslEnabled: false,
+    configureBuckets: [
+      {
+        name: 'supported-filestypes',
+        configs: [fs.readFileSync(corsConfig)],
+      },
+    ],
+  });
+  try {
+    await instance.run();
+  } catch (e) {
+    console.log('S3rver run', e);
+  }
+  return instance;
 }

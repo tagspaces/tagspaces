@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import AppConfig from '../../src/renderer/AppConfig';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   createNewDirectory,
@@ -18,15 +19,16 @@ import {
   clickOn,
   expectElementExist,
   selectorFile,
-  takeScreenshot,
   createTxtFile,
   expectMetaFilesExist,
   getGridFileSelector,
   isDisplayed,
+  openFolder,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
+import { stopServices } from '../setup-functions';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -36,20 +38,32 @@ const subFolderContentExtractionPath =
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
-test.beforeAll(async () => {
-  await startTestingApp(global.isMinio ? undefined : 'extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  //await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
@@ -57,10 +71,14 @@ test.beforeEach(async () => {
   if (global.isMinio) {
     await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await closeWelcomePlaywright();
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -72,9 +90,9 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      2000,
+      4000,
     );
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await openFolder(testFolder);
     // create new file
     await newHTMLFile();
     await closeOpenedFile();
@@ -144,7 +162,7 @@ test.describe('TST51 - Perspective Grid', () => {
 
   test('TST0510 - Generate thumbnail from Images [electron,minio]', async () => {
     const filtered = ['ico', 'tiff', 'tif'];
-    if (global.isMinio) {
+    if (global.isMinio || global.isS3) {
       filtered.push('svg');
     }
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image

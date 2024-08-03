@@ -23,9 +23,10 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
-  id: string;
+  id?: string;
   directoryPath: string;
   //toggleProgressDialog: () => void;
 }
@@ -38,6 +39,7 @@ const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
     const dispatch: AppDispatch = useDispatch();
     const { id, directoryPath } = props;
+    const { findLocalLocation } = useCurrentLocationContext();
     const { openFileUploadDialog } = useFileUploadDialogContext();
     const { uploadFilesAPI } = useIOActionsContext();
     const { setReflectMetaActions } = useEditedEntryMetaContext();
@@ -91,10 +93,16 @@ const FileUploadContainer = forwardRef(
       // const file = selection.currentTarget.files[0];
       dispatch(AppActions.resetProgress());
       openFileUploadDialog();
+      const localLocation = findLocalLocation();
+      const sourceLocationId = localLocation ? localLocation.uuid : undefined;
       uploadFilesAPI(
         Array.from(selection.currentTarget.files),
         directoryPath,
         onUploadProgress,
+        true,
+        true,
+        undefined,
+        sourceLocationId,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
@@ -108,10 +116,11 @@ const FileUploadContainer = forwardRef(
           console.log('uploadFiles', error);
         });
     }
+    const inputId = id || `id-${Math.random().toString(36).substr(2, 9)}`;
 
     return (
       <input
-        id={id}
+        id={inputId}
         style={{ display: 'none' }}
         ref={fileInput}
         accept="*"

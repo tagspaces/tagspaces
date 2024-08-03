@@ -39,7 +39,6 @@ import {
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
   generateFileName,
-  extractParentDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -52,7 +51,6 @@ import {
   openFileMessage,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Progress } from 'aws-sdk/clients/s3';
 import AppConfig from '-/AppConfig';
 import {
   generateImageThumbnail,
@@ -77,6 +75,7 @@ import { Pro } from '-/pro';
 import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 type IOActionsContextData = {
   createDirectory: (directoryPath: string) => Promise<boolean>;
@@ -111,12 +110,12 @@ type IOActionsContextData = {
   downloadFile: (
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
+    onDownloadProgress?: (progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
   uploadFilesAPI: (
     files: Array<any>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
     targetLocationId?: string,
@@ -125,7 +124,7 @@ type IOActionsContextData = {
   uploadFiles: (
     paths: Array<string>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta?: boolean,
     open?: boolean,
     targetLocationId?: string,
@@ -289,9 +288,10 @@ export const IOActionsContextProvider = ({
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (actions && actions.length > 0) {
+    if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
           // reflect visibility change on new KanBan column add
@@ -779,7 +779,7 @@ export const IOActionsContextProvider = ({
   function downloadFile(
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
+    onDownloadProgress?: (progress, abort, fileName?) => void,
   ): Promise<TS.FileSystemEntry> {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !currentLocation.haveObjectStoreSupport()) {
@@ -817,10 +817,12 @@ export const IOActionsContextProvider = ({
               },
               fileContent,
               true,
-            ).then((thumb: TS.FileSystemEntry) => ({
-              ...fsEntry,
-              thumbPath: currentLocation.getThumbPath(thumb.path),
-            }));
+            ).then((thumb: TS.FileSystemEntry) =>
+              currentLocation.getThumbPath(thumb.path).then((thumbPath) => ({
+                ...fsEntry,
+                thumbPath: thumbPath,
+              })),
+            );
           }
           return fsEntry;
         });
@@ -841,7 +843,7 @@ export const IOActionsContextProvider = ({
   function uploadFilesAPI(
     files: Array<any>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta = true,
     open = true,
     targetLocationId: string = undefined,
@@ -914,8 +916,10 @@ export const IOActionsContextProvider = ({
             );
             if (fsEntry) {
               // Generate Thumbnail
+              const url =
+                await currentLocation.getURLforPathInt(fileTargetPath);
               const thumbPath = await generateThumbnailPromise(
-                currentLocation.getURLforPath(fileTargetPath),
+                url,
                 fsEntry.size,
                 currentLocation.loadTextFilePromise,
                 currentLocation.getFileContentPromise,
@@ -944,8 +948,9 @@ export const IOActionsContextProvider = ({
                   console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
-                fsEntry.meta.thumbPath =
-                  currentLocation.getURLforPath(thumbPath);
+                const tmbPath =
+                  await currentLocation.getURLforPathInt(thumbPath);
+                fsEntry.meta.thumbPath = tmbPath;
               }
               fsEntries.push(fsEntry);
               showNotification(
@@ -982,7 +987,7 @@ export const IOActionsContextProvider = ({
     filePath: string,
     fileType: string,
     fileContent: any,
-    onUploadProgress?: (progress: Progress, response: any) => void,
+    onUploadProgress?: (progress, response) => void,
     reflect: boolean = true,
     locationID: string = undefined,
   ) {
@@ -1052,7 +1057,7 @@ export const IOActionsContextProvider = ({
   function uploadFiles(
     paths: Array<string>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, response: any) => void,
+    onUploadProgress?: (progress, response) => void,
     uploadMeta = true,
     open = true,
     targetLocationId: string = undefined,
@@ -1176,58 +1181,61 @@ export const IOActionsContextProvider = ({
             );
 
             // Enhance entries
-            const entriesEnhanced = arrFiles.map((file: TS.FileSystemEntry) => {
-              const metaFilePath = getMetaFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator,
-              );
+            const entriesEnhanced = arrFiles.map(
+              async (file: TS.FileSystemEntry) => {
+                const metaFilePath = getMetaFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator,
+                );
 
-              const thumbFilePath = getThumbFileLocationForFile(
-                file.path,
-                AppConfig.dirSeparator,
-              );
-              if (metaFilePath !== undefined) {
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  const metaFilePath = metaFile.path.replace(/[/\\]/g, '');
-                  if (metaFilePath === metaFilePath.replace(/[/\\]/g, '')) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = {
-                      ...(file.meta && file.meta),
-                      ...metaFile.meta,
-                    };
-                  } else if (
-                    thumbFilePath &&
-                    metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
-                  ) {
-                    file.meta = {
-                      ...(file.meta && file.meta),
-                      thumbPath: currentLocation.getURLforPath(
+                const thumbFilePath = getThumbFileLocationForFile(
+                  file.path,
+                  AppConfig.dirSeparator,
+                );
+                if (metaFilePath !== undefined) {
+                  for (let i = 0; i < arrMeta.length; i += 1) {
+                    const metaFile = arrMeta[i];
+                    const metaFilePath = metaFile.path.replace(/[/\\]/g, '');
+                    if (metaFilePath === metaFilePath.replace(/[/\\]/g, '')) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.meta = {
+                        ...(file.meta && file.meta),
+                        ...metaFile.meta,
+                      };
+                    } else if (
+                      thumbFilePath &&
+                      metaFilePath === thumbFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      const thumbPath = await currentLocation.getURLforPathInt(
                         file.meta.thumbPath,
-                      ),
-                    };
+                      );
+                      file.meta = {
+                        ...(file.meta && file.meta),
+                        thumbPath: thumbPath,
+                      };
+                    }
                   }
                 }
-              }
-              if (file.meta) {
-                return enhanceEntry(
-                  file,
-                  AppConfig.tagDelimiter,
-                  currentLocation?.getDirSeparator(),
-                );
-              }
-              return file;
-            });
-            const reflectActions: TS.EditAction[] = entriesEnhanced.map(
-              (entry) => ({
+                if (file.meta) {
+                  return enhanceEntry(
+                    file,
+                    AppConfig.tagDelimiter,
+                    currentLocation?.getDirSeparator(),
+                  );
+                }
+                return file;
+              },
+            );
+            Promise.all(entriesEnhanced).then((entries) => {
+              const reflectActions: TS.EditAction[] = entries.map((entry) => ({
                 action: 'add',
                 entry: entry,
                 open: open,
                 source: 'upload',
-              }),
-            );
-            setReflectActions(...reflectActions);
-            resolve(entriesEnhanced);
+              }));
+              setReflectActions(...reflectActions);
+              resolve(entries);
+            });
           } else {
             // eslint-disable-next-line prefer-promise-reject-errors
             reject('Upload failed');
@@ -1748,8 +1756,15 @@ export const IOActionsContextProvider = ({
         entry.path,
         currentLocation?.getDirSeparator(),
       );
-      currentLocation.generateURLforPath(folderBgndPath, 604800);
+      currentLocation
+        .generateURLforPath(folderBgndPath, 604800)
+        .then(() => setBackgroundImageChangeAction(entry));
+    } else {
+      setBackgroundImageChangeAction(entry);
     }
+  }
+
+  function setBackgroundImageChangeAction(entry: TS.FileSystemEntry) {
     const action: TS.EditMetaAction = {
       action: 'bgdImgChange',
       entry: {
@@ -1793,8 +1808,14 @@ export const IOActionsContextProvider = ({
         entry.path,
         currentLocation?.getDirSeparator(),
       );
-      currentLocation.generateURLforPath(folderThumbPath, 604800);
+      currentLocation
+        .generateURLforPath(folderThumbPath, 604800)
+        .then(() => setThumbnailImageChangeAction(entry));
     }
+    setThumbnailImageChangeAction(entry);
+  }
+
+  function setThumbnailImageChangeAction(entry: TS.FileSystemEntry) {
     const action: TS.EditMetaAction = {
       action: 'thumbChange',
       entry: {

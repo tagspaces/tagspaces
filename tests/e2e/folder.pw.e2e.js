@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   reloadDirectory,
@@ -22,38 +23,57 @@ import {
   waitForNotification,
   expectAllFileSelected,
   selectAllFiles,
+  openFolder,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
+    await closeWelcomePlaywright();
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -88,7 +108,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0103 - Rename folder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await openFolder(testFolder);
     const newDirectoryName = await renameFolder();
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(
@@ -97,9 +117,7 @@ test.describe('TST01 - Folder management', () => {
       5000,
     );
     // cleanup
-    await global.client.dblclick(
-      '[data-tid=fsEntryName_' + newDirectoryName + ']',
-    );
+    await openFolder(newDirectoryName);
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
@@ -163,14 +181,10 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(
-      '[data-tid=fsEntryName_empty_folder]',
-      false,
-      5000,
-    );
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0109 - Copy folder [web,electron]', async () => {
@@ -187,10 +201,10 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await global.client.dblclick('[data-tid=fsEntryName_' + folderToCopy + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh();
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    await global.client.dblclick(getGridFileSelector(folderToCopy));
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    await testDataRefresh(s3ServerInstance);
   });
 
   test('TST0110 - Tag folder [web,electron]', async () => {

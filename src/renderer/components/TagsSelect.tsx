@@ -28,62 +28,23 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { Box } from '@mui/material';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-
-/*const styles: any = (theme: any) => ({
-  root: {
-    flexGrow: 1
-  },
-  input: {
-    display: 'flex',
-    padding: 0,
-    height: 'auto'
-  },
-  valueContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    flex: 1,
-    alignItems: 'center',
-    overflow: 'hidden'
-  },
-  noOptionsMessage: {
-    padding: theme.spacing(1, 2)
-  },
-  singleValue: {
-    fontSize: 16
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 2,
-    bottom: 6,
-    fontSize: 16
-  },
-  paper: {
-    position: 'absolute',
-    zIndex: 2,
-    marginTop: theme.spacing(1),
-    left: 0,
-    right: 0
-  }
-});*/
+import { isDesktopMode } from '-/reducers/settings';
 
 interface Props {
   dataTid?: string;
   tags: TS.Tag[];
   label?: string;
   tagSearchType?: string;
-  // defaultBackgroundColor?: string;
-  // defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
-  // allTags?: TS.Tag[];
   tagMode?: 'default' | 'display' | 'remove';
   placeholderText?: string;
   selectedEntryPath?: string;
   autoFocus?: boolean;
-  // removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
 }
 
 function TagsSelect(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
+  const desktopMode = useSelector(isDesktopMode);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null,
   );
@@ -188,6 +149,7 @@ function TagsSelect(props: Props) {
         autoSelect
         autoComplete
         disableClearable
+        size={desktopMode ? 'small' : 'medium'}
         value={tags}
         onChange={handleTagChange}
         renderTags={(value: readonly TS.Tag[], getTagProps) =>

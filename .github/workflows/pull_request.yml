@@ -40,12 +40,56 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts
+          name: test-artifacts-desktop-win
           path: |
-            tests/test-pages/
+            test-results/
             tests/test-reports/
+            playwright-report/
+  e2eTestsWinS3:
+    name: Test desktop pro app on Mac with S3 bucket
+    runs-on: macos-latest
+    env:
+      PD_PLATFORM: node
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v4
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
+      - name: Configure NPM for TagSpaces Pro
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com/
+          scope: '@tagspacespro'
+      - name: Running npm install, prettier and type checks
+        run: |
+          npm install
+          npm run prettier-check
+          npm run type-check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
+      - name: Run Unit tests
+        run: npm run test-unit
+      - name: Run Electron tests
+        run: |
+          npm run build-e2e
+          npm run test-playwright-s3
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-artifacts-desktop-s3-win
+          path: |
+            test-results/
+            tests/test-reports/
+            playwright-report/
   e2eTestsWebWin:
-    name: Test web pro app on Windows
+    name: Test web pro app on Windows with Minio
     runs-on: windows-latest
     env:
       PD_PLATFORM: web
@@ -86,12 +130,57 @@ jobs:
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
+          npm run test-playwright-web-headless-minio
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-artifacts-web-minio-win
+          path: |
+            test-results/
+            tests/test-reports/
+            playwright-report/
+  e2eTestsWebMac:
+    name: Test web pro app on Mac OS
+    runs-on: macos-latest
+    env:
+      PD_PLATFORM: web
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v4
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
+      - name: Configure NPM for TagSpaces Pro
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com/
+          scope: '@tagspacespro'
+      - name: Running npm install, prettier and type checks
+        run: |
+          npm install
+          npm run prepare-web-pro
+          npm run prettier-check
+          npm run type-check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
+      - name: Run Unit tests
+        run: npm run test-unit
+      - name: Run Electron tests
+        run: |
+          npm run build-e2e-web
           npm run test-playwright-web-headless
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts-pr
+          name: test-artifacts-web-mac-s3
           path: |
+            test-results/
             tests/test-reports/
             playwright-report/
   # gitHubActionForNpmMac:

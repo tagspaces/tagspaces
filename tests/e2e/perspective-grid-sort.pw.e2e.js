@@ -1,42 +1,65 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
-import { clickOn, getGridFileName, takeScreenshot } from './general.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  getGridFileName,
+  getGridFileSelector,
+  takeScreenshot,
+} from './general.helpers';
 
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { closeWelcomePlaywright } from './welcome.helpers';
 import { getDirEntries } from './perspective-grid.helpers';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
-test.afterEach(async ({ page }, testInfo) => {
+/*test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-});
+});*/
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
   await clickOn('[data-tid=gridPerspectiveSortMenu]');

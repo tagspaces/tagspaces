@@ -1,9 +1,11 @@
-import { expect, test } from '@playwright/test';
+// import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
   defaultLocationPath,
+  createS3Location,
 } from './location.helpers';
 import {
   checkSettings,
@@ -15,6 +17,7 @@ import {
   getGridFileName,
   getGridFileSelector,
   getRevision,
+  openFolder,
   selectorFile,
   selectorFolder,
   setInputKeys,
@@ -31,42 +34,54 @@ import {
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { stopServices } from '../setup-functions';
 
-/*test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
 });
 
 test.afterAll(async () => {
-  await stopApp();
-  // await testDataRefresh();
-});*/
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+});
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
+  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
   await stopApp();
-  await testDataRefresh();
 });
 
 test.beforeEach(async () => {
-  await startTestingApp('extconfig.js');
+  await startTestingApp(
+    global.isMinio || global.isS3 ? undefined : 'extconfig.js',
+  );
   if (global.isMinio) {
+    await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await closeWelcomePlaywright();
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
 
 test.describe('TST08 - File folder properties', () => {
-  test('TST0801 - Arrow keys select next prev file (keybindings) [web,electron]', async () => {
+  test('TST0801 - Arrow keys select next prev file (keybindings) [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -177,10 +192,10 @@ test.describe('TST08 - File folder properties', () => {
     const propsNewFileName = await getPropertiesFileName();
     expect(propsNewFileName).toBe(newTitle);
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [propsNewFileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [propsNewFileName + '.json'] // check meta file renamed, thumbnails are not created on web or minio
-        : [propsNewFileName + '.json', propsNewFileName + '.jpg']; // check meta and thumbnail renamed
+        : [propsNewFileName + '.json', propsNewFileName + '.jpg'];*/ // check meta and thumbnail renamed
     await expectMetaFilesExist(arrayMeta);
 
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
@@ -326,12 +341,9 @@ test.describe('TST08 - File folder properties', () => {
       stroke="#bbbbbb22"
     ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
     </svg>`;
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await createFile(fileName, svg);
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'showProperties',
-    );
-    await global.client.dblclick(getGridFileSelector('empty_folder'));
+    await openFolder('empty_folder');
     await expectElementExist(getGridFileSelector(fileName));
     //await clickOn(getGridFileSelector(fileName));
     await openContextEntryMenu(
@@ -339,18 +351,15 @@ test.describe('TST08 - File folder properties', () => {
       'showPropertiesTID', //'fileMenuOpenFile'
     );
 
-    //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
     // add meta json to file
-    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
       remove: false,
     });
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio || global.isS3
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 

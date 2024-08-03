@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -45,6 +45,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { dataTidFormat } from '-/services/test';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -104,6 +105,8 @@ function GridPagination(props: Props) {
   const { openDirectory, directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
   if (!showDirectories) {
     directories = [];
   }
@@ -114,13 +117,35 @@ function GridPagination(props: Props) {
     ? Math.ceil(allFilesCount / gridPageLimit)
     : 10;
 
+  const backgroundImage = useRef<string>('none');
+  const thumbImage = useRef<string>('none');
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
-  }, [currentDirectoryPath, containerEl.current]);
+    if (currentLocation) {
+      currentLocation
+        .getFolderBgndPath(currentDirectoryPath, directoryMeta?.lastUpdated)
+        .then((bgPath) => {
+          const bgImage = 'url("' + bgPath + '")';
+          if (bgImage !== backgroundImage.current) {
+            backgroundImage.current = bgImage;
+            forceUpdate();
+          }
+        });
+      currentLocation
+        .getFolderThumbPath(currentDirectoryPath, directoryMeta?.lastUpdated)
+        .then((thumbPath) => {
+          const thbImage = 'url("' + thumbPath + '")';
+          if (thbImage !== thumbImage.current) {
+            thumbImage.current = thbImage;
+            forceUpdate();
+          }
+        });
+    }
+  }, [currentDirectoryPath, containerEl.current, directoryMeta]);
 
   const handleChange = (event, value) => {
     setCurrentPage(value);
@@ -148,6 +173,7 @@ function GridPagination(props: Props) {
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
+      data-tid="backgroundTID"
       style={{
         height: '100%',
         background: `${dirColor}`,
@@ -164,13 +190,7 @@ function GridPagination(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
-          backgroundImage:
-            'url("' +
-            currentLocation?.getFolderBgndPath(
-              currentDirectoryPath,
-              directoryMeta?.lastUpdated,
-            ) +
-            '")',
+          backgroundImage: backgroundImage.current,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
         }}
@@ -212,7 +232,7 @@ function GridPagination(props: Props) {
                   >
                     <Tooltip title={t('core:renameDirectory')}>
                       <ButtonBase
-                        data-tid={'currentDir_' + folderName}
+                        data-tid={'currentDir_' + dataTidFormat(folderName)}
                         style={{
                           fontSize: '1.5rem',
                           filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
@@ -277,13 +297,7 @@ function GridPagination(props: Props) {
                     borderRadius: 10,
                     height: 100,
                     width: 140,
-                    backgroundImage:
-                      'url("' +
-                      currentLocation?.getFolderThumbPath(
-                        currentDirectoryPath,
-                        directoryMeta?.lastUpdated,
-                      ) +
-                      '")',
+                    backgroundImage: thumbImage.current,
                     backgroundSize: 'cover', // cover contain
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center center',

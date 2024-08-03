@@ -19,6 +19,7 @@
 import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { TS } from '-/tagspaces.namespace';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -31,16 +32,53 @@ export const types = {
 
 export const initialState = [];
 
-export default (state: Array<CommonLocation> = initialState, action: any) => {
+function toTsLocation(location: CommonLocation): TS.Location {
+  return {
+    uuid: location.uuid || getUuid(),
+    name: location.name,
+    type: location.type,
+    ...(location.authType && { authType: location.authType }),
+    ...(location.username && { username: location.username }),
+    ...(location.password && { password: location.password }),
+    ...(location.path && { path: location.path }),
+    ...(location.isDefault && { isDefault: location.isDefault }),
+    ...(location.isReadOnly && { isReadOnly: location.isReadOnly }),
+    ...(location.isNotEditable && { isNotEditable: location.isNotEditable }),
+    ...(location.watchForChanges && {
+      watchForChanges: location.watchForChanges,
+    }),
+    ...(location.disableIndexing && {
+      disableIndexing: location.disableIndexing,
+    }),
+    ...(location.disableThumbnailGeneration && {
+      disableThumbnailGeneration: location.disableThumbnailGeneration,
+    }),
+    ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
+    ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
+    ...(location.maxLoops && { maxLoops: location.maxLoops }),
+    ...(location.persistTagsInSidecarFile && {
+      persistTagsInSidecarFile: location.persistTagsInSidecarFile,
+    }),
+    ...(location.ignorePatternPaths && {
+      ignorePatternPaths: location.ignorePatternPaths,
+    }),
+    ...(location.autoOpenedFilename && {
+      autoOpenedFilename: location.autoOpenedFilename,
+    }),
+    ...(location.creationDate && { creationDate: location.creationDate }),
+    ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
+  };
+}
+
+export default (state: Array<TS.Location> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       const locations = action.location.isDefault
         ? state.map((location) => ({ ...location, isDefault: false }))
         : [...state];
 
-      const newLocation: CommonLocation = {
-        ...action.location,
-        uuid: action.location.uuid || getUuid(),
+      const newLocation: TS.Location = {
+        ...toTsLocation(action.location),
         creationDate: new Date().getTime(),
         lastEditedDate: new Date().getTime(),
       };
@@ -68,12 +106,11 @@ export default (state: Array<CommonLocation> = initialState, action: any) => {
           ...state.slice(0, indexForEditing),
           {
             ...state[indexForEditing],
-            ...action.location,
+            ...toTsLocation(action.location),
             uuid:
               action.location.newuuid !== undefined
                 ? action.location.newuuid
                 : action.location.uuid,
-            persistTagsInSidecarFile: action.location.persistTagsInSidecarFile,
             lastEditedDate: new Date().getTime(),
           },
           ...state.slice(indexForEditing + 1),
@@ -173,9 +210,13 @@ export const actions = {
 };
 
 // Selectors
-export const getLocations = (state: any): Array<CommonLocation> =>
-  state.locations.map((l) => new CommonLocation(l));
-export const getLocation = (
+export const getLocations = (state: any): TS.Location[] => state.locations;
+export const getDefaultLocationId = (state: any): string | undefined => {
+  let foundLocation = state.locations.find((location) => location.isDefault);
+  return foundLocation ? foundLocation.uuid : undefined;
+};
+// state.locations.map((l) => new CommonLocation(l));
+/*export const getLocation = (
   state: any,
   locationId: string,
 ): CommonLocation | null =>
@@ -185,10 +226,6 @@ export const getLocationByPath = (
   path: string,
 ): CommonLocation | null =>
   state.locations.find((location) => location.path === path);
-export const getDefaultLocationId = (state: any): string | undefined => {
-  let foundLocation = state.locations.find((location) => location.isDefault);
-  return foundLocation ? foundLocation.uuid : undefined;
-};
 export const getFirstRWLocation = (state: any): CommonLocation | undefined => {
   let foundLocation = state.locations.find(
     (location) => location.isDefault && !location.isReadOnly,
@@ -197,4 +234,4 @@ export const getFirstRWLocation = (state: any): CommonLocation | undefined => {
     foundLocation = state.locations.find((location) => !location.isReadOnly);
   }
   return foundLocation;
-};
+};    */

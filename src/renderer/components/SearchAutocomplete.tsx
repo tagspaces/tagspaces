@@ -71,6 +71,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { removePrefix } from '-/services/utils-io';
+import { isDesktopMode } from '-/reducers/settings';
 
 interface Props {
   style?: any;
@@ -91,6 +92,7 @@ interface Props {
 
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
+  const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const { openLink } = useOpenedEntryContext();
   const { locations, currentLocation, changeLocationByID, openLocationById } =
@@ -1190,13 +1192,14 @@ function SearchAutocomplete(props: Props) {
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
-          style={{ maxHeight: 35 }}
+          style={{ maxHeight: 34 }}
+          size={desktopMode ? 'small' : 'medium'}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorSearch(event.currentTarget);
           }}
         >
-          <AdvancedSearchIcon />
-          <DropDownIcon />
+          <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
+          {/* <DropDownIcon /> */}
         </IconButton>
       </Tooltip>
       <Tooltip title={t('clearSearch') + ' (ESC)'}>
@@ -1205,10 +1208,11 @@ function SearchAutocomplete(props: Props) {
           onClick={() => {
             clearSearch();
           }}
-          size="small"
+          style={{ maxHeight: 34 }}
+          size={desktopMode ? 'small' : 'medium'}
           edge="end"
         >
-          <ClearSearchIcon />
+          <ClearSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
         </IconButton>
       </Tooltip>
     </>
@@ -1239,7 +1243,10 @@ function SearchAutocomplete(props: Props) {
         <style>
           {`
           #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 1px 5px 0 5px !important;
+            padding: 1px 15px 0 5px !important;
+          }
+          #searchAutocompleteComp .MuiTextField-root {
+            overflow-x: hidden !important;
           }
           .MuiAutocomplete-popper {
             min-width: 350px;
@@ -1431,7 +1438,8 @@ function SearchAutocomplete(props: Props) {
               )}
             </Box>
           )}
-          sx={{ width: 'calc(100% - 80px)' }}
+          sx={{ width: '100%' }}
+          size="small"
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
           renderInput={(params) => {
@@ -1483,11 +1491,6 @@ function SearchAutocomplete(props: Props) {
           </Button>
         </Tooltip>
       </div>
-      <SavedSearchesMenu
-        anchorEl={openSavedSearches}
-        open={Boolean(openSavedSearches)}
-        onClose={() => setOpenSavedSearches(null)}
-      />
     </>
   );
 }

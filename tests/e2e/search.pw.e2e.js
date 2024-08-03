@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   clickOn,
   expectElementExist,
@@ -22,6 +22,7 @@ import {
   closeLocation,
   createPwLocation,
   createPwMinioLocation,
+  createS3Location,
   defaultLocationName,
   defaultLocationPath,
   getPwLocationTid,
@@ -38,21 +39,30 @@ import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  await startTestingApp('extconfig-two-locations.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
   await createFile();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
     const localStorage = await global.client.evaluate(() =>
       JSON.stringify(window.localStorage),
@@ -61,7 +71,7 @@ test.afterEach(async ({ page }, testInfo) => {
       testInfo.outputPath(testInfo.title + '_localstorage.json'),
       localStorage,
     );
-  }
+  }*/
   await clearDataStorage();
 });
 
@@ -69,10 +79,13 @@ test.beforeEach(async () => {
   // await closeWelcomePlaywright();
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });

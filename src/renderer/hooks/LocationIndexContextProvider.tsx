@@ -50,6 +50,7 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { Pro } from '-/pro';
+import useFirstRender from '-/utils/useFirstRender';
 
 type LocationIndexContextData = {
   //index: TS.FileSystemEntry[];
@@ -109,13 +110,14 @@ export const LocationIndexContextProvider = ({
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     clearDirectoryIndex();
   }, [currentLocation]);
 
   useEffect(() => {
-    if (actions && actions.length > 0) {
+    if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
           reflectCreateEntry(action.entry);
@@ -437,11 +439,16 @@ export const LocationIndexContextProvider = ({
       if (thumbFilePath) {
         return loc.checkFileExist(thumbFilePath).then((exist) => {
           if (exist) {
-            const thumbPath =
-              loc.type === locationType.TYPE_CLOUD
-                ? loc.getURLforPath(thumbFilePath)
-                : thumbFilePath;
-            return { ...entry, meta: { ...entry.meta, thumbPath } };
+            if (loc.type === locationType.TYPE_CLOUD) {
+              return loc.getURLforPathInt(thumbFilePath).then((thumbPath) => ({
+                ...entry,
+                meta: { ...entry.meta, thumbPath },
+              }));
+            }
+            return {
+              ...entry,
+              meta: { ...entry.meta, thumbPath: thumbFilePath },
+            };
           }
           return undefined;
         });

@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {
   checkSettings,
@@ -16,6 +16,7 @@ import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
   createPwMinioLocation,
+  createS3Location,
   defaultLocationName,
   defaultLocationPath,
 } from './location.helpers';
@@ -31,21 +32,34 @@ import {
   testTagName,
 } from './tag.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  //await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
@@ -282,6 +296,8 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=locationManager]');
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);
+    } else if (global.isS3) {
+      await createS3Location('', defaultLocationName, true);
     } else {
       await createPwLocation(defaultLocationPath, defaultLocationName, true);
     }
@@ -330,10 +346,11 @@ test.describe('TST04 - Testing the tag library:', () => {
       '[data-tid=tagContainer_' + tagName + ']',
       getGridFileSelector('sample.txt'),
     );
+    await clickOn('[data-tid=showTimeTID]');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
 
     await expectElementExist(
-      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), true) + ']',
+      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), false) + ']',
       true,
       8000,
       '[data-tid=perspectiveGridFileTable]',

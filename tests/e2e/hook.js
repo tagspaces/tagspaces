@@ -1,7 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
-// import { execSync } from 'child_process';
+import { uploadFile } from '../s3rver/S3DataRefresh';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -72,7 +72,13 @@ export async function clearLocalStorage() {
 export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
   let srcDir;
   if (global.isWeb) {
-    srcDir = pathLib.join(__dirname, '..', '..', 'scripts', 'web' + extconfig);
+    srcDir = pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      'scripts',
+      'web' + (global.isS3 ? 's3' : '') + extconfig,
+    );
 
     if (!fse.existsSync(srcDir)) {
       srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
@@ -91,15 +97,17 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
 }
 
 export async function removeExtConfig() {
-  await fse.remove(
-    pathLib.join(
-      __dirname,
-      '..',
-      '..',
-      global.isWeb ? 'web' : 'release/app/dist/renderer',
-      'extconfig.js',
-    ),
-  );
+  if (!global.isWeb) {
+    await fse.remove(
+      pathLib.join(
+        __dirname,
+        '..',
+        '..',
+        global.isWeb ? 'web' : 'release/app/dist/renderer',
+        'extconfig.js',
+      ),
+    );
+  }
 }
 
 export async function startTestingApp(extconfig) {
@@ -194,19 +202,37 @@ export async function stopApp() {
   }
 }
 
-export async function testDataRefresh() {
-  const src = pathLib.join(
-    __dirname,
-    '..',
-    'testdata',
-    'file-structure',
-    'supported-filestypes',
-  );
-  const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
+export async function testDataRefresh(s3ServerInstance) {
+  if (global.isS3) {
+    /*if(s3ServerInstance) {
+      s3ServerInstance.reset();
+     await uploadTestDirectory();
+    }*/
+  } else {
+    await deleteTestData();
+    const src = pathLib.join(
+      __dirname,
+      '..',
+      'testdata',
+      'file-structure',
+      'supported-filestypes',
+    );
+    const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
+    let newPath = pathLib.join(dst, pathLib.basename(src));
+    await fse.copy(src, newPath); //, { overwrite: true });
+  }
+}
 
-  let newPath = pathLib.join(dst, pathLib.basename(src));
-  await fse.emptyDir(newPath);
-  await fse.copy(src, newPath); //, { overwrite: true });
+export async function deleteTestData() {
+  await fse.emptyDir(
+    pathLib.join(
+      __dirname,
+      '..',
+      'testdata-tmp',
+      'file-structure',
+      'supported-filestypes',
+    ),
+  );
 }
 
 export async function createFile(
@@ -223,16 +249,19 @@ export async function createFile(
     rootFolder,
     fileName,
   );
-
-  try {
-    if (fileContent) {
-      await fse.outputFile(filePath, fileContent);
-    } else {
-      await fse.createFile(filePath);
-      console.log('Empty file created!');
+  if (global.isS3) {
+    await uploadFile(filePath, fileContent || 'test content');
+  } else {
+    try {
+      if (fileContent) {
+        await fse.outputFile(filePath, fileContent);
+      } else {
+        await fse.createFile(filePath);
+        console.log('Empty file created!');
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
   }
 }
 

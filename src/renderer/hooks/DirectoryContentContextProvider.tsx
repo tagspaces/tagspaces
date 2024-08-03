@@ -63,6 +63,7 @@ import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCancelable } from '-/utils/useCancelable';
 import LoadingLazy from '-/components/LoadingLazy';
+import useFirstRender from '-/utils/useFirstRender';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -242,7 +243,7 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
-  // const firstRender = useFirstRender();
+  const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -302,7 +303,7 @@ export const DirectoryContentContextProvider = ({
   }, [currentLocation]);
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (
           cleanTrailingDirSeparator(currentDirectoryPath.current) ===
@@ -314,7 +315,7 @@ export const DirectoryContentContextProvider = ({
                 action.entry.meta.perspective === PerspectiveIDs.UNSPECIFIED
                   ? defaultPerspective
                   : action.entry.meta.perspective;
-              forceUpdate();
+              setDirectoryMeta(action.entry.meta);
             }
             //setManualDirectoryPerspective(action.entry.meta.perspective);
           } else if (
@@ -335,19 +336,17 @@ export const DirectoryContentContextProvider = ({
     if (kanbanActions && kanbanActions.length > 0) {
       for (const action of kanbanActions) {
         if (action.action === 'directoryVisibilityChange') {
-          directoryMeta.current = action.meta;
-          currentDirectoryDirs.current = [
-            ...directoryMeta.current.customOrder.folders,
-          ];
-          forceUpdate();
+          setDirectoryMeta(action.meta);
         }
       }
     }
   }, [kanbanActions]);
 
   useEffect(() => {
-    reflectActions(actions).catch(console.error);
-    reflectSelection(actions);
+    if (!firstRender) {
+      reflectActions(actions).catch(console.error);
+      reflectSelection(actions);
+    }
   }, [actions]);
 
   const reflectActions = async (actions) => {
@@ -686,26 +685,39 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function loadMetaDirectoryContent(
+  async function loadMetaDirectoryContent(
     directoryPath: string,
     location: CommonLocation,
-    showHiddenEntries = undefined,
+    showHiddenEntries: boolean | undefined = undefined,
   ): Promise<TS.FileSystemEntry[]> {
+    // Ensure selectedEntries is cleared if not empty
     if (selectedEntries.length > 0) {
       setSelectedEntries([]);
     }
-    return getDirMeta(directoryPath, location).then((meta) => {
-      if (meta) {
-        directoryMeta.current = meta;
-      } else {
-        directoryMeta.current = getDefaultDirMeta();
-      }
-      return loadDirectoryContentInt(
-        directoryPath,
-        location,
-        showHiddenEntries,
-      );
-    });
+
+    // Fetch directory metadata
+    const meta = await getDirMeta(directoryPath, location);
+
+    // Load directory content
+    const entries = await loadDirectoryContentInt(
+      directoryPath,
+      location,
+      showHiddenEntries,
+    );
+
+    // Update directory metadata
+    if (meta) {
+      directoryMeta.current = meta;
+      currentDirectoryDirs.current = meta.customOrder?.folders || [];
+      currentDirectoryFiles.current = meta.customOrder?.files || [];
+    } else {
+      directoryMeta.current = getDefaultDirMeta();
+    }
+
+    // Set current directory entries
+    setCurrentDirectoryEntries(entries);
+
+    return entries;
   }
 
   /**
@@ -738,7 +750,10 @@ export const DirectoryContentContextProvider = ({
           directoryPath,
           currentLocation,
           showHiddenEntries,
-        );
+        ).then((entries) => {
+          setCurrentDirectoryEntries(entries);
+          return entries;
+        });
       });
     } else {
       isMetaLoaded.current = false;
@@ -747,7 +762,10 @@ export const DirectoryContentContextProvider = ({
         directoryPath,
         currentLocation,
         showHiddenEntries,
-      );
+      ).then((entries) => {
+        setCurrentDirectoryEntries(entries);
+        return entries;
+      });
     }
   }
 
@@ -867,25 +885,6 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setSearchFilter(undefined));
     }
 
-    if (directoryMeta.current) {
-      /*if (directoryMeta.current.perspective) {
-        currentPerspective.current = directoryMeta.current
-          .perspective as TS.PerspectiveType;
-      } else {
-        currentPerspective.current = 'unspecified';
-      }*/
-      if (directoryMeta.current.customOrder) {
-        if (directoryMeta.current.customOrder.files) {
-          currentDirectoryFiles.current =
-            directoryMeta.current.customOrder.files;
-        }
-        if (directoryMeta.current.customOrder.folders) {
-          currentDirectoryDirs.current =
-            directoryMeta.current.customOrder.folders;
-        }
-      }
-    }
-
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
       location,
@@ -894,12 +893,9 @@ export const DirectoryContentContextProvider = ({
       showHiddenEntries,
     );
 
-    setCurrentDirectoryEntries(directoryContent);
+    //setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
-    updateHistory(
-      { ...location, path: currentLocationPath.current },
-      directoryPath,
-    );
+    updateHistory(location.uuid, currentLocationPath.current, directoryPath);
     return directoryContent;
   }
 
@@ -1021,6 +1017,10 @@ export const DirectoryContentContextProvider = ({
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
     isMetaLoaded.current = true;
+    currentDirectoryDirs.current =
+      directoryMeta.current?.customOrder?.folders || [];
+    currentDirectoryFiles.current =
+      directoryMeta.current?.customOrder?.files || [];
     forceUpdate();
   }
 
@@ -1240,10 +1240,10 @@ export const DirectoryContentContextProvider = ({
     );
   }
 
-  function setThumbForEntry(
+  async function setThumbForEntry(
     entry: TS.FileSystemEntry,
     meta: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
-  ): TS.FileSystemEntry {
+  ): Promise<TS.FileSystemEntry> {
     const thumbEntry = { ...entry, tags: [] };
     let thumbPath = getThumbFileLocationForFile(
       entry.path,
@@ -1261,7 +1261,7 @@ export const DirectoryContentContextProvider = ({
           thumbPath = thumbPath.substring(1);
         }
 
-        thumbPath = currentLocation.generateURLforPath(thumbPath, 604800);
+        thumbPath = await currentLocation.generateURLforPath(thumbPath, 604800);
         if (thumbPath) {
           thumbEntry.meta = { id: getUuid(), thumbPath };
         }
@@ -1350,7 +1350,7 @@ export const DirectoryContentContextProvider = ({
     dirPath: string,
     location: CommonLocation,
   ): Promise<TS.FileSystemEntryMeta> {
-    return location.listMetaDirectoryPromise(dirPath).then((meta) => {
+    return location.listMetaDirectoryPromise(dirPath).then(async (meta) => {
       const metaFilePath = getMetaFileLocationForDir(
         dirPath,
         location?.getDirSeparator(),
@@ -1363,7 +1363,7 @@ export const DirectoryContentContextProvider = ({
       if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
         thumbPath =
           location.haveObjectStoreSupport() || location.haveWebDavSupport()
-            ? location.getURLforPath(thumbDirPath)
+            ? await location.getURLforPathInt(thumbDirPath)
             : thumbDirPath;
       }
       if (

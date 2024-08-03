@@ -63,6 +63,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -134,56 +135,57 @@ function GridCell(props: Props) {
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
-  //const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
-  // const desktopMode = useSelector(isDesktopMode);
+  const thumbPath = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
   const fileSystemEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
   const maxHeight = calculateEntryHeight(entrySize);
   const entryPath = fsEntry.path;
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
+  const gridCellLocation = findLocation(fsEntry.locationID);
+
+  function setThumbPath(update = true): Promise<boolean> {
+    if (gridCellLocation && fsEntry.meta) {
+      if (fsEntry.meta.thumbPath) {
+        return gridCellLocation
+          .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta?.lastUpdated)
+          .then((tmbPath) => {
+            if (tmbPath !== thumbPath.current) {
+              thumbPath.current = tmbPath;
+              if (update) {
+                forceUpdate();
+              }
+              return true;
+            }
+            return false;
+          });
+      }
+    }
+    return Promise.resolve(false);
+  }
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    setThumbPath();
+  }, [fsEntry]);
+
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (fsEntry.path === action.entry.path) {
-          /*if (action.action === 'thumbChange') {
-            if (action.entry.meta.thumbPath) {
-              thumbUrl.current = getThumbPath(
-                action.entry.meta.thumbPath,
-                action.entry.meta?.lastUpdated,
-              );
-            } else {
-              //thumbnail deleted
-              thumbUrl.current = undefined;
-              if (fsEntry.meta) {
-                const { thumbPath, ...meta } = fsEntry.meta;
-                fsEntry.meta = meta;
-              }
-            }
-            forceUpdate();
-          } else*/
-          /*if (action.action === 'bgdColorChange') {
-            fileSystemEntryBgColor.current = findBackgroundColorForFolder(
-              action.entry,
-            );
-            forceUpdate();
-          } else*/
           if (
             action.action === 'thumbChange' ||
             action.action === 'bgdColorChange' ||
             action.action === 'descriptionChange'
           ) {
             fsEntry.meta = { ...action.entry.meta };
-            forceUpdate();
+            setThumbPath(false).then(() => forceUpdate());
           }
         }
       }
     }
   }, [metaActions]);
 
-  const gridCellLocation = findLocation(fsEntry.locationID);
   if (!gridCellLocation && fsEntry.locationID) {
     // location not exist in locationManager (maybe removed)
     return null;
@@ -414,7 +416,7 @@ function GridCell(props: Props) {
             <TagsPreview tags={entryTags} />
           )}
         </Box>
-        {fsEntry.meta && fsEntry.meta.thumbPath ? (
+        {fsEntry.meta && fsEntry.meta.thumbPath && thumbPath.current ? (
           <CardMedia
             component="img"
             loading="lazy"
@@ -422,10 +424,7 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={gridCellLocation.getThumbPath(
-              fsEntry.meta.thumbPath,
-              fsEntry.meta?.lastUpdated,
-            )}
+            src={thumbPath.current}
             style={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,

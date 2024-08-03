@@ -30,6 +30,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { mergeFsEntryMeta } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 type PerspectiveSettingsContextData = {
   settings: TS.FolderSettings;
@@ -100,6 +101,7 @@ export const PerspectiveSettingsContextProvider = ({
   const settings = useRef<TS.FolderSettings>(
     getSettings(getPerspective(), directoryMeta),
   );
+  const firstRender = useFirstRender();
 
   /*useEffect(() => {
     settings.current = getSettings(getPerspective(), directoryMeta);
@@ -107,7 +109,7 @@ export const PerspectiveSettingsContextProvider = ({
   }, [perspective, directoryMeta]);*/
 
   useEffect(() => {
-    if (metaActions && metaActions.length > 0) {
+    if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (action.action === 'perspectiveChange') {
           settings.current = getSettings(getPerspective(), directoryMeta);

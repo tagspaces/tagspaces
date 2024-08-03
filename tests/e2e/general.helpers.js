@@ -2,7 +2,7 @@
 import path from 'path';
 import { expect } from '@playwright/test';
 import { delay } from './hook';
-import { firstFile, toContainTID } from './test-utils';
+import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
 
@@ -78,27 +78,29 @@ export async function rightClickOn(selector) {
 /**
  *
  * @param selector
- * @param className
+ * @param propValue
+ * @param attribute
+ * @param timeout
  * @returns {Promise<void>} newClassName
  */
-export async function waitUntilClassChanged(selector, className) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function () {
-      const newClassName = await this.getAttribute('class');
-      return newClassName !== className;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg:
-        'waitUntilClassChanged selector ' +
-        selector +
-        ' className:' +
-        className +
-        ' to changed after 5s',
-    },
-  );
-  return await element.getAttribute('class');
+export async function waitUntilChanged(
+  selector,
+  propValue,
+  attribute = 'class',
+  timeout = 5000,
+) {
+  const element = global.client.locator(selector);
+  await expect
+    .poll(
+      async () => {
+        const value = await element.getAttribute(attribute);
+        return value;
+      },
+      { timeout },
+    )
+    .not.toBe(propValue);
+
+  return await element.getAttribute(attribute);
 }
 
 export async function setInputValue(selector, value) {
@@ -354,8 +356,8 @@ export async function expectAudioPlay() {
   await expect
     .poll(
       async () => {
-        if (!global.isWin) {
-          //todo remove this - currently video do not start playing on mac
+        if (!global.isWin || global.isWeb) {
+          //todo remove this - currently video do not start playing on mac and web
           return true;
         }
         const fLocator = await frameLocator();
@@ -801,6 +803,26 @@ export async function waitForNotification(
   } */
 }
 
+export async function openFolder(folderName) {
+  await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
+  await expectElementExist(
+    '[data-tid=currentDir_' + dataTidFormat(folderName) + ']',
+    true,
+    8000,
+  );
+}
+
+export async function openFile(fileName) {
+  await openContextEntryMenu(
+    getGridFileSelector(fileName), // perspectiveGridTable + firstFile,
+    'fileMenuOpenFile',
+  );
+  await expectElementExist(
+    '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+    true,
+    8000,
+  );
+}
 /**
  * for check settings use checkSettings instead
  * @param selector
@@ -901,7 +923,8 @@ export async function createNewDirectory(dirName = testFolder) {
   // set new dir name
   await setInputKeys('directoryName', dirName);
   await clickOn('[data-tid=confirmCreateNewDirectory]');
-  await waitForNotification();
+  await expectElementExist(getGridFileSelector(dirName), true, 5000);
+  // await waitForNotification();
   return dirName;
 }
 

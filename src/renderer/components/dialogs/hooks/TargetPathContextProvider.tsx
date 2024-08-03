@@ -17,9 +17,7 @@
  */
 
 import React, { createContext, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { getFirstRWLocation } from '-/reducers/locations';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -40,11 +38,11 @@ export type TargetPathContextProviderProps = {
 export const TargetPathContextProvider = ({
   children,
 }: TargetPathContextProviderProps) => {
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentDirectoryPath, getPerspective } = useDirectoryContentContext();
 
-  const firstRWLocation = useSelector(getFirstRWLocation);
+  const firstRWLocation = getFirstRWLocation();
 
   const context = useMemo(() => {
     let targetDirectoryPath = currentDirectoryPath;

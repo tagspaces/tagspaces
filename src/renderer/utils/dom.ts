@@ -36,7 +36,8 @@ export function clearURLParam(paramName) {
 }
 
 export function updateHistory(
-  newLocation: CommonLocation,
+  locationUUID: string,
+  locationPath: string,
   newDirectoryPath: string,
   newEntryPath?: string,
 ) {
@@ -50,19 +51,14 @@ export function updateHistory(
   let diffFolderPath = false;
   let diffEntryPath = false;
 
-  if (newLocation) {
+  if (locationUUID) {
     let urlParams = '?';
-    if (newLocation && newLocation.uuid) {
-      const newEncLocationID = encodeURIComponent(newLocation.uuid);
-      urlParams += 'tslid=' + newEncLocationID;
-      diffLocation = newLocation.uuid !== currentLocationID;
-    }
+    const newEncLocationID = encodeURIComponent(locationUUID);
+    urlParams += 'tslid=' + newEncLocationID;
+    diffLocation = locationUUID !== currentLocationID;
 
     if (newDirectoryPath && newDirectoryPath.length > 0) {
-      const newRelDir = getRelativeEntryPath(
-        newLocation.path,
-        newDirectoryPath,
-      );
+      const newRelDir = getRelativeEntryPath(locationPath, newDirectoryPath);
       if (newRelDir) {
         const newEncRelDir = encodeURIComponent(newRelDir);
         urlParams += '&tsdpath=' + newEncRelDir;
@@ -71,7 +67,7 @@ export function updateHistory(
     }
 
     if (newEntryPath && newEntryPath.length > 0) {
-      const entryRelPath = getRelativeEntryPath(newLocation.path, newEntryPath);
+      const entryRelPath = getRelativeEntryPath(locationPath, newEntryPath);
       if (entryRelPath) {
         const newEncEntryPath = encodeURIComponent(entryRelPath);
         urlParams += '&tsepath=' + newEncEntryPath;

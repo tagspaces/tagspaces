@@ -2,7 +2,7 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { generateFileName } from '@tagspaces/tagspaces-common/paths';
 import {
   defaultLocationPath,
@@ -11,6 +11,7 @@ import {
   deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import AppConfig from '../../src/renderer/AppConfig';
 import { searchEngine } from './search.helpers';
@@ -33,37 +34,55 @@ import {
   takeScreenshot,
   expectMetaFilesExist,
   setSettings,
+  openFolder,
+  openFile,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { stopServices } from '../setup-functions';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -71,16 +90,11 @@ test.beforeEach(async () => {
 // Scenarios for right button on a file
 test.describe('TST50** - Right button on a file', () => {
   test('TST5016 - Open file [web,electron]', async () => {
-    // await searchEngine('txt');
-    await openContextEntryMenu(
-      getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
-      'fileMenuOpenFile',
-    );
-    // await takeScreenshot('fileMenuOpenFile');
+    await openFile('sample.txt');
     await expect
       .poll(
         async () => {
-          const fLocator = await frameLocator();
+          const fLocator = await frameLocator('#root iframe');
           const bodyTxt = await fLocator.locator('body').innerText();
           return toContainTID(bodyTxt);
         },
@@ -91,30 +105,6 @@ test.describe('TST50** - Right button on a file', () => {
         },
       )
       .toBe(true);
-    // await takeScreenshot('bodyTxt_fileMenuOpenFile');
-
-    /*const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
-    // Check if the file is opened
-    // await delay(1500);
-    /*await expectElementExist('#FileViewer', true, 2000);
-    const webViewer = await global.client.waitForSelector('#FileViewer');
-    // await webViewer.waitForDisplayed();
-    // await delay(5000);
-    // expect(await webViewer.isDisplayed()).toBe(true);
-    const iframe = await webViewer.contentFrame();
-    // await global.client.switchToFrame(webViewer);
-    // await isElementDisplayed(iframeBody,'body');
-    const iframeBody = await iframe.waitForSelector('body');
-    const bodyTxt = await iframeBody.innerText();
-    const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
   });
 
   test('TST5017 - Rename file and check thumbnail exist [web,electron]', async () => {
@@ -195,7 +185,7 @@ test.describe('TST50** - Right button on a file', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]',
     );
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
     // cleanup
     /*await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles('grid', [testTagName + 'Edited'], false);
@@ -401,22 +391,24 @@ test.describe('TST50** - Right button on a file', () => {
   test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
   test('TST5033 - Open directory (directory menu) [web,electron]', async () => {
+    await expectElementExist(selectorFile, true, 5000);
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
-    // await global.client.screenshot({ path: 'screenshotTST5033.png' });
-    await expectElementExist(selectorFile, false);
-    // const firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(undefined); //'sample.eml');
+    await expectElementExist(selectorFile, false, 5000);
   });
 
   test('TST5034 - Rename directory (directory menu) [web,electron]', async () => {
     const newDirName = 'new_dir_name';
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    const folder = getGridFileSelector('empty_folder');
+    await openContextEntryMenu(folder, 'renameDirectory');
     const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    await openContextEntryMenu(
+      getGridFileSelector(newDirName),
+      'renameDirectory',
+    );
     const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);
@@ -517,6 +509,7 @@ test.describe('TST50** - Right button on a file', () => {
       // '[data-tid=' + listDefaultSettings.testID + ']',
       '[data-tid=listPerspectiveContainer]',
       true,
+      5000,
     );
   });
 

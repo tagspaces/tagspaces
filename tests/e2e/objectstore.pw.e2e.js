@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
@@ -18,33 +19,49 @@ import {
   takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { createSavedSearch, searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { startMinio } from '../setup-functions';
+import { stopServices } from '../setup-functions';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig-objectstore-location.js');
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig-objectstore-location.js');
+  }
   //await clearDataStorage();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
 test.beforeEach(async () => {
-  await closeWelcomePlaywright();
-  await clickOn('[data-tid=locationManager]');
-  await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
+  if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
+  } else {
+    await closeWelcomePlaywright();
+    await clickOn('[data-tid=locationManager]');
+    await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
+  }
 });
 
 test.describe('TST09 - ObjectStore location', () => {

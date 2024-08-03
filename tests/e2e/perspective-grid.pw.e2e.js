@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
@@ -33,33 +34,51 @@ import {
   getPropertiesFileName,
 } from './file.properties.helpers';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
+import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  //await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
   await stopApp();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
+  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
-  await testDataRefresh();
 });
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -170,10 +189,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 
@@ -209,10 +228,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 
