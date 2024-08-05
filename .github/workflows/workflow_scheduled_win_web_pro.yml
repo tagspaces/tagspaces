@@ -47,7 +47,7 @@ jobs:
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
-          npm run test-playwright-web-headless
+          npm run test-playwright-web-headless-minio
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
