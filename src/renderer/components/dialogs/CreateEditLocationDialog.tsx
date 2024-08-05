@@ -110,6 +110,7 @@ function CreateEditLocationDialog(props: Props) {
   /*const { location } = props;*/
   const [showSecretAccessKey, setShowSecretAccessKey] =
     useState<boolean>(false);
+  const [showEncryptionKey, setShowEncryptionKey] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
@@ -162,6 +163,11 @@ function CreateEditLocationDialog(props: Props) {
   );
   const [endpointURL, setEndpointURL] = useState<string>(
     selectedLocation ? selectedLocation.endpointURL : '',
+  );
+  const [encryptionKey, setEncryptionKey] = useState<string>(
+    selectedLocation && selectedLocation.encryptionKey
+      ? selectedLocation.encryptionKey
+      : '',
   );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
@@ -319,6 +325,13 @@ function CreateEditLocationDialog(props: Props) {
     } else if (!checkOnly) {
       setCloudErrorSecretAccessKey(false);
     }
+
+    if (encryptionKey && encryptionKey.length !== 32) {
+      if (checkOnly) return true;
+      setCloudErrorSecretAccessKey(true);
+    } else if (!checkOnly) {
+      setCloudErrorSecretAccessKey(false);
+    }
     return false;
   };
 
@@ -423,6 +436,7 @@ function CreateEditLocationDialog(props: Props) {
           path: storePath,
           paths: [storePath],
           endpointURL,
+          encryptionKey,
           accessKeyId,
           secretAccessKey,
           sessionToken,
@@ -475,15 +489,19 @@ function CreateEditLocationDialog(props: Props) {
         cloudErrorBucketName={false}
         cloudErrorRegion={false}
         showSecretAccessKey={showSecretAccessKey}
+        showEncryptionKey={showEncryptionKey}
         storeName={storeName}
         storePath={storePath}
         accessKeyId={accessKeyId}
         secretAccessKey={secretAccessKey}
         sessionToken={sessionToken}
         setShowSecretAccessKey={setShowSecretAccessKey}
+        setShowEncryptionKey={setShowEncryptionKey}
         bucketName={bucketName}
         region={region}
         endpointURL={endpointURL}
+        encryptionKey={encryptionKey}
+        setEncryptionKey={setEncryptionKey}
         setStoreName={setStoreName}
         setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}

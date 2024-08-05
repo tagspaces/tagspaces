@@ -88,7 +88,7 @@ export class CommonLocation implements TS.Location {
       this.secretAccessKey = (location as TS.S3Location).secretAccessKey;
       this.sessionToken = (location as TS.S3Location).sessionToken;
       this.bucketName = (location as TS.S3Location).bucketName;
-      this.encryptionKey = '12345678901234567890123456789012'; //(location as TS.S3Location).encryptionKey;
+      this.encryptionKey = (location as TS.S3Location).encryptionKey; // '12345678901234567890123456789012';
       this.region = (location as TS.S3Location).region;
       this.endpointURL = (location as TS.S3Location).endpointURL;
       this.ioAPI = require('@tagspaces/tagspaces-common-aws3'); //objectStoreAPI.getS3Api(location);

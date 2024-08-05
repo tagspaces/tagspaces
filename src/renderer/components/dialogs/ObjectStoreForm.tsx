@@ -84,6 +84,7 @@ interface Props {
   cloudErrorBucketName: boolean;
   cloudErrorRegion: boolean;
   showSecretAccessKey: boolean;
+  showEncryptionKey: boolean;
   storeName: string;
   storePath: string;
   accessKeyId: string;
@@ -92,19 +93,23 @@ interface Props {
   bucketName: string;
   region: string;
   endpointURL: string;
+  encryptionKey: string;
   setStoreName: (string) => void;
   setStorePath: (string) => void;
   setAccessKeyId: (string) => void;
   setSecretAccessKey: (string) => void;
   setSessionToken: (string) => void;
   setShowSecretAccessKey: (boolean) => void;
+  setShowEncryptionKey: (boolean) => void;
   setBucketName: (string) => void;
   setRegion: (string) => void;
   setEndpointURL: (string) => void;
+  setEncryptionKey: (string) => void;
 }
 function ObjectStoreForm(props: Props) {
   const {
     setShowSecretAccessKey,
+    setShowEncryptionKey,
     cloudErrorTextName,
     cloudErrorTextPath,
     cloudErrorAccessKey,
@@ -112,6 +117,7 @@ function ObjectStoreForm(props: Props) {
     cloudErrorBucketName,
     cloudErrorRegion,
     showSecretAccessKey,
+    showEncryptionKey,
     storeName,
     storePath,
     accessKeyId,
@@ -120,6 +126,7 @@ function ObjectStoreForm(props: Props) {
     bucketName,
     region,
     endpointURL,
+    encryptionKey,
     setStoreName,
     setStorePath,
     setAccessKeyId,
@@ -127,6 +134,7 @@ function ObjectStoreForm(props: Props) {
     setSessionToken,
     setBucketName,
     setEndpointURL,
+    setEncryptionKey,
     setRegion,
   } = props;
   const { t } = useTranslation();
@@ -281,6 +289,35 @@ function ObjectStoreForm(props: Props) {
           {/* {state.cloudErrorId && (
           <FormHelperText>{t('core:missingId')}</FormHelperText>
           )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true}>
+          <TextField
+            margin="dense"
+            name="encryptionKey"
+            type={showEncryptionKey ? 'text' : 'password'}
+            fullWidth={true}
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            data-tid="encryptionKeyTID"
+            placeholder={t('s3encryptionKey')}
+            onChange={(event) => setEncryptionKey(event.target.value)}
+            value={encryptionKey}
+            label={t('core:encryptionKey')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowEncryptionKey(!showEncryptionKey)}
+                    size="large"
+                  >
+                    {showEncryptionKey ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
         </FormControl>
       </Grid>
       <Grid item xs={12}>

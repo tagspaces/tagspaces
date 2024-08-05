@@ -32,6 +32,7 @@ import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
 import IconButton from '@mui/material/IconButton';
+import HttpsIcon from '@mui/icons-material/Https';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import TagsPreview from '-/components/TagsPreview';
@@ -259,6 +260,15 @@ function EntryContainerTitle(props: Props) {
         </IconButton>
       </ProTooltip>
       <TagsPreview tags={getAllTags(openedEntry)} />
+      {openedEntry.isEncrypted && (
+        <Tooltip title={t('core:encryptedTooltip')}>
+          <HttpsIcon
+            style={{
+              color: theme.palette.primary.main,
+            }}
+          />
+        </Tooltip>
+      )}
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}

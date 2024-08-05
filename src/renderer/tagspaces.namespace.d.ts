@@ -55,6 +55,7 @@ export namespace TS {
     bucketName?: string;
     region?: string;
     endpointURL?: string;
+    encryptionKey?: string;
     s3API?: AWS.S3;
   }
 
@@ -190,6 +191,7 @@ export namespace TS {
     extension?: string;
     textContent?: string;
     tags?: TS.Tag[];
+    isEncrypted?: boolean;
     size: number;
     lmdt: number;
     path: string;
