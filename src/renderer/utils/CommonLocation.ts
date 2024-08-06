@@ -383,6 +383,7 @@ export class CommonLocation implements TS.Location {
           path,
           bucketName: this.bucketName,
           location: this,
+          ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
         };
         url = await this.ioAPI.getURLforPath(param, expirationInSeconds);
       } else if (this.haveWebDavSupport()) {

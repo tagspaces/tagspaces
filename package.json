@@ -165,7 +165,7 @@
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.5.2",
-    "@tagspaces/tagspaces-common-aws3": "4.5.2",
+    "@tagspaces/tagspaces-common-aws3": "4.5.3",
     "@tagspaces/tagspaces-common-cordova": "4.5.2",
     "@tagspaces/tagspaces-indexer": "4.5.2",
     "@tagspaces/tagspaces-md": "4.3.30",
@@ -233,7 +233,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.64-alpha.8"
+    "@tagspacespro/tagspacespro": "5.0.64"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
