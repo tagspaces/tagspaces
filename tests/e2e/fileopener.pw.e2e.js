@@ -330,7 +330,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(newFileContent, 15000);
   });
 
-  test('TST0813 - Delete file and check meta and thumbnails deleted [web,electron]', async () => {
+  test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async () => {
     const fileName = 'new_file.svg';
     const svg = `<svg
       xmlns="http://www.w3.org/2000/svg"
@@ -351,8 +351,9 @@ test.describe('TST08 - File folder properties', () => {
       'showPropertiesTID', //'fileMenuOpenFile'
     );
 
+    const tags = global.isMinio ? ['test-tag1'] : ['test-tag1', 'test-tag2'];
     // add meta json to file
-    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+    await AddRemovePropertiesTags(tags, {
       add: true,
       remove: false,
     });
