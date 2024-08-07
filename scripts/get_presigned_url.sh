@@ -6,7 +6,7 @@ RAW_ENCRYPTION_KEY="12345678901234567890123456789012"
 
 # Base64 encode the encryption key
 ENCRYPTION_KEY=$(echo -n "$RAW_ENCRYPTION_KEY" | base64)
-ENCRYPTION_KEY_MD5=$(echo -n "$ENCRYPTION_KEY" | base64 --decode | openssl md5 -binary | base64)
+ENCRYPTION_KEY_MD5=$(echo -n "$RAW_ENCRYPTION_KEY" | openssl md5 -binary | base64)
 
 
 # Download file
