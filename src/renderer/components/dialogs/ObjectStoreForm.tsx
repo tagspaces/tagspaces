@@ -17,10 +17,12 @@
  */
 
 import React from 'react';
+import CryptoJS from 'crypto-js';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
+import PasswordIcon from '@mui/icons-material/Password';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
@@ -313,6 +315,19 @@ function ObjectStoreForm(props: Props) {
                     size="large"
                   >
                     {showEncryptionKey ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                  <IconButton
+                    aria-label="auto fill password"
+                    onClick={() =>
+                      setEncryptionKey(
+                        CryptoJS.lib.WordArray.random(32)
+                          .toString(CryptoJS.enc.Hex)
+                          .slice(0, 32),
+                      )
+                    }
+                    size="large"
+                  >
+                    <PasswordIcon />
                   </IconButton>
                 </InputAdornment>
               ),

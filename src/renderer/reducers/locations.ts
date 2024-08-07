@@ -114,12 +114,12 @@ export default (state: Array<TS.S3Location> = initialState, action: any) => {
         return [
           ...state.slice(0, indexForEditing),
           {
-            ...state[indexForEditing],
+            // ...state[indexForEditing],
             ...toTsLocation(action.location),
             uuid:
               action.location.newuuid !== undefined
                 ? action.location.newuuid
-                : action.location.uuid,
+                : action.location.uuid || state[indexForEditing],
             lastEditedDate: new Date().getTime(),
           },
           ...state.slice(indexForEditing + 1),
@@ -219,7 +219,8 @@ export const actions = {
 };
 
 // Selectors
-export const getLocations = (state: any): TS.S3Location[] => state.locations;
+export const getLocations = (state: any): CommonLocation[] =>
+  state.locations.map((l) => new CommonLocation(l));
 export const getDefaultLocationId = (state: any): string | undefined => {
   let foundLocation = state.locations.find((location) => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;

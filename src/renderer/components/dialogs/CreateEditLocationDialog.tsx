@@ -326,7 +326,7 @@ function CreateEditLocationDialog(props: Props) {
       setCloudErrorSecretAccessKey(false);
     }
 
-    if (encryptionKey && encryptionKey.length !== 32) {
+    if (encryptionKey && encryptionKey.length < 32) {
       if (checkOnly) return true;
       setCloudErrorSecretAccessKey(true);
     } else if (!checkOnly) {
