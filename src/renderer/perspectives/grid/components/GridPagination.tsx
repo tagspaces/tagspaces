@@ -257,6 +257,7 @@ function GridPagination(props: Props) {
                   </Box>
                 )}
                 <Box
+                  data-tid={'allFilesCount' + allFilesCount}
                   style={{
                     paddingBottom: 5,
                     marginTop: 10,

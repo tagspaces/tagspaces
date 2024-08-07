@@ -24,11 +24,13 @@ import {
   getGridFileSelector,
   isDisplayed,
   openFolder,
+  frameLocator,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -173,18 +175,31 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async () => {
-    await clickOn(getGridFileSelector('sample_exif[iptc].jpg'));
+    const fileName = 'sample_exif[iptc].jpg';
+    await clickOn(getGridFileSelector(fileName));
 
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      5000,
+    );
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();
 
+    const fLocator = await frameLocator();
+    const fabMenu = await fLocator.locator('#extFabMenu');
+    await fabMenu.click();
+    const exifButton = await fLocator.locator('#exifButton');
+    await exifButton.click();
+    /*
     await frame.click('#extFabMenu');
     await frame.click('#exifButton');
+    */
 
     let latExists = await isDisplayed(
       '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
       true,
-      5000,
+      8000,
       frame,
     );
     expect(latExists).toBeTruthy();

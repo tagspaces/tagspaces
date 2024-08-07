@@ -24,6 +24,8 @@ import {
   expectAllFileSelected,
   selectAllFiles,
   openFolder,
+  waitUntilChanged,
+  getAttribute,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -241,7 +243,7 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0113 - Delete not empty folder to trashcan [electron]', async () => {});
 
-  test('TST0114 - Use as thumbnail for parent folder [web,electron,_pro]', async () => {
+  test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.jpg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -262,7 +264,15 @@ test.describe('TST01 - Folder management', () => {
     const initScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
+    //await expectElementExist('[data-tid=folderThumbTID]', false, 100000);
+    const folderThumbStyle = getAttribute('[data-tid=folderThumbTID]', 'style');
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
+
+    await waitUntilChanged(
+      '[data-tid=folderThumbTID]',
+      folderThumbStyle,
+      'style',
+    );
 
     const withThumbScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
