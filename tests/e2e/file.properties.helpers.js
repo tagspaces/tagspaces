@@ -41,7 +41,7 @@ export async function AddRemovePropertiesTags(
       const tagName = tagNames[i];
       const propsTags = await getPropertiesTags();
       expect(propsTags.includes(tagName)).toBe(false);
-      await setInputKeys('PropertiesTagsSelectTID', tagName, 20);
+      await setInputKeys('PropertiesTagsSelectTID', tagName, 100);
       //await setInputValue('[data-tid=PropertiesTagsSelectTID] input', tagName);
       // await clickOn('[data-tid=PropertiesTagsSelectTID]');
       await global.client.keyboard.press('Enter');

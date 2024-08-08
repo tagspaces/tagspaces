@@ -268,7 +268,7 @@ test.describe('TST01 - Folder management', () => {
     const folderThumbStyle = getAttribute('[data-tid=folderThumbTID]', 'style');
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
 
-    await waitUntilChanged(
+    const newStyle = await waitUntilChanged(
       '[data-tid=folderThumbTID]',
       folderThumbStyle,
       'style',
@@ -282,7 +282,9 @@ test.describe('TST01 - Folder management', () => {
     // remove thumb
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
-    //await clickOn('[data-tid=folderThumbTID]');
+
+    await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
+
     const thumbRemovedScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
