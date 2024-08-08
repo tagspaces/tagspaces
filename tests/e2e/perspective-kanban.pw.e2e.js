@@ -65,7 +65,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4909 - move with copy/move file dialog [web,electron,_pro]', async () => {
+  test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
@@ -76,6 +76,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmMoveFiles]');
+    await expectElementExist(getGridFileSelector(fileName), false, 5000);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'openDirectory',
