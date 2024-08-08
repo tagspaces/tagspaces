@@ -18,6 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import CryptoJS from 'crypto-js';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -66,7 +67,7 @@ import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon, IDIcon, FolderIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -74,6 +75,9 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PasswordIcon from '@mui/icons-material/Password';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -111,6 +115,8 @@ function CreateEditLocationDialog(props: Props) {
   const [showSecretAccessKey, setShowSecretAccessKey] =
     useState<boolean>(false);
   const [showEncryptionKey, setShowEncryptionKey] = useState<boolean>(false);
+  const [isConfirmEncryptionChanged, setConfirmEncryptionChanged] =
+    useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
@@ -388,6 +394,17 @@ function CreateEditLocationDialog(props: Props) {
 
   const { open, onClose } = props;
 
+  const preConfirm = () => {
+    if (
+      type === locationType.TYPE_CLOUD &&
+      encryptionKey !== selectedLocation.encryptionKey
+    ) {
+      setConfirmEncryptionChanged(true);
+    } else {
+      onConfirm();
+    }
+  };
+
   const onConfirm = () => {
     if (!disableConfirmButton()) {
       let loc;
@@ -489,19 +506,15 @@ function CreateEditLocationDialog(props: Props) {
         cloudErrorBucketName={false}
         cloudErrorRegion={false}
         showSecretAccessKey={showSecretAccessKey}
-        showEncryptionKey={showEncryptionKey}
         storeName={storeName}
         storePath={storePath}
         accessKeyId={accessKeyId}
         secretAccessKey={secretAccessKey}
         sessionToken={sessionToken}
         setShowSecretAccessKey={setShowSecretAccessKey}
-        setShowEncryptionKey={setShowEncryptionKey}
         bucketName={bucketName}
         region={region}
         endpointURL={endpointURL}
-        encryptionKey={encryptionKey}
-        setEncryptionKey={setEncryptionKey}
         setStoreName={setStoreName}
         setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
@@ -566,7 +579,7 @@ function CreateEditLocationDialog(props: Props) {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
-          onConfirm();
+          preConfirm();
         }
         // } else if (event.key === 'Escape') {
         //   onClose();
@@ -589,6 +602,24 @@ function CreateEditLocationDialog(props: Props) {
           padding: 8,
         }}
       >
+        <ConfirmDialog
+          open={isConfirmEncryptionChanged}
+          onClose={() => {
+            setConfirmEncryptionChanged(false);
+          }}
+          title={t('core:confirm')}
+          content={t('core:confirmEncryptionChanged')}
+          confirmCallback={(result) => {
+            if (result) {
+              onConfirm();
+            } else {
+              setConfirmEncryptionChanged(false);
+            }
+          }}
+          cancelDialogTID="cancelConfirmEncryptionChanged"
+          confirmDialogTID="confirmConfirmEncryptionChanged"
+          confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
+        />
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
@@ -723,6 +754,66 @@ function CreateEditLocationDialog(props: Props) {
             </FormGroup>
           </AccordionDetails>
         </Accordion>
+        {type === locationType.TYPE_CLOUD && (
+          <Accordion>
+            <AccordionSummary
+              data-tid="switchEncryptionTID"
+              expandIcon={<ExpandIcon />}
+              aria-controls="panelEncryption-content"
+              id="panelEncryption-header"
+            >
+              <Typography>{t('core:switchEncryption')}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl fullWidth={true}>
+                <TextField
+                  margin="dense"
+                  name="encryptionKey"
+                  type={showEncryptionKey ? 'text' : 'password'}
+                  fullWidth={true}
+                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+                  data-tid="encryptionKeyTID"
+                  placeholder={t('s3encryptionKey')}
+                  onChange={(event) => setEncryptionKey(event.target.value)}
+                  value={encryptionKey}
+                  label={t('core:encryptionKey')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() =>
+                            setShowEncryptionKey(!showEncryptionKey)
+                          }
+                          size="large"
+                        >
+                          {showEncryptionKey ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                        <IconButton
+                          aria-label="auto fill password"
+                          onClick={() =>
+                            setEncryptionKey(
+                              CryptoJS.lib.WordArray.random(32)
+                                .toString(CryptoJS.enc.Hex)
+                                .slice(0, 32),
+                            )
+                          }
+                          size="large"
+                        >
+                          <PasswordIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
+        )}
         <Accordion>
           <AccordionSummary
             data-tid="switchAdvancedModeTID"
@@ -1065,7 +1156,7 @@ function CreateEditLocationDialog(props: Props) {
         <Button onClick={() => onClose()}>{t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
-          onClick={onConfirm}
+          onClick={preConfirm}
           data-tid="confirmLocationCreation"
           color="primary"
           variant="contained"

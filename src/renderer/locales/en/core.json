@@ -844,5 +844,7 @@
   "copyright": "Copyright",
   "modificationDate": "Modification Date",
   "noSelectedEntryError": "No Selected Entries",
+  "confirmEncryptionChanged": "Encryption key was changed. Are you sure that you don't have files encrypted with old key or have copy of the old key?",
+  "switchEncryption": "Server Side Encryption",
   "-": "-"
 }
