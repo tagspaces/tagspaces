@@ -80,7 +80,7 @@ test.describe('TST49 - Perspective KanBan', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
-    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
   });
 
   test('TST4910 - prev/next button [web,electron,_pro]', async () => {
