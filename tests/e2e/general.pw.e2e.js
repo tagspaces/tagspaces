@@ -186,6 +186,8 @@ test.describe('TST51 - Perspective Grid', () => {
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();
 
+    await isDisplayed('#imageContent', true, 8000, frame);
+
     const fLocator = await frameLocator();
     const fabMenu = await fLocator.locator('#extFabMenu');
     await fabMenu.click();

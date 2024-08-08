@@ -261,6 +261,7 @@ test.describe('TST01 - Folder management', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
     const initScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
