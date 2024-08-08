@@ -397,6 +397,7 @@ function CreateEditLocationDialog(props: Props) {
   const preConfirm = () => {
     if (
       type === locationType.TYPE_CLOUD &&
+      selectedLocation &&
       encryptionKey !== selectedLocation.encryptionKey
     ) {
       setConfirmEncryptionChanged(true);
