@@ -103,6 +103,10 @@ export async function waitUntilChanged(
   return await element.getAttribute(attribute);
 }
 
+export async function getAttribute(selector, attribute = 'style') {
+  const element = global.client.locator(selector);
+  return await element.getAttribute(attribute);
+}
 export async function setInputValue(selector, value) {
   global.client.fill(selector, value);
 }
