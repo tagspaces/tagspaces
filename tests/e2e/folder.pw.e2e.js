@@ -293,7 +293,12 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
 
-    await expectElementExist('[data-tid=clearThumbnail]', false, 5000);
+    //await global.client.waitForTimeout(100000);
+
+    await global.client.waitForSelector('[data-tid=clearThumbnail]', {
+      timeout: 5000,
+      state: 'hidden',
+    });
 
     await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
 

@@ -25,12 +25,15 @@ import {
   isDisplayed,
   openFolder,
   frameLocator,
+  dnd,
+  setSettings,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { stopServices } from '../setup-functions';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -205,6 +208,14 @@ test.describe('TST51 - Perspective Grid', () => {
       frame,
     );
     expect(latExists).toBeTruthy();
+    //check iptc
+    let iptcExists = await isDisplayed(
+      '#exifTableBody tr:has(th:has-text("bylineTitle")) td',
+      true,
+      8000,
+      frame,
+    );
+    expect(iptcExists).toBeTruthy();
   });
 
   test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
@@ -271,6 +282,33 @@ test.describe('TST51 - Perspective Grid', () => {
       '[data-tid="tagContainer_8FWH4HVG+3V"]',
       true,
       5000,
+    );
+  });
+
+  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron]', async () => {
+    const tagName = 'custom-date';
+    const sourceTagGroup = 'Smart Tags';
+
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      3000,
+      '[data-tid=tagGroupContainer_' + dataTidFormat(sourceTagGroup) + ']',
+    );
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      getGridFileSelector('sample.txt'),
+    );
+    await clickOn('[data-tid=showTimeTID]');
+    await clickOn('[data-tid=confirmEditTagEntryDialog]');
+
+    await expectElementExist(
+      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), false) + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]',
     );
   });
 });
