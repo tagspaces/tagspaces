@@ -293,6 +293,8 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
 
+    await expectElementExist('[data-tid=clearThumbnail]', false, 5000);
+
     await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
 
     const thumbRemovedScreenshot = await getElementScreenshot(
