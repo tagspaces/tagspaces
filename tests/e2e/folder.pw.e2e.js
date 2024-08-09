@@ -247,63 +247,55 @@ test.describe('TST01 - Folder management', () => {
    * in old minio preSigned URL for thumbnails cannot be opened SignatureDoesNotMatch error
    */
   test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
-    if (!global.isMinio) {
-      //await global.client.waitForTimeout(10000000);
-      const fileName = 'sample.jpg';
-      await openContextEntryMenu(
-        getGridFileSelector(fileName),
-        'fileMenuMoveCopyFile',
-      );
-      await clickOn('[data-tid=MoveTargetempty_folder]');
-      await clickOn('[data-tid=confirmCopyFiles]');
-      await clickOn('[data-tid=uploadCloseAndClearTID]');
+    //await global.client.waitForTimeout(10000000);
+    const fileName = 'sample.jpg';
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'fileMenuMoveCopyFile',
+    );
+    await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
 
-      await openContextEntryMenu(
-        getGridFileSelector('empty_folder'),
-        'showProperties',
-      );
-      await openContextEntryMenu(
-        getGridFileSelector('empty_folder'),
-        'openDirectory',
-      );
-      await expectElementExist(getGridFileSelector(fileName), true, 5000);
-      const initScreenshot = await getElementScreenshot(
-        '[data-tid=folderThumbTID]',
-      );
-      await expectElementExist('[data-tid=folderThumbTID]', false, 100000);
-      const folderThumbStyle = getAttribute(
-        '[data-tid=folderThumbTID]',
-        'style',
-      );
-      await openContextEntryMenu(
-        getGridFileSelector(fileName),
-        'setAsThumbTID',
-      );
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties',
+    );
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory',
+    );
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
+    const initScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
 
-      const newStyle = await waitUntilChanged(
-        '[data-tid=folderThumbTID]',
-        folderThumbStyle,
-        'style',
-      );
+    const folderThumbStyle = getAttribute('[data-tid=folderThumbTID]', 'style');
+    await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
 
-      // await global.client.waitForTimeout(1000000);
+    const newStyle = await waitUntilChanged(
+      '[data-tid=folderThumbTID]',
+      folderThumbStyle,
+      'style',
+    );
 
-      const withThumbScreenshot = await getElementScreenshot(
-        '[data-tid=folderThumbTID]',
-      );
-      expect(initScreenshot).not.toBe(withThumbScreenshot);
+    // await global.client.waitForTimeout(1000000);
 
-      // remove thumb
-      await clickOn('[data-tid=changeThumbnailTID]');
-      await clickOn('[data-tid=clearThumbnail]');
+    const withThumbScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+    expect(initScreenshot).not.toBe(withThumbScreenshot);
 
-      await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
+    // remove thumb
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=clearThumbnail]');
 
-      const thumbRemovedScreenshot = await getElementScreenshot(
-        '[data-tid=folderThumbTID]',
-      );
-      expect(initScreenshot).toBe(thumbRemovedScreenshot);
-    }
+    await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
+
+    const thumbRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+    expect(initScreenshot).toBe(thumbRemovedScreenshot);
   });
 
   test('TST0116 - Switch to Grid Perspective [web,electron]', async () => {

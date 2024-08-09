@@ -175,38 +175,36 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async () => {
-    if (!global.isMinio) {
-      const fileName = 'sample_exif[iptc].jpg';
-      await clickOn(getGridFileSelector(fileName));
+    const fileName = 'sample_exif[iptc].jpg';
+    await clickOn(getGridFileSelector(fileName));
 
-      await expectElementExist(
-        '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
-        true,
-        5000,
-      );
-      const iframeElement = await global.client.waitForSelector('iframe');
-      const frame = await iframeElement.contentFrame();
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      5000,
+    );
+    const iframeElement = await global.client.waitForSelector('iframe');
+    const frame = await iframeElement.contentFrame();
 
-      await isDisplayed('#imageContent', true, 8000, frame);
+    await isDisplayed('#imageContent', true, 8000, frame);
 
-      const fLocator = await frameLocator();
-      const fabMenu = await fLocator.locator('#extFabMenu');
-      await fabMenu.click();
-      const exifButton = await fLocator.locator('#exifButton');
-      await exifButton.click();
-      /*
+    const fLocator = await frameLocator();
+    const fabMenu = await fLocator.locator('#extFabMenu');
+    await fabMenu.click();
+    const exifButton = await fLocator.locator('#exifButton');
+    await exifButton.click();
+    /*
       await frame.click('#extFabMenu');
       await frame.click('#exifButton');
       */
 
-      let latExists = await isDisplayed(
-        '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
-        true,
-        8000,
-        frame,
-      );
-      expect(latExists).toBeTruthy();
-    }
+    let latExists = await isDisplayed(
+      '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
+      true,
+      8000,
+      frame,
+    );
+    expect(latExists).toBeTruthy();
   });
 
   test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
