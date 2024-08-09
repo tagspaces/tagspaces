@@ -266,11 +266,14 @@ test.describe('TST01 - Folder management', () => {
       'openDirectory',
     );
     await expectElementExist(getGridFileSelector(fileName), true, 5000);
+    const folderThumbStyle = await getAttribute(
+      '[data-tid=folderThumbTID]',
+      'style',
+    );
     const initScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
 
-    const folderThumbStyle = getAttribute('[data-tid=folderThumbTID]', 'style');
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
 
     const newStyle = await waitUntilChanged(
