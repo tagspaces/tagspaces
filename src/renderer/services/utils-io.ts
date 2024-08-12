@@ -29,6 +29,7 @@ import versionMeta from '../version.json';
 import { TS } from '-/tagspaces.namespace';
 import { supportedFileTypes } from '-/extension-config';
 import removeMd from 'remove-markdown';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
@@ -1109,4 +1110,51 @@ export function getMimeType(extension: string): string | undefined {
     rar: 'application/x-rar-compressed',
   };
   return mimeTypes[extension.toLowerCase()];
+}
+
+export function toTsLocation(location: CommonLocation): TS.S3Location {
+  return {
+    uuid: location.uuid || getUuid(),
+    name: location.name,
+    type: location.type,
+    ...(location.authType && { authType: location.authType }),
+    ...(location.username && { username: location.username }),
+    ...(location.password && { password: location.password }),
+    ...(location.path && { path: location.path }),
+    ...(location.isDefault && { isDefault: location.isDefault }),
+    ...(location.isReadOnly && { isReadOnly: location.isReadOnly }),
+    ...(location.isNotEditable && { isNotEditable: location.isNotEditable }),
+    ...(location.watchForChanges && {
+      watchForChanges: location.watchForChanges,
+    }),
+    ...(location.disableIndexing && {
+      disableIndexing: location.disableIndexing,
+    }),
+    ...(location.disableThumbnailGeneration && {
+      disableThumbnailGeneration: location.disableThumbnailGeneration,
+    }),
+    ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
+    ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
+    ...(location.maxLoops && { maxLoops: location.maxLoops }),
+    ...(location.persistTagsInSidecarFile && {
+      persistTagsInSidecarFile: location.persistTagsInSidecarFile,
+    }),
+    ...(location.ignorePatternPaths && {
+      ignorePatternPaths: location.ignorePatternPaths,
+    }),
+    ...(location.autoOpenedFilename && {
+      autoOpenedFilename: location.autoOpenedFilename,
+    }),
+    ...(location.creationDate && { creationDate: location.creationDate }),
+    ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
+    ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
+    ...(location.secretAccessKey && {
+      secretAccessKey: location.secretAccessKey,
+    }),
+    ...(location.sessionToken && { sessionToken: location.sessionToken }),
+    ...(location.bucketName && { bucketName: location.bucketName }),
+    ...(location.region && { region: location.region }),
+    ...(location.endpointURL && { endpointURL: location.endpointURL }),
+    ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
+  };
 }

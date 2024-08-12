@@ -17,9 +17,9 @@
  */
 
 import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { TS } from '-/tagspaces.namespace';
+import { toTsLocation } from '-/services/utils-io';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -31,53 +31,6 @@ export const types = {
 };
 
 export const initialState = [];
-
-function toTsLocation(location: CommonLocation): TS.S3Location {
-  return {
-    uuid: location.uuid || getUuid(),
-    name: location.name,
-    type: location.type,
-    ...(location.authType && { authType: location.authType }),
-    ...(location.username && { username: location.username }),
-    ...(location.password && { password: location.password }),
-    ...(location.path && { path: location.path }),
-    ...(location.isDefault && { isDefault: location.isDefault }),
-    ...(location.isReadOnly && { isReadOnly: location.isReadOnly }),
-    ...(location.isNotEditable && { isNotEditable: location.isNotEditable }),
-    ...(location.watchForChanges && {
-      watchForChanges: location.watchForChanges,
-    }),
-    ...(location.disableIndexing && {
-      disableIndexing: location.disableIndexing,
-    }),
-    ...(location.disableThumbnailGeneration && {
-      disableThumbnailGeneration: location.disableThumbnailGeneration,
-    }),
-    ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
-    ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
-    ...(location.maxLoops && { maxLoops: location.maxLoops }),
-    ...(location.persistTagsInSidecarFile && {
-      persistTagsInSidecarFile: location.persistTagsInSidecarFile,
-    }),
-    ...(location.ignorePatternPaths && {
-      ignorePatternPaths: location.ignorePatternPaths,
-    }),
-    ...(location.autoOpenedFilename && {
-      autoOpenedFilename: location.autoOpenedFilename,
-    }),
-    ...(location.creationDate && { creationDate: location.creationDate }),
-    ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
-    ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
-    ...(location.secretAccessKey && {
-      secretAccessKey: location.secretAccessKey,
-    }),
-    ...(location.sessionToken && { sessionToken: location.sessionToken }),
-    ...(location.bucketName && { bucketName: location.bucketName }),
-    ...(location.region && { region: location.region }),
-    ...(location.endpointURL && { endpointURL: location.endpointURL }),
-    ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
-  };
-}
 
 export default (state: Array<TS.S3Location> = initialState, action: any) => {
   switch (action.type) {
@@ -171,7 +124,7 @@ export default (state: Array<TS.S3Location> = initialState, action: any) => {
     case types.REMOVE_LOCATION: {
       let indexForRemoving = -1;
       state.forEach((location, index) => {
-        if (location.uuid === action.location.uuid) {
+        if (location.uuid === action.locationId) {
           indexForRemoving = index;
         }
       });
@@ -212,9 +165,9 @@ export const actions = {
     type: types.EDIT_LOCATION,
     location,
   }),
-  deleteLocation: (location: CommonLocation) => ({
+  deleteLocation: (locationId: string) => ({
     type: types.REMOVE_LOCATION,
-    location,
+    locationId,
   }),
 };
 
