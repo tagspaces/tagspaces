@@ -168,6 +168,7 @@ export const CurrentLocationContextProvider = ({
         addLocationInt(new CommonLocation(location));
       } else if (action.type === 'editLocation') {
         const location = action.payload as TS.Location;
+        skipInitialDirList.current = true; // don't change location dir after reflect
         editLocationInt(new CommonLocation(location));
       } else if (action.type === 'deleteLocation') {
         deleteLocationInt(action.payload);
@@ -283,7 +284,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function addLocation(location: CommonLocation) {
-    //addLocationInt(location, openAfterCreate, locationPosition);
+    //addLocationInt(location); //, openAfterCreate, locationPosition);
     sendMessage('addLocation', toTsLocation(location));
   }
 
