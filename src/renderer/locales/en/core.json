@@ -674,8 +674,8 @@
   "contactUs": "Contact us",
   "sessionToken": "Session Token",
   "s3serviceURL": "URL of the S3 service",
-  "s3encryptionKey": "32 chars long Server-side Encryption Key (SSE type C)",
-  "encryptionKey": "Server-side Encryption Key",
+  "encryptionKeyExplanation": "32 characters long encryption key (SSE type C)",
+  "encryptionKey": "Key for Server-side Encryption",
   "encryptedTooltip": "File is encrypted",
   "webdavServiceURL": "URL of the Webdav service",
   "print": "Print",
@@ -844,7 +844,10 @@
   "copyright": "Copyright",
   "modificationDate": "Modification Date",
   "noSelectedEntryError": "No Selected Entries",
-  "confirmEncryptionChanged": "Encryption key was changed. Are you sure that you don't have files encrypted with old key or have copy of the old key?",
+  "confirmEncryptionChanged": "After changing the encryption key, you will not be able to decrypt files encrypted with the old key. Are you sure you want to continue?",
+  "encryptionExplanation": "This is an experimental feature, which can lead to loosing data if you forget the following bucket encryption key. Use with caution!!!",
   "switchEncryption": "Server Side Encryption",
+  "generateEncryptionKey": "Generate random encryption key",
+  "toggleKeyVisibility": "Toggle key visibility",
   "-": "-"
 }
