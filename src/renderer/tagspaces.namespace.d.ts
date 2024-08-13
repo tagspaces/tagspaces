@@ -227,6 +227,8 @@ export namespace TS {
   }
 
   interface BroadcastMessage {
+    // unique ID for the tab instance
+    uuid: string;
     type: string;
     payload?: any;
   }

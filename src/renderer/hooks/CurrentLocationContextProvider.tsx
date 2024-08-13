@@ -142,6 +142,8 @@ export const CurrentLocationContextProvider = ({
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
   const broadcast = new BroadcastChannel('ts-sync-channel');
+  // Generate a unique ID for the tab
+  const instanceId = getUuid();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -163,21 +165,23 @@ export const CurrentLocationContextProvider = ({
     // Listen for messages from other tabs
     broadcast.onmessage = (event: MessageEvent) => {
       const action = event.data as TS.BroadcastMessage;
-      if (action.type === 'addLocation') {
-        const location = action.payload as TS.Location;
-        addLocationInt(new CommonLocation(location));
-      } else if (action.type === 'editLocation') {
-        const location = action.payload as TS.Location;
-        skipInitialDirList.current = true; // don't change location dir after reflect
-        editLocationInt(new CommonLocation(location));
-      } else if (action.type === 'deleteLocation') {
-        deleteLocationInt(action.payload);
-      } else if (action.type === 'moveLocationUp') {
-        moveLocationUpInt(action.payload);
-        forceUpdate();
-      } else if (action.type === 'moveLocationDown') {
-        moveLocationDownInt(action.payload);
-        forceUpdate();
+      if (instanceId !== action.uuid) {
+        if (action.type === 'addLocation') {
+          const location = action.payload as TS.Location;
+          addLocationInt(new CommonLocation(location));
+        } else if (action.type === 'editLocation') {
+          const location = action.payload as TS.Location;
+          skipInitialDirList.current = true; // don't change location dir after reflect
+          editLocationInt(new CommonLocation(location));
+        } else if (action.type === 'deleteLocation') {
+          deleteLocationInt(action.payload);
+        } else if (action.type === 'moveLocationUp') {
+          moveLocationUpInt(action.payload);
+          forceUpdate();
+        } else if (action.type === 'moveLocationDown') {
+          moveLocationDownInt(action.payload);
+          forceUpdate();
+        }
       }
     };
   }, []);
@@ -279,12 +283,12 @@ export const CurrentLocationContextProvider = ({
   }
 
   function sendMessage(type: string, payload?: any) {
-    const message: TS.BroadcastMessage = { type, payload };
+    const message: TS.BroadcastMessage = { uuid: instanceId, type, payload };
     broadcast.postMessage(message);
   }
 
   function addLocation(location: CommonLocation) {
-    //addLocationInt(location); //, openAfterCreate, locationPosition);
+    addLocationInt(location); //, openAfterCreate, locationPosition);
     sendMessage('addLocation', toTsLocation(location));
   }
 
@@ -301,7 +305,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function deleteLocation(locationId: string) {
-    //deleteLocationInt(locationId);
+    deleteLocationInt(locationId);
     sendMessage('deleteLocation', locationId);
   }
 
@@ -314,7 +318,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function moveLocationUp(locationUUID) {
-    //moveLocationUpInt(locationUUID);
+    moveLocationUpInt(locationUUID);
     sendMessage('moveLocationUp', locationUUID);
   }
 
@@ -341,7 +345,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function moveLocationDown(locationUUID) {
-    //moveLocationDownInt(locationUUID);
+    moveLocationDownInt(locationUUID);
     sendMessage('moveLocationDown', locationUUID);
   }
 
@@ -431,7 +435,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function editLocation(location: CommonLocation) {
-    // editLocationInt(location);
+    editLocationInt(location);
     sendMessage('editLocation', toTsLocation(location));
   }
 

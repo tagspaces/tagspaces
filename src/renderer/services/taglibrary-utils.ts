@@ -22,11 +22,10 @@ export function getTagLibrary(): TS.TagGroup[] {
 
 export function setTagLibrary(
   tagGroups: Array<TS.TagGroup>,
-  broadcast: BroadcastChannel,
 ): Array<TS.TagGroup> {
   if (tagGroups && tagGroups.length > 0) {
     localStorage.setItem(tagLibraryKey, JSON.stringify(tagGroups));
-    broadcast.postMessage({ type: 'tagLibraryChanged' });
+    //broadcast.postMessage({ type: 'tagLibraryChanged' });
   }
   return tagGroups;
 }

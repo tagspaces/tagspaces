@@ -1009,7 +1009,8 @@ export const TaggingActionsContextProvider = ({
   }
 
   function saveTagLibrary(tg: TS.TagGroup[]) {
-    reflectTagLibraryChanged(setTagLibrary(tg, broadcast));
+    const tagGroups = setTagLibrary(tg);
+    reflectTagLibraryChanged(tagGroups);
   }
 
   function saveTags(tags: TS.Tag[], indexForEditing: number) {

@@ -25,6 +25,7 @@ import React, {
 } from 'react';
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 type EditedTagLibraryContextData = {
   tagGroups: TS.TagGroup[];
@@ -50,19 +51,29 @@ export const EditedTagLibraryContextProvider = ({
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('tag-library-sync');
+  // Generate a unique ID for the tab
+  const instanceId = getUuid();
 
   useEffect(() => {
     // Listen for messages from other tabs
     broadcast.onmessage = (event: MessageEvent) => {
       const action = event.data as TS.BroadcastMessage;
-      if (action.type === 'tagLibraryChanged') {
-        reflectTagLibraryChanged(getTagLibrary());
+      if (instanceId !== action.uuid) {
+        if (action.type === 'tagLibraryChanged') {
+          tagGroups.current = getTagLibrary();
+          forceUpdate();
+        }
       }
     };
   }, []);
 
   function reflectTagLibraryChanged(tg: TS.TagGroup[]) {
     tagGroups.current = tg;
+    const message: TS.BroadcastMessage = {
+      uuid: instanceId,
+      type: 'tagLibraryChanged',
+    };
+    broadcast.postMessage(message);
     forceUpdate();
   }
 
