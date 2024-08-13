@@ -32,7 +32,7 @@ export const types = {
 
 export const initialState = [];
 
-function toTsLocation(location: CommonLocation): TS.Location {
+function toTsLocation(location: CommonLocation): TS.S3Location {
   return {
     uuid: location.uuid || getUuid(),
     name: location.name,
@@ -67,17 +67,26 @@ function toTsLocation(location: CommonLocation): TS.Location {
     }),
     ...(location.creationDate && { creationDate: location.creationDate }),
     ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
+    ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
+    ...(location.secretAccessKey && {
+      secretAccessKey: location.secretAccessKey,
+    }),
+    ...(location.sessionToken && { sessionToken: location.sessionToken }),
+    ...(location.bucketName && { bucketName: location.bucketName }),
+    ...(location.region && { region: location.region }),
+    ...(location.endpointURL && { endpointURL: location.endpointURL }),
+    ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
   };
 }
 
-export default (state: Array<TS.Location> = initialState, action: any) => {
+export default (state: Array<TS.S3Location> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       const locations = action.location.isDefault
         ? state.map((location) => ({ ...location, isDefault: false }))
         : [...state];
 
-      const newLocation: TS.Location = {
+      const newLocation: TS.S3Location = {
         ...toTsLocation(action.location),
         creationDate: new Date().getTime(),
         lastEditedDate: new Date().getTime(),
@@ -105,12 +114,12 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
         return [
           ...state.slice(0, indexForEditing),
           {
-            ...state[indexForEditing],
+            // ...state[indexForEditing],
             ...toTsLocation(action.location),
             uuid:
               action.location.newuuid !== undefined
                 ? action.location.newuuid
-                : action.location.uuid,
+                : action.location.uuid || state[indexForEditing],
             lastEditedDate: new Date().getTime(),
           },
           ...state.slice(indexForEditing + 1),
@@ -210,7 +219,8 @@ export const actions = {
 };
 
 // Selectors
-export const getLocations = (state: any): TS.Location[] => state.locations;
+export const getLocations = (state: any): CommonLocation[] =>
+  state.locations.map((l) => new CommonLocation(l));
 export const getDefaultLocationId = (state: any): string | undefined => {
   let foundLocation = state.locations.find((location) => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;

@@ -106,6 +106,7 @@
     "prepare-node": "npm run install-ext-node-check && npm run postinstall-electron-check",
     "prepare-web": "npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/modules && shx mkdir -p web/modules/@tagspaces/extensions && shx cp -rL release/app/node_modules/@tagspaces/extensions/* web/modules/@tagspaces/extensions/ && shx cp LICENSE.txt web && npm run build:web && node scripts/genswconf.js && npm run clean-maps",
     "prepare-web-pro": "npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/modules && shx mkdir -p web/modules/@tagspaces/extensions && shx cp -rL release/app/node_modules/@tagspaces/extensions/* web/modules/@tagspaces/extensions/ && npm run prepare-web-pro-ext && shx cp node_modules/@tagspacespro/tagspacespro/EULA.txt web && npm run build:web && node scripts/genswconf.js && npm run clean-maps",
+    "prepare-web-pro-dev": "npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/modules && shx mkdir -p web/modules/@tagspaces/extensions && shx cp -rL release/app/node_modules/@tagspaces/extensions/* web/modules/@tagspaces/extensions/ && npm run prepare-web-pro-ext && shx cp node_modules/@tagspacespro/tagspacespro/EULA.txt web && npm run build:web:dev && node scripts/genswconf.js",
     "prepare-web-pro-ext": "shx mkdir -p web/modules/@tagspacespro/extensions && shx cp -rL release/app/node_modules/@tagspacespro/extensions/* web/modules/@tagspacespro/extensions/",
     "prettier-check": "prettier --check --ignore-path=.prettierignore \"**/*.{js,jsx,json,ts,tsx,yml}\"",
     "prettier-format": "prettier --ignore-path=.prettierignore --write \"**/*.{js,jsx,json,ts,tsx,yml}\"",
@@ -116,7 +117,7 @@
     "run-ios-dev": "npm run prepare-cordova && npm run build:cordova:dev && cd cordova && cordova run ios && cd ..",
     "run-web": "npm run prepare-web-pro && node scripts/webserver.js",
     "run-web-aws": "npm run prepare-web-pro && node scripts/webserver.js",
-    "run-web-dev": "npm run prepare-web-pro && npm run build:web:dev && node scripts/webserver.js",
+    "run-web-dev": "npm run prepare-web-pro-dev && node scripts/webserver.js",
     "run-web-server": "node scripts/webserver.js",
     "setup-tests": "node scripts/setup-tests.js",
     "skip:husky:pre-commit": "node -e \"require('fs').rename('./.git/hooks/pre-commit', './.git/hooks/pre-commit.disabled', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
@@ -164,10 +165,10 @@
     "@mui/lab": "5.0.0-alpha.170",
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
-    "@tagspaces/tagspaces-common": "4.4.6",
-    "@tagspaces/tagspaces-common-aws3": "4.4.8",
-    "@tagspaces/tagspaces-common-cordova": "4.4.6",
-    "@tagspaces/tagspaces-indexer": "4.4.6",
+    "@tagspaces/tagspaces-common": "4.5.2",
+    "@tagspaces/tagspaces-common-aws3": "4.5.5",
+    "@tagspaces/tagspaces-common-cordova": "4.5.2",
+    "@tagspaces/tagspaces-indexer": "4.5.2",
     "@tagspaces/tagspaces-md": "4.3.30",
     "aws-amplify": "^4.3.8",
     "classnames": "^2.3.1",
@@ -233,7 +234,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.65"
+    "@tagspacespro/tagspacespro": "5.0.66"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",

@@ -5,6 +5,7 @@ import {
   expectElementSelected,
   getGridFileName,
   getGridFileSelector,
+  openFile,
   selectorFile,
   setSettings,
   takeScreenshot,
@@ -40,6 +41,7 @@ import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { stopServices } from '../setup-functions';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 
 let s3ServerInstance;
 let webServerInstance;
@@ -148,9 +150,13 @@ test.describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  test('TST0609 - Show thumbnails of image files in the search results [web,electron]', async () => {
+  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
+    await global.client.waitForSelector('img[alt="thumbnail image"]', {
+      visible: true,
+    });
     const searchQuery = 'sample_exif.jpg'; //'jpg';
     await addSearchCommand(searchQuery, true);
+    await expectElementExist('[data-tid=allFilesCount1]', true, 5000);
     await global.client.waitForSelector('img[alt="thumbnail image"]', {
       visible: true,
     });
@@ -434,5 +440,25 @@ test.describe('TST06 - Test Search in file structure:', () => {
       'openDirectory',
     );
     await expectElementExist(getGridFileSelector('text_file.txt'), true, 5000);
+  });
+
+  test('TST0647 - Search by new sidecar tag [web,minio,electron]', async () => {
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    const tag = 'test-tag10';
+    const fileName = 'sample';
+    const fileExt = 'jpg';
+    await openFile(fileName + '.' + fileExt, 'showPropertiesTID');
+    await AddRemovePropertiesTags([tag], {
+      add: true,
+      remove: false,
+    });
+    await addSearchCommand('+' + tag, true);
+    //const selector = getGridFileSelector('sample[' + tag + '].' + fileExt);
+    //console.log('selector:'+selector)
+    await expectElementExist(
+      getGridFileSelector(fileName + '.' + fileExt),
+      true,
+      5000,
+    );
   });
 });

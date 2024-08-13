@@ -81,10 +81,28 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
     );
 
     if (!fse.existsSync(srcDir)) {
+      srcDir = pathLib.join(
+        __dirname,
+        '..',
+        '..',
+        'scripts',
+        (global.isS3 ? 's3' : '') + extconfig,
+      );
+    }
+    if (!fse.existsSync(srcDir)) {
       srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
     }
   } else {
-    srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
+    srcDir = pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      'scripts',
+      (global.isS3 ? 's3' : '') + extconfig,
+    );
+    if (!fse.existsSync(srcDir)) {
+      srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
+    }
   }
   const destDir = pathLib.join(
     __dirname,

@@ -43,6 +43,7 @@ interface PlatformParms {
   lmdt?: number;
   locationID?: string;
   total?: number;
+  encryptionKey?: string;
 }
 interface getLocationProps extends Omit<PlatformParms, 'path'> {
   // All the properties from PlatformParms, except 'path'
@@ -168,8 +169,7 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
-  const { currentLocation, locations, findLocation } =
-    useCurrentLocationContext();
+  const { currentLocation, findLocation } = useCurrentLocationContext();
   const { getAllPropertiesPromise } = useDirectoryContentContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
@@ -733,7 +733,7 @@ export const PlatformFacadeContextProvider = ({
       deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
-  }, [ignored, currentLocation, locations]); //watcher
+  }, [ignored, currentLocation]); //watcher
 
   return (
     <PlatformFacadeContext.Provider value={context}>

@@ -33,6 +33,7 @@ import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
+import TooltipTS from '-/components/Tooltip';
 
 interface Props {
   historyKey: string;
@@ -112,25 +113,27 @@ function RenderHistory(props: Props) {
               </Grid>
               {showDelete && (
                 <Grid item xs={2}>
-                  <IconButton
-                    aria-label={t('core:clearHistory')}
-                    onClick={() => {
-                      if (historyKey === Pro.keys.bookmarksKey) {
-                        //del bookmarks
-                        bookmarksContext.delBookmark(item.path);
-                      } else {
-                        historyContext.delHistory(
-                          historyKey,
-                          item.creationTimeStamp,
-                        );
-                      }
-                      update();
-                    }}
-                    data-tid="deleteHistoryItemTID"
-                    size="small"
-                  >
-                    <RemoveIcon />
-                  </IconButton>
+                  <TooltipTS title={t('delete')}>
+                    <IconButton
+                      aria-label={t('core:clearHistory')}
+                      onClick={() => {
+                        if (historyKey === Pro.keys.bookmarksKey) {
+                          //del bookmarks
+                          bookmarksContext.delBookmark(item.path);
+                        } else {
+                          historyContext.delHistory(
+                            historyKey,
+                            item.creationTimeStamp,
+                          );
+                        }
+                        update();
+                      }}
+                      data-tid="deleteHistoryItemTID"
+                      size="small"
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+                  </TooltipTS>
                 </Grid>
               )}
             </ListItem>

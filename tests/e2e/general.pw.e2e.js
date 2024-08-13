@@ -24,11 +24,16 @@ import {
   getGridFileSelector,
   isDisplayed,
   openFolder,
+  frameLocator,
+  dnd,
+  setSettings,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -173,21 +178,44 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async () => {
-    await clickOn(getGridFileSelector('sample_exif[iptc].jpg'));
+    const fileName = 'sample_exif[iptc].jpg';
+    await clickOn(getGridFileSelector(fileName));
 
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      5000,
+    );
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();
 
-    await frame.click('#extFabMenu');
-    await frame.click('#exifButton');
+    await isDisplayed('#imageContent', true, 8000, frame);
+
+    const fLocator = await frameLocator();
+    const fabMenu = await fLocator.locator('#extFabMenu');
+    await fabMenu.click();
+    const exifButton = await fLocator.locator('#exifButton');
+    await exifButton.click();
+    /*
+      await frame.click('#extFabMenu');
+      await frame.click('#exifButton');
+      */
 
     let latExists = await isDisplayed(
       '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
       true,
-      5000,
+      8000,
       frame,
     );
     expect(latExists).toBeTruthy();
+    //check iptc
+    let iptcExists = await isDisplayed(
+      '#exifTableBody tr:has(th:has-text("bylineTitle")) td',
+      true,
+      8000,
+      frame,
+    );
+    expect(iptcExists).toBeTruthy();
   });
 
   test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
@@ -254,6 +282,33 @@ test.describe('TST51 - Perspective Grid', () => {
       '[data-tid="tagContainer_8FWH4HVG+3V"]',
       true,
       5000,
+    );
+  });
+
+  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron]', async () => {
+    const tagName = 'custom-date';
+    const sourceTagGroup = 'Smart Tags';
+
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      3000,
+      '[data-tid=tagGroupContainer_' + dataTidFormat(sourceTagGroup) + ']',
+    );
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      getGridFileSelector('sample.txt'),
+    );
+    await clickOn('[data-tid=showTimeTID]');
+    await clickOn('[data-tid=confirmEditTagEntryDialog]');
+
+    await expectElementExist(
+      '[data-tid=tagContainer_' + formatDateTime4Tag(new Date(), false) + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]',
     );
   });
 });

@@ -18,6 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import CryptoJS from 'crypto-js';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -50,6 +51,7 @@ import {
   AccordionSummary,
   InputLabel,
   MenuItem,
+  FormLabel,
   Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
@@ -66,7 +68,7 @@ import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon, IDIcon, FolderIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -74,6 +76,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PasswordIcon from '@mui/icons-material/Password';
+import TooltipTS from '-/components/Tooltip';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -109,6 +115,9 @@ function CreateEditLocationDialog(props: Props) {
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   /*const { location } = props;*/
   const [showSecretAccessKey, setShowSecretAccessKey] =
+    useState<boolean>(false);
+  const [showEncryptionKey, setShowEncryptionKey] = useState<boolean>(false);
+  const [isConfirmEncryptionChanged, setConfirmEncryptionChanged] =
     useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
@@ -162,6 +171,11 @@ function CreateEditLocationDialog(props: Props) {
   );
   const [endpointURL, setEndpointURL] = useState<string>(
     selectedLocation ? selectedLocation.endpointURL : '',
+  );
+  const [encryptionKey, setEncryptionKey] = useState<string>(
+    selectedLocation && selectedLocation.encryptionKey
+      ? selectedLocation.encryptionKey
+      : '',
   );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
@@ -319,6 +333,13 @@ function CreateEditLocationDialog(props: Props) {
     } else if (!checkOnly) {
       setCloudErrorSecretAccessKey(false);
     }
+
+    if (encryptionKey && encryptionKey.length < 32) {
+      if (checkOnly) return true;
+      setCloudErrorSecretAccessKey(true);
+    } else if (!checkOnly) {
+      setCloudErrorSecretAccessKey(false);
+    }
     return false;
   };
 
@@ -375,6 +396,18 @@ function CreateEditLocationDialog(props: Props) {
 
   const { open, onClose } = props;
 
+  const preConfirm = () => {
+    if (
+      type === locationType.TYPE_CLOUD &&
+      selectedLocation &&
+      encryptionKey !== selectedLocation.encryptionKey
+    ) {
+      setConfirmEncryptionChanged(true);
+    } else {
+      onConfirm();
+    }
+  };
+
   const onConfirm = () => {
     if (!disableConfirmButton()) {
       let loc;
@@ -423,6 +456,7 @@ function CreateEditLocationDialog(props: Props) {
           path: storePath,
           paths: [storePath],
           endpointURL,
+          encryptionKey,
           accessKeyId,
           secretAccessKey,
           sessionToken,
@@ -548,7 +582,7 @@ function CreateEditLocationDialog(props: Props) {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
-          onConfirm();
+          preConfirm();
         }
         // } else if (event.key === 'Escape') {
         //   onClose();
@@ -571,6 +605,24 @@ function CreateEditLocationDialog(props: Props) {
           padding: 8,
         }}
       >
+        <ConfirmDialog
+          open={isConfirmEncryptionChanged}
+          onClose={() => {
+            setConfirmEncryptionChanged(false);
+          }}
+          title={t('core:confirm')}
+          content={t('core:confirmEncryptionChanged')}
+          confirmCallback={(result) => {
+            if (result) {
+              onConfirm();
+            } else {
+              setConfirmEncryptionChanged(false);
+            }
+          }}
+          cancelDialogTID="cancelConfirmEncryptionChanged"
+          confirmDialogTID="confirmConfirmEncryptionChanged"
+          confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
+        />
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
@@ -716,56 +768,6 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
-              <FormControl fullWidth={true}>
-                <TextField
-                  required
-                  margin="dense"
-                  name="newuuid"
-                  fullWidth={true}
-                  data-tid="newuuid"
-                  placeholder="Unique location identifier"
-                  onChange={(event) => setNewLocationID(event.target.value)}
-                  value={newuuid}
-                  label={t('core:locationId')}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        <Tooltip title="Generates new unique identifier for this location">
-                          <IconButton
-                            onClick={() => {
-                              const result = confirm(
-                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
-                              );
-                              if (result) {
-                                setNewLocationID(getUuid());
-                              }
-                            }}
-                            size="large"
-                          >
-                            <IDIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-              <FormControl fullWidth={true}>
-                <TextField
-                  margin="dense"
-                  name="autoOpenedFilename"
-                  fullWidth={true}
-                  data-tid="autoOpenedFilenameTID"
-                  placeholder={
-                    t('core:forExample') + ': index.md, index.html or readme.md'
-                  }
-                  onChange={(event) =>
-                    setAutoOpenedFilename(event.target.value)
-                  }
-                  value={autoOpenedFilename}
-                  label={t('core:autoOpenedFilename')}
-                />
-              </FormControl>
               <FormControlLabel
                 className={classes.formControl}
                 labelPlacement="start"
@@ -970,6 +972,22 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
+              <FormControl fullWidth={true}>
+                <TextField
+                  margin="dense"
+                  name="autoOpenedFilename"
+                  fullWidth={true}
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
+                />
+              </FormControl>
               <>
                 <FormControlLabel
                   className={classes.formControl}
@@ -1037,9 +1055,109 @@ function CreateEditLocationDialog(props: Props) {
                   />
                 )}
               </>
+              <FormControl fullWidth={true} style={{ marginTop: 10 }}>
+                <TextField
+                  required
+                  margin="dense"
+                  name="newuuid"
+                  fullWidth={true}
+                  data-tid="newuuid"
+                  placeholder="Unique location identifier"
+                  onChange={(event) => setNewLocationID(event.target.value)}
+                  value={newuuid}
+                  label={t('core:locationId')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        <Tooltip title="Generates new unique identifier for this location">
+                          <IconButton
+                            onClick={() => {
+                              const result = confirm(
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
+                              );
+                              if (result) {
+                                setNewLocationID(getUuid());
+                              }
+                            }}
+                            size="large"
+                          >
+                            <IDIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
+        {type === locationType.TYPE_CLOUD && (
+          <Accordion>
+            <AccordionSummary
+              data-tid="switchEncryptionTID"
+              expandIcon={<ExpandIcon />}
+              aria-controls="panelEncryption-content"
+              id="panelEncryption-header"
+            >
+              <Typography>
+                {t('core:switchEncryption')}
+                <BetaLabel />
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl fullWidth={true}>
+                <FormLabel>{t('encryptionExplanation')}</FormLabel>
+                <TextField
+                  margin="dense"
+                  name="encryptionKey"
+                  type={showEncryptionKey ? 'text' : 'password'}
+                  fullWidth={true}
+                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+                  data-tid="encryptionKeyTID"
+                  placeholder={t('encryptionKeyExplanation')}
+                  onChange={(event) => setEncryptionKey(event.target.value)}
+                  value={encryptionKey}
+                  label={t('core:encryptionKey')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <TooltipTS title={t('toggleKeyVisibility')}>
+                          <IconButton
+                            aria-label="toggle key visibility"
+                            onClick={() =>
+                              setShowEncryptionKey(!showEncryptionKey)
+                            }
+                          >
+                            {showEncryptionKey ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </TooltipTS>
+                        <TooltipTS title={t('generateEncryptionKey')}>
+                          <IconButton
+                            aria-label="generate encryption key"
+                            onClick={() =>
+                              setEncryptionKey(
+                                CryptoJS.lib.WordArray.random(32)
+                                  .toString(CryptoJS.enc.Hex)
+                                  .slice(0, 32),
+                              )
+                            }
+                          >
+                            <PasswordIcon />
+                          </IconButton>
+                        </TooltipTS>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
+        )}
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
@@ -1047,7 +1165,7 @@ function CreateEditLocationDialog(props: Props) {
         <Button onClick={() => onClose()}>{t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
-          onClick={onConfirm}
+          onClick={preConfirm}
           data-tid="confirmLocationCreation"
           color="primary"
           variant="contained"

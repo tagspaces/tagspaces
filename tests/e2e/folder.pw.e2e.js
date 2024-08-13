@@ -243,7 +243,11 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0113 - Delete not empty folder to trashcan [electron]', async () => {});
 
+  /**
+   * in old minio preSigned URL for thumbnails cannot be opened SignatureDoesNotMatch error
+   */
   test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
+    //await global.client.waitForTimeout(10000000);
     const fileName = 'sample.jpg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -261,11 +265,15 @@ test.describe('TST01 - Folder management', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
+    const folderThumbStyle = await getAttribute(
+      '[data-tid=folderThumbTID]',
+      'style',
+    );
     const initScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
-    //await expectElementExist('[data-tid=folderThumbTID]', false, 100000);
-    const folderThumbStyle = getAttribute('[data-tid=folderThumbTID]', 'style');
+
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
 
     const newStyle = await waitUntilChanged(
@@ -273,6 +281,8 @@ test.describe('TST01 - Folder management', () => {
       folderThumbStyle,
       'style',
     );
+
+    // await global.client.waitForTimeout(1000000);
 
     const withThumbScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
@@ -282,6 +292,13 @@ test.describe('TST01 - Folder management', () => {
     // remove thumb
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
+
+    //await global.client.waitForTimeout(100000);
+
+    await global.client.waitForSelector('[data-tid=clearThumbnail]', {
+      timeout: 5000,
+      state: 'hidden',
+    });
 
     await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
 

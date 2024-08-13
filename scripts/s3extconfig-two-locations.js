@@ -22,7 +22,7 @@ window.ExtLocations = [
     creationDate: '2024-06-01T08:46:50.449Z',
   },
   {
-    uuid: '30675f09-c7fd-2333-fc67-a75db27rt5ba', // an unique id of the location
+    uuid: '40675f09-c7fd-2333-fc67-a75db27rt5bb', // an unique id of the location
     type: '1', // 1 defines the locations a cloud based
     name: 'supported-filestypes', // the name of the location
     path: '', // the path to sub folder in the location

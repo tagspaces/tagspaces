@@ -126,15 +126,13 @@ export const CurrentLocationContextProvider = ({
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
 
-  const locations: TS.Location[] = useSelector(getLocations);
+  const locations: CommonLocation[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
     getPersistTagsInSidecarFile,
   );
 
-  const allLocations = useRef<CommonLocation[]>(
-    locations.map((l) => new CommonLocation(l)),
-  );
+  const allLocations = useRef<CommonLocation[]>(locations);
   const currentLocation = useRef<string>(defaultLocationId);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
@@ -423,7 +421,7 @@ export const CurrentLocationContextProvider = ({
 
   const location: CommonLocation = useMemo(
     () => findLocation(),
-    [currentLocation.current],
+    [currentLocation.current, allLocations.current],
   );
 
   const readOnlyMode: boolean = useMemo(() => {

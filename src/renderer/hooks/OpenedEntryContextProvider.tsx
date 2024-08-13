@@ -537,11 +537,15 @@ export const OpenedEntryContextProvider = ({
         if (entry) {
           return openFsEntry(entry, showDetails);
         } else {
-          showNotification(
-            'File ' + fsEntry.path + ' not exist on filesystem!',
-            'warning',
-            true,
-          );
+          if (typeof entry === 'boolean') {
+            if (!entry) {
+              showNotification(
+                'File ' + fsEntry.path + ' not exist on filesystem!',
+                'warning',
+                true,
+              );
+            }
+          }
           return openFsEntry(fsEntry, showDetails);
         }
       })

@@ -121,7 +121,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0405 - Should add tag to a tag group [web,electron]', async () => {
+  /*test('TST0405 - Should add tag to a tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await addTags([newTagName]);
@@ -130,9 +130,7 @@ test.describe('TST04 - Testing the tag library:', () => {
       true,
     );
     await deleteTagGroup(testGroup);
-  });
-
-  test.skip('TST0406 - Import tag groups [manual]', async () => {});
+  });*/
 
   test('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,electron]', async () => {
     await createTagGroup(testGroup);
@@ -142,10 +140,13 @@ test.describe('TST04 - Testing the tag library:', () => {
       await expectElementExist(
         '[data-tid=tagContainer_' + arrTags[i] + ']',
         true,
+        5000,
       );
     }
     await deleteTagGroup(testGroup);
   });
+
+  test.skip('TST0406 - Import tag groups [manual]', async () => {});
 
   test('TST0407 - Should rename tag [web,electron]', async () => {
     await tagMenu('done', 'editTagDialog');

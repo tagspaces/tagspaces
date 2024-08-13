@@ -816,10 +816,10 @@ export async function openFolder(folderName) {
   );
 }
 
-export async function openFile(fileName) {
+export async function openFile(fileName, menuOption = 'fileMenuOpenFile') {
   await openContextEntryMenu(
     getGridFileSelector(fileName), // perspectiveGridTable + firstFile,
-    'fileMenuOpenFile',
+    menuOption,
   );
   await expectElementExist(
     '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',

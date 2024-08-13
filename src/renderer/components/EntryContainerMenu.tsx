@@ -138,13 +138,32 @@ function EntryContainerMenu(props: Props) {
         data-tid="downloadFileTID"
         aria-label={t('core:downloadFile')}
         onClick={() => {
-          const downloadResult = downloadFile(
-            openedEntry.path,
-            openedEntry.url,
-            currentLocation?.getDirSeparator(),
-          );
-          if (downloadResult === -1) {
-            showNotification(t('core:cantDownloadLocalFile'));
+          if (openedEntry.isEncrypted) {
+            currentLocation
+              .getFileContentPromise(openedEntry.path, 'arraybuffer')
+              .then((arrayBuffer) => {
+                const url = window.URL || window.webkitURL;
+                const openedEntryUrl = url.createObjectURL(
+                  new Blob([arrayBuffer]),
+                );
+                const downloadResult = downloadFile(
+                  openedEntry.path,
+                  openedEntryUrl,
+                  currentLocation?.getDirSeparator(),
+                );
+                if (downloadResult === -1) {
+                  showNotification(t('core:cantDownloadLocalFile'));
+                }
+              });
+          } else {
+            const downloadResult = downloadFile(
+              openedEntry.path,
+              openedEntry.url,
+              currentLocation?.getDirSeparator(),
+            );
+            if (downloadResult === -1) {
+              showNotification(t('core:cantDownloadLocalFile'));
+            }
           }
           handleClose();
         }}

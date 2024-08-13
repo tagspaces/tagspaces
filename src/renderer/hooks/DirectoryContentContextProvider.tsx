@@ -399,6 +399,7 @@ export const DirectoryContentContextProvider = ({
           action.source !== 'upload' &&
           action.source !== 'thumbgen' &&
           action.entry &&
+          action.entry.path &&
           action.entry.path.indexOf(
             currentLocation?.getDirSeparator() + AppConfig.metaFolder,
           ) === -1
@@ -1082,11 +1083,17 @@ export const DirectoryContentContextProvider = ({
       .getPropertiesPromise(entryPath)
       .then((entryProps: TS.FileSystemEntry) => {
         if (entryProps) {
-          const entry = { ...entryProps, locationID: location.uuid };
-          if (!entryProps.isFile) {
-            return getEnhancedDir(entry);
+          if (typeof entryProps === 'boolean') {
+            /*if(entryProps){
+              showNotification('Can\'t get '+entryPath+' maybe the file is encrypted?');
+            }*/
+          } else {
+            const entry = { ...entryProps, locationID: location.uuid };
+            if (!entryProps.isFile) {
+              return getEnhancedDir(entry);
+            }
+            return getEnhancedFile(entry);
           }
-          return getEnhancedFile(entry);
         }
         console.log('Error getting props for ' + entryPath);
         return undefined;
