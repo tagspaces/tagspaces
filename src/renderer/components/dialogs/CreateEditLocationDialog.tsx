@@ -51,6 +51,7 @@ import {
   AccordionSummary,
   InputLabel,
   MenuItem,
+  FormLabel,
   Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
@@ -78,6 +79,7 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PasswordIcon from '@mui/icons-material/Password';
+import TooltipTS from '-/components/Tooltip';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -826,56 +828,6 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
-              <FormControl fullWidth={true}>
-                <TextField
-                  required
-                  margin="dense"
-                  name="newuuid"
-                  fullWidth={true}
-                  data-tid="newuuid"
-                  placeholder="Unique location identifier"
-                  onChange={(event) => setNewLocationID(event.target.value)}
-                  value={newuuid}
-                  label={t('core:locationId')}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        <Tooltip title="Generates new unique identifier for this location">
-                          <IconButton
-                            onClick={() => {
-                              const result = confirm(
-                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
-                              );
-                              if (result) {
-                                setNewLocationID(getUuid());
-                              }
-                            }}
-                            size="large"
-                          >
-                            <IDIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-              <FormControl fullWidth={true}>
-                <TextField
-                  margin="dense"
-                  name="autoOpenedFilename"
-                  fullWidth={true}
-                  data-tid="autoOpenedFilenameTID"
-                  placeholder={
-                    t('core:forExample') + ': index.md, index.html or readme.md'
-                  }
-                  onChange={(event) =>
-                    setAutoOpenedFilename(event.target.value)
-                  }
-                  value={autoOpenedFilename}
-                  label={t('core:autoOpenedFilename')}
-                />
-              </FormControl>
               <FormControlLabel
                 className={classes.formControl}
                 labelPlacement="start"
@@ -1080,6 +1032,22 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
+              <FormControl fullWidth={true}>
+                <TextField
+                  margin="dense"
+                  name="autoOpenedFilename"
+                  fullWidth={true}
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
+                />
+              </FormControl>
               <>
                 <FormControlLabel
                   className={classes.formControl}
@@ -1147,9 +1115,109 @@ function CreateEditLocationDialog(props: Props) {
                   />
                 )}
               </>
+              <FormControl fullWidth={true} style={{ marginTop: 10 }}>
+                <TextField
+                  required
+                  margin="dense"
+                  name="newuuid"
+                  fullWidth={true}
+                  data-tid="newuuid"
+                  placeholder="Unique location identifier"
+                  onChange={(event) => setNewLocationID(event.target.value)}
+                  value={newuuid}
+                  label={t('core:locationId')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        <Tooltip title="Generates new unique identifier for this location">
+                          <IconButton
+                            onClick={() => {
+                              const result = confirm(
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
+                              );
+                              if (result) {
+                                setNewLocationID(getUuid());
+                              }
+                            }}
+                            size="large"
+                          >
+                            <IDIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
+        {type === locationType.TYPE_CLOUD && (
+          <Accordion>
+            <AccordionSummary
+              data-tid="switchEncryptionTID"
+              expandIcon={<ExpandIcon />}
+              aria-controls="panelEncryption-content"
+              id="panelEncryption-header"
+            >
+              <Typography>
+                {t('core:switchEncryption')}
+                <BetaLabel />
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl fullWidth={true}>
+                <FormLabel>{t('encryptionExplanation')}</FormLabel>
+                <TextField
+                  margin="dense"
+                  name="encryptionKey"
+                  type={showEncryptionKey ? 'text' : 'password'}
+                  fullWidth={true}
+                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+                  data-tid="encryptionKeyTID"
+                  placeholder={t('encryptionKeyExplanation')}
+                  onChange={(event) => setEncryptionKey(event.target.value)}
+                  value={encryptionKey}
+                  label={t('core:encryptionKey')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <TooltipTS title={t('toggleKeyVisibility')}>
+                          <IconButton
+                            aria-label="toggle key visibility"
+                            onClick={() =>
+                              setShowEncryptionKey(!showEncryptionKey)
+                            }
+                          >
+                            {showEncryptionKey ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </TooltipTS>
+                        <TooltipTS title={t('generateEncryptionKey')}>
+                          <IconButton
+                            aria-label="generate encryption key"
+                            onClick={() =>
+                              setEncryptionKey(
+                                CryptoJS.lib.WordArray.random(32)
+                                  .toString(CryptoJS.enc.Hex)
+                                  .slice(0, 32),
+                              )
+                            }
+                          >
+                            <PasswordIcon />
+                          </IconButton>
+                        </TooltipTS>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
+        )}
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
