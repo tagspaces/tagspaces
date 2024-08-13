@@ -268,7 +268,7 @@ export const CurrentLocationContextProvider = ({
                 isReadOnly: false,
                 disableIndexing: false,
               });
-              addLocation(location, false);
+              addLocation(location);
             });
           }
           return true;
@@ -282,13 +282,8 @@ export const CurrentLocationContextProvider = ({
     broadcast.postMessage(message);
   }
 
-  function addLocation(
-    location: CommonLocation,
-    openAfterCreate = true,
-    locationPosition: number = undefined,
-  ) {
-    dispatch(LocationActions.createLocation(location, locationPosition));
-    addLocationInt(location, openAfterCreate, locationPosition);
+  function addLocation(location: CommonLocation) {
+    //addLocationInt(location, openAfterCreate, locationPosition);
     sendMessage('addLocation', toTsLocation(location));
   }
 
@@ -301,11 +296,11 @@ export const CurrentLocationContextProvider = ({
     if (openAfterCreate) {
       openLocation(location);
     }
+    dispatch(LocationActions.createLocation(location, locationPosition));
   }
 
   function deleteLocation(locationId: string) {
-    dispatch(LocationActions.deleteLocation(locationId));
-    deleteLocationInt(locationId);
+    //deleteLocationInt(locationId);
     sendMessage('deleteLocation', locationId);
   }
 
@@ -313,12 +308,12 @@ export const CurrentLocationContextProvider = ({
     allLocations.current = allLocations.current.filter(
       (l) => l.uuid !== locationId,
     );
+    dispatch(LocationActions.deleteLocation(locationId));
     forceUpdate();
   }
 
   function moveLocationUp(locationUUID) {
-    dispatch(LocationActions.moveLocationUp(locationUUID));
-    moveLocationUpInt(locationUUID);
+    //moveLocationUpInt(locationUUID);
     sendMessage('moveLocationUp', locationUUID);
   }
 
@@ -341,11 +336,11 @@ export const CurrentLocationContextProvider = ({
     newArray[currentIndex - 1] = temp;
 
     allLocations.current = newArray;
+    dispatch(LocationActions.moveLocationUp(locationUUID));
   }
 
   function moveLocationDown(locationUUID) {
-    dispatch(LocationActions.moveLocationDown(locationUUID));
-    moveLocationDownInt(locationUUID);
+    //moveLocationDownInt(locationUUID);
     sendMessage('moveLocationDown', locationUUID);
   }
 
@@ -371,6 +366,7 @@ export const CurrentLocationContextProvider = ({
     newArray[currentIndex + 1] = temp;
 
     allLocations.current = newArray;
+    dispatch(LocationActions.moveLocationDown(locationUUID));
   }
 
   function moveLocation(locationUUID: string, newIndex: number) {
@@ -411,11 +407,11 @@ export const CurrentLocationContextProvider = ({
       const locationExist: boolean = allLocations.current.some(
         (location) => location.uuid === newLocation.uuid,
       );
-      const isLast = idx === array.length - 1;
+      //const isLast = idx === array.length - 1;
       if (!locationExist) {
-        addLocation(newLocation, isLast);
+        addLocation(newLocation);
       } else if (override) {
-        editLocation(newLocation, isLast);
+        editLocation(newLocation);
       }
     });
   }
@@ -433,17 +429,17 @@ export const CurrentLocationContextProvider = ({
     forceUpdate();
   }
 
-  function editLocation(location: CommonLocation, openAfterEdit = true) {
-    dispatch(LocationActions.changeLocation(location));
-    editLocationInt(location, openAfterEdit);
+  function editLocation(location: CommonLocation) {
+    // editLocationInt(location);
     sendMessage('editLocation', toTsLocation(location));
   }
 
-  function editLocationInt(location: CommonLocation, openAfterEdit = true) {
+  function editLocationInt(location: CommonLocation, openAfterEdit = false) {
     allLocations.current = allLocations.current.map((l) =>
       l.uuid === location.uuid ? location : l,
     );
     currentLocation.current = location.uuid;
+    dispatch(LocationActions.changeLocation(location));
     forceUpdate();
     if (openAfterEdit) {
       /*
@@ -457,7 +453,6 @@ export const CurrentLocationContextProvider = ({
       } else {
         openLocation(location);
       }
-      // dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
   }
 

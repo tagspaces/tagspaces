@@ -282,9 +282,10 @@ export const DirectoryContentContextProvider = ({
       getLocationPath(currentLocation).then((locationPath) => {
         currentLocationPath.current = locationPath;
         if (!skipInitialDirList) {
-          /*if (isLoading.current) {  todo  //cancel loading KanBan S3 folders on location-folder change
+          if (isLoading.current) {
+            //cancel loading KanBan S3 folders on location-folder change
             abort();
-          }*/
+          }
           isLoading.current = true;
           openDirectory(locationPath)
             .then((success) => {
@@ -292,7 +293,10 @@ export const DirectoryContentContextProvider = ({
               isLoading.current = false;
               return success;
             })
-            .catch((ex) => console.log('Error openDirectory:', ex));
+            .catch((ex) => {
+              isLoading.current = false;
+              console.log('Error openDirectory:', ex);
+            });
         }
       });
     } else {
