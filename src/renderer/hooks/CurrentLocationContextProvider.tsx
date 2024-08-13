@@ -40,10 +40,6 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
 import { CommonLocation } from '-/utils/CommonLocation';
-import broadcast, {
-  BroadcastMessage,
-  sendMessage,
-} from '-/services/tsBroadcastChannel';
 import { getDevicePaths, toTsLocation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
@@ -145,6 +141,7 @@ export const CurrentLocationContextProvider = ({
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
+  const broadcast = new BroadcastChannel('ts-sync-channel');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -163,12 +160,9 @@ export const CurrentLocationContextProvider = ({
         openLocationById(defaultLocationId);
       }
     }
-  }, []);
-
-  useEffect(() => {
     // Listen for messages from other tabs
     broadcast.onmessage = (event: MessageEvent) => {
-      const action = event.data as BroadcastMessage;
+      const action = event.data as TS.BroadcastMessage;
       if (action.type === 'addLocation') {
         const location = action.payload as TS.Location;
         addLocationInt(new CommonLocation(location));
@@ -185,7 +179,7 @@ export const CurrentLocationContextProvider = ({
         forceUpdate();
       }
     };
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (allLocations.current.length < 1) {
@@ -279,8 +273,13 @@ export const CurrentLocationContextProvider = ({
           }
           return true;
         })
-        .catch((ex) => console.log(ex));
+        .catch((ex) => console.log('Error getDevicePaths:', ex));
     }
+  }
+
+  function sendMessage(type: string, payload?: any) {
+    const message: TS.BroadcastMessage = { type, payload };
+    broadcast.postMessage(message);
   }
 
   function addLocation(
@@ -288,6 +287,7 @@ export const CurrentLocationContextProvider = ({
     openAfterCreate = true,
     locationPosition: number = undefined,
   ) {
+    dispatch(LocationActions.createLocation(location, locationPosition));
     addLocationInt(location, openAfterCreate, locationPosition);
     sendMessage('addLocation', toTsLocation(location));
   }
@@ -297,7 +297,6 @@ export const CurrentLocationContextProvider = ({
     openAfterCreate = true,
     locationPosition: number = undefined,
   ) {
-    dispatch(LocationActions.createLocation(location, locationPosition));
     allLocations.current = [...allLocations.current, location];
     if (openAfterCreate) {
       openLocation(location);
@@ -305,12 +304,12 @@ export const CurrentLocationContextProvider = ({
   }
 
   function deleteLocation(locationId: string) {
+    dispatch(LocationActions.deleteLocation(locationId));
     deleteLocationInt(locationId);
     sendMessage('deleteLocation', locationId);
   }
 
   function deleteLocationInt(locationId: string) {
-    dispatch(LocationActions.deleteLocation(locationId));
     allLocations.current = allLocations.current.filter(
       (l) => l.uuid !== locationId,
     );
@@ -318,6 +317,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function moveLocationUp(locationUUID) {
+    dispatch(LocationActions.moveLocationUp(locationUUID));
     moveLocationUpInt(locationUUID);
     sendMessage('moveLocationUp', locationUUID);
   }
@@ -341,11 +341,10 @@ export const CurrentLocationContextProvider = ({
     newArray[currentIndex - 1] = temp;
 
     allLocations.current = newArray;
-
-    dispatch(LocationActions.moveLocationUp(locationUUID));
   }
 
   function moveLocationDown(locationUUID) {
+    dispatch(LocationActions.moveLocationDown(locationUUID));
     moveLocationDownInt(locationUUID);
     sendMessage('moveLocationDown', locationUUID);
   }
@@ -372,8 +371,6 @@ export const CurrentLocationContextProvider = ({
     newArray[currentIndex + 1] = temp;
 
     allLocations.current = newArray;
-
-    dispatch(LocationActions.moveLocationDown(locationUUID));
   }
 
   function moveLocation(locationUUID: string, newIndex: number) {
@@ -437,16 +434,17 @@ export const CurrentLocationContextProvider = ({
   }
 
   function editLocation(location: CommonLocation, openAfterEdit = true) {
+    dispatch(LocationActions.changeLocation(location));
     editLocationInt(location, openAfterEdit);
     sendMessage('editLocation', toTsLocation(location));
   }
 
   function editLocationInt(location: CommonLocation, openAfterEdit = true) {
-    dispatch(LocationActions.changeLocation(location));
     allLocations.current = allLocations.current.map((l) =>
       l.uuid === location.uuid ? location : l,
     );
-    setCurrentLocation(location);
+    currentLocation.current = location.uuid;
+    forceUpdate();
     if (openAfterEdit) {
       /*
        * check if location uuid is changed

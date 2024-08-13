@@ -226,6 +226,11 @@ export namespace TS {
     focused?: boolean; // TODO make it mandatory once support for multiple files is added
   }
 
+  interface BroadcastMessage {
+    type: string;
+    payload?: any;
+  }
+
   interface CustomOrder {
     folders?: Array<OrderVisibilitySettings>;
     files?: Array<OrderVisibilitySettings>;

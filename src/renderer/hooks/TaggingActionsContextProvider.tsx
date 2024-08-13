@@ -153,7 +153,8 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { findLocation, currentLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
-  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
+  const { tagGroups, reflectTagLibraryChanged, broadcast } =
+    useEditedTagLibraryContext();
   const {
     createLocationTagGroup,
     editLocationTagGroup,
@@ -1008,7 +1009,7 @@ export const TaggingActionsContextProvider = ({
   }
 
   function saveTagLibrary(tg: TS.TagGroup[]) {
-    reflectTagLibraryChanged(setTagLibrary(tg));
+    reflectTagLibraryChanged(setTagLibrary(tg, broadcast));
   }
 
   function saveTags(tags: TS.Tag[], indexForEditing: number) {
