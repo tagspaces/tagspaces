@@ -71,6 +71,10 @@ export const SavedSearchesContextProvider = ({
     if (item) {
       return JSON.parse(item);
     }
+    if (reduxSearches.length > 0) {
+      //import from redux
+      localStorage.setItem(searchesKey, JSON.stringify(reduxSearches));
+    }
     return reduxSearches;
     //return [];
   }
