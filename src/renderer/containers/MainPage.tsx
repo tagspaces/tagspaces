@@ -43,7 +43,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
-import DialogsRoot from '-/containers/DialogsRoot';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -287,22 +286,21 @@ function MainPage(props: Props) {
   }
 
   return (
-    <DialogsRoot>
-      <Root>
-        <HotKeys
-          handlers={keyBindingHandlers}
-          keyMap={keyMap}
-          style={{ height: '100%' }}
+    <Root>
+      <HotKeys
+        handlers={keyBindingHandlers}
+        keyMap={keyMap}
+        style={{ height: '100%' }}
+      >
+        <PageNotification />
+        <div
+          style={{
+            backgroundColor: theme.palette.background.default,
+            height: '100%',
+          }}
         >
-          <PageNotification />
-          <div
-            style={{
-              backgroundColor: theme.palette.background.default,
-              height: '100%',
-            }}
-          >
-            <style>
-              {`
+          <style>
+            {`
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
@@ -328,47 +326,46 @@ function MainPage(props: Props) {
                 flex-direction: column;
               }
           `}
-            </style>
-            {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
-              <>
-                <Drawer
-                  style={{ backgroundColor: 'unset' }}
-                  variant="persistent"
-                  anchor="left"
-                  open={drawerOpened}
-                >
-                  <MobileNavigation width={drawerWidth} />
-                </Drawer>
-                <main
-                  className={clsx(classes.content, {
-                    [classes.contentShift]: !drawerOpened,
-                  })}
-                >
-                  {renderContainers()}
-                </main>
-              </>
-            ) : (
-              <>
-                <SwipeableDrawer
-                  open={drawerOpened}
-                  onClose={() => setDrawerOpened(false)}
-                  onOpen={() => setDrawerOpened(true)}
-                  hysteresis={0.1}
-                  disableBackdropTransition={!AppConfig.isIOS}
-                  disableDiscovery={AppConfig.isIOS}
-                >
-                  <MobileNavigation
-                    width={drawerWidth}
-                    hideDrawer={() => setDrawerOpened(false)}
-                  />
-                </SwipeableDrawer>
+          </style>
+          {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
+            <>
+              <Drawer
+                style={{ backgroundColor: 'unset' }}
+                variant="persistent"
+                anchor="left"
+                open={drawerOpened}
+              >
+                <MobileNavigation width={drawerWidth} />
+              </Drawer>
+              <main
+                className={clsx(classes.content, {
+                  [classes.contentShift]: !drawerOpened,
+                })}
+              >
                 {renderContainers()}
-              </>
-            )}
-          </div>
-        </HotKeys>
-      </Root>
-    </DialogsRoot>
+              </main>
+            </>
+          ) : (
+            <>
+              <SwipeableDrawer
+                open={drawerOpened}
+                onClose={() => setDrawerOpened(false)}
+                onOpen={() => setDrawerOpened(true)}
+                hysteresis={0.1}
+                disableBackdropTransition={!AppConfig.isIOS}
+                disableDiscovery={AppConfig.isIOS}
+              >
+                <MobileNavigation
+                  width={drawerWidth}
+                  hideDrawer={() => setDrawerOpened(false)}
+                />
+              </SwipeableDrawer>
+              {renderContainers()}
+            </>
+          )}
+        </div>
+      </HotKeys>
+    </Root>
   );
 }
 

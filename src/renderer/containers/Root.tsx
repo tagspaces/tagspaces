@@ -49,6 +49,7 @@ import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
 import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
 import { UserContextProvider } from '-/hooks/UserContextProvider';
 import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
+import DialogsRoot from '-/containers/DialogsRoot';
 
 type RootType = {
   store: Store<{}>;
@@ -95,12 +96,16 @@ export default function Root({ store, persistor }: RootType) {
                                                   <Pro.contextProviders.BookmarksContextProvider>
                                                     <Pro.contextProviders.HistoryContextProvider>
                                                       <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                        <MainPage />
+                                                        <DialogsRoot>
+                                                          <MainPage />
+                                                        </DialogsRoot>
                                                       </Pro.contextProviders.KanBanImportDialogContextProvider>
                                                     </Pro.contextProviders.HistoryContextProvider>
                                                   </Pro.contextProviders.BookmarksContextProvider>
                                                 ) : (
-                                                  <MainPage />
+                                                  <DialogsRoot>
+                                                    <MainPage />
+                                                  </DialogsRoot>
                                                 )}
                                               </SavedSearchesContextProvider>
                                             </UserContextProvider>
