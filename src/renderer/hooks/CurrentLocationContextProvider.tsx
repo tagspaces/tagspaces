@@ -83,6 +83,8 @@ type CurrentLocationContextData = {
   getFirstRWLocation: () => CommonLocation | undefined;
 };
 
+const instanceId = getUuid();
+
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     locations: undefined,
@@ -143,7 +145,6 @@ export const CurrentLocationContextProvider = ({
   ] = useState<null | HTMLElement>(null);
   const broadcast = new BroadcastChannel('ts-sync-channel');
   // Generate a unique ID for the tab
-  const instanceId = getUuid();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
