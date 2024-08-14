@@ -31,6 +31,8 @@ import { supportedFileTypes } from '-/extension-config';
 import removeMd from 'remove-markdown';
 import { CommonLocation } from '-/utils/CommonLocation';
 
+export const instanceId = getUuid();
+
 export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   const tags = [];
   if (entry.meta && entry.meta.tags && entry.meta.tags.length > 0) {

@@ -40,7 +40,7 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { getDevicePaths, toTsLocation } from '-/services/utils-io';
+import { getDevicePaths, instanceId, toTsLocation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
@@ -82,8 +82,6 @@ type CurrentLocationContextData = {
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
   getFirstRWLocation: () => CommonLocation | undefined;
 };
-
-const instanceId = getUuid();
 
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
