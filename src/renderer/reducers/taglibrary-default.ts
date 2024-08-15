@@ -17,6 +17,7 @@
  */
 
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { TS } from '-/tagspaces.namespace';
 
 export default [
   {
@@ -131,4 +132,4 @@ export default [
       },
     ],
   },
-] as any;
+] as TS.TagGroup[];

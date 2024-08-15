@@ -45,10 +45,11 @@ import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContext
 import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
 import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
 import { Pro } from '-/pro';
-import DialogsRoot from '-/containers/DialogsRoot';
 import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
 import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
 import { UserContextProvider } from '-/hooks/UserContextProvider';
+import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
+import DialogsRoot from '-/containers/DialogsRoot';
 
 type RootType = {
   store: Store<{}>;
@@ -90,19 +91,23 @@ export default function Root({ store, persistor }: RootType) {
                                         <ExtensionsContextProvider>
                                           <PanelsContextProvider>
                                             <UserContextProvider>
-                                              <DialogsRoot>
+                                              <SavedSearchesContextProvider>
                                                 {Pro ? (
                                                   <Pro.contextProviders.BookmarksContextProvider>
                                                     <Pro.contextProviders.HistoryContextProvider>
                                                       <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                        <MainPage />
+                                                        <DialogsRoot>
+                                                          <MainPage />
+                                                        </DialogsRoot>
                                                       </Pro.contextProviders.KanBanImportDialogContextProvider>
                                                     </Pro.contextProviders.HistoryContextProvider>
                                                   </Pro.contextProviders.BookmarksContextProvider>
                                                 ) : (
-                                                  <MainPage />
+                                                  <DialogsRoot>
+                                                    <MainPage />
+                                                  </DialogsRoot>
                                                 )}
-                                              </DialogsRoot>
+                                              </SavedSearchesContextProvider>
                                             </UserContextProvider>
                                           </PanelsContextProvider>
                                         </ExtensionsContextProvider>

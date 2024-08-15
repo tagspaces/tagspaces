@@ -236,7 +236,7 @@ function LocationManager(props: Props) {
           })}
           confirmCallback={(result) => {
             if (result && selectedLocation) {
-              deleteLocation(selectedLocation);
+              deleteLocation(selectedLocation.uuid);
               //dispatch(LocationActions.deleteLocation(selectedLocation));
             }
           }}

@@ -226,6 +226,13 @@ export namespace TS {
     focused?: boolean; // TODO make it mandatory once support for multiple files is added
   }
 
+  interface BroadcastMessage {
+    // unique ID for the tab instance
+    uuid: string;
+    type: string;
+    payload?: any;
+  }
+
   interface CustomOrder {
     folders?: Array<OrderVisibilitySettings>;
     files?: Array<OrderVisibilitySettings>;

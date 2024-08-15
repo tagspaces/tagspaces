@@ -25,6 +25,7 @@ export function setTagLibrary(
 ): Array<TS.TagGroup> {
   if (tagGroups && tagGroups.length > 0) {
     localStorage.setItem(tagLibraryKey, JSON.stringify(tagGroups));
+    //broadcast.postMessage({ type: 'tagLibraryChanged' });
   }
   return tagGroups;
 }

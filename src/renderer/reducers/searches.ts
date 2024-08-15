@@ -99,7 +99,7 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
   }
 };
 
-export const actions = {
+/*export const actions = {
   addSearch: (search: TS.SearchQuery) => ({
     type: types.ADD_SEARCH,
     search,
@@ -132,11 +132,7 @@ export const actions = {
     type: types.REMOVE_SEARCH,
     uuid,
   }),
-  /* getSearch: (uuid: string) => (
-      dispatch: (actions: Object) => void,
-      getState: () => any
-  ) => getState().searches.find(search => search.uuid === uuid) */
-};
+};*/
 
 // Selectors
 export const getSearches = (state: any): Array<TS.SearchQuery> =>
