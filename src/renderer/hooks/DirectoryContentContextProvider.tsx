@@ -45,15 +45,11 @@ import {
   actions as SettingsActions,
   getDefaultPerspective,
   getShowUnixHiddenEntries,
-  getTagColor,
-  getTagTextColor,
 } from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { getSearches } from '-/reducers/searches';
-import { getTagColors } from '-/services/taglibrary-utils';
 import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
@@ -124,7 +120,6 @@ type DirectoryContentContextData = {
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
-  findFromSavedSearch: (uuid: string) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   getPerspective: () => TS.PerspectiveType;
   getAllPropertiesPromise: (
@@ -176,7 +171,6 @@ export const DirectoryContentContext =
     appendSearchResults: () => {},
     enterSearchMode: () => {},
     exitSearchMode: () => {},
-    findFromSavedSearch: () => {},
     getDefaultPerspectiveSettings: undefined,
     getPerspective: undefined,
     getAllPropertiesPromise: undefined,
@@ -219,12 +213,6 @@ export const DirectoryContentContextProvider = ({
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const defaultPerspective = useSelector(getDefaultPerspective);
-  //const editedEntryPaths = useSelector(getEditedEntryPaths);
-  const searches = useSelector(getSearches);
-  const defaultBackgroundColor = useSelector(getTagColor);
-  const defaultTextColor = useSelector(getTagTextColor);
-
-  //const enableWS = useSelector(getEnableWS);
 
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const searchQuery = useRef<TS.SearchQuery>({});
@@ -1039,42 +1027,6 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function updateTagColors(tags: TS.Tag[]) {
-    return tags.map((tag) => {
-      const tagColors = getTagColors(
-        tag.title,
-        defaultTextColor,
-        defaultBackgroundColor,
-      );
-      return {
-        ...tag,
-        ...tagColors,
-      };
-    });
-  }
-
-  function findFromSavedSearch(uuid: string) {
-    const savedSearch = searches.find((search) => search.uuid === uuid);
-    if (!savedSearch) {
-      return true;
-    }
-
-    setSearchQuery({
-      ...savedSearch,
-      ...(savedSearch.tagsAND && {
-        tagsAND: updateTagColors(savedSearch.tagsAND),
-      }),
-      ...(savedSearch.tagsNOT && {
-        tagsNOT: updateTagColors(savedSearch.tagsNOT),
-      }),
-      ...(savedSearch.tagsOR && {
-        tagsOR: updateTagColors(savedSearch.tagsOR),
-      }),
-      showUnixHiddenEntries,
-      executeSearch: true,
-    });
-  }
-
   /**
    *  get full entry properties - with full description
    */
@@ -1445,7 +1397,6 @@ export const DirectoryContentContextProvider = ({
       appendSearchResults,
       enterSearchMode,
       exitSearchMode,
-      findFromSavedSearch,
       getDefaultPerspectiveSettings,
       getAllPropertiesPromise,
       loadCurrentDirMeta,

@@ -61,7 +61,6 @@ import {
 } from '-/components/SearchOptions';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
-import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
@@ -72,6 +71,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { removePrefix } from '-/services/utils-io';
 import { isDesktopMode } from '-/reducers/settings';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 interface Props {
   style?: any;
@@ -106,6 +106,7 @@ function SearchAutocomplete(props: Props) {
   } = useDirectoryContentContext();
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
+  const { searches } = useSavedSearchesContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
@@ -115,7 +116,6 @@ function SearchAutocomplete(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);
 

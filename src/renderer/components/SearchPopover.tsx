@@ -48,7 +48,6 @@ import {
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
 import { parseGeoLocation, parseLatLon } from '-/utils/geo';
-import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import Links from 'assets/links';
@@ -76,6 +75,7 @@ import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -98,10 +98,10 @@ function SearchPopover(props: Props) {
     setSearchQuery,
     exitSearchMode,
   } = useDirectoryContentContext();
+  const { searches } = useSavedSearchesContext();
   const { getIndex, isIndexing } = useLocationIndexContext();
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const maxSearchResults = useSelector(getMaxSearchResults);
-  const searches = useSelector(getSearches);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   // const textQuery = useRef<string>(searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(searchQuery.tagsAND);

@@ -13,6 +13,13 @@ import { TS } from '-/tagspaces.namespace';
 import { instanceId } from '-/services/utils-io';
 import { useSelector } from 'react-redux';
 import { getSearches } from '-/reducers/searches';
+import { getTagColors } from '-/services/taglibrary-utils';
+import {
+  getShowUnixHiddenEntries,
+  getTagColor,
+  getTagTextColor,
+} from '-/reducers/settings';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SavedSearchesContextData = {
   searches: TS.SearchQuery[];
@@ -21,6 +28,7 @@ type SavedSearchesContextData = {
   addSearches: (newSearches: TS.SearchQuery[]) => void;
   delAllSearches: () => void;
   removeSearch: (uuid: string) => void;
+  findFromSavedSearch: (uuid: string) => void;
 };
 
 export const SavedSearchesContext = createContext<SavedSearchesContextData>({
@@ -30,6 +38,7 @@ export const SavedSearchesContext = createContext<SavedSearchesContextData>({
   addSearches: undefined,
   delAllSearches: undefined,
   removeSearch: undefined,
+  findFromSavedSearch: undefined,
 });
 
 export type SavedSearchesContextProviderProps = {
@@ -40,7 +49,11 @@ export const SavedSearchesContextProvider = ({
   children,
 }: SavedSearchesContextProviderProps) => {
   const searchesKey = 'tsSavedSearches';
+  const { setSearchQuery } = useDirectoryContentContext();
   const reduxSearches = useSelector(getSearches);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
+  const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const searches = useRef<TS.SearchQuery[]>(getAllSearches());
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('searches-sync');
@@ -135,6 +148,42 @@ export const SavedSearchesContextProvider = ({
     }
   }
 
+  function updateTagColors(tags: TS.Tag[]) {
+    return tags.map((tag) => {
+      const tagColors = getTagColors(
+        tag.title,
+        defaultTextColor,
+        defaultBackgroundColor,
+      );
+      return {
+        ...tag,
+        ...tagColors,
+      };
+    });
+  }
+
+  function findFromSavedSearch(uuid: string) {
+    const savedSearch = searches.current.find((search) => search.uuid === uuid);
+    if (!savedSearch) {
+      return true;
+    }
+
+    setSearchQuery({
+      ...savedSearch,
+      ...(savedSearch.tagsAND && {
+        tagsAND: updateTagColors(savedSearch.tagsAND),
+      }),
+      ...(savedSearch.tagsNOT && {
+        tagsNOT: updateTagColors(savedSearch.tagsNOT),
+      }),
+      ...(savedSearch.tagsOR && {
+        tagsOR: updateTagColors(savedSearch.tagsOR),
+      }),
+      showUnixHiddenEntries,
+      executeSearch: true,
+    });
+  }
+
   const context = useMemo(() => {
     return {
       searches: searches.current,
@@ -143,6 +192,7 @@ export const SavedSearchesContextProvider = ({
       editSearch,
       delAllSearches,
       removeSearch,
+      findFromSavedSearch,
     };
   }, [searches.current]);
 

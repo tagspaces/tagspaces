@@ -70,8 +70,8 @@ const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
-  const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
-  const { searches } = useSavedSearchesContext();
+  const { setSearchQuery } = useDirectoryContentContext();
+  const { searches, findFromSavedSearch } = useSavedSearchesContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(
         Pro?.contextProviders?.BookmarksContext,
