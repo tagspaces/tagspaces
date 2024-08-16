@@ -175,7 +175,7 @@ function CreateEditLocationDialog(props: Props) {
   const [encryptionKey, setEncryptionKey] = useState<string>(
     selectedLocation && selectedLocation.encryptionKey
       ? selectedLocation.encryptionKey
-      : '',
+      : undefined,
   );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
