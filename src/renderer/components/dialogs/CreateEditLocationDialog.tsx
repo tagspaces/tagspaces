@@ -757,66 +757,6 @@ function CreateEditLocationDialog(props: Props) {
             </FormGroup>
           </AccordionDetails>
         </Accordion>
-        {type === locationType.TYPE_CLOUD && (
-          <Accordion>
-            <AccordionSummary
-              data-tid="switchEncryptionTID"
-              expandIcon={<ExpandIcon />}
-              aria-controls="panelEncryption-content"
-              id="panelEncryption-header"
-            >
-              <Typography>{t('core:switchEncryption')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <FormControl fullWidth={true}>
-                <TextField
-                  margin="dense"
-                  name="encryptionKey"
-                  type={showEncryptionKey ? 'text' : 'password'}
-                  fullWidth={true}
-                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-                  data-tid="encryptionKeyTID"
-                  placeholder={t('s3encryptionKey')}
-                  onChange={(event) => setEncryptionKey(event.target.value)}
-                  value={encryptionKey}
-                  label={t('core:encryptionKey')}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() =>
-                            setShowEncryptionKey(!showEncryptionKey)
-                          }
-                          size="large"
-                        >
-                          {showEncryptionKey ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </IconButton>
-                        <IconButton
-                          aria-label="auto fill password"
-                          onClick={() =>
-                            setEncryptionKey(
-                              CryptoJS.lib.WordArray.random(32)
-                                .toString(CryptoJS.enc.Hex)
-                                .slice(0, 32),
-                            )
-                          }
-                          size="large"
-                        >
-                          <PasswordIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-            </AccordionDetails>
-          </Accordion>
-        )}
         <Accordion>
           <AccordionSummary
             data-tid="switchAdvancedModeTID"
