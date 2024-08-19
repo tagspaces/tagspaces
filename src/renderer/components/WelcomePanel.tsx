@@ -42,7 +42,6 @@ import {
   KeyShortcutsIcon,
   HelpIcon,
 } from '-/components/CommonIcons';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDesktopMode } from '-/reducers/settings';
 import Links from 'assets/links';
 import { Pro } from '-/pro';
@@ -113,13 +112,6 @@ function WelcomePanel() {
 
   const showDelete = false;
   const maxRecentItems = 5;
-
-  /*function triggerOpenLocation() {
-    const button = document.getElementById(
-      desktopMode ? 'locationMenuButton' : 'mobileMenuButton'
-    );
-    button.click();
-  }*/
 
   function renderRecentItems() {
     return (
@@ -211,15 +203,6 @@ function WelcomePanel() {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        {/* <ListItem onClick={triggerOpenLocation}>
-          <ListItemIcon>
-            <LocalLocationIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:chooseLocation')}
-            className={classes.listItem}
-          />
-        </ListItem> */}
         <ListItem onClick={() => openNewFileDialog()}>
           <ListItemIcon>
             <CreateFileIcon />
@@ -358,7 +341,7 @@ function WelcomePanel() {
         height: '100%',
       }}
     >
-      <div
+      {/* <div
         style={{
           backgroundColor: theme.palette.background.default,
           backgroundImage: 'url(' + WelcomeBackground + ')',
@@ -370,7 +353,7 @@ function WelcomePanel() {
           width: '100%',
           height: '100%',
         }}
-      />
+      /> */}
       <Grid
         style={{
           position: 'relative',
