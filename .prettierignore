@@ -19,6 +19,7 @@ tests/testdata
 tests/testdata-tmp
 tests/file-structure
 tests/bin
+test-results
 .ycache
 src/renderer/aws-exports.js
 src/main/config/config.json
