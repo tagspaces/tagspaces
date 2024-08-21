@@ -370,7 +370,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
 
     await expectMetaFilesExist(arrayMeta, false);
-    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await setSettings('[data-tid=settingsSetPersistTagsInFileName]', true);
   });
 
   test('TST0813a - Delete file and check revisions deleted [web,electron,_pro]', async () => {
