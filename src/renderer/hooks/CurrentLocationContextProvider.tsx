@@ -133,7 +133,7 @@ export const CurrentLocationContextProvider = ({
   );
 
   const allLocations = useRef<CommonLocation[]>(locations);
-  const currentLocation = useRef<string>(defaultLocationId);
+  const currentLocation = useRef<string>(undefined); //defaultLocationId);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const initLocations = useRef<boolean>(false);
