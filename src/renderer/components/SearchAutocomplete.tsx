@@ -1297,7 +1297,8 @@ function SearchAutocomplete(props: Props) {
               );
             });*/
             if (filteredOptions.length === 0 && !haveEmptyAction()) {
-              isOpen.current = false;
+              return options;
+              //isOpen.current = false;
             }
             return filteredOptions;
           }}

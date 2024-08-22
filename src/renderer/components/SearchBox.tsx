@@ -21,7 +21,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
