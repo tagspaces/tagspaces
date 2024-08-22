@@ -2,8 +2,15 @@ import fs from 'fs';
 import webpackPaths from '../configs/webpack.paths';
 import path from 'path';
 
-const { srcNodeModulesPath, appNodeModulesPath, appPath, srcPath, distPath } =
-  webpackPaths;
+const {
+  srcNodeModulesPath,
+  appNodeModulesPath,
+  erbPath,
+  erbNodeModulesPath,
+  appPath,
+  srcPath,
+  distPath,
+} = webpackPaths;
 
 try {
   if (fs.existsSync(srcNodeModulesPath)) {
@@ -14,6 +21,10 @@ try {
 }
 if (fs.existsSync(appNodeModulesPath)) {
   fs.symlinkSync(appNodeModulesPath, srcNodeModulesPath, 'junction');
+}
+
+if (!fs.existsSync(erbNodeModulesPath) && fs.existsSync(appNodeModulesPath)) {
+  fs.symlinkSync(appNodeModulesPath, erbNodeModulesPath, 'junction');
 }
 
 const targetNodeModules = path.join(distPath, 'node_modules');
@@ -35,7 +46,7 @@ if (fs.existsSync(appNodeModulesPath)) {
 }
 
 ////////link .env
-const targetEnv = path.join(srcPath, '.env');
+const targetEnv = path.join(erbPath, '.env'); //srcPath, '.env');
 const appEnv = path.join(appPath, '.env');
 
 try {
