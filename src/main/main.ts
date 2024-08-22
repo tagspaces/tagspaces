@@ -161,7 +161,7 @@ function getSpellcheckLanguage(i18n) {
 function showApp() {
   var windows = BrowserWindow.getAllWindows();
   windows.forEach((win, i) => {
-    if (win) {
+    if (win && i < 1) {
       if (win.isMinimized()) {
         win.restore();
       } else {
