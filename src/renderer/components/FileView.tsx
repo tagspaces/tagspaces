@@ -50,7 +50,7 @@ function FileView(props: Props) {
     eventID,
   } = props;
 
-  const { searchQuery } = useDirectoryContentContext();
+  const { searchQuery, isSearchMode } = useDirectoryContentContext();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -96,9 +96,10 @@ function FileView(props: Props) {
         );
 
       const event = eventID ? '&eventID=' + eventID : '';
-      const extQuery = searchQuery.textQuery
-        ? '&query=' + encodeURIComponent(searchQuery.textQuery)
-        : '';
+      const extQuery =
+        searchQuery.textQuery && isSearchMode
+          ? '&query=' + encodeURIComponent(searchQuery.textQuery)
+          : '';
       const locale = '&locale=' + i18n.language;
       const theming =
         '&theme=' +
