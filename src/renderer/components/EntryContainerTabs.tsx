@@ -80,16 +80,20 @@ interface StyledTabProps {
   onClick: (event: React.SyntheticEvent) => void;
 }
 
-const StyledTab = styled((props: StyledTabProps) => (
-  <Tooltip title={!props.tinyMode && props.title}>
-    <Tab
-      label={!props.tinyMode && props.title}
-      disableRipple
-      iconPosition="start"
-      {...props}
-    />
-  </Tooltip>
-))(({ theme }) => ({
+const StyledTab = styled((props: StyledTabProps) => {
+  const { title, tinyMode, ...tabProps } = props; // Extract title and tinyMode
+
+  return (
+    <Tooltip title={!tinyMode && title}>
+      <Tab
+        label={!tinyMode && title}
+        disableRipple
+        iconPosition="start"
+        {...tabProps} // Pass remaining props to Tab
+      />
+    </Tooltip>
+  );
+})(({ theme }) => ({
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightRegular,
   fontSize: theme.typography.pxToRem(15),
