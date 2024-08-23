@@ -588,9 +588,9 @@ const createWindow = async (i18n) => {
     if (mainWindow.fileChanged || mainWindow.descriptionChanged) {
       const choice = dialog.showMessageBoxSync(mainWindow, {
         type: 'question',
-        buttons: [i18n.t('closeApp'), i18n.t('cancel')],
-        defaultId: 0,
-        cancelId: 1,
+        buttons: [i18n.t('cancel'), i18n.t('closeApp')],
+        defaultId: 1,
+        cancelId: 0,
         title: i18n.t('unsavedChanges'),
         message: i18n.t('unsavedChangesMessage'),
         detail: i18n.t('unsavedChangesDetails'),
