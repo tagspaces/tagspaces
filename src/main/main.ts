@@ -16,6 +16,7 @@ import {
   ipcMain,
   globalShortcut,
   BrowserWindowConstructorOptions,
+  dialog,
 } from 'electron';
 // import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -68,6 +69,7 @@ const testMode = process.env.NODE_ENV === 'test';
 
 let startupFilePath;
 let portableMode;
+let fileChanged = false;
 
 process.argv.forEach((arg, count) => {
   console.log('Opening file: ' + arg);
@@ -574,6 +576,27 @@ const createWindow = async (i18n) => {
     // }
   });
 
+  mainWindow.on('close', (e) => {
+    //e.preventDefault(); // Prevent closing
+    if (fileChanged) {
+      const choice = dialog.showMessageBoxSync(mainWindow, {
+        type: 'question',
+        buttons: [i18n.t('cancel'), i18n.t('closeApp')],
+        defaultId: 0,
+        cancelId: 1,
+        title: i18n.t('unsavedChanges'),
+        message: i18n.t('unsavedChangesMessage'),
+        detail: i18n.t('unsavedChangesDetails'),
+      });
+
+      if (choice === 0) {
+        // Cancel
+        e.preventDefault(); // Prevent closing
+      }
+      // No action needed for "Close Application", window will close
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -699,6 +722,9 @@ app
 
       ipcMain.on('create-new-window', (e, url) => {
         createNewWindowInstance(url);
+      });
+      ipcMain.on('file-changed', (e, isChanged) => {
+        fileChanged = isChanged;
       });
 
       loadMainEvents();
