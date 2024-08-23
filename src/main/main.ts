@@ -69,7 +69,6 @@ const testMode = process.env.NODE_ENV === 'test';
 
 let startupFilePath;
 let portableMode;
-let fileChanged = false;
 
 process.argv.forEach((arg, count) => {
   console.log('Opening file: ' + arg);
@@ -353,6 +352,10 @@ function createNewWindowInstance(url?) {
     show: true,
     center: true,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   newWindowInstance.setMenuBarVisibility(false);
 
@@ -513,6 +516,10 @@ const createWindow = async (i18n) => {
     width: mainWindowState.width,
     height: mainWindowState.height,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   mainWindow.setMenuBarVisibility(false);
 
@@ -577,11 +584,11 @@ const createWindow = async (i18n) => {
   });
 
   mainWindow.on('close', (e) => {
-    //e.preventDefault(); // Prevent closing
-    if (fileChanged) {
+    // @ts-ignore
+    if (mainWindow.fileChanged || mainWindow.descriptionChanged) {
       const choice = dialog.showMessageBoxSync(mainWindow, {
         type: 'question',
-        buttons: [i18n.t('cancel'), i18n.t('closeApp')],
+        buttons: [i18n.t('closeApp'), i18n.t('cancel')],
         defaultId: 0,
         cancelId: 1,
         title: i18n.t('unsavedChanges'),
@@ -724,7 +731,16 @@ app
         createNewWindowInstance(url);
       });
       ipcMain.on('file-changed', (e, isChanged) => {
-        fileChanged = isChanged;
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.fileChanged = isChanged;
+        }
+      });
+      ipcMain.on('description-changed', (e, isChanged) => {
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.descriptionChanged = isChanged;
+        }
       });
 
       loadMainEvents();
