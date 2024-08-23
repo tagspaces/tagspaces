@@ -27,6 +27,7 @@ AppConfig.editableFiles = [
   'sql',
 ];
 AppConfig.autoSaveInterval = 40000;
+let maxCollectedTag = 1500;
 AppConfig.maxLoops = 2;
 AppConfig.defaultFolderColor = 'gray';
 
