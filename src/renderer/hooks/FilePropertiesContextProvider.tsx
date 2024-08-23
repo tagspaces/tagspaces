@@ -25,6 +25,7 @@ import React, {
   useState,
 } from 'react';
 import { Pro } from '-/pro';
+import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -150,6 +151,12 @@ export const FilePropertiesContextProvider = ({
     if (isEditDescriptionMode.current !== editMode) {
       isEditDescriptionMode.current = editMode;
       forceUpdate();
+      if (AppConfig.isElectron) {
+        window.electronIO.ipcRenderer.sendMessage(
+          'description-changed',
+          editMode,
+        );
+      }
     }
   }
 

@@ -11,6 +11,8 @@ export type Channels =
   | 'global-shortcuts-enabled'
   | 'show-main-window'
   | 'create-new-window'
+  | 'file-changed'
+  | 'description-changed'
   | 'quitApp'
   | 'focus-window'
   | 'getDevicePaths'

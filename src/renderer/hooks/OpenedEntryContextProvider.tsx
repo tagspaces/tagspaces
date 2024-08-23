@@ -642,6 +642,9 @@ export const OpenedEntryContextProvider = ({
     if (fileChanged.current !== isChanged) {
       fileChanged.current = isChanged;
       forceUpdate();
+      if (AppConfig.isElectron) {
+        window.electronIO.ipcRenderer.sendMessage('file-changed', isChanged);
+      }
     }
   }
 

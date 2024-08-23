@@ -16,6 +16,7 @@ import {
   ipcMain,
   globalShortcut,
   BrowserWindowConstructorOptions,
+  dialog,
 } from 'electron';
 // import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -351,6 +352,10 @@ function createNewWindowInstance(url?) {
     show: true,
     center: true,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   newWindowInstance.setMenuBarVisibility(false);
 
@@ -511,6 +516,10 @@ const createWindow = async (i18n) => {
     width: mainWindowState.width,
     height: mainWindowState.height,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   mainWindow.setMenuBarVisibility(false);
 
@@ -572,6 +581,27 @@ const createWindow = async (i18n) => {
     // if (isMacLike) {
     //   mainWindow.webContents.setZoomFactor(0.9);
     // }
+  });
+
+  mainWindow.on('close', (e) => {
+    // @ts-ignore
+    if (mainWindow.fileChanged || mainWindow.descriptionChanged) {
+      const choice = dialog.showMessageBoxSync(mainWindow, {
+        type: 'question',
+        buttons: [i18n.t('cancel'), i18n.t('closeApp')],
+        defaultId: 1,
+        cancelId: 0,
+        title: i18n.t('unsavedChanges'),
+        message: i18n.t('unsavedChangesMessage'),
+        detail: i18n.t('unsavedChangesDetails'),
+      });
+
+      if (choice === 0) {
+        // Cancel
+        e.preventDefault(); // Prevent closing
+      }
+      // No action needed for "Close Application", window will close
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -699,6 +729,18 @@ app
 
       ipcMain.on('create-new-window', (e, url) => {
         createNewWindowInstance(url);
+      });
+      ipcMain.on('file-changed', (e, isChanged) => {
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.fileChanged = isChanged;
+        }
+      });
+      ipcMain.on('description-changed', (e, isChanged) => {
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.descriptionChanged = isChanged;
+        }
       });
 
       loadMainEvents();
