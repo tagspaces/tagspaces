@@ -56,15 +56,15 @@ export const SettingsDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'toggle-settings-dialog') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('toggle-settings-dialog', () => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners(
+            'toggle-settings-dialog',
+          );
         }
       };
     }

@@ -53,15 +53,15 @@ export const KeyboardDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'toggle-keys-dialog') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('toggle-keys-dialog', (arg) => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners(
+            'toggle-keys-dialog',
+          );
         }
       };
     }

@@ -46,7 +46,7 @@ export const PanelsContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+      window.electronIO.ipcRenderer.on('panels', (arg) => {
         if (arg === 'open-location-manager-panel') {
           showPanel('locationManagerPanel');
         } else if (arg === 'open-tag-library-panel') {
@@ -58,7 +58,7 @@ export const PanelsContextProvider = ({
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners('panels');
         }
       };
     }

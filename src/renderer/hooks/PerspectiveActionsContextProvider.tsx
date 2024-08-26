@@ -51,7 +51,7 @@ export const PerspectiveActionsContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+      window.electronIO.ipcRenderer.on('perspective', (arg) => {
         if (arg === 'next-file') {
           const action: TS.PerspectiveActions = {
             action: 'openNext',
@@ -67,7 +67,7 @@ export const PerspectiveActionsContextProvider = ({
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners('perspective');
         }
       };
     }

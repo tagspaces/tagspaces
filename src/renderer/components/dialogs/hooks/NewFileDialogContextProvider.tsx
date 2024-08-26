@@ -54,15 +54,13 @@ export const NewFileDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'new-text-file') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('new-text-file', () => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners('new-text-file');
         }
       };
     }

@@ -58,15 +58,15 @@ export const LicenseDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'toggle-license-dialog') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('toggle-license-dialog', () => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners(
+            'toggle-license-dialog',
+          );
         }
       };
     }
