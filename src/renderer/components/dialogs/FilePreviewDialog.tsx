@@ -24,16 +24,15 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
-import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { getCurrentTheme, getSupportedFileTypes } from '-/reducers/settings';
+import { getCurrentTheme } from '-/reducers/settings';
 import { useSelector } from 'react-redux';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 interface Props {
   open: boolean;
@@ -43,10 +42,9 @@ interface Props {
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
-  //const dispatch: AppDispatch = useDispatch();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -55,14 +53,14 @@ function FilePreviewDialog(props: Props) {
     useRef<HTMLDivElement>(null);
   const eventID = useRef<string>(getUuid());
 
-  const openedFile: OpenedEntry =
+  const openedFile: TS.OpenedEntry =
     fsEntry && openedEntry
       ? {
           ...openedEntry,
           ...(fsEntry.uuid && { uuid: fsEntry.uuid }),
           path: fsEntry.path,
           isFile: fsEntry.isFile,
-          editMode: false,
+          // editMode: false,
         }
       : undefined;
 
@@ -104,53 +102,51 @@ function FilePreviewDialog(props: Props) {
           // @ts-ignore call setContent from iframe
           fileViewer.current.contentWindow.setTheme(currentTheme);
         }*/
+        const openLocation = findLocation(openedFile.locationID);
 
-        switchLocationTypeByID(openedFile.locationId).then(() => {
-          PlatformIO.loadTextFilePromise(
+        openLocation
+          ?.loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false,
           )
-            .then((content) => {
-              const UTF8_BOM = '\ufeff';
-              if (content.indexOf(UTF8_BOM) === 0) {
-                content = content.substr(1);
-              }
-              let fileDirectory = extractContainingDirectoryPath(
-                textFilePath,
-                PlatformIO.getDirSeparator(),
+          .then((content) => {
+            const UTF8_BOM = '\ufeff';
+            if (content.indexOf(UTF8_BOM) === 0) {
+              content = content.substr(1);
+            }
+            let fileDirectory = extractContainingDirectoryPath(
+              textFilePath,
+              openLocation?.getDirSeparator(),
+            );
+            if (AppConfig.isWeb) {
+              fileDirectory =
+                extractContainingDirectoryPath(
+                  // eslint-disable-next-line no-restricted-globals
+                  location.href,
+                  openLocation?.getDirSeparator(),
+                ) +
+                '/' +
+                fileDirectory;
+            }
+            if (
+              fileViewer &&
+              fileViewer.current &&
+              fileViewer.current.contentWindow &&
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent
+            ) {
+              // @ts-ignore call setContent from iframe
+              fileViewer.current.contentWindow.setContent(
+                content,
+                fileDirectory,
+                !isEditMode,
+                currentTheme,
               );
-              if (AppConfig.isWeb) {
-                fileDirectory =
-                  extractContainingDirectoryPath(
-                    // eslint-disable-next-line no-restricted-globals
-                    location.href,
-                    PlatformIO.getDirSeparator(),
-                  ) +
-                  '/' +
-                  fileDirectory;
-              }
-              if (
-                fileViewer &&
-                fileViewer.current &&
-                fileViewer.current.contentWindow &&
-                // @ts-ignore
-                fileViewer.current.contentWindow.setContent
-              ) {
-                // @ts-ignore call setContent from iframe
-                fileViewer.current.contentWindow.setContent(
-                  content,
-                  fileDirectory,
-                  !openedFile.editMode,
-                  currentTheme,
-                );
-              }
-              return switchCurrentLocationType();
-            })
-            .catch((err) => {
-              console.warn('Error loading text content ' + err);
-              return switchCurrentLocationType();
-            });
-        });
+            }
+          })
+          .catch((err) => {
+            console.log('Error loading text content ' + err);
+          });
         break;
     }
   };

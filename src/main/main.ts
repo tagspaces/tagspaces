@@ -16,8 +16,9 @@ import {
   ipcMain,
   globalShortcut,
   BrowserWindowConstructorOptions,
+  dialog,
 } from 'electron';
-import { autoUpdater } from 'electron-updater';
+// import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
@@ -27,18 +28,19 @@ import findFreePorts from 'find-free-ports';
 import settings from './settings';
 import { getExtensions } from './extension-utils';
 import i18nInit from '../renderer/services/i18nInit';
-import buildTrayIconMenu from './electron-tray-menu';
+import buildTrayMenu from './electron-tray-menu';
+import buildDockMenu from './electron-dock-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
 import { Extensions } from './types';
 
-class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
+// class AppUpdater {
+//   constructor() {
+//     log.transports.file.level = 'info';
+//     autoUpdater.logger = log;
+//     autoUpdater.checkForUpdatesAndNotify();
+//   }
+// }
 
 let isMacLike = process.platform === 'darwin';
 
@@ -48,6 +50,8 @@ let mainWindow: BrowserWindow | null = null;
 function getUsedWsPort() {
   return usedWsPort;
 }*/
+
+let globalShortcutsEnabled = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -156,6 +160,25 @@ function getSpellcheckLanguage(i18n) {
 }
 
 function showApp() {
+  var windows = BrowserWindow.getAllWindows();
+  windows.forEach((win, i) => {
+    if (win && i < 1) {
+      if (win.isMinimized()) {
+        win.restore();
+      } else {
+        win.show();
+      }
+    }
+  });
+  // if (mainWindow) {
+  //   if (mainWindow.isMinimized()) {
+  //     mainWindow.restore();
+  //   }
+  //   mainWindow?.show();
+  // }
+}
+
+function showMainWindow() {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -165,119 +188,151 @@ function showApp() {
 }
 
 function openLocationManagerPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-location-manager-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-location-manager-panel');
 }
 
 function openTagLibraryPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-tag-library-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-tag-library-panel');
 }
 
 function goBack() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'go-back');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'go-back');
 }
 
 function goForward() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'go-forward');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'go-forward');
 }
 
 function setZoomResetApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-reset-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-reset-app');
 }
 
 function setZoomInApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-in-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-in-app');
 }
 
 function setZoomOutApp() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'set-zoom-out-app');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'set-zoom-out-app');
 }
 
 function exitFullscreen() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'exit-fullscreen');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'exit-fullscreen');
 }
 
 function toggleSettingsDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-settings-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-settings-dialog');
 }
 
 function openHelpFeedbackPanel() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-help-feedback-panel');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'open-help-feedback-panel');
 }
 
 function toggleKeysDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-keys-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-keys-dialog');
 }
 
 function toggleOnboardingDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
 }
 
 function openURLExternally(data) {
-  showApp();
-  mainWindow?.webContents.send('open-url-externally', data);
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('open-url-externally', data);
 }
 
 function toggleLicenseDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-license-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-license-dialog');
 }
 
 function toggleThirdPartyLibsDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
 }
 
 function toggleAboutDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-about-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-about-dialog');
 }
 
 function showSearch() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'open-search');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'open-search');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'open-search');
+  }
 }
 
 function newTextFile() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'new-text-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'new-text-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'new-text-file');
+  }
 }
 
 function getNextFile() {
-  mainWindow?.webContents.send('cmd', 'next-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'next-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'next-file');
+  }
 }
 
 function getPreviousFile() {
-  mainWindow?.webContents.send('cmd', 'previous-file');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('cmd', 'previous-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('cmd', 'previous-file');
+  }
 }
 
 function showCreateDirectoryDialog() {
-  mainWindow?.webContents.send('cmd', 'show-create-directory-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'show-create-directory-dialog');
 }
 
 function toggleOpenLinkDialog() {
-  showApp();
-  mainWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
 }
 
 function resumePlayback() {
-  mainWindow?.webContents.send('play-pause', true);
+  // var focusedWindow = BrowserWindow.getFocusedWindow();
+  // if (focusedWindow) {
+  //   focusedWindow?.webContents.send('cmd', 'play-pause');
+  // } else {
+  //   mainWindow?.webContents.send('cmd', 'play-pause');
+  // }
+  var windows = BrowserWindow.getAllWindows();
+  windows.forEach((win, i) => {
+    win?.webContents.send('cmd', 'play-pause');
+  });
 }
 
 function reloadApp() {
-  showApp();
-  mainWindow?.loadURL(resolveHtmlPath('index.html'));
+  var focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.loadURL(resolveHtmlPath('index.html'));
 }
 
 function createNewWindowInstance(url?) {
@@ -297,6 +352,10 @@ function createNewWindowInstance(url?) {
     show: true,
     center: true,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   newWindowInstance.setMenuBarVisibility(false);
 
@@ -307,8 +366,8 @@ function createNewWindowInstance(url?) {
   }
 }
 
-function buildTrayMenu(i18n) {
-  buildTrayIconMenu(
+function bindTrayMenu(i18n) {
+  buildTrayMenu(
     {
       showTagSpaces: showApp,
       resumePlayback,
@@ -321,10 +380,11 @@ function buildTrayMenu(i18n) {
     },
     i18n,
     isMacLike,
+    globalShortcutsEnabled,
   );
 }
 
-function buildAppMenu(i18n) {
+function bindAppMenu(i18n) {
   buildDesktopMenu(
     {
       showTagSpaces: showApp,
@@ -456,6 +516,10 @@ const createWindow = async (i18n) => {
     width: mainWindowState.width,
     height: mainWindowState.height,
   });
+  // @ts-ignore
+  mainWindow.fileChanged = false;
+  // @ts-ignore
+  mainWindow.descriptionChanged = false;
 
   mainWindow.setMenuBarVisibility(false);
 
@@ -472,6 +536,17 @@ const createWindow = async (i18n) => {
         port: getUsedWsPort(),
       });
     });*/
+
+  /*mainWindow.webContents.on('did-finish-load', () => {
+    const cssPath = app.isPackaged ? path.join(
+      process.resourcesPath,
+      'node_modules/@milkdown/theme-nord/lib/style.css',
+    ) :  path.join(
+      __dirname,
+      '../../node_modules/@milkdown/theme-nord/lib/style.css',
+    )
+    mainWindow?.webContents.insertCSS(fs.readFileSync(cssPath, 'utf8'));
+  });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
     if (!mainWindow) {
@@ -508,6 +583,27 @@ const createWindow = async (i18n) => {
     // }
   });
 
+  mainWindow.on('close', (e) => {
+    // @ts-ignore
+    if (mainWindow.fileChanged || mainWindow.descriptionChanged) {
+      const choice = dialog.showMessageBoxSync(mainWindow, {
+        type: 'question',
+        buttons: [i18n.t('cancel'), i18n.t('closeApp')],
+        defaultId: 1,
+        cancelId: 0,
+        title: i18n.t('unsavedChanges'),
+        message: i18n.t('unsavedChangesMessage'),
+        detail: i18n.t('unsavedChangesDetails'),
+      });
+
+      if (choice === 0) {
+        // Cancel
+        e.preventDefault(); // Prevent closing
+      }
+      // No action needed for "Close Application", window will close
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -524,10 +620,9 @@ const createWindow = async (i18n) => {
       app.quit();
     },
   );
-
   try {
-    buildAppMenu(i18n);
-    buildTrayMenu(i18n);
+    bindAppMenu(i18n);
+    bindTrayMenu(i18n);
   } catch (ex) {
     console.log('buildMenus', ex);
   }
@@ -540,7 +635,7 @@ const createWindow = async (i18n) => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
@@ -559,12 +654,17 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('activate', function () {
+app.on('activate', (event, hasVisibleWindows) => {
+  // console.log('Activate ' + hasVisibleWindows);
+  var windows = BrowserWindow.getAllWindows();
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
+  if (windows.length === 0) {
     createWindow(appI18N);
+  } else {
+    showApp();
   }
+  event.preventDefault();
 });
 
 app.on('quit', () => {
@@ -591,18 +691,29 @@ app
   .then(() => {
     return i18nInit().then((i18n) => {
       appI18N = i18n;
+      if (process.platform === 'darwin') {
+        app.dock.setMenu(
+          buildDockMenu(
+            {
+              showTagSpaces: showApp,
+              resumePlayback,
+              createNewWindowInstance,
+              openSearch: showSearch,
+              toggleNewFileDialog: newTextFile,
+              openNextFile: getNextFile,
+              openPrevFile: getPreviousFile,
+            },
+            i18n,
+          ),
+        );
+      }
       createWindow(i18n);
-      app.on('activate', () => {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (mainWindow === null) createWindow(i18n);
-      });
 
       i18n.on('languageChanged', (lng) => {
         try {
           console.log('languageChanged:' + lng);
-          buildAppMenu(i18n);
-          buildTrayMenu(i18n);
+          bindAppMenu(i18n);
+          bindTrayMenu(i18n);
           const spellCheckLanguage = getSpellcheckLanguage(lng);
           mainWindow?.webContents.session.setSpellCheckerLanguages([
             spellCheckLanguage,
@@ -619,6 +730,18 @@ app
       ipcMain.on('create-new-window', (e, url) => {
         createNewWindowInstance(url);
       });
+      ipcMain.on('file-changed', (e, isChanged) => {
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.fileChanged = isChanged;
+        }
+      });
+      ipcMain.on('description-changed', (e, isChanged) => {
+        if (mainWindow) {
+          // @ts-ignore
+          mainWindow.descriptionChanged = isChanged;
+        }
+      });
 
       loadMainEvents();
 
@@ -633,6 +756,7 @@ app
               extensions,
               supportedFileTypes,
             };
+            console.log('set_extensions' + JSON.stringify(setExtensions));
             mainWindow?.webContents.send('set_extensions', setExtensions);
             // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
           })
@@ -664,10 +788,17 @@ app
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
-        mainWindow?.webContents.setZoomFactor(zoomLevel);
+        var focusedWindow = BrowserWindow.getFocusedWindow();
+        focusedWindow?.webContents.setZoomFactor(zoomLevel);
       });
 
-      ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
+      ipcMain.on('global-shortcuts-enabled', (e, globalShortcuts) => {
+        globalShortcutsEnabled = globalShortcuts;
+        try {
+          bindTrayMenu(i18n);
+        } catch (ex) {
+          console.log('buildMenus', ex);
+        }
         if (globalShortcutsEnabled) {
           globalShortcut.register('CommandOrControl+Shift+F', showSearch);
           globalShortcut.register('CommandOrControl+Shift+P', resumePlayback);

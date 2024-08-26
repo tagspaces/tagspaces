@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -32,7 +32,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import XIcon from '@mui/icons-material/X';
 import WelcomeBackground from '-/assets/images/background.png';
 import WelcomeLogo from '-/assets/images/welcome-logo.png';
 import {
@@ -42,7 +42,6 @@ import {
   KeyShortcutsIcon,
   HelpIcon,
 } from '-/components/CommonIcons';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDesktopMode } from '-/reducers/settings';
 import Links from 'assets/links';
 import { Pro } from '-/pro';
@@ -52,6 +51,11 @@ import { openURLExternally } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 
 const PREFIX = 'WelcomePanel';
 
@@ -64,12 +68,13 @@ const classes = {
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.listItem}`]: {
     color: theme.palette.text.primary,
-    textTransform: 'uppercase',
-    marginTop: 10,
+    marginTop: 5,
+  },
+  [`& .${classes.listItem} .MuiListItemText-primary`]: {
+    fontSize: '1rem',
   },
   [`& .${classes.recentTitle}`]: {
     color: theme.palette.text.primary,
-    textTransform: 'uppercase',
     textAlign: 'center',
   },
   [`& .${classes.noRecentItems}`]: {
@@ -82,40 +87,31 @@ const Root = styled('div')(({ theme }) => ({
 function WelcomePanel() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const dispatch: AppDispatch = useDispatch();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  const { openNewFileDialog } = useNewFileDialogContext();
+  const { openAboutDialog } = useAboutDialogContext();
+  const { openKeyboardDialog } = useKeyboardDialogContext();
+  const { openLinkDialog } = useLinkDialogContext();
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const desktopMode = useSelector(getDesktopMode);
 
-  const toggleNewFileDialogDispatch = () =>
-    dispatch(AppActions.toggleNewFileDialog());
-  const toggleLocationDialogDispatch = () =>
-    dispatch(AppActions.toggleLocationDialog());
-  const toggleOpenLinkDialogDispatch = () =>
-    dispatch(AppActions.toggleOpenLinkDialog());
-  const toggleKeysDialogDispatch = () =>
-    dispatch(AppActions.toggleKeysDialog());
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-
-  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+  const historyKeys = Pro ? Pro.keys.historyKeys : {};
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    ? historyContext.fileOpenHistory
     : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    ? historyContext.fileEditHistory
     : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    ? historyContext.folderOpenHistory
     : [];
 
   const showDelete = false;
   const maxRecentItems = 5;
-
-  /*function triggerOpenLocation() {
-    const button = document.getElementById(
-      desktopMode ? 'locationMenuButton' : 'mobileMenuButton'
-    );
-    button.click();
-  }*/
 
   function renderRecentItems() {
     return (
@@ -203,20 +199,11 @@ function WelcomePanel() {
           role="button"
           aria-hidden="true"
           tabIndex={0}
-          onClick={() => dispatch(AppActions.toggleAboutDialog())}
+          onClick={() => openAboutDialog()}
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        {/* <ListItem onClick={triggerOpenLocation}>
-          <ListItemIcon>
-            <LocalLocationIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:chooseLocation')}
-            className={classes.listItem}
-          />
-        </ListItem> */}
-        <ListItem onClick={toggleNewFileDialogDispatch}>
+        <ListItem onClick={() => openNewFileDialog()}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -225,7 +212,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleLocationDialogDispatch}>
+        <ListItem onClick={() => openCreateEditLocationDialog()}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
@@ -234,7 +221,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleOpenLinkDialogDispatch}>
+        <ListItem onClick={() => openLinkDialog()}>
           <ListItemIcon>
             <OpenLinkIcon />
           </ListItemIcon>
@@ -254,7 +241,7 @@ function WelcomePanel() {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleKeysDialogDispatch}>
+        <ListItem onClick={() => openKeyboardDialog()}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
@@ -333,10 +320,10 @@ function WelcomePanel() {
         </ListItem>
         <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
-            <TwitterIcon />
+            <XIcon />
           </ListItemIcon>
           <ListItemText
-            primary={t('core:followOnTwitter')}
+            primary={t('core:followOnX')}
             className={classes.listItem}
           />
         </ListItem>
@@ -354,7 +341,7 @@ function WelcomePanel() {
         height: '100%',
       }}
     >
-      <div
+      {/* <div
         style={{
           backgroundColor: theme.palette.background.default,
           backgroundImage: 'url(' + WelcomeBackground + ')',
@@ -366,7 +353,7 @@ function WelcomePanel() {
           width: '100%',
           height: '100%',
         }}
-      />
+      /> */}
       <Grid
         style={{
           position: 'relative',

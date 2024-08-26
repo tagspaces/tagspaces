@@ -26,6 +26,7 @@ import {
   deleteDirectoryPromise,
   unZip,
   getDirProperties,
+  isDirectory,
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
 import path from 'path';
@@ -43,6 +44,13 @@ const progress = {};
 let wsc;
 
 export default function loadMainEvents() {
+  ipcMain.on('reloadWindow', () => {
+    const mainWindow = BrowserWindow.getAllWindows();
+    if (mainWindow.length > 0) {
+      mainWindow.map((window) => window.reload());
+    }
+  });
+
   ipcMain.on('watchFolder', async (e, path: string, depth) => {
     try {
       const wssPort = await postRequest(
@@ -55,6 +63,7 @@ export default function loadMainEvents() {
         if (wsc) {
           wsc.close();
         }
+        // @ts-ignore
         wsc = new WebSocket('ws://127.0.0.1:' + wssPort.port);
         wsc.on('message', function message(data) {
           console.log('received: %s', data);
@@ -67,13 +76,17 @@ export default function loadMainEvents() {
         });
       }
     } catch (e) {
-      console.error(e);
+      console.error('wss error:', e);
     }
 
     //watchFolder(mainWindow, e, path, depth);
   });
   ipcMain.handle('isWorkerAvailable', async () => {
     const results = await isWorkerAvailable();
+    return results;
+  });
+  ipcMain.handle('isDirectory', async (event, path) => {
+    const results = await isDirectory(path);
     return results;
   });
   ipcMain.handle('resolveRelativePaths', (event, relativePath) => {
@@ -182,6 +195,15 @@ export default function loadMainEvents() {
   });
   ipcMain.handle('createDirectoryPromise', async (event, dirPath) => {
     const result = await createDirectoryPromise(dirPath);
+    if (process.platform === 'win32' && dirPath.endsWith('\\.ts')) {
+      // hide .ts folder on Windows
+      const wssPost = await postRequest(
+        JSON.stringify({ path: dirPath }),
+        '/hide-folder',
+      );
+      // @ts-ignore
+      console.log('Hide folder: ' + dirPath + ' - ' + wssPost.success);
+    }
     return result;
   });
   ipcMain.handle(
@@ -193,8 +215,18 @@ export default function loadMainEvents() {
   );
   ipcMain.handle(
     'renameFilePromise',
-    async (event, filePath, newFilePath, onProgress) => {
-      const result = await renameFilePromise(filePath, newFilePath, onProgress);
+    async (event, filePath, newFilePath, withProgress) => {
+      let result;
+      if (withProgress) {
+        progress['renameFilePromise'] = newProgress('renameFilePromise', 1);
+        result = await renameFilePromise(
+          filePath,
+          newFilePath,
+          getOnProgress('renameFilePromise', progress),
+        );
+      } else {
+        result = await renameFilePromise(filePath, newFilePath, undefined);
+      }
       return result;
     },
   );
@@ -312,6 +344,7 @@ export default function loadMainEvents() {
         ret = await shell.trashItem(path);
       } catch (err) {
         console.error('moveToTrash ' + path + 'error:', err);
+        return false;
       }
       return ret;
     } else {

@@ -21,9 +21,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
+import AppConfig from '-/AppConfig';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
-import PlatformIO from '-/services/platform-facade';
 
 const configureStore = (initialState) => {
   // Redux Configuration
@@ -67,8 +67,13 @@ const configureStore = (initialState) => {
   const persistor = persistStore(store, null, () => {
     // languageChanged event is not handled in main process on store loaded (App is not ready)
     setTimeout(() => {
-      // @ts-ignore
-      PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
+      if (AppConfig.isElectron) {
+        window.electronIO.ipcRenderer.sendMessage(
+          'set-language',
+          // @ts-ignore
+          store.getState().settings.interfaceLanguage,
+        );
+      }
     }, 500);
     // document.dispatchEvent(new Event('storeLoaded'));
     // store.dispatch(push('/main'));

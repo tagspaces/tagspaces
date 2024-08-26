@@ -25,7 +25,6 @@ import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -40,19 +39,8 @@ import Links from 'assets/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-
-const PREFIX = 'SettingsDialog';
-
-const classes = {
-  mainContent: `${PREFIX}-mainContent`,
-};
-
-const StyledDialog = styled(Dialog)(() => ({
-  [`& .${classes.mainContent}`]: {
-    overflowY: 'auto',
-    overflowX: 'hidden',
-  },
-}));
+import AppConfig from '-/AppConfig';
+import TranslucentDialog from '-/components/dialogs/TranslucentDialog';
 
 interface Props {
   open: boolean;
@@ -107,7 +95,12 @@ function SettingsDialog(props: Props) {
   );
 
   const renderContent = () => (
-    <DialogContent className={classes.mainContent}>
+    <DialogContent
+      style={{
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }}
+    >
       {isResetSettingsDialogOpened && (
         <ConfirmDialog
           open={isResetSettingsDialogOpened}
@@ -121,7 +114,11 @@ function SettingsDialog(props: Props) {
               clearAllURLParams();
               localStorage.clear();
               // eslint-disable-next-line no-restricted-globals
-              location.reload();
+              if (AppConfig.isElectron) {
+                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+              } else {
+                window.location.reload();
+              }
 
               /* const electron = window.require('electron');
               const webContents = electron.remote.getCurrentWebContents();
@@ -135,7 +132,7 @@ function SettingsDialog(props: Props) {
         />
       )}
 
-      <div data-tid="settingsDialog" className={classes.mainContent}>
+      <div data-tid="settingsDialog">
         {currentTab === 0 && <SettingsGeneral />}
         {currentTab === 1 && <SettingsFileTypes />}
         {currentTab === 2 && <SettingsKeyBindings />}
@@ -181,7 +178,7 @@ function SettingsDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <StyledDialog
+    <TranslucentDialog
       fullScreen={fullScreen}
       open={open}
       keepMounted
@@ -191,7 +188,7 @@ function SettingsDialog(props: Props) {
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </StyledDialog>
+    </TranslucentDialog>
   );
 }
 

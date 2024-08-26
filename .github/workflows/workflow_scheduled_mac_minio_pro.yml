@@ -1,0 +1,63 @@
+name: Nightly E2E Tests Electron S3 MacOS
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  e2eTestsElectronMac:
+    name: Test TagSpaces Desktop on Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checking out default branch
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          submodules: true
+      - name: Checkout TestData
+        uses: actions/checkout@v4
+        with:
+          repository: tagspaces/testdata
+          path: tests/testdata
+      - name: Configure NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com/
+          scope: '@tagspacespro'
+      - name: Running npm install, prettier and type checks
+        run: |
+          npm install
+          npm run prepare-node
+          npm run prettier-check
+          npm run type-check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
+      - name: Run Unit tests
+        run: npm run test-unit
+      - uses: carlosperate/download-file-action@v2
+        id: minio
+        name: Download the Minio
+        with:
+          file-url: 'https://s3.eu-central-1.wasabisys.com/demots/public/mc-20201119/minio-mac'
+          file-name: 'minio'
+          location: './tests/bin/'
+      - name: Check if Minio exists
+        run: |
+          ls ./tests/bin/
+          test -f ./tests/bin/minio
+      - name: Make the Minio executable
+        run: chmod +x ./tests/bin/minio
+      - name: Run Electron tests
+        run: |
+          npm run build-e2e
+          npm run test-playwright-minio
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-artifacts
+          path: |
+            tests/test-reports/
+            test-results/
+            playwright-report/

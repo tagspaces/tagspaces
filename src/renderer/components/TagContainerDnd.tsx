@@ -25,7 +25,7 @@ import AppConfig from '-/AppConfig';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   tag: TS.Tag;
@@ -76,6 +76,7 @@ const TagContainerDnd = (props: Props) => {
     selectedEntries,
   } = props;
 
+  const { currentLocation } = useCurrentLocationContext();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
 
   const endDrag = (item, monitor) => {
@@ -194,7 +195,7 @@ const TagContainerDnd = (props: Props) => {
         const extractedTags = extractTags(
           entryPath,
           AppConfig.tagDelimiter,
-          PlatformIO.getDirSeparator(),
+          currentLocation?.getDirSeparator(),
         );
         if (
           extractedTags.length > 0 &&

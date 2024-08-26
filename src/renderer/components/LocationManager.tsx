@@ -16,28 +16,25 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import LoadingLazy from '-/components/LoadingLazy';
+import { AppDispatch } from '-/reducers/app';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
-import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 
-const CreateEditLocationDialog = React.lazy(
+/*const CreateEditLocationDialog = React.lazy(
   () =>
     import(
-      /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
+      /!* webpackChunkName: "CreateEditLocationDialog" *!/ './dialogs/CreateEditLocationDialog'
     ),
 );
 function CreateEditLocationDialogAsync(props) {
@@ -46,7 +43,7 @@ function CreateEditLocationDialogAsync(props) {
       <CreateEditLocationDialog {...props} />
     </React.Suspense>
   );
-}
+}*/
 
 interface Props {
   style?: any;
@@ -56,21 +53,24 @@ interface Props {
 
 function LocationManager(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const {
+    locations,
+    currentLocation,
     addLocations,
-    editLocation,
+    moveLocation,
+    deleteLocation,
     selectedLocation,
     setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
 
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
-    useState<boolean>(false);
+  /*const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
+    useState<boolean>(false);*/
   const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
     useState<boolean>(false);
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
@@ -95,13 +95,13 @@ function LocationManager(props: Props) {
     if (!result.destination) {
       return;
     }
-
-    dispatch(
+    moveLocation(result.draggableId, result.destination.index);
+    /*dispatch(
       LocationActions.moveLocation(
         result.draggableId,
         result.destination.index,
       ),
-    );
+    );*/
   };
 
   const { reduceHeightBy, show } = props;
@@ -114,11 +114,12 @@ function LocationManager(props: Props) {
     >
       {
         //loading &&
-        (PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()) && (
-          <>
-            <style>
-              {`
+        currentLocation &&
+          (currentLocation.haveObjectStoreSupport() ||
+            currentLocation.haveWebDavSupport()) && (
+            <>
+              <style>
+                {`
                 @keyframes hide {
                   to {
                       width: 0;
@@ -126,22 +127,22 @@ function LocationManager(props: Props) {
                 }
               }
             `}
-            </style>
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: 'calc(100% - 150px)',
-                width: 310,
-                backdropFilter: 'grayscale(1)',
-                animation: 'hide 1ms linear 5s 1 forwards',
-                // backgroundColor: 'red'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-              }}
-            />
-          </>
-        )
+              </style>
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 1000,
+                  height: 'calc(100% - 150px)',
+                  width: 310,
+                  backdropFilter: 'grayscale(1)',
+                  animation: 'hide 1ms linear 5s 1 forwards',
+                  // backgroundColor: 'red'
+                  // backdropFilter: 'blur(2px)',
+                  // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+                }}
+              />
+            </>
+          )
       }
       <LocationManagerMenu
         importLocations={() => {
@@ -152,13 +153,11 @@ function LocationManager(props: Props) {
         classes={classes}
         showCreateLocationDialog={() => {
           setSelectedLocation(undefined);
-          dispatch(AppActions.toggleLocationDialog());
+          openCreateEditLocationDialog();
         }}
-        toggleOpenLinkDialog={() => dispatch(AppActions.toggleOpenLinkDialog())}
       />
       {locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu
-          setEditLocationDialogOpened={setEditLocationDialogOpened}
           setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
         />
       )}
@@ -199,9 +198,6 @@ function LocationManager(props: Props) {
                         <LocationView
                           key={location.uuid}
                           location={location}
-                          setEditLocationDialogOpened={
-                            setEditLocationDialogOpened
-                          }
                           setDeleteLocationDialogOpened={
                             setDeleteLocationDialogOpened
                           }
@@ -223,13 +219,13 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isEditLocationDialogOpened && (
+      {/*{isEditLocationDialogOpened && (
         <CreateEditLocationDialogAsync
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
           editLocation={(location) => editLocation(location)}
         />
-      )}
+      )}*/}
       {isDeleteLocationDialogOpened && (
         <ConfirmDialog
           open={isDeleteLocationDialogOpened}
@@ -240,7 +236,8 @@ function LocationManager(props: Props) {
           })}
           confirmCallback={(result) => {
             if (result && selectedLocation) {
-              dispatch(LocationActions.deleteLocation(selectedLocation));
+              deleteLocation(selectedLocation.uuid);
+              //dispatch(LocationActions.deleteLocation(selectedLocation));
             }
           }}
           cancelDialogTID="cancelDeleteLocationDialog"

@@ -24,7 +24,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '-/components/Tooltip';
-import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import DraggablePaper from '-/components/DraggablePaper';
 import LogoIcon from '-/assets/images/icon100x100.svg';
@@ -38,11 +37,12 @@ import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
+import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
+import TranslucentDialog from './TranslucentDialog';
 
 interface Props {
   open: boolean;
-  toggleLicenseDialog: () => void;
-  toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
 }
 
@@ -56,6 +56,8 @@ document.title = productName + ' ' + versionMeta.version;
 
 function AboutDialog(props: Props) {
   const { t } = useTranslation();
+  const { openLicenseDialog } = useLicenseDialogContext();
+  const { openThirdPartyLibsDialog } = useThirdPartyLibsDialogContext();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose } = props;
@@ -82,7 +84,7 @@ function AboutDialog(props: Props) {
           return true;
         })
         .catch((error) => {
-          console.warn('Error while checking for update: ' + error);
+          console.log('Error while checking for update: ' + error);
         });
     }
   }
@@ -115,7 +117,7 @@ function AboutDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <TranslucentDialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -163,7 +165,7 @@ function AboutDialog(props: Props) {
             size="small"
             color="primary"
             style={{ marginLeft: -5 }}
-            onClick={props.toggleThirdPartyLibsDialog}
+            onClick={() => openThirdPartyLibsDialog()}
           >
             Software Acknowledgements
           </Button>
@@ -217,7 +219,7 @@ function AboutDialog(props: Props) {
             size="small"
             color="primary"
             data-tid="openLicenseDialog"
-            onClick={props.toggleLicenseDialog}
+            onClick={() => openLicenseDialog()}
           >
             License Agreement
           </Button>
@@ -269,7 +271,7 @@ function AboutDialog(props: Props) {
           {t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </TranslucentDialog>
   );
 }
 

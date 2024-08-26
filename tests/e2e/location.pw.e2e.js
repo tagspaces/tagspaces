@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   openLocationMenu,
@@ -7,6 +7,8 @@ import {
   getPwLocationTid,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
+  defaultLocationName,
 } from './location.helpers';
 import {
   clickOn,
@@ -16,33 +18,42 @@ import {
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { stopServices } from '../setup-functions';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
 
 let testLocationName;
 
-test.beforeAll(async () => {
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
   await startTestingApp('extconfig-without-locations.js');
   //await clearDataStorage();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
 test.beforeEach(async () => {
   testLocationName = '' + new Date().getTime();
 
-  if (global.isMinio) {
+  if (global.isMinio || global.isS3) {
     await createPwMinioLocation('', testLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, testLocationName, true);
@@ -54,11 +65,6 @@ test.beforeEach(async () => {
 
 test.describe('TST03 - Testing locations:', () => {
   test('TST0301 - Should create a location [web,electron]', async () => {
-    // const allLocations = await global.client.$$('[data-tid=locationTitleElement]');
-    // expect(allLocations.length).toBeGreaterThan(0);
-    // const lastLocation = allLocations[allLocations.length - 1];
-    // const lastLocationNameInDom = (await global.client.elementIdText(lastLocation.ELEMENT)).value;
-    // const addedLocation = await global.client.getText('//button[contains(., "' + testTagName + '")]');
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
@@ -67,12 +73,11 @@ test.describe('TST03 - Testing locations:', () => {
   });
 
   test('TST0302 - Should remove a location [web,electron]', async () => {
-    // await global.client.waitForVisible('[data-tid=locationList]');
-    // const allLocations = await global.client.$$('[data-tid=locationList]');
-    // await delay(500);
-    // expect(allLocations.length).toBeGreaterThan(0);
-    // const lastLocation = allLocations[allLocations.length - 1];
-    // await global.client.elementIdClick(lastLocation.ELEMENT);
+    await expectElementExist(
+      '[data-tid=location_' + testLocationName + ']',
+      true,
+      4500,
+    );
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=removeLocation]');
     await clickOn('[data-tid=confirmDeleteLocationDialog]');
@@ -90,13 +95,6 @@ test.describe('TST03 - Testing locations:', () => {
     await global.client.dblclick('[data-tid=locationName] input');
     await setInputKeys('locationName', newLocationName);
     await clickOn('[data-tid=confirmLocationCreation]');
-    /*await delay(500);
-    await global.client.$('[data-tid=locationList]');
-    const allLocationsList = await global.client.getText(
-      '[data-tid=locationList]'
-    );*/
-    //await delay(500);
-    //expect(allLocationsList.indexOf(newLocationName) >= 0).toBe(true);
 
     await expectElementExist(
       '[data-tid=location_' + newLocationName + ']',
@@ -126,11 +124,12 @@ test.describe('TST03 - Testing locations:', () => {
 
   test('TST0307 - Move location Up and Down [web,electron]', async () => {
     if (global.isWeb) {
-      /*await takeScreenshot(
-        'TST0307 Move location Up and Down before create dummyLocation'
-      );*/
       // in web there is no other locations
-      await createPwMinioLocation('', 'dummyLocation', false);
+      if (global.isMinio) {
+        await createPwMinioLocation('', 'dummyLocation', false);
+      } else if (global.isS3) {
+        await createS3Location('empty_folder');
+      }
     }
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=moveLocationUp]');

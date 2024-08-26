@@ -16,6 +16,9 @@
  *
  */
 
+import { ScopeType } from '-/components/SearchOptions';
+import AWS from 'aws-sdk';
+
 export namespace TS {
   interface Location {
     uuid: string;
@@ -25,27 +28,40 @@ export namespace TS {
     authType?: string; // none,password,digest,token
     username?: string;
     password?: string;
-    accessKeyId?: string;
-    secretAccessKey?: string;
-    sessionToken?: string;
-    bucketName?: string;
-    region?: string;
     paths?: Array<string>; // deprecated
     path?: string;
-    endpointURL?: string;
-    children?: Array<any>;
+    //children?: Array<any>;
     perspective?: string; // id of the perspective
-    creationDate?: string;
+    creationDate?: number;
+    lastEditedDate?: number;
     isDefault: boolean;
     isReadOnly?: boolean;
     isNotEditable?: boolean;
     watchForChanges?: boolean;
     disableIndexing?: boolean;
+    disableThumbnailGeneration?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     maxLoops?: number;
     persistTagsInSidecarFile?: boolean;
     ignorePatternPaths?: Array<string>;
+    autoOpenedFilename?: string;
+  }
+
+  interface S3Location extends Location {
+    accessKeyId?: string;
+    secretAccessKey?: string;
+    sessionToken?: string;
+    bucketName?: string;
+    region?: string;
+    endpointURL?: string;
+    encryptionKey?: string;
+    s3API?: AWS.S3;
+  }
+
+  interface FileExistenceCheck {
+    promise: Promise<boolean>;
+    path: string;
   }
 
   interface Extension {
@@ -83,7 +99,7 @@ export namespace TS {
     tagsNOT?: Array<Tag>;
     lastModified?: string;
     fileSize?: string;
-    searchBoxing?: 'location' | 'folder' | 'global';
+    searchBoxing?: ScopeType;
     searchType?: 'fuzzy' | 'semistrict' | 'strict';
     forceIndexing?: boolean;
     currentDirectory?: string;
@@ -98,12 +114,35 @@ export namespace TS {
   }
 
   type Uuid = string;
+  export type ActionSource = 'local' | 'upload' | 'thumbgen' | 'fsWatcher';
 
   interface EditAction {
-    action: 'add' | 'delete' | 'update' | 'move';
+    action: 'add' | 'delete' | 'update' | 'move' | 'edit';
     entry: TS.FileSystemEntry;
     oldEntryPath?: string;
     open?: boolean;
+    source?: ActionSource;
+  }
+
+  interface EditMetaAction {
+    action:
+      | 'perspectiveChange'
+      | 'autoSaveChange'
+      | 'descriptionChange'
+      | 'thumbChange'
+      | 'thumbGenerate'
+      | 'bgdImgChange'
+      | 'bgdColorChange';
+    entry: TS.FileSystemEntry;
+  }
+
+  interface PerspectiveActions {
+    action: 'openNext' | 'openPrevious';
+  }
+
+  interface KanBanMetaActions {
+    action: 'directoryVisibilityChange';
+    meta: TS.FileSystemEntryMeta;
   }
 
   interface Tag {
@@ -147,20 +186,17 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
-    isAutoSaveEnabled?: boolean; // common with OpenedEntry
+    locationID?: string;
+    //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
-    thumbPath?: string;
-    color?: string;
-    perspective?: TS.PerspectiveType;
     textContent?: string;
-    description?: string;
-    tags: Array<TS.Tag>;
+    tags?: TS.Tag[];
+    isEncrypted?: boolean;
     size: number;
     lmdt: number;
     path: string;
     url?: string;
     meta?: FileSystemEntryMeta;
-    // isIgnored?: boolean;
   }
 
   interface FileSystemEntryMeta {
@@ -168,10 +204,10 @@ export namespace TS {
     description?: string;
     isFile?: boolean;
     autoSave?: boolean;
-    editMode?: boolean;
-    shouldReload?: boolean;
+    //shouldReload?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
+    thumbPath?: string;
     color?: string;
     perspective?: TS.PerspectiveType;
     appName?: string;
@@ -180,6 +216,23 @@ export namespace TS {
     customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
   }
+
+  interface OpenedEntry extends FileSystemEntry {
+    viewingExtensionPath: string;
+    viewingExtensionId: string;
+    editingExtensionPath?: string;
+    editingExtensionId?: string;
+    //editMode?: boolean; // TODO move in FilePropertiesContextProvider
+    focused?: boolean; // TODO make it mandatory once support for multiple files is added
+  }
+
+  interface BroadcastMessage {
+    // unique ID for the tab instance
+    uuid: string;
+    type: string;
+    payload?: any;
+  }
+
   interface CustomOrder {
     folders?: Array<OrderVisibilitySettings>;
     files?: Array<OrderVisibilitySettings>;
@@ -195,6 +248,41 @@ export namespace TS {
   type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
 
   type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+
+  type BookmarksContextData = {
+    bookmarks: TS.BookmarkItem[];
+    setBookmark: (filePath: string, url: string) => void;
+    haveBookmark: (filePath: string) => boolean;
+    delAllBookmarks: () => void;
+    delBookmark: (filePath: string) => void;
+  };
+
+  type extractOptions = {
+    EXIFGeo?: boolean;
+    EXIFDateTime?: boolean;
+    IPTCDescription?: boolean;
+    IPTCTags?: boolean;
+  };
+
+  type ExifExtractionContextData = {
+    extractAndSaveContent: (options: extractOptions) => Promise<boolean>;
+  };
+
+  type HistoryContextData = {
+    fileOpenHistory: TS.HistoryItem[];
+    folderOpenHistory: TS.HistoryItem[];
+    fileEditHistory: TS.HistoryItem[];
+    searchHistory: TS.HistoryItem[];
+    saveHistory: (key, historyItem: TS.HistoryItem, limit) => void;
+    delAllHistory: (key) => void;
+    delHistory: (key, creationTimeStamp) => void;
+    openItem: (item: TS.HistoryItem) => void;
+  };
+
+  type KanBanImportDialogContextData = {
+    openKanBanImportDialog: () => void;
+    closeKanBanImportDialog: () => void;
+  };
 
   interface EditedEntryPath {
     action: EditedEntryAction;

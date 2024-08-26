@@ -16,18 +16,16 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ShareIcon from '@mui/icons-material/Share';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import { Menu, MenuList, MenuItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
 import OpenFileNatively from '@mui/icons-material/Launch';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import { ParentFolderIcon, DownloadIcon } from '-/components/CommonIcons';
 import OpenFolderInternally from '@mui/icons-material/Folder';
-import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
 import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
@@ -39,21 +37,23 @@ import {
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
   generateSharingLink,
+  extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import {
-  setFolderBackgroundPromise,
+  createNewInstance,
+  downloadFile,
   getRelativeEntryPath,
+  openDirectoryMessage,
 } from '-/services/utils-io';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import {
   OpenNewWindowIcon,
   DeleteIcon,
   LinkIcon,
+  TagIcon,
 } from '-/components/CommonIcons';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
@@ -65,6 +65,9 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { TS } from '-/tagspaces.namespace';
+import { generateClipboardLink } from '-/utils/dom';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   anchorEl: Element;
@@ -72,7 +75,6 @@ interface Props {
   mouseY?: number;
   open: boolean;
   onClose: () => void;
-  openDeleteFileDialog: () => void;
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
@@ -85,7 +87,6 @@ interface Props {
 
 function FileMenu(props: Props) {
   const {
-    openDeleteFileDialog,
     openRenameFileDialog,
     openMoveCopyFilesDialog,
     openShareFilesDialog,
@@ -102,14 +103,35 @@ function FileMenu(props: Props) {
 
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
+  const {
+    setBackgroundImageChange,
+    setThumbnailImageChange,
+    openFileNatively,
+    duplicateFile,
+    setFolderBackgroundPromise,
+  } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
-  const { openDirectory, currentLocationPath } = useDirectoryContentContext();
+  const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
-  const { openFileNatively, duplicateFile } = useIOActionsContext();
+  const downloadFileUrl = useRef<string>(undefined);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (currentLocation.haveObjectStoreSupport()) {
+      currentLocation
+        .generateURLforPath(selectedFilePath, 86400)
+        .then((url) => {
+          downloadFileUrl.current = url;
+          forceUpdate();
+        });
+    }
+  }, [currentLocation, selectedFilePath]);
 
   function generateFileLink() {
     const entryPath = selectedEntries[0].path;
@@ -128,13 +150,22 @@ function FileMenu(props: Props) {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
       const sharingLink = generateFileLink();
+      const entryTitle = extractTitle(
+        selectedEntries[0].name,
+        !selectedEntries[0].isFile,
+        currentLocation?.getDirSeparator(),
+      );
+
+      const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
+
       navigator.clipboard
-        .writeText(sharingLink)
+        .write(clibboardItem)
         .then(() => {
           showNotification(t('core:sharingLinkCopied'));
           return true;
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log('Error copying to clipboard ' + e);
           showNotification(t('core:sharingLinkFailed'));
         });
     }
@@ -142,7 +173,7 @@ function FileMenu(props: Props) {
 
   function showDeleteFileDialog() {
     onClose();
-    openDeleteFileDialog();
+    openDeleteMultipleEntriesDialog();
   }
 
   function showRenameFileDialog() {
@@ -162,44 +193,60 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(selectedFilePath)
-      .then((directoryPath: string) => {
-        showNotification('Thumbnail created for: ' + directoryPath);
+    setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
+      .then((thumbPath: string) => {
+        const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
+          extractContainingDirectoryPath(
+            selectedEntries[0].path,
+            currentLocation?.getDirSeparator(),
+          ),
+          false,
+        );
+        setThumbnailImageChange({
+          ...entry,
+          meta: { id: entry.uuid, thumbPath },
+        });
+        //showNotification('Thumbnail created: ' + thumbPath);
         return true;
       })
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
-        console.warn(
-          'Error setting Thumb for entry: ' + selectedFilePath,
+        console.log(
+          'Error setting Thumb for entry: ' + selectedEntries[0].path,
           error,
         );
         return true;
       });
   }
 
-  function setFolderBackground() {
+  async function setFolderBackground() {
     onClose();
-    let path =
-      PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-        ? PlatformIO.getURLforPath(selectedFilePath)
-        : selectedFilePath;
+    let path;
+    if (
+      currentLocation &&
+      (currentLocation.haveObjectStoreSupport() ||
+        currentLocation.haveWebDavSupport())
+    ) {
+      path = await currentLocation.generateURLforPath(selectedFilePath, 604800); // 7 days
+    } else {
+      path = selectedFilePath;
+    }
 
     const directoryPath = extractContainingDirectoryPath(
       selectedFilePath,
-      PlatformIO.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     setFolderBackgroundPromise(path, directoryPath)
-      .then((directoryPath: string) => {
-        dispatch(
-          AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
-        );
-        showNotification('Background created for: ' + directoryPath);
+      .then((dirPath: string) => getAllPropertiesPromise(dirPath))
+      .then((fsEntry: TS.FileSystemEntry) => {
+        setBackgroundImageChange(fsEntry);
+        showNotification('Background created for: ' + fsEntry.path);
         return true;
       })
       .catch((error) => {
         showNotification('Background creation failed.');
-        console.warn(
+        console.log(
           'Error setting Background for entry: ' + selectedFilePath,
           error,
         );
@@ -222,7 +269,7 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       const parentFolder = extractParentDirectoryPath(
         selectedFilePath,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
       return openDirectory(parentFolder);
     }
@@ -241,7 +288,7 @@ function FileMenu(props: Props) {
       const sharingLink = generateFileLink();
       const newInstanceLink =
         window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
+      createNewInstance(newInstanceLink);
     }
   }
 
@@ -300,8 +347,9 @@ function FileMenu(props: Props) {
   }
   if (
     !(
-      PlatformIO.haveObjectStoreSupport() ||
-      PlatformIO.haveWebDavSupport() ||
+      (currentLocation &&
+        (currentLocation.haveObjectStoreSupport() ||
+          currentLocation.haveWebDavSupport())) ||
       AppConfig.isWeb
     ) &&
     selectedEntries.length < 2
@@ -319,23 +367,25 @@ function FileMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
-    menuItems.push(
-      <MenuItem
-        key="fileMenuOpenContainingFolder"
-        data-tid="fileMenuOpenContainingFolder"
-        onClick={() => {
-          onClose();
-          if (selectedFilePath) {
-            PlatformIO.openDirectory(selectedFilePath);
-          }
-        }}
-      >
-        <ListItemIcon>
-          <OpenFolderInternally />
-        </ListItemIcon>
-        <ListItemText primary={t('core:showInFileManager')} />
-      </MenuItem>,
-    );
+    if (AppConfig.isElectron) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuOpenContainingFolder"
+          data-tid="fileMenuOpenContainingFolder"
+          onClick={() => {
+            onClose();
+            if (selectedFilePath) {
+              openDirectoryMessage(selectedFilePath);
+            }
+          }}
+        >
+          <ListItemIcon>
+            <OpenFolderInternally />
+          </ListItemIcon>
+          <ListItemText primary={t('core:showInFileManager')} />
+        </MenuItem>,
+      );
+    }
     menuItems.push(<Divider key="fmDivider" />);
   }
   if (!readOnlyMode) {
@@ -346,7 +396,7 @@ function FileMenu(props: Props) {
         onClick={showAddRemoveTagsDialog}
       >
         <ListItemIcon>
-          <AddRemoveTags />
+          <TagIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
         <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
@@ -475,7 +525,7 @@ function FileMenu(props: Props) {
           <MenuItem
             key="setAsBgndTID"
             data-tid="setAsBgndTID"
-            onClick={setFolderBackground}
+            onClick={() => setFolderBackground()}
           >
             <ListItemIcon>
               <ImageIcon />
@@ -498,6 +548,29 @@ function FileMenu(props: Props) {
           <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:copySharingLink')} />
+      </MenuItem>,
+    );
+
+    menuItems.push(
+      <MenuItem
+        key="downloadFileUrl"
+        data-tid="downloadFileUrlTID"
+        onClick={() => {
+          const downloadResult = downloadFile(
+            selectedFilePath,
+            downloadFileUrl.current,
+            currentLocation?.getDirSeparator(),
+          );
+          if (downloadResult === -1) {
+            showNotification(t('core:cantDownloadLocalFile'));
+          }
+          onClose();
+        }}
+      >
+        <ListItemIcon>
+          <DownloadIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>,
     );
   }
@@ -529,7 +602,7 @@ function FileMenu(props: Props) {
       open={open}
       onClose={onClose}
     >
-      {menuItems}
+      <MenuList>{menuItems}</MenuList>
     </Menu>
   );
 }

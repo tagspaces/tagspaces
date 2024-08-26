@@ -26,14 +26,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { OpenedEntry } from '-/reducers/app';
 import {
   extractContainingDirectoryPath,
   extractFileExtension,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformFacade from '-/services/platform-facade';
-import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
@@ -64,7 +61,6 @@ function ResolveConflictDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       aria-labelledby="draggable-dialog-title"
@@ -118,7 +114,7 @@ function ResolveConflictDialog(props: Props) {
                 props
                   .saveAs(
                     extractContainingDirectoryPath(openedEntry.path) +
-                      PlatformFacade.getDirSeparator() +
+                      '/' +
                       copyFileName.current,
                   )
                   .then(() => {

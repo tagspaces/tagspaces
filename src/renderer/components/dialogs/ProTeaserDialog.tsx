@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -25,19 +25,17 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getProTeaserIndex } from '-/reducers/app';
-import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
-import { register } from 'swiper/element/bundle';
-import { Navigation, Pagination } from 'swiper/modules';
 import { useTranslation } from 'react-i18next';
-
-register();
+import Slider from 'react-slick';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 interface Props {
   open: boolean;
+  slideIndex: number;
   onClose: () => void;
 }
 
@@ -68,99 +66,101 @@ function Slide(props: SlideProps) {
     pictureShadow,
   } = props;
   return (
-    <swiper-slide>
-      <div
-        style={{
-          padding: 50,
-          textAlign: 'left',
-        }}
+    <div
+      style={{
+        padding: 15,
+        textAlign: 'left',
+      }}
+    >
+      <Typography
+        variant="h5"
+        style={{ textAlign: 'center', paddingBottom: 10 }}
       >
-        <Typography
-          variant="h5"
-          style={{ textAlign: 'center', paddingBottom: 10 }}
-        >
-          {title}
-        </Typography>
-        {description && (
-          <Typography variant="subtitle1">{description}</Typography>
-        )}
-        {items &&
-          items.map((item) => (
-            <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
-          ))}
-        <Typography variant="subtitle1">&nbsp;</Typography>
-        <div style={{ textAlign: 'center' }}>
-          {pictureURL && (
-            <a
-              href="#"
-              onClick={() => {
-                openURLExternally(ctaURL, true);
+        {title}
+      </Typography>
+      {description && (
+        <Typography variant="subtitle1">{description}</Typography>
+      )}
+      {items &&
+        items.map((item) => (
+          <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
+        ))}
+      <Typography variant="subtitle1">&nbsp;</Typography>
+      <div style={{ textAlign: 'center' }}>
+        {pictureURL && (
+          <a
+            href="#"
+            onClick={() => {
+              openURLExternally(ctaURL, true);
+            }}
+            style={{
+              paddingTop: 15,
+              paddingBottom: 15,
+            }}
+          >
+            <img
+              style={{
+                cursor: 'pointer',
+                maxHeight: pictureHeight,
+                margin: 'auto',
+                display: 'block',
+                boxShadow: pictureShadow
+                  ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
+                  : 'none',
+                maxWidth: '95%',
               }}
-            >
-              <img
-                style={{
-                  cursor: 'pointer',
-                  maxHeight: pictureHeight,
-                  marginTop: 15,
-                  marginBottom: 15,
-                  boxShadow: pictureShadow
-                    ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
-                    : 'none',
-                  maxWidth: '95%',
-                }}
-                src={pictureURL}
-                alt=""
-              />
-            </a>
-          )}
-          {videoURL && (
-            <video
-              src={videoURL}
-              poster={videoPosterUrl}
-              autoPlay={true}
-              loop
-              controls
-              style={{ width: '100%', marginBottom: 15 }}
+              src={pictureURL}
+              alt=""
             />
-          )}
-          <br />
+          </a>
+        )}
+        {videoURL && (
+          <video
+            src={videoURL}
+            poster={videoPosterUrl}
+            autoPlay={true}
+            loop
+            controls
+            style={{ width: '100%', marginBottom: 15 }}
+          />
+        )}
+        <br />
+        <Button
+          onClick={() => {
+            openURLExternally(Links.links.productsOverview, true);
+          }}
+          // variant="contained"
+          color="primary"
+          size="small"
+        >
+          Compare TagSpaces Products
+        </Button>
+        {ctaTitle && (
           <Button
             onClick={() => {
-              openURLExternally(Links.links.productsOverview, true);
+              openURLExternally(ctaURL, true);
             }}
+            style={{ marginLeft: 10 }}
             // variant="contained"
             color="primary"
             size="small"
           >
-            Compare TagSpaces Products
+            {ctaTitle}
           </Button>
-          {ctaTitle && (
-            <Button
-              onClick={() => {
-                openURLExternally(ctaURL, true);
-              }}
-              style={{ marginLeft: 10 }}
-              // variant="contained"
-              color="primary"
-              size="small"
-            >
-              {ctaTitle}
-            </Button>
-          )}
-        </div>
+        )}
       </div>
-    </swiper-slide>
+    </div>
   );
 }
 
 function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
-  const swiperElRef = useRef(null); //<SwiperRef>
-  const slideIndex = useSelector(getProTeaserIndex);
+  //const swiperElRef = useRef(null); //<SwiperRef>
+  //const slideIndex = useSelector(getProTeaserIndex);
 
   const slidesEN = getProTeaserSlides(t);
 
-  const { open, onClose } = props;
+  const { open, onClose, slideIndex } = props;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -171,6 +171,39 @@ function ProTeaserDialog(props: Props) {
   }
 
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
+
+  function NextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} onClick={onClick}>
+        <NavigateNextIcon color="primary" />
+      </div>
+    );
+  }
+
+  function PrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} onClick={onClick}>
+        <NavigateBeforeIcon color="primary" />
+      </div>
+    );
+  }
+
+  const sliderSettings = {
+    className: 'center',
+    centerMode: true,
+    dots: true,
+    infinite: false,
+    initialSlide: initialSlide,
+    centerPadding: '0px',
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+  };
 
   return (
     <Dialog
@@ -185,40 +218,26 @@ function ProTeaserDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          paddingBottom: 0,
           overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         <style>
           {`
-        swiper-container::part(bullet-active) {
-          background-color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-prev) {
-          color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-next) {
-          color: ${theme.palette.primary.main};
-        }
+            .slick-arrow {
+              height: 200px;
+              display: flex;
+              align-items: center;
+            } 
+            .slick-next:before {
+              content: '';
+            }
+            .slick-prev:before {
+              content: '';
+            }
         `}
         </style>
-        <swiper-container
-          ref={swiperElRef}
-          initialSlide={initialSlide}
-          slidesPerView={1}
-          navigation={true}
-          /*scrollbar={true}*/
-          pagination={{
-            clickable: true,
-          }}
-          cssMode={false}
-          /*keyboard={{
-            enabled: true
-          }}*/
-          modules={[Pagination, Navigation]}
-        >
-          {slides}
-        </swiper-container>
+        <Slider {...sliderSettings}>{slides}</Slider>
       </DialogContent>
     </Dialog>
   );

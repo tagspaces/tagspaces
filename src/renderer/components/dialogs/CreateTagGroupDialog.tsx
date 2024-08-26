@@ -31,11 +31,11 @@ import Select from '@mui/material/Select';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
-import { getLocations } from '-/reducers/locations';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -49,7 +49,8 @@ const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 function CreateTagGroupDialog(props: Props) {
   const { t } = useTranslation();
-  const locations = useSelector(getLocations);
+  const { locations } = useCurrentLocationContext();
+  //const locations = useSelector(getLocations);
   const saveTagsInLocation = useSelector(getSaveTagInLocation);
 
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);

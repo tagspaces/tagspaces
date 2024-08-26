@@ -39,6 +39,17 @@ import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProv
 import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
+import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
+import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
+import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
+import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
+import { Pro } from '-/pro';
+import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
+import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
+import { UserContextProvider } from '-/hooks/UserContextProvider';
+import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
+import DialogsRoot from '-/containers/DialogsRoot';
 
 type RootType = {
   store: Store<{}>;
@@ -63,25 +74,57 @@ export default function Root({ store, persistor }: RootType) {
       <NotificationContextProvider>
         <CurrentLocationContextProvider>
           <EditedEntryContextProvider>
-            <SelectedEntryContextProvider>
-              <DirectoryContentContextProvider>
-                <FSWatcherContextProvider>
-                  <PlatformFacadeContextProvider>
-                    <LocationIndexContextProvider>
-                      <OpenedEntryContextProvider>
-                        <IOActionsContextProvider>
-                          <TaggingActionsContextProvider>
-                            <DndProvider backend={HTML5Backend}>
-                              <MainPage />
-                            </DndProvider>
-                          </TaggingActionsContextProvider>
-                        </IOActionsContextProvider>
-                      </OpenedEntryContextProvider>
-                    </LocationIndexContextProvider>
-                  </PlatformFacadeContextProvider>
-                </FSWatcherContextProvider>
-              </DirectoryContentContextProvider>
-            </SelectedEntryContextProvider>
+            <EditedEntryMetaContextProvider>
+              <EditedTagLibraryContextProvider>
+                <PerspectiveActionsContextProvider>
+                  <EditedKanBanMetaContextProvider>
+                    <SelectedEntryContextProvider>
+                      <DirectoryContentContextProvider>
+                        <FSWatcherContextProvider>
+                          <PlatformFacadeContextProvider>
+                            <LocationIndexContextProvider>
+                              <OpenedEntryContextProvider>
+                                <IOActionsContextProvider>
+                                  <TagGroupsLocationContextProvider>
+                                    <TaggingActionsContextProvider>
+                                      <DndProvider backend={HTML5Backend}>
+                                        <ExtensionsContextProvider>
+                                          <PanelsContextProvider>
+                                            <UserContextProvider>
+                                              <SavedSearchesContextProvider>
+                                                {Pro ? (
+                                                  <Pro.contextProviders.BookmarksContextProvider>
+                                                    <Pro.contextProviders.HistoryContextProvider>
+                                                      <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                        <DialogsRoot>
+                                                          <MainPage />
+                                                        </DialogsRoot>
+                                                      </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                    </Pro.contextProviders.HistoryContextProvider>
+                                                  </Pro.contextProviders.BookmarksContextProvider>
+                                                ) : (
+                                                  <DialogsRoot>
+                                                    <MainPage />
+                                                  </DialogsRoot>
+                                                )}
+                                              </SavedSearchesContextProvider>
+                                            </UserContextProvider>
+                                          </PanelsContextProvider>
+                                        </ExtensionsContextProvider>
+                                      </DndProvider>
+                                    </TaggingActionsContextProvider>
+                                  </TagGroupsLocationContextProvider>
+                                </IOActionsContextProvider>
+                              </OpenedEntryContextProvider>
+                            </LocationIndexContextProvider>
+                          </PlatformFacadeContextProvider>
+                        </FSWatcherContextProvider>
+                      </DirectoryContentContextProvider>
+                    </SelectedEntryContextProvider>
+                  </EditedKanBanMetaContextProvider>
+                </PerspectiveActionsContextProvider>
+              </EditedTagLibraryContextProvider>
+            </EditedEntryMetaContextProvider>
           </EditedEntryContextProvider>
         </CurrentLocationContextProvider>
       </NotificationContextProvider>

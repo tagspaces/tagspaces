@@ -7,6 +7,9 @@
 @import '~leaflet/dist/leaflet.css';
 @import '~react-image-gallery/styles/css/image-gallery.css';
 @import "~@tagspaces/tagspaces-md/lib/tailwind.css";
+@import "~@milkdown/theme-nord/style.css";
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 /* @import '~@tagspaces/tagspaces-md/lib/milkdown.css'; */
 
 /* Needed to disable border on focused HotKey element */

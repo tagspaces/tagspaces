@@ -41,7 +41,6 @@ import {
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import {
   isDesktopMode,
@@ -49,7 +48,6 @@ import {
   isRevisionsEnabled,
   getEntryContainerTab,
 } from '-/reducers/settings';
-import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
@@ -61,51 +59,51 @@ import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
-import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
-//const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
-// const bufferedSplitResize = buffer({
-//   timeout: 300,
-//   id: 'buffered-split-resize'
-// });
-
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+//const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
 function EntryContainer() {
   const { t } = useTranslation();
-  // const dispatch: AppDispatch = useDispatch();
   const {
     openedEntry,
     closeAllFiles,
-    updateOpenedFile,
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
+    reflectUpdateOpenedFileContent,
+    fileChanged,
+    setFileChanged,
   } = useOpenedEntryContext();
-  const { saveDescription } = useDescriptionContext();
-  const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
+  const { setReflectActions } = useEditedEntryContext();
+  const { setActions } = usePerspectiveActionsContext();
+  const {
+    saveDescription,
+    description,
+    isEditMode,
+    setEditMode,
+    isEditDescriptionMode,
+  } = useFilePropertiesContext();
+  const { setAutoSave, getMetadataID } = useIOActionsContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
     usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
-  const fileEditHistoryKey = useSelector(
-    (state: any) => state.settings[historyKeys.fileEditKey],
-  );
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
   const revisionsEnabled = useSelector(isRevisionsEnabled);
   const theme = useTheme();
-  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
-  // const percent = useRef<number | undefined>(undefined);
   const timer = useRef<NodeJS.Timeout>(null);
 
   const openedPanelStyle: React.CSSProperties = {
@@ -116,13 +114,9 @@ function EntryContainer() {
     tabIndex !== undefined,
   );
 
-  /*const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
-    false
-  );*/
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-  // const [editingSupported, setEditingSupported] = useState<boolean>(true);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [
     isSaveBeforeCloseConfirmDialogOpened,
     setSaveBeforeCloseConfirmDialogOpened,
@@ -135,16 +129,15 @@ function EntryContainer() {
     useState<boolean>(false);
   const [isConflictDialogOpen, setConflictDialogOpen] =
     useState<boolean>(false);
-  const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
+  const isSavingInProgress = useRef<boolean>(false);
   const [entryPropertiesHeight, setEntryPropertiesHeight] =
     useState<number>(100);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);
   const fileViewerContainer: MutableRefObject<HTMLDivElement> =
     useRef<HTMLDivElement>(null);
-  const fileChanged = useRef<boolean>(false);
   const eventID = useRef<string>(getUuid());
-  // const firstRender = useFirstRender();
+  const cLocation = findLocation(openedEntry.locationID);
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
@@ -213,13 +206,6 @@ function EntryContainer() {
     }
   }, [isFullscreen]);
 
-  /*useEffect(() => {
-    // description is saved as Preview
-    if (isPropertiesPanelVisible && openedEntry.description) {
-      reloadOpenedFile();
-    }
-  }, [isPropertiesPanelVisible]);*/
-
   useEffect(() => {
     if (fscreen.fullscreenEnabled) {
       fscreen.addEventListener(
@@ -236,10 +222,10 @@ function EntryContainer() {
   });
 
   useEffect(() => {
-    if (openedEntry && openedEntry.isAutoSaveEnabled) {
-      if (fileChanged.current) {
+    if (openedEntry && openedEntry.meta && openedEntry.meta.autoSave) {
+      if (fileChanged) {
         timer.current = setInterval(() => {
-          if (openedEntry.isAutoSaveEnabled && fileChanged.current) {
+          if (openedEntry.meta.autoSave && fileChanged) {
             startSavingFile();
             console.debug('autosave');
           }
@@ -255,10 +241,10 @@ function EntryContainer() {
         clearInterval(timer.current);
       }
     };
-  }, [openedEntry, fileChanged.current]);
+  }, [openedEntry, fileChanged]);
 
   // editor is not loaded in this time - change theme after loadDefaultTextContent
-  /*useEffect(() => {
+  useEffect(() => {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -267,9 +253,9 @@ function EntryContainer() {
       fileViewer.current.contentWindow.setTheme
     ) {
       // @ts-ignore call setContent from iframe
-      fileViewer.current.contentWindow.setTheme(settings.currentTheme);
+      fileViewer.current.contentWindow.setTheme(theme.palette.mode);
     }
-  }, [settings.currentTheme]);*/
+  }, [theme.palette.mode]); //settings.currentTheme
 
   /*  useEffect(() => {
     // if (openedEntrys.length > 0) {
@@ -290,7 +276,8 @@ function EntryContainer() {
     : true;*/
 
   const editingSupported: boolean =
-    !readOnlyMode &&
+    cLocation &&
+    !cLocation.isReadOnly &&
     openedEntry &&
     openedEntry.editingExtensionId !== undefined &&
     openedEntry.editingExtensionId.length > 3;
@@ -327,7 +314,6 @@ function EntryContainer() {
         }
         textFilePath = openedEntry.path;
 
-        // TODO setTheme in milkdown v6 editor only
         if (
           fileViewer &&
           fileViewer.current &&
@@ -342,62 +328,54 @@ function EntryContainer() {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        switchLocationTypeByID(openedEntry.locationId).then(
-          (currentLocationId) => {
-            PlatformIO.loadTextFilePromise(
+        cLocation
+          .loadTextFilePromise(
+            textFilePath,
+            data.preview ? data.preview : false,
+          )
+          .then((content) => {
+            const UTF8_BOM = '\ufeff';
+            if (content.indexOf(UTF8_BOM) === 0) {
+              // eslint-disable-next-line no-param-reassign
+              content = content.substr(1);
+            }
+            let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
-              data.preview ? data.preview : false,
-            )
-              .then((content) => {
-                const UTF8_BOM = '\ufeff';
-                if (content.indexOf(UTF8_BOM) === 0) {
-                  // eslint-disable-next-line no-param-reassign
-                  content = content.substr(1);
-                }
-                let fileDirectory = extractContainingDirectoryPath(
-                  textFilePath,
-                  PlatformIO.getDirSeparator(),
-                );
-                if (AppConfig.isWeb) {
-                  fileDirectory =
-                    extractContainingDirectoryPath(
-                      // eslint-disable-next-line no-restricted-globals
-                      location.href,
-                      PlatformIO.getDirSeparator(),
-                    ) +
-                    '/' +
-                    fileDirectory;
-                }
-                if (
-                  fileViewer &&
-                  fileViewer.current &&
-                  fileViewer.current.contentWindow &&
-                  // @ts-ignore
-                  fileViewer.current.contentWindow.setContent
-                ) {
-                  // @ts-ignore call setContent from iframe
-                  fileViewer.current.contentWindow.setContent(
-                    content,
-                    fileDirectory,
-                    !openedEntry.editMode,
-                    theme.palette.mode,
-                  );
-                }
-                return switchCurrentLocationType();
-              })
-              .catch((err) => {
-                console.warn('Error loading text content ' + err);
-                return switchCurrentLocationType();
-              });
-          },
-        );
+              cLocation?.getDirSeparator(),
+            );
+            if (AppConfig.isWeb) {
+              fileDirectory =
+                extractContainingDirectoryPath(
+                  // eslint-disable-next-line no-restricted-globals
+                  location.href,
+                  cLocation?.getDirSeparator(),
+                ) +
+                '/' +
+                fileDirectory;
+            }
+            if (
+              fileViewer &&
+              fileViewer.current &&
+              fileViewer.current.contentWindow &&
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent
+            ) {
+              // @ts-ignore call setContent from iframe
+              fileViewer.current.contentWindow.setContent(
+                content,
+                fileDirectory,
+                !isEditMode,
+                theme.palette.mode,
+              );
+            }
+            return true;
+          })
+          .catch((err) => {
+            console.log('Error loading text content ' + err);
+          });
         break;
       case 'contentChangedInEditor': {
-        if (!fileChanged.current) {
-          fileChanged.current = true;
-          // to render DOT before file name (only first time)
-          forceUpdate();
-        }
+        setFileChanged(true);
         break;
       }
       default:
@@ -408,49 +386,13 @@ function EntryContainer() {
     }
   };
 
-  /*const reloadOpenedFile = () => {
-    if (openedEntry) {
-      const metaFilePath = openedEntry.isFile
-        ? getMetaFileLocationForFile(
-            openedEntry.path,
-            PlatformIO.getDirSeparator()
-          )
-        : getMetaFileLocationForDir(
-            openedEntry.path,
-            PlatformIO.getDirSeparator()
-          );
-      try {
-        loadJSONFile(metaFilePath)
-          .then(fsEntryMeta => {
-            updateOpenedFile(openedEntry.path, {
-              ...fsEntryMeta,
-              editMode: false,
-              shouldReload: !openedEntry.shouldReload
-            });
-          })
-          .catch(() =>
-            updateOpenedFile(openedEntry.path, {
-              ...openedEntry,
-              editMode: false,
-              shouldReload: !openedEntry.shouldReload
-            })
-          );
-      } catch (e) {
-        updateOpenedFile(openedEntry.path, {
-          ...openedEntry,
-          editMode: false,
-          shouldReload: !openedEntry.shouldReload
-        });
-      }
-    }
-  };*/
-
   const reloadDocument = () => {
     if (openedEntry) {
-      if (openedEntry.editMode && fileChanged.current) {
+      if (isEditMode && fileChanged) {
         // openedEntry.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
+        setEditMode(false);
         reloadOpenedFile();
       }
     }
@@ -461,7 +403,7 @@ function EntryContainer() {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
     }
-    if (openedEntry && fileChanged.current && openedEntry.editMode) {
+    if (openedEntry && fileChanged && isEditMode) {
       // openedEntry.changed
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
@@ -475,7 +417,7 @@ function EntryContainer() {
   };
 
   const startSavingFile = () => {
-    if (openedEntry.editMode) {
+    if (isEditMode) {
       savingFile();
     } else {
       saveDescription();
@@ -492,134 +434,141 @@ function EntryContainer() {
     ) {
       try {
         //check if file is changed
-        if (fileChanged.current || force) {
-          setSavingInProgress(true);
-          saveFile().then((success) => {
+        if (fileChanged || force) {
+          isSavingInProgress.current = true;
+          save(openedEntry).then((success) => {
             if (success) {
-              fileChanged.current = false;
+              setFileChanged(false);
               // showNotification(
               //   t('core:fileSavedSuccessfully'),
               //   NotificationTypes.default
               // );
             }
             // change state will not render DOT before file name too
-            setSavingInProgress(false);
+            isSavingInProgress.current = false;
           });
         }
       } catch (e) {
-        setSavingInProgress(false);
+        isSavingInProgress.current = false;
         console.debug('function getContent not exist for video file:', e);
       }
     }
   };
 
   const override = (): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      PlatformIO.getPropertiesPromise(openedEntry.path).then(
-        (entryProp: TS.FileSystemEntry) =>
-          save({ ...openedEntry, lmdt: entryProp.lmdt }).then(() =>
-            switchCurrentLocationType(),
-          ),
-      ),
-    );
+    return cLocation
+      .getPropertiesPromise(openedEntry.path)
+      .then((entryProp: TS.FileSystemEntry) =>
+        save({ ...openedEntry, lmdt: entryProp.lmdt }),
+      );
   };
 
   const saveAs = (newFilePath: string): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      copyFilePromise(openedEntry.path, newFilePath).then(() =>
-        PlatformIO.getPropertiesPromise(newFilePath).then(
-          (entryProp: TS.FileSystemEntry) =>
-            save({
-              ...openedEntry,
-              path: entryProp.path,
-              lmdt: entryProp.lmdt,
-            }).then(() => {
-              const openedEntryDir = extractContainingDirectoryPath(
-                entryProp.path,
-              );
-              if (currentDirectoryPath === openedEntryDir) {
-                openDirectory(openedEntryDir);
-                /*
-                  updateOpenedFile(openedEntry.path, {
-                    ...openedEntry,
-                    editMode: false,
-                    shouldReload: !openedEntry.shouldReload
-                  });*/
-              }
-              return switchCurrentLocationType();
-            }),
+    return copyFilePromise(openedEntry.path, newFilePath).then(() =>
+      cLocation
+        .getPropertiesPromise(newFilePath)
+        .then((entryProp: TS.FileSystemEntry) =>
+          save({
+            ...openedEntry,
+            path: entryProp.path,
+            lmdt: entryProp.lmdt,
+          }).then(() => {
+            const openedEntryDir = extractContainingDirectoryPath(
+              entryProp.path,
+            );
+            if (currentDirectoryPath === openedEntryDir) {
+              openDirectory(openedEntryDir);
+            }
+            return true;
+          }),
         ),
-      ),
     );
   };
 
-  const saveFile = (): Promise<boolean> => {
-    return switchLocationTypeByID(openedEntry.locationId).then(() =>
-      save(openedEntry).then(() => switchCurrentLocationType()),
-    );
-  };
-
-  async function save(fileOpen: OpenedEntry): Promise<boolean> {
+  async function save(fileOpen: TS.OpenedEntry): Promise<boolean> {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
-    if (Pro && revisionsEnabled) {
-      const id = await Pro.MetaOperations.getMetadataID(
-        fileOpen.path,
-        fileOpen.uuid,
-      );
-      const targetPath = getBackupFileLocation(
-        fileOpen.path,
-        id,
-        PlatformIO.getDirSeparator(),
-      );
-      try {
-        await copyFilePromiseOverwrite(fileOpen.path, targetPath, false); // todo test what happened if remove await?
-      } catch (error) {
-        console.log('copyFilePromiseOverwrite', error);
-      }
-    }
-    return saveTextFilePromise(
-      { path: fileOpen.path, lmdt: fileOpen.lmdt },
-      textContent,
-      true,
-    )
-      .then(() => {
-        if (Pro) {
-          Pro.history.saveHistory(
-            historyKeys.fileEditKey,
-            {
-              path: fileOpen.path,
-              url: fileOpen.url,
-              lid: fileOpen.locationId,
-            },
-            fileEditHistoryKey,
-          );
+    const location = findLocation(fileOpen.locationID);
+    if (location) {
+      if (
+        Pro &&
+        revisionsEnabled &&
+        fileOpen.path.indexOf(
+          location.getDirSeparator() +
+            AppConfig.metaFolder +
+            location.getDirSeparator(),
+        ) === -1
+      ) {
+        const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
+        const targetPath = getBackupFileLocation(
+          fileOpen.path,
+          id,
+          location.getDirSeparator(),
+        );
+        try {
+          await copyFilePromiseOverwrite(
+            fileOpen.path,
+            targetPath,
+            fileOpen.locationID,
+            false,
+          ); // todo test what happened if remove await?
+        } catch (error) {
+          console.log('copyFilePromiseOverwrite', error);
         }
-        return true;
-        /*return updateOpenedFile(fileOpen.path, {
-          id: '',
-          ...fileOpen,
-          editMode: true,
-          //changed: false,
-          shouldReload: undefined,
-        }).then(() => true);*/
-      })
-      .catch((error) => {
-        setConflictDialogOpen(true);
-        console.log('Error saving file ' + fileOpen.path + ' - ' + error);
-        return false;
-      });
+      }
+      return saveTextFilePromise(
+        {
+          path: fileOpen.path,
+          lmdt: fileOpen.lmdt,
+          locationID: fileOpen.locationID,
+        },
+        textContent,
+        true,
+      )
+        .then((entry) => {
+          reflectUpdateOpenedFileContent(entry);
+          // send action to save in history
+          const action: TS.EditAction = {
+            action: 'edit',
+            entry: entry,
+          };
+          setReflectActions(action);
+          /*if (Pro) {
+            const relativePath = getRelativeEntryPath(
+              currentLocationPath,
+              fileOpen.path,
+            );
+            historyContext.saveHistory(
+              historyKeys.fileEditKey,
+              {
+                creationTimeStamp: new Date().getTime(),
+                path: relativePath,
+                url: generateSharingLink(fileOpen.locationID, relativePath),
+                lid: fileOpen.locationID,
+              },
+              fileEditHistoryKey,
+            );
+          }*/
+          return true;
+          /*return updateOpenedFile(fileOpen.path, {
+            id: '',
+            ...fileOpen,
+            editMode: true,
+            //changed: false,
+            shouldReload: undefined,
+          }).then(() => true);*/
+        })
+        .catch((error) => {
+          setConflictDialogOpen(true);
+          console.log('Error saving file ' + fileOpen.path + ' - ' + error);
+          return false;
+        });
+    }
   }
 
   const editOpenedFile = () => {
-    switchLocationTypeByID(openedEntry.locationId).then(() => {
-      updateOpenedFile(openedEntry.path, {
-        id: '',
-        ...openedEntry,
-        editMode: true,
-        shouldReload: undefined,
-      }).then(() => switchCurrentLocationType());
-    });
+    // addToEntryContainer(openedEntry);
+    setEditMode(true);
   };
 
   /*const setPercent = (p: number | undefined) => {
@@ -652,27 +601,31 @@ function EntryContainer() {
     setPanelOpened(!isPanelOpened);
   };
   const openNextFileAction = () => {
-    window.dispatchEvent(new Event('next-file'));
-    //openNextFile(openedEntry.path);
+    const action: TS.PerspectiveActions = { action: 'openNext' };
+    setActions(action);
+    // window.dispatchEvent(new Event('next-file'));
   };
 
   const openPrevFileAction = () => {
-    window.dispatchEvent(new Event('previous-file'));
-    //openPrevFile(openedEntry.path);
+    const action: TS.PerspectiveActions = { action: 'openPrevious' };
+    setActions(action);
+    //window.dispatchEvent(new Event('previous-file'));
   };
 
   const fileExtension =
     openedEntry &&
-    extractFileExtension(openedEntry.path, PlatformIO.getDirSeparator());
+    extractFileExtension(openedEntry.path, cLocation?.getDirSeparator());
   const isEditable =
+    !readOnlyMode &&
     openedEntry &&
     openedEntry.isFile &&
     AppConfig.editableFiles.includes(fileExtension);
 
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
-    if (Pro && Pro.MetaOperations) {
-      switchLocationTypeByID(openedEntry.locationId).then(
+    if (Pro) {
+      setAutoSave(openedEntry, autoSave, openedEntry.locationID);
+      /*switchLocationTypeByID(openedEntry.locationId).then(
         (currentLocationId) => {
           Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, {
             autoSave,
@@ -682,7 +635,7 @@ function EntryContainer() {
             );
           });
         },
-      );
+      );*/
     } else {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
     }
@@ -708,10 +661,7 @@ function EntryContainer() {
       >
         <Switch
           data-tid="autoSaveTID"
-          checked={
-            openedEntry.isAutoSaveEnabled !== undefined &&
-            openedEntry.isAutoSaveEnabled
-          }
+          checked={openedEntry.meta && openedEntry.meta.autoSave}
           onChange={toggleAutoSave}
           name="autoSave"
           color="primary"
@@ -721,28 +671,27 @@ function EntryContainer() {
 
     let closeCancelIcon;
     if (desktopMode) {
-      closeCancelIcon = fileChanged.current ? (
-        <CancelIcon />
-      ) : (
-        <CloseEditIcon />
-      );
+      closeCancelIcon = fileChanged ? <CancelIcon /> : <CloseEditIcon />;
     }
 
     let editFile = null;
     if (editingSupported) {
-      if (openedEntry.editMode) {
+      if (isEditMode) {
         editFile = (
           <ButtonGroup>
             <Tooltip title={t('core:cancelEditing')}>
               <Button
-                onClick={reloadDocument}
+                onClick={() => {
+                  setEditMode(false);
+                  setFileChanged(false);
+                }}
                 aria-label={t('core:cancelEditing')}
                 size="small"
                 variant="outlined"
                 color="primary"
                 startIcon={closeCancelIcon}
               >
-                {fileChanged.current ? t('core:cancel') : t('core:closeButton')}
+                {fileChanged ? t('core:cancel') : t('core:closeButton')}
               </Button>
             </Tooltip>
             <Tooltip
@@ -762,7 +711,7 @@ function EntryContainer() {
                 variant="outlined"
                 color="primary"
                 startIcon={desktopMode && <SaveIcon />}
-                loading={isSavingInProgress}
+                loading={isSavingInProgress.current}
               >
                 {t('core:save')}
               </LoadingButton>
@@ -773,7 +722,7 @@ function EntryContainer() {
         editFile = (
           <Tooltip title={t('core:editFile')}>
             <Button
-              disabled={false}
+              disabled={isEditDescriptionMode}
               size="small"
               variant="outlined"
               color="primary"
@@ -788,14 +737,20 @@ function EntryContainer() {
         );
       }
     }
-    const tabsComponent = (marginRight = undefined) => (
-      <EntryContainerTabs
-        isEditable={isEditable}
-        isPanelOpened={isPanelOpened}
-        openPanel={openPanel}
-        toggleProperties={toggleProperties}
-        marginRight={marginRight}
-      />
+    const haveDescription = description?.length > 0;
+
+    const tabsComponent = useCallback(
+      (marginRight: string | undefined = undefined) => (
+        <EntryContainerTabs
+          isEditable={isEditable}
+          isPanelOpened={isPanelOpened}
+          openPanel={openPanel}
+          toggleProperties={toggleProperties}
+          haveDescription={haveDescription}
+          marginRight={marginRight}
+        />
+      ),
+      [isEditable, isPanelOpened, haveDescription],
     );
 
     if (!autoSave && !editFile) {
@@ -887,7 +842,6 @@ function EntryContainer() {
             }}
           >
             <EntryContainerTitle
-              isFileChanged={fileChanged.current}
               reloadDocument={reloadDocument}
               toggleFullScreen={toggleFullScreen}
               startClosingEntry={startClosingEntry}
@@ -970,14 +924,7 @@ function EntryContainer() {
               startSavingFile();
             } else {
               setSaveBeforeReloadConfirmDialogOpened(false);
-              updateOpenedFile(openedEntry.path, {
-                id: '',
-                ...openedEntry,
-                editMode: false,
-                // changed: false,
-                shouldReload: true,
-              });
-              fileChanged.current = false;
+              setFileChanged(false);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
@@ -990,7 +937,9 @@ function EntryContainer() {
           open={isEditTagsModalOpened}
           onClose={() => setEditTagsModalOpened(false)}
           selected={
-            openedEntry ? [toFsEntry(openedEntry.path, openedEntry.isFile)] : []
+            openedEntry
+              ? [cLocation.toFsEntry(openedEntry.path, openedEntry.isFile)]
+              : []
           }
         />
       )}
@@ -1000,8 +949,6 @@ function EntryContainer() {
         saveAs={saveAs}
         override={override}
       />
-      {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
-      <a href="#" id="downloadFile" />
     </GlobalHotKeys>
   );
 }

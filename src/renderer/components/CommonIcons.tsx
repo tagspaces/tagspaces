@@ -72,7 +72,7 @@ export { default as OpenNewWindowIcon } from '@mui/icons-material/OpenInBrowser'
 
 export { default as ReloadIcon } from '@mui/icons-material/Refresh';
 
-export { default as DeleteIcon } from '@mui/icons-material/DeleteForever';
+export { default as DeleteIcon } from '@mui/icons-material/Delete';
 
 export { default as LinkIcon } from '@mui/icons-material/Link';
 
@@ -116,6 +116,8 @@ export { default as RevisionIcon } from '@mui/icons-material/Restore';
 
 export { default as DescriptionIcon } from '@mui/icons-material/Subject';
 
+export { default as EditDescriptionIcon } from '@mui/icons-material/EditNote';
+
 export { default as AudioRecordIcon } from '@mui/icons-material/KeyboardVoice';
 
 export { default as NewFileIcon } from '@mui/icons-material/InsertDriveFile';
@@ -133,3 +135,7 @@ export { default as PauseIcon } from '@mui/icons-material/Pause';
 export { default as SaveIcon } from '@mui/icons-material/Save';
 
 export { default as DownloadIcon } from '@mui/icons-material/DownloadForOffline';
+
+export { default as TagIcon } from '@mui/icons-material/LocalOffer';
+
+export { default as IDIcon } from '@mui/icons-material/Abc';

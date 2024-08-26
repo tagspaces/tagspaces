@@ -49,11 +49,13 @@ import {
   isDevMode,
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformFacade from '-/services/platform-facade';
-import { AppDispatch, getExtensions } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
+import { getUserDataDir } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
+import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -85,6 +87,7 @@ const Root = styled('div')(({ theme: any }) => ({
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
+  const { extensions } = useExtensionsContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
@@ -95,10 +98,10 @@ function SettingsFileTypes() {
     useState<boolean>(false);
   const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
-  const extensions = useSelector(getExtensions);
+  //const extensions = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -373,9 +376,9 @@ function SettingsFileTypes() {
                   (ext) => ext.extensionId === event.target.value,
                 );
                 if (extension.extensionExternal) {
-                  PlatformFacade.getUserDataDir().then((dataDir) => {
+                  getUserDataDir().then((dataDir) => {
                     const externalExtensionPath =
-                      dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
+                      dataDir + AppConfig.dirSeparator + 'tsplugins';
                     updateItems(
                       item,
                       'extensionExternalPath',
@@ -395,7 +398,10 @@ function SettingsFileTypes() {
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >
-                      {extension.extensionName} ({extension.version})
+                      {extension.extensionName}{' '}
+                      <small style={{ marginLeft: 5 }}>
+                        v{extension.version}
+                      </small>
                     </MenuItem>
                   ),
               )}
@@ -423,7 +429,8 @@ function SettingsFileTypes() {
                   key={extension.extensionName}
                   value={extension.extensionId}
                 >
-                  {extension.extensionName} ({extension.version})
+                  {extension.extensionName}
+                  <small style={{ marginLeft: 5 }}>v{extension.version}</small>
                 </MenuItem>
               ))}
           </Select>

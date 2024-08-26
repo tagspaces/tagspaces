@@ -31,28 +31,73 @@ export async function createPwMinioLocation(
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuCreateLocation]');
+    await clickOn('[data-tid=locationTypeTID]');
+    await clickOn('[data-tid=cloudLocationTID]');
     //await clickOn('[data-tid=createNewLocation]', { timeout: 35000 });
     // if (global.isMinio) {
     // await clickOn('[data-tid=objectStorageLocation]');
     // }
 
     // SET LOCATION NAME
-    await global.client.fill(
+    /*await global.client.fill(
       '[data-tid=locationName] input',
       locationName || 'Test Location' + new Date().getTime(),
+    );*/
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime(),
+      20,
     );
-    await global.client.fill('[data-tid=locationPath] input', locationPath);
-    await global.client.fill('[data-tid=accessKeyId] input', minioAccessKey);
-    await global.client.fill(
+    await setInputKeys('locationPath', locationPath, 20);
+    //await global.client.fill('[data-tid=locationPath] input', locationPath);
+    await setInputKeys('accessKeyId', minioAccessKey, 20);
+    //await global.client.fill('[data-tid=accessKeyId] input', minioAccessKey);
+    await setInputKeys('secretAccessKey', minioSecretAccessKey, 20);
+    /*await global.client.fill(
       '[data-tid=secretAccessKey] input',
       minioSecretAccessKey,
-    );
-    await global.client.fill('[data-tid=bucketName] input', locationName);
-    await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
+    );*/
+    await setInputKeys('bucketName', locationName, 20);
+    //await global.client.fill('[data-tid=bucketName] input', locationName);
+    await setInputKeys('endpointURL', minioEndpointURL, 20);
+    //await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
 
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
-      await clickOn('[data-tid=locationIsDefault]');
+      await global.client.check('[data-tid=locationIsDefault] input');
+    }
+    await clickOn('[data-tid=confirmLocationCreation]');
+  }
+}
+
+export async function createS3Location(
+  locationPath,
+  locationName,
+  isDefault = false,
+) {
+  const lastLocationTID = await getPwLocationTid(-1);
+  // Check if location not exist (from extconfig.js)
+  if (locationName !== lastLocationTID) {
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuCreateLocation]');
+    await clickOn('[data-tid=locationTypeTID]');
+    await clickOn('[data-tid=cloudLocationTID]');
+
+    await setInputKeys(
+      'locationName',
+      locationName || 'Test Location' + new Date().getTime(),
+      20,
+    );
+    await setInputKeys('locationPath', locationPath, 20);
+    await setInputKeys('accessKeyId', 'S3RVER', 20);
+    await setInputKeys('secretAccessKey', 'S3RVER', 20);
+    await setInputKeys('bucketName', 'supported-filestypes', 20);
+    await setInputKeys('endpointURL', 'http://localhost:4569', 20);
+    //await setInputKeys('regionTID', 'eu-central-1', 20);
+
+    if (isDefault) {
+      await clickOn('[data-tid=switchAdvancedModeTID]');
+      await global.client.check('[data-tid=locationIsDefault] input');
     }
     await clickOn('[data-tid=confirmLocationCreation]');
   }

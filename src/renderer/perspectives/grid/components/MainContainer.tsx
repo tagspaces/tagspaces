@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
@@ -26,12 +26,10 @@ import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import GridCell from './GridCell';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
-import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
@@ -47,8 +45,11 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { GridCellsStyleContextProvider } from '-/perspectives/grid/hooks/GridCellsStyleProvider';
-import { useRendererListenerContext } from '-/hooks/useRendererListenerContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import useFirstRender from '-/utils/useFirstRender';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -57,12 +58,14 @@ interface Props {
 function GridPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
-  const { openEntry } = useOpenedEntryContext();
-  const { openPrevFile, openNextFile } = useRendererListenerContext();
+  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const { actions } = usePerspectiveActionsContext();
   const { showDirectories } = usePerspectiveSettingsContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useIOActionsContext();
-  const dispatch: AppDispatch = useDispatch();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
 
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
     useSortedDirContext();
@@ -107,6 +110,19 @@ function GridPerspective(props: Props) {
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
+  const firstRender = useFirstRender();
+
+  useEffect(() => {
+    if (!firstRender && actions && actions.length > 0) {
+      for (const action of actions) {
+        if (action.action === 'openNext') {
+          openNextFile(sortedDirContent);
+        } else if (action.action === 'openPrevious') {
+          openPrevFile(sortedDirContent);
+        }
+      }
+    }
+  }, [actions]);
 
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
@@ -177,11 +193,9 @@ function GridPerspective(props: Props) {
   };
 
   const openShareFilesDialog = () => {
-    setIsShareFilesDialogOpened(true);
-  };
-
-  const openDeleteFileDialog = () => {
-    dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
+    if (currentLocation && currentLocation.haveObjectStoreSupport()) {
+      setIsShareFilesDialogOpened(true);
+    }
   };
 
   const openAddRemoveTagsDialog = () => {
@@ -222,12 +236,12 @@ function GridPerspective(props: Props) {
   };
 
   const keyBindingHandlers = {
-    nextDocument: () => openNextFile(),
-    prevDocument: () => openPrevFile(),
+    nextDocument: () => openNextFile(sortedDirContent),
+    prevDocument: () => openPrevFile(sortedDirContent),
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
       if (fileOperationsEnabled(selectedEntries)) {
-        openDeleteFileDialog();
+        openDeleteMultipleEntriesDialog();
       }
     },
     addRemoveTags: () => {
@@ -346,9 +360,7 @@ function GridPerspective(props: Props) {
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        openShareFilesDialog={
-          PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
-        }
+        openShareFilesDialog={openShareFilesDialog}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -415,14 +427,9 @@ function GridPerspective(props: Props) {
           mouseY={mouseY}
           open={Boolean(fileContextMenuAnchorEl)}
           onClose={() => setFileContextMenuAnchorEl(null)}
-          openDeleteFileDialog={openDeleteFileDialog}
           openRenameFileDialog={openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-          openShareFilesDialog={
-            PlatformIO.haveObjectStoreSupport()
-              ? openShareFilesDialog
-              : undefined
-          }
+          openShareFilesDialog={openShareFilesDialog}
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           selectedFilePath={
             lastSelectedEntryPath ? lastSelectedEntryPath : currentDirectoryPath

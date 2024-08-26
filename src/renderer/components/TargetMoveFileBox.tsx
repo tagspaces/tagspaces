@@ -20,6 +20,7 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import { TS } from '-/tagspaces.namespace';
 import { classes, DnD } from '-/components/DnD.css';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 /*const styles: any = () => ({
   dropzone: {
@@ -41,7 +42,7 @@ interface Props {
   onDrop: (item: any, monitor: any) => void;
   children: any;
   targetPath?: string;
-  targetLocation?: TS.Location;
+  targetLocation?: CommonLocation;
 }
 
 const TargetMoveFileBox = (props: Props) => {
@@ -70,7 +71,11 @@ const TargetMoveFileBox = (props: Props) => {
   });
   return (
     <div ref={drop}>
-      {canDrop && isOver && <DnD className={classes.dropzone} />}
+      {canDrop && isOver && (
+        <DnD>
+          <div className={classes.dropzone}></div>
+        </DnD>
+      )}
       {children}
     </div>
   );

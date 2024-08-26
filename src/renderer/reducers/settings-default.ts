@@ -32,6 +32,10 @@ let checkForUpdates = true;
 if (window.ExtCheckForUpdatesOnStartup !== undefined) {
   checkForUpdates = window.ExtCheckForUpdatesOnStartup;
 }
+let filenameTagPlacedAtEnd = true;
+if (window.ExtFilenameTagPlacedAtEnd !== undefined) {
+  filenameTagPlacedAtEnd = window.ExtFilenameTagPlacedAtEnd;
+}
 
 export default {
   //isLoading: false,
@@ -43,7 +47,7 @@ export default {
   contentHash: '',
   isUpdateInProgress: false,
   isUpdateAvailable: false,
-  enableWS: true,
+  enableWS: AppConfig.isElectron,
   warningOpeningFilesExternally: true,
   tagDelimiter: ' ',
   maxSearchResult: 1000,
@@ -69,6 +73,7 @@ export default {
   lastOpenedLocation: '',
   useDefaultLocation: false, // TODO for remove
   persistTagsInSidecarFile: false, // old name writeMetaToSidecarFile -> persistTagsInSidecarFile
+  filenameTagPlacedAtEnd,
   addTagsToLibrary: true,
   interfaceLanguage: 'en',
   useTrashCan: true,
@@ -82,7 +87,7 @@ export default {
   currentDarkTheme: 'darklegacy',
   geoTaggingFormat: 'pluscodes',
   defaultPerspective: PerspectiveIDs.GRID,
-  enableGlobalKeyboardShortcuts: true,
+  enableGlobalKeyboardShortcuts: false,
   zoomFactor: 1,
   lastPublishedVersion: '',
   entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',

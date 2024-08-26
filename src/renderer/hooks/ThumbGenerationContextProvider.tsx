@@ -19,15 +19,21 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  extractContainingDirectoryPath,
+  extractFileName,
+  normalizePath,
+  getMetaDirectoryPath,
+  extractFileExtension,
+} from '@tagspaces/tagspaces-common/paths';
+import {
   getEnableWS,
   getShowUnixHiddenEntries,
   getUseGenerateThumbnails,
 } from '-/reducers/settings';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
 import {
-  getThumbnailURLPromise,
+  generateThumbnailPromise,
   supportedContainers,
   supportedImgs,
   supportedMisc,
@@ -37,9 +43,16 @@ import {
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { base64ToBlob } from '-/utils/dom';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import {
+  createThumbnailsInWorker,
+  isWorkerAvailable,
+} from '-/services/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -62,14 +75,19 @@ export const ThumbGenerationContextProvider = ({
     currentDirectoryPath,
     currentDirectoryEntries,
     updateCurrentDirEntries,
+    loadCurrentDirMeta,
   } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
+  const { saveBinaryFilePromise, createDirectoryPromise } =
+    usePlatformFacadeContext();
+  const { metaActions } = useEditedEntryMetaContext();
   const { pageFiles, page } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const isGeneratingThumbs = useRef(false);
+  const firstRender = useFirstRender();
 
   function setGenThumbs(isGen: boolean) {
     isGeneratingThumbs.current = isGen;
@@ -118,20 +136,41 @@ export const ThumbGenerationContextProvider = ({
     }
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);
 
-  function genThumbnailsEnabled(): boolean {
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0) {
+      const entries = [];
+      for (const action of metaActions) {
+        if (action.action === 'thumbGenerate') {
+          entries.push(action.entry);
+        }
+      }
+      if (entries.length > 0) {
+        generateThumbnails(entries).then(() => {
+          return loadCurrentDirMeta(currentDirectoryPath, entries).then(
+            (ent) => {
+              updateCurrentDirEntries(ent);
+              return true;
+            },
+          );
+        });
+      }
+    }
+  }, [metaActions]);
+
+  function genThumbnailsEnabled(location: CommonLocation): boolean {
     if (
-      !currentDirectoryPath ||
+      currentDirectoryPath === undefined ||
       currentDirectoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder,
       ) ||
-      currentDirectoryPath.endsWith(
+      currentDirectoryPath.indexOf(
         AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator,
-      )
+      ) !== -1
     ) {
       return false; // dont generate thumbnails in meta folder
     }
-    if (currentLocation.type === locationType.TYPE_CLOUD) {
-      return false; // dont generate thumbnails for cloud location
+    if (!location || location.disableThumbnailGeneration === true) {
+      return false; // dont generate thumbnails if it's not enabled in location settings
     }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
@@ -142,28 +181,30 @@ export const ThumbGenerationContextProvider = ({
   function generateThumbnails(
     dirEntries: TS.FileSystemEntry[],
   ): Promise<boolean> {
-    if (
-      AppConfig.isWeb || // not in web mode
-      PlatformIO.haveObjectStoreSupport() || // not in object store mode
-      PlatformIO.haveWebDavSupport() || // not in webdav mode
-      !genThumbnailsEnabled() // enabled in the settings
-    ) {
+    if (dirEntries.length === 0) {
+      return Promise.resolve(false);
+    }
+    const location: CommonLocation = findLocation(dirEntries[0].locationID);
+    if (!location || location.disableThumbnailGeneration === true) {
+      return Promise.resolve(false); // dont generate thumbnails if it's not enabled in location settings
+    }
+    if (!genThumbnailsEnabled(location)) {
       return Promise.resolve(false);
     }
 
     if (AppConfig.isElectron) {
-      return PlatformIO.isWorkerAvailable().then((isWorkerAvailable) =>
-        generateThumbnails2(dirEntries, isWorkerAvailable),
+      return isWorkerAvailable().then((isWorkerAvailable) =>
+        generateThumbnails2(dirEntries, isWorkerAvailable, location),
       );
     }
-    return generateThumbnails2(dirEntries, false);
+    return generateThumbnails2(dirEntries, false, location);
   }
 
   function generateThumbnails2(
     dirEntries: TS.FileSystemEntry[],
     isWorkerAvailable,
+    location: CommonLocation,
   ): Promise<boolean> {
-    // const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
     dirEntries.map((entry) => {
@@ -173,31 +214,36 @@ export const ThumbGenerationContextProvider = ({
       if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
         return true;
       }
+      const extension = entry.extension
+        ? entry.extension
+        : extractFileExtension(entry.name, location.getDirSeparator());
       if (
         isWorkerAvailable &&
         enableWS &&
-        supportedImgsWS.includes(entry.extension)
+        supportedImgsWS.includes(extension) &&
+        !location.haveObjectStoreSupport() &&
+        !location.haveWebDavSupport()
       ) {
         workerEntries.push(entry.path);
       } else if (
-        supportedImgs.includes(entry.extension) ||
-        supportedContainers.includes(entry.extension) ||
-        supportedText.includes(entry.extension) ||
-        supportedMisc.includes(entry.extension) ||
-        supportedVideos.includes(entry.extension)
+        supportedImgs.includes(extension) ||
+        supportedContainers.includes(extension) ||
+        supportedText.includes(extension) ||
+        supportedMisc.includes(extension) ||
+        supportedVideos.includes(extension)
       ) {
         mainEntries.push(entry.path);
       } else {
-        console.log('Unsupported thumb generation ext:' + entry.extension);
+        console.log('Unsupported thumb generation ext:' + extension);
       }
       return true;
     });
 
     if (workerEntries.length > 0) {
       setGenThumbs(true);
-      return PlatformIO.createThumbnailsInWorker(workerEntries)
+      return createThumbnailsInWorker(workerEntries)
         .then(() =>
-          thumbnailMainGeneration(mainEntries).then(() => {
+          thumbnailMainGeneration(mainEntries, location).then(() => {
             setGenThumbs(false);
             return true;
           }),
@@ -205,17 +251,17 @@ export const ThumbGenerationContextProvider = ({
         .catch((e) => {
           // WS error handle let process thumbgeneration in Main process Generator
           console.log('createThumbnailsInWorker', e);
-          return thumbnailMainGeneration([
-            ...workerEntries,
-            ...mainEntries,
-          ]).then(() => {
+          return thumbnailMainGeneration(
+            [...workerEntries, ...mainEntries],
+            location,
+          ).then(() => {
             setGenThumbs(false);
             return true;
           });
         });
     } else if (mainEntries.length > 0) {
       setGenThumbs(true);
-      return thumbnailMainGeneration(mainEntries).then(() => {
+      return thumbnailMainGeneration(mainEntries, location).then(() => {
         setGenThumbs(false);
         return true;
       });
@@ -225,10 +271,13 @@ export const ThumbGenerationContextProvider = ({
     return Promise.resolve(false);
   }
 
-  function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {
+  function thumbnailMainGeneration(
+    mainEntries: string[],
+    location: CommonLocation,
+  ): Promise<boolean> {
     const maxExecutionTime = 9000;
     const promises = mainEntries.map((tmbPath) =>
-      getThumbnailURLPromise(tmbPath),
+      getThumbnailURLPromise(tmbPath, location),
     );
     const promisesWithTimeout = promises.map((promise) => {
       const timeoutPromise = new Promise((resolve, reject) => {
@@ -249,6 +298,185 @@ export const ThumbGenerationContextProvider = ({
       .catch((e) => {
         console.log('thumbnailMainGeneration', e);
         return false;
+      });
+  }
+
+  function getThumbnailURLPromise(
+    filePath: string,
+    location: CommonLocation,
+  ): Promise<{ filePath: string; tmbPath?: string }> {
+    return location
+      .getPropertiesPromise(filePath)
+      .then((origStats) => {
+        const thumbFilePath = getThumbFileLocation(filePath, location);
+        return location
+          .getPropertiesPromise(thumbFilePath)
+          .then((stats) => {
+            if (stats) {
+              // Thumbnail exists
+              if (origStats.lmdt > stats.lmdt) {
+                // Checking if is up to date
+                return createThumbnailPromise(
+                  filePath,
+                  origStats.size,
+                  thumbFilePath,
+                  origStats.isFile,
+                  location,
+                )
+                  .then((tmbPath) => ({ filePath, tmbPath }))
+                  .catch((err) => {
+                    console.log('Thumb generation failed ' + err);
+                    return Promise.resolve({
+                      filePath,
+                      tmbPath: thumbFilePath,
+                    });
+                  });
+              } else {
+                // Tmb up to date
+                return Promise.resolve({ filePath, tmbPath: thumbFilePath });
+              }
+            } else {
+              // Thumbnail does not exists
+              return createThumbnailPromise(
+                filePath,
+                origStats.size,
+                thumbFilePath,
+                origStats.isFile,
+                location,
+              )
+                .then((tmbPath) => {
+                  if (tmbPath !== undefined) {
+                    return { filePath, tmbPath };
+                  } else {
+                    return { filePath };
+                  }
+                })
+                .catch((err) => {
+                  console.log('Thumb generation failed ' + err);
+                  return Promise.resolve({ filePath });
+                });
+            }
+          })
+          .catch((err) => {
+            console.log('Error getting tmb properties ' + err);
+            return Promise.resolve({ filePath });
+          });
+      })
+      .catch((err) => {
+        console.log('Error getting file properties ' + err);
+        return Promise.resolve({ filePath });
+      });
+  }
+
+  function getThumbFileLocation(filePath: string, location: CommonLocation) {
+    const containingFolder = extractContainingDirectoryPath(
+      filePath,
+      location.getDirSeparator(),
+    );
+    const metaFolder = getMetaDirectoryPath(
+      containingFolder,
+      location.getDirSeparator(),
+    );
+    return (
+      metaFolder +
+      location.getDirSeparator() +
+      extractFileName(filePath, location.getDirSeparator()) +
+      AppConfig.thumbFileExt
+    );
+  }
+
+  function createThumbnailPromise(
+    filePath: string,
+    fileSize: number,
+    thumbFilePath: string,
+    isFile: boolean,
+    location: CommonLocation,
+  ): Promise<string | undefined> {
+    const metaDirectory = extractContainingDirectoryPath(
+      thumbFilePath,
+      location.getDirSeparator(),
+    );
+    const fileDirectory = isFile
+      ? extractContainingDirectoryPath(filePath, location.getDirSeparator())
+      : filePath;
+    const normalizedFileDirectory = normalizePath(fileDirectory);
+    if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
+      return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
+    }
+    return location.checkDirExist(metaDirectory).then((exist) => {
+      if (!exist) {
+        return createDirectoryPromise(metaDirectory, location.uuid).then(() => {
+          return createThumbnailSavePromise(
+            filePath,
+            fileSize,
+            thumbFilePath,
+            location,
+          );
+        });
+      } else {
+        return createThumbnailSavePromise(
+          filePath,
+          fileSize,
+          thumbFilePath,
+          location,
+        );
+      }
+    });
+  }
+
+  function createThumbnailSavePromise(
+    filePath: string,
+    fileSize: number,
+    thumbFilePath: string,
+    location: CommonLocation,
+  ): Promise<string | undefined> {
+    return generateThumbnailPromise(
+      filePath,
+      fileSize,
+      location.loadTextFilePromise,
+      location.getFileContentPromise,
+      location.getDirSeparator(),
+    )
+      .then((dataURL) => {
+        if (dataURL && dataURL.length) {
+          return saveThumbnailPromise(thumbFilePath, dataURL, location.uuid)
+            .then(() => thumbFilePath)
+            .catch((err) => {
+              console.log('Thumb saving failed ' + err + ' for ' + filePath);
+              return Promise.resolve(undefined);
+            });
+        }
+        return undefined; // thumbFilePath;
+      })
+      .catch((err) => {
+        console.log('Thumb generation failed ' + err + ' for ' + filePath);
+        return Promise.resolve(undefined);
+      });
+  }
+
+  function saveThumbnailPromise(filePath, dataURL, locationID) {
+    if (!dataURL || dataURL.length < 7) {
+      // data:,
+      return Promise.reject(new Error('Invalid dataURL'));
+    }
+    const baseString = dataURL.split(',').pop();
+    const content = base64ToBlob(baseString);
+    return saveBinaryFilePromise(
+      { path: filePath, locationID },
+      content, //PlatformIO.isMinio() ? content : content.buffer,
+      true,
+      undefined,
+      'thumbgen',
+    )
+      .then(() => filePath)
+      .catch((error) => {
+        console.log(
+          'Saving thumbnail for ' +
+            filePath +
+            ' failed with ' +
+            JSON.stringify(error),
+        );
+        return Promise.reject(new Error('Saving tmb failed for: ' + filePath));
       });
   }
 

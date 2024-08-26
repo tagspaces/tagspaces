@@ -2,6 +2,7 @@
   "compilerOptions": {
     "incremental": true,
     "target": "es2022",
+    "ignoreDeprecations": "5.0",
     "module": "commonjs",
     "lib": ["dom", "dom.iterable", "es2022"],
     "jsx": "react-jsx",
@@ -21,14 +22,15 @@
     "baseUrl": "./",
     "paths": {
       "-/*": ["src/renderer/*"],
-      "assets/*": ["assets/*"],
-    },
+      "assets/*": ["assets/*"]
+    }
   },
   "include": [
+    "src/main/**/*.ts",
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
     "tagspacespro/**/*.ts",
-    "tagspacespro/**/*.tsx",
+    "tagspacespro/**/*.tsx"
   ],
-  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"],
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

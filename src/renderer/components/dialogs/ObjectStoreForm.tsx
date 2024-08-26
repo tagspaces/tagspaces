@@ -26,6 +26,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTranslation } from 'react-i18next';
+import TooltipTS from '../Tooltip';
 
 /**
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
@@ -134,10 +135,11 @@ function ObjectStoreForm(props: Props) {
   function handleRegionChange(inputValue: any, value: string, reason: string) {
     if (reason === 'input') {
       setRegion(value);
-    } else if (reason === 'select-option') {
+    } else if (reason === 'selectOption') {
       setRegion(value);
     }
     if (reason === 'clear') {
+      //|| reason === 'reset') {
       setRegion('');
     }
   }
@@ -214,13 +216,17 @@ function ObjectStoreForm(props: Props) {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
-                    size="large"
-                  >
-                    {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
+                  <TooltipTS title={t('toggleKeyVisibility')}>
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() =>
+                        setShowSecretAccessKey(!showSecretAccessKey)
+                      }
+                      size="large"
+                    >
+                      {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </TooltipTS>
                 </InputAdornment>
               ),
             }}
@@ -294,6 +300,7 @@ function ObjectStoreForm(props: Props) {
               <TextField
                 {...params}
                 label={t('core:regionSearch')}
+                data-tid="regionTID"
                 placeholder={t('core:regionSearch')}
                 margin="normal"
               />

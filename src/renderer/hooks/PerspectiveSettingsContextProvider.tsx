@@ -25,11 +25,15 @@ import React, {
 } from 'react';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { TS } from '-/tagspaces.namespace';
-import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import { removeFolderCustomSettings } from '-/utils/metaoperations';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { mergeFsEntryMeta } from '-/services/utils-io';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 type PerspectiveSettingsContextData = {
+  settings: TS.FolderSettings;
   orderBy: boolean;
   sortBy: string;
   singleClickAction: string;
@@ -53,6 +57,7 @@ type PerspectiveSettingsContextData = {
 
 export const PerspectiveSettingsContext =
   createContext<PerspectiveSettingsContextData>({
+    settings: undefined,
     orderBy: true,
     sortBy: 'byName',
     singleClickAction: 'openInternal', // openInternal openExternal
@@ -81,38 +86,53 @@ export type PerspectiveSettingsContextProviderProps = {
 export const PerspectiveSettingsContextProvider = ({
   children,
 }: PerspectiveSettingsContextProviderProps) => {
+  const { currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryPath,
-    currentDirectoryPerspective,
     directoryMeta,
     setDirectoryMeta,
     getDefaultPerspectiveSettings,
     getPerspective,
   } = useDirectoryContentContext();
+  const { metaActions } = useEditedEntryMetaContext();
+  const { removeFolderCustomSettings, saveCurrentLocationMetaData } =
+    useIOActionsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
     getSettings(getPerspective(), directoryMeta),
   );
+  const firstRender = useFirstRender();
 
-  useEffect(() => {
+  /*useEffect(() => {
     settings.current = getSettings(getPerspective(), directoryMeta);
     forceUpdate();
-  }, [currentDirectoryPerspective, directoryMeta]);
+  }, [perspective, directoryMeta]);*/
+
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (action.action === 'perspectiveChange') {
+          settings.current = getSettings(getPerspective(), directoryMeta);
+          forceUpdate();
+        }
+      }
+    }
+  }, [metaActions]);
 
   function getSettings(
-    perspective: string,
+    persp: string,
     directoryMeta: TS.FileSystemEntryMeta,
   ): TS.FolderSettings {
-    const defaultSettings = getDefaultPerspectiveSettings(perspective);
+    const defaultSettings = getDefaultPerspectiveSettings(persp);
     let s: TS.FolderSettings = defaultSettings;
     if (
       Pro &&
       directoryMeta &&
       directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[perspective]
+      directoryMeta.perspectiveSettings[persp]
     ) {
       const proSettings: TS.FolderSettings =
-        directoryMeta.perspectiveSettings[perspective];
+        directoryMeta.perspectiveSettings[persp];
       if (proSettings) {
         s = { ...s, ...proSettings };
       }
@@ -161,12 +181,13 @@ export const PerspectiveSettingsContextProvider = ({
       isDefaultSetting = !haveLocalSetting();
     }
     if (Pro && !isDefaultSetting) {
-      Pro.MetaOperations.savePerspectiveSettings(
+      setPerspectiveSettings(
         currentDirectoryPath,
         getPerspective(),
         settings.current,
-      ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        setDirectoryMeta(fsEntryMeta);
+      ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
+        saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta);
+        setDirectoryMeta(updatedFsEntryMeta);
       });
     } else {
       const defaultSettings = getDefaultPerspectiveSettings(getPerspective());
@@ -177,8 +198,36 @@ export const PerspectiveSettingsContextProvider = ({
     }
   }
 
+  function setPerspectiveSettings(
+    path: string,
+    perspective: string,
+    folderSettings?: TS.FolderSettings,
+  ): Promise<TS.FileSystemEntryMeta> {
+    return currentLocation
+      .loadMetaDataPromise(path)
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        return {
+          ...(fsEntryMeta && fsEntryMeta),
+          perspectiveSettings: {
+            ...(fsEntryMeta &&
+              fsEntryMeta.perspectiveSettings &&
+              fsEntryMeta.perspectiveSettings),
+            [perspective]: folderSettings,
+          },
+        };
+      })
+      .catch(() => {
+        return mergeFsEntryMeta({
+          perspectiveSettings: {
+            [perspective]: folderSettings,
+          },
+        });
+      });
+  }
+
   const context = useMemo(() => {
     return {
+      settings: settings.current,
       showDirectories: settings.current.showDirectories,
       showDescription: settings.current.showDescription,
       showEntriesDescription: settings.current.showEntriesDescription,
@@ -199,7 +248,7 @@ export const PerspectiveSettingsContextProvider = ({
       setSettings: setSettings,
       saveSettings: saveSettings,
     };
-  }, [settings.current]);
+  }, [settings.current, currentDirectoryPath, directoryMeta]);
 
   return (
     <PerspectiveSettingsContext.Provider value={context}>

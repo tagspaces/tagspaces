@@ -36,7 +36,7 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
-  onClose: () => void;
+  onClose: (event?: Object, reason?: string) => void;
 }
 
 function NewEntryDialog(props: Props) {
@@ -58,7 +58,10 @@ function NewEntryDialog(props: Props) {
       >
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
           {t('core:create') + '...'}
-          <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
+          <DialogCloseButton
+            testId="closeCreateDialogTID"
+            onClose={() => onClose()}
+          />
         </DialogTitle>
         <DialogContent
           style={{
@@ -67,7 +70,7 @@ function NewEntryDialog(props: Props) {
             marginBottom: 20,
             overflow: 'overlay',
           }}
-          data-tid="keyboardShortCutsDialog"
+          data-tid="newEntryDialog"
         >
           <Accordion style={{ marginTop: 5 }} defaultExpanded>
             <AccordionDetails style={{ paddingTop: 16 }}>

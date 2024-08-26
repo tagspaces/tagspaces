@@ -17,10 +17,10 @@
  */
 
 import React, { useState } from 'react';
+import { alpha, useTheme } from '@mui/material/styles';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
@@ -28,6 +28,7 @@ interface Props {
 }
 
 function SearchBox(props: Props) {
+  const theme = useTheme();
   const { searchQuery } = useDirectoryContentContext();
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null,
@@ -59,6 +60,8 @@ function SearchBox(props: Props) {
               style: {
                 overflow: 'hidden',
                 height: 720,
+                // background: alpha(theme.palette.background.default, 0.95),
+                // backdropFilter: 'blur(5px)',
               },
             },
           }}

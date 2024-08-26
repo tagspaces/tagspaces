@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { expect } from '@playwright/test';
-import { clickOn, setInputKeys } from './general.helpers';
+import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
 
 const newDirectoryName = 'newDirectory';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -45,5 +45,10 @@ export async function renameFolder() {
   // set new dir name
   await setInputKeys('renameEntryDialogInput', newDirectoryName);
   await clickOn('[data-tid=confirmRenameEntry]');
+  await expectElementExist(
+    '[data-tid=currentDir_' + newDirectoryName + ']',
+    true,
+    5000,
+  );
   return newDirectoryName;
 }

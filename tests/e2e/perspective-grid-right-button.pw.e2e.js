@@ -2,7 +2,8 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
+import { generateFileName } from '@tagspaces/tagspaces-common/paths';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -10,7 +11,9 @@ import {
   deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
+import AppConfig from '../../src/renderer/AppConfig';
 import { searchEngine } from './search.helpers';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 import {
@@ -18,7 +21,6 @@ import {
   createNewDirectory,
   createTxtFile,
   expectElementExist,
-  generateFileName,
   getGridFileSelector,
   reloadDirectory,
   removeTagFromTagMenu,
@@ -30,54 +32,69 @@ import {
   showFilesWithTag,
   frameLocator,
   takeScreenshot,
+  expectMetaFilesExist,
+  setSettings,
+  openFolder,
+  openFile,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { stopServices } from '../setup-functions';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  // await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
   await clearDataStorage();
 });
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
 // Test the functionality of the right button on a file on a grid perspective table
 // Scenarios for right button on a file
 test.describe('TST50** - Right button on a file', () => {
-  test('TST5016 - Open file [web,minio,electron]', async () => {
-    // await searchEngine('txt');
-    await openContextEntryMenu(
-      getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
-      'fileMenuOpenFile',
-    );
-    // await takeScreenshot('fileMenuOpenFile');
+  test('TST5016 - Open file [web,electron]', async () => {
+    await openFile('sample.txt');
     await expect
       .poll(
         async () => {
-          const fLocator = await frameLocator();
+          const fLocator = await frameLocator('#root iframe');
           const bodyTxt = await fLocator.locator('body').innerText();
           return toContainTID(bodyTxt);
         },
@@ -88,58 +105,41 @@ test.describe('TST50** - Right button on a file', () => {
         },
       )
       .toBe(true);
-    // await takeScreenshot('bodyTxt_fileMenuOpenFile');
-
-    /*const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
-    // Check if the file is opened
-    // await delay(1500);
-    /*await expectElementExist('#FileViewer', true, 2000);
-    const webViewer = await global.client.waitForSelector('#FileViewer');
-    // await webViewer.waitForDisplayed();
-    // await delay(5000);
-    // expect(await webViewer.isDisplayed()).toBe(true);
-    const iframe = await webViewer.contentFrame();
-    // await global.client.switchToFrame(webViewer);
-    // await isElementDisplayed(iframeBody,'body');
-    const iframeBody = await iframe.waitForSelector('body');
-    const bodyTxt = await iframeBody.innerText();
-    const containTID = toContainTID(bodyTxt);
-    if (!containTID) {
-      console.debug('no containTID in:' + bodyTxt);
-    }
-    expect(containTID).toBe(true);*/
   });
 
-  test('TST5017 - Rename file [web,minio,electron]', async () => {
+  test('TST5017 - Rename file and check thumbnail exist [web,electron]', async () => {
     const newFileName = 'newFileName';
-    const fileExtension = '.txt';
+    const fileExtension = '.jpeg';
     // await searchEngine('txt');
-    const sampleFileName = 'sample.txt';
+    const sampleFileName = 'sample';
+
     const oldName = await renameFileFromMenu(
       newFileName,
-      getGridFileSelector(sampleFileName),
+      getGridFileSelector(sampleFileName + fileExtension),
     );
-    expect(oldName).toBe(sampleFileName);
+    expect(oldName).toBe(sampleFileName + fileExtension);
 
     await expectElementExist(getGridFileSelector(newFileName + fileExtension));
     await expectElementExist(getGridFileSelector(oldName), false);
 
-    // const fileNameTxt = await getFirstFileName();
-    // expect(fileNameTxt).toContain(newFileName);
+    /*const fileRenamedScreenshot = await getElementScreenshot(
+      '[data-tid=fsEntryName_'+dataTidFormat(newFileName + fileExtension)+'] img',
+    );*/
 
     // rename back to oldName
     const fileName = await renameFileFromMenu(
-      oldName,
+      sampleFileName,
       getGridFileSelector(newFileName + fileExtension),
     );
     expect(fileName).toBe(newFileName + fileExtension);
+    /*const initScreenshot = await getElementScreenshot(
+      '[data-tid=fsEntryName_'+dataTidFormat(oldName)+'] img',
+    );
+    expect(initScreenshot).toBe(fileRenamedScreenshot);*/
+    await expectMetaFilesExist([oldName + '.jpg']);
   });
 
-  test('TST5018 - Delete file [web,minio,electron]', async () => {
+  test('TST5018 - Delete file [web,electron]', async () => {
     // await createTxtFile();
     // await searchEngine('note'); //select new created file - note[date_created].txt
     const fileName = 'sample.html'; // await getGridFileName(-1);
@@ -153,7 +153,7 @@ test.describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe(undefined); */
   });
 
-  test('TST5019 - Rename tag in file [web,minio,electron]', async () => {
+  test('TST5019 - Rename tag in file [web,electron]', async () => {
     // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
@@ -173,8 +173,8 @@ test.describe('TST50** - Right button on a file', () => {
     }); */
     await clickOn('[data-tid=tagMoreButton_' + testTagName + ']');
     await clickOn('[data-tid=editTagDialogMenu]');
-    await global.client.dblclick('[data-tid=editTagEntryDialog_input] input');
-    await setInputKeys('editTagEntryDialog_input', testTagName + 'Edited');
+    //await global.client.dblclick('[data-tid=editTagEntryDialog_input] input');
+    await setInputKeys('editTagEntryDialog_input', 'Edited');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
     // await waitForNotification();
 
@@ -185,7 +185,7 @@ test.describe('TST50** - Right button on a file', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]',
     );
-    await testDataRefresh();
+    await testDataRefresh(s3ServerInstance);
     // cleanup
     /*await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles('grid', [testTagName + 'Edited'], false);
@@ -203,7 +203,7 @@ test.describe('TST50** - Right button on a file', () => {
     );*/
   });
 
-  test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {
+  test('TST5023 - Remove tag from file (tag menu) [web,electron]', async () => {
     // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
@@ -273,17 +273,18 @@ test.describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles([testTagName], false); */
   });
 
-  test('TST5025 - Add - Remove tags (file menu) [web,minio,electron]', async () => {
+  test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
     // await searchEngine('desktop');
-    const fileName = 'sample';
-    const fileExt = 'desktop';
+    const fileName = 'sample.desktop';
     const tags = [testTagName, testTagName + '2'];
     // select file
-    await clickOn(getGridFileSelector(fileName + '.' + fileExt));
+    await clickOn(getGridFileSelector(fileName));
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(
-      getGridFileSelector(generateFileName(fileName, fileExt, tags, ' ')),
+      getGridFileSelector(
+        generateFileName(fileName, tags, AppConfig.tagDelimiter),
+      ),
     );
     gridElement = await gridElement.$('..');
     for (let i = 0; i < tags.length; i++) {
@@ -317,7 +318,7 @@ test.describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [web,minio,electron]', async () => {
+  test('TST5027 - Open containing folder [web,electron]', async () => {
     if (!global.isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
@@ -343,7 +344,7 @@ test.describe('TST50** - Right button on a file', () => {
   /**
    * todo web: io-actions.ts:120 Moving files failed with Renaming file failedSignatureDoesNotMatch
    */
-  test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
+  test('TST5028 - Move - Copy file (file menu) [electron]', async () => {
     // Move file in child folder
     const fileName = 'sample.pdf';
     const folderName = 'empty_folder';
@@ -354,14 +355,14 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
 
     //await waitForNotification();
-    await expectElementExist(getGridFileSelector(fileName), false);
+    await expectElementExist(fileSelector, false, 4000);
 
     //await global.client.dblclick(selectorFolder);
     await openContextEntryMenu(
       getGridFileSelector(folderName),
       'openDirectory',
     );
-    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectElementExist(fileSelector, true);
 
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
@@ -372,7 +373,7 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectElementExist(fileSelector, true);
 
     // cleanup
     // await global.client.dblclick(selectorFolder);
@@ -380,32 +381,34 @@ test.describe('TST50** - Right button on a file', () => {
       getGridFileSelector(folderName),
       'openDirectory',
     );
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(fileSelector, true);
     await deleteFileFromMenu();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(fileSelector, false);
     await reloadDirectory();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(fileSelector, false);
   });
 
   test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
-  test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5033 - Open directory (directory menu) [web,electron]', async () => {
+    await expectElementExist(selectorFile, true, 5000);
     // open empty_folder
     await openContextEntryMenu(selectorFolder, 'openDirectory');
-    // await global.client.screenshot({ path: 'screenshotTST5033.png' });
-    await expectElementExist(selectorFile, false);
-    // const firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(undefined); //'sample.eml');
+    await expectElementExist(selectorFile, false, 5000);
   });
 
-  test('TST5034 - Rename directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5034 - Rename directory (directory menu) [web,electron]', async () => {
     const newDirName = 'new_dir_name';
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    const folder = getGridFileSelector('empty_folder');
+    await openContextEntryMenu(folder, 'renameDirectory');
     const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
-    await openContextEntryMenu(selectorFolder, 'renameDirectory');
+    await openContextEntryMenu(
+      getGridFileSelector(newDirName),
+      'renameDirectory',
+    );
     const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);
@@ -417,10 +420,10 @@ test.describe('TST50** - Right button on a file', () => {
   test('TST5035 - Delete directory (directory menu) [web,minio,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
-    await global.client.dblclick(selectorFolder);
+    await global.client.dblclick(getGridFileSelector('empty_folder'));
     const testFolder = await createNewDirectory('aaa');
 
-    await openContextEntryMenu(selectorFolder, 'deleteDirectory');
+    await openContextEntryMenu(getGridFileSelector('aaa'), 'deleteDirectory');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
 
     await expectElementExist(
@@ -432,12 +435,12 @@ test.describe('TST50** - Right button on a file', () => {
     // await expectElementExist(selectorFolder, true);
   });
 
-  test('TST5036 - Open directory properties (directory menu) [web,minio,electron]', async () => {
+  test('TST5036 - Open directory properties (directory menu) [web,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await expectElementExist('[data-tid=fileNameProperties]', true, 5000);
   });
 
-  test('TST5037 - Show sub folders [web,minio,electron]', async () => {
+  test('TST5037 - Show sub folders [web,electron]', async () => {
     // click on hide directories
     await setGridOptions('grid', false);
 
@@ -455,7 +458,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFolder, true);
   });
 
-  test.skip('TST5038 - Return directory back [web,minio,electron]', async () => {
+  test.skip('TST5038 - Return directory back [web,electron]', async () => {
     // TODO
     // expect(received).toBe(expected) // Object.is equality
     // Expected: true
@@ -479,7 +482,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFolder);
   });
 
-  test('TST5039 - Changing the Perspective View [web,minio,electron]', async () => {
+  test('TST5039 - Changing the Perspective View [web,electron]', async () => {
     // await isDisplayed('[data-tid=perspectiveGridFileTable]', true);
     // await global.client.screenshot({ path: 'screenshotTST5039.png' });
 
@@ -506,10 +509,11 @@ test.describe('TST50** - Right button on a file', () => {
       // '[data-tid=' + listDefaultSettings.testID + ']',
       '[data-tid=listPerspectiveContainer]',
       true,
+      5000,
     );
   });
 
-  test('TST5040 - Create file [web,minio,electron]', async () => {
+  test('TST5040 - Create file [web,electron]', async () => {
     // Open empty folder
     await global.client.dblclick(selectorFolder);
 
@@ -521,5 +525,43 @@ test.describe('TST50** - Right button on a file', () => {
     // await deleteFirstFile();
     // const firstFileName = await getGridFileName(0);
     // expect(firstFileName).toBe(undefined);
+  });
+
+  test('TST5049 - Add/remove filename tags Placed at Start [web,electron]', async () => {
+    await setSettings('[data-tid=settingsSetPersistTagsInFileName]', true);
+    await setSettings('[data-tid=fileNameBeginningTagTID]', true);
+
+    const fileName = 'sample.txt';
+    const tags = [testTagName, testTagName + '2'];
+    // select file
+    await clickOn(getGridFileSelector(fileName));
+    await AddRemoveTagsToSelectedFiles('grid', tags, true);
+
+    let gridElement = await global.client.waitForSelector(
+      getGridFileSelector(
+        generateFileName(
+          fileName,
+          tags,
+          AppConfig.tagDelimiter,
+          AppConfig.dirSeparator,
+          AppConfig.prefixTagContainer,
+          false,
+        ),
+      ),
+    );
+    gridElement = await gridElement.$('..');
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', true);
+    }
+
+    // remove tags
+    await gridElement.click();
+    await AddRemoveTagsToSelectedFiles('grid', tags, false);
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        false,
+      );
+    }
   });
 });

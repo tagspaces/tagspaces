@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useContext, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -40,7 +40,6 @@ import {
   getStoredSearchesVisible,
 } from '-/reducers/settings';
 import { Pro } from '../pro';
-import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import HistoryMenu from '-/components/menus/HistoryMenu';
@@ -49,13 +48,11 @@ import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 interface Props {
   style?: any;
-  searches: Array<TS.SearchQuery>;
   showUnixHiddenEntries: boolean;
-  addSearches: (searches: Array<TS.SearchQuery>) => void;
   reduceHeightBy: number;
   storedSearchesVisible: boolean;
   showBookmarks: boolean;
@@ -70,11 +67,19 @@ interface Props {
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
-  const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
+  const { setSearchQuery } = useDirectoryContentContext();
+  const { searches, findFromSavedSearch } = useSavedSearchesContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(
+        Pro?.contextProviders?.BookmarksContext,
+      )
+    : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<TS.SearchQuery>(undefined);
   const [searchMenuAnchorEl, setSearchMenuAnchorEl] =
@@ -91,7 +96,8 @@ function StoredSearches(props: Props) {
   const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const historyKeys = Pro ? Pro.keys.historyKeys : {};
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const ExportSearchesDialog =
     Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
@@ -107,7 +113,7 @@ function StoredSearches(props: Props) {
   };
 
   const editSearch = (uuid: string) => {
-    const savedSearch = props.searches.find((search) => search.uuid === uuid);
+    const savedSearch = searches.find((search) => search.uuid === uuid);
     if (!savedSearch) {
       return true;
     }
@@ -124,21 +130,22 @@ function StoredSearches(props: Props) {
   const preventDefault = (event: React.SyntheticEvent) =>
     event.preventDefault();
 
-  const noSearchesFound = props.searches.length < 1;
+  const noSearchesFound = searches.length < 1;
 
   const { reduceHeightBy } = props;
 
-  const bookmarkItems: Array<TS.BookmarkItem> = Pro
-    ? Pro.bookmarks.getBookmarks()
-    : [];
+  const bookmarkItems: Array<TS.BookmarkItem> =
+    Pro && bookmarksContext
+      ? bookmarksContext.bookmarks //getBookmarks()
+      : [];
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    ? historyContext.fileOpenHistory
     : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    ? historyContext.fileEditHistory
     : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    ? historyContext.folderOpenHistory
     : [];
 
   const bookmarksAvailable = bookmarkItems && bookmarkItems.length > 0;
@@ -241,7 +248,7 @@ function StoredSearches(props: Props) {
           )}
         </Grid>
         {props.storedSearchesVisible &&
-          props.searches.map((search) => (
+          searches.map((search) => (
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
               <Grid item xs={10} style={{ width: 250 }}>
                 <Button
@@ -324,7 +331,7 @@ function StoredSearches(props: Props) {
         </Grid>
         {Pro && props.showBookmarks && (
           <RenderHistory
-            historyKey={Pro.bookmarks.bookmarksKey}
+            historyKey={Pro.keys.bookmarksKey}
             items={bookmarkItems}
             update={forceUpdate}
           />
@@ -332,7 +339,11 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
-              data-tid="fileOpenHistoryTID"
+              data-tid={
+                props.fileOpenHistory
+                  ? 'fileCloseHistoryTID'
+                  : 'fileOpenHistoryTID'
+              }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
               size="large"
@@ -427,7 +438,11 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
-              data-tid="folderOpenHistoryTID"
+              data-tid={
+                props.folderOpenHistory
+                  ? 'folderCloseHistoryTID'
+                  : 'folderOpenHistoryTID'
+              }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)
@@ -468,7 +483,7 @@ function StoredSearches(props: Props) {
           refreshHistory={() => forceUpdate()}
           clearAll={() => {
             if (Pro) {
-              Pro.history.delAllHistory(menuHistoryKey.current);
+              historyContext.delAllHistory(menuHistoryKey.current);
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}
@@ -479,8 +494,8 @@ function StoredSearches(props: Props) {
           onClose={() => setBookmarksMenuAnchorEl(null)}
           refresh={() => forceUpdate()}
           clearAll={() => {
-            if (Pro) {
-              Pro.bookmarks.delAllBookmarks();
+            if (Pro && bookmarksContext) {
+              bookmarksContext.delAllBookmarks();
             } //historyKeys.fileOpenKey);
             forceUpdate();
           }}
@@ -539,7 +554,7 @@ function StoredSearches(props: Props) {
         <ExportSearchesDialog
           open={isExportSearchesDialogOpened}
           onClose={() => setExportSearchesDialogOpened(false)}
-          searches={props.searches}
+          searches={searches}
         />
       )}
       {ImportSearchesDialog && importFile && (
@@ -547,8 +562,7 @@ function StoredSearches(props: Props) {
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          addSearches={props.addSearches}
-          searches={props.searches}
+          searches={searches}
         />
       )}
     </SidePanel>
@@ -557,7 +571,6 @@ function StoredSearches(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
     storedSearchesVisible: getStoredSearchesVisible(state),
     showBookmarks: getShowBookmarks(state),
@@ -570,7 +583,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      addSearches: SearchActions.addSearches,
       setStoredSearchesVisible: SettingsActions.setStoredSearchesVisible,
       setShowBookmarks: SettingsActions.setShowBookmarks,
       setFileOpenHistory: SettingsActions.setFileOpenHistory,
@@ -587,10 +599,10 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.fileOpenHistory === prevProp.fileOpenHistory &&
   nextProp.folderOpenHistory === prevProp.folderOpenHistory &&
   nextProp.fileEditHistory === prevProp.fileEditHistory &&
-  nextProp.indexing === prevProp.indexing &&
-  nextProp.currentDirectory === prevProp.currentDirectory &&
-  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
-  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
+  //  nextProp.indexing === prevProp.indexing &&
+  nextProp.currentDirectory === prevProp.currentDirectory;
+// nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
+//  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
 //  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
 
 export default connect(

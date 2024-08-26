@@ -23,7 +23,7 @@ A full list of the changes is available in the [changelog](https://www.tagspaces
 
 ## Main Features
 
-- **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and man files and folders.
+- **File and folder management** - TagSpaces provides a convenient user interface for browsing, viewing and managing files and folders.
 - **File tagging** - The application supports two ways for tagging files. The default one embeds the tags directly in the name of the file, the other one uses a so called sidecar files for persisting the tags.
 - **Searching** - The search functionality supports fuzzy functionality and can filter your locations for files and folders containing one or more tags
 - **Browser for local content** - TagSpaces can be used just as browser for your local photos or navigation thought your local ebook library
@@ -81,12 +81,6 @@ Change to the branch with the name **develop**:
 and install the project dependencies:
 
     $ npm install
-
-Note: we have two package.json in `release/app` for the native dependencies and `/` you need to run `npm install` twice. 
-
-The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
-
-    $ npm run install-ext-node
 
 Starting from v4 of the application, a web service is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be generated from webpack script in the `.env` file located in `release/app` folder. This is an example for an .env file.
 

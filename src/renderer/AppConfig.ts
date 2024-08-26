@@ -27,6 +27,7 @@ AppConfig.editableFiles = [
   'sql',
 ];
 AppConfig.autoSaveInterval = 40000;
+AppConfig.maxCollectedTag = 500;
 AppConfig.maxLoops = 2;
 AppConfig.defaultFolderColor = 'gray';
 

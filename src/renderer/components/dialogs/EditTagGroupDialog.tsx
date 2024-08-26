@@ -32,25 +32,31 @@ import { useSelector } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
-import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 interface Props {
   open: boolean;
-  editTagGroup: (tagGroup: TS.TagGroup) => void;
   selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
 }
 
 function EditTagGroupDialog(props: Props) {
-  const { editTagGroup, selectedTagGroupEntry, open, onClose } = props;
+  const { selectedTagGroupEntry, open, onClose } = props;
+
+  const { locations, findLocation } = useCurrentLocationContext();
+  const { updateTagGroup } = useTaggingActionsContext();
+  const { removeLocationTagGroup } = useTagGroupsLocationContext();
   const { t } = useTranslation();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
@@ -98,22 +104,20 @@ function EditTagGroupDialog(props: Props) {
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
       if (Pro && locationId !== selectedTagGroupEntry.locationId) {
-        const location: TS.Location = locations.find(
-          (l) => l.uuid === selectedTagGroupEntry.locationId,
+        const location: CommonLocation = findLocation(
+          selectedTagGroupEntry.locationId,
         );
         if (location) {
-          Pro.MetaOperations.removeTagGroup(
-            location.path,
-            selectedTagGroupEntry.uuid,
-          );
+          removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
         }
       }
-      editTagGroup({
+      updateTagGroup({
         ...selectedTagGroupEntry,
         title,
         color,
         textcolor,
         locationId,
+        modified_date: new Date().getTime(),
         children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
           color: applyChanges ? color : tag.color,

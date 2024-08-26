@@ -36,7 +36,6 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "license": "src/renderer/LICENSE.txt",
     "include": "resources/installer.nsh"
   },
   "directories": {

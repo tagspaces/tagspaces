@@ -36,7 +36,7 @@ const FileSourceDnd: React.FC<Props> = ({ children }) => {
   const fileSourceRef = useRef<HTMLSpanElement>(null);
   const childProps = children as React.ReactElement<ChildProps>;
   const entryPath = childProps.props.entryPath;
-  const selectedEntries = childProps.props.selectedEntries;
+  const selectedEntries = childProps.props.selectedEntries || [];
   let entries = !selectedEntries.some((entry) => entry.path === entryPath)
     ? [{ path: entryPath }]
     : selectedEntries;

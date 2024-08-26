@@ -29,7 +29,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { LinearProgress, Grid, Tooltip } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
-import PlatformIO from '-/services/platform-facade';
 import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
@@ -38,15 +37,16 @@ import {
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { PerspectiveIDs } from '-/perspectives';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
+import { uploadAbort } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
   title: string;
+  targetPath?: string;
   onClose: () => void;
 }
 
@@ -55,15 +55,11 @@ function FileUploadDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
-  const {
-    loadDirectoryContent,
-    currentDirectoryPerspective,
-    currentDirectoryPath,
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
 
-  const targetPath = React.useRef<string>(getTargetPath());
+  const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -98,20 +94,16 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      return PlatformIO.uploadAbort();
-      /*progress.map((fileProgress) => {
-        const { abort } = fileProgress;
-        if (abort !== undefined && typeof abort === 'function') {
-          abort();
-        }
-        return true;
-      });*/
+      return uploadAbort();
     }
   };
 
   let haveProgress = false;
 
   function getTargetPath() {
+    if (props.targetPath) {
+      return props.targetPath;
+    }
     const pathProgress = progress.find((fileProgress) => fileProgress.path);
     if (pathProgress) {
       return pathProgress.path;
@@ -120,6 +112,9 @@ function FileUploadDialog(props: Props) {
   }
 
   function getTargetURL() {
+    if (props.targetPath) {
+      return props.targetPath;
+    }
     if (currentLocation) {
       if (currentLocation.endpointURL) {
         return (
@@ -219,7 +214,7 @@ function FileUploadDialog(props: Props) {
                       ? filePath
                       : extractFileName(
                           targetPath.current,
-                          PlatformIO.getDirSeparator(),
+                          currentLocation?.getDirSeparator(),
                         )}
                     {percentage === -1 && (
                       <Tooltip
@@ -255,10 +250,7 @@ function FileUploadDialog(props: Props) {
             data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
-              dispatch(AppActions.clearUploadDialog());
-              if (currentDirectoryPerspective === PerspectiveIDs.GRID) {
-                loadDirectoryContent(currentDirectoryPath, false);
-              }
+              dispatch(AppActions.resetProgress());
             }}
             color="primary"
           >

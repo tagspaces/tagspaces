@@ -33,7 +33,7 @@ import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import XIcon from '@mui/icons-material/X';
 import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
@@ -43,12 +43,12 @@ import { openURLExternally } from '-/services/utils-io';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
+import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 
 interface Props {
-  toggleAboutDialog?: () => void;
-  toggleKeysDialog: () => void;
-  toggleOnboardingDialog: () => void;
-  toggleProTeaser: (slidePage?: string) => void;
   style?: any;
   reduceHeightBy?: number;
 }
@@ -56,13 +56,11 @@ interface Props {
 function HelpFeedbackPanel(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const {
-    toggleAboutDialog,
-    toggleKeysDialog,
-    toggleOnboardingDialog,
-    toggleProTeaser,
-    reduceHeightBy,
-  } = props;
+  const { openAboutDialog } = useAboutDialogContext();
+  const { openOnboardingDialog } = useOnboardingDialogContext();
+  const { openKeyboardDialog } = useKeyboardDialogContext();
+  const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { reduceHeightBy } = props;
 
   return (
     <SidePanel
@@ -92,7 +90,7 @@ function HelpFeedbackPanel(props: Props) {
         }}
       >
         <ListItem
-          onClick={toggleAboutDialog}
+          onClick={() => openAboutDialog()}
           title="Opens the about dialog"
           data-tid="aboutDialog"
         >
@@ -115,7 +113,7 @@ function HelpFeedbackPanel(props: Props) {
             {t('core:documentation')}
           </Typography>
         </ListItem>
-        <ListItem onClick={toggleKeysDialog}>
+        <ListItem onClick={() => openKeyboardDialog()}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
@@ -134,7 +132,7 @@ function HelpFeedbackPanel(props: Props) {
             {t('core:whatsNew')}
           </Typography>
         </ListItem>
-        <ListItem onClick={toggleOnboardingDialog}>
+        <ListItem onClick={() => openOnboardingDialog()}>
           <ListItemIcon>
             <OnboardingIcon />
           </ListItemIcon>
@@ -220,14 +218,14 @@ function HelpFeedbackPanel(props: Props) {
         )}
         <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
-            <TwitterIcon />
+            <XIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {t('core:followOnTwitter')}
+            {t('core:followOnX')}
           </Typography>
         </ListItem>
         <Divider />
-        <ListItem onClick={() => toggleProTeaser()}>
+        <ListItem onClick={() => openProTeaserDialog()}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>

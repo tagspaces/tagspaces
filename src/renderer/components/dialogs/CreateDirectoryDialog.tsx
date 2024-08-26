@@ -27,10 +27,11 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   open: boolean;
@@ -42,7 +43,9 @@ interface Props {
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
   const { createDirectory } = useIOActionsContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
 
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
@@ -73,17 +76,24 @@ function CreateDirectoryDialog(props: Props) {
   function onConfirm() {
     if (!disableConfirmButton && name) {
       const dirPath = joinPaths(
-        PlatformIO.getDirSeparator(),
+        currentLocation.getDirSeparator(),
         selectedDirectoryPath !== undefined
           ? selectedDirectoryPath
           : currentDirectoryPath,
         name,
       );
-      createDirectory(dirPath).then(() => {
-        if (props.callback) {
-          props.callback(dirPath);
+      currentLocation.checkDirExist(dirPath).then((exist) => {
+        if (!exist) {
+          createDirectory(dirPath).then(() => {
+            if (props.callback) {
+              props.callback(dirPath);
+            }
+          });
+        } else {
+          showNotification('Directory ' + dirPath + ' exist!');
         }
       });
+
       resetState();
       props.onClose();
     }

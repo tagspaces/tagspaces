@@ -20,10 +20,9 @@ import React, { useEffect, useState } from 'react';
 import {
   getBackupFileLocation,
   extractContainingDirectoryPath,
+  extractFileNameWithoutExt,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import { OpenedEntry } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -47,18 +46,22 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { executePromisesInBatches } from '-/services/utils-io';
+import { useSelector } from 'react-redux';
+import { getUseTrashCan } from '-/reducers/settings';
 
 const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
-  // const dispatch: AppDispatch = useDispatch();
-  const { switchLocationTypeByID, switchCurrentLocationType } =
-    useCurrentLocationContext();
-  const { openedEntry, updateOpenedFile } = useOpenedEntryContext();
+  const { findLocation } = useCurrentLocationContext();
+  const { getMetadataID } = useIOActionsContext();
+  const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
+  const useTrashCan = useSelector(getUseTrashCan);
   const [rowsPerPage, setRowsPerPage] =
     React.useState<number>(initialRowsPerPage);
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
@@ -73,32 +76,32 @@ function Revisions() {
     }
   }, [openedEntry]);
 
-  function loadHistoryItems(openedFile: OpenedEntry) {
+  function getLmdt(fileName) {
+    return parseInt(extractFileNameWithoutExt(fileName));
+  }
+
+  function loadHistoryItems(openedFile: TS.OpenedEntry) {
     if (Pro) {
-      Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
-        (id) => {
+      const location = findLocation(openedFile.locationID);
+      if (location) {
+        getMetadataID(openedFile.path, openedFile.uuid, location).then((id) => {
           openedFile.uuid = id;
           const backupFilePath = getBackupFileLocation(
             openedFile.path,
             openedFile.uuid,
-            PlatformIO.getDirSeparator(),
+            location.getDirSeparator(),
           );
           const backupPath = extractContainingDirectoryPath(
             backupFilePath,
-            PlatformIO.getDirSeparator(),
+            location.getDirSeparator(),
           );
-          switchLocationTypeByID(openedFile.locationId)
-            .then(() => {
-              PlatformIO.listDirectoryPromise(backupPath, []).then((h) => {
-                setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)));
-                return switchCurrentLocationType();
-              });
-            })
-            .catch(() => {
-              return switchCurrentLocationType();
-            });
-        },
-      );
+          location.listDirectoryPromise(backupPath, []).then((h) => {
+            setRows(
+              h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
+            );
+          });
+        });
+      }
     }
   }
 
@@ -114,36 +117,35 @@ function Revisions() {
   };
 
   function deleteRevision(path) {
-    PlatformIO.deleteFilePromise(path, true).then(() =>
-      loadHistoryItems(openedEntry),
-    );
+    const location = findLocation(openedEntry.locationID);
+    location
+      .deleteFilePromise(path, useTrashCan)
+      .then(() => loadHistoryItems(openedEntry));
   }
 
   function deleteRevisions() {
     if (rows.length > 0) {
+      const location = findLocation(openedEntry.locationID);
       const promises = rows.map((row) =>
-        PlatformIO.deleteFilePromise(row.path, true),
+        location.deleteFilePromise(row.path, useTrashCan),
       );
-      Promise.all(promises).then(() => loadHistoryItems(openedEntry));
+      executePromisesInBatches(promises).then(() =>
+        loadHistoryItems(openedEntry),
+      );
     }
   }
 
   function restoreRevision(revisionPath) {
+    const location = findLocation(openedEntry.locationID);
     const targetPath = getBackupFileLocation(
       openedEntry.path,
       openedEntry.uuid,
-      PlatformIO.getDirSeparator(),
+      location.getDirSeparator(),
     );
     return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
-      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() => {
-        const fsMeta = {
-          id: '',
-          ...openedEntry,
-          editMode: false,
-          shouldReload: !openedEntry.shouldReload,
-        };
-        updateOpenedFile(openedEntry.path, fsMeta);
-      }),
+      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() =>
+        reloadOpenedFile(),
+      ),
     );
   }
   function titleFormat(lmdt) {
@@ -232,7 +234,7 @@ function Revisions() {
                   {row.name}
                 </TableCell>
                 <TableCell align="right" title={titleFormat(row.lmdt)}>
-                  {cellFormat(row.lmdt)}
+                  {cellFormat(getLmdt(row.name))}
                 </TableCell>
                 <TableCell align="right">
                   <Tooltip title={t('core:view')}>

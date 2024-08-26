@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import ListItemText from '@mui/material/ListItemText';
@@ -35,22 +34,20 @@ import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { actions as LocationActions } from '-/reducers/locations';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 
 interface Props {
-  setEditLocationDialogOpened: (open: boolean) => void;
+  //setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
   //closeLocationTree: () => void;
 }
 
 function LocationContextMenu(props: Props) {
   const {
-    setEditLocationDialogOpened,
     setDeleteLocationDialogOpened,
     //closeLocationTree
   } = props;
@@ -59,6 +56,8 @@ function LocationContextMenu(props: Props) {
   const {
     addLocation,
     closeLocation,
+    moveLocationUp,
+    moveLocationDown,
     getLocationPosition,
     selectedLocation,
     locationDirectoryContextMenuAnchorEl,
@@ -66,15 +65,16 @@ function LocationContextMenu(props: Props) {
     getLocationPath,
   } = useCurrentLocationContext();
   const { createLocationIndex } = useLocationIndexContext();
-  const dispatch: AppDispatch = useDispatch();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  //const dispatch: AppDispatch = useDispatch();
 
-  const moveLocationUp = (locationId) => {
+  /*const moveLocationUp = (locationId) => {
     dispatch(LocationActions.moveLocationUp(locationId));
   };
 
   const moveLocationDown = (locationId) => {
     dispatch(LocationActions.moveLocationDown(locationId));
-  };
+  };*/
 
   const indexLocation = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
@@ -83,7 +83,7 @@ function LocationContextMenu(props: Props) {
 
   const showEditLocationDialog = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    setEditLocationDialogOpened(true);
+    openCreateEditLocationDialog();
   };
 
   const duplicateLocation = () => {
@@ -123,7 +123,7 @@ function LocationContextMenu(props: Props) {
   const showInFileManagerInt = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
     getLocationPath(selectedLocation).then((path) =>
-      PlatformIO.openDirectory(path),
+      openDirectoryMessage(path),
     );
   };
 
@@ -138,7 +138,7 @@ function LocationContextMenu(props: Props) {
   const openInNewWindow = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
     const sharingLink = generateSharingLink(selectedLocation.uuid);
-    PlatformIO.createNewInstance(
+    createNewInstance(
       window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1],
     );
   };

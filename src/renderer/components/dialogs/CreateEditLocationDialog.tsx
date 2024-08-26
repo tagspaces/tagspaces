@@ -18,6 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import CryptoJS from 'crypto-js';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -39,7 +40,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
-import IdIcon from '@mui/icons-material/Abc';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
@@ -51,6 +51,7 @@ import {
   AccordionSummary,
   InputLabel,
   MenuItem,
+  FormLabel,
   Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
@@ -61,22 +62,24 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { getLocations } from '-/reducers/locations';
-import { AppDispatch } from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PasswordIcon from '@mui/icons-material/Password';
+import TooltipTS from '-/components/Tooltip';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -94,7 +97,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   open: boolean;
   onClose: () => void;
-  editLocation?: (location: TS.Location) => void;
+  //editLocation?: (location: CommonLocation) => void;
 }
 
 function CreateEditLocationDialog(props: Props) {
@@ -102,14 +105,19 @@ function CreateEditLocationDialog(props: Props) {
 
   const { showNotification } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
-  const { addLocation, selectedLocation } = useCurrentLocationContext();
+  const { loadLocationDataPromise } = useTagGroupsLocationContext();
+  const { addLocation, editLocation, selectedLocation, findLocation } =
+    useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   /*const { location } = props;*/
   const [showSecretAccessKey, setShowSecretAccessKey] =
+    useState<boolean>(false);
+  const [showEncryptionKey, setShowEncryptionKey] = useState<boolean>(false);
+  const [isConfirmEncryptionChanged, setConfirmEncryptionChanged] =
     useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
@@ -164,6 +172,11 @@ function CreateEditLocationDialog(props: Props) {
   const [endpointURL, setEndpointURL] = useState<string>(
     selectedLocation ? selectedLocation.endpointURL : '',
   );
+  const [encryptionKey, setEncryptionKey] = useState<string>(
+    selectedLocation && selectedLocation.encryptionKey
+      ? selectedLocation.encryptionKey
+      : undefined,
+  );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
     selectedLocation ? selectedLocation.isDefault : false,
@@ -177,6 +190,10 @@ function CreateEditLocationDialog(props: Props) {
   const [disableIndexing, setIndexDisable] = useState<boolean>(
     selectedLocation ? selectedLocation.disableIndexing : false,
   );
+  const [disableThumbnailGeneration, setDisableThumbnailGeneration] =
+    useState<boolean>(
+      selectedLocation ? selectedLocation.disableThumbnailGeneration : false,
+    );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
     selectedLocation ? selectedLocation.fullTextIndex : false,
   );
@@ -213,6 +230,9 @@ function CreateEditLocationDialog(props: Props) {
   const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
     selectedLocation ? selectedLocation.uuid : getUuid(),
+  );
+  const [autoOpenedFilename, setAutoOpenedFilename] = useState<string>(
+    selectedLocation ? selectedLocation.autoOpenedFilename : undefined,
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
@@ -261,22 +281,28 @@ function CreateEditLocationDialog(props: Props) {
     }
   }, [name, path]);
 
-  function setLocationId(path: string) {
-    loadLocationDataPromise(path, AppConfig.metaFolderFile)
+  function getMetaLocationId(
+    location: CommonLocation,
+  ): Promise<string | undefined> {
+    return loadLocationDataPromise(location, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          if (!locations.some((ln) => ln.uuid === meta.id)) {
-            setNewUuid(meta.id);
+          const location = findLocation(meta.id);
+          if (!location) {
+            return meta.id;
           }
         }
-        return true;
+        return undefined;
       })
       .catch((err) => {
-        console.debug('no meta in location:' + path);
+        console.debug('no meta in location:' + location.path);
+        return undefined;
       });
   }
+
   function setNewLocationID(newId: string) {
-    if (!locations.some((ln) => ln.uuid === newId)) {
+    const location = findLocation(newId);
+    if (!location) {
       setNewUuid(newId);
     } else {
       showNotification('Location with this ID already exists', 'error');
@@ -302,6 +328,13 @@ function CreateEditLocationDialog(props: Props) {
     }
 
     if (!secretAccessKey || secretAccessKey.length === 0) {
+      if (checkOnly) return true;
+      setCloudErrorSecretAccessKey(true);
+    } else if (!checkOnly) {
+      setCloudErrorSecretAccessKey(false);
+    }
+
+    if (encryptionKey && encryptionKey.length < 32) {
       if (checkOnly) return true;
       setCloudErrorSecretAccessKey(true);
     } else if (!checkOnly) {
@@ -363,6 +396,18 @@ function CreateEditLocationDialog(props: Props) {
 
   const { open, onClose } = props;
 
+  const preConfirm = () => {
+    if (
+      type === locationType.TYPE_CLOUD &&
+      selectedLocation &&
+      encryptionKey !== selectedLocation.encryptionKey
+    ) {
+      setConfirmEncryptionChanged(true);
+    } else {
+      onConfirm();
+    }
+  };
+
   const onConfirm = () => {
     if (!disableConfirmButton()) {
       let loc;
@@ -376,10 +421,12 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
@@ -394,10 +441,12 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -407,6 +456,7 @@ function CreateEditLocationDialog(props: Props) {
           path: storePath,
           paths: [storePath],
           endpointURL,
+          encryptionKey,
           accessKeyId,
           secretAccessKey,
           sessionToken,
@@ -415,11 +465,13 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
           maxLoops,
           ignorePatternPaths,
+          autoOpenedFilename,
         };
       }
       if (persistTagsInSidecarFile !== null) {
@@ -428,13 +480,19 @@ function CreateEditLocationDialog(props: Props) {
       }
 
       if (!selectedLocation) {
-        addLocation(loc);
-      } else if (props.editLocation) {
-        loc.newuuid = newuuid;
-        props.editLocation(loc);
+        const commonLocation = new CommonLocation(loc);
+        getMetaLocationId(commonLocation).then((uuid) => {
+          if (uuid) {
+            commonLocation.uuid = uuid;
+          }
+          addLocation(commonLocation);
+        });
       } else {
+        loc.newuuid = newuuid;
+        editLocation(new CommonLocation(loc));
+      } /*else {
         console.log('No addLocation or editLocation props exist');
-      }
+      }*/
       onClose();
       // this.props.resetState('createLocationDialogKey');
     }
@@ -461,10 +519,7 @@ function CreateEditLocationDialog(props: Props) {
         region={region}
         endpointURL={endpointURL}
         setStoreName={setStoreName}
-        setStorePath={(path) => {
-          setStorePath(path);
-          setLocationId(path);
-        }}
+        setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
         setSecretAccessKey={setSecretAccessKey}
         setSessionToken={setSessionToken}
@@ -500,10 +555,7 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={(path) => {
-          setPath(path);
-          setLocationId(path);
-        }}
+        setPath={setPath}
         path={path}
         name={name}
       />
@@ -530,7 +582,7 @@ function CreateEditLocationDialog(props: Props) {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
-          onConfirm();
+          preConfirm();
         }
         // } else if (event.key === 'Escape') {
         //   onClose();
@@ -553,6 +605,24 @@ function CreateEditLocationDialog(props: Props) {
           padding: 8,
         }}
       >
+        <ConfirmDialog
+          open={isConfirmEncryptionChanged}
+          onClose={() => {
+            setConfirmEncryptionChanged(false);
+          }}
+          title={t('core:confirm')}
+          content={t('core:confirmEncryptionChanged')}
+          confirmCallback={(result) => {
+            if (result) {
+              onConfirm();
+            } else {
+              setConfirmEncryptionChanged(false);
+            }
+          }}
+          cancelDialogTID="cancelConfirmEncryptionChanged"
+          confirmDialogTID="confirmConfirmEncryptionChanged"
+          confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
+        />
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
@@ -562,7 +632,7 @@ function CreateEditLocationDialog(props: Props) {
                 </InputLabel>
                 <Select
                   labelId="locationLabelID"
-                  id="locationTypeID"
+                  data-tid="locationTypeTID"
                   value={type}
                   label={t('core:locationType')}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -570,17 +640,26 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 >
                   {!AppConfig.isWeb && (
-                    <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
+                    <MenuItem
+                      key="TYPE_LOCAL"
+                      value={locationType.TYPE_LOCAL}
+                      data-tid="localLocationTID"
+                    >
                       {t('core:localLocation')}
                     </MenuItem>
                   )}
-                  <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
+                  <MenuItem
+                    key="TYPE_CLOUD"
+                    value={locationType.TYPE_CLOUD}
+                    data-tid="cloudLocationTID"
+                  >
                     {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
                   {Pro && devMode && (
                     <MenuItem
                       key="TYPE_WEBDAV"
                       value={locationType.TYPE_WEBDAV}
+                      data-tid="webdavLocationTID"
                     >
                       {t('core:webdavLocation') + ' (experimental)'}
                     </MenuItem>
@@ -671,7 +750,7 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:watchForChangesInLocation')}
-                    <ProLabel />
+                    {!Pro && <ProLabel />}
                   </>
                 }
               />
@@ -689,40 +768,6 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
-              <FormControl fullWidth={true}>
-                <TextField
-                  required
-                  margin="dense"
-                  name="newuuid"
-                  fullWidth={true}
-                  data-tid="newuuid"
-                  placeholder="Unique location identifier"
-                  onChange={(event) => setNewLocationID(event.target.value)}
-                  value={newuuid}
-                  label={t('core:locationId')}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        <Tooltip title="Generates new unique identifier for this location">
-                          <IconButton
-                            onClick={() => {
-                              const result = confirm(
-                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
-                              );
-                              if (result) {
-                                setNewLocationID(getUuid());
-                              }
-                            }}
-                            size="large"
-                          >
-                            <IdIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
               <FormControlLabel
                 className={classes.formControl}
                 labelPlacement="start"
@@ -744,6 +789,22 @@ function CreateEditLocationDialog(props: Props) {
                     <ProLabel />
                   </>
                 }
+              />
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    data-tid="locationSettingsGenThumbsTID"
+                    name="locationSettingsGenThumbs"
+                    checked={disableThumbnailGeneration}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setDisableThumbnailGeneration(event.target.checked)
+                    }
+                  />
+                }
+                label={<>{t('core:disableThumbnailGeneration')}</>}
               />
               <FormControlLabel
                 className={classes.formControl}
@@ -866,7 +927,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={false}
-                        data-tid="settingsSetPersistTagsInFileName"
+                        data-tid="locationSetPersistTagsInFileName"
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
                         <Tooltip
@@ -885,7 +946,7 @@ function CreateEditLocationDialog(props: Props) {
                       </ToggleButton>
                       <ToggleButton
                         value={true}
-                        data-tid="settingsSetPersistTagsInSidecarFile"
+                        data-tid="locationSetPersistTagsInSidecarFile"
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
                         <Tooltip
@@ -911,6 +972,22 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
+              <FormControl fullWidth={true}>
+                <TextField
+                  margin="dense"
+                  name="autoOpenedFilename"
+                  fullWidth={true}
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
+                />
+              </FormControl>
               <>
                 <FormControlLabel
                   className={classes.formControl}
@@ -978,9 +1055,109 @@ function CreateEditLocationDialog(props: Props) {
                   />
                 )}
               </>
+              <FormControl fullWidth={true} style={{ marginTop: 10 }}>
+                <TextField
+                  required
+                  margin="dense"
+                  name="newuuid"
+                  fullWidth={true}
+                  data-tid="newuuid"
+                  placeholder="Unique location identifier"
+                  onChange={(event) => setNewLocationID(event.target.value)}
+                  value={newuuid}
+                  label={t('core:locationId')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        <Tooltip title="Generates new unique identifier for this location">
+                          <IconButton
+                            onClick={() => {
+                              const result = confirm(
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
+                              );
+                              if (result) {
+                                setNewLocationID(getUuid());
+                              }
+                            }}
+                            size="large"
+                          >
+                            <IDIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
+        {type === locationType.TYPE_CLOUD && (
+          <Accordion>
+            <AccordionSummary
+              data-tid="switchEncryptionTID"
+              expandIcon={<ExpandIcon />}
+              aria-controls="panelEncryption-content"
+              id="panelEncryption-header"
+            >
+              <Typography>
+                {t('core:switchEncryption')}
+                <BetaLabel />
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl fullWidth={true}>
+                <FormLabel>{t('encryptionExplanation')}</FormLabel>
+                <TextField
+                  margin="dense"
+                  name="encryptionKey"
+                  type={showEncryptionKey ? 'text' : 'password'}
+                  fullWidth={true}
+                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+                  data-tid="encryptionKeyTID"
+                  placeholder={t('encryptionKeyExplanation')}
+                  onChange={(event) => setEncryptionKey(event.target.value)}
+                  value={encryptionKey}
+                  label={t('core:encryptionKey')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <TooltipTS title={t('toggleKeyVisibility')}>
+                          <IconButton
+                            aria-label="toggle key visibility"
+                            onClick={() =>
+                              setShowEncryptionKey(!showEncryptionKey)
+                            }
+                          >
+                            {showEncryptionKey ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </TooltipTS>
+                        <TooltipTS title={t('generateEncryptionKey')}>
+                          <IconButton
+                            aria-label="generate encryption key"
+                            onClick={() =>
+                              setEncryptionKey(
+                                CryptoJS.lib.WordArray.random(32)
+                                  .toString(CryptoJS.enc.Hex)
+                                  .slice(0, 32),
+                              )
+                            }
+                          >
+                            <PasswordIcon />
+                          </IconButton>
+                        </TooltipTS>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
+        )}
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
@@ -988,7 +1165,7 @@ function CreateEditLocationDialog(props: Props) {
         <Button onClick={() => onClose()}>{t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
-          onClick={onConfirm}
+          onClick={preConfirm}
           data-tid="confirmLocationCreation"
           color="primary"
           variant="contained"

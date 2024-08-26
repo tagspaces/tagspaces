@@ -24,6 +24,7 @@ import { parseGeoLocation } from '-/utils/geo';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import { getAllTags } from '-/services/utils-io';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -67,7 +68,7 @@ export const FileTypeGroups = {
     'dotx',
   ],
   audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc'],
-  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2'],
+  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
@@ -156,25 +157,36 @@ const fuseOptions = {
   distance: 1000,
   tokenize: true,
   minMatchCharLength: 2,
+  useExtendedSearch: true,
   keys: [
     {
       name: 'name',
-      weight: 0.3,
+      getFn: (entry) => entry.name,
+      weight: 0.2,
+    },
+    {
+      name: 'id',
+      getFn: (entry) => entry.meta?.id,
+      weight: 0.1,
     },
     {
       name: 'description',
+      getFn: (entry) => entry.meta?.description,
       weight: 0.2,
     },
     {
       name: 'textContent',
+      getFn: (entry) => entry.textContent,
       weight: 0.2,
     },
     {
       name: 'tags',
+      getFn: (entry) => entry.tags?.title,
       weight: 0.2,
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
+      getFn: (entry) => entry.path,
       weight: 0.1,
     },
   ],
@@ -279,7 +291,7 @@ function prepareIndex(
     );
   }
   const enhancedIndex = filteredIndex.map((entry: any) => {
-    const tags = [...entry.tags];
+    const tags = getAllTags(entry);
     let lat = null;
     let lon = null;
     let fromTime = null;
@@ -305,7 +317,7 @@ function prepareIndex(
             enhancedTag.title = tag.title.toLowerCase();
           }
         } catch (e) {
-          console.warn(
+          console.log(
             'Error parsing tag ' + JSON.stringify(tag) + ' from ' + entry.path,
           );
         }
@@ -352,7 +364,7 @@ export default class Search {
   static searchLocationIndex = (
     locationContent: Array<TS.FileSystemEntry>,
     searchQuery: TS.SearchQuery,
-  ): Promise<Array<TS.FileSystemEntry> | []> =>
+  ): Promise<TS.FileSystemEntry[]> =>
     new Promise((resolve, reject) => {
       console.time('searchtime');
       if (!locationContent || locationContent.length === 0) {
@@ -402,23 +414,31 @@ export default class Search {
               ? searchQuery.textQuery.toLowerCase()
               : searchQuery.textQuery;
             // const name = ignoreCase ? entry.name && entry.name.toLowerCase() : entry.name;
-            const description =
-              ignoreCase && entry.description
-                ? entry.description.toLowerCase()
-                : entry.description;
-            const textContent =
-              ignoreCase && entry.textContent
-                ? entry.textContent.toLowerCase()
-                : entry.textContent;
-            const path = ignoreCase
-              ? entry.path && entry.path.toLowerCase()
-              : entry.path;
+            let description = entry.meta?.description;
+            if (ignoreCase && description) {
+              description = description.toLowerCase();
+            }
+            let metaId = entry.meta?.id;
+            if (ignoreCase && metaId) {
+              metaId = metaId.toLowerCase();
+            }
+            let textContent = entry.textContent;
+            if (ignoreCase && textContent) {
+              textContent = textContent.toLowerCase();
+            }
+            let path = entry.path;
+            if (ignoreCase && path) {
+              path = path.toLowerCase();
+            }
             // const foundInName = name && name.includes(textQuery);
             const foundInDescr = description && description.includes(textQuery);
+            const foundInMetaId = metaId && metaId.includes(textQuery);
             const foundInContent =
               textContent && textContent.includes(textQuery);
             const foundInPath = path && path.includes(textQuery);
-            return foundInPath || foundInDescr || foundInContent; // || foundInName;
+            return (
+              foundInPath || foundInDescr || foundInContent || foundInMetaId
+            ); // || foundInName;
           });
         } else {
           const fuse = new Fuse(results, fuseOptions);

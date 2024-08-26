@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -80,11 +80,14 @@ interface Props {
   showResetSettings: (showDialog: boolean) => void;
 }
 
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
   const { showResetSettings } = props;
   const { t } = useTranslation();
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
@@ -146,7 +149,11 @@ function SettingsAdvanced(props: Props) {
           <Button
             data-tid="reloadAppTID"
             onClick={() => {
-              window.location.reload();
+              if (AppConfig.isElectron) {
+                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+              } else {
+                window.location.reload();
+              }
             }}
             color="secondary"
           >
@@ -175,6 +182,7 @@ function SettingsAdvanced(props: Props) {
           <ListItemText primary={t('enableWS')} />
           <Switch
             data-tid="settingsEnableWS"
+            disabled={!AppConfig.isElectron}
             onClick={() => setEnableWS(!settings.enableWS)}
             checked={settings.enableWS}
           />
@@ -331,7 +339,7 @@ function SettingsAdvanced(props: Props) {
               content={t('core:confirm' + confirmDialogKey + 'Deletion')}
               confirmCallback={(result) => {
                 if (result) {
-                  Pro.history.delAllHistory(confirmDialogKey);
+                  historyContext.delAllHistory(confirmDialogKey);
                 }
               }}
               cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}

@@ -24,15 +24,15 @@ import { Toolbar, Box, Divider, Badge } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
-import TagIcon from '@mui/icons-material/LocalOffer';
 import ShareIcon from '@mui/icons-material/Share';
 import {
   SelectedIcon,
   UnSelectedIcon,
   DownloadIcon,
+  TagIcon,
+  DeleteIcon,
 } from '-/components/CommonIcons';
 import CopyIcon from '@mui/icons-material/FileCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import {
   ParentFolderIcon,
@@ -51,7 +51,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import PlatformIO from '-/services/platform-facade';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -86,7 +86,9 @@ function MainToolbar(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { openDeleteMultipleEntriesDialog } =
+    useDeleteMultipleEntriesDialogContext();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, true);
@@ -98,8 +100,9 @@ function MainToolbar(props: Props) {
         const cleanedPath = entry.path.startsWith('/')
           ? entry.path.substr(1)
           : entry.path;
-        const url = PlatformIO.getURLforPath(cleanedPath);
-        fetch(url)
+        currentLocation
+          .generateURLforPath(cleanedPath, 900)
+          .then((url) => fetch(url))
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {
             saveAs(blob, entry.name);
@@ -113,6 +116,8 @@ function MainToolbar(props: Props) {
     selectedEntries?.length > 0 &&
     // (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) &&
     !AppConfig.isCordovaAndroid; // saveAs do not work on Android
+
+  const folderSettingsAvailable = haveLocalSetting();
 
   return (
     <Toolbar
@@ -213,9 +218,7 @@ function MainToolbar(props: Props) {
               <IconButton
                 aria-label={t('core:deleteSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-                onClick={() =>
-                  dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
-                }
+                onClick={() => openDeleteMultipleEntriesDialog()}
                 // </span>size="large"
               >
                 <DeleteIcon />
@@ -282,24 +285,18 @@ function MainToolbar(props: Props) {
         <Tooltip
           title={
             t('core:perspectiveSettingsTitle') +
-            (haveLocalSetting && ' - folder specific')
+            (folderSettingsAvailable ? ' - folder specific' : '')
           }
         >
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
           >
-            <Badge
-              color="primary"
-              variant="dot"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              invisible={!haveLocalSetting()}
-            >
+            {folderSettingsAvailable ? (
+              <PerspectiveSettingsIcon color="primary" />
+            ) : (
               <PerspectiveSettingsIcon />
-            </Badge>
+            )}
           </IconButton>
         </Tooltip>
       </Box>

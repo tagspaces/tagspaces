@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   clickOn,
   expectElementExist,
   expectElementSelected,
   getGridFileName,
   getGridFileSelector,
+  openFile,
   selectorFile,
   setSettings,
   takeScreenshot,
@@ -22,6 +23,7 @@ import {
   closeLocation,
   createPwLocation,
   createPwMinioLocation,
+  createS3Location,
   defaultLocationName,
   defaultLocationPath,
   getPwLocationTid,
@@ -38,21 +40,31 @@ import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { stopServices } from '../setup-functions';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  await startTestingApp('extconfig-two-locations.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
   await createFile();
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
+  await testDataRefresh(s3ServerInstance);
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
     const localStorage = await global.client.evaluate(() =>
       JSON.stringify(window.localStorage),
@@ -61,7 +73,7 @@ test.afterEach(async ({ page }, testInfo) => {
       testInfo.outputPath(testInfo.title + '_localstorage.json'),
       localStorage,
     );
-  }
+  }*/
   await clearDataStorage();
 });
 
@@ -69,10 +81,13 @@ test.beforeEach(async () => {
   // await closeWelcomePlaywright();
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -136,8 +151,12 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });*/
 
   test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
-    const searchQuery = 'jpg'; //'sample_exif.jpg';
+    await global.client.waitForSelector('img[alt="thumbnail image"]', {
+      visible: true,
+    });
+    const searchQuery = 'sample_exif.jpg'; //'jpg';
     await addSearchCommand(searchQuery, true);
+    await expectElementExist('[data-tid=allFilesCount1]', true, 5000);
     await global.client.waitForSelector('img[alt="thumbnail image"]', {
       visible: true,
     });
@@ -421,5 +440,25 @@ test.describe('TST06 - Test Search in file structure:', () => {
       'openDirectory',
     );
     await expectElementExist(getGridFileSelector('text_file.txt'), true, 5000);
+  });
+
+  test('TST0647 - Search by new sidecar tag [web,minio,electron]', async () => {
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    const tag = 'test-tag10';
+    const fileName = 'sample';
+    const fileExt = 'jpg';
+    await openFile(fileName + '.' + fileExt, 'showPropertiesTID');
+    await AddRemovePropertiesTags([tag], {
+      add: true,
+      remove: false,
+    });
+    await addSearchCommand('+' + tag, true);
+    //const selector = getGridFileSelector('sample[' + tag + '].' + fileExt);
+    //console.log('selector:'+selector)
+    await expectElementExist(
+      getGridFileSelector(fileName + '.' + fileExt),
+      true,
+      5000,
+    );
   });
 });

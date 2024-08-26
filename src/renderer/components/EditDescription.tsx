@@ -1,13 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
-import { OpenedEntry } from '-/reducers/app';
-import { useDescriptionContext } from '-/hooks/useDescriptionContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { Pro } from '-/pro';
 
 const PREFIX = 'EditDescription';
 
@@ -28,14 +27,19 @@ const EditDescriptionRoot = styled('div')(({ theme }) => ({
 function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry } = useOpenedEntryContext();
+  // const { openedEntry } = useOpenedEntryContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { description, setDescription } = useDescriptionContext();
+  const {
+    description,
+    setDescription,
+    isEditDescriptionMode,
+    setEditDescriptionMode,
+    isEditMode,
+  } = useFilePropertiesContext();
 
   const fileDescriptionRef = useRef<MilkdownRef>(null);
-  const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
-  const descriptionButtonsRef = useRef(null);
+  // const descriptionButtonsRef = useRef(null);
 
   useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
@@ -43,7 +47,7 @@ function EditDescription() {
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
-      //setEditMode(!editMode);
+      //setEditDescriptionMode(!editMode);
       toggleEditDescriptionField();
     } /!*dispatch(AppActions.openNextFile())*!/
   };*/
@@ -55,29 +59,21 @@ function EditDescription() {
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
       setDescription(markdown);
-      descriptionButtonsRef.current.setDescriptionChanged(true);
+      /*if (descriptionButtonsRef.current) {
+        descriptionButtonsRef.current.setDescriptionChanged(true);
+      }*/
     }
-    // update codeMirror
-    /*const { current } = codeMirrorRef;
-      if (!current) return;
-      current.update(markdown);*/
   }, []);
 
   const noDescription = !description || description.length < 1;
   return (
     <EditDescriptionRoot>
-      {!openedEntry.editMode && (
-        <EditDescriptionButtons
-          buttonsRef={descriptionButtonsRef}
-          editMode={editMode}
-          setEditMode={setEditMode}
-        />
-      )}
+      <EditDescriptionButtons />
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (!editMode && !openedEntry.editMode) {
-            setEditMode(true);
+          if (Pro && !isEditDescriptionMode && !isEditMode) {
+            setEditDescriptionMode(true);
           }
         }}
         style={{
@@ -88,7 +84,7 @@ function EditDescription() {
           overflowY: 'auto',
         }}
       >
-        {noDescription && !editMode ? (
+        {noDescription && !isEditDescriptionMode ? (
           <Typography
             variant="caption"
             style={{
@@ -98,9 +94,9 @@ function EditDescription() {
             }}
           >
             {t(
-              openedEntry.editMode
-                ? 'core:editDisabled'
-                : 'core:addMarkdownDescription',
+              Pro
+                ? 'core:addMarkdownDescription'
+                : 'core:thisFunctionalityIsAvailableInPro',
             )}
           </Typography>
         ) : (
@@ -120,16 +116,21 @@ function EditDescription() {
               content={description || ''}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}
-              readOnly={!editMode}
+              readOnly={!isEditDescriptionMode}
               lightMode={false}
-              excludePlugins={!editMode ? ['menu', 'upload'] : []}
+              excludePlugins={
+                !isEditDescriptionMode
+                  ? ['menu', 'upload', 'slash']
+                  : ['slash', 'block']
+              }
+              mode="description"
               currentFolder={currentDirectoryPath}
             />
           </>
         )}
       </div>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-        <Typography
+        {/* <Typography
           variant="caption"
           style={{
             color: theme.palette.text.primary,
@@ -139,7 +140,7 @@ function EditDescription() {
           <b className={classes.mdHelpers}>**bold**</b>{' '}
           <span className={classes.mdHelpers}>* list item</span>{' '}
           <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography>
+        </Typography> */}
       </span>
     </EditDescriptionRoot>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useReducer, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -14,7 +14,6 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
-import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -22,16 +21,14 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
-import Tooltip from '-/components/Tooltip';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import {
-  checkDirsExistPromise,
-  checkFilesExistPromise,
-} from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { getDirProperties } from '-/services/utils-io';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   open: boolean;
@@ -43,15 +40,17 @@ interface Props {
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
 
   const [targetPath, setTargetPath] = useState(
     currentDirectoryPath ? currentDirectoryPath : '',
   );
-  const isCopy = useRef<boolean>(true);
-  const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -80,12 +79,12 @@ function MoveCopyFilesDialog(props: Props) {
     if (
       selectedDirs.length > 0 &&
       AppConfig.isElectron &&
-      !PlatformIO.haveObjectStoreSupport() &&
-      !PlatformIO.haveWebDavSupport()
+      !currentLocation.haveObjectStoreSupport() &&
+      !currentLocation.haveWebDavSupport()
     ) {
       const promises = selectedDirs.map((dirPath) => {
         try {
-          return PlatformIO.getDirProperties(dirPath).then((prop) => {
+          return getDirProperties(dirPath).then((prop) => {
             dirProp.current[dirPath] = prop;
             return true;
           });
@@ -96,18 +95,6 @@ function MoveCopyFilesDialog(props: Props) {
       Promise.all(promises).then(() => forceUpdate());
     }
   }, []);
-
-  /*useEffect(() => {
-    handleValidation();
-  }, [targetPath]);*/
-
-  /*function handleValidation() {
-    if (targetPath && targetPath.length > 0) {
-      setDisableConfirmButton(false);
-    } else {
-      setDisableConfirmButton(true);
-    }
-  }*/
 
   function getEntriesCount(dirPaths): Array<any> {
     return dirPaths.map((path) => {
@@ -124,39 +111,25 @@ function MoveCopyFilesDialog(props: Props) {
     return total;*/
   }
 
-  function handleCopyMove(copy = true) {
-    if (selectedFiles.length > 0) {
-      checkFilesExistPromise(selectedFiles, targetPath).then((exist) =>
-        handleEntryExist(copy, exist),
-      );
-    }
-    if (selectedDirs.length > 0) {
-      checkDirsExistPromise(selectedDirs, targetPath).then((exist) =>
-        handleEntryExist(copy, exist),
-      );
-    }
-  }
-
-  function handleEntryExist(copy: boolean, exist: string[]) {
-    if (exist && exist.length > 0) {
-      isCopy.current = copy;
-      setEntriesExistPath(exist);
-    } else if (copy) {
-      handleCopyFiles();
-    } else {
-      handleMoveFiles();
-    }
-  }
-
-  function handleCopyFiles() {
+  function handleCopy() {
     dispatch(AppActions.resetProgress());
-    dispatch(AppActions.toggleUploadDialog('copyEntriesTitle'));
+    openFileUploadDialog(undefined, 'copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      copyFiles(selectedFiles, targetPath, onUploadProgress);
+      copyFiles(
+        selectedFiles,
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      copyDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
+      copyDirs(
+        getEntriesCount(selectedDirs),
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
     }
     onClose(true);
   }
@@ -165,35 +138,47 @@ function MoveCopyFilesDialog(props: Props) {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
   };
 
-  function handleMoveFiles() {
+  function handleMove() {
     if (selectedFiles.length > 0) {
-      moveFiles(selectedFiles, targetPath);
+      moveFiles(
+        selectedFiles,
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
       dispatch(AppActions.resetProgress());
-      dispatch(AppActions.toggleUploadDialog('moveEntriesTitle'));
-      moveDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
+      openFileUploadDialog(undefined, 'moveEntriesTitle');
+      moveDirs(
+        getEntriesCount(selectedDirs),
+        targetPath,
+        currentLocation.uuid,
+        onUploadProgress,
+      );
     }
     onClose(true);
   }
 
-  /*function selectDirectory() {
-    PlatformIO.selectDirectoryDialog()
-      .then(selectedPaths => {
-        setTargetPath(selectedPaths[0]);
-        return true;
-      })
-      .catch(err => {
-        console.log('selectDirectoryDialog failed with: ' + err);
-      });
-  }*/
-
-  function formatFileExist(entries) {
-    if (entries !== undefined) {
-      return entries.join(', ');
-    }
-    return '';
+  function copyMove(copy: boolean) {
+    handleEntryExist(allEntries.current, targetPath).then((exist) => {
+      if (exist) {
+        openEntryExistDialog(exist, () => {
+          if (copy) {
+            handleCopy();
+          } else {
+            handleMove();
+          }
+        });
+      } else {
+        if (copy) {
+          handleCopy();
+        } else {
+          handleMove();
+        }
+      }
+    });
   }
 
   const theme = useTheme();
@@ -272,40 +257,15 @@ function MoveCopyFilesDialog(props: Props) {
               // AppConfig.isAndroid ||
               targetPath === currentDirectoryPath
             }
-            onClick={() => handleCopyMove(false)}
+            onClick={() => copyMove(false)}
             color="primary"
             variant="contained"
           >
             {t('core:moveEntriesButton')}
           </Button>
         )}
-        <ConfirmDialog
-          open={entriesExistPath !== undefined}
-          onClose={() => {
-            setEntriesExistPath(undefined);
-          }}
-          title={t('core:confirm')}
-          content={
-            formatFileExist(entriesExistPath) +
-            ' exist do you want to override it?'
-          }
-          confirmCallback={(result) => {
-            if (result) {
-              if (isCopy.current) {
-                handleCopyFiles();
-              } else {
-                handleMoveFiles();
-              }
-            } else {
-              setEntriesExistPath(undefined);
-            }
-          }}
-          cancelDialogTID="cancelOverwriteByCopyMoveDialog"
-          confirmDialogTID="confirmOverwriteByCopyMoveDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
         <Button
-          onClick={() => handleCopyMove(true)}
+          onClick={() => copyMove(true)}
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === currentDirectoryPath}
           color="primary"

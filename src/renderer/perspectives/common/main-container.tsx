@@ -3,10 +3,11 @@ import FileSourceDnd from '-/components/FileSourceDnd';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
 import React from 'react';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
@@ -53,7 +54,7 @@ export const renderCell = (
   setSelectedEntries,
   lastSelectedEntryPath,
   directoryContent,
-  openEntry,
+  openEntryInternal,
   openFileNatively,
   openDirectory,
   setFileContextMenuAnchorEl,
@@ -63,7 +64,15 @@ export const renderCell = (
     notificationType: string,
     autohide: boolean,
   ) => void,
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>,
+  moveFiles: (
+    files: Array<string>,
+    destination: string,
+    locationID: string,
+    onProgress?,
+    reflect?: boolean,
+  ) => Promise<boolean>,
+  handleEntryExist,
+  openEntryExistDialog,
   clearSelection: () => void,
   isLast?: boolean,
 ) => {
@@ -131,7 +140,8 @@ export const renderCell = (
   const openLocation = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       setSelectedEntries([fsEntry]);
-      openEntry(fsEntry.path);
+      openEntryInternal(fsEntry);
+      //openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       openDirectory(fsEntry.path);
@@ -140,23 +150,7 @@ export const renderCell = (
 
   const handleGridCellDblClick = (event, fsEntry: TS.FileSystemEntry) => {
     setSelectedEntries([]);
-    if (currentLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(currentLocation)
-        .then(() => {
-          openLocation(fsEntry);
-          return true;
-        })
-        .catch((error) => {
-          console.log('enableObjectStoreSupport', error);
-        });
-    } else if (currentLocation.type === locationType.TYPE_WEBDAV) {
-      PlatformIO.enableWebdavSupport(currentLocation);
-      openLocation(fsEntry);
-    } else if (currentLocation.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      PlatformIO.disableWebdavSupport();
-      openLocation(fsEntry);
-    }
+    openLocation(fsEntry);
   };
 
   const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
@@ -168,7 +162,7 @@ export const renderCell = (
     } = props;*/
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
-      let lastSelectedIndex;
+      let lastSelectedIndex = -1;
       if (lastSelectedEntryPath) {
         lastSelectedIndex = directoryContent.findIndex(
           (entry) => entry.path === lastSelectedEntryPath,
@@ -226,7 +220,7 @@ export const renderCell = (
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          openEntry(fsEntry.path);
+          openEntryInternal(fsEntry);
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }
@@ -260,8 +254,15 @@ export const renderCell = (
         arrPath = [item.path];
       }
       console.log('Dropped files: ' + item.path);
-      moveFiles(arrPath, item.targetPath);
-      //clearSelection();
+      handleEntryExist(item.selectedEntries, item.targetPath).then((exist) => {
+        if (exist) {
+          openEntryExistDialog(exist, () => {
+            moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+          });
+        } else {
+          moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+        }
+      });
     }
   };
 
@@ -282,6 +283,7 @@ export const renderCell = (
       </FileSourceDnd>
     );
   }
+  const { FILE } = NativeTypes;
 
   return (
     <div
@@ -290,21 +292,24 @@ export const renderCell = (
       }}
       key={key}
     >
-      <TargetMoveFileBox
-        accepts={[DragItemTypes.FILE]}
-        targetPath={fsEntry.path}
-        onDrop={handleFileMoveDrop}
-      >
-        {cellContent(
-          fsEntry,
-          selectedEntries,
-          index,
-          handleGridContextMenu,
-          handleGridCellClick,
-          handleGridCellDblClick,
-          isLast,
-        )}
-      </TargetMoveFileBox>
+      <TargetFileBox accepts={[FILE]} directoryPath={fsEntry.path}>
+        <CustomDragLayer />
+        <TargetMoveFileBox
+          accepts={[DragItemTypes.FILE]}
+          targetPath={fsEntry.path}
+          onDrop={handleFileMoveDrop}
+        >
+          {cellContent(
+            fsEntry,
+            selectedEntries,
+            index,
+            handleGridContextMenu,
+            handleGridCellClick,
+            handleGridCellDblClick,
+            isLast,
+          )}
+        </TargetMoveFileBox>
+      </TargetFileBox>
     </div>
   );
 };

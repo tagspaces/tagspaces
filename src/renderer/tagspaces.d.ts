@@ -28,8 +28,8 @@ declare module '*.xml';
 
 declare interface Window {
   // interface TSCustomWindow extends Window {
-  ExtMapTileServers?: Array<TS.MapTileServer>;
-  walkCanceled?: boolean;
+  ExtMapTileServers?: Array<any>; //TS.MapTileServer>;
+  //walkCanceled?: boolean;
   ExtLogoURL?: string;
   ExtDefaultVerticalPanel?: string;
   ExtDisplayMode?: string;
@@ -57,6 +57,7 @@ declare interface Window {
   ExtPrivacyURL?: string;
   ExtImprintURL?: string;
   ExtCheckForUpdatesOnStartup?: boolean;
+  ExtFilenameTagPlacedAtEnd?: boolean;
   ExtRevisionsEnabled?: boolean;
   ExtAutoSaveEnabled?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;

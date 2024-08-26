@@ -39,10 +39,6 @@ const MainSearchField = styled(TextField)(({ theme }) => ({
       theme.palette.mode === 'light'
         ? theme.palette.grey[200]
         : theme.palette.grey[900],
-    // backgroundColor: 'gray',
-    // outline: '2px solid red',
-    // border: 'none',
-    // boxShadow: 'none'
   },
   // '&$focused': {
   //   outline: 'none',
@@ -52,9 +48,6 @@ const MainSearchField = styled(TextField)(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
     // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
   },
-  // '&:active': {
-  //   backgroundColor: theme.palette.background.paper
-  // }
 }));
 
 export default MainSearchField;

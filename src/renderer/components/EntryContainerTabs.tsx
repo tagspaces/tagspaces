@@ -16,29 +16,35 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
+import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { AppDispatch, OpenedEntry } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
+import Tooltip from '-/components/Tooltip';
 import EntryProperties from '-/components/EntryProperties';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDesktopMode,
 } from '-/reducers/settings';
 import {
   FolderPropertiesIcon,
   DescriptionIcon,
+  EditDescriptionIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { CommonLocation } from '-/utils/CommonLocation';
+import TsTabPanel from '-/components/TsTabPanel';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -68,20 +74,34 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 }));
 
 interface StyledTabProps {
-  label: string;
+  title: string;
+  tinyMode: any;
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
 
-const StyledTab = styled((props: StyledTabProps) => (
-  <Tab disableRipple iconPosition="start" {...props} />
-))(({ theme }) => ({
+const StyledTab = styled((props: StyledTabProps) => {
+  const { title, tinyMode, ...tabProps } = props; // Extract title and tinyMode
+
+  return (
+    <Tooltip title={!tinyMode && title}>
+      <Tab
+        label={!tinyMode && title}
+        disableRipple
+        iconPosition="start"
+        {...tabProps} // Pass remaining props to Tab
+      />
+    </Tooltip>
+  );
+})(({ theme }) => ({
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightRegular,
   fontSize: theme.typography.pxToRem(15),
-  marginRight: theme.spacing(1),
   minHeight: 50,
   maxHeight: 50,
+  minWidth: 40,
+  marginRight: 5,
+  padding: 5,
 }));
 
 function a11yProps(index: number) {
@@ -96,13 +116,8 @@ interface EntryContainerTabsProps {
   toggleProperties: () => void;
   isEditable: boolean;
   isPanelOpened: boolean;
+  haveDescription: boolean;
   marginRight: string;
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
 }
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
@@ -112,39 +127,36 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     marginRight,
     isEditable,
     isPanelOpened,
+    haveDescription,
   } = props;
 
   const { t } = useTranslation();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
-  const desktopMode = useSelector(isDesktopMode);
+  const haveRevisions = useRef<boolean>(isEditable);
   const dispatch: AppDispatch = useDispatch();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
 
-  function TsTabPanel(tprops: TabPanelProps) {
-    const { children, value, index, ...other } = tprops;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-        style={{
-          height: '100%',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          paddingTop: 5,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}
-      >
-        {value === index && children}
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!isEditable) {
+      const location: CommonLocation = findLocation(openedEntry.locationID);
+      const backupFilePath = getBackupFileDir(
+        openedEntry.path,
+        openedEntry.uuid,
+        location.getDirSeparator(),
+      );
+      location.checkDirExist(backupFilePath).then((exist) => {
+        if (exist) {
+          haveRevisions.current = exist;
+          forceUpdate();
+        }
+      });
+    }
+  }, [isEditable]);
 
   // Create functions that dispatch actions
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -165,8 +177,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   };
 
   // directories must be always opened
-  const selectedTabIndex =
+  let selectedTabIndex =
     !openedEntry.isFile && tabIndex === undefined ? 0 : tabIndex;
+  if (!haveRevisions.current && selectedTabIndex === 2) {
+    selectedTabIndex = 0;
+  }
 
   return (
     <div
@@ -186,41 +201,46 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         <StyledTabs
           value={selectedTabIndex}
           onChange={handleChange}
-          aria-label="basic tabs example"
+          aria-label="Switching among description, revisions entry properties"
         >
           <StyledTab
             data-tid="detailsTabTID"
             icon={<FolderPropertiesIcon />}
-            label={desktopMode && t('core:details')}
+            title={t('core:details')}
+            tinyMode={isTinyMode}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
           <StyledTab
             data-tid="descriptionTabTID"
-            icon={<DescriptionIcon />}
-            label={desktopMode && t('core:filePropertiesDescription')}
+            icon={
+              haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
+            }
+            title={t('core:filePropertiesDescription')}
+            tinyMode={isTinyMode}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
-          {isEditable && (
+          {haveRevisions.current && (
             <StyledTab
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
-              label={desktopMode && t('core:revisions')}
+              title={t('core:revisions')}
+              tinyMode={isTinyMode}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />
           )}
         </StyledTabs>
       </Box>
-      <TsTabPanel value={selectedTabIndex} index={0}>
+      <TsTabPanel key="propertiesTab" value={selectedTabIndex} index={0}>
         <EntryProperties key={openedEntry.path} tileServer={tileServer} />
       </TsTabPanel>
-      <TsTabPanel value={selectedTabIndex} index={1}>
+      <TsTabPanel key="descriptionTab" value={selectedTabIndex} index={1}>
         <EditDescription />
       </TsTabPanel>
-      {isEditable && (
-        <TsTabPanel value={selectedTabIndex} index={2}>
+      {haveRevisions.current && (
+        <TsTabPanel key="revisionsTab" value={selectedTabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
       )}

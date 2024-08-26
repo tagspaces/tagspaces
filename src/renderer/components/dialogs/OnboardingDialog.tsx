@@ -18,7 +18,7 @@
 
 import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navigation, Pagination } from 'swiper/modules';
+import Slider from 'react-slick';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -46,10 +46,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
 
-import { register } from 'swiper/element/bundle';
 import { useTranslation } from 'react-i18next';
-
-register();
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 interface Props {
   classes: any;
@@ -64,7 +63,7 @@ function OnboardingDialog(props: Props) {
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
-  const swiperElRef = useRef(null); //<SwiperRef>
+  //const swiperElRef = useRef(null); //<SwiperRef>
 
   /*useEffect(() => {
   if(swiperElRef.current){
@@ -98,6 +97,39 @@ function OnboardingDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  function NextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} onClick={onClick}>
+        <NavigateNextIcon color="primary" />
+      </div>
+    );
+  }
+
+  function PrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div className={className} onClick={onClick}>
+        <NavigateBeforeIcon color="primary" />
+      </div>
+    );
+  }
+
+  const sliderSettings = {
+    className: 'center',
+    centerMode: true,
+    dots: true,
+    infinite: false,
+    initialSlide: 0,
+    centerPadding: '0px',
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+  };
+
   return (
     <Dialog
       open={open}
@@ -111,45 +143,44 @@ function OnboardingDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          marginTop: 20,
           overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         <style>
           {`
-        swiper-container::part(bullet-active) {
-          background-color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-prev) {
-          color: ${theme.palette.primary.main};
-        }
-        swiper-container::part(button-next) {
-          color: ${theme.palette.primary.main};
-        }
+            .slick-arrow {
+              height: 200px;
+              display: flex;
+              align-items: center;
+            } 
+            .slick-next:before {
+              content: '';
+            }
+            .slick-prev:before {
+              content: '';
+            }
         `}
         </style>
-        <swiper-container
-          ref={swiperElRef}
-          slidesPerView={1}
-          navigation="true"
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination, Navigation]}
-        >
-          <swiper-slide>
+        <Slider {...sliderSettings}>
+          <div>
             <div
               style={{
+                padding: 15,
                 textAlign: 'center',
-                overflowX: 'hidden',
-                padding: 50,
               }}
             >
               <Typography variant="h5">
                 {t('core:welcomeToTagSpaces')}
               </Typography>
               <img
-                style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
+                style={{
+                  maxHeight: 250,
+                  paddingTop: 15,
+                  paddingBottom: 40,
+                  margin: 'auto',
+                  display: 'block',
+                }}
                 src={NewLook}
                 alt=""
               />
@@ -167,146 +198,144 @@ function OnboardingDialog(props: Props) {
                 <ToggleButton value="dark">Dark</ToggleButton>
               </ToggleButtonGroup>
             </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 50,
-              }}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <Typography variant="h5">
+              Choose your the default tagging method for files
+            </Typography>
+            <Typography variant="h5">&nbsp;</Typography>
+            <Typography variant="body1">
+              Core functionality of the application the tagging of files and
+              folders. Here you can choose how tags will attached to files.
+            </Typography>
+            <FormControl
+              style={{ marginTop: 20, marginBottom: 20 }}
+              component="fieldset"
             >
-              <Typography variant="h5">
-                Choose your the default tagging method for files
-              </Typography>
-              <Typography variant="h5">&nbsp;</Typography>
-              <Typography variant="body1">
-                Core functionality of the application the tagging of files and
-                folders. Here you can choose how tags will attached to files.
-              </Typography>
-              <FormControl
-                style={{ marginTop: 20, marginBottom: 20 }}
-                component="fieldset"
+              <RadioGroup
+                aria-label="fileTaggingType"
+                name="isPersistTagsInSidecar"
+                onChange={toggleTaggingType}
               >
-                <RadioGroup
-                  aria-label="fileTaggingType"
-                  name="isPersistTagsInSidecar"
-                  onChange={toggleTaggingType}
-                >
-                  <FormControlLabel
-                    value="false"
-                    control={<Radio checked={!isPersistTagsInSidecar} />}
-                    label={
-                      <Typography
-                        variant="subtitle1"
-                        style={{ textAlign: 'left' }}
-                      >
-                        Use the name of file for saving the tags - Tagging the
-                        file <strong>image.jpg</strong> with a tag{' '}
-                        <strong>sunset</strong> will rename it to{' '}
-                        <strong>image[sunset].jpg</strong>
-                      </Typography>
-                    }
-                  />
-
-                  <FormControlLabel
-                    style={{ marginTop: 20 }}
-                    value="true"
-                    control={<Radio checked={isPersistTagsInSidecar} />}
-                    label={
-                      <Typography
-                        variant="subtitle1"
-                        style={{ textAlign: 'left' }}
-                      >
-                        Use sidecar file for saving the tags - Tagging the file{' '}
-                        <strong>image.jpg</strong> with a tag{' '}
-                        <strong>sunset</strong> will save this tag in an
-                        additional sidecar file called{' '}
-                        <strong>image.jpg.json</strong> located in a sub folder
-                        with the name
-                        <strong>.ts</strong>
-                      </Typography>
-                    }
-                  />
-                  <img
-                    style={{ maxHeight: 200, marginTop: 15 }}
-                    src={ChooseTagging}
-                    alt=""
-                  />
-                </RadioGroup>
-              </FormControl>
-              <Typography variant="body1">
-                You can always revise you decision and change the tagging
-                method. But files already tagged with the renaming method will
-                stay renamed and the created sidecar file with the tags will
-                stay.
-              </Typography>
-            </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
+                <FormControlLabel
+                  value="false"
+                  control={<Radio checked={!isPersistTagsInSidecar} />}
+                  label={
+                    <Typography
+                      variant="subtitle1"
+                      style={{ textAlign: 'left' }}
+                    >
+                      Use the name of file for saving the tags - Tagging the
+                      file <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will rename it to{' '}
+                      <strong>image[sunset].jpg</strong>
+                    </Typography>
+                  }
+                />
+                <FormControlLabel
+                  style={{ marginTop: 20 }}
+                  value="true"
+                  control={<Radio checked={isPersistTagsInSidecar} />}
+                  label={
+                    <Typography
+                      variant="subtitle1"
+                      style={{ textAlign: 'left' }}
+                    >
+                      Use sidecar file for saving the tags - Tagging the file{' '}
+                      <strong>image.jpg</strong> with a tag{' '}
+                      <strong>sunset</strong> will save this tag in an
+                      additional sidecar file called{' '}
+                      <strong>image.jpg.json</strong> located in a sub folder
+                      with the name
+                      <strong>.ts</strong>
+                    </Typography>
+                  }
+                />
+              </RadioGroup>
+            </FormControl>
+            <img
+              style={{ maxHeight: 200, margin: 'auto' }}
+              src={ChooseTagging}
+              alt=""
+            />
+            <Typography variant="body1">
+              You can always revise you decision and change the tagging method.
+              But files already tagged with the renaming method will stay
+              renamed and the created sidecar file with the tags will stay.
+            </Typography>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <Typography variant="h5">
+              Collect web pages, create bookmarks or take screenshot from
+              websites directly in your web browser.
+            </Typography>
+            <img
               style={{
-                textAlign: 'center',
-                padding: 50,
+                maxHeight: 300,
+                paddingTop: 15,
+                paddingBottom: 20,
+                margin: 'auto',
+                display: 'block',
               }}
-            >
-              <Typography variant="h5">
-                Collect web pages, create bookmarks or take screenshot from
-                websites directly in your web browser.
-              </Typography>
-              <img
-                style={{ maxHeight: 300, marginTop: 15, marginBottom: 20 }}
-                src={BrowserExtension}
-                alt=""
-              />
-              <Typography variant="h6">
-                Check out our web clipper browser extension for Chrome, Edge and
-                Firefox.
-              </Typography>
-              <Typography variant="h6">
-                It is available for free in the official browser stores.
-              </Typography>
-              <Button
-                style={{ marginTop: 20 }}
-                onClick={() => {
-                  openURLExternally(Links.links.webClipper, true);
-                }}
-                variant="contained"
-                color="primary"
-              >
-                Get the web clipper
-              </Button>
-            </div>
-          </swiper-slide>
-          <swiper-slide>
-            <div
+              src={BrowserExtension}
+              alt=""
+            />
+            <Typography variant="body1">
+              Check out our web clipper browser extension for Chrome, Edge and
+              Firefox. It is available for free in the official browser stores.
+            </Typography>
+            <Button
               style={{
-                textAlign: 'center',
-                padding: 50,
+                marginTop: 20,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginBottom: 20,
+                display: 'block',
               }}
+              onClick={() => {
+                openURLExternally(Links.links.webClipper, true);
+              }}
+              variant="contained"
+              color="primary"
             >
-              <Typography variant="h5">
-                We hope you will love TagSpaces as much as we do!
-              </Typography>
-              <img
-                style={{ maxHeight: 300, maxWidth: '90%', marginTop: 100 }}
-                src={WizardFinished}
-                alt=""
-              />
-              <Typography variant="h6">
-                If you want to learn more about the application, you can start
-                the introduction from the welcome screen.
-              </Typography>
-              <Button
-                style={{ marginTop: 20 }}
-                onClick={onClose}
-                variant="contained"
-                color="primary"
-              >
-                Start using TagSpaces
-              </Button>
-            </div>
-          </swiper-slide>
-        </swiper-container>
+              Get the web clipper
+            </Button>
+          </div>
+          <div>
+            <Typography variant="h5">
+              We hope you will love TagSpaces as much as we do!
+            </Typography>
+            <img
+              style={{
+                maxHeight: 300,
+                maxWidth: '90%',
+                paddingTop: 70,
+                margin: 'auto',
+                display: 'block',
+              }}
+              src={WizardFinished}
+              alt=""
+            />
+            <Typography variant="body1">
+              If you want to learn more about the application, you can start the
+              introduction from the welcome screen.
+            </Typography>
+            <Button
+              style={{
+                marginTop: 20,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginBottom: 20,
+                display: 'block',
+              }}
+              onClick={onClose}
+              variant="contained"
+              color="primary"
+            >
+              Start using TagSpaces
+            </Button>
+          </div>
+        </Slider>
       </DialogContent>
     </Dialog>
   );

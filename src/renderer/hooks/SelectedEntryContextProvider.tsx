@@ -50,7 +50,6 @@ export const SelectedEntryContextProvider = ({
   children,
 }: SelectedEntryContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
-  const { actions } = useEditedEntryContext();
   const selectedEntries = useRef<TS.FileSystemEntry[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -61,35 +60,6 @@ export const SelectedEntryContextProvider = ({
     }
   }, [currentLocation]);
 
-  useEffect(() => {
-    if (actions && actions.length > 0) {
-      let selected = [...selectedEntries.current];
-      for (const action of actions) {
-        if (action.action === 'add') {
-          selected.push(action.entry);
-        } else if (action.action === 'delete') {
-          let index = selectedEntries.current.findIndex(
-            (e) => e.path === action.entry.path,
-          );
-          if (index !== -1) {
-            selectedEntries.current.splice(index, 1);
-            selected = [...selectedEntries.current];
-          }
-        } else if (action.action === 'update') {
-          let index = selectedEntries.current.findIndex(
-            (e) => e.path === action.oldEntryPath,
-          );
-          if (index !== -1) {
-            selectedEntries.current[index] = action.entry;
-            selected = [...selectedEntries.current];
-          }
-        }
-      }
-      selectedEntries.current = selected;
-      forceUpdate();
-    }
-  }, [actions]);
-
   //const lastSelectedEntry = useRef<TS.FileSystemEntry>(undefined);
 
   /*function getLastSelectedEntry() {
@@ -99,7 +69,7 @@ export const SelectedEntryContextProvider = ({
     return undefined;
   }*/
   const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
-    selectedEntries.current = entries;
+    selectedEntries.current = entries ? entries : [];
     forceUpdate();
   };
 

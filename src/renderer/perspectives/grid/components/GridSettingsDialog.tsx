@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -49,6 +49,7 @@ import { useTranslation } from 'react-i18next';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import ZoomComponent from '-/components/ZoomComponent';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -74,10 +75,20 @@ function GridSettingsDialog(props: Props) {
     saveSettings,
   } = usePerspectiveSettingsContext();
   const { sortBy, orderBy } = useSortedDirContext();
+  const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const theme = useTheme();
   const { open, onClose, openHelpWebPage } = props;
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSettings({
+        sortBy: sortBy,
+        orderBy: orderBy,
+      });
+    }
+  }, [sortBy, orderBy]);
 
   const handleGridPaginationLimit = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -262,63 +273,6 @@ function GridSettingsDialog(props: Props) {
             }
           />
         </MenuItem>
-        {/* <MenuItem
-          data-tid="gridPerspectiveEntrySizeSmall"
-          title={t('core:entrySizeSmall')}
-          aria-label={t('core:entrySizeSmall')}
-          onClick={() => {
-            changeEntrySize('small');
-            entrySize.current = EntrySizes.small;
-            forceUpdate();
-          }}
-        >
-          <ListItemIcon>
-            {entrySize.current === 'small' ? (
-              <RadioCheckedIcon />
-            ) : (
-              <RadioUncheckedIcon />
-            )}
-          </ListItemIcon>
-          <ListItemText primary={t('core:entrySizeSmall')} />
-        </MenuItem>
-        <MenuItem
-          data-tid="gridPerspectiveEntrySizeNormal"
-          title={t('core:entrySizeNormal')}
-          aria-label={t('core:entrySizeNormal')}
-          onClick={() => {
-            changeEntrySize('normal');
-            entrySize.current = EntrySizes.normal;
-            forceUpdate();
-          }}
-        >
-          <ListItemIcon>
-            {entrySize.current === 'normal' ? (
-              <RadioCheckedIcon />
-            ) : (
-              <RadioUncheckedIcon />
-            )}
-          </ListItemIcon>
-          <ListItemText primary={t('core:entrySizeNormal')} />
-        </MenuItem>
-        <MenuItem
-          data-tid="gridPerspectiveEntrySizeBig"
-          title={t('core:entrySizeBig')}
-          aria-label={t('core:entrySizeBig')}
-          onClick={() => {
-            changeEntrySize('big');
-            entrySize.current = EntrySizes.big;
-            forceUpdate();
-          }}
-        >
-          <ListItemIcon>
-            {entrySize.current === 'big' ? (
-              <RadioCheckedIcon />
-            ) : (
-              <RadioUncheckedIcon />
-            )}
-          </ListItemIcon>
-          <ListItemText primary={t('core:entrySizeBig')} />
-        </MenuItem> */}
         <Divider />
         <MenuItem
           data-tid="gridPerspectiveSingleClickOpenInternally"

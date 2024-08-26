@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
   deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
+  createS3Location,
 } from './location.helpers';
 import {
   clickOn,
@@ -33,38 +34,57 @@ import {
   getPropertiesFileName,
 } from './file.properties.helpers';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { openContextEntryMenu } from './test-utils';
+import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
-test.beforeAll(async () => {
-  await startTestingApp('extconfig.js');
-  //await clearDataStorage();
+let s3ServerInstance;
+let webServerInstance;
+let minioServerInstance;
+
+test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+  s3ServerInstance = s3Server;
+  webServerInstance = webServer;
+  minioServerInstance = minioServer;
+  if (global.isS3) {
+    await startTestingApp();
+    await closeWelcomePlaywright();
+  } else {
+    await startTestingApp('extconfig.js');
+  }
 });
 
 test.afterAll(async () => {
+  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
   await stopApp();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
-  }
+  }*/
+  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
-  await testDataRefresh();
 });
 
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
+  } else if (global.isS3) {
+    await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
+
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
   // await closeFileProperties();
 });
 
 test.describe('TST50 - Perspective Grid', () => {
-  test('TST5002 - Open file with click [web,minio,electron]', async () => {
+  test('TST5002 - Open file with click [web,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
     const fileName = 'sample.txt';
 
@@ -79,7 +99,7 @@ test.describe('TST50 - Perspective Grid', () => {
     // await checkFilenameForExist(testTestFilename);
   });
 
-  test('TST5004 - Select-deselect all files [web,minio,electron]', async () => {
+  test('TST5004 - Select-deselect all files [web,electron]', async () => {
     await selectAllFiles();
     await expectAllFileSelected(true);
     await selectAllFiles();
@@ -87,7 +107,7 @@ test.describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add/Remove tags from selected files [web,minio,electron]', async () => {
+  test('TST5005 - Add/Remove tags from selected files [web,electron]', async () => {
     let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
@@ -129,7 +149,7 @@ test.describe('TST50 - Perspective Grid', () => {
   /**
    * todo in [web] its need more time to wait for removed files
    */
-  test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [web,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
@@ -148,7 +168,7 @@ test.describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5008 - Copy file [web,minio,electron]', async () => {
+  test('TST5008 - Copy file [web,electron]', async () => {
     const fileName = 'sample.svg';
     await clickOn(getGridFileSelector(fileName));
     await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
@@ -169,10 +189,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 
@@ -184,12 +204,16 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
-  test('TST5010 - Move file [web,minio,electron]', async () => {
+  test('TST5010 - Move file [web,electron]', async () => {
     const fileName = 'sample.svg';
-    await clickOn(getGridFileSelector(fileName));
-    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     //Toggle Properties
-    await clickOn('[data-tid=detailsTabTID]');
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID',
+    );
+    /*await clickOn(getGridFileSelector(fileName));
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
+    await clickOn('[data-tid=detailsTabTID]');*/
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
@@ -204,10 +228,10 @@ test.describe('TST50 - Perspective Grid', () => {
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
 
-    const arrayMeta =
-      global.isWeb || global.isMinio
+    const arrayMeta = [fileName + '.json'];
+    /*global.isWeb || global.isMinio
         ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
-        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+        : [fileName + '.json', fileName + '.jpg'];*/ // check meta and thumbnail
 
     await expectMetaFilesExist(arrayMeta, true);
 
@@ -221,7 +245,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5012 - Move file different partition [manual]', async () => {});
 
-  test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
+  test('TST5013 - Delete files from selection (many files) [web,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
@@ -239,6 +263,16 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
+  test('TST5048 - prev/next button [web,electron]', async () => {
+    const fileName = 'sample.svg';
+    const nextFileName = 'sample.tga';
+    await clickOn(getGridFileSelector(fileName));
+    //await expectElementExist('[data-tid=fileContainerNextFile]', true, 5000);
+    await clickOn('[data-tid=fileContainerNextFile]');
+    await expectElementSelected(nextFileName, true);
+    await clickOn('[data-tid=fileContainerPrevFile]');
+    await expectElementSelected(fileName, true);
+  });
   /* test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'

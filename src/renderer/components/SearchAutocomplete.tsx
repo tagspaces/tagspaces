@@ -16,7 +16,14 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import Fuse from 'fuse.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -35,7 +42,6 @@ import {
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
-import useFirstRender from '-/utils/useFirstRender';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
 import { Autocomplete, Box, TextField } from '@mui/material';
@@ -53,10 +59,8 @@ import {
   SearchOptionType,
   SearchQueryComposition,
 } from '-/components/SearchOptions';
-import { getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
-import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
@@ -64,8 +68,10 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { removePrefix } from '-/services/utils-io';
+import { isDesktopMode } from '-/reducers/settings';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 interface Props {
   style?: any;
@@ -86,14 +92,11 @@ interface Props {
 
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
+  const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
-  const { openEntry, openLink } = useOpenedEntryContext();
-  const {
-    currentLocation,
-    changeLocationByID,
-    switchLocationTypeByID,
-    openLocationById,
-  } = useCurrentLocationContext();
+  const { openLink } = useOpenedEntryContext();
+  const { locations, currentLocation, changeLocationByID, openLocationById } =
+    useCurrentLocationContext();
   const {
     currentDirectoryPath,
     exitSearchMode,
@@ -101,17 +104,18 @@ function SearchAutocomplete(props: Props) {
     searchQuery,
     setSearchQuery,
   } = useDirectoryContentContext();
-  const {
-    // watchForChanges,
-    isIndexing,
-    searchAllLocations,
-    searchLocationIndex,
-  } = useLocationIndexContext();
+  const { isIndexing, searchAllLocations, searchLocationIndex } =
+    useLocationIndexContext();
+  const { searches } = useSavedSearchesContext();
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
+    : undefined;
+  const historyContext = Pro?.contextProviders?.HistoryContext
+    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
+    : undefined;
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const locations: TS.Location[] = useSelector(getLocations);
-  const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);
 
@@ -123,10 +127,10 @@ function SearchAutocomplete(props: Props) {
   const fileTypes = useRef<Array<string>>(
     searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const actionValues = useRef<Array<SearchOptionType>>([]);
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
-    searchQuery.searchBoxing || 'location',
+    searchQuery.searchBoxing || scope.location,
   );
 
   const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
@@ -157,7 +161,6 @@ function SearchAutocomplete(props: Props) {
   const isOpen = useRef<boolean>(true);
 
   // const firstRender = useFirstRender();
-  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
   useEffect(() => {
     processSearchQuery();
@@ -213,14 +216,14 @@ function SearchAutocomplete(props: Props) {
       }
 
       if (searchQuery.searchBoxing) {
-        setSearchBoxing(searchQuery.searchBoxing);
+        const sBoxing = !currentLocation
+          ? scope.global
+          : searchQuery.searchBoxing;
+        setSearchBoxing(sBoxing);
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SCOPE.fullName,
-          label:
-            SearchQueryComposition.SCOPE.fullName +
-            ' ' +
-            searchQuery.searchBoxing,
+          label: SearchQueryComposition.SCOPE.fullName + ' ' + sBoxing,
         });
       }
       if (
@@ -351,7 +354,7 @@ function SearchAutocomplete(props: Props) {
         isAction(action.action, SearchQueryComposition.SCOPE),
       )
     ) {
-      setSearchBoxing('location');
+      setSearchBoxing(scope.location);
     }
     if (
       !exceptions.some((action) =>
@@ -575,13 +578,13 @@ function SearchAutocomplete(props: Props) {
         currentOptions.current = action;
 
         const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.fileOpenKey)
+          ? historyContext.fileOpenHistory
           : [];
         const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.folderOpenKey)
+          ? historyContext.folderOpenHistory
           : [];
         const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.fileEditKey)
+          ? historyContext.fileEditHistory
           : [];
 
         searchOptions.current = [
@@ -597,7 +600,7 @@ function SearchAutocomplete(props: Props) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
         const bookmarks: Array<TS.BookmarkItem> =
-          Pro && Pro.bookmarks && Pro.bookmarks.getBookmarks();
+          Pro && bookmarksContext && bookmarksContext.bookmarks; //getBookmarks();
 
         function getOptions(
           items: TS.BookmarkItem[],
@@ -625,7 +628,7 @@ function SearchAutocomplete(props: Props) {
       }
     } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
       const searchHistoryItems: Array<TS.HistoryItem> = Pro
-        ? Pro.history.getHistory(historyKeys.searchHistoryKey)
+        ? historyContext.searchHistory
         : [];
       searchOptions.current = getHistoryOptions(
         searchHistoryItems,
@@ -880,46 +883,32 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
-              switchLocationTypeByID(option.id).then(() => {
-                changeLocationByID(option.id);
-                setSearchQuery(option.searchQuery);
-              });
+              changeLocationByID(option.id);
+              setSearchQuery(option.searchQuery);
             } else {
             }
-          } else if (Pro && Pro.history) {
+          } else if (Pro && historyContext) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: option.id,
               creationTimeStamp: 0,
             };
-            Pro.history.openItem(
-              item,
-              currentLocation && currentLocation.uuid,
-              openLinkDispatch,
-              openLocationById,
-              openEntry,
-            );
+            historyContext.openItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_BOOKMARK) {
-          if (Pro && Pro.history) {
+          if (Pro && historyContext) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: undefined,
               creationTimeStamp: 0,
             };
-            Pro.history.openItem(
-              item,
-              currentLocation && currentLocation.uuid,
-              openLinkDispatch,
-              openLocationById,
-              openEntry,
-            );
+            historyContext.openItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
@@ -1203,13 +1192,14 @@ function SearchAutocomplete(props: Props) {
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
-          style={{ maxHeight: 35 }}
+          style={{ maxHeight: 34 }}
+          size={desktopMode ? 'small' : 'medium'}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorSearch(event.currentTarget);
           }}
         >
-          <AdvancedSearchIcon />
-          <DropDownIcon />
+          <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
+          {/* <DropDownIcon /> */}
         </IconButton>
       </Tooltip>
       <Tooltip title={t('clearSearch') + ' (ESC)'}>
@@ -1218,10 +1208,11 @@ function SearchAutocomplete(props: Props) {
           onClick={() => {
             clearSearch();
           }}
-          size="small"
+          style={{ maxHeight: 34 }}
+          size={desktopMode ? 'small' : 'medium'}
           edge="end"
         >
-          <ClearSearchIcon />
+          <ClearSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
         </IconButton>
       </Tooltip>
     </>
@@ -1252,7 +1243,10 @@ function SearchAutocomplete(props: Props) {
         <style>
           {`
           #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 0 5px 0 5px !important;
+            padding: 1px 15px 0 5px !important;
+          }
+          #searchAutocompleteComp .MuiTextField-root {
+            overflow-x: hidden !important;
           }
           .MuiAutocomplete-popper {
             min-width: 350px;
@@ -1274,7 +1268,25 @@ function SearchAutocomplete(props: Props) {
           onInputChange={handleInputChange}
           open={isOpen.current}
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
-            const filteredOptions = options.filter((option) => {
+            if ((state.inputValue ?? '').trim() === '') {
+              return options;
+            }
+            const fuseOptions = {
+              keys: [
+                {
+                  name: 'label',
+                  getFn: (entry) => entry.label,
+                  weight: 0.2,
+                },
+              ],
+              threshold: 0.3,
+              shouldSort: true,
+              minMatchCharLength: 1,
+            };
+            const fuse = new Fuse(options, fuseOptions);
+            const result = fuse.search(state.inputValue);
+            const filteredOptions = result.map(({ item }) => item);
+            /*const filteredOptions = options.filter((option) => {
               if (option.filter === false) {
                 return true;
               }
@@ -1283,9 +1295,10 @@ function SearchAutocomplete(props: Props) {
                   .toLowerCase()
                   .indexOf(state.inputValue.toLowerCase()) > -1
               );
-            });
+            });*/
             if (filteredOptions.length === 0 && !haveEmptyAction()) {
-              isOpen.current = false;
+              return options;
+              //isOpen.current = false;
             }
             return filteredOptions;
           }}
@@ -1330,27 +1343,29 @@ function SearchAutocomplete(props: Props) {
                       {option}
                     </Box>
                   ) : (
-                    <Button
-                      onClick={() => {
-                        changeOptions(action.action, false);
-                      }}
-                      data-tid={dataTidFormat('menu' + option)}
-                      size="small"
-                      style={{
-                        backgroundColor: 'transparent',
-                        textTransform: 'lowercase',
-                        padding: 0,
-                        margin: 0,
-                      }}
-                      endIcon={
-                        <ArrowDropDownIcon
-                          style={{ marginLeft: -10 }}
-                          fontSize="small"
-                        />
-                      }
-                    >
-                      {option}
-                    </Button>
+                    <Tooltip title={option}>
+                      <Button
+                        onClick={() => {
+                          changeOptions(action.action, false);
+                        }}
+                        data-tid={dataTidFormat('menu' + option)}
+                        size="small"
+                        style={{
+                          backgroundColor: 'transparent',
+                          textTransform: 'lowercase',
+                          padding: 0,
+                          margin: 0,
+                        }}
+                        endIcon={
+                          <ArrowDropDownIcon
+                            style={{ marginLeft: -10 }}
+                            fontSize="small"
+                          />
+                        }
+                      >
+                        {removePrefix(option, action.action)}
+                      </Button>
+                    </Tooltip>
                   )}
 
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
@@ -1424,7 +1439,8 @@ function SearchAutocomplete(props: Props) {
               )}
             </Box>
           )}
-          sx={{ width: 'calc(100% - 80px)' }}
+          sx={{ width: '100%' }}
+          size="small"
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
           renderInput={(params) => {
@@ -1463,7 +1479,7 @@ function SearchAutocomplete(props: Props) {
             id="searchButton"
             variant="outlined"
             size="small"
-            disabled={isIndexing}
+            disabled={isIndexing !== undefined}
             style={{
               marginRight: 10,
               marginLeft: 10,
@@ -1476,11 +1492,6 @@ function SearchAutocomplete(props: Props) {
           </Button>
         </Tooltip>
       </div>
-      <SavedSearchesMenu
-        anchorEl={openSavedSearches}
-        open={Boolean(openSavedSearches)}
-        onClose={() => setOpenSavedSearches(null)}
-      />
     </>
   );
 }

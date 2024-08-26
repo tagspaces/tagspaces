@@ -18,7 +18,6 @@
 
 import React, { useReducer, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -28,7 +27,6 @@ import {
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { getFirstRWLocation } from '-/reducers/locations';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -64,11 +62,12 @@ function CreateFile(props: Props) {
   const { t } = useTranslation();
 
   //const dispatch: AppDispatch = useDispatch();
-  const { currentLocation, openLocation } = useCurrentLocationContext();
+  const { currentLocation, openLocation, getFirstRWLocation } =
+    useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
 
-  const firstRWLocation = useSelector(getFirstRWLocation);
+  const firstRWLocation = getFirstRWLocation();
 
   const fileName = useRef<string>(
     'note' +

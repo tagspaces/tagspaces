@@ -17,7 +17,6 @@
  */
 
 import React, { useEffect, useReducer, useRef } from 'react';
-import { connect } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -27,20 +26,11 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
 import AppConfig from '-/AppConfig';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
-import {
-  getLastBackgroundImageChange,
-  getLastThumbnailImageChange,
-} from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getDescriptionPreview,
-  getFolderThumbPath,
-  getFolderBgndPath,
-} from '-/services/utils-io';
-import PlatformIO from '-/services/platform-facade';
+import { getDescriptionPreview } from '-/services/utils-io';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +44,8 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { dataTidFormat } from '-/services/test';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -74,8 +66,6 @@ interface Props {
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
-  lastBackgroundImageChange: any;
-  lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
@@ -89,9 +79,7 @@ function GridPagination(props: Props) {
     getCellContent,
     desktopMode,
     currentDirectoryPath,
-    lastThumbnailImageChange,
     openRenameEntryDialog,
-    lastBackgroundImageChange,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
     selectedEntries,
@@ -107,14 +95,18 @@ function GridPagination(props: Props) {
     gridPageLimit,
     singleClickAction,
   } = usePerspectiveSettingsContext();
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
   const { lastSelectedEntryPath } = useSelectedEntriesContext();
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntryInternal } = useOpenedEntryContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const { openDirectory, directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
   if (!showDirectories) {
     directories = [];
   }
@@ -125,32 +117,35 @@ function GridPagination(props: Props) {
     ? Math.ceil(allFilesCount / gridPageLimit)
     : 10;
 
+  const backgroundImage = useRef<string>('none');
+  const thumbImage = useRef<string>('none');
   const containerEl = useRef<HTMLDivElement>(null);
-  const folderTmbPath = useRef<string>(
-    getFolderThumbPath(currentDirectoryPath, lastThumbnailImageChange),
-  );
-  const folderBgndPath = useRef<string>(
-    getFolderBgndPath(currentDirectoryPath, lastBackgroundImageChange),
-  );
-
-  const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
-  // TODO move in DirectoryContentContextProvider
-  useEffect(() => {
-    folderTmbPath.current = getFolderThumbPath(
-      props.currentDirectoryPath,
-      props.lastThumbnailImageChange,
-    );
-    forceUpdate();
-  }, [props.currentDirectoryPath, props.lastThumbnailImageChange]);
 
   useEffect(() => {
-    folderBgndPath.current = getFolderBgndPath(
-      props.currentDirectoryPath,
-      props.lastBackgroundImageChange,
-    );
-    forceUpdate();
-  }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);
+    if (containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
+    if (currentLocation) {
+      currentLocation
+        .getFolderBgndPath(currentDirectoryPath, directoryMeta?.lastUpdated)
+        .then((bgPath) => {
+          const bgImage = 'url("' + bgPath + '")';
+          if (bgImage !== backgroundImage.current) {
+            backgroundImage.current = bgImage;
+            forceUpdate();
+          }
+        });
+      currentLocation
+        .getFolderThumbPath(currentDirectoryPath, directoryMeta?.lastUpdated)
+        .then((thumbPath) => {
+          const thbImage = 'url("' + thumbPath + '")';
+          if (thbImage !== thumbImage.current) {
+            thumbImage.current = thbImage;
+            forceUpdate();
+          }
+        });
+    }
+  }, [currentDirectoryPath, containerEl.current, directoryMeta]);
 
   const handleChange = (event, value) => {
     setCurrentPage(value);
@@ -161,7 +156,7 @@ function GridPagination(props: Props) {
 
   const folderName = extractDirectoryName(
     props.currentDirectoryPath,
-    PlatformIO.getDirSeparator(),
+    currentLocation?.getDirSeparator(),
   );
 
   const dirColor =
@@ -178,6 +173,7 @@ function GridPagination(props: Props) {
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
+      data-tid="backgroundTID"
       style={{
         height: '100%',
         background: `${dirColor}`,
@@ -194,7 +190,7 @@ function GridPagination(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
-          backgroundImage: 'url("' + folderBgndPath.current + '")',
+          backgroundImage: backgroundImage.current,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
         }}
@@ -236,10 +232,10 @@ function GridPagination(props: Props) {
                   >
                     <Tooltip title={t('core:renameDirectory')}>
                       <ButtonBase
-                        data-tid={'currentDir_' + folderName}
+                        data-tid={'currentDir_' + dataTidFormat(folderName)}
                         style={{
                           fontSize: '1.5rem',
-                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                          filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                         }}
                         onClick={() => {
                           setSelectedEntries([]);
@@ -261,6 +257,7 @@ function GridPagination(props: Props) {
                   </Box>
                 )}
                 <Box
+                  data-tid={'allFilesCount' + allFilesCount}
                   style={{
                     paddingBottom: 5,
                     marginTop: 10,
@@ -274,7 +271,7 @@ function GridPagination(props: Props) {
                   <Typography
                     style={{
                       fontSize: '0.9rem',
-                      filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                     }}
                   >
                     {folderSummary}
@@ -295,13 +292,13 @@ function GridPagination(props: Props) {
                       </Typography>
                     )}
                 </Box>
-                {/* <Tooltip title={t('core:thumbnail')}> */}
                 <div
+                  data-tid="folderThumbTID"
                   style={{
                     borderRadius: 10,
                     height: 100,
                     width: 140,
-                    backgroundImage: `url("${folderTmbPath.current}")`,
+                    backgroundImage: thumbImage.current,
                     backgroundSize: 'cover', // cover contain
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center center',
@@ -309,8 +306,7 @@ function GridPagination(props: Props) {
                     top: 0,
                     right: 0,
                   }}
-                ></div>
-                {/* </Tooltip> */}
+                />
               </div>
             </Grid>
           )}
@@ -330,7 +326,7 @@ function GridPagination(props: Props) {
               <MilkdownEditor
                 content={directoryMeta.description}
                 readOnly={true}
-                dark={theme.palette.mode === 'dark'}
+                /*dark={theme.palette.mode === 'dark'}*/
                 currentFolder={currentDirectoryPath}
                 lightMode={true}
               />
@@ -353,13 +349,15 @@ function GridPagination(props: Props) {
                 setSelectedEntries,
                 lastSelectedEntryPath,
                 sortedDirContent,
-                openEntry,
+                openEntryInternal,
                 openFileNatively,
                 openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
                 showNotification,
                 moveFiles,
+                handleEntryExist,
+                openEntryExistDialog,
                 clearSelection,
               ),
             )}
@@ -377,13 +375,15 @@ function GridPagination(props: Props) {
               setSelectedEntries,
               lastSelectedEntryPath,
               sortedDirContent,
-              openEntry,
+              openEntryInternal,
               openFileNatively,
               openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
               showNotification,
               moveFiles,
+              handleEntryExist,
+              openEntryExistDialog,
               clearSelection,
               index === dArray.length - 1,
             ),
@@ -393,7 +393,13 @@ function GridPagination(props: Props) {
               {!showDescription &&
                 directoryMeta &&
                 directoryMeta.description && (
-                  <div style={{ position: 'relative', marginBottom: 150 }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      margin: 'auto',
+                      maxWidth: 150,
+                    }}
+                  >
                     <EntryIcon isFile={false} />
                   </div>
                 )}
@@ -416,7 +422,13 @@ function GridPagination(props: Props) {
                 {!showDescription &&
                   directoryMeta &&
                   directoryMeta.description && (
-                    <div style={{ position: 'relative', marginBottom: 150 }}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        margin: 'auto',
+                        maxWidth: 150,
+                      }}
+                    >
                       <EntryIcon isFile={false} />
                     </div>
                   )}
@@ -472,29 +484,4 @@ function GridPagination(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    lastBackgroundImageChange: getLastBackgroundImageChange(state),
-    lastThumbnailImageChange: getLastThumbnailImageChange(state),
-  };
-}
-
-const areEqual = (prevProp: Props, nextProp: Props) =>
-  JSON.stringify(nextProp.lastBackgroundImageChange) ===
-    JSON.stringify(prevProp.lastBackgroundImageChange) &&
-  JSON.stringify(nextProp.lastThumbnailImageChange) ===
-    JSON.stringify(prevProp.lastThumbnailImageChange) &&
-  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  //nextProp.showDirectories === prevProp.showDirectories &&
-  //nextProp.showDetails === prevProp.showDetails &&
-  //nextProp.showDescription === prevProp.showDescription &&
-  //nextProp.showTags === prevProp.showTags &&
-  //nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
-  JSON.stringify(nextProp.directories) ===
-    JSON.stringify(prevProp.directories) &&
-  // JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
-  JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);
-
-export default connect(mapStateToProps)(React.memo(GridPagination, areEqual));
+export default GridPagination;

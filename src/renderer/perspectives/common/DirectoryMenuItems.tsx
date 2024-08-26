@@ -6,10 +6,8 @@ import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
-import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
-import AddRemoveTags from '@mui/icons-material/Loyalty';
 import Divider from '@mui/material/Divider';
 import { Pro } from '-/pro';
 import ImageIcon from '@mui/icons-material/Image';
@@ -26,13 +24,14 @@ import {
   NewFileIcon,
   NewFolderIcon,
   AddExistingFileIcon,
+  TagIcon,
 } from '-/components/CommonIcons';
 import { getKeyBindingObject } from '-/reducers/settings';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 export function getDirectoryMenuItems(
-  currentLocation: TS.Location,
+  currentLocation: CommonLocation,
   selectedEntriesLength: number,
   perspectiveMode: boolean,
   isReadOnlyMode: boolean,
@@ -178,10 +177,11 @@ export function getDirectoryMenuItems(
   }
 
   if (
+    currentLocation &&
     selectedEntriesLength < 2 &&
     !(
-      PlatformIO.haveObjectStoreSupport() ||
-      PlatformIO.haveWebDavSupport() ||
+      currentLocation.haveObjectStoreSupport() ||
+      currentLocation.haveWebDavSupport() ||
       AppConfig.isWeb
     ) &&
     showInFileManager
@@ -203,8 +203,8 @@ export function getDirectoryMenuItems(
       </MenuItem>,
     );
   }
+  menuItems.push(<Divider key="divider1" />);
   if (!isReadOnlyMode && !perspectiveMode) {
-    menuItems.push(<Divider key="divider1" />);
     if (createNewFile) {
       menuItems.push(
         <MenuItem
@@ -240,7 +240,7 @@ export function getDirectoryMenuItems(
             primary={
               <>
                 {t('core:newAudioRecording')}
-                {Pro ? <BetaLabel /> : <ProLabel />}
+                {!Pro && <ProLabel />}
               </>
             }
           />
@@ -334,7 +334,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <AddRemoveTags />
+          <TagIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
         <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
@@ -364,7 +364,7 @@ export function getDirectoryMenuItems(
           primary={
             <>
               {t('core:importMacTags')}
-              {Pro ? <BetaLabel /> : <ProLabel />}
+              {!Pro && <ProLabel />}
             </>
           }
         />
@@ -397,10 +397,7 @@ export function getDirectoryMenuItems(
       if (!Pro && perspective.pro) {
         badge = <ProLabel />;
       }
-      if (!Pro && perspective.beta) {
-        badge = <BetaLabel />;
-      }
-      if (Pro && perspective.beta) {
+      if (perspective.beta) {
         badge = <BetaLabel />;
       }
       menuItems.push(

@@ -25,7 +25,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
@@ -37,7 +36,12 @@ import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
-import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import { ProLabel } from '-/components/HelperComponents';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
+import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -60,8 +64,13 @@ interface Props {
 function CreateDirectory(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
+  const { currentLocation } = useCurrentLocationContext();
   const { downloadFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
+  const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
+  const { openNewAudioDialog } = useNewAudioDialogContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -119,18 +128,16 @@ function CreateDirectory(props: Props) {
         } else if (fileName.indexOf('.') === -1) {
           fileName = url.hostname + '-' + fileName + '.html';
         }
-        if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
+        if (currentLocation?.haveObjectStoreSupport() || AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
-          dispatch(AppActions.toggleUploadDialog());
+          openFileUploadDialog();
           downloadFile(
             fileUrl.current,
-            targetDirectoryPath +
-              PlatformIO.getDirSeparator() +
-              decodeURIComponent(fileName),
+            targetDirectoryPath + '/' + decodeURIComponent(fileName),
             onUploadProgress,
           )
             .then(() => {
-              if (PlatformIO.haveObjectStoreSupport()) {
+              if (currentLocation.haveObjectStoreSupport()) {
                 // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
                 dispatch(AppActions.setProgress(fileUrl.current, 100));
               }
@@ -171,7 +178,7 @@ function CreateDirectory(props: Props) {
           variant="outlined"
           onClick={() => {
             onClose();
-            dispatch(AppActions.toggleLocationDialog());
+            openCreateEditLocationDialog();
           }}
           className={classes.createButton}
           data-tid={tid('createLocationButton')}
@@ -188,7 +195,7 @@ function CreateDirectory(props: Props) {
           variant="outlined"
           onClick={() => {
             onClose();
-            dispatch(AppActions.toggleCreateDirectoryDialog());
+            openCreateDirectoryDialog();
           }}
           className={classes.createButton}
           data-tid={tid('newSubDirTID')}
@@ -203,13 +210,13 @@ function CreateDirectory(props: Props) {
           disabled={!Pro || noSuitableLocation}
           onClick={() => {
             onClose();
-            dispatch(AppActions.toggleNewAudioDialog());
+            openNewAudioDialog();
           }}
           className={classes.createButton}
           data-tid={tid('newSubDirTID')}
         >
           {t('core:newAudioRecording')}
-          {Pro ? <BetaLabel /> : <ProLabel />}
+          {!Pro && <ProLabel />}
         </Button>
       </Grid>
       <Grid style={{ marginTop: 20 }} item xs={12}>
@@ -249,7 +256,7 @@ function CreateDirectory(props: Props) {
           }}
         >
           <Button
-            data-tid={tid('cancelRenameEntryTID')}
+            data-tid={tid('downloadFileUrlTID')}
             className={classes.createButton}
             onClick={() => downloadURL()}
           >

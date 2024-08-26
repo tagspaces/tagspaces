@@ -17,28 +17,30 @@
  */
 
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Table from 'rc-table';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
-import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
-import { TS } from '-/tagspaces.namespace';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { CommonLocation } from '-/utils/CommonLocation';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 interface Props {
   classes: any;
-  location: TS.Location;
+  location: CommonLocation;
   //data?: any;
   handleFileMoveDrop: (item, monitor) => void;
 }
 
 export interface DirectoryTreeViewRef {
-  changeLocation: (location: TS.Location) => void;
+  changeLocation: (location: CommonLocation) => void;
   closeLocation: () => void;
   // removeLocation: () => void;
 }
@@ -47,7 +49,8 @@ const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
-    const { changeLocation, getLocationPath } = useCurrentLocationContext();
+    const { findLocation, changeLocation, getLocationPath } =
+      useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
@@ -55,24 +58,11 @@ const DirectoryTreeView = forwardRef(
     //const dispatch: AppDispatch = useDispatch();
 
     useImperativeHandle(ref, () => ({
-      changeLocation(location: TS.Location) {
+      changeLocation(location: CommonLocation) {
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
-        } else if (location.type === locationType.TYPE_CLOUD) {
-          PlatformIO.enableObjectStoreSupport(location)
-            .then(() => {
-              loadSubDirectories(location);
-            })
-            .catch((error) => {
-              console.log('enableObjectStoreSupport', error);
-            });
-        } else if (location.type === locationType.TYPE_WEBDAV) {
-          PlatformIO.enableWebdavSupport(location);
-          loadSubDirectories(location);
-        } else if (location.type === locationType.TYPE_LOCAL) {
-          PlatformIO.disableObjectStoreSupport();
-          PlatformIO.disableWebdavSupport();
+        } else {
           loadSubDirectories(location);
         }
       },
@@ -84,15 +74,24 @@ const DirectoryTreeView = forwardRef(
       },
     }));
 
+    const { FILE } = NativeTypes;
+
     const renderBodyRow = (props) => {
       if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
-          <TargetTableMoveFileBox
-            accepts={[DragItemTypes.FILE]}
-            onDrop={handleFileMoveDrop}
-            {...props}
-          />
+          <TargetFileBox
+            accepts={[FILE]}
+            directoryPath={props.location.path}
+            locationId={location.uuid}
+          >
+            <CustomDragLayer />
+            <TargetTableMoveFileBox
+              accepts={[DragItemTypes.FILE]}
+              onDrop={handleFileMoveDrop}
+              {...props}
+            />
+          </TargetFileBox>
         );
       }
       return <tr {...props} />;
@@ -140,21 +139,11 @@ const DirectoryTreeView = forwardRef(
     };
 
     const onRowClick = (subDir) => {
-      if (subDir.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(subDir)
-          .then(() => {
-            loadSubDirectories(subDir);
-            changeLocation(subDir);
-            return openDirectory(subDir.path);
-          })
-          .catch((error) => {
-            console.log('enableObjectStoreSupport', error);
-          });
-      } else if (subDir.type === locationType.TYPE_LOCAL) {
-        PlatformIO.disableObjectStoreSupport();
-        loadSubDirectories(subDir);
-        changeLocation(subDir);
-        openDirectory(subDir.path);
+      const location = findLocation(subDir.uuid);
+      if (location) {
+        //loadSubDirectories(location);
+        changeLocation(location, true);
+        openDirectory(subDir.path, undefined, location);
       }
     };
 
@@ -169,7 +158,7 @@ const DirectoryTreeView = forwardRef(
       },
     ];
 
-    const loadSubDirectories = (location: TS.Location) => {
+    const loadSubDirectories = (location: CommonLocation) => {
       getLocationPath(location).then((locationPath) => {
         const subFolder = {
           ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
@@ -233,7 +222,8 @@ const DirectoryTreeView = forwardRef(
     const getDirectoriesTree = (subFolder: SubFolder) =>
       // const { settings } = getState();
       new Promise((resolve, reject) => {
-        PlatformIO.listDirectoryPromise(subFolder.path, [])
+        findLocation(subFolder.uuid)
+          .listDirectoryPromise(subFolder.path, [])
           .then((dirEntries) => {
             if (dirEntries !== undefined) {
               // console.debug('listDirectoryPromise resolved:' + dirEntries.length);

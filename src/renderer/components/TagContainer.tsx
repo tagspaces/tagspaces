@@ -25,7 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag } from '-/utils/geo';
-import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
+import { isDateTimeTag, convertToTimestamp } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import { getTagColors } from '-/services/taglibrary-utils';
 import TagContainerMenu from '-/components/TagContainerMenu';
@@ -84,18 +84,14 @@ function TagContainer(props: Props) {
     () => !isTagGeo && !tagGroup && isDateTimeTag(title),
     [isTagGeo, title, tagGroup],
   );
-  if (tag.color && tag.textcolor) {
-    textColor = tag.textcolor;
-    backgroundColor = tag.color;
-  } else {
-    const tagColors = getTagColors(
-      title,
-      defaultTextColor,
-      defaultBackgroundColor,
-    );
-    textColor = tagColors.textcolor;
-    backgroundColor = tagColors.color;
-  }
+
+  const tagColors = getTagColors(
+    title,
+    tag.textcolor || defaultTextColor,
+    tag.color || defaultBackgroundColor,
+  );
+  textColor = tagColors.textcolor;
+  backgroundColor = tagColors.color;
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
@@ -122,12 +118,25 @@ function TagContainer(props: Props) {
   let tagTitle = ''; // tag.title;
   if (isTagDate) {
     let date;
-    if (tag.title.length > 8) {
-      date = new Date(convertToDateTime(tag.title)).getTime();
+    if (tag.title.includes('-')) {
+      const timeArr = tag.title.split('-');
+      if (parseInt(timeArr[0], 10) && parseInt(timeArr[1], 10)) {
+        const firstTime = convertToTimestamp(timeArr[0]);
+        const secondTime = convertToTimestamp(timeArr[1]);
+        const haveTime0 = timeArr[0].length > 8;
+        const haveTime1 = timeArr[1].length > 8;
+        tagTitle =
+          formatDateTime(firstTime, haveTime0) +
+          ' <-> ' +
+          formatDateTime(secondTime, haveTime1);
+      }
+    } else if (tag.title.length > 8) {
+      date = convertToTimestamp(tag.title); //new Date(convertToDateTime(tag.title)).getTime();
+      tagTitle = formatDateTime(date, true);
     } else {
-      date = new Date(convertToDate(tag.title)).getTime();
+      date = convertToTimestamp(tag.title); //new Date(convertToDate(tag.title)).getTime();
+      tagTitle = formatDateTime(date, false);
     }
-    tagTitle = formatDateTime(date, true);
   }
 
   if (tag.description) {
@@ -194,12 +203,14 @@ function TagContainer(props: Props) {
           style={{
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
+            fontWeight: 'normal',
+            lineHeight: '10px',
             textTransform: 'none',
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
             color: textColor,
             backgroundColor,
-            minHeight: 0,
+            minHeight: 18,
             minWidth: 0,
             margin: 2,
             paddingTop: 0,
@@ -209,30 +220,32 @@ function TagContainer(props: Props) {
             borderRadius: 5,
           }}
         >
-          <span style={{ flexGrow: 1 }}>
+          <span
+            style={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {(isTagGeo || isGeoSmartTag) && (
               <PlaceIcon
                 style={{
-                  color: tag.textcolor,
-                  height: 20,
-                  marginBottom: -5,
+                  color: textColor,
+                  height: 16,
                   marginLeft: -5,
-                  marginRight: 0,
                 }}
               />
             )}
             {(isTagDate || isDateSmartTag) && (
               <DateIcon
                 style={{
-                  color: tag.textcolor,
-                  height: 20,
-                  marginBottom: -5,
+                  color: textColor,
+                  height: 16,
                   marginLeft: -5,
-                  marginRight: 0,
                 }}
               />
             )}
-            {!isTagGeo && title}
+            {!isTagGeo && <span>{title}</span>}
           </span>
           <TagContainerMenu
             handleRemoveTag={handleRemoveTag}

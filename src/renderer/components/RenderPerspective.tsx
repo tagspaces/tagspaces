@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 
 import AppConfig from '-/AppConfig';
 
@@ -28,26 +28,30 @@ import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirCon
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
-import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import CustomDragLayer from '-/components/CustomDragLayer';
+import TargetFileBox from '-/components/TargetFileBox';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 const GridPerspective = React.lazy(
   () =>
     import(/* webpackChunkName: "GridPerspective" */ '../perspectives/grid'),
 );
+
 function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <RendererListenerContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <SortedDirContextProvider>
           <PaginationContextProvider>
             <ThumbGenerationContextProvider>
-              <PerspectiveSettingsContextProvider>
-                <GridPerspective {...props} />
-              </PerspectiveSettingsContextProvider>
+              <GridPerspective {...props} />
             </ThumbGenerationContextProvider>
           </PaginationContextProvider>
-        </RendererListenerContextProvider>
-      </SortedDirContextProvider>
+        </SortedDirContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
@@ -59,17 +63,15 @@ const ListPerspective = React.lazy(
 function ListPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <RendererListenerContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <SortedDirContextProvider>
           <PaginationContextProvider>
             <ThumbGenerationContextProvider>
-              <PerspectiveSettingsContextProvider>
-                <ListPerspective {...props} />
-              </PerspectiveSettingsContextProvider>
+              <ListPerspective {...props} />
             </ThumbGenerationContextProvider>
           </PaginationContextProvider>
-        </RendererListenerContextProvider>
-      </SortedDirContextProvider>
+        </SortedDirContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
@@ -114,11 +116,9 @@ function KanBanPerspectiveAsync(props) {
     <React.Suspense fallback={<LoadingLazy />}>
       <PerspectiveSettingsContextProvider>
         <Pro.Perspectives.KanBanSortedDirContextProvider>
-          <RendererListenerContextProvider>
-            <ThumbGenerationContextProvider>
-              <KanBanPerspective {...props} />
-            </ThumbGenerationContextProvider>
-          </RendererListenerContextProvider>
+          <ThumbGenerationContextProvider>
+            <KanBanPerspective {...props} />
+          </ThumbGenerationContextProvider>
         </Pro.Perspectives.KanBanSortedDirContextProvider>
       </PerspectiveSettingsContextProvider>
     </React.Suspense>
@@ -156,45 +156,62 @@ interface Props {
 
 function RenderPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
-  const { currentDirectoryEntries, currentDirectoryPath, perspective } =
-    useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
+  const { getPerspective } = useDirectoryContentContext();
+  const { metaActions } = useEditedEntryMetaContext();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const firstRender = useFirstRender();
 
-  /*const defaultPerspective = useSelector(getDefaultPerspective);
+  useEffect(() => {
+    if (!firstRender && metaActions && metaActions.length > 0) {
+      for (const action of metaActions) {
+        if (action.action === 'perspectiveChange') {
+          forceUpdate();
+        }
+      }
+    }
+  }, [metaActions]);
 
-  let currentPerspective =
-    currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
-
-  if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
-    currentPerspective = defaultPerspective;
-  }*/
-
-  const showWelcomePanel =
-    !currentDirectoryPath && currentDirectoryEntries.length < 1;
+  const showWelcomePanel = !currentLocation;
+  //!currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
   }
-  if (perspective === PerspectiveIDs.LIST) {
-    return (
-      <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
-  }
-  if (Pro && perspective === PerspectiveIDs.GALLERY) {
-    return <GalleryPerspectiveAsync />;
-  }
-  if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
-    return <MapiquePerspectiveAsync />;
-  }
-  if (Pro && perspective === PerspectiveIDs.KANBAN) {
-    return (
-      <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
-  }
-  if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
-    return <FolderVizPerspectiveAsync />;
-  }
 
-  return <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />;
+  function getPerspectiveComponent() {
+    const perspective = getPerspective();
+    if (perspective === PerspectiveIDs.LIST) {
+      return (
+        <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+      );
+    }
+    if (Pro && perspective === PerspectiveIDs.GALLERY) {
+      return <GalleryPerspectiveAsync />;
+    }
+    if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
+      return <MapiquePerspectiveAsync />;
+    }
+    if (Pro && perspective === PerspectiveIDs.KANBAN) {
+      return (
+        <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+      );
+    }
+    if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
+      return <FolderVizPerspectiveAsync />;
+    }
+
+    return (
+      <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
+    );
+  }
+  const { FILE } = NativeTypes;
+  return (
+    <TargetFileBox style={{ height: '100%' }} accepts={[FILE]}>
+      <CustomDragLayer />
+      {getPerspectiveComponent()}
+    </TargetFileBox>
+  );
 }
 
 export default RenderPerspective;

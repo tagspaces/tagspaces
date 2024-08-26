@@ -17,7 +17,6 @@
  */
 
 import React, { createContext, useMemo } from 'react';
-import PlatformFacade from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 import {
@@ -28,85 +27,110 @@ import {
   getThumbFileLocationForFile,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { getAllPropertiesPromise, toFsEntry } from '-/services/utils-io';
+import { executePromisesInBatches } from '-/services/utils-io';
 import { getUseTrashCan } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import AppConfig from '-/AppConfig';
+import { CommonLocation } from '-/utils/CommonLocation';
 
+interface PlatformParms {
+  path: string;
+  lmdt?: number;
+  locationID?: string;
+  total?: number;
+  encryptionKey?: string;
+}
+interface getLocationProps extends Omit<PlatformParms, 'path'> {
+  // All the properties from PlatformParms, except 'path'
+}
 type PlatformFacadeContextData = {
-  createDirectoryPromise: (path: string) => Promise<any>;
+  createDirectoryPromise: (path: string, locationID?: string) => Promise<any>;
   copyFilePromise: (
     sourceFilePath: string,
     targetFilePath: string,
+    locationID?: string,
     confirmMessage?: string,
   ) => Promise<any>;
   copyFilesWithProgress: (
     paths: Array<string>,
     targetPath: string,
+    locationID: string,
     onProgress?,
     reflect?: boolean,
   ) => Promise<boolean>;
   copyFilePromiseOverwrite: (
     sourceFilePath: string,
     targetFilePath: string,
+    locationID?: string,
     reflect?,
   ) => Promise<any>;
   renameFilePromise: (
     filePath: string,
     newFilePath: string,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   renameFilesPromise: (
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   moveFilePromise: (
-    filePath: string,
+    param: PlatformParms,
     newFilePath: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   moveFilesPromise: (
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress?,
     reflect?,
   ) => Promise<any>;
   reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
-  renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
+  renameDirectoryPromise: (
+    param: PlatformParms,
+    newDirName: string,
+  ) => Promise<any>;
   copyDirectoryPromise: (
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   moveDirectoryPromise: (
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress?,
+    reflect?,
   ) => Promise<any>;
   saveFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     open?: boolean,
   ) => Promise<any>;
   saveTextFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: string,
     overwrite: boolean,
   ) => Promise<any>;
   saveBinaryFilePromise: (
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
-    reflect?,
+    reflect?: boolean | TS.ActionSource,
   ) => Promise<TS.FileSystemEntry>;
   deleteEntriesPromise: (...paths: TS.FileSystemEntry[]) => Promise<boolean>;
   setFolderThumbnailPromise: (filePath: string) => Promise<string>;
@@ -145,97 +169,123 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
+  const { currentLocation, findLocation } = useCurrentLocationContext();
+  const { getAllPropertiesPromise } = useDirectoryContentContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const useTrashCan = useSelector(getUseTrashCan);
 
-  function createDirectoryPromise(path: string): Promise<any> {
+  function getLocation(param: getLocationProps): CommonLocation {
+    const { locationID } = param;
+    if (locationID) {
+      return findLocation(locationID);
+    }
+    return currentLocation;
+  }
+
+  function createDirectoryPromise(
+    path: string,
+    locationID?: string,
+  ): Promise<any> {
     ignoreByWatcher(path);
 
-    return PlatformFacade.createDirectoryPromise(path).then((result) => {
-      reflectAddEntry(toFsEntry(path, false));
-      deignoreByWatcher(path);
-      return result;
-    });
+    return getLocation({ locationID })
+      .createDirectoryPromise(path)
+      .then((result) => {
+        reflectAddEntry(currentLocation.toFsEntry(path, false));
+        deignoreByWatcher(path);
+        return result;
+      });
   }
 
   /**
    * @param filePath
-   * return Promise<directoryPath> of directory in order to open Folder properties next
+   * return Promise<destThumbPath>
    */
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
     const directoryPath = extractContainingDirectoryPath(
       filePath,
-      PlatformFacade.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const directoryName = extractDirectoryName(
       directoryPath,
-      PlatformFacade.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
     const sourceThumbPath = getThumbFileLocationForFile(
       filePath,
-      PlatformFacade.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
       false,
     );
 
     const destThumbPath = getThumbFileLocationForDirectory(
       directoryPath,
-      PlatformFacade.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
 
     return copyFilePromise(
       sourceThumbPath,
       destThumbPath,
+      undefined,
       t('core:thumbAlreadyExists', { directoryName }),
     ).then(() => {
-      dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
-      return directoryPath;
+      //  dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
+      return destThumbPath;
     });
   }
 
   function copyFilePromise(
     sourceFilePath: string,
     targetFilePath: string,
+    locationID: string,
     confirmMessage: string = 'File ' +
       targetFilePath +
       ' exist do you want to override it?',
   ): Promise<any> {
-    return PlatformFacade.getPropertiesPromise(targetFilePath).then(
-      (isTargetExist) => {
+    return getLocation({ locationID })
+      .getPropertiesPromise(targetFilePath)
+      .then((isTargetExist) => {
         if (isTargetExist) {
           // eslint-disable-next-line no-alert
           const confirmOverwrite = window && window.confirm(confirmMessage);
           if (confirmOverwrite === true) {
-            return copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
+            return copyFilePromiseOverwrite(
+              sourceFilePath,
+              targetFilePath,
+              locationID,
+            );
           }
           // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject(
             'File "' + targetFilePath + '" exists. Copying failed.',
           );
         }
-        return copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
-      },
-    );
+        return copyFilePromiseOverwrite(
+          sourceFilePath,
+          targetFilePath,
+          locationID,
+        );
+      });
   }
 
   function copyFilesWithProgress(
     paths: string[],
     targetPath: string,
+    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<boolean> {
     const controller = new AbortController();
     const signal = controller.signal;
+    const location = findLocation(locationID);
 
     const ioJobPromises = paths.map((path) => {
       const targetFile =
         normalizePath(targetPath) +
-        PlatformFacade.getDirSeparator() +
-        extractFileName(path, PlatformFacade.getDirSeparator());
+        (location ? location.getDirSeparator() : AppConfig.dirSeparator) +
+        extractFileName(path, location?.getDirSeparator());
       return {
-        promise: copyFilePromiseOverwrite(path, targetFile, false),
+        promise: copyFilePromiseOverwrite(path, targetFile, locationID, false),
         path: path,
       };
     });
@@ -257,11 +307,13 @@ export const PlatformFacadeContextProvider = ({
     };
     return trackProgress(ioJobPromises, signal, progress).then(() => {
       if (reflect) {
-        const targetPaths = paths.map(
-          (path) =>
+        const targetPaths = paths.map((path) =>
+          getAllPropertiesPromise(
             normalizePath(targetPath) +
-            PlatformFacade.getDirSeparator() +
-            extractFileName(path, PlatformFacade.getDirSeparator()),
+              (location ? location.getDirSeparator() : AppConfig.dirSeparator) +
+              extractFileName(path, location?.getDirSeparator()),
+            locationID,
+          ),
         );
         return reflectAddEntryPath(...targetPaths);
       }
@@ -291,7 +343,7 @@ export const PlatformFacadeContextProvider = ({
           if (progress) {
             progress(completed, path);
           }
-          console.warn('Promise ' + path + ' error:', err);
+          console.log('Promise ' + path + ' error:', err);
         }),
     );
 
@@ -301,7 +353,7 @@ export const PlatformFacadeContextProvider = ({
       .catch((err) => {
         if (abortSignal.aborted) {
           aborted = true;
-          console.warn('Promise execution aborted');
+          console.log('Promise execution aborted');
         } else {
           throw err;
         }
@@ -311,68 +363,78 @@ export const PlatformFacadeContextProvider = ({
   function copyFilePromiseOverwrite(
     sourceFilePath: string,
     targetFilePath: string,
+    locationID: string,
     reflect: boolean = true,
   ): Promise<any> {
     ignoreByWatcher(targetFilePath);
-    return PlatformFacade.copyFilePromiseOverwrite(
-      sourceFilePath,
-      targetFilePath,
-    ).then((result) => {
-      if (reflect) {
-        getAllPropertiesPromise(targetFilePath).then(
-          (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
-        );
-      }
-      deignoreByWatcher(targetFilePath);
-      return result;
-    });
+    const location = getLocation({ locationID });
+    return location
+      .copyFilePromiseOverwrite(sourceFilePath, targetFilePath)
+      .then((result) => {
+        if (reflect) {
+          getAllPropertiesPromise(targetFilePath, location.uuid).then(
+            (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry, false),
+          );
+        }
+        deignoreByWatcher(targetFilePath);
+        return result;
+      });
   }
 
+  /**
+   * @param filePath
+   * @param newFilePath
+   * @param locationID
+   * @param onProgress
+   * @param reflect
+   * return Promise<TS.FileSystemEntry> new file entry renamed
+   */
   function renameFilePromise(
     filePath: string,
     newFilePath: string,
+    locationID: string = undefined,
     onProgress = undefined,
     reflect = true,
-  ): Promise<any> {
+  ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(filePath, newFilePath);
-    return PlatformFacade.renameFilePromise(
-      filePath,
-      newFilePath,
-      onProgress,
-    ).then((result) => {
-      getAllPropertiesPromise(newFilePath).then(
-        (fsEntry: TS.FileSystemEntry) => {
-          if (reflect) {
-            setReflectActions({
-              action: 'update',
-              entry: fsEntry,
-              oldEntryPath: filePath,
-            });
-          }
-        },
-      );
-      deignoreByWatcher(filePath, newFilePath);
-      return result;
-    });
+    return getLocation({ locationID })
+      .renameFilePromise(filePath, newFilePath, onProgress)
+      .then((result) => {
+        deignoreByWatcher(filePath, newFilePath);
+        return getAllPropertiesPromise(newFilePath).then(
+          (fsEntry: TS.FileSystemEntry) => {
+            if (reflect) {
+              setReflectActions({
+                action: 'update',
+                entry: fsEntry,
+                oldEntryPath: filePath,
+              });
+            }
+            return fsEntry;
+          },
+        );
+      });
   }
 
   function renameFilesPromise(
     renameJobs: Array<Array<string>>,
+    locationID: string = undefined,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
-    return Promise.all(
+    const location = getLocation({ locationID });
+    return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
-          return await PlatformFacade.renameFilePromise(
+          return await location.renameFilePromise(
             renameJob[0],
             renameJob[1],
             onProgress,
           );
         } catch (err) {
-          console.warn('Error rename file:', err);
+          console.log('Error rename file:', err);
           return false;
         }
       }),
@@ -380,7 +442,7 @@ export const PlatformFacadeContextProvider = ({
       if (reflect) {
         const actions: TS.EditAction[] = renameJobs.map((job) => ({
           action: 'update',
-          entry: toFsEntry(job[1], true),
+          entry: location.toFsEntry(job[1], true),
           oldEntryPath: job[0],
         }));
         setReflectActions(...actions);
@@ -391,51 +453,51 @@ export const PlatformFacadeContextProvider = ({
   }
 
   function moveFilePromise(
-    filePath: string,
+    param: PlatformParms,
     newFilePath: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
-    ignoreByWatcher(filePath, newFilePath);
-    return PlatformFacade.renameFilePromise(
-      filePath,
-      newFilePath,
-      onProgress,
-    ).then((result) => {
-      if (reflect) {
-        reflectMoveFiles([[filePath, newFilePath]]);
-      }
-      deignoreByWatcher(filePath, newFilePath);
-      return result;
-    });
+    ignoreByWatcher(param.path, newFilePath);
+    return getLocation(param)
+      .renameFilePromise(param.path, newFilePath, onProgress)
+      .then((result) => {
+        if (reflect) {
+          reflectMoveFiles([[param.path, newFilePath]]);
+        }
+        deignoreByWatcher(param.path, newFilePath);
+        return result;
+      });
   }
 
   function moveFilesPromise(
     renameJobs: Array<Array<string>>,
+    locationID: string,
     onProgress = undefined,
     reflect = true,
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
-    return Promise.all(
+    return executePromisesInBatches(
       renameJobs.map(async (renameJob) => {
         try {
-          return await PlatformFacade.renameFilePromise(
+          return await getLocation({ locationID }).renameFilePromise(
             renameJob[0],
             renameJob[1],
             onProgress,
           );
         } catch (err) {
-          console.warn('Error rename file:', err);
-          return false;
+          console.log('Error rename file:', err);
+          return undefined;
         }
       }),
     ).then((ret) => {
-      if (reflect) {
+      deignoreByWatcher(...flatArray);
+      const r = ret.filter((r) => r !== undefined);
+      if (reflect && r.length > 0) {
         reflectMoveFiles(renameJobs);
       }
-      deignoreByWatcher(...flatArray);
-      return ret;
+      return r;
     });
   }
 
@@ -443,111 +505,128 @@ export const PlatformFacadeContextProvider = ({
     const promises = moveJobs.map((job) => {
       return getAllPropertiesPromise(job[1]).then(
         (newFsEntry: TS.FileSystemEntry) => {
-          const actions: TS.EditAction[] = [
-            {
-              action: 'move',
-              entry: newFsEntry,
-              oldEntryPath: job[0],
-            },
-          ];
-          return actions;
+          if (newFsEntry) {
+            const actions: TS.EditAction[] = [
+              {
+                action: 'move',
+                entry: newFsEntry,
+                oldEntryPath: job[0],
+              },
+            ];
+            return actions;
+          }
+          return undefined;
         },
       );
     });
     return Promise.all(promises).then((actionsArray) => {
-      setReflectActions(...actionsArray.flat());
+      const actions = actionsArray.filter((a) => a !== undefined);
+      if (actions.length > 0) {
+        setReflectActions(...actions.flat());
+      }
       return true;
     });
   }
 
   function renameDirectoryPromise(
-    dirPath: string,
+    param: PlatformParms,
     newDirName: string,
   ): Promise<any> {
-    ignoreByWatcher(dirPath, newDirName);
-    return PlatformFacade.renameDirectoryPromise(dirPath, newDirName).then(
-      (newDirPath) => {
+    ignoreByWatcher(param.path, newDirName);
+    return getLocation(param)
+      .renameDirectoryPromise(param.path, newDirName)
+      .then((newDirPath) => {
         getAllPropertiesPromise(newDirPath).then(
           (fsEntry: TS.FileSystemEntry) =>
             setReflectActions({
               action: 'update',
               entry: fsEntry,
-              oldEntryPath: dirPath,
+              oldEntryPath: param.path,
             }),
         );
-        deignoreByWatcher(dirPath, newDirName);
+        deignoreByWatcher(param.path, newDirName);
         return newDirPath;
-      },
-    );
+      });
   }
 
   function copyDirectoryPromise(
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
-    return PlatformFacade.copyDirectoryPromise(
-      param,
-      newDirPath,
-      onProgress,
-    ).then((result) => {
-      getAllPropertiesPromise(param.path).then((fsEntry: TS.FileSystemEntry) =>
-        reflectAddEntry(fsEntry),
-      );
-      deignoreByWatcher(param.path, newDirPath);
-      return result;
-    });
+    return getLocation(param)
+      .copyDirectoryPromise(param, newDirPath, onProgress)
+      .then((result) => {
+        if (reflect) {
+          getAllPropertiesPromise(param.path).then(
+            (fsEntry: TS.FileSystemEntry) => reflectAddEntry(fsEntry),
+          );
+        }
+        deignoreByWatcher(param.path, newDirPath);
+        return result;
+      });
   }
 
   function moveDirectoryPromise(
-    param: any,
+    param: PlatformParms,
     newDirPath: string,
     onProgress = undefined,
+    reflect = true,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
-    return PlatformFacade.moveDirectoryPromise(
-      param,
-      newDirPath,
-      onProgress,
-    ).then((result) => {
-      getAllPropertiesPromise(newDirPath).then((fsEntry: TS.FileSystemEntry) =>
-        setReflectActions({
-          action: 'move',
-          entry: fsEntry,
-          oldEntryPath: param.path,
-        }),
-      );
+    const location = getLocation(param);
+    return location
+      .moveDirectoryPromise(param, newDirPath, onProgress)
+      .then((result) => {
+        if (reflect) {
+          getAllPropertiesPromise(newDirPath, location.uuid).then(
+            (fsEntry: TS.FileSystemEntry) =>
+              setReflectActions({
+                action: 'move',
+                entry: fsEntry,
+                oldEntryPath: param.path,
+              }),
+          );
+        }
 
-      deignoreByWatcher(param.path, newDirPath);
-      return result;
-    });
+        deignoreByWatcher(param.path, newDirPath);
+        return result;
+      });
   }
 
   function saveFilePromise(
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     open: boolean = false,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return PlatformFacade.saveFilePromise(param, content, overwrite).then(
-      (fsEntry) => {
-        reflectAddEntry(fsEntry, open);
+    const location = getLocation(param);
+    return location
+      .saveFilePromise(param, content, overwrite)
+      .then((fsEntry) => {
+        const entry = {
+          ...fsEntry,
+          uuid: getUuid(),
+          locationID: location.uuid,
+        };
+        reflectAddEntry(entry, open);
         deignoreByWatcher(param.path);
-        return fsEntry;
-      },
-    );
+        return entry;
+      });
   }
 
   function saveTextFilePromise(
-    param: any,
+    param: PlatformParms,
     content: string,
     isUpdated: boolean,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return PlatformFacade.saveTextFilePromise(param, content, isUpdated).then(
-      (fsEntry) => {
+    return getLocation(param)
+      .saveTextFilePromise(param, content, isUpdated)
+      .then((fsEntry) => {
         if (isUpdated) {
           setReflectActions({
             action: 'update',
@@ -558,33 +637,35 @@ export const PlatformFacadeContextProvider = ({
         }
         deignoreByWatcher(param.path);
         return fsEntry;
-      },
-    );
+      });
   }
 
   function saveBinaryFilePromise(
-    param: any,
+    param: PlatformParms,
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
       progress: any, // ManagedUpload.Progress,
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
-    reflect: boolean = true,
+    reflect: boolean | TS.ActionSource = true,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
-    return PlatformFacade.saveBinaryFilePromise(
-      param,
-      content,
-      overwrite,
-      onUploadProgress,
-    ).then((fsEntry) => {
-      if (reflect) {
-        reflectAddEntry(fsEntry);
-      }
-      deignoreByWatcher(param.path);
-      return fsEntry;
-    });
+    const location = getLocation(param);
+    return location
+      .saveBinaryFilePromise(param, content, overwrite, onUploadProgress)
+      .then((fsEntry: TS.FileSystemEntry) => {
+        const entry = { ...fsEntry, locationID: location.uuid };
+        if (reflect) {
+          reflectAddEntry(
+            entry,
+            false,
+            typeof reflect === 'boolean' ? 'local' : reflect,
+          );
+        }
+        deignoreByWatcher(param.path);
+        return entry;
+      });
   }
 
   function deleteEntriesPromise(
@@ -595,18 +676,42 @@ export const PlatformFacadeContextProvider = ({
       ignoreByWatcher(...entriesPaths);
       const promises = entries.map((e) => {
         if (e.isFile) {
-          return PlatformFacade.deleteFilePromise(e.path, useTrashCan);
+          return getLocation(e).deleteFilePromise(e.path, useTrashCan);
         }
-        return PlatformFacade.deleteDirectoryPromise(e.path, useTrashCan);
+        return getLocation(e).deleteDirectoryPromise(e.path, useTrashCan);
       });
-      return Promise.all(promises).then(() => {
+      return executePromisesInBatches(promises).then((success) => {
         reflectDeleteEntries(...entries);
         deignoreByWatcher(...entriesPaths);
-        return true;
+        return !success.some((element) => !element);
       });
     }
     return Promise.resolve(false);
   }
+
+  /*function loadTextFilePromise(
+    locationID: string,
+    path: string,
+    isPreview?: boolean,
+  ): Promise<string> {
+    const location = findLocation(locationID);
+    if(location){
+      return location.loadTextFilePromise(path, isPreview);
+    }
+    return Promise.reject(new Error('loadTextFilePromise: no location locationID:'+locationID));
+  }
+
+  function getFileContentPromise(
+    locationID: string,
+    filePath: string,
+    type?: string,
+  ): Promise<string> {
+    const location = findLocation(locationID);
+    if(location){
+      return location.getFileContentPromise(filePath, type);
+    }
+    return Promise.reject(new Error('getFileContentPromise: no location locationID:'+locationID));
+  }*/
 
   const context = useMemo(() => {
     return {
@@ -628,7 +733,7 @@ export const PlatformFacadeContextProvider = ({
       deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
-  }, [ignored]); //watcher
+  }, [ignored, currentLocation]); //watcher
 
   return (
     <PlatformFacadeContext.Provider value={context}>

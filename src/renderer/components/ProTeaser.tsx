@@ -27,20 +27,21 @@ import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 
 interface Props {
-  toggleProTeaser: (slidePage?: string) => void;
   setShowTeaserBanner: (teaserVisibility: boolean) => void;
 }
 
 function ProTeaser(props: Props) {
-  const { toggleProTeaser, setShowTeaserBanner } = props;
+  const { setShowTeaserBanner } = props;
+  const { openProTeaserDialog } = useProTeaserDialogContext();
 
   const { t } = useTranslation();
   return (
     <>
       <CardContent
-        onClick={() => toggleProTeaser()}
+        onClick={() => openProTeaserDialog()}
         style={{
           padding: 5,
           paddingBottom: 0,
@@ -80,7 +81,7 @@ function ProTeaser(props: Props) {
           onClick={(event: any) => {
             event.preventDefault();
             event.stopPropagation();
-            toggleProTeaser();
+            openProTeaserDialog();
           }}
         >
           {t('showMeMore')}

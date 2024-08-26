@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   extractTitle,
@@ -25,16 +25,14 @@ import {
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import PlatformIO from '-/services/platform-facade';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
-import { useSelector } from 'react-redux';
-import { getLocations } from '-/reducers/locations';
 import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
 import IconButton from '@mui/material/IconButton';
+import HttpsIcon from '@mui/icons-material/Https';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import TagsPreview from '-/components/TagsPreview';
@@ -42,6 +40,9 @@ import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { getAllTags } from '-/services/utils-io';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { TS } from '-/tagspaces.namespace';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -54,7 +55,6 @@ const FileBadge = styled('span')(({ theme }) => ({
 }));
 
 interface Props {
-  isFileChanged: boolean;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
   startClosingEntry: (event) => void;
@@ -64,7 +64,6 @@ interface Props {
 
 function EntryContainerTitle(props: Props) {
   const {
-    isFileChanged,
     reloadDocument,
     toggleFullScreen,
     startClosingEntry,
@@ -73,22 +72,23 @@ function EntryContainerTitle(props: Props) {
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, sharingLink, sharingParentFolderLink } =
-    useOpenedEntryContext();
+  const { openedEntry, sharingLink, fileChanged } = useOpenedEntryContext();
+  const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
-  const locations = useSelector(getLocations);
+  //const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const haveBookmark =
-    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedEntry.path);
+  const bookmarksContext = Pro?.contextProviders?.BookmarksContext
+    ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
+    : undefined;
 
   const bookmarkClick = () => {
-    if (Pro) {
-      if (haveBookmark) {
-        Pro.bookmarks.delBookmark(openedEntry.path);
+    if (Pro && bookmarksContext) {
+      if (bookmarksContext.haveBookmark(openedEntry.path)) {
+        bookmarksContext.delBookmark(openedEntry.path);
       } else {
-        Pro.bookmarks.setBookmark(openedEntry.path, sharingLink);
+        bookmarksContext.setBookmark(openedEntry.path, sharingLink);
       }
       forceUpdate();
     } else {
@@ -100,11 +100,12 @@ function EntryContainerTitle(props: Props) {
     }
   };
 
+  const currentLocation = findLocation(openedEntry.locationID);
   let fileTitle: string = openedEntry.path
     ? extractTitle(
         openedEntry.path,
         !openedEntry.isFile,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       )
     : '';
 
@@ -113,19 +114,16 @@ function EntryContainerTitle(props: Props) {
     if (openedEntry.isFile) {
       fileName = extractFileName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     } else {
       fileName = extractDirectoryName(
         openedEntry.path,
-        PlatformIO.getDirSeparator(),
+        currentLocation?.getDirSeparator(),
       );
     }
   }
   if (!fileName) {
-    const currentLocation = locations.find(
-      (location) => location.uuid === openedEntry.locationId,
-    );
     if (currentLocation) {
       fileName = currentLocation.name;
     }
@@ -150,7 +148,7 @@ function EntryContainerTitle(props: Props) {
     >
       {openedEntry.isFile ? (
         <>
-          {isFileChanged ? (
+          {fileChanged ? (
             <Tooltip title={t('core:fileChanged')}>
               <span
                 style={{
@@ -175,7 +173,7 @@ function EntryContainerTitle(props: Props) {
               setAnchorEl(event.currentTarget);
             }}
             style={{
-              backgroundColor: openedEntry.color,
+              backgroundColor: openedEntry.meta?.color,
               display: 'flex',
               alignItems: 'center',
               textTransform: 'uppercase',
@@ -188,7 +186,7 @@ function EntryContainerTitle(props: Props) {
               //'.' +
               extractFileExtension(
                 openedEntry.path,
-                PlatformIO.getDirSeparator(),
+                currentLocation?.getDirSeparator(),
               )
             }
             <MoreMenuIcon style={{ fontSize: 20 }} />
@@ -245,7 +243,8 @@ function EntryContainerTitle(props: Props) {
             WebkitAppRegion: 'no-drag',
           }}
         >
-          {haveBookmark ? (
+          {bookmarksContext &&
+          bookmarksContext.haveBookmark(openedEntry.path) ? (
             <BookmarkIcon
               style={{
                 color: theme.palette.primary.main,
@@ -260,7 +259,16 @@ function EntryContainerTitle(props: Props) {
           )}
         </IconButton>
       </ProTooltip>
-      <TagsPreview tags={openedEntry.tags} />
+      <TagsPreview tags={getAllTags(openedEntry)} />
+      {openedEntry.isEncrypted && (
+        <Tooltip title={t('core:encryptedTooltip')}>
+          <HttpsIcon
+            style={{
+              color: theme.palette.primary.main,
+            }}
+          />
+        </Tooltip>
+      )}
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}

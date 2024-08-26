@@ -1,4 +1,4 @@
-import { clickOn, setInputKeys } from './general.helpers';
+import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
 
 export const testTagName = 'testTag';
 export const newTagName = 'newTagName';
@@ -21,6 +21,21 @@ export async function createTagGroup(tagGroupName, locationName = undefined) {
     }
     await clickOn('[data-tid=createTagGroupConfirmButton]');
   }
+  await expectElementExist(
+    '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
+    true,
+  );
+}
+
+export async function deleteTagGroup(tagGroupName) {
+  await clickOn('[data-tid=tagLibrary]');
+  await clickOn('[data-tid=tagLibraryMoreButton_' + tagGroupName + ']');
+  await clickOn('[data-tid=deleteTagGroup]');
+  await clickOn('[data-tid=confirmDeleteTagGroupDialog]');
+  await expectElementExist(
+    '[data-tid=tagLibraryTagGroupTitle_' + tagGroupName + ']',
+    false,
+  );
 }
 
 export async function addTags(arrTags) {

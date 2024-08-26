@@ -24,10 +24,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';
-import PlatformIO from '-/services/platform-facade';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
+import { quitApp } from '-/services/utils-io';
 
 // import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
@@ -91,7 +91,7 @@ function LicenseDialog(props: Props) {
         </Button> */}
         <Button
           data-tid="confirmLicenseDialog"
-          onClick={PlatformIO.quitApp}
+          onClick={quitApp}
           color="primary"
         >
           {t('core:quit')}

@@ -13,95 +13,48 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-import {
-  createIndex,
-  loadIndex,
-  enhanceDirectoryIndex,
-} from '@tagspaces/tagspaces-indexer';
-import {
-  enhanceEntry,
-  loadJSONString,
-} from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
+import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
 import {
-  locationType,
-  prepareTagForExport,
-} from '@tagspaces/tagspaces-common/misc';
-import {
-  extractTagsAsObjects,
-  extractFileExtension,
-  cleanTrailingDirSeparator,
-  getMetaDirectoryPath,
-  getMetaFileLocationForFile,
-  getMetaFileLocationForDir,
-  extractContainingDirectoryPath,
-  extractDirectoryName,
+  baseName,
   extractFileName,
-  normalizePath,
-  getThumbFileLocationForDirectory,
-  getBgndFileLocationForDirectory,
+  cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import PlatformIO from './platform-facade';
 import versionMeta from '../version.json';
-import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { generateImageThumbnail } from '-/services/thumbsgenerator';
-import { base64ToArrayBuffer } from '-/utils/dom';
-import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
+import removeMd from 'remove-markdown';
+import { CommonLocation } from '-/utils/CommonLocation';
 
-export function getMetaForEntry(
-  entry: TS.FileSystemEntry,
-  metaFilePath?: string,
-): Promise<TS.FileSystemEntry> {
-  //if (entry.meta) {
-  // && Object.keys(entry.meta).length > 0) {
-  // entry is Enhanced
-  //  return Promise.resolve(entry);
-  //}
-  if (!metaFilePath) {
-    if (entry.isFile) {
-      metaFilePath = getMetaFileLocationForFile(
-        entry.path,
-        PlatformIO.getDirSeparator(),
+export const instanceId = getUuid();
+
+export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
+  const tags = [];
+  if (entry.meta && entry.meta.tags && entry.meta.tags.length > 0) {
+    tags.push(...entry.meta.tags);
+  }
+  if (entry.tags && entry.tags.length > 0) {
+    if (tags.length > 0) {
+      const filteredTags = entry.tags.filter(
+        (tag) => !tags.some((t) => t.title === tag.title),
       );
+      tags.push(...filteredTags);
     } else {
-      metaFilePath = getMetaFileLocationForDir(
-        entry.path,
-        PlatformIO.getDirSeparator(),
-      );
+      tags.push(...entry.tags);
     }
   }
-  return loadJSONFile(metaFilePath).then((meta: TS.FileSystemEntryMeta) => {
-    if (meta) {
-      return enhanceEntry(
-        {
-          ...entry,
-          meta: {
-            ...meta,
-            description: getDescriptionPreview(meta.description, 200),
-          },
-        },
-        AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator(),
-      );
-    }
-    return entry;
-  });
+  return tags;
 }
 
-export function enhanceOpenedEntry(
-  entry: OpenedEntry,
+/*export function enhanceOpenedEntry(
+  entry: TS.OpenedEntry,
   tagDelimiter,
-): OpenedEntry {
+): TS.OpenedEntry {
   if (entry.isFile) {
     const fineNameTags = extractTagsAsObjects(
       entry.path,
@@ -132,115 +85,6 @@ export function enhanceOpenedEntry(
     };
   }
   return entry;
-}
-
-/*export function prepareDirectoryContent(
-  dirEntries,
-  directoryPath,
-  settings,
-  dispatch,
-  getState,
-  dirEntryMeta,
-  generateThumbnails
-) {
-  const currentLocation: TS.Location = getLocation(
-    getState(),
-    getState().app.currentLocationId
-  );
-  const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
-  function genThumbnails() {
-    if (
-      !directoryPath ||
-      directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
-      directoryPath.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
-      )
-    ) {
-      return false; // dont generate thumbnails in meta folder
-    }
-    if (AppConfig.useGenerateThumbnails !== undefined) {
-      return AppConfig.useGenerateThumbnails;
-    }
-    return settings.useGenerateThumbnails;
-  }
-
-  const {
-    directoryContent,
-    tmbGenerationPromises,
-    tmbGenerationList
-  } = enhanceDirectoryContent(
-    dirEntries,
-    isCloudLocation,
-    settings.showUnixHiddenEntries,
-    generateThumbnails && genThumbnails(),
-    true,
-    undefined,
-    settings.enableWS
-  );
-
-  function handleTmbGenerationResults(results) {
-    // console.log('tmb results' + JSON.stringify(results));
-    const tmbURLs = [];
-    results.map(tmbResult => {
-      if (tmbResult.tmbPath && tmbResult.tmbPath.length > 0) {
-        // dispatch(actions.updateThumbnailUrl(tmbResult.filePath, tmbResult.tmbPath));
-        tmbURLs.push(tmbResult);
-      }
-      return true;
-    });
-    dispatch(AppActions.setGeneratingThumbnails(false));
-    // dispatch(actions.hideNotifications());
-    if (tmbURLs.length > 0) {
-      dispatch(AppActions.updateThumbnailUrls(tmbURLs));
-    }
-    return true;
-  }
-
-  function handleTmbGenerationFailed(error) {
-    console.warn('Thumb generation failed: ' + error);
-    dispatch(AppActions.setGeneratingThumbnails(false));
-    dispatch(
-      AppActions.showNotification(
-        'Generating thumbnails failed', //t('core:generatingThumbnailsFailed'),
-        'warning',
-        true
-      )
-    );
-  }
-
-  if (
-    generateThumbnails &&
-    (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
-  ) {
-    dispatch(AppActions.setGeneratingThumbnails(true));
-    if (tmbGenerationList.length > 0) {
-      PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-        .then(handleTmbGenerationResults)
-        .catch(() => {
-          // WS error handle
-          Promise.all(
-            tmbGenerationList.map(tmbPath => getThumbnailURLPromise(tmbPath))
-          )
-            .then(handleTmbGenerationResults)
-            .catch(handleTmbGenerationFailed);
-        });
-    }
-    if (tmbGenerationPromises.length > 0) {
-      Promise.all(tmbGenerationPromises)
-        .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed);
-    }
-  }
-
-  console.log('Dir ' + directoryPath + ' contains ' + directoryContent.length);
-  dispatch(
-    AppActions.loadDirectorySuccess(
-      directoryPath,
-      directoryContent,
-      dirEntryMeta
-    )
-  );
 }*/
 
 /**
@@ -317,66 +161,6 @@ export function findExtensionPathForId(
     : '../../node_modules/' + extensionId;
 }
 
-export function addExtensionsForEntry(
-  openedEntry: OpenedEntry,
-  supportedFileTypes: Array<TS.FileTypes>,
-): OpenedEntry {
-  const fileExtension = extractFileExtension(
-    openedEntry.path,
-    PlatformIO.getDirSeparator(),
-  ).toLowerCase();
-
-  const fileForOpening = { ...openedEntry };
-  const fileType: TS.FileTypes = supportedFileTypes.find(
-    (fileType) =>
-      fileType.viewer && fileType.type.toLowerCase() === fileExtension,
-  );
-  if (fileType) {
-    fileForOpening.viewingExtensionId = fileType.viewer;
-    if (fileType.color) {
-      fileForOpening.color = fileType.color;
-    }
-    fileForOpening.viewingExtensionPath = findExtensionPathForId(
-      fileType.viewer,
-      //fileType.extensionExternalPath,
-    );
-    if (fileType.editor && fileType.editor.length > 0) {
-      fileForOpening.editingExtensionId = fileType.editor;
-      fileForOpening.editingExtensionPath = findExtensionPathForId(
-        fileType.editor,
-        //fileType.extensionExternalPath,
-      );
-    }
-  } else {
-    fileForOpening.viewingExtensionPath = openedEntry.isFile
-      ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
-      : 'about:blank';
-  }
-  return fileForOpening;
-}
-
-export function findExtensionsForEntry(
-  uuid: string,
-  supportedFileTypes: Array<any>,
-  entryPath: string,
-  isFile = true,
-): OpenedEntry {
-  return addExtensionsForEntry(
-    {
-      ...(uuid && { uuid: uuid }),
-      path: entryPath,
-      viewingExtensionPath: 'about:blank',
-      viewingExtensionId: '',
-      isFile,
-      // changed: false,
-      // locationId: undefined,
-      lmdt: 0,
-      size: 0,
-    },
-    supportedFileTypes,
-  );
-}
-
 export function getNextFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
@@ -450,180 +234,6 @@ export function getPrevFile(
   return prevFile;
 }
 
-/**
- * persistIndex based on location - used for S3 and cordova only
- * for native used common-platform/indexer.js -> persistIndex instead
- * @param param
- * @param directoryIndex
- */
-async function persistIndex(param: string | any, directoryIndex: any) {
-  let directoryPath;
-  if (typeof param === 'object' && param !== null) {
-    directoryPath = param.path;
-  } else {
-    directoryPath = param;
-  }
-  const metaDirectory = getMetaDirectoryPath(directoryPath);
-  const exist = await PlatformIO.checkDirExist(metaDirectory);
-  if (!exist) {
-    await PlatformIO.createDirectoryPromise(metaDirectory);
-  }
-  const folderIndexPath =
-    metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-  return PlatformIO.saveTextFilePromise(
-    { ...param, path: folderIndexPath },
-    JSON.stringify(directoryIndex), // relativeIndex),
-    true,
-  )
-    .then(() => {
-      console.log(
-        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath,
-      );
-      return true;
-    })
-    .catch((err) => {
-      console.log('Error saving the index for ' + folderIndexPath, err);
-    });
-}
-
-export function createDirectoryIndex(
-  param: string | any,
-  extractText = false,
-  ignorePatterns: Array<string> = [],
-  enableWS = true,
-  // disableIndexing = true,
-) {
-  //: Promise<TS.FileSystemEntry[]> {
-  if (Pro && Pro.Watcher) {
-    Pro.Watcher.stopWatching();
-  }
-  let directoryPath;
-  let locationID;
-  if (typeof param === 'object' && param !== null) {
-    directoryPath = param.path;
-    ({ locationID } = param);
-  } else {
-    directoryPath = param;
-  }
-  const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (
-    enableWS &&
-    !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport()
-    // PlatformIO.isWorkerAvailable()
-  ) {
-    // Start indexing in worker if not in the object store mode
-    return PlatformIO.createDirectoryIndexInWorker(
-      dirPath,
-      extractText,
-      ignorePatterns,
-    ).then((result) => {
-      if (result && result.success) {
-        return loadIndex(
-          { path: dirPath, locationID },
-          PlatformIO.getDirSeparator(),
-          PlatformIO.loadTextFilePromise,
-        );
-      } else if (result && result.error) {
-        console.error('createDirectoryIndexInWorker failed:' + result.error);
-      } else {
-        console.error('createDirectoryIndexInWorker failed: unknown error');
-      }
-      return undefined; // todo create index not in worker
-    });
-  }
-
-  let listDirectoryPromise;
-  let loadTextFilePromise;
-  if (PlatformIO.haveObjectStoreSupport()) {
-    listDirectoryPromise = PlatformIO.listObjectStoreDir;
-    // eslint-disable-next-line prefer-destructuring
-    loadTextFilePromise = PlatformIO.loadTextFilePromise;
-  }
-  const mode = ['extractThumbPath'];
-  if (extractText) {
-    mode.push('extractTextContent');
-  }
-  return createIndex(
-    param,
-    listDirectoryPromise,
-    loadTextFilePromise,
-    mode,
-    ignorePatterns,
-  )
-    .then((directoryIndex) =>
-      persistIndex(param, directoryIndex).then((success) => {
-        if (success) {
-          console.log('Index generated in folder: ' + directoryPath);
-          return enhanceDirectoryIndex(param, directoryIndex, locationID);
-        }
-        return undefined;
-      }),
-    )
-    .catch((err) => {
-      console.log('Error creating index: ', err);
-    });
-}
-
-/**
- *  get full entry properties - with full description
- */
-export function getAllPropertiesPromise(
-  entryPath: string,
-): Promise<TS.FileSystemEntry> {
-  return PlatformIO.getPropertiesPromise(entryPath).then(
-    (entryProps: TS.FileSystemEntry) => {
-      if (entryProps) {
-        const metaFilePath = entryProps.isFile
-          ? getMetaFileLocationForFile(entryPath, PlatformIO.getDirSeparator())
-          : getMetaFileLocationForDir(entryPath, PlatformIO.getDirSeparator());
-        //const metaFileProps = await PlatformIO.getPropertiesPromise(metaFilePath);
-        //if (metaFileProps.isFile) {
-        try {
-          return loadJSONFile(metaFilePath).then(
-            (meta: TS.FileSystemEntryMeta) => {
-              if (meta) {
-                return enhanceEntry(
-                  { ...entryProps, meta },
-                  AppConfig.tagDelimiter,
-                  PlatformIO.getDirSeparator(),
-                );
-              }
-              return enhanceEntry(
-                entryProps,
-                AppConfig.tagDelimiter,
-                PlatformIO.getDirSeparator(),
-              );
-            },
-          );
-        } catch (e) {
-          return enhanceEntry(
-            entryProps,
-            AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator(),
-          );
-        }
-      }
-      console.log('Error getting props for ' + entryPath);
-      return entryProps;
-    },
-  );
-}
-
-export function loadJSONFile(
-  filePath: string,
-): Promise<TS.FileSystemEntryMeta> {
-  // console.debug('loadJSONFile:' + filePath);
-  return PlatformIO.loadTextFilePromise(filePath)
-    .then(
-      (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntryMeta,
-    )
-    .catch((e) => {
-      console.log('cannot load json:' + filePath, e);
-      return undefined;
-    });
-}
-
 export function saveAsTextFile(blob: any, filename: string) {
   saveAs(blob, filename);
 }
@@ -657,64 +267,7 @@ export function getFulfilledResults<T>(
   return results.filter(isFulfilled).map((result) => result.value);
 }
 
-interface FileExistenceCheck {
-  promise: Promise<boolean>;
-  path: string;
-}
-
-export function checkFilesExistPromise(
-  paths: string[],
-  targetPath: string,
-): Promise<Array<string>> {
-  const promises: FileExistenceCheck[] = paths.map((path) => {
-    const targetFile =
-      normalizePath(targetPath) +
-      PlatformIO.getDirSeparator() +
-      extractFileName(path, PlatformIO.getDirSeparator());
-    return { promise: PlatformIO.checkFileExist(targetFile), path };
-  });
-  const progressPromises: Array<Promise<string>> = promises.map(
-    ({ promise, path }) =>
-      promise
-        .then((exists) => (exists ? path : ''))
-        .catch((err) => {
-          console.warn(`Promise ${path} error:`, err);
-          return '';
-        }),
-  );
-
-  return Promise.allSettled(progressPromises).then((results) => {
-    return getFulfilledResults(results).filter((r) => r);
-  });
-}
-
-export function checkDirsExistPromise(
-  paths: string[],
-  targetPath: string,
-): Promise<Array<string>> {
-  const promises: FileExistenceCheck[] = paths.map((path) => {
-    const targetDir =
-      normalizePath(targetPath) +
-      PlatformIO.getDirSeparator() +
-      extractDirectoryName(path, PlatformIO.getDirSeparator());
-    return { promise: PlatformIO.checkDirExist(targetDir), path };
-  });
-  const progressPromises: Array<Promise<string>> = promises.map(
-    ({ promise, path }) =>
-      promise
-        .then((exists) => (exists ? path : ''))
-        .catch((err) => {
-          console.warn(`Promise ${path} error:`, err);
-          return '';
-        }),
-  );
-
-  return Promise.allSettled(progressPromises).then((results) => {
-    return getFulfilledResults(results).filter((r) => r);
-  });
-}
-
-export async function loadSubFolders(path: string, loadHidden = false) {
+/*export async function loadSubFolders(path: string, loadHidden = false) {
   const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
   const subfolders = [];
   let i = 0;
@@ -755,81 +308,14 @@ export async function loadSubFolders(path: string, loadHidden = false) {
     });
   }
   return subfolders;
-}
+}*/
 
-export function generateFileName(
-  fileName: string,
-  tags: string[],
-  tagDelimiter: string,
-  prefixTagContainer = AppConfig.prefixTagContainer,
-) {
-  let tagsString = '';
-  // Creating the string will all the tags by more that 0 tags
-  if (tags && tags.length > 0) {
-    tagsString = AppConfig.beginTagContainer;
-    for (let i = 0; i < tags.length; i += 1) {
-      if (i === tags.length - 1) {
-        tagsString += tags[i].trim();
-      } else {
-        tagsString += tags[i].trim() + tagDelimiter;
-      }
-    }
-    tagsString = tagsString.trim() + AppConfig.endTagContainer;
-  }
-  // console.log('The tags string: ' + tagsString);
-  const fileExt = extractFileExtension(fileName, PlatformIO.getDirSeparator());
-  // console.log('Filename: ' + fileName + ' file extension: ' + fileExt);
-  // Assembling the new filename with the tags
-  let newFileName = '';
-  const beginTagContainer = fileName.indexOf(AppConfig.beginTagContainer);
-  const endTagContainer = fileName.indexOf(AppConfig.endTagContainer);
-  const lastDotPosition = fileName.lastIndexOf('.');
-  if (
-    beginTagContainer < 0 ||
-    endTagContainer < 0 ||
-    beginTagContainer >= endTagContainer
-  ) {
-    // Filename does not contains tags.
-    if (lastDotPosition < 0) {
-      // File does not have an extension
-      newFileName = fileName.trim() + tagsString;
-    } else {
-      // File has an extension
-      newFileName =
-        cleanFileName(
-          fileName.substring(0, lastDotPosition),
-          prefixTagContainer,
-        ) +
-        (tagsString ? prefixTagContainer + tagsString : '') +
-        '.' +
-        fileExt;
-    }
-  } else {
-    // File does not have an extension
-    newFileName =
-      cleanFileName(
-        fileName.substring(0, beginTagContainer),
-        prefixTagContainer,
-      ) +
-      (tagsString ? prefixTagContainer + tagsString : '') +
-      fileName.substring(endTagContainer + 1, fileName.length).trim();
-  }
-  if (newFileName.length < 1) {
-    throw new Error('Generated filename is invalid');
-  }
-  // Removing double prefix todo rethink this ?? there is no double prefix
-  newFileName = newFileName
-    .split(prefixTagContainer + '' + prefixTagContainer)
-    .join(prefixTagContainer);
-  return newFileName;
-}
-
-function cleanFileName(fileName, prefixTagContainer) {
+/*function cleanFileName(fileName, prefixTagContainer) {
   if (prefixTagContainer && fileName.endsWith(prefixTagContainer)) {
     return fileName.slice(0, -prefixTagContainer.length);
   }
   return fileName.trim();
-}
+}*/
 
 export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   if (tagGroup) {
@@ -861,105 +347,6 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   }
 }
 
-export async function loadLocationDataPromise(
-  path: string,
-  metaFile = AppConfig.folderLocationsFile,
-): Promise<TS.FileSystemEntryMeta> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (!entryProperties.isFile) {
-    const metaFilePath = getMetaFileLocationForDir(
-      path,
-      PlatformIO.getDirSeparator(),
-      metaFile,
-    );
-    const metaData = await loadJSONFile(metaFilePath);
-    if (metaData) {
-      return {
-        ...metaData,
-        description: getDescriptionPreview(metaData.description, 200),
-      };
-    }
-  }
-  return undefined;
-}
-
-/**
- * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
- * @param path
- * @param fullDescription
- */
-export function loadMetaDataPromise(
-  path: string,
-  fullDescription = false,
-): Promise<TS.FileSystemEntryMeta> {
-  return PlatformIO.getPropertiesPromise(path).then((entryProperties) => {
-    if (entryProperties) {
-      if (entryProperties.isFile) {
-        return loadFileMetaDataPromise(path, fullDescription);
-      }
-      return loadDirMetaDataPromise(path, fullDescription);
-    }
-    throw new Error('loadMetaDataPromise not exist' + path);
-  });
-}
-
-export function loadFileMetaDataPromise(
-  path: string,
-  fullDescription = false,
-): Promise<TS.FileSystemEntryMeta> {
-  const metaFilePath = getMetaFileLocationForFile(
-    path,
-    PlatformIO.getDirSeparator(),
-  );
-  return loadJSONFile(metaFilePath).then((metaData) => {
-    if (!metaData) {
-      throw new Error('loadFileMetaDataPromise ' + metaFilePath + ' not exist');
-    }
-    return {
-      id: getUuid(),
-      isFile: true,
-      color: '',
-      tags: [],
-      appName: '',
-      appVersion: '',
-      // lastUpdated: 0,
-      ...metaData,
-      description: fullDescription
-        ? metaData.description
-        : getDescriptionPreview(metaData.description, 200),
-    };
-  });
-}
-
-export function loadDirMetaDataPromise(
-  path: string,
-  fullDescription = false,
-): Promise<TS.FileSystemEntryMeta> {
-  const metaDirPath = getMetaFileLocationForDir(
-    path,
-    PlatformIO.getDirSeparator(),
-  );
-  return loadJSONFile(metaDirPath).then((metaData) => {
-    if (!metaData) {
-      throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
-    }
-    return {
-      id: getUuid(),
-      isFile: false,
-      color: '',
-      perspective: 'grid',
-      tags: [],
-      appName: '',
-      appVersion: '',
-      // lastUpdated: 0,
-      ...metaData,
-      description: fullDescription
-        ? metaData.description
-        : getDescriptionPreview(metaData.description, 200),
-    };
-  });
-}
-
 export function cleanMetaData(
   metaData: TS.FileSystemEntryMeta,
 ): TS.FileSystemEntryMeta {
@@ -970,7 +357,8 @@ export function cleanMetaData(
   if (metaData.perspective) {
     cleanedMeta.perspective = metaData.perspective;
   }
-  if (metaData.color && metaData.color !== 'transparent') {
+  if (metaData.color) {
+    //&& metaData.color !== 'transparent') {
     cleanedMeta.color = metaData.color;
   }
   if (metaData.description) {
@@ -982,7 +370,7 @@ export function cleanMetaData(
   if (metaData.customOrder) {
     cleanedMeta.customOrder = metaData.customOrder;
   }
-  if (metaData.autoSave) {
+  if (metaData.autoSave !== undefined) {
     cleanedMeta.autoSave = metaData.autoSave;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
@@ -1055,145 +443,10 @@ export function cleanMetaData(
   return cleanedMeta;
 }
 
-export async function saveLocationDataPromise(
-  path: string,
-  metaData: any,
-): Promise<any> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  if (entryProperties) {
-    let metaFilePath;
-    if (!entryProperties.isFile) {
-      // check and create meta folder if not exist
-      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-      const metaDirectoryPath = getMetaDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const metaDirectoryProperties =
-        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-      if (!metaDirectoryProperties) {
-        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-      }
-
-      metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator(),
-        AppConfig.folderLocationsFile,
-      );
-    }
-    const content = JSON.stringify({
-      ...metaData,
-      appName: versionMeta.name,
-      appVersion: versionMeta.version,
-      lastUpdated: new Date().toJSON(),
-    });
-    return PlatformIO.saveTextFilePromise(
-      { path: metaFilePath },
-      content,
-      true,
-    );
-  }
-  return Promise.reject(new Error('file not found' + path));
-}
-
-export async function saveMetaDataPromise(
-  path: string,
-  metaData: any,
-): Promise<any> {
-  const entryProperties = await PlatformIO.getPropertiesPromise(path);
-  const cleanedMetaData = cleanMetaData(metaData);
-  if (entryProperties) {
-    let metaFilePath;
-    if (entryProperties.isFile) {
-      metaFilePath = getMetaFileLocationForFile(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      // check and create meta folder if not exist
-      const metaFolder = getMetaDirectoryPath(
-        extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
-        PlatformIO.getDirSeparator(),
-      );
-      const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
-      if (!metaExist) {
-        await PlatformIO.createDirectoryPromise(metaFolder);
-      }
-    } else {
-      // check and create meta folder if not exist
-      // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
-      const metaDirectoryPath = getMetaDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-      const metaDirectoryProperties =
-        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
-      if (!metaDirectoryProperties) {
-        await PlatformIO.createDirectoryPromise(metaDirectoryPath);
-      }
-
-      if (!cleanedMetaData.id) {
-        // add id for directories
-        cleanedMetaData.id = getUuid();
-      }
-
-      metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator(),
-      );
-    }
-    const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
-    return PlatformIO.saveTextFilePromise(
-      { path: metaFilePath },
-      content,
-      true,
-    );
-  }
-  return Promise.reject(new Error('file not found' + path));
-}
-
-/**
- * @param filePath
- * @param directoryPath
- * return Promise<directoryPath> of directory in order to open Folder properties next
- */
-export function setFolderBackgroundPromise(
-  filePath: string,
-  directoryPath: string,
-): Promise<string> {
-  const folderBgndPath = getBgndFileLocationForDirectory(
-    directoryPath,
-    PlatformIO.getDirSeparator(),
-  );
-
-  return generateImageThumbnail(filePath, AppConfig.maxBgndSize) // 4K -> 3840, 2K -> 2560
-    .then((base64Image) => {
-      if (base64Image) {
-        const data = base64ToArrayBuffer(base64Image.split(',').pop());
-        return PlatformIO.saveBinaryFilePromise(
-          { path: folderBgndPath },
-          data,
-          true,
-        )
-          .then(() => {
-            // props.setLastBackgroundImageChange(new Date().getTime());
-            return directoryPath;
-          })
-          .catch((error) => {
-            console.log('Save to file failed ', error);
-            return Promise.reject(error);
-          });
-      }
-    })
-    .catch((error) => {
-      console.log('Background generation failed ', error);
-      return Promise.reject(error);
-    });
-}
-
 export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
   if (!fsEntry.isFile) {
-    if (fsEntry.color) {
-      return fsEntry.color;
+    if (fsEntry.meta && fsEntry.meta.color) {
+      return fsEntry.meta.color;
     }
   }
   return 'transparent';
@@ -1245,71 +498,74 @@ export function loadFileContentPromise(
  */
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview = mdContent
-    .replace(
-      /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
-      // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-      '',
-    )
-    .replace(/<[^>]*>/g, '') // remove html
-    .replace(/\*|~|#|_/g, '');
+  // let preview = mdContent
+  //   .replace(
+  //     /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+  //     // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+  //     '',
+  //   )
+  //   .replace(/<[^>]*>/g, '') // remove html
+  //   .replace(/\*|~|#|_/g, '');
+  let preview = removeMd(mdContent);
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
-  return preview.replace(/[#*!_\[\]()`]/g, '');
+  return preview.replaceAll('\n', ' ').replaceAll('|', '').replaceAll('\\', '');
+  // .replaceAll('\\\\', '');
+  // return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
-export function removeMarkDown(mdContent) {
-  if (!mdContent) return '';
-  let result = marked.parse(DOMPurify.sanitize(mdContent));
-  const span = document.createElement('span');
-  span.innerHTML = result;
-  result = span.textContent || span.innerText;
-  return result;
-}
+// export function removeMarkDown(mdContent) {
+//   if (!mdContent) return '';
+//   let result = marked.parse(DOMPurify.sanitize(mdContent));
+//   const span = document.createElement('span');
+//   span.innerHTML = result;
+//   result = span.textContent || span.innerText;
+//   return result;
+// }
 
-export function convertMarkDown(mdContent: string, directoryPath: string) {
-  const customRenderer = new marked.Renderer();
-  customRenderer.link = (href, title, text) => `
-      <a href="#"
-        title="${href}"
-        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
-        ${text}
-      </a>`;
+// export function convertMarkDown(mdContent: string, directoryPath: string) {
+//   const customRenderer = new marked.Renderer();
+//   customRenderer.link = (href, title, text) => `
+//       <a href="#"
+//         title="${href}"
+//         onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
+//         ${text}
+//       </a>`;
 
-  customRenderer.image = (href, title, text) => {
-    let sourceUrl = href;
-    const dirSep = PlatformIO.getDirSeparator();
-    if (
-      !sourceUrl.startsWith('http') &&
-      directoryPath &&
-      directoryPath !== dirSep
-    ) {
-      sourceUrl = directoryPath.endsWith(dirSep)
-        ? directoryPath + sourceUrl
-        : directoryPath + dirSep + sourceUrl;
-    }
-    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
-    }
-    return `<img src="${sourceUrl}" style="max-width: 100%">
-        ${text}
-    </img>`;
-  };
+//   customRenderer.image = (href, title, text) => {
+//     let sourceUrl = href;
+//     const dirSep = PlatformIO.getDirSeparator();
+//     if (
+//       !sourceUrl.startsWith('http') &&
+//       directoryPath &&
+//       directoryPath !== dirSep
+//     ) {
+//       sourceUrl = directoryPath.endsWith(dirSep)
+//         ? directoryPath + sourceUrl
+//         : directoryPath + dirSep + sourceUrl;
+//     }
+//     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+//       sourceUrl = PlatformIO.getURLforPath(sourceUrl);
+//     }
+//     return `<img src="${sourceUrl}" style="max-width: 100%">
+//         ${text}
+//     </img>`;
+//   };
+//
+//   marked.setOptions({
+//     renderer: customRenderer,
+//     pedantic: false,
+//     gfm: true,
+//     tables: true,
+//     breaks: false,
+//     smartLists: true,
+//     smartypants: false,
+//     xhtml: true,
+//   });
 
-  marked.setOptions({
-    renderer: customRenderer,
-    pedantic: false,
-    gfm: true,
-    tables: true,
-    breaks: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: true,
-  });
-
-  return marked.parse(DOMPurify.sanitize(mdContent));
-}
+//   return marked.parse(DOMPurify.sanitize(mdContent));
+// }
 
 /**
  * forbidden characters # \ / * ? " < > |
@@ -1336,18 +592,6 @@ export function fileNameValidation(fileName): boolean {
     return !(rg1.test(fileName) && !rg2.test(fileName) && !rg3.test(fileName));
   }
   return true;
-}
-
-/**
- *  normalize path for URL is always '/'
- */
-export function normalizeUrl(url: string) {
-  if (PlatformIO.getDirSeparator() !== '/') {
-    if (url) {
-      return url.replaceAll(PlatformIO.getDirSeparator(), '/');
-    }
-  }
-  return url;
 }
 
 /**
@@ -1414,79 +658,7 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   return [...oldTagsArray, ...uniqueTags];
 }
 
-export function getFolderThumbPath(
-  path: string,
-  lastThumbnailImageChange: any,
-) {
-  if (path) {
-    return getThumbPath(
-      getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastThumbnailImageChange,
-    );
-  }
-  return undefined;
-}
-
-export function getThumbPath(
-  thumbPath: string,
-  lastThumbnailImageChange?: any,
-) {
-  if (!thumbPath) {
-    return undefined;
-  }
-  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-    if (isSignedURL(thumbPath)) {
-      return thumbPath;
-    }
-    return PlatformIO.getURLforPath(thumbPath);
-  }
-  return (
-    normalizeUrl(thumbPath) +
-    (lastThumbnailImageChange &&
-    lastThumbnailImageChange.thumbPath === thumbPath
-      ? '?' + lastThumbnailImageChange.dt
-      : '')
-  );
-}
-
-function isSignedURL(signedUrl) {
-  try {
-    // const query = url.parse(signedUrl, true).query;
-    return signedUrl.indexOf('Signature=') !== -1;
-  } catch (ex) {}
-  return false;
-}
-
-export function getFolderBgndPath(
-  path: string,
-  lastBackgroundImageChange: any,
-) {
-  if (path !== undefined) {
-    return getBgndPath(
-      getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastBackgroundImageChange,
-    );
-  }
-  return undefined;
-}
-
-export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
-  if (!bgndPath) {
-    return undefined;
-  }
-  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-    return PlatformIO.getURLforPath(bgndPath);
-  }
-  return (
-    normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange
-      ? // && lastBackgroundImageChange.folderPath === bgndPath
-        '?' + lastBackgroundImageChange.dt
-      : '')
-  );
-}
-
-export function setLocationType(location: TS.Location): Promise<boolean> {
+/*export function setLocationType(location: CommonLocation): Promise<boolean> {
   if (location) {
     if (location.type === locationType.TYPE_CLOUD) {
       return PlatformIO.enableObjectStoreSupport(location);
@@ -1499,12 +671,6 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
     return Promise.resolve(true);
   }
   return Promise.resolve(false);
-}
-
-/*export function getCleanLocationPath(location: TS.Location): string {
-  let locationPath = PlatformIO.getLocationPath(location);
-  locationPath = cleanTrailingDirSeparator(locationPath);
-  return locationPath;
 }*/
 
 export function getRelativeEntryPath(
@@ -1557,23 +723,7 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
   };
 }
 
-export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
-  return {
-    uuid: getUuid(),
-    name: isFile
-      ? extractFileName(path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(path, PlatformIO.getDirSeparator()),
-    isFile,
-    extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-    description: '',
-    tags: [],
-    size: 0,
-    lmdt: new Date().getTime(),
-    path,
-  };
-}
-
-export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
+/*export function openedToFsEntry(openedEntry: TS.OpenedEntry): TS.FileSystemEntry {
   return {
     uuid: getUuid(),
     name: openedEntry.isFile
@@ -1584,32 +734,14 @@ export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
       openedEntry.path,
       PlatformIO.getDirSeparator(),
     ),
-    description: openedEntry.description,
+    description: openedEntry.meta?.description,
     tags: openedEntry.tags,
     size: openedEntry.size,
     lmdt: openedEntry.lmdt,
     path: openedEntry.path,
   };
-}
+}*/
 
-export function createFsEntryMeta(
-  path: string,
-  props: any = {},
-): Promise<string> {
-  const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
-  return saveMetaDataPromise(path, newFsEntryMeta)
-    .then(() => newFsEntryMeta.id)
-    .catch((error) => {
-      console.log(
-        'Error saveMetaDataPromise for ' +
-          path +
-          ' orphan id: ' +
-          newFsEntryMeta.id,
-        error,
-      );
-      return newFsEntryMeta.id;
-    });
-}
 export function getDefaultViewer(fileType) {
   const type = supportedFileTypes.find((fType) => fType.type === fileType);
   if (type) {
@@ -1624,13 +756,23 @@ export function getDefaultEditor(fileType) {
   }
   return undefined;
 }
+
+export function openUrl(url: string): void {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('openUrl', url);
+  } else {
+    // web or cordova
+    openUrlForWeb(url);
+  }
+}
+
 export function openURLExternally(url: string, skipConfirmation = false) {
   if (skipConfirmation) {
-    PlatformIO.openUrl(url);
+    openUrl(url);
   } else if (
     window.confirm('Do you really want to open this url: ' + url + ' ?')
   ) {
-    PlatformIO.openUrl(url);
+    openUrl(url);
   }
 }
 
@@ -1648,4 +790,373 @@ export function openUrlForWeb(url) {
   //   href: url,
   //   rel: 'noopener noreferrer'
   // }).click();
+}
+
+export async function executePromisesInBatches<T>(
+  promises: Promise<T>[],
+  batchSize = 5,
+): Promise<T[]> {
+  const results: T[] = [];
+
+  for (let i = 0; i < promises.length; i += batchSize) {
+    const batch = promises.slice(i, i + batchSize);
+    const batchResults = await Promise.allSettled(batch);
+    results.push(
+      ...batchResults.map((result) => {
+        if (result.status === 'fulfilled') {
+          return result.value as T;
+        } else {
+          // Handle rejected promise here
+          return undefined;
+        }
+      }),
+    );
+  }
+
+  return results;
+}
+
+export function setZoomFactorElectron(zoomLevel) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('setZoomFactor', zoomLevel);
+  }
+}
+
+export function setGlobalShortcuts(globalShortcutsEnabled) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage(
+      'global-shortcuts-enabled',
+      globalShortcutsEnabled,
+    );
+  }
+}
+
+export function loadExtensions() {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('load-extensions');
+  }
+}
+export function setLanguage(language: string) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('set-language', language);
+  }
+}
+
+/**
+ *   needs to run in init this function always return false first time
+ */
+export function isWorkerAvailable(): Promise<boolean> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('isWorkerAvailable');
+  }
+  return Promise.resolve(false);
+}
+
+export function createThumbnailsInWorker(
+  tmbGenerationList: Array<string>,
+): Promise<any> {
+  if (AppConfig.isElectron) {
+    const payload = JSON.stringify(tmbGenerationList);
+    return window.electronIO.ipcRenderer.invoke(
+      'postRequest',
+      payload,
+      '/thumb-gen',
+    );
+  }
+  return Promise.reject(new Error('createThumbnailsInWorker not Electron!'));
+}
+
+export function getDirProperties(path): Promise<TS.DirProp> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('getDirProperties', path);
+  } else {
+    return Promise.reject(
+      new Error(
+        'platformDirProperties is supported on Electron local storage.',
+      ),
+    );
+  }
+}
+
+export function watchFolderMessage(locationPath, depth) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage(
+      'watchFolder',
+      locationPath,
+      depth,
+    );
+  }
+}
+
+export function openDirectoryMessage(dirPath: string): void {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('openDirectory', dirPath);
+  } else {
+    console.error('Is supported only in Electron');
+  }
+}
+
+export function openFileMessage(
+  filePath: string,
+  warningOpeningFilesExternally: boolean,
+): void {
+  if (
+    !warningOpeningFilesExternally ||
+    // eslint-disable-next-line no-restricted-globals
+    confirm(
+      'Do you really want to open "' +
+        filePath +
+        '"? Execution of some files can be potentially dangerous!',
+    )
+  ) {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('openFile', filePath);
+    } else if (AppConfig.isCordova) {
+    } else {
+      console.error('Is supported only in Electron');
+    }
+  }
+}
+
+export function createNewInstance(url?: string): void {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('create-new-window', url);
+  } else {
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      window.open('index.html', '_blank');
+    }
+  }
+}
+
+export function readMacOSTags(filename: string): Promise<TS.Tag[]> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('readMacOSTags', filename);
+  }
+  return Promise.resolve(undefined);
+}
+
+export function getUserDataDir(): Promise<string> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('getUserDataDir');
+  } else {
+    return Promise.reject('getUserDataDir is supported only on Electron.');
+  }
+}
+
+export function unZip(filePath, targetPath): Promise<string> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('unZip', filePath, targetPath);
+  } else {
+    console.log('UnZip is supported only on Electron.');
+  }
+}
+
+/*export function removeExtension(extensionId: string) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('removeExtension', extensionId);
+  } else {
+    console.error('remove extensions is supported only on Electron.');
+  }
+}*/
+
+export function quitApp(): void {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('quitApp');
+  }
+}
+export function uploadAbort(path?: string): Promise<any> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('uploadAbort', path);
+  }
+  return Promise.resolve(false);
+}
+export function getDevicePaths(): Promise<any> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('getDevicePaths');
+  } else if (AppConfig.isCordova) {
+    const ioAPI = require('@tagspaces/tagspaces-common-cordova');
+    return ioAPI.getDevicePaths();
+  } else {
+    console.log('getDevicePaths not supported');
+    return Promise.resolve(undefined);
+  }
+}
+
+/**
+ * @param filePath
+ * @param fileUrl
+ * @param dirSeparator
+ * return 0- succeeded; -1 -error cantDownloadLocalFile; 1 - unknown error
+ */
+export function downloadFile(
+  filePath: string,
+  fileUrl: string,
+  dirSeparator: string,
+): number {
+  const entryName = `${baseName(filePath, dirSeparator)}`;
+  const fileName = extractFileName(entryName, dirSeparator);
+
+  if (AppConfig.isCordova) {
+    if (fileUrl) {
+      const downloadCordova = (uri, filename) => {
+        const { Downloader } = window.plugins;
+
+        const downloadSuccessCallback = (result) => {
+          // result is an object
+          /* {
+            path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
+            file: "My Pdf.pdf", // Returns Filename
+            folder: "documents" // Returns folder name
+          } */
+          console.log(result.file); // My Pdf.pdf
+        };
+
+        const downloadErrorCallback = (error) => {
+          console.log(error);
+        };
+
+        const options = {
+          title: 'Downloading File:' + filename, // Download Notification Title
+          url: uri, // File Url
+          path: filename, // The File Name with extension
+          description: 'The file is downloading', // Download description Notification String
+          visible: true, // This download is visible and shows in the notifications while in progress and after completion.
+          folder: 'documents', // Folder to save the downloaded file, if not exist it will be created
+        };
+
+        Downloader.download(
+          options,
+          downloadSuccessCallback,
+          downloadErrorCallback,
+        );
+      };
+      downloadCordova(fileUrl, entryName);
+    } else {
+      console.log('Can only download HTTP/HTTPS URIs');
+      return -1;
+      //showNotification(t('core:cantDownloadLocalFile'));
+    }
+  } else {
+    const downloadLink = document.getElementById('downloadFile');
+    if (downloadLink) {
+      if (AppConfig.isWeb) {
+        // eslint-disable-next-line no-restricted-globals
+        const { protocol } = location;
+        // eslint-disable-next-line no-restricted-globals
+        const { hostname } = location;
+        // eslint-disable-next-line no-restricted-globals
+        const { port } = location;
+        const link = `${protocol}//${hostname}${
+          port !== '' ? `:${port}` : ''
+        }/${filePath}`;
+        downloadLink.setAttribute('href', link);
+      } else {
+        downloadLink.setAttribute('href', `file:///${filePath}`);
+      }
+
+      if (fileUrl) {
+        // mostly the s3 case
+        downloadLink.setAttribute('target', '_blank');
+        downloadLink.setAttribute('href', fileUrl);
+      }
+
+      downloadLink.setAttribute('download', fileName); // works only for same origin
+      downloadLink.click();
+      return 0;
+    }
+  }
+  return 1;
+}
+
+export function selectDirectoryDialog(): Promise<any> {
+  if (AppConfig.isElectron) {
+    return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
+  } else if (AppConfig.isCordova) {
+    const ioAPI = require('@tagspaces/tagspaces-common-cordova');
+    return ioAPI.selectDirectoryDialog();
+  }
+  return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
+}
+
+export function removePrefix(str, prefix) {
+  if (str && prefix && str.length > prefix.length && str.startsWith(prefix)) {
+    return str.slice(prefix.length);
+  }
+  return str.trim();
+}
+
+export function getMimeType(extension: string): string | undefined {
+  const mimeTypes: { [key: string]: string } = {
+    txt: 'text/plain',
+    html: 'text/html',
+    htm: 'text/html',
+    css: 'text/css',
+    js: 'application/javascript',
+    json: 'application/json',
+    xml: 'application/xml',
+    pdf: 'application/pdf',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    bmp: 'image/bmp',
+    webp: 'image/webp',
+    mp3: 'audio/mpeg',
+    wav: 'audio/wav',
+    mp4: 'video/mp4',
+    avi: 'video/x-msvideo',
+    mov: 'video/quicktime',
+    zip: 'application/zip',
+    rar: 'application/x-rar-compressed',
+  };
+  return mimeTypes[extension.toLowerCase()];
+}
+
+export function toTsLocation(location: CommonLocation): TS.S3Location {
+  return {
+    uuid: location.uuid || getUuid(),
+    name: location.name,
+    type: location.type,
+    ...(location.authType && { authType: location.authType }),
+    ...(location.username && { username: location.username }),
+    ...(location.password && { password: location.password }),
+    ...(location.path && { path: location.path }),
+    ...(location.isDefault && { isDefault: location.isDefault }),
+    ...(location.isReadOnly && { isReadOnly: location.isReadOnly }),
+    ...(location.isNotEditable && { isNotEditable: location.isNotEditable }),
+    ...(location.watchForChanges && {
+      watchForChanges: location.watchForChanges,
+    }),
+    ...(location.disableIndexing && {
+      disableIndexing: location.disableIndexing,
+    }),
+    ...(location.disableThumbnailGeneration && {
+      disableThumbnailGeneration: location.disableThumbnailGeneration,
+    }),
+    ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
+    ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
+    ...(location.maxLoops && { maxLoops: location.maxLoops }),
+    ...(location.persistTagsInSidecarFile && {
+      persistTagsInSidecarFile: location.persistTagsInSidecarFile,
+    }),
+    ...(location.ignorePatternPaths && {
+      ignorePatternPaths: location.ignorePatternPaths,
+    }),
+    ...(location.autoOpenedFilename && {
+      autoOpenedFilename: location.autoOpenedFilename,
+    }),
+    ...(location.creationDate && { creationDate: location.creationDate }),
+    ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
+    ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
+    ...(location.secretAccessKey && {
+      secretAccessKey: location.secretAccessKey,
+    }),
+    ...(location.sessionToken && { sessionToken: location.sessionToken }),
+    ...(location.bucketName && { bucketName: location.bucketName }),
+    ...(location.region && { region: location.region }),
+    ...(location.endpointURL && { endpointURL: location.endpointURL }),
+    ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
+  };
 }

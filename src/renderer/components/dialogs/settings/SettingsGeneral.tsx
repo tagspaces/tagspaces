@@ -36,6 +36,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 import {
   actions as SettingsActions,
+  getFileNameTagPlace,
   getPersistTagsInSidecarFile,
   //getCurrentLanguage,
   getSettings,
@@ -44,12 +45,12 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
-import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { setLanguage } from '-/services/utils-io';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -86,6 +87,7 @@ function SettingsGeneral() {
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
 
   const toggleDefaultTagBackgroundColorPicker = () => {
     setDisplayColorPicker(!displayColorPicker);
@@ -128,7 +130,7 @@ function SettingsGeneral() {
             onChange={(event: any) => {
               return i18n.changeLanguage(event.target.value).then(() => {
                 dispatch(SettingsActions.setLanguage(event.target.value));
-                PlatformIO.setLanguage(event.target.value);
+                setLanguage(event.target.value);
                 return true;
               });
             }}
@@ -239,7 +241,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {!persistTagsInSidecarFile && <CheckIcon />}
                     &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
@@ -260,7 +262,7 @@ function SettingsGeneral() {
                     </Typography>
                   }
                 >
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
                     {persistTagsInSidecarFile && <CheckIcon />}
                     &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
@@ -270,6 +272,60 @@ function SettingsGeneral() {
             </ToggleButtonGroup>
           )}
         </ListItem>
+        {!persistTagsInSidecarFile && (
+          <ListItem className={classes.listItem}>
+            <ListItemText primary={t('core:fileNameTagSetting')} />
+            <ToggleButtonGroup
+              value={filenameTagPlacedAtEnd}
+              size="small"
+              exclusive
+            >
+              <ToggleButton
+                value={false}
+                data-tid="fileNameBeginningTagTID"
+                onClick={() =>
+                  dispatch(SettingsActions.setFileNameTagPlace(false))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {t('core:fileNameBeginTagPlaceExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
+                    {!filenameTagPlacedAtEnd && <CheckIcon />}
+                    &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton
+                value={true}
+                data-tid="fileNameEndTagTID"
+                onClick={() =>
+                  dispatch(SettingsActions.setFileNameTagPlace(true))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {t('core:fileNameEndTagPlaceExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
+                    {filenameTagPlacedAtEnd && <CheckIcon />}
+                    &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </ListItem>
+        )}
+
         <ListItem className={classes.listItem}>
           <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
           <Switch
