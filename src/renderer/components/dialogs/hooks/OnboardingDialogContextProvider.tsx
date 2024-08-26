@@ -58,15 +58,15 @@ export const OnboardingDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'toggle-onboarding-dialog') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('toggle-onboarding-dialog', () => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners(
+            'toggle-onboarding-dialog',
+          );
         }
       };
     }

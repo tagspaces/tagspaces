@@ -51,6 +51,18 @@ export type Channels =
   | 'set_extensions'
   | 'play-pause'
   | 'cmd'
+  | 'toggle-about-dialog'
+  | 'show-create-directory-dialog'
+  | 'toggle-keys-dialog'
+  | 'toggle-license-dialog'
+  | 'toggle-open-link-dialog'
+  | 'new-text-file'
+  | 'toggle-onboarding-dialog'
+  | 'toggle-settings-dialog'
+  | 'toggle-third-party-libs-dialog'
+  | 'perspective'
+  | 'panels'
+  | 'opened-entry'
   | 'progress'
   | 'uploadAbort';
 

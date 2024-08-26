@@ -53,15 +53,15 @@ export const LinkDialogContextProvider = ({
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
-        if (arg === 'toggle-open-link-dialog') {
-          openDialog();
-        }
+      window.electronIO.ipcRenderer.on('toggle-open-link-dialog', () => {
+        openDialog();
       });
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners(
+            'toggle-open-link-dialog',
+          );
         }
       };
     }

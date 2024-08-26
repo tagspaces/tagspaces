@@ -160,7 +160,7 @@ function getSpellcheckLanguage(i18n) {
 }
 
 function showApp() {
-  var windows = BrowserWindow.getAllWindows();
+  const windows = BrowserWindow.getAllWindows();
   windows.forEach((win, i) => {
     if (win && i < 1) {
       if (win.isMinimized()) {
@@ -188,87 +188,87 @@ function showMainWindow() {
 }
 
 function openLocationManagerPanel() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'open-location-manager-panel');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('panels', 'open-location-manager-panel');
 }
 
 function openTagLibraryPanel() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'open-tag-library-panel');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('panels', 'open-tag-library-panel');
+}
+
+function openHelpFeedbackPanel() {
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('panels', 'open-help-feedback-panel');
 }
 
 function goBack() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'go-back');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('opened-entry', 'go-back');
 }
 
 function goForward() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'go-forward');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('opened-entry', 'go-forward');
 }
 
 function setZoomResetApp() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.webContents.send('cmd', 'set-zoom-reset-app');
 }
 
 function setZoomInApp() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.webContents.send('cmd', 'set-zoom-in-app');
 }
 
 function setZoomOutApp() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.webContents.send('cmd', 'set-zoom-out-app');
 }
 
 function exitFullscreen() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.webContents.send('cmd', 'exit-fullscreen');
 }
 
 function toggleSettingsDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-settings-dialog');
-}
-
-function openHelpFeedbackPanel() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'open-help-feedback-panel');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-settings-dialog');
 }
 
 function toggleKeysDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-keys-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-keys-dialog');
 }
 
 function toggleOnboardingDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-onboarding-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-onboarding-dialog');
 }
 
 function openURLExternally(data) {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.webContents.send('open-url-externally', data);
 }
 
 function toggleLicenseDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-license-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-license-dialog');
 }
 
 function toggleThirdPartyLibsDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-third-party-libs-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-third-party-libs-dialog');
 }
 
 function toggleAboutDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-about-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-about-dialog');
 }
 
 function showSearch() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
     focusedWindow?.webContents.send('cmd', 'open-search');
   } else {
@@ -278,60 +278,54 @@ function showSearch() {
 }
 
 function newTextFile() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
-    focusedWindow?.webContents.send('cmd', 'new-text-file');
+    focusedWindow?.webContents.send('new-text-file');
   } else {
     showMainWindow();
-    mainWindow?.webContents.send('cmd', 'new-text-file');
+    mainWindow?.webContents.send('new-text-file');
   }
 }
 
 function getNextFile() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
-    focusedWindow?.webContents.send('cmd', 'next-file');
+    focusedWindow?.webContents.send('perspective', 'next-file');
   } else {
     showMainWindow();
-    mainWindow?.webContents.send('cmd', 'next-file');
+    mainWindow?.webContents.send('perspective', 'next-file');
   }
 }
 
 function getPreviousFile() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
-    focusedWindow?.webContents.send('cmd', 'previous-file');
+    focusedWindow?.webContents.send('perspective', 'previous-file');
   } else {
     showMainWindow();
-    mainWindow?.webContents.send('cmd', 'previous-file');
+    mainWindow?.webContents.send('perspective', 'previous-file');
   }
 }
 
 function showCreateDirectoryDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'show-create-directory-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('show-create-directory-dialog');
 }
 
 function toggleOpenLinkDialog() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'toggle-open-link-dialog');
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow?.webContents.send('toggle-open-link-dialog');
 }
 
 function resumePlayback() {
-  // var focusedWindow = BrowserWindow.getFocusedWindow();
-  // if (focusedWindow) {
-  //   focusedWindow?.webContents.send('cmd', 'play-pause');
-  // } else {
-  //   mainWindow?.webContents.send('cmd', 'play-pause');
-  // }
-  var windows = BrowserWindow.getAllWindows();
+  const windows = BrowserWindow.getAllWindows();
   windows.forEach((win, i) => {
-    win?.webContents.send('cmd', 'play-pause');
+    win?.webContents.send('play-pause');
   });
 }
 
 function reloadApp() {
-  var focusedWindow = BrowserWindow.getFocusedWindow();
+  const focusedWindow = BrowserWindow.getFocusedWindow();
   focusedWindow?.loadURL(resolveHtmlPath('index.html'));
 }
 
@@ -656,7 +650,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', (event, hasVisibleWindows) => {
   // console.log('Activate ' + hasVisibleWindows);
-  var windows = BrowserWindow.getAllWindows();
+  const windows = BrowserWindow.getAllWindows();
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (windows.length === 0) {
@@ -788,7 +782,7 @@ app
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
-        var focusedWindow = BrowserWindow.getFocusedWindow();
+        const focusedWindow = BrowserWindow.getFocusedWindow();
         focusedWindow?.webContents.setZoomFactor(zoomLevel);
       });
 

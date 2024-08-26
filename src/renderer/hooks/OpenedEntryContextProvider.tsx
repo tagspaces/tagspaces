@@ -194,7 +194,7 @@ export const OpenedEntryContextProvider = ({
       }
     }
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('cmd', (arg) => {
+      window.electronIO.ipcRenderer.on('opened-entry', (arg) => {
         if (arg === 'go-back') {
           goBack();
         } else if (arg === 'go-forward') {
@@ -204,7 +204,7 @@ export const OpenedEntryContextProvider = ({
 
       return () => {
         if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('cmd');
+          window.electronIO.ipcRenderer.removeAllListeners('opened-entry');
         }
       };
     }
