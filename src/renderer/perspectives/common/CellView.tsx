@@ -1,38 +1,49 @@
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2023-present TagSpaces UG (haftungsbeschraenkt)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+import React from 'react';
+import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
+import { getDesktopMode } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import FileSourceDnd from '-/components/FileSourceDnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import TargetFileBox from '-/components/TargetFileBox';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
-import React from 'react';
-import AppConfig from '-/AppConfig';
-import TagDropContainer from '-/components/TagDropContainer';
-import CustomDragLayer from '-/components/CustomDragLayer';
-import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
+import {
+  fileOperationsEnabled,
+  folderOperationsEnabled,
+} from '-/perspectives/common/main-container';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
-export const fileOperationsEnabled = (selectedEntries) => {
-  let selectionContainsDirectories = false;
-  if (selectedEntries && selectedEntries.length > 0) {
-    selectionContainsDirectories = selectedEntries.some(
-      (entry) => entry !== undefined && !entry.isFile,
-    );
-    return !selectionContainsDirectories;
-  }
-  return false;
-};
-
-export const folderOperationsEnabled = (selectedEntries) => {
-  let selectionContainsFiles = false;
-  if (selectedEntries && selectedEntries.length > 0) {
-    selectionContainsFiles = selectedEntries.some(
-      (entry) => entry !== undefined && entry.isFile,
-    );
-  }
-  return !selectionContainsFiles;
-};
-
-/*export const renderCell = (
-  fsEntry: TS.FileSystemEntry,
-  index: number,
+interface Props {
+  fsEntry: TS.FileSystemEntry;
+  index: number;
   cellContent: (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -44,40 +55,38 @@ export const folderOperationsEnabled = (selectedEntries) => {
     handleGridCellClick,
     handleGridCellDblClick,
     isLast?: boolean,
-  ) => any,
-  showDirectories: boolean,
-  isReadOnlyMode: boolean,
-  desktopMode: boolean,
-  singleClickAction: string,
-  currentLocation,
-  selectedEntries,
-  setSelectedEntries,
-  lastSelectedEntryPath,
-  directoryContent,
-  openEntryInternal,
-  openFileNatively,
-  openDirectory,
-  setFileContextMenuAnchorEl,
-  setDirContextMenuAnchorEl,
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean,
-  ) => void,
-  moveFiles: (
-    files: Array<string>,
-    destination: string,
-    locationID: string,
-    onProgress?,
-    reflect?: boolean,
-  ) => Promise<boolean>,
-  handleEntryExist,
-  openEntryExistDialog,
-  clearSelection: () => void,
-  isLast?: boolean,
-) => {
+  ) => any;
+  setFileContextMenuAnchorEl;
+  setDirContextMenuAnchorEl;
+  isLast?: boolean;
+}
+
+function CellView(props: Props) {
+  const {
+    fsEntry,
+    index,
+    cellContent,
+    setFileContextMenuAnchorEl,
+    setDirContextMenuAnchorEl,
+    isLast,
+  } = props;
+  const { showDirectories, singleClickAction } =
+    usePerspectiveSettingsContext();
+  const { openEntryInternal } = useOpenedEntryContext();
+  const { openDirectory } = useDirectoryContentContext();
+  const { moveFiles, openFileNatively } = useIOActionsContext();
+  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
+  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
+    useSelectedEntriesContext();
+  const { handleEntryExist, openEntryExistDialog } =
+    useEntryExistDialogContext();
+  const { sortedDirContent } = useSortedDirContext();
+  const { showNotification } = useNotificationContext();
+
+  const desktopMode = useSelector(getDesktopMode);
+
   if (!fsEntry.isFile && !showDirectories) {
-    return;
+    return null;
   }
 
   const handleGridContextMenu = (event, fsEntry: TS.FileSystemEntry) => {
@@ -154,21 +163,15 @@ export const folderOperationsEnabled = (selectedEntries) => {
   };
 
   const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
-    /!*const {
-      selectedEntries,
-      directoryContent,
-      lastSelectedEntry,
-      setSelectedEntries
-    } = props;*!/
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex = -1;
       if (lastSelectedEntryPath) {
-        lastSelectedIndex = directoryContent.findIndex(
+        lastSelectedIndex = sortedDirContent.findIndex(
           (entry) => entry.path === lastSelectedEntryPath,
         );
       }
-      const currentSelectedIndex = directoryContent.findIndex(
+      const currentSelectedIndex = sortedDirContent.findIndex(
         (entry) => entry.path === fsEntry.path,
       );
       if (lastSelectedIndex < 0) {
@@ -178,12 +181,12 @@ export const folderOperationsEnabled = (selectedEntries) => {
       let entriesToSelect;
       // console.log('lastSelectedIndex: ' + lastSelectedIndex + '  currentSelectedIndex: ' + currentSelectedIndex);
       if (currentSelectedIndex > lastSelectedIndex) {
-        entriesToSelect = directoryContent.slice(
+        entriesToSelect = sortedDirContent.slice(
           lastSelectedIndex,
           currentSelectedIndex + 1,
         );
       } else if (currentSelectedIndex < lastSelectedIndex) {
-        entriesToSelect = directoryContent
+        entriesToSelect = sortedDirContent
           .slice(currentSelectedIndex, lastSelectedIndex + 1)
           .reverse();
       } else if (currentSelectedIndex === lastSelectedIndex) {
@@ -197,11 +200,11 @@ export const folderOperationsEnabled = (selectedEntries) => {
         selectedEntries.some((entry) => entry.path === fsEntry.path)
       ) {
       } else {
-        const currentSelectedEntry = directoryContent.find(
+        const currentSelectedEntry = sortedDirContent.find(
           (entry) => entry.path === fsEntry.path,
         );
         if (currentSelectedEntry) {
-          // in KanBan directoryContent not content dragging entry from subfolder
+          // in KanBan sortedDirContent not content dragging entry from subfolder
           setSelectedEntries([currentSelectedEntry]);
         }
       }
@@ -229,7 +232,7 @@ export const folderOperationsEnabled = (selectedEntries) => {
   };
 
   const handleFileMoveDrop = (item, monitor) => {
-    if (isReadOnlyMode) {
+    if (readOnlyMode) {
       showNotification(
         'Importing files is disabled because the location is in read-only mode.',
         'error',
@@ -312,18 +315,6 @@ export const folderOperationsEnabled = (selectedEntries) => {
       </TargetFileBox>
     </div>
   );
-};*/
+}
 
-export const renderCellPlaceholder = () => {
-  return (
-    <div
-      style={{
-        position: 'relative',
-      }}
-    >
-      <TagDropContainer entryPath="">
-        <div></div>
-      </TagDropContainer>
-    </div>
-  );
-};
+export default CellView;
