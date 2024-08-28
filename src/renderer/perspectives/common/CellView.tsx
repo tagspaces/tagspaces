@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
@@ -84,6 +84,23 @@ function CellView(props: Props) {
   const { showNotification } = useNotificationContext();
 
   const desktopMode = useSelector(getDesktopMode);
+  // const fileSourceRef = useRef<HTMLDivElement | null>(null);
+
+  /*useEffect(() => {
+    const dragItem = fileSourceRef.current;
+    if (dragItem) {
+      const handleDragStart = (e) => {
+        e.preventDefault()
+        window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+      };
+
+      dragItem.addEventListener('dragstart', handleDragStart);
+
+      return () => {
+        dragItem.removeEventListener('dragstart', handleDragStart);
+      };
+    }
+  }, [fileSourceRef.current]);*/
 
   if (!fsEntry.isFile && !showDirectories) {
     return null;
@@ -273,17 +290,34 @@ function CellView(props: Props) {
 
   if (fsEntry.isFile) {
     return (
-      <FileSourceDnd key={key}>
-        {cellContent(
-          fsEntry,
-          selectedEntries,
-          index,
-          handleGridContextMenu,
-          handleGridCellClick,
-          handleGridCellDblClick,
-          isLast,
-        )}
-      </FileSourceDnd>
+      <div style={{ position: 'relative', paddingTop: 20 }}>
+        <span
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            backgroundColor: 'red',
+          }}
+          draggable="true"
+          onDragStart={(e) => {
+            e.preventDefault();
+            window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+          }}
+        >
+          X
+        </span>
+        <FileSourceDnd key={key}>
+          {cellContent(
+            fsEntry,
+            selectedEntries,
+            index,
+            handleGridContextMenu,
+            handleGridCellClick,
+            handleGridCellDblClick,
+            isLast,
+          )}
+        </FileSourceDnd>
+      </div>
     );
   }
   const { FILE } = NativeTypes;

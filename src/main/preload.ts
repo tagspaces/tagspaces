@@ -89,6 +89,7 @@ const electronHandler = {
     removeAllListeners(channel: string) {
       ipcRenderer.removeAllListeners(channel);
     },
+    startDrag: (fileName) => ipcRenderer.send('ondragstart', fileName),
   },
 };
 
