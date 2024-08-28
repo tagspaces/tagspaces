@@ -32,7 +32,6 @@ import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { getDescriptionPreview } from '-/services/utils-io';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
-import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -46,6 +45,7 @@ import GridCellsContainer from './GridCellsContainer';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import { dataTidFormat } from '-/services/test';
+import CellView from '-/perspectives/common/CellView';
 
 interface Props {
   directories: Array<TS.FileSystemEntry>;
@@ -335,59 +335,25 @@ function GridPagination(props: Props) {
         </Grid>
         <GridCellsContainer>
           {page === 1 &&
-            directories.map((entry, index) =>
-              renderCell(
-                entry,
-                index,
-                getCellContent,
-                showDirectories,
-                readOnlyMode,
-                desktopMode,
-                singleClickAction,
-                currentLocation,
-                selectedEntries,
-                setSelectedEntries,
-                lastSelectedEntryPath,
-                sortedDirContent,
-                openEntryInternal,
-                openFileNatively,
-                openDirectory,
-                setFileContextMenuAnchorEl,
-                setDirContextMenuAnchorEl,
-                showNotification,
-                moveFiles,
-                handleEntryExist,
-                openEntryExistDialog,
-                clearSelection,
-              ),
-            )}
-          {pageFiles.map((entry, index, dArray) =>
-            renderCell(
-              entry,
-              index,
-              getCellContent,
-              showDirectories,
-              readOnlyMode,
-              desktopMode,
-              singleClickAction,
-              currentLocation,
-              selectedEntries,
-              setSelectedEntries,
-              lastSelectedEntryPath,
-              sortedDirContent,
-              openEntryInternal,
-              openFileNatively,
-              openDirectory,
-              setFileContextMenuAnchorEl,
-              setDirContextMenuAnchorEl,
-              showNotification,
-              moveFiles,
-              handleEntryExist,
-              openEntryExistDialog,
-              clearSelection,
-              index === dArray.length - 1,
-            ),
-          )}
+            directories.map((entry, index) => (
+              <CellView
+                fsEntry={entry}
+                index={index}
+                cellContent={getCellContent}
+                setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
+                setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
+              />
+            ))}
+          {pageFiles.map((entry, index, dArray) => (
+            <CellView
+              fsEntry={entry}
+              index={index}
+              cellContent={getCellContent}
+              setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
+              setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
+              isLast={index === dArray.length - 1}
+            />
+          ))}
           {pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
               {!showDescription &&
