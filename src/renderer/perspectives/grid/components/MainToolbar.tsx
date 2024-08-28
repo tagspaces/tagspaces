@@ -52,6 +52,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -76,8 +77,10 @@ function MainToolbar(props: Props) {
     openShareFilesDialog,
   } = props;
 
-  const { haveLocalSetting, setSettings, saveSettings, nativeDragModeEnabled } =
+  const { haveLocalSetting, setSettings, saveSettings } =
     usePerspectiveSettingsContext();
+  const { nativeDragModeEnabled, setNativeDragModeEnabled } =
+    useSortedDirContext();
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -285,8 +288,7 @@ function MainToolbar(props: Props) {
         <IconButton
           data-tid={prefixDataTID + 'PerspectiveDragNative'}
           onClick={() => {
-            setSettings({ nativeDragModeEnabled: !nativeDragModeEnabled });
-            saveSettings();
+            setNativeDragModeEnabled(!nativeDragModeEnabled);
           }}
         >
           {nativeDragModeEnabled ? <SelectedIcon /> : <UnSelectedIcon />}

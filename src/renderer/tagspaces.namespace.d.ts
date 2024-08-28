@@ -336,7 +336,6 @@ export namespace TS {
     // pageLimit?: number; // KanBan
     // pageOffset?: number; // KanBan
     filesLimit?: number; // KanBan
-    nativeDragModeEnabled?: boolean;
     layoutType?: string;
     orderBy?: boolean;
     sortBy?: string;

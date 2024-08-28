@@ -70,7 +70,7 @@ function CellView(props: Props) {
     setDirContextMenuAnchorEl,
     isLast,
   } = props;
-  const { showDirectories, singleClickAction, nativeDragModeEnabled } =
+  const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const { openEntryInternal } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
@@ -80,7 +80,7 @@ function CellView(props: Props) {
     useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
-  const { sortedDirContent } = useSortedDirContext();
+  const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
 
   const desktopMode = useSelector(getDesktopMode);

@@ -49,7 +49,6 @@ type PerspectiveSettingsContextData = {
   layoutType: string; //KanBan
   showSubFolderDetails: boolean; // KanBan
   filesLimit: number; // KanBan
-  nativeDragModeEnabled: boolean;
   haveLocalSetting: () => boolean;
   resetLocalSetting: () => void;
   setSettings: (set: any) => void;
@@ -74,7 +73,6 @@ export const PerspectiveSettingsContext =
     layoutType: 'grid',
     showSubFolderDetails: false,
     filesLimit: 15,
-    nativeDragModeEnabled: false,
     haveLocalSetting: undefined,
     resetLocalSetting: undefined,
     setSettings: undefined,
@@ -245,7 +243,6 @@ export const PerspectiveSettingsContextProvider = ({
       layoutType: settings.current.layoutType,
       showSubFolderDetails: settings.current.showSubFolderDetails,
       filesLimit: settings.current.filesLimit,
-      nativeDragModeEnabled: settings.current.nativeDragModeEnabled,
       resetLocalSetting: resetLocalSetting,
       haveLocalSetting: haveLocalSetting,
       setSettings: setSettings,
