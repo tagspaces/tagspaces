@@ -70,7 +70,7 @@ function CellView(props: Props) {
     setDirContextMenuAnchorEl,
     isLast,
   } = props;
-  const { showDirectories, singleClickAction } =
+  const { showDirectories, singleClickAction, nativeDragModeEnabled } =
     usePerspectiveSettingsContext();
   const { openEntryInternal } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
@@ -290,22 +290,22 @@ function CellView(props: Props) {
 
   if (fsEntry.isFile) {
     return (
-      <div style={{ position: 'relative', paddingTop: 20 }}>
-        <span
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            backgroundColor: 'red',
-          }}
-          draggable="true"
-          onDragStart={(e) => {
-            e.preventDefault();
-            window.electronIO.ipcRenderer.startDrag(fsEntry.path);
-          }}
-        >
-          X
-        </span>
+      <div>
+        {nativeDragModeEnabled && (
+          <span
+            style={{
+              backgroundColor: 'lightgray',
+            }}
+            draggable="true"
+            onDragStart={(e) => {
+              e.preventDefault();
+              window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+            }}
+          >
+            Drag in File Manager
+          </span>
+        )}
+
         <FileSourceDnd key={key}>
           {cellContent(
             fsEntry,

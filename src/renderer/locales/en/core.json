@@ -853,5 +853,6 @@
   "switchEncryption": "Server Side Encryption",
   "generateEncryptionKey": "Generate random encryption key",
   "toggleKeyVisibility": "Toggle key visibility",
+  "dragMode": "Enable copy files with DnD to native File Manager",
   "-": "-"
 }

@@ -64,6 +64,13 @@ export const MoveOrCopyFilesDialogContextProvider = ({
     targetDirectory?: string,
     targetLocationID?: string,
   ) {
+    if (
+      !selectedFiles ||
+      selectedFiles.length === 0 ||
+      selectedFiles.some((file) => file.path === undefined)
+    ) {
+      return;
+    }
     open.current = true;
     targetDir.current = targetDirectory;
     targetLocationId.current = targetLocationID;

@@ -76,7 +76,8 @@ function MainToolbar(props: Props) {
     openShareFilesDialog,
   } = props;
 
-  const { haveLocalSetting } = usePerspectiveSettingsContext();
+  const { haveLocalSetting, setSettings, saveSettings, nativeDragModeEnabled } =
+    usePerspectiveSettingsContext();
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -280,6 +281,17 @@ function MainToolbar(props: Props) {
         <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
+      <Tooltip title={t('core:dragMode')}>
+        <IconButton
+          data-tid={prefixDataTID + 'PerspectiveDragNative'}
+          onClick={() => {
+            setSettings({ nativeDragModeEnabled: !nativeDragModeEnabled });
+            saveSettings();
+          }}
+        >
+          {nativeDragModeEnabled ? <SelectedIcon /> : <UnSelectedIcon />}
+        </IconButton>
+      </Tooltip>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: 'flex' }}>
         <Tooltip
