@@ -43,6 +43,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -92,14 +93,8 @@ interface Props {
 }
 
 function MainPage(props: Props) {
-  const {
-    openLink,
-    openedEntry,
-    isEntryInFullWidth,
-    goForward,
-    goBack,
-    setEntryInFullWidth,
-  } = useOpenedEntryContext();
+  const { openLink, openedEntry, isEntryInFullWidth, setEntryInFullWidth } =
+    useOpenedEntryContext();
 
   const {
     loadParentDirectoryContent,
@@ -270,8 +265,6 @@ function MainPage(props: Props) {
         <FolderContainer
           toggleDrawer={toggleDrawer}
           drawerOpened={drawerOpened}
-          goBack={goBack}
-          goForward={goForward}
           /*openMoveCopyFilesDialog={() =>
             setMoveCopyDialogOpened(props.selectedEntries)
           }*/

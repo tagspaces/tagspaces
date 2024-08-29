@@ -93,8 +93,8 @@ type OpenedEntryContextData = {
   openPrevFile: (entries: TS.FileSystemEntry[]) => TS.FileSystemEntry;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
-  goForward: () => void;
-  goBack: () => void;
+  //goForward: () => void;
+  //goBack: () => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
@@ -125,8 +125,8 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openPrevFile: undefined,
   toggleEntryFullWidth: () => {},
   openLink: () => {},
-  goForward: () => {},
-  goBack: () => {},
+  //goForward: () => {},
+  //goBack: () => {},
   createFile: () => {},
   createFileAdvanced: () => {},
   getOpenedDirProps: undefined,
@@ -192,21 +192,6 @@ export const OpenedEntryContextProvider = ({
           openLink('ts://?cmdopen=' + cmdOpen, { fullWidth: true });
         }, 1000);
       }
-    }
-    if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('opened-entry', (arg) => {
-        if (arg === 'go-back') {
-          goBack();
-        } else if (arg === 'go-forward') {
-          goForward();
-        }
-      });
-
-      return () => {
-        if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('opened-entry');
-        }
-      };
     }
   }, []);
 
@@ -625,6 +610,12 @@ export const OpenedEntryContextProvider = ({
     );
 
     addToEntryContainer(entryForOpening);
+    if (
+      selectedEntries.length !== 1 ||
+      selectedEntries.some((e) => e.path !== fsEntry.path)
+    ) {
+      setSelectedEntries([fsEntry]);
+    }
     return Promise.resolve(true);
   }
 
@@ -648,7 +639,7 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  function goForward() {
+  /*function goForward() {
     window.history.forward();
     window.addEventListener(
       'popstate',
@@ -657,9 +648,9 @@ export const OpenedEntryContextProvider = ({
       },
       { once: true },
     );
-  }
+  }*/
 
-  function goBack() {
+  /*function goBack() {
     // console.log(
     //   '>>> current href: ' + decodeURIComponent(window.location.href)
     // );
@@ -674,7 +665,7 @@ export const OpenedEntryContextProvider = ({
       },
       { once: true },
     );
-  }
+  }*/
 
   function openLink(url: string, options = { fullWidth: true }) {
     try {
@@ -987,8 +978,8 @@ export const OpenedEntryContextProvider = ({
       openNextFile,
       openPrevFile,
       toggleEntryFullWidth,
-      goForward,
-      goBack,
+      //goForward,
+      //goBack,
       openLink,
       createFile,
       createFileAdvanced,

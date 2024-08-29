@@ -204,12 +204,12 @@ function openHelpFeedbackPanel() {
 
 function goBack() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('opened-entry', 'go-back');
+  focusedWindow?.webContents.send('history', 'go-back');
 }
 
 function goForward() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('opened-entry', 'go-forward');
+  focusedWindow?.webContents.send('history', 'go-forward');
 }
 
 function setZoomResetApp() {

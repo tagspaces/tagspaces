@@ -297,7 +297,7 @@ export namespace TS {
     path: string;
     url: string;
     lid: string;
-    creationTimeStamp: number;
+    creationTimeStamp?: number;
     searchQuery?: TS.SearchQuery;
   }
 
