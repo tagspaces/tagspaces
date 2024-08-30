@@ -65,7 +65,7 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { goForward, goBack, haveHistory } = useBrowserHistoryContext();
+  const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const {
@@ -225,7 +225,7 @@ function FolderContainer(props: Props) {
         >
           <IconButton
             id="goBackButton"
-            disabled={!haveHistory()}
+            disabled={historyIndex === 0}
             onClick={goBack}
             style={{
               // @ts-ignore
@@ -239,7 +239,7 @@ function FolderContainer(props: Props) {
           <Tooltip title={t('core:goforward') + ' - BETA'}>
             <IconButton
               id="goForwardButton"
-              disabled={!haveHistory()}
+              disabled={historyIndex === 0}
               onClick={goForward}
               style={{
                 // @ts-ignore

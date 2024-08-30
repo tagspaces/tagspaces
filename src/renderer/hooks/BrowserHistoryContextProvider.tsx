@@ -2,13 +2,7 @@
 Copyright (c) 2024-present The TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
 */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { createContext, useEffect, useReducer, useRef } from 'react';
 import { TS } from '-/tagspaces.namespace';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -16,17 +10,20 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
+import { FixedSizeArray } from '-/services/FixedSizeArray';
 
 type BrowserHistoryContextData = {
-  haveHistory: () => boolean;
+  historyIndex: number;
   goBack: () => void;
   goForward: () => void;
+  openHistoryItem: (item: TS.HistoryItem) => void;
 };
 
 export const BrowserHistoryContext = createContext<BrowserHistoryContextData>({
-  haveHistory: undefined,
+  historyIndex: undefined,
   goBack: undefined,
   goForward: undefined,
+  openHistoryItem: undefined,
 });
 
 export type BrowserHistoryContextProviderProps = {
@@ -40,7 +37,9 @@ export const BrowserHistoryContextProvider = ({
   const { openedEntry, openLink, openEntry } = useOpenedEntryContext();
   const { currentLocationPath, currentDirectoryPath } =
     useDirectoryContentContext();
-  const history = useRef<TS.HistoryItem[]>([]);
+  const history = useRef<FixedSizeArray<TS.HistoryItem>>(
+    new FixedSizeArray<TS.HistoryItem>(50),
+  );
   const historyIndex = useRef<number>(0);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -89,7 +88,11 @@ export const BrowserHistoryContextProvider = ({
   }, [openedEntry]);
 
   useEffect(() => {
-    if (currentLocation && currentDirectoryPath) {
+    if (
+      currentLocation &&
+      currentDirectoryPath &&
+      currentLocation.path !== currentDirectoryPath
+    ) {
       const relEntryPath = getRelativeEntryPath(
         currentLocationPath,
         currentDirectoryPath,
@@ -106,19 +109,19 @@ export const BrowserHistoryContextProvider = ({
     const lastItem = lastHistoryItem();
     if (!lastItem || lastItem.path !== path) {
       const sliced = history.current.slice(0, historyIndex.current + 1);
-      const filtered = sliced.filter((item) => item.path !== path);
-      history.current = [...filtered, { path, url, lid }];
-      historyIndex.current = history.current.length - 1;
+      //const filtered = sliced.filter((item) => item.path !== path); // unique history items
+      history.current.setArray([...sliced, { path, url, lid }]);
+      historyIndex.current = history.current.getArray().length - 1;
       forceUpdate();
     }
   }
 
-  function haveHistory() {
+  /*function haveHistory() {
     return historyIndex.current > 0;
-  }
+  }*/
 
   function lastHistoryItem() {
-    return history.current[historyIndex.current];
+    return history.current.get(historyIndex.current);
   }
 
   function goBack() {
@@ -133,7 +136,7 @@ export const BrowserHistoryContextProvider = ({
   }
 
   function goForward() {
-    if (historyIndex.current < history.current.length) {
+    if (historyIndex.current < history.current.getArray().length) {
       historyIndex.current = historyIndex.current + 1;
       const lastItem = lastHistoryItem();
       //const filtered = history.current.filter((item) => item.path !== lastItem.path);
@@ -155,9 +158,10 @@ export const BrowserHistoryContextProvider = ({
   }
 
   const context = {
-    haveHistory,
+    historyIndex: historyIndex.current,
     goBack,
     goForward,
+    openHistoryItem,
   };
 
   return (

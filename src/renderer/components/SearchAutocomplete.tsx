@@ -72,6 +72,7 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { removePrefix } from '-/services/utils-io';
 import { isDesktopMode } from '-/reducers/settings';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 interface Props {
   style?: any;
@@ -104,6 +105,7 @@ function SearchAutocomplete(props: Props) {
     searchQuery,
     setSearchQuery,
   } = useDirectoryContentContext();
+  const { openHistoryItem } = useBrowserHistoryContext();
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
   const { searches } = useSavedSearchesContext();
@@ -887,28 +889,28 @@ function SearchAutocomplete(props: Props) {
               setSearchQuery(option.searchQuery);
             } else {
             }
-          } else if (Pro && historyContext) {
+          } else if (Pro) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: option.id,
               creationTimeStamp: 0,
             };
-            historyContext.openItem(item);
+            openHistoryItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_BOOKMARK) {
-          if (Pro && historyContext) {
+          if (Pro) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
               lid: undefined,
               creationTimeStamp: 0,
             };
-            historyContext.openItem(item);
+            openHistoryItem(item);
           }
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;

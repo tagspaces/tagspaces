@@ -276,7 +276,7 @@ export namespace TS {
     saveHistory: (key, historyItem: TS.HistoryItem, limit) => void;
     delAllHistory: (key) => void;
     delHistory: (key, creationTimeStamp) => void;
-    openItem: (item: TS.HistoryItem) => void;
+    //openItem: (item: TS.HistoryItem) => void;
   };
 
   type KanBanImportDialogContextData = {
