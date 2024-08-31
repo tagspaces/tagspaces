@@ -62,7 +62,7 @@ export type Channels =
   | 'toggle-third-party-libs-dialog'
   | 'perspective'
   | 'panels'
-  | 'opened-entry'
+  | 'history'
   | 'progress'
   | 'uploadAbort';
 

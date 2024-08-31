@@ -30,11 +30,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getProgress,
-} from '../reducers/app';
+import { getProgress } from '../reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -56,20 +52,20 @@ import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeas
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
-  goBack: () => void;
-  goForward: () => void;
 }
 
 function FolderContainer(props: Props) {
-  const { toggleDrawer, goBack, goForward, drawerOpened } = props;
+  const { toggleDrawer, drawerOpened } = props;
 
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
+  const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const {
@@ -229,7 +225,7 @@ function FolderContainer(props: Props) {
         >
           <IconButton
             id="goBackButton"
-            disabled={window.history.length < 2}
+            disabled={historyIndex === 0}
             onClick={goBack}
             style={{
               // @ts-ignore
@@ -243,7 +239,7 @@ function FolderContainer(props: Props) {
           <Tooltip title={t('core:goforward') + ' - BETA'}>
             <IconButton
               id="goForwardButton"
-              disabled={window.history.length < 2}
+              disabled={historyIndex === 0}
               onClick={goForward}
               style={{
                 // @ts-ignore
