@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -51,9 +51,11 @@ function TagsSelect(props: Props) {
 
   const [selectedTag, setSelectedTag] = useState(undefined);
   const allTags = useRef<Array<TS.Tag>>(getAllTags());
+  const tagsInputRef = useRef<HTMLInputElement>(null);
 
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
+  const tagChanged = useRef(false);
   const {
     placeholderText = '',
     label,
@@ -62,6 +64,12 @@ function TagsSelect(props: Props) {
     tags = [],
     tagMode,
   } = props;
+
+  useEffect(() => {
+    if (!readOnlyMode && tagChanged.current && tagsInputRef.current) {
+      tagsInputRef.current.focus();
+    }
+  }, [readOnlyMode, tagsInputRef.current, tagChanged.current]);
 
   function handleTagChange(
     event: Object,
@@ -100,6 +108,7 @@ function TagsSelect(props: Props) {
       } else if (reason === 'clear') {
         props.handleChange(props.tagSearchType, [], reason);
       }
+      tagChanged.current = true;
     } else {
       console.debug('tags disabled in read only mode!');
     }
@@ -176,6 +185,7 @@ function TagsSelect(props: Props) {
             placeholder={placeholderText}
             margin="normal"
             autoFocus={autoFocus}
+            inputRef={tagsInputRef}
             style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
             fullWidth
           />
