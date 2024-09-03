@@ -37,7 +37,6 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
-  getBackupFileLocation,
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -53,7 +52,6 @@ import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { Switch } from '@mui/material';
-import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
@@ -61,14 +59,13 @@ import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 
 //const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
@@ -80,11 +77,9 @@ function EntryContainer() {
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
-    reflectUpdateOpenedFileContent,
     fileChanged,
     setFileChanged,
   } = useOpenedEntryContext();
-  const { setReflectActions } = useEditedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
   const {
     saveDescription,
@@ -93,11 +88,10 @@ function EntryContainer() {
     setEditMode,
     isEditDescriptionMode,
   } = useFilePropertiesContext();
-  const { setAutoSave, getMetadataID } = useIOActionsContext();
+  const { setAutoSave } = useIOActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
-  const { copyFilePromiseOverwrite, copyFilePromise, saveTextFilePromise } =
-    usePlatformFacadeContext();
+  const { saveFileOpen } = useResolveConflictContext();
+
   const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const keyBindings = useSelector(getKeyBindingObject);
@@ -126,8 +120,6 @@ function EntryContainer() {
     setSaveBeforeReloadConfirmDialogOpened,
   ] = useState<boolean>(false);
   const [isEditTagsModalOpened, setEditTagsModalOpened] =
-    useState<boolean>(false);
-  const [isConflictDialogOpen, setConflictDialogOpen] =
     useState<boolean>(false);
   const isSavingInProgress = useRef<boolean>(false);
   const [entryPropertiesHeight, setEntryPropertiesHeight] =
@@ -432,11 +424,13 @@ function EntryContainer() {
       // @ts-ignore
       fileViewer.current.contentWindow.getContent
     ) {
+      // @ts-ignore
+      const fileContent = fileViewer.current.contentWindow.getContent();
       try {
         //check if file is changed
         if (fileChanged || force) {
           isSavingInProgress.current = true;
-          save(openedEntry).then((success) => {
+          saveFileOpen(openedEntry, fileContent).then((success) => {
             if (success) {
               setFileChanged(false);
               // showNotification(
@@ -454,117 +448,6 @@ function EntryContainer() {
       }
     }
   };
-
-  const override = (): Promise<boolean> => {
-    return cLocation
-      .getPropertiesPromise(openedEntry.path)
-      .then((entryProp: TS.FileSystemEntry) =>
-        save({ ...openedEntry, lmdt: entryProp.lmdt }),
-      );
-  };
-
-  const saveAs = (newFilePath: string): Promise<boolean> => {
-    return copyFilePromise(openedEntry.path, newFilePath).then(() =>
-      cLocation
-        .getPropertiesPromise(newFilePath)
-        .then((entryProp: TS.FileSystemEntry) =>
-          save({
-            ...openedEntry,
-            path: entryProp.path,
-            lmdt: entryProp.lmdt,
-          }).then(() => {
-            const openedEntryDir = extractContainingDirectoryPath(
-              entryProp.path,
-            );
-            if (currentDirectoryPath === openedEntryDir) {
-              openDirectory(openedEntryDir);
-            }
-            return true;
-          }),
-        ),
-    );
-  };
-
-  async function save(fileOpen: TS.OpenedEntry): Promise<boolean> {
-    // @ts-ignore
-    const textContent = fileViewer.current.contentWindow.getContent();
-    const location = findLocation(fileOpen.locationID);
-    if (location) {
-      if (
-        Pro &&
-        revisionsEnabled &&
-        fileOpen.path.indexOf(
-          location.getDirSeparator() +
-            AppConfig.metaFolder +
-            location.getDirSeparator(),
-        ) === -1
-      ) {
-        const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
-        const targetPath = getBackupFileLocation(
-          fileOpen.path,
-          id,
-          location.getDirSeparator(),
-        );
-        try {
-          await copyFilePromiseOverwrite(
-            fileOpen.path,
-            targetPath,
-            fileOpen.locationID,
-            false,
-          ); // todo test what happened if remove await?
-        } catch (error) {
-          console.log('copyFilePromiseOverwrite', error);
-        }
-      }
-      return saveTextFilePromise(
-        {
-          path: fileOpen.path,
-          lmdt: fileOpen.lmdt,
-          locationID: fileOpen.locationID,
-        },
-        textContent,
-        true,
-      )
-        .then((entry) => {
-          reflectUpdateOpenedFileContent(entry);
-          // send action to save in history
-          const action: TS.EditAction = {
-            action: 'edit',
-            entry: entry,
-          };
-          setReflectActions(action);
-          /*if (Pro) {
-            const relativePath = getRelativeEntryPath(
-              currentLocationPath,
-              fileOpen.path,
-            );
-            historyContext.saveHistory(
-              historyKeys.fileEditKey,
-              {
-                creationTimeStamp: new Date().getTime(),
-                path: relativePath,
-                url: generateSharingLink(fileOpen.locationID, relativePath),
-                lid: fileOpen.locationID,
-              },
-              fileEditHistoryKey,
-            );
-          }*/
-          return true;
-          /*return updateOpenedFile(fileOpen.path, {
-            id: '',
-            ...fileOpen,
-            editMode: true,
-            //changed: false,
-            shouldReload: undefined,
-          }).then(() => true);*/
-        })
-        .catch((error) => {
-          setConflictDialogOpen(true);
-          console.log('Error saving file ' + fileOpen.path + ' - ' + error);
-          return false;
-        });
-    }
-  }
 
   const editOpenedFile = () => {
     // addToEntryContainer(openedEntry);
@@ -943,12 +826,6 @@ function EntryContainer() {
           }
         />
       )}
-      <ResolveConflictDialog
-        open={isConflictDialogOpen}
-        onClose={() => setConflictDialogOpen(false)}
-        saveAs={saveAs}
-        override={override}
-      />
     </GlobalHotKeys>
   );
 }

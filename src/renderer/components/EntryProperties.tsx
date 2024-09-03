@@ -660,6 +660,7 @@ function EntryProperties(props: Props) {
               tagMode="default"
               handleChange={handleChange}
               selectedEntryPath={openedEntry.path}
+              autoFocus={true}
             />
           </TagDropContainer>
         </Grid>
