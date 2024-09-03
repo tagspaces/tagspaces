@@ -32,19 +32,19 @@ import {
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
+  openedEntry: TS.OpenedEntry;
   onClose: () => void;
   saveAs: (newFilePath: string) => Promise<boolean>;
   override: () => Promise<boolean>;
 }
 
 function ResolveConflictDialog(props: Props) {
-  const { open, onClose } = props;
+  const { open, onClose, openedEntry } = props;
   const { t } = useTranslation();
-  const { openedEntry } = useOpenedEntryContext();
   const copyFileName = React.useRef<string>(getFileName());
   const [isSaveAs, setSaveAs] = React.useState<boolean>(false);
 
@@ -52,9 +52,12 @@ function ResolveConflictDialog(props: Props) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function getFileName() {
-    const fileName = extractFileName(openedEntry.path);
-    const ext = extractFileExtension(openedEntry.path);
-    return fileName.slice(0, -(ext.length + 1)) + '-copy.' + ext;
+    if (openedEntry) {
+      const fileName = extractFileName(openedEntry.path);
+      const ext = extractFileExtension(openedEntry.path);
+      return fileName.slice(0, -(ext.length + 1)) + '-copy.' + ext;
+    }
+    return '';
   }
 
   return (

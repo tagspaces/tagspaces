@@ -35,6 +35,7 @@ import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialog
 import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTeaserDialogContextProvider';
 import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
+import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -60,7 +61,9 @@ function DialogsRoot({ children }: DialogsRootProps) {
                                   <LinkDialogContextProvider>
                                     <ProTeaserDialogContextProvider>
                                       <SettingsDialogContextProvider>
-                                        {children}
+                                        <ResolveConflictContextProvider>
+                                          {children}
+                                        </ResolveConflictContextProvider>
                                       </SettingsDialogContextProvider>
                                     </ProTeaserDialogContextProvider>
                                   </LinkDialogContextProvider>
