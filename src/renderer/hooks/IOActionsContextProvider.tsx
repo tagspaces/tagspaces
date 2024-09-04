@@ -950,7 +950,10 @@ export const IOActionsContextProvider = ({
               if (thumbPath) {
                 const tmbPath =
                   await currentLocation.getURLforPathInt(thumbPath);
-                fsEntry.meta.thumbPath = tmbPath;
+                fsEntry.meta = {
+                  ...fsEntry.meta,
+                  thumbPath: tmbPath,
+                };
               }
               fsEntries.push(fsEntry);
               showNotification(
