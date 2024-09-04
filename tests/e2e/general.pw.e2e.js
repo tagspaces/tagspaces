@@ -166,10 +166,10 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0510 - Generate thumbnail from Images [electron,minio]', async () => {
-    const filtered = ['ico', 'tiff', 'tif'];
-    if (global.isMinio || global.isS3) {
+    const filtered = ['ico', 'tiff', 'tif', 'svg'];
+    /*if (global.isMinio || global.isS3) {
       filtered.push('svg');
-    }
+    }*/
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image
       .filter((ext) => !filtered.includes(ext)) // ico file thumbnail generation not work TODO in not PRO version tiff tif is not generated in tests environment only
       .map((imgExt) => 'sample.' + imgExt + '.jpg');
@@ -284,6 +284,8 @@ test.describe('TST51 - Perspective Grid', () => {
       true,
       5000,
     );
+    await clickOn('[data-tid=openGridPerspective]');
+    await expectElementExist('[data-tid=perspectiveGridToolbar]', true, 5000);
   });
 
   test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron]', async () => {

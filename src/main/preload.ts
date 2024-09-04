@@ -1,6 +1,11 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import {
+  contextBridge,
+  ipcRenderer,
+  IpcRendererEvent,
+  webUtils,
+} from 'electron';
 
 export type Channels =
   | 'isWorkerAvailable'
@@ -62,7 +67,7 @@ export type Channels =
   | 'toggle-third-party-libs-dialog'
   | 'perspective'
   | 'panels'
-  | 'opened-entry'
+  | 'history'
   | 'progress'
   | 'uploadAbort';
 
@@ -90,6 +95,9 @@ const electronHandler = {
       ipcRenderer.removeAllListeners(channel);
     },
     startDrag: (fileName) => ipcRenderer.send('ondragstart', fileName),
+    getPathForFile(file: File) {
+      return webUtils.getPathForFile(file);
+    },
   },
 };
 

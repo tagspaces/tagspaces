@@ -34,6 +34,7 @@ import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import TooltipTS from '-/components/Tooltip';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 interface Props {
   historyKey: string;
@@ -44,6 +45,7 @@ interface Props {
 }
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
+  const { openHistoryItem } = useBrowserHistoryContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
@@ -73,9 +75,7 @@ function RenderHistory(props: Props) {
                     fontWeight: 'normal',
                     justifyContent: 'start',
                   }}
-                  onClick={() =>
-                    historyContext.openItem(item as TS.HistoryItem)
-                  }
+                  onClick={() => openHistoryItem(item as TS.HistoryItem)}
                 >
                   <Tooltip
                     title={

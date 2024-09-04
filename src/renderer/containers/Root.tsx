@@ -50,6 +50,7 @@ import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
 import { UserContextProvider } from '-/hooks/UserContextProvider';
 import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
 import DialogsRoot from '-/containers/DialogsRoot';
+import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -92,21 +93,23 @@ export default function Root({ store, persistor }: RootType) {
                                           <PanelsContextProvider>
                                             <UserContextProvider>
                                               <SavedSearchesContextProvider>
-                                                {Pro ? (
-                                                  <Pro.contextProviders.BookmarksContextProvider>
-                                                    <Pro.contextProviders.HistoryContextProvider>
-                                                      <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                        <DialogsRoot>
-                                                          <MainPage />
-                                                        </DialogsRoot>
-                                                      </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                    </Pro.contextProviders.HistoryContextProvider>
-                                                  </Pro.contextProviders.BookmarksContextProvider>
-                                                ) : (
-                                                  <DialogsRoot>
-                                                    <MainPage />
-                                                  </DialogsRoot>
-                                                )}
+                                                <BrowserHistoryContextProvider>
+                                                  {Pro ? (
+                                                    <Pro.contextProviders.BookmarksContextProvider>
+                                                      <Pro.contextProviders.HistoryContextProvider>
+                                                        <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                          <DialogsRoot>
+                                                            <MainPage />
+                                                          </DialogsRoot>
+                                                        </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                      </Pro.contextProviders.HistoryContextProvider>
+                                                    </Pro.contextProviders.BookmarksContextProvider>
+                                                  ) : (
+                                                    <DialogsRoot>
+                                                      <MainPage />
+                                                    </DialogsRoot>
+                                                  )}
+                                                </BrowserHistoryContextProvider>
                                               </SavedSearchesContextProvider>
                                             </UserContextProvider>
                                           </PanelsContextProvider>
