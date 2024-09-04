@@ -12,8 +12,10 @@ export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
 export const tsFolder = '\\.ts'; // escape dot
-export const selectorFile = '//*[@data-tid="perspectiveGridFileTable"]/span';
-export const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
+export const selectorFile =
+  '//*[@data-tid="perspectiveGridFileTable"]/div/span';
+export const selectorFolder =
+  '//*[@data-tid="perspectiveGridFileTable"]/div/div';
 
 // const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';

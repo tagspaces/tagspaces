@@ -94,6 +94,7 @@ const electronHandler = {
     removeAllListeners(channel: string) {
       ipcRenderer.removeAllListeners(channel);
     },
+    startDrag: (fileName) => ipcRenderer.send('ondragstart', fileName),
     getPathForFile(file: File) {
       return webUtils.getPathForFile(file);
     },

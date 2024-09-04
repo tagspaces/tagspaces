@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
@@ -30,6 +30,9 @@ import TargetFileBox from '-/components/TargetFileBox';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
+import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import {
   fileOperationsEnabled,
   folderOperationsEnabled,
@@ -40,6 +43,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import i18n from '-/services/i18n';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -72,6 +76,7 @@ function CellView(props: Props) {
   } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
+  const theme = useTheme();
   const { openEntryInternal } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -80,10 +85,27 @@ function CellView(props: Props) {
     useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
-  const { sortedDirContent } = useSortedDirContext();
+  const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
 
   const desktopMode = useSelector(getDesktopMode);
+  // const fileSourceRef = useRef<HTMLDivElement | null>(null);
+
+  /*useEffect(() => {
+    const dragItem = fileSourceRef.current;
+    if (dragItem) {
+      const handleDragStart = (e) => {
+        e.preventDefault()
+        window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+      };
+
+      dragItem.addEventListener('dragstart', handleDragStart);
+
+      return () => {
+        dragItem.removeEventListener('dragstart', handleDragStart);
+      };
+    }
+  }, [fileSourceRef.current]);*/
 
   if (!fsEntry.isFile && !showDirectories) {
     return null;
@@ -273,17 +295,41 @@ function CellView(props: Props) {
 
   if (fsEntry.isFile) {
     return (
-      <FileSourceDnd key={key}>
-        {cellContent(
-          fsEntry,
-          selectedEntries,
-          index,
-          handleGridContextMenu,
-          handleGridCellClick,
-          handleGridCellDblClick,
-          isLast,
+      <div>
+        {nativeDragModeEnabled && (
+          <div
+            style={{
+              display: 'flex',
+            }}
+            draggable="true"
+            onDragStart={(e) => {
+              e.preventDefault();
+              window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+            }}
+          >
+            <DragHandleIcon style={{ color: theme.palette.text.primary }} />
+            <Typography
+              color="textSecondary"
+              variant="caption"
+              style={{ alignSelf: 'center' }}
+            >
+              {i18n.t('dragOutsideApp')}
+            </Typography>
+          </div>
         )}
-      </FileSourceDnd>
+
+        <FileSourceDnd key={key}>
+          {cellContent(
+            fsEntry,
+            selectedEntries,
+            index,
+            handleGridContextMenu,
+            handleGridCellClick,
+            handleGridCellDblClick,
+            isLast,
+          )}
+        </FileSourceDnd>
+      </div>
     );
   }
   const { FILE } = NativeTypes;

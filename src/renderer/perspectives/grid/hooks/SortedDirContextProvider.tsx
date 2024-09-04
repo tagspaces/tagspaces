@@ -29,16 +29,20 @@ type SortedDirContextData = {
   sortedDirContent: TS.FileSystemEntry[];
   sortBy: string;
   orderBy: null | boolean;
+  nativeDragModeEnabled: boolean;
   setSortBy: (sort: string) => void;
   setOrderBy: (isAsc: null | boolean) => void;
+  setNativeDragModeEnabled: (enabled: boolean) => void;
 };
 
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
   sortBy: undefined,
   orderBy: undefined,
-  setSortBy: () => {},
-  setOrderBy: () => {},
+  nativeDragModeEnabled: undefined,
+  setSortBy: undefined,
+  setOrderBy: undefined,
+  setNativeDragModeEnabled: undefined,
 });
 
 export type SortedDirContextProviderProps = {
@@ -72,6 +76,8 @@ export const SortedDirContextProvider = ({
       ? settings.orderBy
       : defaultSettings.orderBy,
   );
+  const [nativeDragModeEnabled, setNativeDragModeEnabled] =
+    useState<boolean>(false);
 
   /*function getSettings(meta, persp = PerspectiveIDs.GRID): TS.FolderSettings {
     if (persp === PerspectiveIDs.UNSPECIFIED) {
@@ -118,8 +124,10 @@ export const SortedDirContextProvider = ({
       orderBy,
       setSortBy,
       setOrderBy,
+      nativeDragModeEnabled,
+      setNativeDragModeEnabled,
     };
-  }, [sortedDirContent, sortBy, orderBy]);
+  }, [sortedDirContent, sortBy, orderBy, nativeDragModeEnabled]);
 
   return (
     <SortedDirContext.Provider value={context}>

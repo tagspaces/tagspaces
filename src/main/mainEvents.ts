@@ -4,6 +4,7 @@ import {
   globalShortcut,
   ipcMain,
   shell,
+  nativeImage,
   BrowserWindow,
 } from 'electron';
 import {
@@ -124,6 +125,17 @@ export default function loadMainEvents() {
   ipcMain.handle('readMacOSTags', async (event, filename) => {
     const results = await readMacOSTags(filename);
     return results;
+  });
+  ipcMain.on('ondragstart', (event, filePath) => {
+    // https://www.electronjs.org/docs/latest/api/web-contents#contentsstartdragitem
+
+    const dragIconBase64 =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABGCAYAAABxLuKEAAAACXBIWXMAACsPAAArDwFlCXzZAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA3hJREFUeJztm8+LVlUYxz+PjdaULkQkQWRIGBrcDNoipIJCxYVBu9noX6DSRglTpJWCQa4qajEkGLlwL4gWRCOFOJIgpFBiObVIKVr4C3zn2+JOMF3Pw3vuzD33Pdn5wNmc+9xzvu+Xc8597nnPNUkUHmfJoAXkSjHGoRjjUIxxGOqiEzNbAzzfUX8PgBlJfy2qFUlJCrAU2AfcANRxmQW+A95csP5EpjwLfDUAQ0LlaE7GTGZgyPyys+lvsLYTPDMbBa6R18L+M/CCGvzYFOJ3JGp3MYwA401uSPGUGHHqLwB/JOivzigwFqgfAb6PbSSFMUud+lNUQzo12wkbs6xJI7kN+WwoxjgUYxyKMQ6NF18zWwtsBX6TdK59SXkQPWLMbNjMPgZuAieAtxJpyoKoEWNmy4AzwOtJ1WRE7Ih5h/+RKRBhjJk9BbzdgZasiBkxLwKrUwvJjZg15ndgIlD/Y8tasqKvMZLuAKc70JIVJcFzKMY49J1KZrYSeClwaUbStfYl5UHM4jsOhFL/j4C97crJhzKVHIoxDsUYh2KMQ8zi+wtwLFD/bctasiIm870BHOhAS1aUqeRQjHGIyXyHgBWBSw8l3WtfUh7EjJhXqf5arZf3E+oaOGUqORRjHIoxDsUYh5jM90/gfKD+estasiIm870CbOtAS1aUqeSQ4kSVdwBwDFieoL863lG32SaNpDDmtlM/6G1QT1eQmFeCl4EvApc+l/ReoP6bJgI64h5wqckNMSNmGFgfqF/lxH8NXAY2NRGSmE+avte1vvhKmgV2UT3mc2AaONz0piRPJUk/AJsZ7C7fLNUBpzcWsguQ7DMZSdfN7BWqKbUZWJOyv3k8oNqO/VLSgs8Vxwh9RHha3O9349zZ/em58p+i9Y8snhRK5utQjHEoxjjEZL6jwJHApbOSJufFPQ2cDMT9JOndWpsfAOvqgZImanG7CZ8W3SfpVj/tiyLiM761hD+n+7AW95wTdzHQ5tVQbCDus0BcD1iZ4pPF+aXvVJL0K1WKnwtTkpJn1bFrzEH87YQu6QGHuugoyhhJZ4H9DNacHrBH0lQXnUU/lSQdB7ZQvT33kil6nB7VnvNrkj7tqtMFZb5mthx4Zu4M8D91S4CNgfC79UOMZraBajvjX0iarsWtnru/87+CyyuBQ0nwHIoxDsUYh2KMw9+ZHv8EJjGI7wAAAABJRU5ErkJggg==';
+    const icon = nativeImage.createFromDataURL(dragIconBase64);
+    event.sender.startDrag({
+      file: filePath,
+      icon: icon,
+    });
   });
   ipcMain.handle('postRequest', async (event, payload, endpoint) => {
     try {
