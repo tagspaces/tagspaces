@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import path from 'path';
+import fs from 'fs';
 import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
@@ -56,6 +56,32 @@ export async function getElementScreenshot(
     console.log('getElementScreenshot ' + selector + ' error: ', e);
   }
   return undefined;
+}
+
+/**
+ * Used to create a DataTransfer. Useful when you want to perform drag and drop operations.
+ * @param filePath
+ * @param fileName
+ * @param fileType
+ * @returns {Promise<*>}
+ */
+export async function createDataTransfer(filePath, fileName, fileType) {
+  return await global.client.evaluateHandle(
+    ({ fileHex, localFileName, localFileType }) => {
+      const dataTransfer = new DataTransfer();
+
+      dataTransfer.items.add(
+        new File([fileHex], localFileName, { type: localFileType }),
+      );
+
+      return dataTransfer;
+    },
+    {
+      fileHex: fs.readFileSync(filePath).toString('hex'),
+      localFileName: fileName,
+      localFileType: fileType,
+    },
+  );
 }
 
 export async function clickOn(selector, options = { timeout: 15000 }) {

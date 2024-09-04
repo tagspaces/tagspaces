@@ -36,11 +36,13 @@ import {
   setSettings,
   openFolder,
   openFile,
+  createDataTransfer,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { stopServices } from '../setup-functions';
+import pathLib from 'path';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
@@ -388,7 +390,39 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(fileSelector, false);
   });
 
-  test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
+  test('TST5029 - Add file from file manager with dnd [web,minio,electron]', async () => {
+    const dndSourceFile = pathLib.resolve(
+      __dirname,
+      '..',
+      's3rver',
+      'cors.xml',
+    );
+    const fileName = 'cors.xml';
+    const fileType = 'application/xml';
+    /*const buffer = fs.readFileSync(dndSourceFile);
+
+    // Create the DataTransfer and File
+    const dataTransfer = await global.client.evaluateHandle((data) => {
+      const dt = new DataTransfer();
+      // Convert the buffer to a hex array
+      const file = new File([data.toString('hex')], 'cors.xml', { type: 'application/xml' });
+      dt.items.add(file);
+      return dt;
+    }, buffer);*/
+    const dataTransfer = await createDataTransfer(
+      dndSourceFile,
+      fileName,
+      fileType,
+    );
+
+    //const target = await global.client.$('[data-tid=perspectiveGridFileTable]');
+    await global.client.dispatchEvent(
+      '[data-tid=perspectiveGridFileTable]',
+      'drop',
+      { dataTransfer },
+    );
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
+  });
 
   test('TST5033 - Open directory (directory menu) [web,electron]', async () => {
     await expectElementExist(selectorFile, true, 5000);
