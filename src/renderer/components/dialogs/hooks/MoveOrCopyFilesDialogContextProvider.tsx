@@ -64,6 +64,15 @@ export const MoveOrCopyFilesDialogContextProvider = ({
     targetDirectory?: string,
     targetLocationID?: string,
   ) {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      return;
+    }
+    selectedFiles = selectedFiles.map((file) => {
+      if (!file.path) {
+        file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+      }
+      return file;
+    });
     open.current = true;
     targetDir.current = targetDirectory;
     targetLocationId.current = targetLocationID;

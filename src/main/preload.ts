@@ -1,6 +1,11 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import {
+  contextBridge,
+  ipcRenderer,
+  IpcRendererEvent,
+  webUtils,
+} from 'electron';
 
 export type Channels =
   | 'isWorkerAvailable'
@@ -88,6 +93,9 @@ const electronHandler = {
     },
     removeAllListeners(channel: string) {
       ipcRenderer.removeAllListeners(channel);
+    },
+    getPathForFile(file: File) {
+      return webUtils.getPathForFile(file);
     },
   },
 };
