@@ -25,6 +25,10 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import ShareIcon from '@mui/icons-material/Share';
+// import DragOnIcon from '@mui/icons-material/PanTool';
+import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
+// import DragOffIcon from '@mui/icons-material/PanToolOutlined';
+import DragOffIcon from '@mui/icons-material/CopyAll';
 import {
   SelectedIcon,
   UnSelectedIcon,
@@ -284,16 +288,18 @@ function MainToolbar(props: Props) {
         <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
-      <Tooltip title={t('core:dragMode')}>
-        <IconButton
-          data-tid={prefixDataTID + 'PerspectiveDragNative'}
-          onClick={() => {
-            setNativeDragModeEnabled(!nativeDragModeEnabled);
-          }}
-        >
-          {nativeDragModeEnabled ? <SelectedIcon /> : <UnSelectedIcon />}
-        </IconButton>
-      </Tooltip>
+      {AppConfig.isElectron && (
+        <Tooltip title={t('core:dragMode')}>
+          <IconButton
+            data-tid={prefixDataTID + 'PerspectiveDragNative'}
+            onClick={() => {
+              setNativeDragModeEnabled(!nativeDragModeEnabled);
+            }}
+          >
+            {nativeDragModeEnabled ? <DragOnIcon /> : <DragOffIcon />}
+          </IconButton>
+        </Tooltip>
+      )}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: 'flex' }}>
         <Tooltip

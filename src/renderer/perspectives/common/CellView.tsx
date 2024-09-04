@@ -30,6 +30,9 @@ import TargetFileBox from '-/components/TargetFileBox';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
+import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import {
   fileOperationsEnabled,
   folderOperationsEnabled,
@@ -40,6 +43,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import i18n from '-/services/i18n';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -72,6 +76,7 @@ function CellView(props: Props) {
   } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
+  const theme = useTheme();
   const { openEntryInternal } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -292,9 +297,9 @@ function CellView(props: Props) {
     return (
       <div>
         {nativeDragModeEnabled && (
-          <span
+          <div
             style={{
-              backgroundColor: 'lightgray',
+              display: 'flex',
             }}
             draggable="true"
             onDragStart={(e) => {
@@ -302,8 +307,15 @@ function CellView(props: Props) {
               window.electronIO.ipcRenderer.startDrag(fsEntry.path);
             }}
           >
-            Drag in File Manager
-          </span>
+            <DragHandleIcon style={{ color: theme.palette.text.primary }} />
+            <Typography
+              color="textSecondary"
+              variant="caption"
+              style={{ alignSelf: 'center' }}
+            >
+              {i18n.t('dragOutsideApp')}
+            </Typography>
+          </div>
         )}
 
         <FileSourceDnd key={key}>

@@ -853,6 +853,7 @@
   "switchEncryption": "Server Side Encryption",
   "generateEncryptionKey": "Generate random encryption key",
   "toggleKeyVisibility": "Toggle key visibility",
-  "dragMode": "Enable copy files with DnD to native File Manager",
+  "dragMode": "Enable dragging files outside of the application",
+  "dragOutsideApp": "Drag outside the app",
   "-": "-"
 }
