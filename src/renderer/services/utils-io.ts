@@ -568,6 +568,22 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
 // }
 
 /**
+ * forbidden characters # \ / * ? " < > | & %
+ * @param tagTitle
+ * return true if valid; false otherwise
+ */
+export function tagsValidation(tagTitle: string): boolean {
+  if (tagTitle.length > 0) {
+    if (tagTitle.trim().length === 0 || tagTitle.includes(' ')) {
+      return false;
+    }
+    const rg1 = /^[^#\\/*?"<>|&%]+$/;
+    return rg1.test(tagTitle);
+  }
+  return false;
+}
+
+/**
  * forbidden characters # \ / * ? " < > |
  * @param dirName
  */

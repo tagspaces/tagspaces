@@ -855,5 +855,6 @@
   "toggleKeyVisibility": "Toggle key visibility",
   "dragMode": "Enable dragging files outside of the application",
   "dragOutsideApp": "Drag outside the app",
+  "tagsErrorHelp": "Tag title is not valid! forbidden characters # \\ / * ? \" < > | & %",
   "-": "-"
 }

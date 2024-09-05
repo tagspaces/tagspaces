@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -29,13 +29,17 @@ import { getAllTags } from '-/services/taglibrary-utils';
 import { Box } from '@mui/material';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { isDesktopMode } from '-/reducers/settings';
+import { tagsValidation } from '-/services/utils-io';
+import FormHelperText from '@mui/material/FormHelperText';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   dataTid?: string;
   tags: TS.Tag[];
   label?: string;
   tagSearchType?: string;
-  handleChange?: (param1: any, param2: any, param3?: any) => void;
+  handleChange?: (name: string, value: TS.Tag[], action: string) => void;
+  handleNewTags?: (newTags: TS.Tag[]) => void;
   tagMode?: 'default' | 'display' | 'remove';
   placeholderText?: string;
   selectedEntryPath?: string;
@@ -43,6 +47,7 @@ interface Props {
 }
 
 function TagsSelect(props: Props) {
+  const { t } = useTranslation();
   const { readOnlyMode } = useCurrentLocationContext();
   const desktopMode = useSelector(isDesktopMode);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
@@ -50,10 +55,12 @@ function TagsSelect(props: Props) {
   );
 
   const [selectedTag, setSelectedTag] = useState(undefined);
+  const tagsError = useRef<boolean>(false);
   const allTags = useRef<Array<TS.Tag>>(getAllTags());
 
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const {
     placeholderText = '',
     label,
@@ -61,6 +68,7 @@ function TagsSelect(props: Props) {
     autoFocus = false,
     tags = [],
     tagMode,
+    handleNewTags,
   } = props;
 
   function handleTagChange(
@@ -68,52 +76,65 @@ function TagsSelect(props: Props) {
     selectedTags: Array<TS.Tag>,
     reason: string,
   ) {
+    tagsError.current = false;
     if (!readOnlyMode) {
-      if (reason === 'selectOption') {
-        props.handleChange(props.tagSearchType, selectedTags, reason);
-      } else if (reason === 'createOption') {
-        if (selectedTags && selectedTags.length) {
-          const tagsInput = '' + selectedTags[selectedTags.length - 1];
-          let tags = tagsInput.split(' ').join(',').split(','); // handle spaces around commas
-          tags = [...new Set(tags)]; // remove duplicates
-          tags = tags.filter((tag) => tag && tag.length > 0); // zero length tags
-
-          const newTags = [];
-          tags.map((tag) => {
-            const newTag: TS.Tag = {
-              id: getUuid(),
-              title: '' + tag,
-              color: defaultBackgroundColor,
-              textcolor: defaultTextColor,
-            };
-            if (isValidNewOption(newTag.title, selectedTags)) {
-              newTags.push(newTag);
-              allTags.current.push(newTag);
-            }
-          });
-          selectedTags.pop();
-          const allNewTags = [...selectedTags, ...newTags];
-          props.handleChange(props.tagSearchType, allNewTags, reason);
+      if (reason === 'blur') {
+        handleNewTags(undefined);
+      } else {
+        handleNewTags([]);
+        if (reason === 'selectOption') {
+          props.handleChange(props.tagSearchType, selectedTags, reason);
+        } else if (reason === 'createOption') {
+          if (selectedTags && selectedTags.length) {
+            const newTags = parseTagsInput(
+              '' + selectedTags[selectedTags.length - 1],
+            );
+            selectedTags.pop();
+            const allNewTags = [...selectedTags, ...newTags];
+            props.handleChange(props.tagSearchType, allNewTags, reason);
+          }
+        } else if (reason === 'remove-value') {
+          props.handleChange(props.tagSearchType, selectedTags, reason);
+        } else if (reason === 'clear') {
+          props.handleChange(props.tagSearchType, [], reason);
         }
-      } else if (reason === 'remove-value') {
-        props.handleChange(props.tagSearchType, selectedTags, reason);
-      } else if (reason === 'clear') {
-        props.handleChange(props.tagSearchType, [], reason);
       }
     } else {
       console.debug('tags disabled in read only mode!');
     }
   }
 
-  function isValidNewOption(inputValue, selectOptions) {
-    const trimmedInput = inputValue.trim();
-    return (
-      trimmedInput.trim().length > 0 &&
-      !trimmedInput.includes(' ') &&
-      !trimmedInput.includes('#') &&
-      !trimmedInput.includes(',') &&
-      !selectOptions.find((option) => option.title === inputValue)
-    );
+  function parseTagsInput(tagsInput: string): TS.Tag[] {
+    let tags = tagsInput.split(' ').join(',').split(','); // handle spaces around commas
+    tags = [...new Set(tags)]; // remove duplicates
+
+    const newTags = [];
+    tags.map((tag) => {
+      if (tagsValidation(tag)) {
+        const newTag: TS.Tag = {
+          id: getUuid(),
+          title: '' + tag,
+          color: defaultBackgroundColor,
+          textcolor: defaultTextColor,
+        };
+        //if (!allTags.current.find((option) => option.title === newTag.title)) {
+        newTags.push(newTag);
+        //allTags.current.push(newTag);
+        //}
+      } else {
+        tagsError.current = true;
+        forceUpdate();
+      }
+    });
+    return newTags;
+  }
+
+  function handleInputChange(event: any, value: string, reason: string) {
+    tagsError.current = false;
+    if (reason === 'input' && handleNewTags) {
+      const newTags = parseTagsInput(value);
+      handleNewTags(newTags);
+    }
   }
 
   const handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag) => {
@@ -146,12 +167,13 @@ function TagsSelect(props: Props) {
         options={!readOnlyMode ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
         freeSolo
+        disableClearable={true}
         autoSelect
         autoComplete
-        disableClearable
         size={desktopMode ? 'small' : 'medium'}
         value={tags}
         onChange={handleTagChange}
+        onInputChange={handleInputChange}
         renderTags={(value: readonly TS.Tag[], getTagProps) =>
           value.map((option: TS.Tag, index: number) => (
             <TagContainer
@@ -169,16 +191,22 @@ function TagsSelect(props: Props) {
           </Box>
         )}
         renderInput={(params) => (
-          <TextField
-            {...params}
-            // variant="filled"
-            label={label}
-            placeholder={placeholderText}
-            margin="normal"
-            autoFocus={autoFocus}
-            style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
-            fullWidth
-          />
+          <>
+            <TextField
+              {...params}
+              // variant="filled"
+              label={label}
+              placeholder={placeholderText}
+              margin="normal"
+              autoFocus={autoFocus}
+              error={tagsError.current}
+              style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
+              fullWidth
+            />
+            {tagsError.current && (
+              <FormHelperText>{t('core:tagsErrorHelp')}</FormHelperText>
+            )}
+          </>
         )}
       />
       {selectedEntryPath && (

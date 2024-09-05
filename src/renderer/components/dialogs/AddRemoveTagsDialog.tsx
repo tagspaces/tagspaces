@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
@@ -57,7 +57,9 @@ function AddRemoveTagsDialog(props: Props) {
 
   const { currentLocation } = useCurrentLocationContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
+  const [newlyAddedTags, setNewlyAddedTags] = useState<TS.Tag[]>([]);
+  const inputTags = useRef<TS.Tag[]>([]);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
@@ -69,6 +71,28 @@ function AddRemoveTagsDialog(props: Props) {
       setNewlyAddedTags(value);
     }
   };
+
+  const handleNewTags = (newTags: TS.Tag[]) => {
+    if (newTags === undefined) {
+      if (inputTags.current.length > 0) {
+        setNewlyAddedTags(
+          uniqueTags([...newlyAddedTags, ...inputTags.current]),
+        );
+      }
+    } else {
+      inputTags.current = newTags;
+      forceUpdate();
+    }
+  };
+  function uniqueTags(tagsArray: TS.Tag[]): TS.Tag[] {
+    return tagsArray.reduce((acc: TS.Tag[], current) => {
+      // Check if an object with the same 'id' exists in the accumulator
+      if (!acc.some((item) => item.title === current.title)) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+  }
 
   const onClose = () => {
     onCloseDialog();
@@ -82,7 +106,7 @@ function AddRemoveTagsDialog(props: Props) {
   const addTagsAction = () => {
     if (selected && selected.length > 0) {
       const paths = selected.map((entry) => entry.path);
-      addTags(paths, newlyAddedTags);
+      addTags(paths, uniqueTags([...newlyAddedTags, ...inputTags.current]));
     }
     onCloseDialog(true);
   };
@@ -90,7 +114,7 @@ function AddRemoveTagsDialog(props: Props) {
   const removeTagsAction = () => {
     if (selected && selected.length > 0) {
       const paths = selected.map((entry) => entry.path);
-      removeTags(paths, newlyAddedTags);
+      removeTags(paths, [...newlyAddedTags, ...inputTags.current]);
     }
     onCloseDialog(true);
   };
@@ -105,7 +129,9 @@ function AddRemoveTagsDialog(props: Props) {
 
   const { open } = props;
   const disabledButtons =
-    !newlyAddedTags || newlyAddedTags.length < 1 || selected.length < 1;
+    (!newlyAddedTags && !inputTags.current) ||
+    (newlyAddedTags.length < 1 && inputTags.current.length < 1) ||
+    selected.length < 1;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -137,6 +163,7 @@ function AddRemoveTagsDialog(props: Props) {
           label={t('core:fileTags')}
           tags={newlyAddedTags}
           handleChange={handleChange}
+          handleNewTags={handleNewTags}
           tagMode="remove"
           autoFocus={true}
         />
