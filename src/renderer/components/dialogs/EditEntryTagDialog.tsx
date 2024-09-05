@@ -42,6 +42,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { tagsValidation } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -92,10 +93,11 @@ function EditEntryTagDialog(props: Props) {
     // handleValidation();
   }, [title]);
 
-  function handleValidation() {
+  function handleValidation(tagTitle: string) {
     // Tags should be at least 1 character long and should not contain: spaces, \, / #
-    const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
-    if (title && tagCheck.test(title)) {
+    //const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
+    if (tagsValidation(tagTitle)) {
+      // && tagCheck.test(title)) {
       setError('tag', false);
       return true;
     }
@@ -104,7 +106,7 @@ function EditEntryTagDialog(props: Props) {
   }
 
   function onConfirm() {
-    if (handleValidation() && !haveError()) {
+    if (!haveError()) {
       const isNew =
         tag.functionality === 'geoTagging' ||
         tag.functionality === 'dateTagging'; //path.includes(props.selectedTag.title);
@@ -148,6 +150,7 @@ function EditEntryTagDialog(props: Props) {
             label={t('core:editTag')}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { target } = event;
+              handleValidation(target.value);
               setTitle(target.value);
             }}
             defaultValue={title}

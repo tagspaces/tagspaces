@@ -79,9 +79,13 @@ function TagsSelect(props: Props) {
     tagsError.current = false;
     if (!readOnlyMode) {
       if (reason === 'blur') {
-        handleNewTags(undefined);
+        if (handleNewTags) {
+          handleNewTags(undefined);
+        }
       } else {
-        handleNewTags([]);
+        if (handleNewTags) {
+          handleNewTags([]);
+        }
         if (reason === 'selectOption') {
           props.handleChange(props.tagSearchType, selectedTags, reason);
         } else if (reason === 'createOption') {
@@ -131,9 +135,11 @@ function TagsSelect(props: Props) {
 
   function handleInputChange(event: any, value: string, reason: string) {
     tagsError.current = false;
-    if (reason === 'input' && handleNewTags) {
+    if (reason === 'input') {
       const newTags = parseTagsInput(value);
-      handleNewTags(newTags);
+      if (handleNewTags) {
+        handleNewTags(newTags);
+      }
     }
   }
 
