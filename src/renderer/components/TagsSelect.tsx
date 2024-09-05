@@ -210,7 +210,7 @@ function TagsSelect(props: Props) {
               fullWidth
             />
             {tagsError.current && (
-              <FormHelperText>{t('core:tagsErrorHelp')}</FormHelperText>
+              <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
             )}
           </>
         )}
