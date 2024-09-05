@@ -284,8 +284,8 @@ test.describe('TST51 - Perspective Grid', () => {
       true,
       5000,
     );
-    await clickOn('[data-tid=openGridPerspective]');
-    await expectElementExist('[data-tid=perspectiveGridToolbar]', true, 5000);
+    await clickOn('[data-tid=openDefaultPerspective]');
+    await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
   test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron]', async () => {
