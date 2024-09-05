@@ -574,31 +574,33 @@ function EntryContainer() {
                 color="primary"
                 startIcon={closeCancelIcon}
               >
-                {fileChanged ? t('core:cancel') : t('core:closeButton')}
+                {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
               </Button>
             </Tooltip>
-            <Tooltip
-              title={
-                t('core:saveFile') +
-                ' (' +
-                (AppConfig.isMacLike ? '⌘' : 'CTRL') +
-                ' + S)'
-              }
-            >
-              <LoadingButton
-                disabled={false}
-                onClick={startSavingFile}
-                aria-label={t('core:saveFile')}
-                data-tid="fileContainerSaveFile"
-                size="small"
-                variant="outlined"
-                color="primary"
-                startIcon={desktopMode && <SaveIcon />}
-                loading={isSavingInProgress.current}
+            {fileChanged && (
+              <Tooltip
+                title={
+                  t('core:saveFile') +
+                  ' (' +
+                  (AppConfig.isMacLike ? '⌘' : 'CTRL') +
+                  ' + S)'
+                }
               >
-                {t('core:save')}
-              </LoadingButton>
-            </Tooltip>
+                <LoadingButton
+                  disabled={false}
+                  onClick={startSavingFile}
+                  aria-label={t('core:saveFile')}
+                  data-tid="fileContainerSaveFile"
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={desktopMode && <SaveIcon />}
+                  loading={isSavingInProgress.current}
+                >
+                  {t('core:save')}
+                </LoadingButton>
+              </Tooltip>
+            )}
           </ButtonGroup>
         );
       } else {
