@@ -93,7 +93,7 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
@@ -288,7 +288,7 @@ function MainToolbar(props: Props) {
         <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
-      {AppConfig.isElectron && (
+      {AppConfig.isElectron && !currentLocation.haveObjectStoreSupport() && (
         <Tooltip title={t('core:dragMode')}>
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveDragNative'}

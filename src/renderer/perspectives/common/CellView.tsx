@@ -296,27 +296,29 @@ function CellView(props: Props) {
   if (fsEntry.isFile) {
     return (
       <div>
-        {nativeDragModeEnabled && (
-          <div
-            style={{
-              display: 'flex',
-            }}
-            draggable="true"
-            onDragStart={(e) => {
-              e.preventDefault();
-              window.electronIO.ipcRenderer.startDrag(fsEntry.path);
-            }}
-          >
-            <DragHandleIcon style={{ color: theme.palette.text.primary }} />
-            <Typography
-              color="textSecondary"
-              variant="caption"
-              style={{ alignSelf: 'center' }}
+        {nativeDragModeEnabled &&
+          AppConfig.isElectron &&
+          !currentLocation.haveObjectStoreSupport() && (
+            <div
+              style={{
+                display: 'flex',
+              }}
+              draggable="true"
+              onDragStart={(e) => {
+                e.preventDefault();
+                window.electronIO.ipcRenderer.startDrag(fsEntry.path);
+              }}
             >
-              {i18n.t('dragOutsideApp')}
-            </Typography>
-          </div>
-        )}
+              <DragHandleIcon style={{ color: theme.palette.text.primary }} />
+              <Typography
+                color="textSecondary"
+                variant="caption"
+                style={{ alignSelf: 'center' }}
+              >
+                {i18n.t('dragOutsideApp')}
+              </Typography>
+            </div>
+          )}
 
         <FileSourceDnd key={key}>
           {cellContent(
