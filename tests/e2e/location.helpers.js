@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
+/* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu } from './test-utils';

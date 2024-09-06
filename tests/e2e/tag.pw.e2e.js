@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
+/* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { test, expect } from './fixtures';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {

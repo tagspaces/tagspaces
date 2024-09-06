@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2024-present The TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
+Copyright (c) 2024-present The TagSpaces GmbH. All rights reserved.
 */
 
 import React, { createContext, useEffect, useReducer, useRef } from 'react';

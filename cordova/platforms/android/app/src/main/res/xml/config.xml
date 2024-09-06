@@ -42,7 +42,7 @@
 		Offline file organizer and browser with tagging support.
     </description>
     <author email="contact@tagspaces.org" href="https://tagspaces.org">
-        TagSpaces UG (haftungsbeschraenkt)
+        TagSpaces GmbH
     </author>
     <content src="index.html" />
     <access origin="*" />

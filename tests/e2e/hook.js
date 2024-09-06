@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
+/* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
 import { uploadFile } from '../s3rver/S3DataRefresh';
