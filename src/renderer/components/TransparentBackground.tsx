@@ -25,6 +25,7 @@ function TransparentBackground(props: Props) {
   return (
     <span
       style={{
+        minHeight: 25,
         borderRadius: 5,
         background:
           'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==")',

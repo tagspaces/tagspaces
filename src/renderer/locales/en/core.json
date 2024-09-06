@@ -856,5 +856,7 @@
   "dragMode": "Enable dragging files outside of the application",
   "dragOutsideApp": "Drag outside the app",
   "exitEditMode": "Exit editing",
+  "cloudPath": "Path in the cloud",
+  "calculate": "Calculate",
   "-": "-"
 }

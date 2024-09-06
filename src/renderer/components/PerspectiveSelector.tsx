@@ -83,6 +83,7 @@ function PerspectiveSelector(props: Props) {
     <TextField
       data-tid={testId}
       defaultValue={defaultValue}
+      variant="filled"
       onChange={onChange}
       select
       label={label}

@@ -200,7 +200,7 @@ function TagsSelect(props: Props) {
           <>
             <TextField
               {...params}
-              // variant="filled"
+              variant="filled"
               label={label}
               placeholder={placeholderText}
               margin="normal"
