@@ -182,11 +182,12 @@ function CreateFile(props: Props) {
             error={inputError}
             margin="dense"
             name="entryName"
+            variant="filled"
             label={t('core:newFileName')}
             onChange={handleInputChange}
             onFocus={onInputFocus}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.keyCode === 13) {
+              if (event.key === 'Enter' || event.code === 'Enter') {
                 event.preventDefault();
                 event.stopPropagation();
                 createMarkdownFile();

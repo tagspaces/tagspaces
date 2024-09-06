@@ -18,7 +18,9 @@
 
 import React from 'react';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
+import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import Tooltip from '-/components/Tooltip';
+import { opacity } from 'html2canvas/dist/types/css/property-descriptors/opacity';
 
 interface Props {
   tooltip?: string;
@@ -28,7 +30,7 @@ function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip title={tooltip}>
-      <InfoTooltipIcon />
+      <NotListedLocationIcon style={{ opacity: '0.7' }} />
     </Tooltip>
   );
 }
