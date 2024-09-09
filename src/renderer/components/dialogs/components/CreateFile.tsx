@@ -121,12 +121,11 @@ function CreateFile(props: Props) {
     <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
         <TextField
-          autoFocus
           error={inputError}
           margin="dense"
           name="entryName"
           variant="filled"
-          label={t('core:newFileName')}
+          label={t('core:fileName')}
           onChange={handleInputChange}
           onFocus={onInputFocus}
           onKeyDown={(event) => {
@@ -148,12 +147,14 @@ function CreateFile(props: Props) {
       {fileType ? (
         <FormControl fullWidth={true}>
           <TextField
+            autoFocus
             id="fileContentID"
-            label="Content"
+            label={t('core:fileContent')}
             multiline
             fullWidth
-            placeholder={fileContent}
-            maxRows={5}
+            variant="filled"
+            // value={fileContent}
+            rows={5}
             margin="dense"
             onChange={handleContentChange}
           />

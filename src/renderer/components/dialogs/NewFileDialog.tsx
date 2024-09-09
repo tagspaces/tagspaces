@@ -124,7 +124,7 @@ function NewFileDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:create') + ' ' + getFileType()}
+        {getFileType()}
         <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -152,7 +152,6 @@ function NewFileDialog(props: Props) {
         >
           <Button
             data-tid="backTID"
-            title={t('core:cancel')}
             onClick={() => {
               onClose();
             }}
@@ -162,13 +161,13 @@ function NewFileDialog(props: Props) {
           </Button>
           <Button
             data-tid="createTID"
-            title={t('core:create')}
+            variant="contained"
             onClick={() => {
               createFile(fileType, targetDirectoryPath);
             }}
             color="primary"
           >
-            {t('core:save')}
+            {t('core:ok')}
           </Button>
         </DialogActions>
       )}

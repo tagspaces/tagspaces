@@ -17,6 +17,7 @@
  */
 
 import React, { useState, useEffect, useRef, useReducer } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Dialog,
   DialogActions,
@@ -29,6 +30,8 @@ import {
   IconButton,
   FormLabel,
   Box,
+  InputAdornment,
+  inputBaseClasses,
 } from '@mui/material';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
@@ -39,6 +42,12 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
+
+const FolderColorTextField = styled(TextField)(({ theme }) => ({
+  [`& .${inputBaseClasses.root}`]: {
+    height: 100,
+  },
+}));
 
 interface Props {
   open: boolean;
@@ -74,33 +83,33 @@ function CreateDirectoryDialog(props: Props) {
 
   const defaultBackgrounds = [
     'transparent',
-    '#00000044',
+    // '#00000044',
     '#ac725e44',
     '#f83a2244',
-    '#ff753744',
+    // '#ff753744',
     '#ffad4644',
     '#42d69244',
-    '#00800044',
+    // '#00800044',
     '#7bd14844',
     '#fad16544',
     '#92e1c044',
     '#9fe1e744',
     '#9fc6e744',
-    '#4986e744',
-    '#9a9cff44',
-    '#c2c2c244',
-    '#cca6ac44',
-    '#f691b244',
-    '#cd74e644',
-    '#a47ae244',
-    '#845EC260',
-    '#D65DB160',
-    '#FF6F9160',
-    '#FF967160',
-    '#FFC75F60',
-    '#F9F87160',
-    '#008E9B60',
-    '#008F7A60',
+    // '#4986e744',
+    // '#9a9cff44',
+    // '#c2c2c244',
+    // '#cca6ac44',
+    // '#f691b244',
+    // '#cd74e644',
+    // '#a47ae244',
+    // '#845EC260',
+    // '#D65DB160',
+    // '#FF6F9160',
+    // '#FF967160',
+    // '#FFC75F60',
+    // '#F9F87160',
+    // '#008E9B60',
+    // '#008F7A60',
   ];
 
   function handleValidation() {
@@ -186,10 +195,11 @@ function CreateDirectoryDialog(props: Props) {
           <TextField
             fullWidth
             error={inputError}
+            variant="filled"
             margin="dense"
             autoFocus
             name="name"
-            label={t('core:createNewDirectoryTitleName')}
+            label={t('core:folderName')}
             onChange={(event) => {
               const { target } = event;
               setName(target.value);
@@ -198,35 +208,51 @@ function CreateDirectoryDialog(props: Props) {
             data-tid="directoryName"
             id="directoryName"
           />
-          <FormHelperText>{t('core:directoryNameHelp')}</FormHelperText>
+          {inputError && (
+            <FormHelperText>{t('core:directoryNameHelp')}</FormHelperText>
+          )}
         </FormControl>
         <FormControl>
-          <FormLabel>{t('backgroundColor')}</FormLabel>
-          <Box>
-            {defaultBackgrounds.map((background, cnt) => (
-              <>
-                <IconButton
-                  key={cnt}
-                  data-tid={'bgTID' + cnt}
-                  aria-label="changeFolderBackground"
-                  onClick={() => {
-                    backgroundColor.current = background;
-                    forceUpdate();
-                  }}
-                  style={{
-                    backgroundColor: background,
-                    backgroundImage: background,
-                    margin: 5,
-                    ...(backgroundColor.current === background && {
-                      border: '0.5rem outset ' + background,
-                    }),
-                  }}
-                >
-                  <SetBackgroundIcon />
-                </IconButton>
-              </>
-            ))}
-          </Box>
+          <FolderColorTextField
+            data-tid="folderColorTID"
+            margin="dense"
+            variant="filled"
+            size="medium"
+            label={t('backgroundColor')}
+            fullWidth={true}
+            value={' '}
+            style={{ height: 100 }}
+            InputProps={{
+              readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  {defaultBackgrounds.map((background, cnt) => (
+                    <>
+                      <IconButton
+                        key={cnt}
+                        data-tid={'bgTID' + cnt}
+                        aria-label="changeFolderBackground"
+                        onClick={() => {
+                          backgroundColor.current = background;
+                          forceUpdate();
+                        }}
+                        style={{
+                          backgroundColor: background,
+                          backgroundImage: background,
+                          margin: 5,
+                          ...(backgroundColor.current === background && {
+                            border: '0.5rem outset ' + background,
+                          }),
+                        }}
+                      >
+                        <SetBackgroundIcon />
+                      </IconButton>
+                    </>
+                  ))}
+                </InputAdornment>
+              ),
+            }}
+          />
         </FormControl>
       </DialogContent>
       <DialogActions>
