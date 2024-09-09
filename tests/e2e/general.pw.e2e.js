@@ -219,14 +219,14 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
-    //if (global.isWin) {
-    // todo in github thumbnails not generated for videos on MacOS
-    //todo thumbnails not generated for ogv
-    const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video
-      .filter((file) => file !== 'ogv')
-      .map((imgExt) => 'sample.' + imgExt + '.jpg');
-    await expectMetaFilesExist(metaFiles);
-    //}
+    if (global.isWin) {
+      // todo in github thumbnails not generated for videos on MacOS
+      //todo thumbnails not generated for ogv
+      const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video
+        .filter((file) => file !== 'ogv')
+        .map((imgExt) => 'sample.' + imgExt + '.jpg');
+      await expectMetaFilesExist(metaFiles);
+    }
   });
 
   test('TST0516 - Generate thumbnail from PDF [electron]', async () => {
