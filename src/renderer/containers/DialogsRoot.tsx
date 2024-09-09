@@ -23,7 +23,6 @@ import { CreateEditLocationDialogContextProvider } from '-/components/dialogs/ho
 import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks/MoveOrCopyFilesDialogContextProvider';
 import { CreateDirectoryDialogContextProvider } from '-/components/dialogs/hooks/CreateDirectoryDialogContextProvider';
 import { ProgressDialogContextProvider } from '-/components/dialogs/hooks/ProgressDialogContextProvider';
-import { NewEntryDialogContextProvider } from '-/components/dialogs/hooks/NewEntryDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
@@ -50,31 +49,29 @@ function DialogsRoot({ children }: DialogsRootProps) {
             <MoveOrCopyFilesDialogContextProvider>
               <CreateDirectoryDialogContextProvider>
                 <ProgressDialogContextProvider>
-                  <NewEntryDialogContextProvider>
-                    <NewFileDialogContextProvider>
-                      <NewAudioDialogContextProvider>
-                        <LicenseDialogContextProvider>
-                          <ThirdPartyLibsDialogContextProvider>
-                            <AboutDialogContextProvider>
-                              <OnboardingDialogContextProvider>
-                                <KeyboardDialogContextProvider>
-                                  <LinkDialogContextProvider>
-                                    <ProTeaserDialogContextProvider>
-                                      <SettingsDialogContextProvider>
-                                        <ResolveConflictContextProvider>
-                                          {children}
-                                        </ResolveConflictContextProvider>
-                                      </SettingsDialogContextProvider>
-                                    </ProTeaserDialogContextProvider>
-                                  </LinkDialogContextProvider>
-                                </KeyboardDialogContextProvider>
-                              </OnboardingDialogContextProvider>
-                            </AboutDialogContextProvider>
-                          </ThirdPartyLibsDialogContextProvider>
-                        </LicenseDialogContextProvider>
-                      </NewAudioDialogContextProvider>
-                    </NewFileDialogContextProvider>
-                  </NewEntryDialogContextProvider>
+                  <NewFileDialogContextProvider>
+                    <NewAudioDialogContextProvider>
+                      <LicenseDialogContextProvider>
+                        <ThirdPartyLibsDialogContextProvider>
+                          <AboutDialogContextProvider>
+                            <OnboardingDialogContextProvider>
+                              <KeyboardDialogContextProvider>
+                                <LinkDialogContextProvider>
+                                  <ProTeaserDialogContextProvider>
+                                    <SettingsDialogContextProvider>
+                                      <ResolveConflictContextProvider>
+                                        {children}
+                                      </ResolveConflictContextProvider>
+                                    </SettingsDialogContextProvider>
+                                  </ProTeaserDialogContextProvider>
+                                </LinkDialogContextProvider>
+                              </KeyboardDialogContextProvider>
+                            </OnboardingDialogContextProvider>
+                          </AboutDialogContextProvider>
+                        </ThirdPartyLibsDialogContextProvider>
+                      </LicenseDialogContextProvider>
+                    </NewAudioDialogContextProvider>
+                  </NewFileDialogContextProvider>
                 </ProgressDialogContextProvider>
               </CreateDirectoryDialogContextProvider>
             </MoveOrCopyFilesDialogContextProvider>

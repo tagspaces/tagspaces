@@ -16,17 +16,12 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import {
-  formatDateTime4Tag,
-  locationType,
-} from '@tagspaces/tagspaces-common/misc';
-import AppConfig from '-/AppConfig';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -34,9 +29,6 @@ import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'CreateFile';
 
@@ -52,34 +44,31 @@ const StyledGrid = styled(Grid)(() => ({
 }));
 
 interface Props {
-  //open: boolean;
-  onClose: () => void;
+  fileName: string;
+  fileContent: string;
+  handleFileNameChange: (fileName: string) => void;
+  handleFileContentChange: (fileContent: string) => void;
+  createFile: (fileType: 'txt' | 'md' | 'html') => void;
   tidPrefix?: string;
+  fileType?: 'txt' | 'md' | 'html';
 }
 
 function CreateFile(props: Props) {
-  const { onClose, tidPrefix } = props;
+  const {
+    tidPrefix,
+    fileType,
+    createFile,
+    fileName,
+    fileContent,
+    handleFileNameChange,
+    handleFileContentChange,
+  } = props;
   const { t } = useTranslation();
-
-  //const dispatch: AppDispatch = useDispatch();
-  const { currentLocation, openLocation, getFirstRWLocation } =
-    useCurrentLocationContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
 
-  const firstRWLocation = getFirstRWLocation();
-
-  const fileName = useRef<string>(
-    'note' +
-      AppConfig.beginTagContainer +
-      formatDateTime4Tag(new Date(), true) +
-      AppConfig.endTagContainer,
-  );
   const [inputError, setInputError] = useState<boolean>(false);
 
-  const { createFileAdvanced } = useOpenedEntryContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const fileContent = '';
 
   const noSuitableLocation = !targetDirectoryPath;
 
@@ -90,63 +79,15 @@ function CreateFile(props: Props) {
     return tid;
   }
 
-  function loadLocation() {
-    const isCloudLocation =
-      currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
-    // no currentDirectoryPath in root cloud location
-    if (!isCloudLocation && !currentDirectoryPath && firstRWLocation) {
-      openLocation(firstRWLocation);
-    }
-  }
-
-  function createRichTextFile() {
-    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
-      loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'html',
-      );
-      onClose();
-    }
-  }
-
-  function createTextFile() {
-    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
-      loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'txt',
-      );
-      onClose();
-    }
-  }
-
-  function createMarkdownFile() {
-    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
-      loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'md',
-      );
-      onClose();
-    }
-  }
-
   const onInputFocus = (event) => {
-    if (fileName.current) {
+    if (fileName) {
       event.preventDefault();
       const { target } = event;
       target.focus();
       /*const indexOfBracket = fileName.current.indexOf(
         AppConfig.beginTagContainer
       );*/
-      let endRange = fileName.current.length;
+      let endRange = fileName.length;
       // if (indexOfBracket > 0) {
       //   endRange = indexOfBracket;
       // }
@@ -155,12 +96,15 @@ function CreateFile(props: Props) {
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    fileName.current = event.target.value;
-    handleValidation();
+    handleFileNameChange(event.target.value);
+    handleValidation(event.target.value);
+  };
+  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileContentChange(event.target.value);
   };
 
-  const handleValidation = () => {
-    let noValid = fileNameValidation(fileName.current);
+  const handleValidation = (file) => {
+    let noValid = fileNameValidation(file);
 
     if (noValid) {
       if (inputError !== noValid) {
@@ -175,87 +119,100 @@ function CreateFile(props: Props) {
 
   return (
     <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
-      <Grid item xs={12}>
-        <FormControl fullWidth={true} error={inputError}>
-          <TextField
-            autoFocus
-            error={inputError}
-            margin="dense"
-            name="entryName"
-            variant="filled"
-            label={t('core:newFileName')}
-            onChange={handleInputChange}
-            onFocus={onInputFocus}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.code === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                createMarkdownFile();
-              }
-            }}
-            defaultValue={fileName.current}
-            disabled={noSuitableLocation}
-            fullWidth={true}
-            data-tid={tid('newEntryDialogInputTID')}
-          />
-          {inputError && (
-            <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
-          )}
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <ButtonGroup
-          style={{
-            textAlign: 'center',
-            width: '100%',
+      <FormControl fullWidth={true} error={inputError}>
+        <TextField
+          autoFocus
+          error={inputError}
+          margin="dense"
+          name="entryName"
+          variant="filled"
+          label={t('core:newFileName')}
+          onChange={handleInputChange}
+          onFocus={onInputFocus}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.code === 'Enter') {
+              event.preventDefault();
+              event.stopPropagation();
+              createFile(fileType);
+            }
           }}
-        >
-          <Button
-            // variant="contained"
-            onClick={createMarkdownFile}
-            className={classes.createButton}
-            data-tid={tid('createMarkdownButton')}
-            disabled={noSuitableLocation}
+          defaultValue={fileName}
+          disabled={noSuitableLocation}
+          fullWidth={true}
+          data-tid={tid('newEntryDialogInputTID')}
+        />
+        {inputError && (
+          <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
+        )}
+      </FormControl>
+      {fileType ? (
+        <FormControl fullWidth={true}>
+          <TextField
+            id="fileContentID"
+            label="Content"
+            multiline
+            fullWidth
+            placeholder={fileContent}
+            maxRows={5}
+            margin="dense"
+            onChange={handleContentChange}
+          />
+        </FormControl>
+      ) : (
+        <Grid item xs={12}>
+          <ButtonGroup
+            style={{
+              textAlign: 'center',
+              width: '100%',
+            }}
           >
-            <Tooltip title={t('createMarkdownTitle')}>
-              <Typography
-                variant="button"
-                style={{ fontWeight: 'bold' }}
-                display="block"
-                gutterBottom
-              >
-                {t('createMarkdown')}
-              </Typography>
-            </Tooltip>
-          </Button>
-          <Button
-            // variant="contained"
-            onClick={createRichTextFile}
-            className={classes.createButton}
-            data-tid={tid('createRichTextFileButton')}
-            disabled={noSuitableLocation}
-          >
-            <Tooltip title={t('createNoteTitle')}>
-              <Typography variant="button" display="block" gutterBottom>
-                {t('createRichTextFile')}
-              </Typography>
-            </Tooltip>
-          </Button>
-          <Button
-            // variant="contained"
-            onClick={createTextFile}
-            className={classes.createButton}
-            data-tid={tid('createTextFileButton')}
-            disabled={noSuitableLocation}
-          >
-            <Tooltip title={t('createTextFileTitle')}>
-              <Typography variant="button" display="block" gutterBottom>
-                {t('createTextFile')}
-              </Typography>
-            </Tooltip>
-          </Button>
-        </ButtonGroup>
-      </Grid>
+            <Button
+              // variant="contained"
+              onClick={() => createFile('md')}
+              className={classes.createButton}
+              data-tid={tid('createMarkdownButton')}
+              disabled={noSuitableLocation}
+            >
+              <Tooltip title={t('createMarkdownTitle')}>
+                <Typography
+                  variant="button"
+                  style={{ fontWeight: 'bold' }}
+                  display="block"
+                  gutterBottom
+                >
+                  {t('createMarkdown')}
+                </Typography>
+              </Tooltip>
+            </Button>
+            <Button
+              // variant="contained"
+              onClick={() => createFile('html')}
+              className={classes.createButton}
+              data-tid={tid('createRichTextFileButton')}
+              disabled={noSuitableLocation}
+            >
+              <Tooltip title={t('createNoteTitle')}>
+                <Typography variant="button" display="block" gutterBottom>
+                  {t('createRichTextFile')}
+                </Typography>
+              </Tooltip>
+            </Button>
+            <Button
+              // variant="contained"
+              onClick={() => createFile('txt')}
+              className={classes.createButton}
+              data-tid={tid('createTextFileButton')}
+              disabled={noSuitableLocation}
+            >
+              <Tooltip title={t('createTextFileTitle')}>
+                <Typography variant="button" display="block" gutterBottom>
+                  {t('createTextFile')}
+                </Typography>
+              </Tooltip>
+            </Button>
+          </ButtonGroup>
+        </Grid>
+      )}
     </StyledGrid>
   );
 }

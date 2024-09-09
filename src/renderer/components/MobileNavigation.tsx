@@ -63,7 +63,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AppDispatch } from '../reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as SettingsActions } from '-/reducers/settings';
 import StoredSearches from '-/components/StoredSearches';
@@ -75,7 +75,6 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { createNewInstance } from '-/services/utils-io';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
-import { useNewEntryDialogContext } from '-/components/dialogs/hooks/useNewEntryDialogContext';
 import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
 import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
 import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
@@ -110,7 +109,7 @@ function MobileNavigation(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const { setSelectedLocation } = useCurrentLocationContext();
-  const { openNewEntryDialog } = useNewEntryDialogContext();
+  //const { openNewEntryDialog } = useNewEntryDialogContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
@@ -245,7 +244,7 @@ function MobileNavigation(props: Props) {
                       key="createNewTextFileTID"
                       ata-tid="createNewTextFileTID"
                       onClick={() => {
-                        openNewFileDialog();
+                        openNewFileDialog('txt');
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();
@@ -261,7 +260,7 @@ function MobileNavigation(props: Props) {
                       key="createNewMarkdownFileTID"
                       ata-tid="createNewMarkdownFileTID"
                       onClick={() => {
-                        openNewFileDialog();
+                        openNewFileDialog('md');
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();
@@ -278,7 +277,7 @@ function MobileNavigation(props: Props) {
                       key="createHTMLTextFileTID"
                       data-tid="createHTMLTextFileTID"
                       onClick={() => {
-                        openNewFileDialog();
+                        openNewFileDialog('html');
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();

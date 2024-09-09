@@ -850,7 +850,7 @@ export const OpenedEntryContextProvider = ({
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: 'md' | 'txt' | 'html',
+    fileType: 'md' | 'txt' | 'html' = 'md',
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;

@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces GmbH
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React from 'react';
 import Typography from '@mui/material/Typography';
@@ -97,3 +98,4 @@ function NewEntryDialog(props: Props) {
 }
 
 export default NewEntryDialog;
+*/

@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces GmbH
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
@@ -34,7 +35,7 @@ export type NewEntryDialogContextProviderProps = {
 };
 
 const NewEntryDialog = React.lazy(
-  () => import(/* webpackChunkName: "NewEntryDialog" */ '../NewEntryDialog'),
+  () => import(/!* webpackChunkName: "NewEntryDialog" *!/ '../NewEntryDialog'),
 );
 
 export const NewEntryDialogContextProvider = ({
@@ -83,3 +84,4 @@ export const NewEntryDialogContextProvider = ({
     </NewEntryDialogContext.Provider>
   );
 };
+*/
