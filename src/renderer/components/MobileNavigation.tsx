@@ -44,6 +44,7 @@ import {
   HTMLFileIcon,
   LinkFileIcon,
   AccountIcon,
+  AddExistingFileIcon,
 } from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import Popover from '@mui/material/Popover';
@@ -257,8 +258,8 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createTextFile')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewTextFileTID"
-                      ata-tid="createNewTextFileTID"
+                      key="createNewMarkdownFileTID"
+                      ata-tid="createNewMarkdownFileTID"
                       onClick={() => {
                         openNewFileDialog();
                         setOpenCreateMenu(false);
@@ -329,6 +330,17 @@ function MobileNavigation(props: Props) {
                           </>
                         }
                       />
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem
+                      key="addUploadFilesTID"
+                      data-tid="addUploadFilesTID"
+                      onClick={() => {}}
+                    >
+                      <ListItemIcon>
+                        <AddExistingFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:addFiles')} />
                     </MenuItem>
                     <Divider />
                     <MenuItem
