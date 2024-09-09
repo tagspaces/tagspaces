@@ -536,7 +536,7 @@ export async function selectFilesByID(arrEntryIds = []) {
 export async function selectRowFiles(arrIndex = []) {
   await setGridOptions('grid', false);
   const filesList = await global.client.$$(
-    '[data-tid=perspectiveGridFileTable] > span',
+    '[data-tid=perspectiveGridFileTable] > div > span',
   );
   const arrElements = [];
   if (filesList.length > 0) {
