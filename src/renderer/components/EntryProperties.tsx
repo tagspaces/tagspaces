@@ -25,10 +25,7 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { styled, useTheme } from '@mui/material/styles';
-import {
-  getMetaFileLocationForFile,
-  extractTitle,
-} from '@tagspaces/tagspaces-common/paths';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
   Grid,
@@ -43,18 +40,11 @@ import {
 } from '@mui/material';
 import Tooltip from '-/components/Tooltip';
 import Stack from '@mui/material/Stack';
-import {
-  LinkIcon,
-  LocalLocationIcon,
-  CloudLocationIcon,
-  IDIcon,
-} from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import ColorPaletteIcon from '@mui/icons-material/ColorLens';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   AttributionControl,
   MapContainer,

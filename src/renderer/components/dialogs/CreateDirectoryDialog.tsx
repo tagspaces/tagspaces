@@ -16,15 +16,21 @@
  *
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import Dialog from '@mui/material/Dialog';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
+import {
+  Dialog,
+  DialogActions,
+  FormControl,
+  DialogContent,
+  TextField,
+  DialogTitle,
+  Button,
+  FormHelperText,
+  IconButton,
+  FormLabel,
+  Box,
+} from '@mui/material';
+import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +38,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
@@ -42,15 +49,19 @@ interface Props {
 
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
-  const { createDirectory } = useIOActionsContext();
+  const { createDirectory, setBackgroundColorChange } = useIOActionsContext();
   const { currentLocation } = useCurrentLocationContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { currentDirectoryPath, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
 
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
+  const backgroundColor = useRef<string>('transparent');
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
+
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath } = props;
 
   useEffect(() => {
@@ -60,6 +71,37 @@ function CreateDirectoryDialog(props: Props) {
     }
     handleValidation();
   });
+
+  const defaultBackgrounds = [
+    'transparent',
+    '#00000044',
+    '#ac725e44',
+    '#f83a2244',
+    '#ff753744',
+    '#ffad4644',
+    '#42d69244',
+    '#00800044',
+    '#7bd14844',
+    '#fad16544',
+    '#92e1c044',
+    '#9fe1e744',
+    '#9fc6e744',
+    '#4986e744',
+    '#9a9cff44',
+    '#c2c2c244',
+    '#cca6ac44',
+    '#f691b244',
+    '#cd74e644',
+    '#a47ae244',
+    '#845EC260',
+    '#D65DB160',
+    '#FF6F9160',
+    '#FF967160',
+    '#FFC75F60',
+    '#F9F87160',
+    '#008E9B60',
+    '#008F7A60',
+  ];
 
   function handleValidation() {
     // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
@@ -87,6 +129,12 @@ function CreateDirectoryDialog(props: Props) {
           createDirectory(dirPath).then(() => {
             if (props.callback) {
               props.callback(dirPath);
+            }
+            if (backgroundColor.current !== 'transparent') {
+              getAllPropertiesPromise(dirPath).then(
+                (fsEntry: TS.FileSystemEntry) =>
+                  setBackgroundColorChange(fsEntry, backgroundColor.current),
+              );
             }
           });
         } else {
@@ -151,6 +199,34 @@ function CreateDirectoryDialog(props: Props) {
             id="directoryName"
           />
           <FormHelperText>{t('core:directoryNameHelp')}</FormHelperText>
+        </FormControl>
+        <FormControl>
+          <FormLabel>{t('backgroundColor')}</FormLabel>
+          <Box>
+            {defaultBackgrounds.map((background, cnt) => (
+              <>
+                <IconButton
+                  key={cnt}
+                  data-tid={'bgTID' + cnt}
+                  aria-label="changeFolderBackground"
+                  onClick={() => {
+                    backgroundColor.current = background;
+                    forceUpdate();
+                  }}
+                  style={{
+                    backgroundColor: background,
+                    backgroundImage: background,
+                    margin: 5,
+                    ...(backgroundColor.current === background && {
+                      border: '0.5rem outset ' + background,
+                    }),
+                  }}
+                >
+                  <SetBackgroundIcon />
+                </IconButton>
+              </>
+            ))}
+          </Box>
         </FormControl>
       </DialogContent>
       <DialogActions>
