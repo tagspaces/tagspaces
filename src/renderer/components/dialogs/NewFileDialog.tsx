@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useReducer, useRef } from 'react';
 import {
   locationType,
   formatDateTime4Tag,
@@ -31,7 +31,6 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CreateFile from '-/components/dialogs/components/CreateFile';
 import TargetPath from '-/components/dialogs/components/TargetPath';
-import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -61,15 +60,17 @@ function NewFileDialog(props: Props) {
 
   const firstRWLocation = getFirstRWLocation();
 
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileName = useRef<string>(
-    'note' +
+    (fileType === 'url' ? 'link' : 'note') +
       AppConfig.beginTagContainer +
       formatDateTime4Tag(new Date(), true) +
       AppConfig.endTagContainer,
   );
 
+  const haveError = useRef<boolean>(false);
   const fileContent = useRef<string>(
     fileType === 'txt' || fileType === 'md'
       ? 'Created in ' +
@@ -148,6 +149,10 @@ function NewFileDialog(props: Props) {
             handleFileContentChange={(content) =>
               (fileContent.current = content)
             }
+            haveError={(error) => {
+              haveError.current = error;
+              forceUpdate();
+            }}
             fileName={fileName.current}
           />
         ) : (
@@ -158,6 +163,10 @@ function NewFileDialog(props: Props) {
             handleFileContentChange={(content) =>
               (fileContent.current = content)
             }
+            haveError={(error) => {
+              haveError.current = error;
+              forceUpdate();
+            }}
             fileName={fileName.current}
           />
         )}
@@ -183,6 +192,7 @@ function NewFileDialog(props: Props) {
               createFile(fileType, targetDirectoryPath);
             }}
             color="primary"
+            disabled={haveError.current}
           >
             {t('core:ok')}
           </Button>

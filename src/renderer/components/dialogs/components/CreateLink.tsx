@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -45,6 +45,7 @@ interface Props {
   handleFileNameChange: (fileName: string) => void;
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
+  haveError: (error: boolean) => void;
   tidPrefix?: string;
 }
 
@@ -55,6 +56,7 @@ function CreateLink(props: Props) {
     fileName,
     handleFileNameChange,
     handleFileContentChange,
+    haveError,
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
@@ -65,6 +67,10 @@ function CreateLink(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const noSuitableLocation = !targetDirectoryPath;
+
+  useEffect(() => {
+    haveError(inputError || urlError);
+  }, [inputError, urlError]);
 
   function tid(tid) {
     if (tidPrefix) {

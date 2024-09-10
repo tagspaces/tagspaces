@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -49,6 +49,7 @@ interface Props {
   handleFileNameChange: (fileName: string) => void;
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
+  haveError: (error: boolean) => void;
   tidPrefix?: string;
   fileType?: TS.FileType;
 }
@@ -61,6 +62,7 @@ function CreateFile(props: Props) {
     fileName,
     handleFileNameChange,
     handleFileContentChange,
+    haveError,
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
@@ -70,6 +72,10 @@ function CreateFile(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const noSuitableLocation = !targetDirectoryPath;
+
+  useEffect(() => {
+    haveError(inputError);
+  }, [inputError]);
 
   function tid(tid) {
     if (tidPrefix) {
