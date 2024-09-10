@@ -568,6 +568,18 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
 // }
 
 /**
+ * @param url
+ * return true if valid; false otherwise
+ */
+export function urlValidation(url: string): boolean {
+  if (url.length > 0) {
+    const urlRegex = /^(https?|ftp|ts):\/\/([^\s/$.?#].[^\s]*|\?[^ ]*)$/i;
+    return urlRegex.test(url);
+  }
+  return false;
+}
+
+/**
  * forbidden characters # \ / * ? " < > | & %
  * @param tagTitle
  * return true if valid; false otherwise
@@ -586,10 +598,11 @@ export function tagsValidation(tagTitle: string): boolean {
 /**
  * forbidden characters # \ / * ? " < > |
  * @param dirName
+ * return notValid
  */
 export function dirNameValidation(dirName): boolean {
   if (dirName.length > 0) {
-    const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
+    const rg1 = /^[^#\\/*?"<>|&%]+$/; // forbidden characters # \ / * ? " < > | & %
     return !rg1.test(dirName);
   }
   return true;

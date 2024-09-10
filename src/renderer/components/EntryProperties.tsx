@@ -25,10 +25,7 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { styled, useTheme } from '@mui/material/styles';
-import {
-  getMetaFileLocationForFile,
-  extractTitle,
-} from '@tagspaces/tagspaces-common/paths';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
   Grid,
@@ -43,18 +40,11 @@ import {
 } from '@mui/material';
 import Tooltip from '-/components/Tooltip';
 import Stack from '@mui/material/Stack';
-import {
-  LinkIcon,
-  LocalLocationIcon,
-  CloudLocationIcon,
-  IDIcon,
-} from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import ColorPaletteIcon from '@mui/icons-material/ColorLens';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   AttributionControl,
   MapContainer,
@@ -580,6 +570,7 @@ function EntryProperties(props: Props) {
             label={
               openedEntry.isFile ? t('core:fileName') : t('core:folderName')
             }
+            variant="filled"
             InputProps={{
               readOnly: editName === undefined,
               endAdornment: (
@@ -591,6 +582,7 @@ function EntryProperties(props: Props) {
                           <Button
                             data-tid="cancelRenameEntryTID"
                             onClick={deactivateEditNameField}
+                            size="small"
                           >
                             {t('core:cancel')}
                           </Button>
@@ -598,6 +590,7 @@ function EntryProperties(props: Props) {
                             data-tid="confirmRenameEntryTID"
                             color="primary"
                             onClick={renameEntry}
+                            size="small"
                             disabled={disableConfirmButton.current}
                           >
                             {t('core:confirmSaveButton')}
@@ -607,6 +600,7 @@ function EntryProperties(props: Props) {
                         <Button
                           data-tid="startRenameEntryTID"
                           color="primary"
+                          size="small"
                           onClick={activateEditNameField}
                         >
                           {t('core:rename')}
@@ -674,8 +668,8 @@ function EntryProperties(props: Props) {
                 width: '99%',
                 margin: 2,
                 marginTop: 8,
-                borderRadius: 5,
-                border: '1px solid rgba(0, 0, 0, 0.38)',
+                borderRadius: 3,
+                // border: '1px solid rgba(0, 0, 0, 0.38)',
               }}
               doubleClickZoom={true}
               keyboard={false}
@@ -763,9 +757,10 @@ function EntryProperties(props: Props) {
         )}
 
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               margin="dense"
+              variant="filled"
               fullWidth={true}
               size={desktopMode ? 'small' : 'medium'}
               value={ldtm}
@@ -775,7 +770,9 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+        </Grid>
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={12}>
             <Tooltip
               title={
                 !location.haveObjectStoreSupport() &&
@@ -794,20 +791,24 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 fullWidth={true}
                 value={fileSize()}
+                variant="filled"
                 size={desktopMode ? 'small' : 'medium'}
                 label={t('core:fileSize')}
                 InputProps={{
                   readOnly: true,
                   ...(!openedEntry.isFile && {
                     endAdornment: (
-                      <RefreshIcon
+                      <Button
+                        size="small"
                         onClick={() =>
                           getOpenedDirProps().then((props) => {
                             dirProps.current = props;
                             forceUpdate();
                           })
                         }
-                      />
+                      >
+                        {t('core:calculate')}
+                      </Button>
                     ),
                   }),
                 }}
@@ -821,27 +822,28 @@ function EntryProperties(props: Props) {
             <TextField
               margin="dense"
               name="path"
+              variant="filled"
               title={openedEntry.url || openedEntry.path}
               fullWidth={true}
-              label={t('core:filePath')}
+              label={isCloudLocation ? t('cloudPath') : t('core:filePath')}
               size={desktopMode ? 'small' : 'medium'}
               data-tid="filePathProperties"
               value={openedEntry.path || ''}
               InputProps={{
                 readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {isCloudLocation ? (
-                      <CloudLocationIcon
-                        style={{ color: theme.palette.text.secondary }}
-                      />
-                    ) : (
-                      <LocalLocationIcon
-                        style={{ color: theme.palette.text.secondary }}
-                      />
-                    )}
-                  </InputAdornment>
-                ),
+                // startAdornment: (
+                //   <InputAdornment position="start">
+                //     {isCloudLocation ? (
+                //       <CloudLocationIcon
+                //         style={{ color: theme.palette.text.secondary }}
+                //       />
+                //     ) : (
+                //       <LocalLocationIcon
+                //         style={{ color: theme.palette.text.secondary }}
+                //       />
+                //     )}
+                //   </InputAdornment>
+                // ),
                 endAdornment: (
                   <InputAdornment position="end">
                     {!readOnlyMode && !isEditMode && editName === undefined && (
@@ -849,6 +851,7 @@ function EntryProperties(props: Props) {
                         data-tid="moveCopyEntryTID"
                         color="primary"
                         onClick={toggleMoveCopyFilesDialog}
+                        size="small"
                       >
                         {t('core:move')}
                       </Button>
@@ -864,37 +867,33 @@ function EntryProperties(props: Props) {
           container
           item
           xs={12}
-          spacing={1}
           alignItems="center"
           justifyContent="center"
         >
-          <Grid item xs={showLinkForDownloading ? 8 : 12}>
+          <Grid item xs={12}>
             <TextField
               data-tid="sharingLinkTID"
               margin="dense"
+              variant="filled"
               name="sharinglink"
               size={desktopMode ? 'small' : 'medium'}
-              label={
-                <>
-                  {t('core:sharingLink')}
-                  <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
-                </>
-              }
+              label={<>{t('core:sharingLink')}</>}
               fullWidth={true}
               value={sharingLink}
               inputRef={sharingLinkRef}
               InputProps={{
                 readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LinkIcon style={{ color: theme.palette.text.secondary }} />
-                  </InputAdornment>
-                ),
+                // startAdornment: (
+                //   <InputAdornment position="start">
+                //     <LinkIcon style={{ color: theme.palette.text.secondary }} />
+                //   </InputAdornment>
+                // ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <Tooltip title={t('core:copyLinkToClipboard')}>
                       <Button
                         data-tid="copyLinkToClipboardTID"
+                        size="small"
                         color="primary"
                         onClick={() => {
                           const entryTitle = extractTitle(
@@ -914,49 +913,40 @@ function EntryProperties(props: Props) {
                         {t('core:copy')}
                       </Button>
                     </Tooltip>
+                    <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
                   </InputAdornment>
                 ),
               }}
             />
           </Grid>
-
           {showLinkForDownloading && (
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <TextField
                 margin="dense"
                 name="downloadLink"
+                variant="filled"
                 size={desktopMode ? 'small' : 'medium'}
-                label={
-                  <>
-                    {t('core:downloadLink')}
-                    <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
-                  </>
-                }
+                label={<>{t('core:downloadLink')}</>}
                 fullWidth
                 value={' '}
                 InputProps={{
                   readOnly: true,
-                  startAdornment: (
-                    <InputAdornment position="start" style={{ width: '100%' }}>
+                  endAdornment: (
+                    <InputAdornment position="end">
                       <Tooltip title={t('core:generateDownloadLink')}>
                         <Button
                           onClick={() => setShowSharingLinkDialog(true)}
+                          size="small"
                           startIcon={
                             <QRCodeIcon
                               style={{ color: theme.palette.text.secondary }}
                             />
                           }
                         >
-                          <span
-                            style={{
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {t('core:generateDownloadLink')}
-                          </span>
+                          {t('core:generateDownloadLink')}
                         </Button>
                       </Tooltip>
+                      <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
                     </InputAdornment>
                   ),
                 }}
@@ -981,27 +971,20 @@ function EntryProperties(props: Props) {
             <TextField
               margin="dense"
               name="path"
-              label={
-                <>
-                  {t('core:backgroundColor')}
-                  <InfoIcon
-                    tooltip={t(
-                      'The background color will not be visible if you have set a background image',
-                    )}
-                  />
-                </>
-              }
+              variant="filled"
+              label={<>{t('core:backgroundColor')}</>}
               fullWidth
               InputProps={{
                 readOnly: true,
                 startAdornment: (
-                  <InputAdornment position="start" style={{ marginTop: 10 }}>
+                  <InputAdornment position="start" style={{ marginTop: 14 }}>
                     <TransparentBackground>
                       <Tooltip title={t('editBackgroundColor')}>
                         <Button
                           fullWidth
                           style={{
-                            width: 140,
+                            width: 160,
+                            height: 25,
                             background: openedEntry.meta?.color,
                           }}
                           onClick={toggleBackgroundColorPicker}
@@ -1080,6 +1063,11 @@ function EntryProperties(props: Props) {
                         </ProTooltip>
                       </>
                     )}
+                    <InfoIcon
+                      tooltip={t(
+                        'The background color will not be visible if you have set a background image',
+                      )}
+                    />
                   </InputAdornment>
                 ),
               }}
@@ -1091,6 +1079,7 @@ function EntryProperties(props: Props) {
             <ThumbnailTextField
               margin="dense"
               label={t('core:thumbnail')}
+              variant="filled"
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -1098,7 +1087,7 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Stack
                       direction="column"
-                      spacing={1}
+                      spacing={0}
                       style={{ alignItems: 'center' }}
                     >
                       {!readOnlyMode &&
@@ -1109,6 +1098,7 @@ function EntryProperties(props: Props) {
                               data-tid="changeThumbnailTID"
                               fullWidth
                               onClick={toggleThumbFilesDialog}
+                              size="small"
                             >
                               {t('core:change')}
                             </Button>
@@ -1141,13 +1131,14 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 label={t('core:backgroundImage')}
                 fullWidth
+                variant="filled"
                 InputProps={{
                   readOnly: true,
                   startAdornment: (
                     <InputAdornment position="end">
                       <Stack
                         direction="column"
-                        spacing={1}
+                        spacing={0}
                         style={{ alignItems: 'center' }}
                       >
                         {!readOnlyMode &&
@@ -1158,6 +1149,7 @@ function EntryProperties(props: Props) {
                                 data-tid="changeBackgroundImageTID"
                                 fullWidth
                                 onClick={toggleBgndImgDialog}
+                                size="small"
                               >
                                 {t('core:change')}
                               </Button>
@@ -1201,28 +1193,26 @@ function EntryProperties(props: Props) {
             data-tid="entryIDTID"
             margin="dense"
             name="entryid"
+            variant="filled"
             size={desktopMode ? 'small' : 'medium'}
-            label={
-              <>
-                {t('core:entryId')}
-                <InfoIcon tooltip={t('core:entryIdTooltip')} />
-              </>
-            }
+            label={t('core:entryId')}
             fullWidth={true}
             value={openedEntry?.meta?.id}
             InputProps={{
               readOnly: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IDIcon style={{ color: theme.palette.text.secondary }} />
-                </InputAdornment>
-              ),
+              // startAdornment: (
+              //   <InputAdornment position="start">
+              //     <InfoIcon tooltip={t('core:entryIdTooltip')} />
+              //     {/* <IDIcon style={{ color: theme.palette.text.secondary }} /> */}
+              //   </InputAdornment>
+              // ),
               endAdornment: (
                 <InputAdornment position="end">
                   <Tooltip title={t('core:copyIdToClipboard')}>
                     <Button
                       data-tid="copyIdToClipboardTID"
                       color="primary"
+                      size="small"
                       disabled={!openedEntry?.meta?.id}
                       onClick={() => {
                         const entryId = openedEntry?.meta?.id;
@@ -1240,6 +1230,7 @@ function EntryProperties(props: Props) {
                       {t('core:copy')}
                     </Button>
                   </Tooltip>
+                  <InfoIcon tooltip={t('core:entryIdTooltip')} />
                 </InputAdornment>
               ),
             }}

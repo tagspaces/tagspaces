@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces GmbH
+ * Copyright (C) 2023-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,23 +16,8 @@
  *
  */
 
-import React from 'react';
-import { InfoTooltipIcon } from '-/components/CommonIcons';
-import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
-import Tooltip from '-/components/Tooltip';
-import { opacity } from 'html2canvas/dist/types/css/property-descriptors/opacity';
+import { useContext } from 'react';
 
-interface Props {
-  tooltip?: string;
-}
+import { FileUploadContext } from '-/hooks/FileUploadContextProvider';
 
-function InfoIcon(props: Props) {
-  const { tooltip } = props;
-  return (
-    <Tooltip title={tooltip}>
-      <NotListedLocationIcon style={{ opacity: '0.7' }} />
-    </Tooltip>
-  );
-}
-
-export default InfoIcon;
+export const useFileUploadContext = () => useContext(FileUploadContext);

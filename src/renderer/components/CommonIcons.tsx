@@ -18,10 +18,15 @@
 
 import React from 'react';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import MarkdownRawIcon from '@mui/icons-material/SimCardDownload';
 
 export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
   // <ParentFolder {...props} />
+);
+
+export const MarkdownFileIcon = (props) => (
+  <MarkdownRawIcon style={{ transform: 'scaleX(-1)' }} />
 );
 
 export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
@@ -139,3 +144,11 @@ export { default as DownloadIcon } from '@mui/icons-material/DownloadForOffline'
 export { default as TagIcon } from '@mui/icons-material/LocalOffer';
 
 export { default as IDIcon } from '@mui/icons-material/Abc';
+
+export { default as AudioFileIcon } from '@mui/icons-material/AudioFile';
+
+export { default as HTMLFileIcon } from '@mui/icons-material/Description';
+
+export { default as LinkFileIcon } from '@mui/icons-material/FileOpen';
+
+export { default as AccountIcon } from '@mui/icons-material/AccountCircle';

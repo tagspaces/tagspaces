@@ -33,14 +33,21 @@ import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
 import { Divider } from '@mui/material';
 import {
+  OpenLinkIcon,
   OpenNewWindowIcon,
-  AudioRecordIcon,
   NewFileIcon,
   NewFolderIcon,
   LocalLocationIcon,
   SettingsIcon,
+  CreateFileIcon,
+  MarkdownFileIcon,
+  AudioFileIcon,
+  HTMLFileIcon,
+  LinkFileIcon,
+  AccountIcon,
+  AddExistingFileIcon,
 } from '-/components/CommonIcons';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import InfoIcon from '-/components/InfoIcon';
 import Popover from '@mui/material/Popover';
 import { Pro } from '-/pro';
 import CustomLogo from '-/components/CustomLogo';
@@ -57,7 +64,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AppDispatch } from '../reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as SettingsActions } from '-/reducers/settings';
 import StoredSearches from '-/components/StoredSearches';
@@ -69,12 +76,14 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { createNewInstance } from '-/services/utils-io';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
-import { useNewEntryDialogContext } from '-/components/dialogs/hooks/useNewEntryDialogContext';
 import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
 import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
 import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -104,12 +113,14 @@ function MobileNavigation(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const { setSelectedLocation } = useCurrentLocationContext();
-  const { openNewEntryDialog } = useNewEntryDialogContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { openFileUpload } = useFileUploadContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
   const { openSettingsDialog } = useSettingsDialogContext();
+  const { openLinkDialog } = useLinkDialogContext();
   const { currentOpenedPanel, showPanel } = usePanelsContext();
   const keyBindings = useSelector(getKeyBindingObject);
   /* const isLocationManagerPanelOpenedSelector = useSelector(
@@ -185,20 +196,6 @@ function MobileNavigation(props: Props) {
               }}
             >
               <Button
-                size="small"
-                data-tid="createNewFileTID"
-                onClick={() => {
-                  openNewEntryDialog();
-                  if (hideDrawer) {
-                    hideDrawer();
-                  }
-                }}
-              >
-                {t('core:createNewFile')}
-              </Button>
-
-              <Button
-                size="small"
                 aria-controls={
                   openedCreateMenu ? 'split-button-menu' : undefined
                 }
@@ -206,9 +203,24 @@ function MobileNavigation(props: Props) {
                 aria-haspopup="menu"
                 data-tid="createNewDropdownButtonTID"
                 onClick={handleToggle}
+                size="small"
+                startIcon={<CreateFileIcon />}
+                // endIcon={<ArrowDropDownIcon />}
               >
-                <ArrowDropDownIcon />
+                {t('core:createNew')}
               </Button>
+              <Tooltip title={t('core:openSharingLink')}>
+                <Button
+                  size="small"
+                  data-tid="openLinkTID"
+                  onClick={() => {
+                    openLinkDialog();
+                  }}
+                  startIcon={<OpenLinkIcon />}
+                >
+                  {t('core:openLink')}
+                </Button>
+              </Tooltip>
             </ButtonGroup>
           </Box>
         </Box>
@@ -233,31 +245,11 @@ function MobileNavigation(props: Props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList id="split-button-menu" autoFocusItem>
-                    {!AppConfig.isCordova && (
-                      <>
-                        <MenuItem
-                          key="createWindowTID"
-                          ata-tid="createWindowTID"
-                          onClick={() => {
-                            createNewInstance();
-                            setOpenCreateMenu(false);
-                          }}
-                        >
-                          <ListItemIcon>
-                            <OpenNewWindowIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={t('core:newWindow')}
-                          ></ListItemText>
-                        </MenuItem>
-                        <Divider />
-                      </>
-                    )}
                     <MenuItem
                       key="createNewTextFileTID"
                       ata-tid="createNewTextFileTID"
                       onClick={() => {
-                        openNewFileDialog();
+                        openNewFileDialog('txt');
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();
@@ -270,10 +262,10 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createTextFile')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewFolderTID"
-                      ata-tid="createNewFolderTID"
+                      key="createNewMarkdownFileTID"
+                      ata-tid="createNewMarkdownFileTID"
                       onClick={() => {
-                        openCreateDirectoryDialog();
+                        openNewFileDialog('md');
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
                           hideDrawer();
@@ -281,11 +273,43 @@ function MobileNavigation(props: Props) {
                       }}
                     >
                       <ListItemIcon>
-                        <NewFolderIcon />
+                        <MarkdownFileIcon />
                       </ListItemIcon>
-                      <ListItemText
-                        primary={t('core:createNewDirectoryTitle')}
-                      />
+                      <ListItemText primary={t('core:createMarkdown')} />
+                      <InfoIcon tooltip={t('core:createMarkdownTitle')} />
+                    </MenuItem>
+                    <MenuItem
+                      key="createHTMLTextFileTID"
+                      data-tid="createHTMLTextFileTID"
+                      onClick={() => {
+                        openNewFileDialog('html');
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <HTMLFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:createRichTextFile')} />
+                      <InfoIcon tooltip={t('core:createNoteTitle')} />
+                    </MenuItem>
+                    <MenuItem
+                      key="createNewLinkFileTID"
+                      data-tid="createNewLinkFileTID"
+                      onClick={() => {
+                        openNewFileDialog('url');
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LinkFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:createLinkFile')} />
                     </MenuItem>
                     <MenuItem
                       key="createNewAudio"
@@ -300,7 +324,7 @@ function MobileNavigation(props: Props) {
                       }}
                     >
                       <ListItemIcon>
-                        <AudioRecordIcon />
+                        <AudioFileIcon />
                       </ListItemIcon>
                       <ListItemText
                         primary={
@@ -310,6 +334,40 @@ function MobileNavigation(props: Props) {
                           </>
                         }
                       />
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem
+                      key="addUploadFilesTID"
+                      data-tid="addUploadFilesTID"
+                      onClick={() => {
+                        openFileUpload(currentDirectoryPath);
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <AddExistingFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:addFiles')} />
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem
+                      key="createNewFolderTID"
+                      ata-tid="createNewFolderTID"
+                      onClick={() => {
+                        openCreateDirectoryDialog();
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <NewFolderIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:createDirectory')} />
                     </MenuItem>
                     <Divider />
                     <MenuItem
@@ -327,8 +385,28 @@ function MobileNavigation(props: Props) {
                       <ListItemIcon>
                         <LocalLocationIcon />
                       </ListItemIcon>
-                      <ListItemText primary={t('core:createLocationTitle')} />
+                      <ListItemText primary={t('core:createLocation')} />
                     </MenuItem>
+                    {!AppConfig.isCordova && (
+                      <>
+                        {/* <Divider /> */}
+                        <MenuItem
+                          key="createWindowTID"
+                          ata-tid="createWindowTID"
+                          onClick={() => {
+                            createNewInstance();
+                            setOpenCreateMenu(false);
+                          }}
+                        >
+                          <ListItemIcon>
+                            <OpenNewWindowIcon />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={t('core:newWindow')}
+                          ></ListItemText>
+                        </MenuItem>
+                      </>
+                    )}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -449,7 +527,7 @@ function MobileNavigation(props: Props) {
                 style={{ marginTop: -15, marginRight: 2 }}
                 size="large"
               >
-                <AccountCircleIcon />
+                <AccountIcon />
               </IconButton>
             </Tooltip>
             <Popover

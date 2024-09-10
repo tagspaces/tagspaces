@@ -29,6 +29,7 @@ import {
   SelectedIcon,
   UnSelectedIcon,
   FolderOutlineIcon,
+  MoreMenuIcon,
 } from '-/components/CommonIcons';
 import {
   formatFileSize,
@@ -485,6 +486,21 @@ function RowCell(props: Props) {
             />
           </Grid>
         )}
+        <Grid
+          item
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <IconButton
+            aria-label="entry context menu"
+            size="small"
+            onClick={(event) => handleGridContextMenu(event, fsEntry)}
+          >
+            <MoreMenuIcon />
+          </IconButton>
+        </Grid>
       </Grid>
     </RowPaper>
   );

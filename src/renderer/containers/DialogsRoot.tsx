@@ -23,7 +23,6 @@ import { CreateEditLocationDialogContextProvider } from '-/components/dialogs/ho
 import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks/MoveOrCopyFilesDialogContextProvider';
 import { CreateDirectoryDialogContextProvider } from '-/components/dialogs/hooks/CreateDirectoryDialogContextProvider';
 import { ProgressDialogContextProvider } from '-/components/dialogs/hooks/ProgressDialogContextProvider';
-import { NewEntryDialogContextProvider } from '-/components/dialogs/hooks/NewEntryDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
@@ -36,6 +35,7 @@ import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTe
 import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
+import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -46,11 +46,11 @@ function DialogsRoot({ children }: DialogsRootProps) {
     <EntryExistDialogContextProvider>
       <DeleteMultipleEntriesDialogContextProvider>
         <FileUploadDialogContextProvider>
-          <CreateEditLocationDialogContextProvider>
-            <MoveOrCopyFilesDialogContextProvider>
-              <CreateDirectoryDialogContextProvider>
-                <ProgressDialogContextProvider>
-                  <NewEntryDialogContextProvider>
+          <FileUploadContextProvider>
+            <CreateEditLocationDialogContextProvider>
+              <MoveOrCopyFilesDialogContextProvider>
+                <CreateDirectoryDialogContextProvider>
+                  <ProgressDialogContextProvider>
                     <NewFileDialogContextProvider>
                       <NewAudioDialogContextProvider>
                         <LicenseDialogContextProvider>
@@ -74,11 +74,11 @@ function DialogsRoot({ children }: DialogsRootProps) {
                         </LicenseDialogContextProvider>
                       </NewAudioDialogContextProvider>
                     </NewFileDialogContextProvider>
-                  </NewEntryDialogContextProvider>
-                </ProgressDialogContextProvider>
-              </CreateDirectoryDialogContextProvider>
-            </MoveOrCopyFilesDialogContextProvider>
-          </CreateEditLocationDialogContextProvider>
+                  </ProgressDialogContextProvider>
+                </CreateDirectoryDialogContextProvider>
+              </MoveOrCopyFilesDialogContextProvider>
+            </CreateEditLocationDialogContextProvider>
+          </FileUploadContextProvider>
         </FileUploadDialogContextProvider>
       </DeleteMultipleEntriesDialogContextProvider>
     </EntryExistDialogContextProvider>

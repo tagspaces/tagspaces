@@ -25,10 +25,11 @@ import React, {
 } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import AppConfig from '-/AppConfig';
-import { actions as SettingsActions } from '-/reducers/settings';
+import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { TS } from '-/tagspaces.namespace';
 
 type NewFileDialogContextData = {
-  openNewFileDialog: () => void;
+  openNewFileDialog: (entryType?: TS.FileType) => void;
   closeNewFileDialog: () => void;
 };
 
@@ -49,6 +50,7 @@ export const NewFileDialogContextProvider = ({
   children,
 }: NewFileDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
+  const fileType = useRef<TS.FileType>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -66,8 +68,9 @@ export const NewFileDialogContextProvider = ({
     }
   }, []);
 
-  function openDialog() {
+  function openDialog(fType = undefined) {
     open.current = true;
+    fileType.current = fType;
     forceUpdate();
   }
 
@@ -92,16 +95,19 @@ export const NewFileDialogContextProvider = ({
   }, []);
 
   return (
-    <NewFileDialogContext.Provider value={context}>
-      <NewFileDialogAsync
-        open={open.current}
-        onClose={(event, reason) => {
-          if (reason !== 'backdropClick') {
-            closeDialog();
-          }
-        }}
-      />
-      {children}
-    </NewFileDialogContext.Provider>
+    <TargetPathContextProvider>
+      <NewFileDialogContext.Provider value={context}>
+        <NewFileDialogAsync
+          open={open.current}
+          onClose={(event, reason) => {
+            if (reason !== 'backdropClick') {
+              closeDialog();
+            }
+          }}
+          fileType={fileType.current}
+        />
+        {children}
+      </NewFileDialogContext.Provider>
+    </TargetPathContextProvider>
   );
 };

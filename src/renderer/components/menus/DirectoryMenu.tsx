@@ -17,7 +17,6 @@
  */
 
 import React, { useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { Menu, MenuList } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -29,10 +28,6 @@ import {
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import FileUploadContainer, {
-  FileUploadContainerRef,
-} from '-/components/FileUploadContainer';
 import {
   createNewInstance,
   getRelativeEntryPath,
@@ -60,6 +55,7 @@ import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDi
 import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 interface Props {
   open: boolean;
@@ -87,6 +83,7 @@ function DirectoryMenu(props: Props) {
     useCurrentLocationContext();
   const { setThumbnailImageChange } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
+  const { openFileUpload } = useFileUploadContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const {
     openDirectory,
@@ -102,7 +99,6 @@ function DirectoryMenu(props: Props) {
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
-  const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
     onClose,
@@ -218,7 +214,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function addExistingFile() {
-    fileUploadContainerRef.current.onFileUpload();
+    openFileUpload(directoryPath);
   }
 
   function importMacTags() {
@@ -447,11 +443,6 @@ Do you want to continue?`)
       >
         <MenuList>{menuItems}</MenuList>
       </Menu>
-      <FileUploadContainer
-        /*id="dirMenuId"*/
-        ref={fileUploadContainerRef}
-        directoryPath={directoryPath}
-      />
     </>
   );
 }
