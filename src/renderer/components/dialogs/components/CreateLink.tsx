@@ -18,20 +18,16 @@
 
 import React, { useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
-import { fileNameValidation } from '-/services/utils-io';
+import { fileNameValidation, urlValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
 
-const PREFIX = 'CreateFile';
+const PREFIX = 'CreateLink';
 
 const classes = {
   createButton: `${PREFIX}-createButton`,
@@ -50,13 +46,11 @@ interface Props {
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
   tidPrefix?: string;
-  fileType?: TS.FileType;
 }
 
-function CreateFile(props: Props) {
+function CreateLink(props: Props) {
   const {
     tidPrefix,
-    fileType,
     createFile,
     fileName,
     handleFileNameChange,
@@ -66,6 +60,7 @@ function CreateFile(props: Props) {
   const { targetDirectoryPath } = useTargetPathContext();
 
   const [inputError, setInputError] = useState<boolean>(false);
+  const [urlError, setUrlError] = useState<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -83,28 +78,21 @@ function CreateFile(props: Props) {
       event.preventDefault();
       const { target } = event;
       target.focus();
-      /*const indexOfBracket = fileName.current.indexOf(
-        AppConfig.beginTagContainer
-      );*/
       let endRange = fileName.length;
-      // if (indexOfBracket > 0) {
-      //   endRange = indexOfBracket;
-      // }
       target.setSelectionRange(0, endRange);
     }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleFileNameChange(event.target.value);
-    handleValidation(event.target.value);
+    handleValidation(fileNameValidation(event.target.value));
   };
-  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleFileContentChange(event.target.value);
+    handleUrlValidation(!urlValidation(event.target.value));
   };
 
-  const handleValidation = (file) => {
-    let noValid = fileNameValidation(file);
-
+  const handleValidation = (noValid) => {
     if (noValid) {
       if (inputError !== noValid) {
         setInputError(noValid);
@@ -113,6 +101,18 @@ function CreateFile(props: Props) {
       }
     } else {
       setInputError(noValid);
+    }
+  };
+
+  const handleUrlValidation = (noValid) => {
+    if (noValid) {
+      if (urlError !== noValid) {
+        setUrlError(noValid);
+      } else {
+        forceUpdate();
+      }
+    } else {
+      setUrlError(noValid);
     }
   };
 
@@ -131,7 +131,7 @@ function CreateFile(props: Props) {
             if (event.key === 'Enter' || event.code === 'Enter') {
               event.preventDefault();
               event.stopPropagation();
-              createFile(fileType);
+              createFile('url');
             }
           }}
           defaultValue={fileName}
@@ -143,78 +143,23 @@ function CreateFile(props: Props) {
           <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
         )}
       </FormControl>
-      {fileType ? (
-        <FormControl fullWidth={true}>
-          <TextField
-            autoFocus
-            id="fileContentID"
-            label={t('core:fileContent')}
-            multiline
-            fullWidth
-            variant="filled"
-            // value={fileContent}
-            rows={5}
-            margin="dense"
-            onChange={handleContentChange}
-          />
-        </FormControl>
-      ) : (
-        <Grid item xs={12}>
-          <ButtonGroup
-            style={{
-              textAlign: 'center',
-              width: '100%',
-            }}
-          >
-            <Button
-              // variant="contained"
-              onClick={() => createFile('md')}
-              className={classes.createButton}
-              data-tid={tid('createMarkdownButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createMarkdownTitle')}>
-                <Typography
-                  variant="button"
-                  style={{ fontWeight: 'bold' }}
-                  display="block"
-                  gutterBottom
-                >
-                  {t('createMarkdown')}
-                </Typography>
-              </Tooltip>
-            </Button>
-            <Button
-              // variant="contained"
-              onClick={() => createFile('html')}
-              className={classes.createButton}
-              data-tid={tid('createRichTextFileButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createNoteTitle')}>
-                <Typography variant="button" display="block" gutterBottom>
-                  {t('createRichTextFile')}
-                </Typography>
-              </Tooltip>
-            </Button>
-            <Button
-              // variant="contained"
-              onClick={() => createFile('txt')}
-              className={classes.createButton}
-              data-tid={tid('createTextFileButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createTextFileTitle')}>
-                <Typography variant="button" display="block" gutterBottom>
-                  {t('createTextFile')}
-                </Typography>
-              </Tooltip>
-            </Button>
-          </ButtonGroup>
-        </Grid>
-      )}
+      <FormControl fullWidth={true} error={urlError}>
+        <TextField
+          autoFocus
+          error={urlError}
+          id="fileLinkID"
+          label={t('core:linkURL')}
+          fullWidth
+          variant="filled"
+          margin="dense"
+          onChange={handleUrlChange}
+        />
+        {urlError && (
+          <FormHelperText>{t('core:urlValidationHelp')}</FormHelperText>
+        )}
+      </FormControl>
     </StyledGrid>
   );
 }
 
-export default CreateFile;
+export default CreateLink;

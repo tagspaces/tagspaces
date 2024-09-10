@@ -294,11 +294,11 @@ function MobileNavigation(props: Props) {
                       key="createNewLinkFileTID"
                       data-tid="createNewLinkFileTID"
                       onClick={() => {
-                        // openNewFileDialog();
-                        // setOpenCreateMenu(false);
-                        // if (hideDrawer) {
-                        //   hideDrawer();
-                        // }
+                        openNewFileDialog('url');
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
                       }}
                     >
                       <ListItemIcon>

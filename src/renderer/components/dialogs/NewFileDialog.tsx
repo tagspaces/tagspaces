@@ -41,11 +41,13 @@ import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import AppConfig from '-/AppConfig';
 import versionMeta from '-/version.json';
+import { TS } from '-/tagspaces.namespace';
+import CreateLink from '-/components/dialogs/components/CreateLink';
 
 interface Props {
   open: boolean;
   onClose: (event?: Object, reason?: string) => void;
-  fileType?: 'txt' | 'md' | 'html';
+  fileType?: TS.FileType;
 }
 
 function NewFileDialog(props: Props) {
@@ -69,7 +71,7 @@ function NewFileDialog(props: Props) {
   );
 
   const fileContent = useRef<string>(
-    fileType !== 'html'
+    fileType === 'txt' || fileType === 'md'
       ? 'Created in ' +
           versionMeta.name +
           ' on ' +
@@ -87,6 +89,9 @@ function NewFileDialog(props: Props) {
     }
     if (fileType === 'html') {
       return t('createRichTextFile');
+    }
+    if (fileType === 'url') {
+      return t('createLinkFile');
     }
     return '...';
   }
@@ -136,14 +141,26 @@ function NewFileDialog(props: Props) {
         }}
         data-tid="newFileDialog"
       >
-        <CreateFile
-          fileType={fileType}
-          createFile={(type) => createFile(type, targetDirectoryPath)}
-          handleFileNameChange={(name) => (fileName.current = name)}
-          handleFileContentChange={(content) => (fileContent.current = content)}
-          fileContent={fileContent.current}
-          fileName={fileName.current}
-        />
+        {fileType === 'url' ? (
+          <CreateLink
+            createFile={(type) => createFile(type, targetDirectoryPath)}
+            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileContentChange={(content) =>
+              (fileContent.current = content)
+            }
+            fileName={fileName.current}
+          />
+        ) : (
+          <CreateFile
+            fileType={fileType}
+            createFile={(type) => createFile(type, targetDirectoryPath)}
+            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileContentChange={(content) =>
+              (fileContent.current = content)
+            }
+            fileName={fileName.current}
+          />
+        )}
         <TargetPath />
       </DialogContent>
       {fileType && (

@@ -25,11 +25,11 @@ import React, {
 } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import AppConfig from '-/AppConfig';
-import { actions as SettingsActions } from '-/reducers/settings';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { TS } from '-/tagspaces.namespace';
 
 type NewFileDialogContextData = {
-  openNewFileDialog: (entryType?: 'txt' | 'md' | 'html') => void;
+  openNewFileDialog: (entryType?: TS.FileType) => void;
   closeNewFileDialog: () => void;
 };
 
@@ -50,7 +50,7 @@ export const NewFileDialogContextProvider = ({
   children,
 }: NewFileDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
-  const fileType = useRef<'txt' | 'md' | 'html'>(undefined);
+  const fileType = useRef<TS.FileType>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 

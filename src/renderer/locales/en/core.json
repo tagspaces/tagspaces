@@ -861,5 +861,7 @@
   "calculate": "Calculate",
   "addNew": "Add new",
   "fileContent": "File Content",
+  "linkURL": "URL",
+  "urlValidationHelp": "not valid URL",
   "-": "-"
 }

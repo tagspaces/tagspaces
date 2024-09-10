@@ -115,6 +115,7 @@ export namespace TS {
 
   type Uuid = string;
   export type ActionSource = 'local' | 'upload' | 'thumbgen' | 'fsWatcher';
+  export type FileType = 'txt' | 'md' | 'html' | 'url';
 
   interface EditAction {
     action: 'add' | 'delete' | 'update' | 'move' | 'edit';

@@ -569,6 +569,19 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
 
 /**
  * forbidden characters # \ / * ? " < > | & %
+ * @param url
+ * return true if valid; false otherwise
+ */
+export function urlValidation(url: string): boolean {
+  if (url.length > 0) {
+    const urlRegex = /^(https?|ftp|ts):\/\/[^\s/$.?#].[^\s]*$/i;
+    return urlRegex.test(url);
+  }
+  return false;
+}
+
+/**
+ * forbidden characters # \ / * ? " < > | & %
  * @param tagTitle
  * return true if valid; false otherwise
  */

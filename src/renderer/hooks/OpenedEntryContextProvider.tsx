@@ -99,7 +99,7 @@ type OpenedEntryContextData = {
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: 'md' | 'txt' | 'html',
+    fileType: TS.FileType,
   ) => void;
   createFile: () => void;
   getOpenedDirProps: () => Promise<TS.DirProp>;
@@ -850,7 +850,7 @@ export const OpenedEntryContextProvider = ({
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: 'md' | 'txt' | 'html' = 'md',
+    fileType: TS.FileType = 'md',
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
@@ -882,6 +882,8 @@ export const OpenedEntryContextProvider = ({
       '</body>' + newHTMLFileContent.split('<body></body>')[1];
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
+    } else if (fileType === 'url') {
+      fileContent = '[InternetShortcut]\n' + 'URL=' + content + '\n';
     }
     saveFilePromise({ path: filePath }, fileContent, false, true)
       .then((fsEntry: TS.FileSystemEntry) => {
