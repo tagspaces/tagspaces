@@ -90,7 +90,6 @@ function OpenLinkDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      style={{ minWidth: 300 }}
       // fullScreen={fullScreen}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
@@ -104,7 +103,7 @@ function OpenLinkDialog(props: Props) {
         {t('core:openLink')}
         <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ minWidth: 300 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth

@@ -83,21 +83,21 @@ function LocationManagerMenu(props: Props) {
     );
   }
 
-  menuItems.push(
-    <MenuItem
-      key="locationManagerMenuOpenLink"
-      data-tid="locationManagerMenuOpenLink"
-      onClick={() => {
-        setLocationManagerMenuAnchorEl(null);
-        openLinkDialog();
-      }}
-    >
-      <ListItemIcon>
-        <OpenLinkIcon />
-      </ListItemIcon>
-      <ListItemText primary={t('core:openLink')} />
-    </MenuItem>,
-  );
+  // menuItems.push(
+  //   <MenuItem
+  //     key="locationManagerMenuOpenLink"
+  //     data-tid="locationManagerMenuOpenLink"
+  //     onClick={() => {
+  //       setLocationManagerMenuAnchorEl(null);
+  //       openLinkDialog();
+  //     }}
+  //   >
+  //     <ListItemIcon>
+  //       <OpenLinkIcon />
+  //     </ListItemIcon>
+  //     <ListItemText primary={t('core:openLink')} />
+  //   </MenuItem>,
+  // );
 
   if (!AppConfig.locationsReadOnly) {
     // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android

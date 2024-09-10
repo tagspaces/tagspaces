@@ -859,9 +859,10 @@
   "exitEditMode": "Exit editing",
   "cloudPath": "Path in the cloud",
   "calculate": "Calculate",
-  "addNew": "Add new",
+  "createNew": "Create New",
   "fileContent": "File Content",
   "linkURL": "URL",
   "urlValidationHelp": "not valid URL",
+  "openSharingLink": "Open sharing links created with the TagSpaces (ts:// links)",
   "-": "-"
 }

@@ -33,6 +33,7 @@ import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
 import { Divider } from '@mui/material';
 import {
+  OpenLinkIcon,
   OpenNewWindowIcon,
   NewFileIcon,
   NewFolderIcon,
@@ -82,6 +83,7 @@ import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -118,6 +120,7 @@ function MobileNavigation(props: Props) {
   const { openNewFileDialog } = useNewFileDialogContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
   const { openSettingsDialog } = useSettingsDialogContext();
+  const { openLinkDialog } = useLinkDialogContext();
   const { currentOpenedPanel, showPanel } = usePanelsContext();
   const keyBindings = useSelector(getKeyBindingObject);
   /* const isLocationManagerPanelOpenedSelector = useSelector(
@@ -192,19 +195,6 @@ function MobileNavigation(props: Props) {
                 textAlign: 'center',
               }}
             >
-              {/* <Button
-                size="small"
-                data-tid="createNewFileTID"
-                onClick={() => {
-                  openNewEntryDialog();
-                  if (hideDrawer) {
-                    hideDrawer();
-                  }
-                }}
-              >
-                {t('core:createNewFile')}
-              </Button> */}
-
               <Button
                 aria-controls={
                   openedCreateMenu ? 'split-button-menu' : undefined
@@ -213,12 +203,24 @@ function MobileNavigation(props: Props) {
                 aria-haspopup="menu"
                 data-tid="createNewDropdownButtonTID"
                 onClick={handleToggle}
-                size="medium"
+                size="small"
                 startIcon={<CreateFileIcon />}
-                endIcon={<ArrowDropDownIcon />}
+                // endIcon={<ArrowDropDownIcon />}
               >
-                {t('core:addNew')}
+                {t('core:createNew')}
               </Button>
+              <Tooltip title={t('core:openSharingLink')}>
+                <Button
+                  size="small"
+                  data-tid="openLinkTID"
+                  onClick={() => {
+                    openLinkDialog();
+                  }}
+                  startIcon={<OpenLinkIcon />}
+                >
+                  {t('core:openLink')}
+                </Button>
+              </Tooltip>
             </ButtonGroup>
           </Box>
         </Box>
