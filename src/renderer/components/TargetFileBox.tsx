@@ -125,6 +125,15 @@ function TargetFileBox(props: Props) {
 
         if (files && files.length) {
           const location = findLocation(locationId);
+          if (AppConfig.isElectron) {
+            files = files.map((file) => {
+              if (!file.path) {
+                file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+              }
+              return file;
+            });
+          }
+
           if (
             AppConfig.isElectron &&
             !location.haveObjectStoreSupport() &&
