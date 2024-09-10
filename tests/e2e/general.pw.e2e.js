@@ -288,7 +288,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron]', async () => {
+  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,electron,_pro]', async () => {
     const tagName = 'custom-date';
     const sourceTagGroup = 'Smart Tags';
 
