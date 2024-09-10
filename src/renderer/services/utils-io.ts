@@ -590,7 +590,7 @@ export function tagsValidation(tagTitle: string): boolean {
  */
 export function dirNameValidation(dirName): boolean {
   if (dirName.length > 0) {
-    const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
+    const rg1 = /^[^#\\/*?"<>|&%]+$/; // forbidden characters # \ / * ? " < > | & %
     return !rg1.test(dirName);
   }
   return true;

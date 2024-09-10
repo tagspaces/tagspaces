@@ -177,13 +177,13 @@ function CreateDirectoryDialog(props: Props) {
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.keyCode === 13) {
+        if (event.key === 'Enter') {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } /*else if (event.key === 'Escape') {
+        } else if (event.key === 'Escape') {
           onClose();
-        }*/
+        }
       }}
     >
       <DialogTitle>
