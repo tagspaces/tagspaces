@@ -35,6 +35,7 @@ import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTe
 import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
+import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -45,37 +46,39 @@ function DialogsRoot({ children }: DialogsRootProps) {
     <EntryExistDialogContextProvider>
       <DeleteMultipleEntriesDialogContextProvider>
         <FileUploadDialogContextProvider>
-          <CreateEditLocationDialogContextProvider>
-            <MoveOrCopyFilesDialogContextProvider>
-              <CreateDirectoryDialogContextProvider>
-                <ProgressDialogContextProvider>
-                  <NewFileDialogContextProvider>
-                    <NewAudioDialogContextProvider>
-                      <LicenseDialogContextProvider>
-                        <ThirdPartyLibsDialogContextProvider>
-                          <AboutDialogContextProvider>
-                            <OnboardingDialogContextProvider>
-                              <KeyboardDialogContextProvider>
-                                <LinkDialogContextProvider>
-                                  <ProTeaserDialogContextProvider>
-                                    <SettingsDialogContextProvider>
-                                      <ResolveConflictContextProvider>
-                                        {children}
-                                      </ResolveConflictContextProvider>
-                                    </SettingsDialogContextProvider>
-                                  </ProTeaserDialogContextProvider>
-                                </LinkDialogContextProvider>
-                              </KeyboardDialogContextProvider>
-                            </OnboardingDialogContextProvider>
-                          </AboutDialogContextProvider>
-                        </ThirdPartyLibsDialogContextProvider>
-                      </LicenseDialogContextProvider>
-                    </NewAudioDialogContextProvider>
-                  </NewFileDialogContextProvider>
-                </ProgressDialogContextProvider>
-              </CreateDirectoryDialogContextProvider>
-            </MoveOrCopyFilesDialogContextProvider>
-          </CreateEditLocationDialogContextProvider>
+          <FileUploadContextProvider>
+            <CreateEditLocationDialogContextProvider>
+              <MoveOrCopyFilesDialogContextProvider>
+                <CreateDirectoryDialogContextProvider>
+                  <ProgressDialogContextProvider>
+                    <NewFileDialogContextProvider>
+                      <NewAudioDialogContextProvider>
+                        <LicenseDialogContextProvider>
+                          <ThirdPartyLibsDialogContextProvider>
+                            <AboutDialogContextProvider>
+                              <OnboardingDialogContextProvider>
+                                <KeyboardDialogContextProvider>
+                                  <LinkDialogContextProvider>
+                                    <ProTeaserDialogContextProvider>
+                                      <SettingsDialogContextProvider>
+                                        <ResolveConflictContextProvider>
+                                          {children}
+                                        </ResolveConflictContextProvider>
+                                      </SettingsDialogContextProvider>
+                                    </ProTeaserDialogContextProvider>
+                                  </LinkDialogContextProvider>
+                                </KeyboardDialogContextProvider>
+                              </OnboardingDialogContextProvider>
+                            </AboutDialogContextProvider>
+                          </ThirdPartyLibsDialogContextProvider>
+                        </LicenseDialogContextProvider>
+                      </NewAudioDialogContextProvider>
+                    </NewFileDialogContextProvider>
+                  </ProgressDialogContextProvider>
+                </CreateDirectoryDialogContextProvider>
+              </MoveOrCopyFilesDialogContextProvider>
+            </CreateEditLocationDialogContextProvider>
+          </FileUploadContextProvider>
         </FileUploadDialogContextProvider>
       </DeleteMultipleEntriesDialogContextProvider>
     </EntryExistDialogContextProvider>

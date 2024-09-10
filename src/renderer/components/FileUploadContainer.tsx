@@ -16,9 +16,16 @@
  *
  */
 
-import React, { forwardRef, Ref, useImperativeHandle, useRef } from 'react';
+import React, {
+  ChangeEvent,
+  forwardRef,
+  Ref,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import { TS } from '-/tagspaces.namespace';
+import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
@@ -27,29 +34,30 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   id?: string;
-  directoryPath: string;
-  //toggleProgressDialog: () => void;
+  //directoryPath: string;
 }
 
 export interface FileUploadContainerRef {
-  onFileUpload: () => void;
+  onFileUpload: (directoryPath: string) => void;
 }
 
 const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
     const dispatch: AppDispatch = useDispatch();
-    const { id, directoryPath } = props;
+    const { id } = props;
     const { findLocalLocation } = useCurrentLocationContext();
     const { openFileUploadDialog } = useFileUploadDialogContext();
     const { uploadFilesAPI } = useIOActionsContext();
     const { setReflectMetaActions } = useEditedEntryMetaContext();
+    const directoryPath = useRef<string>(undefined);
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
     };
 
     useImperativeHandle(ref, () => ({
-      onFileUpload() {
+      onFileUpload(dirPath: string) {
+        directoryPath.current = dirPath;
         /* if (AppConfig.isCordovaAndroid) {
           PlatformIO.selectFileDialog()
             .then(file => {
@@ -88,16 +96,26 @@ const FileUploadContainer = forwardRef(
 
     const fileInput = useRef<HTMLInputElement>(null);
 
-    function handleFileInputChange(selection: any) {
+    function handleFileInputChange(selection: ChangeEvent<HTMLInputElement>) {
       // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
       // const file = selection.currentTarget.files[0];
       dispatch(AppActions.resetProgress());
       openFileUploadDialog();
       const localLocation = findLocalLocation();
       const sourceLocationId = localLocation ? localLocation.uuid : undefined;
+
+      let files = Array.from(selection.currentTarget.files);
+      if (AppConfig.isElectron) {
+        files = files.map((file) => {
+          if (!file.path) {
+            file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+          }
+          return file;
+        });
+      }
       uploadFilesAPI(
-        Array.from(selection.currentTarget.files),
-        directoryPath,
+        files,
+        directoryPath.current,
         onUploadProgress,
         true,
         true,

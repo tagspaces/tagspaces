@@ -80,6 +80,8 @@ import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudio
 import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -109,7 +111,8 @@ function MobileNavigation(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const { setSelectedLocation } = useCurrentLocationContext();
-  //const { openNewEntryDialog } = useNewEntryDialogContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { openFileUpload } = useFileUploadContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
@@ -334,7 +337,13 @@ function MobileNavigation(props: Props) {
                     <MenuItem
                       key="addUploadFilesTID"
                       data-tid="addUploadFilesTID"
-                      onClick={() => {}}
+                      onClick={() => {
+                        openFileUpload(currentDirectoryPath);
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
                     >
                       <ListItemIcon>
                         <AddExistingFileIcon />

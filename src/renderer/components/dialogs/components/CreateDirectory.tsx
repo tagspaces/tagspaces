@@ -29,9 +29,6 @@ import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import Typography from '@mui/material/Typography';
-import FileUploadContainer, {
-  FileUploadContainerRef,
-} from '-/components/FileUploadContainer';
 import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -42,6 +39,7 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -71,7 +69,7 @@ function CreateDirectory(props: Props) {
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
-  const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
+  const { openFileUpload } = useFileUploadContext();
   const dispatch: AppDispatch = useDispatch();
 
   const { targetDirectoryPath } = useTargetPathContext();
@@ -87,8 +85,7 @@ function CreateDirectory(props: Props) {
   }*/
 
   function addFile() {
-    // loadLocation();
-    fileUploadContainerRef.current.onFileUpload();
+    openFileUpload(targetDirectoryPath);
     onClose();
   }
 
@@ -264,11 +261,6 @@ function CreateDirectory(props: Props) {
           </Button>
         </ButtonGroup>
       </Grid>
-      <FileUploadContainer
-        id="createDirId"
-        ref={fileUploadContainerRef}
-        directoryPath={targetDirectoryPath}
-      />
     </Root>
   );
 }
