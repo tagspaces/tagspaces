@@ -42,6 +42,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
+import { dirNameValidation } from '-/services/utils-io';
 
 const FolderColorTextField = styled(TextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -65,7 +66,7 @@ function CreateDirectoryDialog(props: Props) {
   const { showNotification } = useNotificationContext();
 
   const [inputError, setInputError] = useState(false);
-  const isFirstRun = useRef(true);
+  //const isFirstRun = useRef(true);
   const backgroundColor = useRef<string>('transparent');
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
@@ -73,13 +74,13 @@ function CreateDirectoryDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath } = props;
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
     }
     handleValidation();
-  });
+  });*/
 
   const defaultBackgrounds = [
     'transparent',
@@ -112,10 +113,8 @@ function CreateDirectoryDialog(props: Props) {
     // '#008F7A60',
   ];
 
-  function handleValidation() {
-    // const pathRegex = '^((\.\./|[a-zA-Z0-9_/\-\\])*\.[a-zA-Z0-9]+)$';
-    // const nameRegex = '^[A-Z][-a-zA-Z]+$';
-    if (name.length > 0) {
+  function handleValidation(dirName) {
+    if (!dirNameValidation(dirName)) {
       setInputError(false);
       setDisableConfirmButton(false);
     } else {
@@ -125,6 +124,7 @@ function CreateDirectoryDialog(props: Props) {
   }
 
   function onConfirm() {
+    handleValidation(name);
     if (!disableConfirmButton && name) {
       const dirPath = joinPaths(
         currentLocation.getDirSeparator(),
@@ -202,6 +202,7 @@ function CreateDirectoryDialog(props: Props) {
             label={t('core:folderName')}
             onChange={(event) => {
               const { target } = event;
+              handleValidation(target.value);
               setName(target.value);
             }}
             value={name}

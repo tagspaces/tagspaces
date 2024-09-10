@@ -586,6 +586,7 @@ export function tagsValidation(tagTitle: string): boolean {
 /**
  * forbidden characters # \ / * ? " < > |
  * @param dirName
+ * return notValid
  */
 export function dirNameValidation(dirName): boolean {
   if (dirName.length > 0) {
