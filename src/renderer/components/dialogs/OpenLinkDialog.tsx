@@ -17,6 +17,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -38,6 +40,8 @@ interface Props {
 
 function OpenLinkDialog(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { openLink } = useOpenedEntryContext();
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -84,13 +88,11 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={fullScreen}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -103,7 +105,7 @@ function OpenLinkDialog(props: Props) {
         {t('core:openLink')}
         <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minWidth: 300 }}>
+      <DialogContent style={{ minWidth: fullScreen ? 100 : 400 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth
