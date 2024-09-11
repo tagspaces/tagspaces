@@ -207,7 +207,16 @@ function MobileNavigation(props: Props) {
                 startIcon={<CreateFileIcon />}
                 // endIcon={<ArrowDropDownIcon />}
               >
-                {t('core:createNew')}
+                <Box
+                  style={{
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    maxWidth: 100,
+                  }}
+                >
+                  {t('core:createNew')}
+                </Box>
               </Button>
               <Tooltip title={t('core:openSharingLink')}>
                 <Button
@@ -218,7 +227,16 @@ function MobileNavigation(props: Props) {
                   }}
                   startIcon={<OpenLinkIcon />}
                 >
-                  {t('core:openLink')}
+                  <Box
+                    style={{
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      maxWidth: 100,
+                    }}
+                  >
+                    {t('core:openLink')}
+                  </Box>
                 </Button>
               </Tooltip>
             </ButtonGroup>
