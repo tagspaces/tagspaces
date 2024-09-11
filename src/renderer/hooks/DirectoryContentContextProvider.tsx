@@ -364,8 +364,9 @@ export const DirectoryContentContextProvider = ({
             cleanTrailingDirSeparator(action.entry.path)
           ) {
             directoryMeta.current = {
-              ...(directoryMeta.current && directoryMeta.current),
-              ...(action.entry.meta && action.entry.meta),
+              ...directoryMeta.current,
+              ...action.entry.meta,
+              tags: action.entry.meta?.tags || [],
             };
           }
         } else if (action.action === 'move') {
