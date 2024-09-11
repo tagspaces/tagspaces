@@ -195,29 +195,31 @@ function MobileNavigation(props: Props) {
                 textAlign: 'center',
               }}
             >
-              <Button
-                aria-controls={
-                  openedCreateMenu ? 'split-button-menu' : undefined
-                }
-                aria-expanded={openedCreateMenu ? 'true' : undefined}
-                aria-haspopup="menu"
-                data-tid="createNewDropdownButtonTID"
-                onClick={handleToggle}
-                size="small"
-                startIcon={<CreateFileIcon />}
-                // endIcon={<ArrowDropDownIcon />}
-              >
-                <Box
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    maxWidth: 100,
-                  }}
+              <Tooltip title={t('core:createNew')}>
+                <Button
+                  aria-controls={
+                    openedCreateMenu ? 'split-button-menu' : undefined
+                  }
+                  aria-expanded={openedCreateMenu ? 'true' : undefined}
+                  aria-haspopup="menu"
+                  data-tid="createNewDropdownButtonTID"
+                  onClick={handleToggle}
+                  size="small"
+                  startIcon={<CreateFileIcon />}
+                  // endIcon={<ArrowDropDownIcon />}
                 >
-                  {t('core:createNew')}
-                </Box>
-              </Button>
+                  <Box
+                    style={{
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      maxWidth: 100,
+                    }}
+                  >
+                    {t('core:createNew')}
+                  </Box>
+                </Button>
+              </Tooltip>
               <Tooltip title={t('core:openSharingLink')}>
                 <Button
                   size="small"
