@@ -334,22 +334,6 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createLinkFile')} />
                     </MenuItem>
                     <MenuItem
-                      key="downloadFileTID"
-                      data-tid="downloadFileTID"
-                      onClick={() => {
-                        openDownloadUrl();
-                        setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
-                      }}
-                    >
-                      <ListItemIcon>
-                        <FileDownloadIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={t('core:downloadFile')} />
-                    </MenuItem>
-                    <MenuItem
                       key="createNewAudio"
                       data-tid="createNewAudioTID"
                       disabled={!Pro}
@@ -390,6 +374,24 @@ function MobileNavigation(props: Props) {
                       </ListItemIcon>
                       <ListItemText primary={t('core:addFiles')} />
                     </MenuItem>
+                    {AppConfig.isElectron && (
+                      <MenuItem
+                        key="newFromDownloadURL"
+                        data-tid="newFromDownloadURLTID"
+                        onClick={() => {
+                          openDownloadUrl();
+                          setOpenCreateMenu(false);
+                          if (hideDrawer) {
+                            hideDrawer();
+                          }
+                        }}
+                      >
+                        <ListItemIcon>
+                          <FileDownloadIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('core:newFromDownloadURL')} />
+                      </MenuItem>
+                    )}
                     <Divider />
                     <MenuItem
                       key="createNewFolderTID"
@@ -427,7 +429,6 @@ function MobileNavigation(props: Props) {
                     </MenuItem>
                     {!AppConfig.isCordova && (
                       <>
-                        {/* <Divider /> */}
                         <MenuItem
                           key="createWindowTID"
                           ata-tid="createWindowTID"

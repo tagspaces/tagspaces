@@ -170,7 +170,7 @@ function DownloadUrlDialog(props: Props) {
           scroll="paper"
         >
           <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-            {t('core:url')}
+            {t('core:downloadFile')}
             <DialogCloseButton
               testId="closeCreateDialogTID"
               onClose={() => onClose()}
@@ -188,6 +188,7 @@ function DownloadUrlDialog(props: Props) {
             <TextField
               error={invalidURL}
               label={t('core:url')}
+              autoFocus
               margin="dense"
               name="name"
               fullWidth={true}
@@ -204,11 +205,12 @@ function DownloadUrlDialog(props: Props) {
           <DialogActions>
             <Button onClick={onClose}>{t('core:cancel')}</Button>
             <Button
+              variant="contained"
               data-tid={'downloadFileUrlTID'}
               className={classes.createButton}
               onClick={() => downloadURL()}
             >
-              {t('core:downloadFile')}
+              {t('core:ok')}
             </Button>
           </DialogActions>
         </Dialog>

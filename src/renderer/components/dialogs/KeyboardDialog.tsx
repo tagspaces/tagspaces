@@ -35,8 +35,13 @@ import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 
 export function adjustKeyBinding(keyBinding: string) {
-  if (!keyBinding || !keyBinding.length || keyBinding.length < 1) return '';
-  let adjKB = keyBinding.toLowerCase();
+  if (!keyBinding || !keyBinding.length) return '';
+  let adjKB = '';
+  if (Array.isArray(keyBinding)) {
+    adjKB = keyBinding.join(', ');
+  } else {
+    adjKB = keyBinding?.toLowerCase();
+  }
   if (AppConfig.isMacLike) {
     adjKB = adjKB
       .replaceAll('+', ' ')

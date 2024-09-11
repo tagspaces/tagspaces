@@ -94,7 +94,7 @@ function NewFileDialog(props: Props) {
     if (fileType === 'url') {
       return t('createLinkFile');
     }
-    return '...';
+    return t('newFileNote');
   }
 
   function loadLocation() {
