@@ -212,7 +212,7 @@ function MobileNavigation(props: Props) {
               <Tooltip title={t('core:openSharingLink')}>
                 <Button
                   size="small"
-                  data-tid="openLinkTID"
+                  data-tid="openLinkNavigationTID"
                   onClick={() => {
                     openLinkDialog();
                   }}
