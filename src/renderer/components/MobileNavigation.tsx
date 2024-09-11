@@ -23,6 +23,7 @@ import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
 import ToggleButton from '@mui/material/ToggleButton';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -55,7 +56,6 @@ import ProTeaser from '-/components/ProTeaser';
 import TagLibrary from '-/components/TagLibrary';
 import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
@@ -84,6 +84,7 @@ import { useUserContext } from '-/hooks/useUserContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
+import { useDownloadUrlDialogContext } from '-/components/dialogs/hooks/useDownloadUrlDialogContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -122,6 +123,7 @@ function MobileNavigation(props: Props) {
   const { openSettingsDialog } = useSettingsDialogContext();
   const { openLinkDialog } = useLinkDialogContext();
   const { currentOpenedPanel, showPanel } = usePanelsContext();
+  const { openDownloadUrl } = useDownloadUrlDialogContext();
   const keyBindings = useSelector(getKeyBindingObject);
   /* const isLocationManagerPanelOpenedSelector = useSelector(
     isLocationManagerPanelOpened,
@@ -316,7 +318,7 @@ function MobileNavigation(props: Props) {
                       <InfoIcon tooltip={t('core:createNoteTitle')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewLinkFileTID"
+                      key="createNewLinkFile"
                       data-tid="createNewLinkFileTID"
                       onClick={() => {
                         openNewFileDialog('url');
@@ -330,6 +332,22 @@ function MobileNavigation(props: Props) {
                         <LinkFileIcon />
                       </ListItemIcon>
                       <ListItemText primary={t('core:createLinkFile')} />
+                    </MenuItem>
+                    <MenuItem
+                      key="downloadFileTID"
+                      data-tid="downloadFileTID"
+                      onClick={() => {
+                        openDownloadUrl();
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <FileDownloadIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:downloadFile')} />
                     </MenuItem>
                     <MenuItem
                       key="createNewAudio"

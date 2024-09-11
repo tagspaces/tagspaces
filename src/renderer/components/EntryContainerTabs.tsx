@@ -147,9 +147,9 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       const backupFilePath = getBackupFileDir(
         openedEntry.path,
         openedEntry.uuid,
-        location.getDirSeparator(),
+        location?.getDirSeparator(),
       );
-      location.checkDirExist(backupFilePath).then((exist) => {
+      location?.checkDirExist(backupFilePath).then((exist) => {
         if (exist) {
           haveRevisions.current = exist;
           forceUpdate();

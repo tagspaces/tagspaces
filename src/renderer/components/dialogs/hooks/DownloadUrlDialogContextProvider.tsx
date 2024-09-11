@@ -1,5 +1,4 @@
-/*
-/!**
+/**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces GmbH
  *
@@ -15,32 +14,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- *!/
+ */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 
-type NewEntryDialogContextData = {
-  openNewEntryDialog: () => void;
-  closeNewEntryDialog: () => void;
+type DownloadUrlContextData = {
+  openDownloadUrl: () => void;
+  closeDownloadUrl: () => void;
 };
 
-export const NewEntryDialogContext = createContext<NewEntryDialogContextData>({
-  openNewEntryDialog: undefined,
-  closeNewEntryDialog: undefined,
+export const DownloadUrlDialogContext = createContext<DownloadUrlContextData>({
+  openDownloadUrl: undefined,
+  closeDownloadUrl: undefined,
 });
 
-export type NewEntryDialogContextProviderProps = {
+export type DownloadUrlContextProviderProps = {
   children: React.ReactNode;
 };
 
-const NewEntryDialog = React.lazy(
-  () => import(/!* webpackChunkName: "NewEntryDialog" *!/ '../NewEntryDialog'),
+const DownloadUrlDialog = React.lazy(
+  () =>
+    import(/* webpackChunkName: "DownloadUrlDialog" */ '../DownloadUrlDialog'),
 );
 
-export const NewEntryDialogContextProvider = ({
+export const DownloadUrlContextProvider = ({
   children,
-}: NewEntryDialogContextProviderProps) => {
+}: DownloadUrlContextProviderProps) => {
   const open = useRef<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -55,33 +55,25 @@ export const NewEntryDialogContextProvider = ({
     forceUpdate();
   }
 
-  function NewEntryDialogAsync(props) {
+  function DownloadUrlAsync(props) {
     return (
       <React.Suspense fallback={<LoadingLazy />}>
-        <NewEntryDialog {...props} />
+        <DownloadUrlDialog {...props} />
       </React.Suspense>
     );
   }
 
   const context = useMemo(() => {
     return {
-      openNewEntryDialog: openDialog,
-      closeNewEntryDialog: closeDialog,
+      openDownloadUrl: openDialog,
+      closeDownloadUrl: closeDialog,
     };
   }, []);
 
   return (
-    <NewEntryDialogContext.Provider value={context}>
-      <NewEntryDialogAsync
-        open={open.current}
-        onClose={(event, reason) => {
-          if (reason !== 'backdropClick') {
-            closeDialog();
-          }
-        }}
-      />
+    <DownloadUrlDialogContext.Provider value={context}>
+      <DownloadUrlAsync open={open.current} onClose={closeDialog} />
       {children}
-    </NewEntryDialogContext.Provider>
+    </DownloadUrlDialogContext.Provider>
   );
 };
-*/
