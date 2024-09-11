@@ -274,7 +274,7 @@
   "createRichTextFile": "New HTML File",
   "createLinkFile": "New Link File",
   "createDirectory": "New Folder",
-  "addFiles": "Add Files",
+  "addFiles": "New From Device",
   "addFilesTitle": "Add or upload files from your computer.",
   "exitApp": "Exit",
   "closeWin": "Close Window",
@@ -862,7 +862,8 @@
   "createNew": "Create New",
   "fileContent": "File Content",
   "linkURL": "URL",
-  "urlValidationHelp": "not valid URL",
+  "urlValidationHelp": "Invalid URL",
   "openSharingLink": "Open sharing links created with the TagSpaces (ts:// links)",
+  "newFromDownloadURL": "New From URL",
   "-": "-"
 }

@@ -340,7 +340,7 @@ function EntryProperties(props: Props) {
         openedEntry.path,
         location?.getDirSeparator(),
       );
-      const nextPath = path + location.getDirSeparator() + editName;
+      const nextPath = path + location?.getDirSeparator() + editName;
 
       if (openedEntry.isFile) {
         renameFile(openedEntry.path, nextPath, openedEntry.locationID).catch(
@@ -411,7 +411,7 @@ function EntryProperties(props: Props) {
     } else if (dirProps.current) {
       return formatBytes(dirProps.current.totalSize);
     }
-    return t(location.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
+    return t(location?.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
   };
 
   const toggleBackgroundColorPicker = () => {
@@ -775,7 +775,7 @@ function EntryProperties(props: Props) {
           <Grid item xs={12}>
             <Tooltip
               title={
-                !location.haveObjectStoreSupport() &&
+                !location?.haveObjectStoreSupport() &&
                 dirProps.current &&
                 !openedEntry.isFile &&
                 dirProps.current.dirsCount +

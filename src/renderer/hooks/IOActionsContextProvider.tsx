@@ -281,7 +281,8 @@ export const IOActionsContextProvider = ({
   const { setReflectKanBanActions } = useEditedKanBanMetaContext();
   const { currentDirectoryPath, openDirectory, getAllPropertiesPromise } =
     useDirectoryContentContext();
-  const { currentLocation, findLocation } = useCurrentLocationContext();
+  const { currentLocation, findLocation, getFirstRWLocation } =
+    useCurrentLocationContext();
   const { reflectUpdateSidecarMeta } = useLocationIndexContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -770,8 +771,18 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  function fetchUrl(url: string, targetPath: string, haveProgress: boolean) {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'fetchUrl',
+        url,
+        targetPath,
+        haveProgress,
+      );
+    }
+    return fetch(url);
+  }
   /**
-   * S3 TODO deprecated fetch must be moved in main thread
    * @param url
    * @param targetPath
    * @param onDownloadProgress
@@ -781,8 +792,13 @@ export const IOActionsContextProvider = ({
     targetPath: string,
     onDownloadProgress?: (progress, abort, fileName?) => void,
   ): Promise<TS.FileSystemEntry> {
-    function saveFile(response: Response): Promise<TS.FileSystemEntry> {
-      if (AppConfig.isElectron && !currentLocation.haveObjectStoreSupport()) {
+    const location = currentLocation || getFirstRWLocation();
+    function saveFile(response): Promise<TS.FileSystemEntry> {
+      if (response.filePath) {
+        //file is already saved
+        return location.getPropertiesPromise(response.filePath);
+      }
+      if (AppConfig.isElectron && !location.haveObjectStoreSupport()) {
         return saveBinaryFilePromise(
           { path: targetPath },
           response.body,
@@ -794,15 +810,15 @@ export const IOActionsContextProvider = ({
         return saveFilePromise({ path: targetPath }, arrayBuffer, true);
       });
     }
-    return fetch(url)
+    return fetchUrl(url, targetPath, onDownloadProgress !== undefined)
       .then((response) => saveFile(response))
       .then((fsEntry: TS.FileSystemEntry) => {
         return generateThumbnailPromise(
-          currentLocation.haveObjectStoreSupport() ? url : fsEntry.path,
+          location.haveObjectStoreSupport() ? url : fsEntry.path,
           fsEntry.size,
-          currentLocation.loadTextFilePromise,
-          currentLocation.getFileContentPromise,
-          currentLocation?.getDirSeparator(),
+          location.loadTextFilePromise,
+          location.getFileContentPromise,
+          location?.getDirSeparator(),
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
@@ -811,14 +827,14 @@ export const IOActionsContextProvider = ({
               {
                 path: getThumbFileLocationForFile(
                   targetPath,
-                  currentLocation?.getDirSeparator(),
+                  location?.getDirSeparator(),
                   false,
                 ),
               },
               fileContent,
               true,
             ).then((thumb: TS.FileSystemEntry) =>
-              currentLocation.getThumbPath(thumb.path).then((thumbPath) => ({
+              location.getThumbPath(thumb.path).then((thumbPath) => ({
                 ...fsEntry,
                 thumbPath: thumbPath,
               })),

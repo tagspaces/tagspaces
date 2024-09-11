@@ -29,6 +29,8 @@ import {
   isDirectory,
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
+import http from 'http';
+import https from 'https';
 import path from 'path';
 import WebSocket from 'ws';
 import {
@@ -80,6 +82,61 @@ export default function loadMainEvents() {
     }
 
     //watchFolder(mainWindow, e, path, depth);
+  });
+  ipcMain.handle('fetchUrl', async (event, url, targetPath, withProgress) => {
+    function fetchHttp(url) {
+      return new Promise((resolve, reject) => {
+        const client = url.startsWith('https') ? https : http;
+
+        client
+          .get(url, (res) => {
+            let downloadedSize = 0;
+            const totalSize = parseInt(res.headers['content-length'], 10);
+
+            let onUploadProgress = undefined;
+            if (withProgress) {
+              progress['fetchUrl'] = newProgress('fetchUrl', totalSize);
+              onUploadProgress = getOnProgress('fetchUrl', progress);
+            }
+
+            const fileStream = fs.createWriteStream(targetPath); // Write file to disk
+            // Pipe the response data into the file
+            res.pipe(fileStream);
+
+            // Collect data chunks and calculate size
+            res.on('data', (chunk) => {
+              downloadedSize += chunk.length; // Add the size of the current chunk
+              if (onUploadProgress) {
+                onUploadProgress(
+                  { key: targetPath, loaded: downloadedSize, total: totalSize },
+                  undefined,
+                );
+              }
+            });
+
+            // Resolve the response on end
+            res.on('end', () => {
+              if (onUploadProgress) {
+                onUploadProgress(
+                  { key: targetPath, loaded: 1, total: 1 },
+                  undefined,
+                );
+              }
+              resolve({ success: true, filePath: targetPath });
+            });
+          })
+          .on('error', (err) => {
+            reject(err);
+          });
+      });
+    }
+
+    try {
+      const response = await fetchHttp(url);
+      return response;
+    } catch (error) {
+      return { error: error.message };
+    }
   });
   ipcMain.handle('isWorkerAvailable', async () => {
     const results = await isWorkerAvailable();
@@ -308,7 +365,6 @@ export default function loadMainEvents() {
         param,
         content,
         overwrite,
-        onUploadProgress,
       ).then((succeeded) => {
         if (succeeded && onUploadProgress) {
           onUploadProgress({ key: param.path, loaded: 1, total: 1 }, undefined);

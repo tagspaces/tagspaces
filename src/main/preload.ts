@@ -9,6 +9,7 @@ import {
 
 export type Channels =
   | 'isWorkerAvailable'
+  | 'fetchUrl'
   | 'isDirectory'
   | 'resolveRelativePaths'
   | 'set-language'

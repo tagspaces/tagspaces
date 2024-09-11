@@ -582,11 +582,11 @@ export const OpenedEntryContextProvider = ({
     }
     entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
     const loc = findLocation(fsEntry.locationID);
-    if (loc.haveObjectStoreSupport() || loc.haveWebDavSupport()) {
+    if (loc?.haveObjectStoreSupport() || loc?.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;
-      entryForOpening.url = await loc.getURLforPathInt(cleanedPath);
+      entryForOpening.url = await loc?.getURLforPathInt(cleanedPath);
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
