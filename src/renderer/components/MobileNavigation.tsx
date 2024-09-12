@@ -113,7 +113,7 @@ function MobileNavigation(props: Props) {
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
 
-  const { setSelectedLocation } = useCurrentLocationContext();
+  const { setSelectedLocation, currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openFileUpload } = useFileUploadContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
@@ -374,24 +374,27 @@ function MobileNavigation(props: Props) {
                       </ListItemIcon>
                       <ListItemText primary={t('core:addFiles')} />
                     </MenuItem>
-                    {AppConfig.isElectron && (
-                      <MenuItem
-                        key="newFromDownloadURL"
-                        data-tid="newFromDownloadURLTID"
-                        onClick={() => {
-                          openDownloadUrl();
-                          setOpenCreateMenu(false);
-                          if (hideDrawer) {
-                            hideDrawer();
-                          }
-                        }}
-                      >
-                        <ListItemIcon>
-                          <FileDownloadIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={t('core:newFromDownloadURL')} />
-                      </MenuItem>
-                    )}
+                    {AppConfig.isElectron &&
+                      !currentLocation?.haveObjectStoreSupport() && (
+                        <MenuItem
+                          key="newFromDownloadURL"
+                          data-tid="newFromDownloadURLTID"
+                          onClick={() => {
+                            openDownloadUrl();
+                            setOpenCreateMenu(false);
+                            if (hideDrawer) {
+                              hideDrawer();
+                            }
+                          }}
+                        >
+                          <ListItemIcon>
+                            <FileDownloadIcon />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={t('core:newFromDownloadURL')}
+                          />
+                        </MenuItem>
+                      )}
                     <Divider />
                     <MenuItem
                       key="createNewFolderTID"
