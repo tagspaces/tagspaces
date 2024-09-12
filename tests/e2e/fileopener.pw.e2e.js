@@ -451,8 +451,9 @@ test.describe('TST08 - File folder properties', () => {
 
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
-    await clickOn('[data-tid=locationManagerMenu]');
-    await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    //await clickOn('[data-tid=locationManagerMenu]');
+    //await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    await clickOn('[data-tid=openLinkNavigationTID]');
     await setInputKeys('directoryName', sharingLinkValue);
     await clickOn('[data-tid=confirmOpenLink]');
     await expectElementExist(

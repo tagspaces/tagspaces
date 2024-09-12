@@ -242,8 +242,10 @@ test.describe('TST02 - Folder properties', () => {
     );
     const sharingLinkValue = await sharingLink.getAttribute('value');
 
-    await clickOn('[data-tid=locationManagerMenu]');
-    await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    //await clickOn('[data-tid=locationManagerMenu]');
+    //await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    await clickOn('[data-tid=openLinkNavigationTID]');
+
     /*const clipboardContent = await global.client.evaluate(() =>
       navigator.clipboard.readText()
     );
