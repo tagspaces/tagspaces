@@ -430,6 +430,7 @@ function EntryContainer() {
         //check if file is changed
         if (fileChanged || force) {
           isSavingInProgress.current = true;
+          forceUpdate();
           saveFileOpen(openedEntry, fileContent).then((success) => {
             if (success) {
               setFileChanged(false);
