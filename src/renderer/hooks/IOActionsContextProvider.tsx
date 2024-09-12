@@ -643,13 +643,19 @@ export const IOActionsContextProvider = ({
             ]);
             return true;
           });
-          return moveFilesPromise(moveMetaJobs, location.uuid, undefined, false)
+          return moveFilesPromise(
+            moveMetaJobs,
+            location.uuid,
+            undefined,
+            false,
+            true,
+          )
             .then(() => {
               console.log('Moving meta and thumbs successful');
               return reflect && reflectMoveFiles(moveJobs);
             })
             .catch((err) => {
-              console.log('At least one meta or thumb was not moved ' + err);
+              console.log('At least one meta or thumb was not moved ', err);
               return reflect && reflectMoveFiles(moveJobs);
             });
         } else {
@@ -735,17 +741,25 @@ export const IOActionsContextProvider = ({
       .then((success) => {
         if (success) {
           showNotification(t('core:filesCopiedSuccessful'));
-          const metaPaths = paths.flatMap((path) => [
-            getMetaFileLocationForFile(
-              path,
-              currentLocation?.getDirSeparator(),
-            ),
-            getThumbFileLocationForFile(
-              path,
-              currentLocation?.getDirSeparator(),
-              false,
-            ),
-          ]);
+          const metaPaths = paths.flatMap((path) =>
+            path.indexOf(
+              AppConfig.dirSeparator +
+                AppConfig.metaFolder +
+                AppConfig.dirSeparator,
+            ) !== -1
+              ? []
+              : [
+                  getMetaFileLocationForFile(
+                    path,
+                    currentLocation?.getDirSeparator(),
+                  ),
+                  getThumbFileLocationForFile(
+                    path,
+                    currentLocation?.getDirSeparator(),
+                    false,
+                  ),
+                ],
+          );
 
           return copyFilesWithProgress(
             metaPaths,

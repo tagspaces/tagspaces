@@ -149,6 +149,7 @@ export const OpenedEntryContextProvider = ({
     currentLocationPath,
     openDirectory,
     getAllPropertiesPromise,
+    setSearchQuery,
   } = useDirectoryContentContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
@@ -347,6 +348,7 @@ export const OpenedEntryContextProvider = ({
           openedFile.locationID,
           relativePath,
           relativeDirPath,
+          openedFile.uuid,
         );
       } else {
         const relativePath = getRelativeEntryPath(
@@ -358,6 +360,7 @@ export const OpenedEntryContextProvider = ({
           openedFile.locationID,
           undefined,
           relativePath,
+          openedFile.uuid,
         );
       }
     } else {
@@ -674,6 +677,7 @@ export const OpenedEntryContextProvider = ({
       const dPath = getURLParameter('tsdpath', url);
       const ePath = getURLParameter('tsepath', url);
       const cmdOpen = getURLParameter('cmdopen', url);
+      const id = getURLParameter('tseid', url);
       if (cmdOpen && cmdOpen.length > 0) {
         const entryPath = decodeURIComponent(cmdOpen);
         getAllPropertiesPromise(entryPath, lid)
@@ -751,6 +755,7 @@ export const OpenedEntryContextProvider = ({
               // });
             } else {
               // local files case
+              let openDirPath = locationPath;
               if (directoryPath && directoryPath.length > 0) {
                 if (
                   directoryPath.includes('../') ||
@@ -760,38 +765,41 @@ export const OpenedEntryContextProvider = ({
                   return true;
                 }
 
-                const dirFullPath = joinPaths(
+                openDirPath = joinPaths(
                   targetLocation.getDirSeparator(),
                   locationPath,
                   directoryPath,
                 );
-
-                openDirectory(dirFullPath, undefined, targetLocation);
-              } else {
-                openDirectory(locationPath, undefined, targetLocation);
               }
-
-              if (entryPath && entryPath.length > 0) {
-                if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                  showNotification(t('core:invalidLink'), 'warning', true);
-                  return true;
-                }
-                const entryFullPath =
-                  locationPath + targetLocation.getDirSeparator() + entryPath;
-                getAllPropertiesPromise(entryFullPath, lid)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      openFsEntry(fsEntry);
-                      if (options.fullWidth) {
-                        setEntryInFullWidth(true);
-                      }
-                    }
+              openDirectory(openDirPath, undefined, targetLocation).then(() => {
+                if (entryPath && entryPath.length > 0) {
+                  if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                    showNotification(t('core:invalidLink'), 'warning', true);
                     return true;
-                  })
-                  .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true),
-                  );
-              }
+                  }
+                  const entryFullPath =
+                    locationPath + targetLocation.getDirSeparator() + entryPath;
+                  getAllPropertiesPromise(entryFullPath, lid)
+                    .then((fsEntry: TS.FileSystemEntry) => {
+                      if (fsEntry) {
+                        openFsEntry(fsEntry);
+                        if (options.fullWidth) {
+                          setEntryInFullWidth(true);
+                        }
+                      } else if (id) {
+                        //ENTRY NOT EXIST maybe moved
+                        setSearchQuery({
+                          textQuery: id,
+                          executeSearch: true,
+                        });
+                      }
+                      return true;
+                    })
+                    .catch(() =>
+                      showNotification(t('core:invalidLink'), 'warning', true),
+                    );
+                }
+              });
             }
             //}, openLocationTimer);
           });
