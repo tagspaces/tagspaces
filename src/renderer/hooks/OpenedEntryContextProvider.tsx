@@ -22,6 +22,7 @@ import React, {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '-/reducers/app';
@@ -66,6 +67,8 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -144,6 +147,7 @@ export const OpenedEntryContextProvider = ({
 
   const { currentLocation, findLocation, openLocation, getLocationPath } =
     useCurrentLocationContext();
+  const { getMetadataID } = useIOActionsContext();
   const {
     currentDirectoryPath,
     currentLocationPath,
@@ -163,15 +167,12 @@ export const OpenedEntryContextProvider = ({
   //const locations: CommonLocation[] = useSelector(getLocations);
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const currentEntry = useRef<TS.OpenedEntry>(undefined);
-  /* const dirProps = useRef<TS.DirProp>({
-    totalSize: undefined,
-    filesCount: undefined,
-    dirsCount: undefined,
-  });*/
   const fileChanged = useRef<boolean>(false);
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
+  const [isLinkFromSearchDialogOpened, setLinkFromSearchConfirmDialogOpened] =
+    useState<string>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -593,6 +594,16 @@ export const OpenedEntryContextProvider = ({
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
+    if (!fsEntry.meta || !fsEntry.meta.id) {
+      //generate new meta id
+      entryForOpening.uuid = await getMetadataID(
+        fsEntry.path,
+        fsEntry.uuid,
+        loc,
+      );
+      entryForOpening.meta = { id: entryForOpening.uuid };
+    }
+
     if (
       fsEntry.isNewFile &&
       AppConfig.editableFiles.includes(fsEntry.extension)
@@ -788,10 +799,7 @@ export const OpenedEntryContextProvider = ({
                         }
                       } else if (id) {
                         //ENTRY NOT EXIST maybe moved
-                        setSearchQuery({
-                          textQuery: id,
-                          executeSearch: true,
-                        });
+                        setLinkFromSearchConfirmDialogOpened(id);
                       }
                       return true;
                     })
@@ -1006,6 +1014,29 @@ export const OpenedEntryContextProvider = ({
   return (
     <OpenedEntryContext.Provider value={context}>
       {children}
+      <ConfirmDialog
+        open={isLinkFromSearchDialogOpened !== undefined}
+        onClose={() => {
+          setLinkFromSearchConfirmDialogOpened(undefined);
+        }}
+        title={t('core:linkFromSearchTitle')}
+        content={t('core:linkFromSearch')}
+        confirmCallback={(result) => {
+          if (result) {
+            setSearchQuery({
+              textQuery: isLinkFromSearchDialogOpened,
+              searchBoxing: 'location',
+              searchType: 'strict',
+              maxSearchResults: 1,
+              forceIndexing: true,
+              executeSearch: true,
+            });
+          }
+        }}
+        cancelDialogTID="linkFromSearchDialogCancel"
+        confirmDialogTID="linkFromSearchDialogConfirm"
+        confirmDialogContentTID="linkFromSearchDialogContent"
+      />
     </OpenedEntryContext.Provider>
   );
 };
