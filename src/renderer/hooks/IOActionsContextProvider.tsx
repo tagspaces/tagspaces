@@ -151,6 +151,11 @@ type IOActionsContextData = {
     entry: TS.FileSystemEntry,
     metaData: any,
   ) => Promise<TS.FileSystemEntryMeta>;
+  getMetadata: (
+    path: string,
+    id: string,
+    location: CommonLocation,
+  ) => Promise<TS.FileSystemEntryMeta>;
   getMetadataID: (
     path: string,
     id: string,
@@ -231,6 +236,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   duplicateFile: undefined,
   saveCurrentLocationMetaData: undefined,
   saveMetaDataPromise: undefined,
+  getMetadata: undefined,
   getMetadataID: undefined,
   saveFsEntryMeta: undefined,
   savePerspective: undefined,
@@ -1561,29 +1567,38 @@ export const IOActionsContextProvider = ({
     id: string,
     location: CommonLocation,
   ): Promise<string> {
+    return getMetadata(path, id, location).then((metaData) => metaData.id);
+  }
+
+  function getMetadata(
+    path: string,
+    id: string,
+    location: CommonLocation,
+  ): Promise<TS.FileSystemEntryMeta> {
     return location
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         if (fsEntryMeta.id) {
-          return fsEntryMeta.id;
+          return fsEntryMeta;
         } else {
           return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
             ...fsEntryMeta,
             id: id,
-          }).then((fsEntryMeta) => fsEntryMeta.id);
+          }).then((fsEntryMeta) => fsEntryMeta);
         }
       })
       .catch(() => {
         // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
-        const content = JSON.stringify({ id: id });
+        const mataData = { id: id };
         const metaFilePath = path.endsWith(location.getDirSeparator())
           ? getMetaFileLocationForDir(path, location.getDirSeparator())
           : getMetaFileLocationForFile(path, location.getDirSeparator());
+
         return saveTextFilePromise(
           { path: metaFilePath, locationID: location.uuid },
-          content,
+          JSON.stringify(mataData),
           true,
-        ).then(() => id);
+        ).then(() => mataData);
       });
   }
 
@@ -2151,6 +2166,7 @@ export const IOActionsContextProvider = ({
       duplicateFile,
       saveCurrentLocationMetaData,
       saveMetaDataPromise,
+      getMetadata,
       getMetadataID,
       saveFsEntryMeta,
       savePerspective,

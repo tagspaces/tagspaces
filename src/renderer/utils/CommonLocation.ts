@@ -932,7 +932,7 @@ export class CommonLocation implements TS.Location {
         );
       }
       return {
-        id: getUuid(),
+        //id: getUuid(),
         isFile: true,
         color: '',
         tags: [],
@@ -954,7 +954,7 @@ export class CommonLocation implements TS.Location {
         throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
       }
       return {
-        id: getUuid(),
+        //id: getUuid(),
         isFile: false,
         color: '',
         perspective: 'grid',

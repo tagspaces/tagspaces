@@ -147,7 +147,7 @@ export const OpenedEntryContextProvider = ({
 
   const { currentLocation, findLocation, openLocation, getLocationPath } =
     useCurrentLocationContext();
-  const { getMetadataID } = useIOActionsContext();
+  const { getMetadata } = useIOActionsContext();
   const {
     currentDirectoryPath,
     currentLocationPath,
@@ -594,15 +594,10 @@ export const OpenedEntryContextProvider = ({
     } else if (fsEntry.url) {
       entryForOpening.url = fsEntry.url;
     }
-    if (!fsEntry.meta || !fsEntry.meta.id) {
-      //generate new meta id
-      entryForOpening.uuid = await getMetadataID(
-        fsEntry.path,
-        fsEntry.uuid,
-        loc,
-      );
-      entryForOpening.meta = { id: entryForOpening.uuid };
-    }
+    //set meta and generate new meta id if not exist
+    const meta = await getMetadata(fsEntry.path, fsEntry.uuid, loc);
+    entryForOpening.uuid = meta.id;
+    entryForOpening.meta = { ...fsEntry.meta, ...meta };
 
     if (
       fsEntry.isNewFile &&
@@ -766,7 +761,7 @@ export const OpenedEntryContextProvider = ({
               // });
             } else {
               // local files case
-              let openDirPath = locationPath;
+              let dirPath = locationPath;
               if (directoryPath && directoryPath.length > 0) {
                 if (
                   directoryPath.includes('../') ||
@@ -776,36 +771,58 @@ export const OpenedEntryContextProvider = ({
                   return true;
                 }
 
-                openDirPath = joinPaths(
+                dirPath = joinPaths(
                   targetLocation.getDirSeparator(),
                   locationPath,
                   directoryPath,
                 );
               }
-              openDirectory(openDirPath, undefined, targetLocation).then(() => {
-                if (entryPath && entryPath.length > 0) {
-                  if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                    showNotification(t('core:invalidLink'), 'warning', true);
-                    return true;
-                  }
-                  const entryFullPath =
-                    locationPath + targetLocation.getDirSeparator() + entryPath;
-                  getAllPropertiesPromise(entryFullPath, lid)
-                    .then((fsEntry: TS.FileSystemEntry) => {
-                      if (fsEntry) {
-                        openFsEntry(fsEntry);
-                        if (options.fullWidth) {
-                          setEntryInFullWidth(true);
-                        }
-                      } else if (id) {
-                        //ENTRY NOT EXIST maybe moved
-                        setLinkFromSearchConfirmDialogOpened(id);
+              targetLocation.checkDirExist(dirPath).then((exist) => {
+                if (exist) {
+                  openDirectory(dirPath, undefined, targetLocation).then(() => {
+                    if (entryPath && entryPath.length > 0) {
+                      if (
+                        entryPath.includes('../') ||
+                        entryPath.includes('..\\')
+                      ) {
+                        showNotification(
+                          t('core:invalidLink'),
+                          'warning',
+                          true,
+                        );
+                        return true;
                       }
-                      return true;
-                    })
-                    .catch(() =>
-                      showNotification(t('core:invalidLink'), 'warning', true),
-                    );
+                      const entryFullPath =
+                        locationPath +
+                        targetLocation.getDirSeparator() +
+                        entryPath;
+                      getAllPropertiesPromise(entryFullPath, lid)
+                        .then((fsEntry: TS.FileSystemEntry) => {
+                          if (fsEntry) {
+                            openFsEntry(fsEntry);
+                            if (options.fullWidth) {
+                              setEntryInFullWidth(true);
+                            }
+                          } else if (id) {
+                            //ENTRY NOT EXIST maybe moved
+                            setLinkFromSearchConfirmDialogOpened(id);
+                          }
+                          return true;
+                        })
+                        .catch(() =>
+                          showNotification(
+                            t('core:invalidLink'),
+                            'warning',
+                            true,
+                          ),
+                        );
+                    }
+                  });
+                } else if (id) {
+                  //ENTRY NOT EXIST maybe moved
+                  setLinkFromSearchConfirmDialogOpened(id);
+                } else {
+                  showNotification(t('core:invalidLink'), 'warning', true);
                 }
               });
             }
