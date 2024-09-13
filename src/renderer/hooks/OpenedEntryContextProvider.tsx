@@ -1036,8 +1036,8 @@ export const OpenedEntryContextProvider = ({
         onClose={() => {
           setLinkFromSearchConfirmDialogOpened(undefined);
         }}
-        title={t('core:linkFromSearchTitle')}
-        content={t('core:linkFromSearch')}
+        title={t('core:invalidSharingLink')}
+        content={t('core:confirmSearchById')}
         confirmCallback={(result) => {
           if (result) {
             setSearchQuery({

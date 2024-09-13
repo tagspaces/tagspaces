@@ -865,7 +865,7 @@
   "urlValidationHelp": "Invalid URL",
   "openSharingLink": "Open sharing links created with the TagSpaces (ts:// links)",
   "newFromDownloadURL": "New From URL",
-  "linkFromSearchTitle": "Link not exist",
-  "linkFromSearch": "Do you want trying to search it by id?",
+  "invalidSharingLink": "Invalid Sharing Link",
+  "confirmSearchById": "Do you want to search for the file or folder by its ID?",
   "-": "-"
 }
