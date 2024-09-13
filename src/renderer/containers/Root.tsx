@@ -84,8 +84,8 @@ export default function Root({ store, persistor }: RootType) {
                         <FSWatcherContextProvider>
                           <PlatformFacadeContextProvider>
                             <LocationIndexContextProvider>
-                              <OpenedEntryContextProvider>
-                                <IOActionsContextProvider>
+                              <IOActionsContextProvider>
+                                <OpenedEntryContextProvider>
                                   <TagGroupsLocationContextProvider>
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
@@ -117,8 +117,8 @@ export default function Root({ store, persistor }: RootType) {
                                       </DndProvider>
                                     </TaggingActionsContextProvider>
                                   </TagGroupsLocationContextProvider>
-                                </IOActionsContextProvider>
-                              </OpenedEntryContextProvider>
+                                </OpenedEntryContextProvider>
+                              </IOActionsContextProvider>
                             </LocationIndexContextProvider>
                           </PlatformFacadeContextProvider>
                         </FSWatcherContextProvider>

@@ -253,7 +253,7 @@ export default function loadMainEvents() {
   );
   ipcMain.handle(
     'renameFilePromise',
-    async (event, filePath, newFilePath, withProgress) => {
+    async (event, filePath, newFilePath, withProgress, force) => {
       let result;
       if (withProgress) {
         progress['renameFilePromise'] = newProgress('renameFilePromise', 1);
@@ -261,9 +261,15 @@ export default function loadMainEvents() {
           filePath,
           newFilePath,
           getOnProgress('renameFilePromise', progress),
+          force,
         );
       } else {
-        result = await renameFilePromise(filePath, newFilePath, undefined);
+        result = await renameFilePromise(
+          filePath,
+          newFilePath,
+          undefined,
+          force,
+        );
       }
       return result;
     },

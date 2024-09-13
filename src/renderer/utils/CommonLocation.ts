@@ -473,6 +473,7 @@ export class CommonLocation implements TS.Location {
     filePath: string,
     newFilePath: string,
     onProgress = undefined,
+    force = false,
   ): Promise<any> => {
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
@@ -494,6 +495,7 @@ export class CommonLocation implements TS.Location {
         filePath,
         newFilePath,
         onProgress !== undefined,
+        force,
       );
     }
     return Promise.reject(new Error('renameFilePromise: not implemented'));
@@ -930,7 +932,7 @@ export class CommonLocation implements TS.Location {
         );
       }
       return {
-        id: getUuid(),
+        //id: getUuid(),
         isFile: true,
         color: '',
         tags: [],
@@ -952,7 +954,7 @@ export class CommonLocation implements TS.Location {
         throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
       }
       return {
-        id: getUuid(),
+        //id: getUuid(),
         isFile: false,
         color: '',
         perspective: 'grid',

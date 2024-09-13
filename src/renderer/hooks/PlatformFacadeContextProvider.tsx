@@ -93,6 +93,7 @@ type PlatformFacadeContextData = {
     locationID: string,
     onProgress?,
     reflect?,
+    force?,
   ) => Promise<any>;
   reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
   renameDirectoryPromise: (
@@ -475,6 +476,7 @@ export const PlatformFacadeContextProvider = ({
     locationID: string,
     onProgress = undefined,
     reflect = true,
+    force = false,
   ): Promise<any> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
@@ -485,6 +487,7 @@ export const PlatformFacadeContextProvider = ({
             renameJob[0],
             renameJob[1],
             onProgress,
+            force,
           );
         } catch (err) {
           console.log('Error rename file:', err);
