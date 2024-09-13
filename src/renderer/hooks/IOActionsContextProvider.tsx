@@ -774,6 +774,16 @@ export const IOActionsContextProvider = ({
             false,
           )
             .then(() => {
+              paths.map((path) => {
+                const location = findLocation(locationID);
+                const targetFilePath =
+                  normalizePath(targetPath) +
+                  (location
+                    ? location.getDirSeparator()
+                    : AppConfig.dirSeparator) +
+                  extractFileName(path, location?.getDirSeparator());
+                setFileMetaId(locationID, targetFilePath, getUuid());
+              });
               console.log('Copy meta and thumbs successful');
               return true;
             })
@@ -789,6 +799,21 @@ export const IOActionsContextProvider = ({
         showNotification(t('core:copyingFilesFailed'));
         return false;
       });
+  }
+
+  function setFileMetaId(locationID: string, path: string, fileId: string) {
+    const location = findLocation(locationID);
+    location
+      .loadMetaDataPromise(path)
+      .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        if (fsEntryMeta.id) {
+          return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
+            ...fsEntryMeta,
+            id: fileId,
+          });
+        }
+      })
+      .catch(() => {});
   }
 
   function fetchUrl(url: string, targetPath: string, haveProgress: boolean) {
