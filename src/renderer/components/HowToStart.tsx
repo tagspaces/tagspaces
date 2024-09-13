@@ -28,7 +28,7 @@ function clearHighlights() {
   selectByTID('locationManager').classList.remove('highlighterOn');
   selectByTID('tagLibrary').classList.remove('highlighterOn');
   selectByTID('settings').classList.remove('highlighterOn');
-  selectByTID('createNewFileTID').classList.remove('highlighterOn');
+  selectByTID('createNewDropdownButtonTID').classList.remove('highlighterOn');
   // selectByTID('createNewLocation').classList.remove('highlighterOn');
   selectByTID('locationList').classList.remove('highlighterOn');
   selectByTID('tagLibraryTagGroupList') &&
@@ -37,7 +37,6 @@ function clearHighlights() {
   selectByTID('quickAccessArea') &&
     selectByTID('quickAccessArea').classList.remove('highlighterOn');
   selectByTID('floatingPerspectiveSwitcher').classList.remove('highlighterOn');
-  selectByTID('createNewDropdownButtonTID').classList.remove('highlighterOn');
 }
 
 function HowToStart() {
@@ -232,7 +231,9 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('createNewFileTID').classList.add('highlighterOn');
+        selectByTID('createNewDropdownButtonTID').classList.add(
+          'highlighterOn',
+        );
       },
     },
     {
@@ -265,7 +266,9 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('createNewFileTID').classList.add('highlighterOn');
+        selectByTID('createNewDropdownButtonTID').classList.add(
+          'highlighterOn',
+        );
         selectByTID('locationList').classList.add('highlighterOn');
         selectByTID('locationManager').click();
       },
