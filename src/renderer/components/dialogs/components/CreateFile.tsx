@@ -143,6 +143,7 @@ function CreateFile(props: Props) {
           defaultValue={fileName}
           disabled={noSuitableLocation}
           fullWidth={true}
+          autoFocus
           data-tid={tid('newEntryDialogInputTID')}
         />
         {inputError && (
