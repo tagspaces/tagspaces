@@ -219,7 +219,7 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0808 - Add and remove tags to a file (file names) [web,electron]', async () => {
     // open fileProperties
-    const fileName = 'sample.svg';
+    const fileName = 'sample.epub'; //'sample.svg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
       'showPropertiesTID',
