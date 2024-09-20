@@ -90,6 +90,7 @@ src/main/config
 src/renderer/extconfig*
 public/extconfig*
 web/extconfig*
+!web/extconfig.js
 !web/extconfig.tmpl.js
 cordova/www/extconfig.js
 
