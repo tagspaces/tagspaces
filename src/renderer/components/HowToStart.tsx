@@ -25,18 +25,15 @@ const selectByTID: any = (tid) =>
   document.querySelector('[data-tid="' + tid + '"]');
 
 function clearHighlights() {
-  selectByTID('locationManager').classList.remove('highlighterOn');
-  selectByTID('tagLibrary').classList.remove('highlighterOn');
-  selectByTID('settings').classList.remove('highlighterOn');
-  selectByTID('createNewDropdownButtonTID').classList.remove('highlighterOn');
-  // selectByTID('createNewLocation').classList.remove('highlighterOn');
-  selectByTID('locationList').classList.remove('highlighterOn');
-  selectByTID('tagLibraryTagGroupList') &&
-    selectByTID('tagLibraryTagGroupList').classList.remove('highlighterOn');
-  selectByTID('quickAccessButton').classList.remove('highlighterOn');
-  selectByTID('quickAccessArea') &&
-    selectByTID('quickAccessArea').classList.remove('highlighterOn');
-  selectByTID('floatingPerspectiveSwitcher').classList.remove('highlighterOn');
+  selectByTID('locationManager')?.classList.remove('highlighterOn');
+  selectByTID('tagLibrary')?.classList.remove('highlighterOn');
+  selectByTID('settings')?.classList.remove('highlighterOn');
+  selectByTID('createNewDropdownButtonTID')?.classList.remove('highlighterOn');
+  selectByTID('locationList')?.classList.remove('highlighterOn');
+  selectByTID('tagLibraryTagGroupList')?.classList.remove('highlighterOn');
+  selectByTID('quickAccessButton')?.classList.remove('highlighterOn');
+  selectByTID('quickAccessArea')?.classList.remove('highlighterOn');
+  selectByTID('floatingPerspectiveSwitcher')?.classList.remove('highlighterOn');
 }
 
 function HowToStart() {
@@ -70,8 +67,8 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('locationManager').click();
-        selectByTID('locationList').classList.add('highlighterOn');
+        selectByTID('locationManager')?.click();
+        selectByTID('locationList')?.classList.add('highlighterOn');
       },
     },
     {
@@ -91,7 +88,7 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('createNewDropdownButtonTID').classList.add(
+        selectByTID('createNewDropdownButtonTID')?.classList.add(
           'highlighterOn',
         );
       },
@@ -114,8 +111,8 @@ function HowToStart() {
       action: () => {
         selectByTID('tagLibrary').click();
         setTimeout(() => {
-          selectByTID('tagLibrary').classList.add('highlighterOn');
-          selectByTID('tagLibraryTagGroupList').classList.add('highlighterOn');
+          selectByTID('tagLibrary')?.classList.add('highlighterOn');
+          selectByTID('tagLibraryTagGroupList')?.classList.add('highlighterOn');
         }, 2000);
       },
     },
@@ -151,8 +148,8 @@ function HowToStart() {
       action: () => {
         selectByTID('quickAccessButton').click();
         setTimeout(() => {
-          selectByTID('quickAccessButton').classList.add('highlighterOn');
-          selectByTID('quickAccessArea').classList.add('highlighterOn');
+          selectByTID('quickAccessButton')?.classList.add('highlighterOn');
+          selectByTID('quickAccessArea')?.classList.add('highlighterOn');
         }, 2000);
       },
     },
@@ -195,7 +192,7 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('floatingPerspectiveSwitcher').classList.add(
+        selectByTID('floatingPerspectiveSwitcher')?.classList.add(
           'highlighterOn',
         );
       },
@@ -231,7 +228,7 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('createNewDropdownButtonTID').classList.add(
+        selectByTID('createNewDropdownButtonTID')?.classList.add(
           'highlighterOn',
         );
       },
@@ -253,8 +250,8 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('locationManager').click();
-        selectByTID('settings').classList.add('highlighterOn');
+        selectByTID('locationManager')?.click();
+        selectByTID('settings')?.classList.add('highlighterOn');
       },
     },
     {
@@ -266,11 +263,11 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('createNewDropdownButtonTID').classList.add(
+        selectByTID('createNewDropdownButtonTID')?.classList.add(
           'highlighterOn',
         );
-        selectByTID('locationList').classList.add('highlighterOn');
-        selectByTID('locationManager').click();
+        selectByTID('locationList')?.classList.add('highlighterOn');
+        selectByTID('locationManager')?.click();
       },
     },
   ];

@@ -328,7 +328,8 @@ function OnboardingDialog(props: Props) {
               </Typography>
               <img
                 style={{
-                  maxHeight: 250,
+                  maxHeight: 300,
+                  maxWidth: '90%',
                   paddingTop: 15,
                   paddingBottom: 20,
                   margin: 'auto',
