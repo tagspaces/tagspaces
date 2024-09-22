@@ -17,6 +17,7 @@
  */
 
 import React, { useContext, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   extractTitle,
@@ -36,11 +37,12 @@ import HttpsIcon from '@mui/icons-material/Https';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import TagsPreview from '-/components/TagsPreview';
+import { getSupportedFileTypes } from '-/reducers/settings';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { getAllTags } from '-/services/utils-io';
+import { getAllTags, findColorForEntry } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 
@@ -78,7 +80,11 @@ function EntryContainerTitle(props: Props) {
   //const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const fileSystemEntryColor = findColorForEntry(
+    openedEntry,
+    supportedFileTypes,
+  );
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
@@ -173,7 +179,7 @@ function EntryContainerTitle(props: Props) {
               setAnchorEl(event.currentTarget);
             }}
             style={{
-              backgroundColor: openedEntry.meta?.color,
+              backgroundColor: fileSystemEntryColor,
               display: 'flex',
               alignItems: 'center',
               textTransform: 'uppercase',
