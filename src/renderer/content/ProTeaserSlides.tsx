@@ -50,7 +50,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 150,
   };
   slidesEN[slidesNames[1]] = {
-    title: 'TagSpaces Pro - Kanban Perspectives',
+    title: 'Kanban Perspectives',
     description: (
       <>
         This perspective allows each folder to be transformed into a Kanban
@@ -69,7 +69,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[2]] = {
-    title: 'TagSpaces Pro - FolderViz Perspective',
+    title: 'FolderViz Perspective',
     description: (
       <>
         <p>
@@ -94,7 +94,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[3]] = {
-    title: 'TagSpaces Pro - Mapique Perspective & Geo tagging',
+    title: 'Mapique Perspective and Geo-tagging',
     description: (
       <>
         <p>
@@ -118,7 +118,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[4]] = {
-    title: 'TagSpaces Pro - Gallery Perspectives',
+    title: 'Gallery Perspectives',
     description: (
       <>
         This perspective is designed to best display folders containing photos
@@ -168,20 +168,19 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[6]] = {
-    title: 'Revisions and auto-save for editable files',
+    title: 'File revisions and auto-save for text files',
     description: (
       <>
         <p>
           A key feature of document management systems is the ability to create
-          revisions of the edited files. This feature can be enabled in the
-          Advanced tab of the application's Settings dialog box. Once activated,
-          a full copy of the current file (e.g. TXT, MD, HTML or JSON) is
-          created with each save.
+          <b>revisions</b> of the edited files. Once activated, a full copy of
+          the current file (e.g. TXT, MD, HTML or JSON) is made on each document
+          saving.
         </p>
         <p>
-          The auto-save feature can be enabled individually for each editable
-          file. When it is enabled, the application will save any changes you
-          make automatically.
+          The <b>auto-save</b> feature can be enabled individually for each
+          editable file. When it is enabled, the application will save the
+          changes you make automatically.
         </p>
       </>
     ),
@@ -194,10 +193,7 @@ export function getProTeaserSlides(t) {
   slidesEN[slidesNames[7]] = {
     title: 'Extended Search',
     description: (
-      <>
-        The search is essential part of TagSpaces, which is significantly
-        extended in the PRO version.
-      </>
+      <>The search options is significantly enhanced in the PRO version.</>
     ),
     items: [
       <>
@@ -205,7 +201,7 @@ export function getProTeaserSlides(t) {
         use
       </>,
       <>
-        <b>Full text search</b> on TXT, Markdown and HTML files
+        <b>Full text search</b> for text, markdown and HTML files
       </>,
       <>
         <b>Global search</b> – searching all local locations at once

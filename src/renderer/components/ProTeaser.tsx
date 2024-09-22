@@ -44,11 +44,12 @@ function ProTeaser(props: Props) {
   return (
     <>
       <CardContent
-        onClick={() => openProTeaserDialog()}
         style={{
           padding: 5,
+          paddingTop: 34,
           paddingBottom: 0,
           textAlign: 'center',
+          cursor: 'pointer',
         }}
       >
         <Typography color="textSecondary" variant="caption">
@@ -67,13 +68,26 @@ function ProTeaser(props: Props) {
           </IconButton>
         </Typography>
         <br />
-        <b>TagSpaces Pro</b>
-        {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
-        <br />
-        <ViewKanbanTwoToneIcon style={{ fontSize: 50, color: '#a466aa' }} />
-        <CameraTwoToneIcon style={{ fontSize: 50, color: '#f7901e' }} />
-        <MapTwoToneIcon style={{ fontSize: 50, color: '#33b5be' }} />
-        {/* <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" /> */}
+        <div
+          role="button"
+          onClick={() => openProTeaserDialog()}
+          style={{
+            cursor: 'pointer',
+          }}
+        >
+          <b>TagSpaces Pro</b>
+          {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
+          <br />
+          <ViewKanbanTwoToneIcon
+            style={{
+              fontSize: 50,
+              color: '#a466aa',
+            }}
+          />
+          <CameraTwoToneIcon style={{ fontSize: 50, color: '#f7901e' }} />
+          <MapTwoToneIcon style={{ fontSize: 50, color: '#33b5be' }} />
+          {/* <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" /> */}
+        </div>
       </CardContent>
       <CardActions
         style={{
