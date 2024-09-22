@@ -862,6 +862,7 @@
   "createNew": "Create New",
   "fileContent": "File Content",
   "linkURL": "URL",
+  "upgrade": "Upgrade",
   "urlValidationHelp": "Invalid URL",
   "openSharingLink": "Open sharing links created with the TagSpaces (ts:// links)",
   "newFromDownloadURL": "New From URL",

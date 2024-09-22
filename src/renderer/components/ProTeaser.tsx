@@ -24,6 +24,9 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
+import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
+import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
+import MapTwoToneIcon from '@mui/icons-material/MapTwoTone';
 import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +70,10 @@ function ProTeaser(props: Props) {
         <b>TagSpaces Pro</b>
         {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
         <br />
-        <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
+        <ViewKanbanTwoToneIcon style={{ fontSize: 50, color: '#a466aa' }} />
+        <CameraTwoToneIcon style={{ fontSize: 50, color: '#f7901e' }} />
+        <MapTwoToneIcon style={{ fontSize: 50, color: '#33b5be' }} />
+        {/* <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" /> */}
       </CardContent>
       <CardActions
         style={{
@@ -94,7 +100,7 @@ function ProTeaser(props: Props) {
             openURLExternally(Links.links.productsOverview, true);
           }}
         >
-          {t('getItNow')}
+          {t('upgrade')}
         </Button>
       </CardActions>
     </>
