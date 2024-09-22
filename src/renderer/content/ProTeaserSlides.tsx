@@ -99,8 +99,8 @@ export function getProTeaserSlides(t) {
       <>
         <p>
           The Mapique Perspective displays files and folders that have been
-          tagged with geotags on a digital map. This perspective is also able to
-          automatically extract geocoordinates from EXIF/IPTC data stored in
+          tagged with geo-tags on a digital map. This perspective is also able
+          to automatically extract geo-coordinates from EXIF/IPTC data stored in
           JPEG files. OpenStreetMap is the default choice for the map, though
           other compatible map tile servers may be used.{' '}
         </p>
@@ -181,8 +181,7 @@ export function getProTeaserSlides(t) {
         <p>
           The auto-save feature can be enabled individually for each editable
           file. When it is enabled, the application will save any changes you
-          make automatically. You can also save the file manually by clicking
-          the save button or by pressing the CTRL+S key combination.
+          make automatically.
         </p>
       </>
     ),
@@ -242,11 +241,11 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[9]] = {
-    title: 'TagSpaces Web Pro & Enterprise',
+    title: 'TagSpaces Web Pro',
     description: (
       <>
-        TagSpaces is also available as a web application that runs on your web
-        browser.
+        TagSpaces is also available as a web application that runs in your web
+        browser on your IT-infrastructure.
       </>
     ),
     items: [
@@ -260,13 +259,14 @@ export function getProTeaserSlides(t) {
         <b>White label</b> packages, with custom colors and logo
       </>,
       <>
-        Easy deployable on the AWS cloud stack, providing user management and
-        MFA/2FA by utilizing Cognito.
-      </>,
-      <>
-        Development of custom <b>file viewers</b> or <b>perspectives</b>
+        Easy deployable with <b>Docker</b> containers
       </>,
       <>Premium technical support</>,
+      <>
+        We offer development of custom <b>file viewers</b> or{' '}
+        <b>perspectives</b> and custom installations in the{' '}
+        <b>AWS cloud stack</b>, with user management and <b>MFA/2FA</b>.
+      </>,
     ],
     ctaURL: Links.links.emailContact,
     ctaTitle: t('contactUs'),

@@ -70,6 +70,8 @@ function Slide(props: SlideProps) {
       style={{
         padding: 15,
         textAlign: 'left',
+        overflowY: 'hidden',
+        overflowX: 'hidden',
       }}
     >
       <Typography
@@ -78,6 +80,13 @@ function Slide(props: SlideProps) {
       >
         {title}
       </Typography>
+      {/* <div
+        style={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          width: '100%',
+        }}
+      > */}
       {description && (
         <Typography variant="subtitle1">{description}</Typography>
       )}
@@ -125,15 +134,16 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
+        {/* </div> */}
         <Button
           onClick={() => {
             openURLExternally(Links.links.productsOverview, true);
           }}
-          // variant="contained"
+          variant="outlined"
           color="primary"
           size="small"
         >
-          Compare TagSpaces Products
+          Compare & Upgrade
         </Button>
         {ctaTitle && (
           <Button
@@ -141,7 +151,7 @@ function Slide(props: SlideProps) {
               openURLExternally(ctaURL, true);
             }}
             style={{ marginLeft: 10 }}
-            // variant="contained"
+            // variant="outlined"
             color="primary"
             size="small"
           >
@@ -176,7 +186,7 @@ function ProTeaserDialog(props: Props) {
     const { className, style, onClick } = props;
     return (
       <div className={className} onClick={onClick}>
-        <NavigateNextIcon color="primary" />
+        <NavigateNextIcon fontSize="large" color="primary" />
       </div>
     );
   }
@@ -185,7 +195,7 @@ function ProTeaserDialog(props: Props) {
     const { className, style, onClick } = props;
     return (
       <div className={className} onClick={onClick}>
-        <NavigateBeforeIcon color="primary" />
+        <NavigateBeforeIcon fontSize="large" color="primary" />
       </div>
     );
   }
@@ -193,7 +203,7 @@ function ProTeaserDialog(props: Props) {
   const sliderSettings = {
     className: 'center',
     centerMode: true,
-    dots: true,
+    // dots: true,
     infinite: false,
     initialSlide: initialSlide,
     centerPadding: '0px',
@@ -226,6 +236,7 @@ function ProTeaserDialog(props: Props) {
           {`
             .slick-arrow {
               height: 200px;
+              width: 50px;
               display: flex;
               align-items: center;
             } 
