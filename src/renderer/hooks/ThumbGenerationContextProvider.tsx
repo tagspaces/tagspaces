@@ -185,7 +185,11 @@ export const ThumbGenerationContextProvider = ({
       return Promise.resolve(false);
     }
     const location: CommonLocation = findLocation(dirEntries[0].locationID);
-    if (!location || location.disableThumbnailGeneration === true) {
+    if (
+      !location ||
+      location.disableThumbnailGeneration === true ||
+      location.isReadOnly
+    ) {
       return Promise.resolve(false); // dont generate thumbnails if it's not enabled in location settings
     }
     if (!genThumbnailsEnabled(location)) {

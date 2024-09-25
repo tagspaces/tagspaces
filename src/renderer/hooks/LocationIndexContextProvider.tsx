@@ -685,28 +685,32 @@ export const LocationIndexContextProvider = ({
     }
     const metaDirectory = getMetaDirectoryPath(directoryPath);
     const exist = await currentLocation.checkDirExist(metaDirectory);
-    if (!exist) {
-      await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+    try {
+      if (!exist) {
+        await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+      }
+      const folderIndexPath =
+        metaDirectory +
+        currentLocation?.getDirSeparator() +
+        AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
+      return currentLocation
+        .saveTextFilePromise(
+          { ...param, path: folderIndexPath },
+          JSON.stringify(directoryIndex), // relativeIndex),
+          true,
+        )
+        .then(() => {
+          console.log(
+            'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath,
+          );
+          return true;
+        })
+        .catch((err) => {
+          console.log('Error saving the index for ' + folderIndexPath, err);
+        });
+    } catch (e) {
+      console.log('Error saving the index', e);
     }
-    const folderIndexPath =
-      metaDirectory +
-      currentLocation?.getDirSeparator() +
-      AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-    return currentLocation
-      .saveTextFilePromise(
-        { ...param, path: folderIndexPath },
-        JSON.stringify(directoryIndex), // relativeIndex),
-        true,
-      )
-      .then(() => {
-        console.log(
-          'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath,
-        );
-        return true;
-      })
-      .catch((err) => {
-        console.log('Error saving the index for ' + folderIndexPath, err);
-      });
   }
 
   function enhanceDirectoryIndex(

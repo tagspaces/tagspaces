@@ -194,7 +194,10 @@ export const PlatformFacadeContextProvider = ({
     return getLocation({ locationID })
       .createDirectoryPromise(path)
       .then((result) => {
-        reflectAddEntry(currentLocation.toFsEntry(path, false));
+        if (result !== undefined) {
+          // do not reflect if directory not created
+          reflectAddEntry(currentLocation.toFsEntry(path, false));
+        }
         deignoreByWatcher(path);
         return result;
       });
