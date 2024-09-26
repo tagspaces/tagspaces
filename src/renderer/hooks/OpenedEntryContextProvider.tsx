@@ -145,8 +145,13 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { currentLocation, findLocation, openLocation, getLocationPath } =
-    useCurrentLocationContext();
+  const {
+    currentLocation,
+    findLocation,
+    openLocation,
+    getLocationPath,
+    getFirstRWLocation,
+  } = useCurrentLocationContext();
   const { getMetadata } = useIOActionsContext();
   const {
     currentDirectoryPath,
@@ -686,7 +691,8 @@ export const OpenedEntryContextProvider = ({
       const id = getURLParameter('tseid', url);
       if (cmdOpen && cmdOpen.length > 0) {
         const entryPath = decodeURIComponent(cmdOpen);
-        getAllPropertiesPromise(entryPath, lid)
+        const locationId = lid ? lid : getFirstRWLocation()?.uuid;
+        getAllPropertiesPromise(entryPath, locationId)
           .then((fsEntry: TS.FileSystemEntry) => {
             if (fsEntry.isFile) {
               openFsEntry(fsEntry);
