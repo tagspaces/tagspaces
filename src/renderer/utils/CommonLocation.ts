@@ -422,6 +422,9 @@ export class CommonLocation implements TS.Location {
   };
 
   createDirectoryPromise = (dirPath: string): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.createDirectoryPromise({
@@ -444,6 +447,9 @@ export class CommonLocation implements TS.Location {
     sourceFilePath: string,
     targetFilePath: string,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.copyFilePromise(
@@ -533,6 +539,9 @@ export class CommonLocation implements TS.Location {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.copyDirectoryPromise(
@@ -563,6 +572,9 @@ export class CommonLocation implements TS.Location {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.moveDirectoryPromise(
@@ -593,6 +605,9 @@ export class CommonLocation implements TS.Location {
     content: any,
     overwrite: boolean,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveFilePromise(
@@ -623,6 +638,9 @@ export class CommonLocation implements TS.Location {
     content: string,
     overwrite: boolean,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveTextFilePromise(
@@ -657,6 +675,9 @@ export class CommonLocation implements TS.Location {
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
   ): Promise<TS.FileSystemEntry> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveBinaryFilePromise(
@@ -702,6 +723,9 @@ export class CommonLocation implements TS.Location {
   };
 
   deleteFilePromise = (path: string, useTrash?: boolean): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.deleteFilePromise({
@@ -722,6 +746,9 @@ export class CommonLocation implements TS.Location {
   };
 
   deleteDirectoryPromise = (path: string, useTrash?: boolean): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.deleteDirectoryPromise({
@@ -817,6 +844,9 @@ export class CommonLocation implements TS.Location {
     extractText: boolean,
     ignorePatterns: Array<string>,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (
       AppConfig.isElectron &&
       !this.haveObjectStoreSupport() &&
