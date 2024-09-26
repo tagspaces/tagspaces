@@ -1574,8 +1574,10 @@ export const IOActionsContextProvider = ({
         { path: metaFilePath, locationID: entry.locationID },
         content,
         true,
-      ).then(() => {
-        reflectUpdateSidecarMeta(entry.path, meta);
+      ).then((success) => {
+        if (success) {
+          reflectUpdateSidecarMeta(entry.path, meta);
+        }
         return meta;
       });
     }
@@ -1623,7 +1625,12 @@ export const IOActionsContextProvider = ({
           { path: metaFilePath, locationID: location.uuid },
           JSON.stringify(mataData),
           true,
-        ).then(() => mataData);
+        )
+          .then(() => mataData)
+          .catch((e) => {
+            console.error(e);
+            return mataData;
+          });
       });
   }
 
