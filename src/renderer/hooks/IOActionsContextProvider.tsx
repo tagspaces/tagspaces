@@ -1186,6 +1186,17 @@ export const IOActionsContextProvider = ({
               ),
             )
             .catch((err) => {
+              if (
+                err &&
+                err.message &&
+                err.message.indexOf(
+                  'Error: EISDIR: illegal operation on a directory, read',
+                ) > -1
+              ) {
+                const errorMessage = t('core:uploadDirsNotSupported');
+                showNotification(errorMessage, 'warning', true);
+                dispatch(AppActions.setProgress(filePath, -1, errorMessage));
+              }
               // console.log('Error getting file:' + job[0] + ' ' + err);
               if (fileType === 'thumb' && job[3]) {
                 return generateThumbnailPromise(

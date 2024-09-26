@@ -19,7 +19,7 @@ import {
   dialog,
 } from 'electron';
 // import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
+//import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
 import { resolveHtmlPath } from './util';
@@ -63,6 +63,10 @@ const isDebug =
 
 if (isDebug) {
   require('electron-debug')({ showDevTools: false });
+  if (isMacLike) {
+    // temp fix https://github.com/electron/electron/issues/43415#issuecomment-2359194469
+    app.disableHardwareAcceleration();
+  }
 }
 
 const testMode = process.env.NODE_ENV === 'test';

@@ -94,7 +94,15 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      return uploadAbort();
+      if (currentLocation.haveObjectStoreSupport()) {
+        const progresses = progress.map((fileProgress) => {
+          fileProgress.abort();
+          return { ...fileProgress, state: 'finished' };
+        });
+        dispatch(AppActions.setProgresses(progresses));
+      } else {
+        return uploadAbort();
+      }
     }
   };
 
@@ -188,7 +196,11 @@ function FileUploadDialog(props: Props) {
               const { path, filePath } = fileProgress;
               targetPath.current = path.split('?')[0];
               let { abort } = fileProgress;
-              if (percentage > -1 && percentage < 100) {
+              if (
+                percentage > -1 &&
+                percentage < 100 &&
+                fileProgress.state !== 'finished'
+              ) {
                 haveProgress = true;
               } /*else {
                 abort = undefined;
