@@ -205,9 +205,15 @@ test.describe('TST02 - Folder properties', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]',
     );
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      8000,
+      '[data-tid=PropertiesTagsSelectTID]',
+    );
 
-    const propsTags = await getPropertiesTags();
-    expect(propsTags).toContain(tagName);
+    //const propsTags = await getPropertiesTags();
+    //expect(propsTags).toContain(tagName);
   });
 
   test('TST0213 - Add description to folder [web,electron,_pro]', async () => {
