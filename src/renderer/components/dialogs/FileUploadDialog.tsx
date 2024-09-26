@@ -94,7 +94,11 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      return uploadAbort();
+      if (currentLocation.haveObjectStoreSupport()) {
+        progress.map((fileProgress) => fileProgress.abort());
+      } else {
+        return uploadAbort();
+      }
     }
   };
 
