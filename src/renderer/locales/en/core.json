@@ -868,5 +868,6 @@
   "newFromDownloadURL": "New From URL",
   "invalidSharingLink": "Invalid Sharing Link",
   "confirmSearchById": "Do you want to search for the file or folder by its ID?",
+  "uploadDirsNotSupported": "Uploading directories not supported!",
   "-": "-"
 }

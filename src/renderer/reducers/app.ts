@@ -127,6 +127,7 @@ export default (state: any = initialState, action: any) => {
           filePath: action.filePath,
           progress: action.progress,
           abort: action.abort,
+          state: 'started',
         },
       ];
       state.progress.map((fileProgress) => {
@@ -138,7 +139,7 @@ export default (state: any = initialState, action: any) => {
       return { ...state, progress: arrProgress };
     }
     case types.PROGRESS_FINISH: {
-      return { ...state, progress: action.progresses };
+      return { ...state, progress: action.progresses, state: 'finished' };
     }
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };
