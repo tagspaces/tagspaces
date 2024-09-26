@@ -19,6 +19,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CryptoJS from 'crypto-js';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -55,6 +56,7 @@ import {
   Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
+import DraggablePaper from '-/components/DraggablePaper';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
@@ -578,6 +580,8 @@ function CreateEditLocationDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      aria-labelledby="draggable-dialog-title"
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -589,7 +593,7 @@ function CreateEditLocationDialog(props: Props) {
         // }
       }}
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {selectedLocation
           ? t('core:editLocationTitle')
           : t('core:createLocationTitle')}

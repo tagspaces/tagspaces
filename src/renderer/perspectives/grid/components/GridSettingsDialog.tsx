@@ -27,21 +27,22 @@ import {
   FormGroup,
   Switch,
   Divider,
-  InputLabel,
-  Select,
   MenuItem,
   Button,
   FormHelperText,
   Typography,
   TextField,
+  Paper,
   Box,
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
@@ -79,6 +80,7 @@ function GridSettingsDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { open, onClose, openHelpWebPage } = props;
 
   useEffect(() => {
@@ -111,8 +113,14 @@ function GridSettingsDialog(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
-      <DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {t('core:perspectiveSettingsTitle')}
         <DialogCloseButton
           testId="closePerspectiveSettingsTID"
