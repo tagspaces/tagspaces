@@ -91,16 +91,19 @@ process.argv.forEach((arg, count) => {
     arg = '';
   } else if (
     arg.endsWith('main.prod.js') ||
-    arg === './app/main.dev.babel.js' ||
+    arg.indexOf('node_modules/electron/dist/') > -1 ||
+    arg.endsWith('electronmon/src/hook.js') ||
+    //arg === './app/main.dev.babel.js' ||
     arg === '.' ||
+    arg === '--require' ||
     count === 0
   ) {
     // ignoring the first argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
-    if (arg !== './app/main.dev.js' && arg !== './app/') {
-      startupFilePath = arg;
-    }
+    //if (arg !== './app/main.dev.js' && arg !== './app/' && arg !== '') {
+    startupFilePath = arg;
+    //}
   }
 
   if (portableMode) {
@@ -495,6 +498,7 @@ function startWS() {
 const createWindow = async (i18n) => {
   let startupParameter = '';
   if (startupFilePath) {
+    console.log('startupFilePath: ' + startupFilePath);
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
         '?cmdopen=' + encodeURIComponent(path.join(__dirname, startupFilePath));
