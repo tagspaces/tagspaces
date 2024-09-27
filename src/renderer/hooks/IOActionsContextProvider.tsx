@@ -1626,22 +1626,28 @@ export const IOActionsContextProvider = ({
         }
       })
       .catch(() => {
-        // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
-        const mataData = { id: id };
-        const metaFilePath = path.endsWith(location.getDirSeparator())
-          ? getMetaFileLocationForDir(path, location.getDirSeparator())
-          : getMetaFileLocationForFile(path, location.getDirSeparator());
+        if (
+          path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) === -1
+        ) {
+          // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
+          const mataData = { id: id };
+          const metaFilePath = path.endsWith(location.getDirSeparator())
+            ? getMetaFileLocationForDir(path, location.getDirSeparator())
+            : getMetaFileLocationForFile(path, location.getDirSeparator());
 
-        return saveTextFilePromise(
-          { path: metaFilePath, locationID: location.uuid },
-          JSON.stringify(mataData),
-          true,
-        )
-          .then(() => mataData)
-          .catch((e) => {
-            console.error(e);
-            return mataData;
-          });
+          return saveTextFilePromise(
+            { path: metaFilePath, locationID: location.uuid },
+            JSON.stringify(mataData),
+            true,
+          )
+            .then(() => mataData)
+            .catch((e) => {
+              console.error(e);
+              return mataData;
+            });
+        } else {
+          return { id: id };
+        }
       });
   }
 
