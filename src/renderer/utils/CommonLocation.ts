@@ -293,6 +293,25 @@ export class CommonLocation implements TS.Location {
     );
   };
 
+  checkFileEncryptedPromise = (path: string): Promise<boolean> => {
+    if (this.ioAPI) {
+      if (this.haveObjectStoreSupport() && this.encryptionKey) {
+        return this.ioAPI
+          .getPropertiesPromise({
+            path,
+            bucketName: this.bucketName,
+            location: this,
+            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
+          })
+          .then(
+            (fsEntry: TS.FileSystemEntry) =>
+              fsEntry && typeof fsEntry !== 'boolean',
+          );
+      }
+    }
+    return Promise.resolve(false);
+  };
+
   getPropertiesPromise = (path: string): Promise<any> => {
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {

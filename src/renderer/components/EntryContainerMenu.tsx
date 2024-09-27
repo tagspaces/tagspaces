@@ -73,8 +73,8 @@ function EntryContainerMenu(props: Props) {
   } = useOpenedEntryContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
-  const { deleteFile } = useIOActionsContext();
-  const { showNotification } = useNotificationContext();
+  const { deleteFile, downloadFsEntry } = useIOActionsContext();
+  //const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -138,7 +138,8 @@ function EntryContainerMenu(props: Props) {
         data-tid="downloadFileTID"
         aria-label={t('core:downloadFile')}
         onClick={() => {
-          if (openedEntry.isEncrypted) {
+          downloadFsEntry(openedEntry);
+          /*if (openedEntry.isEncrypted) {
             currentLocation
               .getFileContentPromise(openedEntry.path, 'arraybuffer')
               .then((arrayBuffer) => {
@@ -164,7 +165,7 @@ function EntryContainerMenu(props: Props) {
             if (downloadResult === -1) {
               showNotification(t('core:cantDownloadLocalFile'));
             }
-          }
+          }*/
           handleClose();
         }}
       >

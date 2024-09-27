@@ -45,6 +45,7 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   cleanMetaData,
+  downloadFile,
   executePromisesInBatches,
   mergeFsEntryMeta,
   openDirectoryMessage,
@@ -107,11 +108,12 @@ type IOActionsContextData = {
     locationID: string,
     onProgress?,
   ) => Promise<boolean>;
-  downloadFile: (
+  downloadUrl: (
     url: string,
     targetPath: string,
     onDownloadProgress?: (progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
+  downloadFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   uploadFilesAPI: (
     files: Array<any>,
     targetPath: string,
@@ -227,7 +229,8 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   moveFiles: undefined,
   copyDirs: undefined,
   copyFiles: undefined,
-  downloadFile: undefined,
+  downloadUrl: undefined,
+  downloadFsEntry: undefined,
   uploadFilesAPI: undefined,
   uploadFiles: undefined,
   renameDirectory: undefined,
@@ -832,7 +835,7 @@ export const IOActionsContextProvider = ({
    * @param targetPath
    * @param onDownloadProgress
    */
-  function downloadFile(
+  function downloadUrl(
     url: string,
     targetPath: string,
     onDownloadProgress?: (progress, abort, fileName?) => void,
@@ -890,6 +893,47 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  function downloadFsEntry(fsEntry: TS.FileSystemEntry) {
+    const loc = findLocation(fsEntry.locationID);
+    if (loc) {
+      if (fsEntry.isEncrypted) {
+        loc
+          .getFileContentPromise(fsEntry.path, 'arraybuffer')
+          .then((arrayBuffer) => {
+            const url = window.URL || window.webkitURL;
+            const openedEntryUrl = url.createObjectURL(new Blob([arrayBuffer]));
+            const downloadResult = downloadFile(
+              fsEntry.path,
+              openedEntryUrl,
+              currentLocation?.getDirSeparator(),
+            );
+            if (downloadResult === -1) {
+              showNotification(t('core:cantDownloadLocalFile'));
+            }
+          });
+      } else if (loc.haveObjectStoreSupport()) {
+        loc.generateURLforPath(fsEntry.path, 86400).then((url) => {
+          const downloadResult = downloadFile(
+            fsEntry.path,
+            url,
+            currentLocation?.getDirSeparator(),
+          );
+          if (downloadResult === -1) {
+            showNotification(t('core:cantDownloadLocalFile'));
+          }
+        });
+      } else {
+        const downloadResult = downloadFile(
+          fsEntry.path,
+          fsEntry.url,
+          currentLocation?.getDirSeparator(),
+        );
+        if (downloadResult === -1) {
+          showNotification(t('core:cantDownloadLocalFile'));
+        }
+      }
+    }
+  }
   /**
    * with HTML5 Files API
    * @param files
@@ -2206,7 +2250,8 @@ export const IOActionsContextProvider = ({
       moveFiles,
       copyDirs,
       copyFiles,
-      downloadFile,
+      downloadUrl,
+      downloadFsEntry,
       uploadFilesAPI,
       uploadFiles,
       renameDirectory,
