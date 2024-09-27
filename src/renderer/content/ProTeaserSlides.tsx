@@ -68,7 +68,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 150,
   };
   slidesEN[slidesNames[1]] = {
-    title: 'Kanban Perspectives',
+    title: 'Kanban Perspectives in TagSpaces Pro',
     description: (
       <>
         This perspective transforms each folder into a Kanban board, where the
@@ -87,7 +87,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[2]] = {
-    title: 'FolderViz Perspective',
+    title: 'FolderViz Perspective in TagSpaces Pro',
     description: (
       <>
         <p>
@@ -121,7 +121,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[3]] = {
-    title: 'Mapique Perspective and Geo-tagging',
+    title: 'Mapique Perspective in TagSpaces Pro',
     description: (
       <>
         <p>
@@ -132,9 +132,9 @@ export function getProTeaserSlides(t) {
           tile servers can be integrated as well.
         </p>
         <p>
-          Users can tag files and folders with geolocation data. This feature is
-          especially useful for trip planning or for adding private annotations
-          to maps.
+          Users can tag files and folders with geolocation data (geo-tagging).
+          This feature is especially useful for trip planning or for adding
+          private annotations to maps.
         </p>
       </>
     ),
@@ -145,7 +145,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[4]] = {
-    title: 'Gallery Perspectives',
+    title: 'Gallery Perspectives in TagSpaces Pro',
     description: (
       <>
         This perspective is optimized for displaying folders that contain photos

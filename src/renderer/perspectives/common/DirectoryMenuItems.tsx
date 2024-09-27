@@ -352,6 +352,7 @@ export function getDirectoryMenuItems(
       <MenuItem
         key="importMacTags"
         data-tid="importMacTags"
+        disabled={!Pro}
         onClick={() => {
           onClose();
           importMacTags();
@@ -394,9 +395,9 @@ export function getDirectoryMenuItems(
     menuItems.push(<Divider key="divider2" />);
     AvailablePerspectives.forEach((perspective) => {
       let badge = <></>;
-      if (!Pro && perspective.pro) {
-        badge = <ProLabel />;
-      }
+      // if (!Pro && perspective.pro) {
+      //   badge = <ProLabel />;
+      // }
       if (perspective.beta) {
         badge = <BetaLabel />;
       }
