@@ -312,14 +312,18 @@ export class CommonLocation implements TS.Location {
     return Promise.resolve(false);
   };
 
-  getPropertiesPromise = (path: string): Promise<any> => {
+  getPropertiesPromise = (
+    path: string,
+    useEncryption: boolean = true,
+  ): Promise<any> => {
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.getPropertiesPromise({
           path,
           bucketName: this.bucketName,
           location: this,
-          ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
+          ...(this.encryptionKey &&
+            useEncryption && { encryptionKey: this.encryptionKey }),
         });
       }
       return this.ioAPI.getPropertiesPromise(path);
@@ -329,7 +333,7 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('getPropertiesPromise: not implemented'));
   };
 
-  checkFileExist = (file: string): Promise<boolean> => {
+  checkFileExist = (file: string, useEncryption = true): Promise<boolean> => {
     if (file === undefined) {
       return Promise.resolve(false);
     }
@@ -339,7 +343,8 @@ export class CommonLocation implements TS.Location {
           path: file,
           bucketName: this.bucketName,
           location: this,
-          ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
+          ...(this.encryptionKey &&
+            useEncryption && { encryptionKey: this.encryptionKey }),
         });
       } else if (AppConfig.isCordova) {
         return this.ioAPI.checkFileExist(file);
@@ -806,7 +811,11 @@ export class CommonLocation implements TS.Location {
     );
   };*/
 
-  loadTextFilePromise = (param: any, isPreview?: boolean): Promise<string> => {
+  loadTextFilePromise = (
+    param: any,
+    isPreview?: boolean,
+    useEncryption: boolean = true,
+  ): Promise<string> => {
     let filePath = this.getPath(param);
     try {
       filePath = decodeURIComponent(filePath);
@@ -818,7 +827,8 @@ export class CommonLocation implements TS.Location {
             path: filePath,
             bucketName: this.bucketName,
             location: this,
-            ...(this.encryptionKey && { encryptionKey: this.encryptionKey }),
+            ...(this.encryptionKey &&
+              useEncryption && { encryptionKey: this.encryptionKey }),
           },
           isPreview,
         );
@@ -887,8 +897,11 @@ export class CommonLocation implements TS.Location {
     );
   };
 
-  loadJSONFile = (filePath: string): Promise<TS.FileSystemEntryMeta> => {
-    return this.loadTextFilePromise(filePath)
+  loadJSONFile = (
+    filePath: string,
+    useEncryption: boolean = true,
+  ): Promise<TS.FileSystemEntryMeta> => {
+    return this.loadTextFilePromise(filePath, useEncryption)
       .then(
         (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntryMeta,
       )

@@ -125,6 +125,7 @@ type DirectoryContentContextData = {
   getAllPropertiesPromise: (
     entryPath: string,
     locationID?: string,
+    useEncryption?: boolean,
   ) => Promise<TS.FileSystemEntry>;
   loadCurrentDirMeta: (
     directoryPath: string,
@@ -1034,10 +1035,11 @@ export const DirectoryContentContextProvider = ({
   function getAllPropertiesPromise(
     entryPath: string,
     locationID: string = undefined,
+    useEncryption: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     const location = locationID ? findLocation(locationID) : currentLocation;
     return location
-      .getPropertiesPromise(entryPath)
+      .getPropertiesPromise(entryPath, useEncryption)
       .then((entryProps: TS.FileSystemEntry) => {
         if (entryProps) {
           if (typeof entryProps === 'boolean') {
@@ -1049,7 +1051,7 @@ export const DirectoryContentContextProvider = ({
             if (!entryProps.isFile) {
               return getEnhancedDir(entry);
             }
-            return getEnhancedFile(entry);
+            return getEnhancedFile(entry, useEncryption);
           }
         }
         console.log('Error getting props for ' + entryPath);
@@ -1257,6 +1259,7 @@ export const DirectoryContentContextProvider = ({
 
   function getEnhancedFile(
     entry: TS.FileSystemEntry,
+    useEncryption: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     if (!entry) {
       return Promise.resolve(undefined);
@@ -1275,39 +1278,41 @@ export const DirectoryContentContextProvider = ({
       false,
     );
 
-    return location.checkFileExist(thumbFilePath).then((exist) => {
-      const metaProps = exist ? { thumbPath: thumbFilePath } : {};
+    return location
+      .checkFileExist(thumbFilePath, useEncryption)
+      .then((exist) => {
+        const metaProps = exist ? { thumbPath: thumbFilePath } : {};
 
-      const metaFilePath = getMetaFileLocationForFile(
-        entry.path,
-        location.getDirSeparator(),
-      );
+        const metaFilePath = getMetaFileLocationForFile(
+          entry.path,
+          location.getDirSeparator(),
+        );
 
-      try {
-        return location
-          .loadJSONFile(metaFilePath)
-          .then((meta: TS.FileSystemEntryMeta) => {
-            if (meta) {
+        try {
+          return location
+            .loadJSONFile(metaFilePath, useEncryption)
+            .then((meta: TS.FileSystemEntryMeta) => {
+              if (meta) {
+                return enhanceEntry(
+                  { ...entry, meta: { ...meta, ...metaProps } },
+                  AppConfig.tagDelimiter,
+                  location.getDirSeparator(),
+                );
+              }
               return enhanceEntry(
-                { ...entry, meta: { ...meta, ...metaProps } },
+                { ...entry, meta: { ...metaProps } },
                 AppConfig.tagDelimiter,
                 location.getDirSeparator(),
               );
-            }
-            return enhanceEntry(
-              { ...entry, meta: { ...metaProps } },
-              AppConfig.tagDelimiter,
-              location.getDirSeparator(),
-            );
-          });
-      } catch (e) {
-        return enhanceEntry(
-          { ...entry, meta: { ...metaProps } },
-          AppConfig.tagDelimiter,
-          location.getDirSeparator(),
-        );
-      }
-    });
+            });
+        } catch (e) {
+          return enhanceEntry(
+            { ...entry, meta: { ...metaProps } },
+            AppConfig.tagDelimiter,
+            location.getDirSeparator(),
+          );
+        }
+      });
   }
 
   function getDirMeta(
