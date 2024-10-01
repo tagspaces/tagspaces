@@ -431,7 +431,7 @@ async function findPort() {
     return 2000;
   }
   const defaultWSPort = settings.getInitWsPort();
-  console.log('defaultWSPort:' + defaultWSPort);
+  //console.log('defaultWSPort:' + defaultWSPort);
   try {
     const [port] = await findFreePorts(1, { startPort: defaultWSPort });
     return port;
