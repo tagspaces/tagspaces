@@ -68,7 +68,7 @@ function DownloadUrlDialog(props: Props) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { setReflectActions } = useEditedEntryContext();
-  const { downloadFile } = useIOActionsContext();
+  const { downloadUrl } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const dispatch: AppDispatch = useDispatch();
@@ -117,7 +117,7 @@ function DownloadUrlDialog(props: Props) {
         if (!location.haveObjectStoreSupport() && AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
           openFileUploadDialog();
-          downloadFile(
+          downloadUrl(
             fileUrl.current,
             targetDirectoryPath + '/' + decodeURIComponent(fileName),
             onUploadProgress,

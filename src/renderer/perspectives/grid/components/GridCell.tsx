@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useEffect, useMemo, useReducer, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
@@ -42,6 +42,7 @@ import {
 import {
   extractTagsAsObjects,
   extractTitle,
+  getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import {
@@ -64,6 +65,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import i18n from '-/services/i18n';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { arrayBufferToDataURL } from '-/utils/dom';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -145,28 +147,58 @@ function GridCell(props: Props) {
   const isSmall = entrySize === 'tiny' || entrySize === 'small';
   const gridCellLocation = findLocation(fsEntry.locationID);
 
-  function setThumbPath(update = true): Promise<boolean> {
+  function getThumbUrl() {
+    if (gridCellLocation) {
+      return gridCellLocation
+        .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta?.lastUpdated)
+        .then((tmbPath) => {
+          if (tmbPath !== thumbPath.current) {
+            thumbPath.current = tmbPath;
+            return true;
+          }
+          return false;
+        });
+    }
+    return Promise.resolve(false);
+  }
+
+  function setThumbPath(): Promise<boolean> {
     if (gridCellLocation && fsEntry.meta) {
       if (fsEntry.meta.thumbPath) {
-        return gridCellLocation
-          .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta?.lastUpdated)
-          .then((tmbPath) => {
-            if (tmbPath !== thumbPath.current) {
-              thumbPath.current = tmbPath;
-              if (update) {
-                forceUpdate();
+        if (gridCellLocation.encryptionKey) {
+          let thumbFilePath = getThumbFileLocationForFile(
+            fsEntry.path,
+            gridCellLocation.getDirSeparator(),
+            false,
+          );
+          return gridCellLocation
+            .getFileContentPromise(thumbFilePath, 'arraybuffer')
+            .then((arrayBuffer) => {
+              if (arrayBuffer) {
+                return arrayBufferToDataURL(arrayBuffer, 'image/jpeg').then(
+                  (dataURL) => {
+                    thumbPath.current = dataURL;
+                    return true;
+                  },
+                );
+              } else {
+                return getThumbUrl();
               }
-              return true;
-            }
-            return false;
-          });
+            });
+        } else {
+          return getThumbUrl();
+        }
       }
     }
     return Promise.resolve(false);
   }
 
   useEffect(() => {
-    setThumbPath();
+    setThumbPath().then((success) => {
+      if (success) {
+        forceUpdate();
+      }
+    });
   }, [fsEntry]);
 
   useEffect(() => {
@@ -179,7 +211,11 @@ function GridCell(props: Props) {
             action.action === 'descriptionChange'
           ) {
             fsEntry.meta = { ...action.entry.meta };
-            setThumbPath(false).then(() => forceUpdate());
+            setThumbPath().then((success) => {
+              if (success) {
+                forceUpdate();
+              }
+            });
           }
         }
       }

@@ -106,31 +106,24 @@ function FileView(props: Props) {
         extTextColor +
         extBgndColor;
 
+      const encrypted = openedEntry.isEncrypted ? '&encrypted=true' : '';
+      const getParams =
+        '/index.html?file=' +
+        encodeURIComponent(
+          openedEntry.url ? openedEntry.url : openedEntry.path,
+        ) +
+        locale +
+        theming +
+        extQuery +
+        event +
+        encrypted;
+
       if (isEditMode && openedEntry.editingExtensionPath) {
-        return (
-          openedEntry.editingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            openedEntry.url ? openedEntry.url : openedEntry.path,
-          ) +
-          locale +
-          theming +
-          extQuery +
-          event +
-          '&edit=true'
-          // '&t=' + openedEntry.lmdt
-        );
+        return openedEntry.editingExtensionPath + getParams + '&edit=true';
       } else {
         return (
           openedEntry.viewingExtensionPath +
-          '/index.html?file=' +
-          encodeURIComponent(
-            openedEntry.url ? openedEntry.url : openedEntry.path,
-          ) +
-          locale +
-          theming +
-          extQuery +
-          event +
+          getParams +
           '&t=' +
           openedEntry.lmdt
         );
