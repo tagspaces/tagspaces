@@ -138,12 +138,15 @@ function RenameEntryDialog(props: Props) {
     if (!disableConfirmButton.current) {
       onClose();
       if (isFile) {
+        const dirSeparator = currentLocation?.getDirSeparator();
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
-          currentLocation?.getDirSeparator(),
+          dirSeparator,
         );
         const newFilePath =
-          fileDirectory + currentLocation.getDirSeparator() + name.current;
+          (fileDirectory && fileDirectory !== dirSeparator
+            ? fileDirectory + dirSeparator
+            : '') + name.current;
         return renameFile(originPath, newFilePath, currentLocation.uuid);
       } else {
         return renameDirectory(originPath, name.current, currentLocation.uuid);

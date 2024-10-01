@@ -336,11 +336,13 @@ function EntryProperties(props: Props) {
 
   const renameEntry = () => {
     if (editName !== undefined) {
+      const dirSeparator = location?.getDirSeparator();
       const path = extractContainingDirectoryPath(
         openedEntry.path,
-        location?.getDirSeparator(),
+        dirSeparator,
       );
-      const nextPath = path + location?.getDirSeparator() + editName;
+      const nextPath =
+        (path && path !== dirSeparator ? path + dirSeparator : '') + editName;
 
       if (openedEntry.isFile) {
         renameFile(openedEntry.path, nextPath, openedEntry.locationID).catch(

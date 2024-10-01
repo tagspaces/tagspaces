@@ -44,6 +44,7 @@ import {
   extractContainingDirectoryPath,
   extractFileName,
   extractTags,
+  extractTagsAsObjects,
   generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -66,7 +67,7 @@ type TaggingActionsContextData = {
     path: string,
     tags: Array<TS.Tag>,
     reflect?: boolean,
-  ) => Promise<string>;
+  ) => Promise<TS.FileSystemEntry>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
   removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
   removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
@@ -185,29 +186,26 @@ export const TaggingActionsContextProvider = ({
 
   function addTagsToFilePath(path: string, tags: string[]) {
     if (tags && tags.length > 0) {
+      const dirSeparator = currentLocation
+        ? currentLocation.getDirSeparator()
+        : AppConfig.dirSeparator;
       const extractedTags: string[] = extractTags(
         path,
         tagDelimiter,
-        currentLocation?.getDirSeparator(),
+        dirSeparator,
       );
       const uniqueTags = tags.filter(
         (tag) => !extractedTags.some((tagName) => tagName === tag),
       );
-      const fileName = extractFileName(
-        path,
-        currentLocation?.getDirSeparator(),
-      );
+      const fileName = extractFileName(path, dirSeparator);
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        currentLocation?.getDirSeparator(),
+        dirSeparator,
       );
 
       return (
-        (containingDirectoryPath
-          ? containingDirectoryPath +
-            (currentLocation
-              ? currentLocation.getDirSeparator()
-              : AppConfig.dirSeparator)
+        (containingDirectoryPath && containingDirectoryPath !== dirSeparator
+          ? containingDirectoryPath + dirSeparator
           : '') +
         generateFileName(
           fileName,
@@ -227,34 +225,26 @@ export const TaggingActionsContextProvider = ({
   }): Promise<boolean> {
     if (files) {
       const promises = Object.entries(files).map(([filePath, tags]) =>
-        addTagsToEntry(filePath, tags, false).then((newPath) => ({
+        addTagsToEntry(filePath, tags, false).then((newEntry) => ({
           filePath,
-          newPath,
+          newEntry,
         })),
       );
       return Promise.all(promises).then((editedPaths) => {
-        const promiseReflect: Promise<TS.EditAction>[] = [];
+        const reflects: TS.EditAction[] = [];
         for (let i = 0; i < editedPaths.length; i++) {
-          const { filePath, newPath } = editedPaths[i];
-          if (newPath !== undefined) {
-            promiseReflect.push(
-              getAllPropertiesPromise(newPath).then(
-                (fsEntry: TS.FileSystemEntry) => {
-                  const currentAction: TS.EditAction = {
-                    action: 'update',
-                    entry: fsEntry,
-                    oldEntryPath: filePath,
-                  };
-                  return currentAction;
-                },
-              ),
-            );
+          const { filePath, newEntry } = editedPaths[i];
+          if (newEntry !== undefined) {
+            const currentAction: TS.EditAction = {
+              action: 'update',
+              entry: newEntry,
+              oldEntryPath: filePath,
+            };
+            reflects.push(currentAction);
           }
         }
-        return Promise.all(promiseReflect).then((actionsArray) => {
-          setReflectActions(...actionsArray);
-          return true;
-        });
+        setReflectActions(...reflects);
+        return true;
       });
     }
     return Promise.resolve(true);
@@ -409,13 +399,13 @@ export const TaggingActionsContextProvider = ({
    * @param entry: TS.FileSystemEntry
    * @param tags
    * @param reflect
-   * return newPath
+   * return newFsEntry updated
    */
   async function addTagsToFsEntry(
     entry: TS.FileSystemEntry,
     tags: Array<TS.Tag>,
     reflect: boolean = true,
-  ): Promise<string> {
+  ): Promise<TS.FileSystemEntry> {
     if (entry) {
       let fsEntryMeta;
       try {
@@ -449,7 +439,7 @@ export const TaggingActionsContextProvider = ({
                 if (reflect) {
                   reflectUpdateMeta({ ...entry, meta });
                 }
-                return entry.path;
+                return { ...entry, meta };
               })
               .catch((err) => {
                 console.log(
@@ -460,7 +450,7 @@ export const TaggingActionsContextProvider = ({
                   'error',
                   true,
                 );
-                return entry.path;
+                return entry;
               });
           }
         } else {
@@ -470,7 +460,7 @@ export const TaggingActionsContextProvider = ({
               if (reflect) {
                 reflectUpdateMeta({ ...entry, meta });
               }
-              return entry.path;
+              return { ...entry, meta };
             })
             .catch((error) => {
               console.log(
@@ -481,7 +471,7 @@ export const TaggingActionsContextProvider = ({
                 'error',
                 true,
               );
-              return entry.path;
+              return entry;
             });
         }
       } else if (fsEntryMeta) {
@@ -508,7 +498,21 @@ export const TaggingActionsContextProvider = ({
               entry.locationID,
               reflect,
             ).then((success) => {
-              return success ? newFilePath : undefined;
+              return success
+                ? {
+                    ...entry,
+                    tags: extractTagsAsObjects(
+                      newFilePath,
+                      tagDelimiter,
+                      currentLocation?.getDirSeparator(),
+                    ),
+                    name: extractFileName(
+                      newFilePath,
+                      currentLocation?.getDirSeparator(),
+                    ),
+                    path: newFilePath,
+                  }
+                : undefined;
             });
           }
         }
@@ -525,11 +529,25 @@ export const TaggingActionsContextProvider = ({
             entry.locationID,
             reflect,
           ).then((success) => {
-            return success ? newFilePath : undefined;
+            return success
+              ? {
+                  ...entry,
+                  tags: extractTagsAsObjects(
+                    newFilePath,
+                    tagDelimiter,
+                    currentLocation?.getDirSeparator(),
+                  ),
+                  name: extractFileName(
+                    newFilePath,
+                    currentLocation?.getDirSeparator(),
+                  ),
+                  path: newFilePath,
+                }
+              : undefined;
           });
         }
       }
-      return Promise.resolve(entry.path);
+      return Promise.resolve(entry);
 
       function getNonExistingTags(
         newTagsArray: Array<TS.Tag>,
@@ -553,19 +571,19 @@ export const TaggingActionsContextProvider = ({
         return newTags;
       }
     }
-    return Promise.resolve('');
+    return Promise.resolve(undefined);
   }
   /**
    * @param path
    * @param tags
    * @param reflect
-   * return newPath
+   * return newFsEntry updated
    */
   function addTagsToEntry(
     path: string,
     tags: Array<TS.Tag>,
     reflect: boolean = true,
-  ): Promise<string> {
+  ): Promise<TS.FileSystemEntry> {
     return currentLocation
       .getPropertiesPromise(path)
       .then((entry) => addTagsToFsEntry(entry, tags, reflect));
@@ -583,6 +601,9 @@ export const TaggingActionsContextProvider = ({
     tag: TS.Tag,
     newTagTitle?: string,
   ) {
+    const dirSeparator = currentLocation
+      ? currentLocation.getDirSeparator()
+      : AppConfig.dirSeparator;
     if (newTagTitle === undefined) {
       // eslint-disable-next-line no-param-reassign
       newTagTitle = tag.title;
@@ -605,19 +626,16 @@ export const TaggingActionsContextProvider = ({
     const extractedTags: string[] = extractTags(
       path,
       tagDelimiter,
-      currentLocation?.getDirSeparator(),
+      dirSeparator,
     );
     // TODO: Handle adding already added tags
     if (extractedTags.includes(tag.title)) {
       //tag.type === 'plain') {
 
-      const fileName = extractFileName(
-        path,
-        currentLocation?.getDirSeparator(),
-      );
+      const fileName = extractFileName(path, dirSeparator);
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
-        currentLocation?.getDirSeparator(),
+        dirSeparator,
       );
 
       let tagFoundPosition = -1;
@@ -641,20 +659,16 @@ export const TaggingActionsContextProvider = ({
         fileName,
         extractedTags,
         tagDelimiter,
-        currentLocation?.getDirSeparator(),
+        dirSeparator,
         prefixTagContainer,
         filenameTagPlacedAtEnd,
       );
       if (newFileName !== fileName) {
-        await renameFile(
-          path,
-          containingDirectoryPath +
-            (currentLocation
-              ? currentLocation.getDirSeparator()
-              : AppConfig.dirSeparator) +
-            newFileName,
-          currentLocation.uuid,
-        );
+        const newFilePath =
+          (containingDirectoryPath && containingDirectoryPath !== dirSeparator
+            ? containingDirectoryPath + dirSeparator
+            : '') + newFileName;
+        await renameFile(path, newFilePath, currentLocation.uuid);
       }
     } else {
       //if (tag.type === 'sidecar') {
@@ -898,19 +912,15 @@ export const TaggingActionsContextProvider = ({
         return Promise.resolve(path);
       }
       return new Promise(async (resolve, reject) => {
-        let extractedTags = extractTags(
-          path,
-          tagDelimiter,
-          currentLocation?.getDirSeparator(),
-        );
+        const dirSeparator = currentLocation
+          ? currentLocation.getDirSeparator()
+          : AppConfig.dirSeparator;
+        let extractedTags = extractTags(path, tagDelimiter, dirSeparator);
         if (extractedTags.length > 0) {
-          const fileName = extractFileName(
-            path,
-            currentLocation?.getDirSeparator(),
-          );
+          const fileName = extractFileName(path, dirSeparator);
           const containingDirectoryPath = extractContainingDirectoryPath(
             path,
-            currentLocation?.getDirSeparator(),
+            dirSeparator,
           );
           if (tagTitlesForRemoving) {
             for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
@@ -927,14 +937,14 @@ export const TaggingActionsContextProvider = ({
             extractedTags = [];
           }
           const newFilePath =
-            (containingDirectoryPath
-              ? containingDirectoryPath + currentLocation.getDirSeparator()
+            (containingDirectoryPath && containingDirectoryPath !== dirSeparator
+              ? containingDirectoryPath + dirSeparator
               : '') +
             generateFileName(
               fileName,
               extractedTags,
               tagDelimiter,
-              currentLocation?.getDirSeparator(),
+              dirSeparator,
               prefixTagContainer,
               filenameTagPlacedAtEnd,
             );
