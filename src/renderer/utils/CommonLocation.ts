@@ -901,7 +901,7 @@ export class CommonLocation implements TS.Location {
     filePath: string,
     useEncryption: boolean = true,
   ): Promise<TS.FileSystemEntryMeta> => {
-    return this.loadTextFilePromise(filePath, useEncryption)
+    return this.loadTextFilePromise(filePath, undefined, useEncryption)
       .then(
         (jsonContent) => loadJSONString(jsonContent) as TS.FileSystemEntryMeta,
       )
