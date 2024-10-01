@@ -749,7 +749,7 @@ export const OpenedEntryContextProvider = ({
                 const filePath =
                   (locationPath.length > 0 ? locationPath + '/' : '') +
                   entryPath;
-                currentLocation
+                targetLocation
                   .checkFileEncryptedPromise(filePath)
                   .then((encrypted) => {
                     getAllPropertiesPromise(filePath, lid, encrypted)
