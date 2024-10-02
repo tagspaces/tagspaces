@@ -491,7 +491,7 @@ export const CurrentLocationContextProvider = ({
       return locationPersistTagsInSidecarFile;
     }
     return settingsPersistTagsInSidecarFile;
-  }, [currentLocation.current, settingsPersistTagsInSidecarFile]);
+  }, [location, settingsPersistTagsInSidecarFile]);
 
   function changeLocation(
     location: CommonLocation,
