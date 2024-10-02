@@ -26,11 +26,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+import ListItemText from '@mui/material/ListItemText';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 // import useMediaQuery from '@mui/material/useMediaQuery';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -179,8 +182,17 @@ function OpenLinkDialog(props: Props) {
                 : undefined
             }
           >
-            <MenuItem onClick={handleCopy}>Copy</MenuItem>
-            <MenuItem onClick={handlePaste}>Paste</MenuItem>
+            <MenuList dense style={{ minWidth: 150 }}>
+              <MenuItem onClick={handleCopy}>
+                <ListItemText primary={t('core:copy')} />
+                <MenuKeyBinding keyBinding="command+c" />
+              </MenuItem>
+              <MenuItem onClick={handlePaste}>
+                {' '}
+                <ListItemText primary={t('core:paste')} />
+                <MenuKeyBinding keyBinding="command+v" />
+              </MenuItem>
+            </MenuList>
           </Menu>
         </FormControl>
       </DialogContent>
