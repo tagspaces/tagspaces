@@ -600,9 +600,14 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.url = fsEntry.url;
     }
     //set meta and generate new meta id if not exist
-    const meta = await getMetadata(fsEntry.path, fsEntry.uuid, loc);
+    let meta;
+    if (fsEntry.meta && fsEntry.meta.id) {
+      meta = { ...fsEntry.meta };
+    } else {
+      meta = await getMetadata(fsEntry.path, fsEntry.uuid, loc);
+    }
     entryForOpening.uuid = meta.id;
-    entryForOpening.meta = { ...fsEntry.meta, ...meta };
+    entryForOpening.meta = meta;
 
     if (
       fsEntry.isNewFile &&

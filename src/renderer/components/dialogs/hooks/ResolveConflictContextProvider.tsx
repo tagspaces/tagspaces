@@ -20,6 +20,7 @@ import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import {
   extractContainingDirectoryPath,
   getBackupFileLocation,
+  cleanTrailingDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
 import LoadingLazy from '-/components/LoadingLazy';
 import { TS } from '-/tagspaces.namespace';
@@ -122,7 +123,10 @@ export const ResolveConflictContextProvider = ({
             const openedEntryDir = extractContainingDirectoryPath(
               entryProp.path,
             );
-            if (currentDirectoryPath === openedEntryDir) {
+            if (
+              cleanTrailingDirSeparator(currentDirectoryPath) ===
+              cleanTrailingDirSeparator(openedEntryDir)
+            ) {
               return openDirectory(openedEntryDir).then(() => true);
             }
             return true;

@@ -21,6 +21,7 @@ import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
 import {
   baseName,
   extractFileName,
+  extractTagsAsObjects,
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
@@ -38,14 +39,23 @@ export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
   if (entry.meta && entry.meta.tags && entry.meta.tags.length > 0) {
     tags.push(...entry.meta.tags);
   }
+  let fileNameTags;
   if (entry.tags && entry.tags.length > 0) {
+    fileNameTags = entry.tags;
+  } else if (
+    entry.path.indexOf(AppConfig.beginTagContainer) !== -1 &&
+    entry.path.indexOf(AppConfig.endTagContainer) !== -1
+  ) {
+    fileNameTags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
+  }
+  if (fileNameTags) {
     if (tags.length > 0) {
-      const filteredTags = entry.tags.filter(
+      const filteredTags = fileNameTags.filter(
         (tag) => !tags.some((t) => t.title === tag.title),
       );
       tags.push(...filteredTags);
     } else {
-      tags.push(...entry.tags);
+      tags.push(...fileNameTags);
     }
   }
   return tags;

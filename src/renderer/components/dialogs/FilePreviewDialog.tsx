@@ -119,14 +119,13 @@ function FilePreviewDialog(props: Props) {
               openLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
+              const webDir = extractContainingDirectoryPath(
+                // eslint-disable-next-line no-restricted-globals
+                location.href,
+                openLocation?.getDirSeparator(),
+              );
               fileDirectory =
-                extractContainingDirectoryPath(
-                  // eslint-disable-next-line no-restricted-globals
-                  location.href,
-                  openLocation?.getDirSeparator(),
-                ) +
-                '/' +
-                fileDirectory;
+                (webDir && webDir !== '/' ? webDir + '/' : '') + fileDirectory;
             }
             if (
               fileViewer &&

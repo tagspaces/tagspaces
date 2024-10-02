@@ -114,15 +114,15 @@ function ResolveConflictDialog(props: Props) {
               data-tid="saveTID"
               title={t('core:save')}
               onClick={() => {
-                props
-                  .saveAs(
-                    extractContainingDirectoryPath(openedEntry.path) +
-                      '/' +
-                      copyFileName.current,
-                  )
-                  .then(() => {
-                    onClose();
-                  });
+                const dirPath = extractContainingDirectoryPath(
+                  openedEntry.path,
+                );
+                const newFilePath =
+                  (dirPath && dirPath !== '/' ? dirPath + '/' : '') +
+                  copyFileName.current;
+                props.saveAs(newFilePath).then(() => {
+                  onClose();
+                });
               }}
               color="primary"
             >
