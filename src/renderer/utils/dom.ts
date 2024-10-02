@@ -100,10 +100,27 @@ export function getBase64Image(imgURL: string) {
   return canvas.toDataURL('image/png');
 }
 
-export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
+/*export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
   const blob = new Blob([arrayBuffer], { type: mime });
   const url = window.URL || window.webkitURL;
   return url.createObjectURL(blob);
+}*/
+
+export function arrayBufferToDataURL(
+  arrayBuffer: any,
+  mime: string,
+): Promise<string> {
+  return new Promise((resolve) => {
+    const blob = new Blob([arrayBuffer], { type: mime });
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      const dataUrl = event.target?.result as string;
+      resolve(dataUrl);
+    };
+
+    reader.readAsDataURL(blob);
+  });
 }
 
 export function dataURLtoBlob(dataURI) {

@@ -426,8 +426,23 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };*/
 
+async function findPort() {
+  if (isDebug) {
+    return 2000;
+  }
+  const defaultWSPort = settings.getInitWsPort();
+  //console.log('defaultWSPort:' + defaultWSPort);
+  try {
+    const [port] = await findFreePorts(1, { startPort: defaultWSPort });
+    return port;
+  } catch (e) {
+    console.error('Error findPort:', e);
+  }
+  console.log('Using default WS port:' + defaultWSPort);
+  return defaultWSPort;
+}
+
 function startWS() {
-  const port = isDebug ? 2000 : undefined;
   try {
     let filepath;
     let script;
@@ -448,44 +463,41 @@ function startWS() {
     //console.debug(JSON.stringify(properties.get('KEY')));
 
     const results = new Promise((resolve, reject) => {
-      findFreePorts(1, { startPort: settings.getInitWsPort() }).then(
-        ([findPort]) => {
-          const freePort = port ? port : findPort;
-          try {
-            pm2.start(
-              {
-                name: 'Tagspaces WS',
-                script, // Script to be run
-                cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-                args: ['-p', freePort, '-k', properties.get('KEY')],
-                restartAt: [],
-                // log: path.join(process.cwd(), 'thumbGen.log')
-              },
-              (err, pid) => {
-                if (err && pid) {
-                  if (pid && pid.name) console.error(pid.name, err, pid);
-                  else console.error(err, pid);
-                  reject(err);
-                } else if (err) {
-                  reject(err);
-                } else {
-                  settings.setUsedWsPort(freePort);
-                  mainWindow?.webContents.send('start_ws', {
-                    port: freePort,
-                  });
-                  console.debug('start_ws:' + freePort);
-                  resolve(
-                    `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
-                  );
-                }
-              },
-            );
-          } catch (e) {
-            console.error('pm2.start err:', e);
-            reject(e);
-          }
-        },
-      );
+      findPort().then((freePort) => {
+        try {
+          pm2.start(
+            {
+              name: 'Tagspaces WS',
+              script, // Script to be run
+              cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+              args: ['-p', freePort, '-k', properties.get('KEY')],
+              restartAt: [],
+              // log: path.join(process.cwd(), 'thumbGen.log')
+            },
+            (err, pid) => {
+              if (err && pid) {
+                if (pid && pid.name) console.error(pid.name, err, pid);
+                else console.error(err, pid);
+                reject(err);
+              } else if (err) {
+                reject(err);
+              } else {
+                settings.setUsedWsPort(freePort);
+                mainWindow?.webContents.send('start_ws', {
+                  port: freePort,
+                });
+                console.debug('start_ws:' + freePort);
+                resolve(
+                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
+                );
+              }
+            },
+          );
+        } catch (e) {
+          console.error('pm2.start err:', e);
+          reject(e);
+        }
+      });
     });
     results
       .then((results) => console.debug(results))

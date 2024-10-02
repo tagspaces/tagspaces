@@ -41,7 +41,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import {
   createNewInstance,
-  downloadFile,
   getRelativeEntryPath,
   openDirectoryMessage,
 } from '-/services/utils-io';
@@ -79,6 +78,9 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
+  /**
+   * @deprecated use selectedEntries instead
+   */
   selectedFilePath?: string;
   reorderTop?: () => void;
   reorderBottom?: () => void;
@@ -112,6 +114,7 @@ function FileMenu(props: Props) {
     openFileNatively,
     duplicateFile,
     setFolderBackgroundPromise,
+    downloadFsEntry,
   } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
@@ -556,14 +559,25 @@ function FileMenu(props: Props) {
         key="downloadFileUrl"
         data-tid="downloadFileUrlTID"
         onClick={() => {
-          const downloadResult = downloadFile(
+          if (selectedEntries && selectedEntries.length > 0) {
+            const fsEntry = selectedEntries[selectedEntries.length - 1];
+            currentLocation
+              .checkFileEncryptedPromise(fsEntry.path)
+              .then((encrypted) => {
+                downloadFsEntry({ ...fsEntry, isEncrypted: encrypted });
+              });
+          }
+          /*currentLocation
+            .getPropertiesPromise(selectedFilePath)
+            .then((fsEntry: TS.FileSystemEntry) => downloadFsEntry(fsEntry));*/
+          /*const downloadResult = downloadFile(
             selectedFilePath,
             downloadFileUrl.current,
             currentLocation?.getDirSeparator(),
           );
           if (downloadResult === -1) {
             showNotification(t('core:cantDownloadLocalFile'));
-          }
+          }*/
           onClose();
         }}
       >

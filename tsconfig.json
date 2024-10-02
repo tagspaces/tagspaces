@@ -23,7 +23,9 @@
     "paths": {
       "-/*": ["src/renderer/*"],
       "assets/*": ["assets/*"]
-    }
+    },
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"]
   },
   "include": [
     "src/main/**/*.ts",

@@ -552,7 +552,8 @@ function EntryProperties(props: Props) {
 
   const isCloudLocation = openedEntry.url && openedEntry.url.length > 5;
 
-  const showLinkForDownloading = isCloudLocation && openedEntry.isFile;
+  const showLinkForDownloading =
+    isCloudLocation && openedEntry.isFile && !openedEntry.isEncrypted;
 
   /*const thumbUrl = location.getThumbPath(
     openedEntry.meta?.thumbPath,
