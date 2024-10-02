@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 import ListItemText from '@mui/material/ListItemText';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
@@ -80,18 +80,16 @@ function PerspectiveSelector(props: Props) {
   });
 
   return (
-    <TextField
+    <TsTextField
       data-tid={testId}
       defaultValue={defaultValue}
-      variant="filled"
       onChange={onChange}
       select
       label={label}
-      fullWidth
       size={desktopMode ? 'small' : 'medium'}
     >
       {perspectiveSelectorMenuItems}
-    </TextField>
+    </TsTextField>
   );
 }
 

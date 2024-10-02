@@ -19,18 +19,17 @@
 import React from 'react';
 
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import TsTextField from '-/components/TsTextField';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { selectDirectoryDialog } from '-/services/utils-io';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   errorTextPath: boolean;
@@ -69,16 +68,14 @@ function LocalForm(props: Props) {
     <Grid container>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextName}>
-          <TextField
+          <TsTextField
             required
             autoFocus
-            margin="dense"
             name="name"
             inputProps={{ autoCorrect: 'off' }}
             onChange={(event) => setName(event.target.value)}
             value={name}
             data-tid="locationName"
-            fullWidth={true}
             // helperText="Please enter location name"
             label={t('core:createLocationName')}
           />
@@ -86,11 +83,9 @@ function LocalForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextPath}>
-          <TextField
+          <TsTextField
             required
-            margin="dense"
             name="path"
-            fullWidth={true}
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
             onChange={(event) => setPath(event.target.value)}

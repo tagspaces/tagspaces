@@ -18,13 +18,13 @@
 
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
+import TsTextField from '-/components/TsTextField';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -103,7 +103,7 @@ function CreateTagsDialog(props: Props) {
       </DialogTitle>
       <DialogContent style={{ minWidth: 350, paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
-          <TextField
+          <TsTextField
             error={inputError}
             name="tagTitle"
             autoFocus
@@ -111,7 +111,6 @@ function CreateTagsDialog(props: Props) {
             onChange={handleTagTitleChange}
             value={tagTitle}
             data-tid="addTagsInput"
-            fullWidth={true}
           />
           {inputError && (
             <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>

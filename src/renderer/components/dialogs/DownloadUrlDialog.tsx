@@ -29,11 +29,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import TsTextField from '-/components/TsTextField';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -170,7 +170,7 @@ function DownloadUrlDialog(props: Props) {
           scroll="paper"
         >
           <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-            {t('core:downloadFile')}
+            {t('core:downloadLink')}
             <DialogCloseButton
               testId="closeCreateDialogTID"
               onClose={() => onClose()}
@@ -185,13 +185,11 @@ function DownloadUrlDialog(props: Props) {
             }}
             data-tid="downloadUrlDialogTID"
           >
-            <TextField
+            <TsTextField
               error={invalidURL}
               label={t('core:url')}
               autoFocus
-              margin="dense"
               name="name"
-              fullWidth={true}
               data-tid="newUrlTID"
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {

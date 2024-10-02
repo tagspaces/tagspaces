@@ -34,6 +34,7 @@ import {
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -178,11 +179,10 @@ function RenameEntryDialog(props: Props) {
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
-          <TextField
+          <TsTextField
             autoFocus
             required
             error={inputError}
-            margin="dense"
             name="entryName"
             label={t(
               'core:' +
@@ -190,8 +190,10 @@ function RenameEntryDialog(props: Props) {
             )}
             onChange={handleInputChange}
             onFocus={onInputFocus}
+            // updateValue={(value) => {
+            //   name.current = value;
+            // }}
             defaultValue={name.current}
-            fullWidth={true}
             data-tid="renameEntryDialogInput"
           />
           <FormHelperText>

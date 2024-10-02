@@ -18,7 +18,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -34,6 +33,7 @@ import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -173,16 +173,14 @@ function EditTagGroupDialog(props: Props) {
           style={{ overflow: 'visible' }}
         >
           <FormHelperText>{t('core:editTagGroupNewName')}</FormHelperText>
-          <TextField
+          <TsTextField
             error={inputError}
-            margin="dense"
             name="title"
             autoFocus
             // label={t('core:editTagGroupNewName')}
             onChange={handleTagGroupTitleChange}
             value={title}
             data-tid="editTagGroupInput"
-            fullWidth={true}
           />
           {inputError && (
             <FormHelperText>{t('core:taggroupTitleHelper')}</FormHelperText>

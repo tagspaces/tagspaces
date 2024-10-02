@@ -23,9 +23,9 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Tooltip from '-/components/Tooltip';
-import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
+import TsTextField from '-/components/TsTextField';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
@@ -125,11 +125,9 @@ function CreateFile(props: Props) {
   return (
     <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
-        <TextField
+        <TsTextField
           error={inputError}
-          margin="dense"
           name="entryName"
-          variant="filled"
           label={t('core:fileName')}
           onChange={handleInputChange}
           onFocus={onInputFocus}
@@ -142,7 +140,6 @@ function CreateFile(props: Props) {
           }}
           defaultValue={fileName}
           disabled={noSuitableLocation}
-          fullWidth={true}
           autoFocus
           data-tid={tid('newEntryDialogInputTID')}
         />
@@ -152,16 +149,12 @@ function CreateFile(props: Props) {
       </FormControl>
       {fileType ? (
         <FormControl fullWidth={true}>
-          <TextField
+          <TsTextField
             autoFocus
             id="fileContentID"
             label={t('core:fileContent')}
             multiline
-            fullWidth
-            variant="filled"
-            // value={fileContent}
             rows={5}
-            margin="dense"
             onChange={handleContentChange}
           />
         </FormControl>
