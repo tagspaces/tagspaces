@@ -82,6 +82,7 @@ import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
+import TsTextField from '-/components/TsTextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { useTranslation } from 'react-i18next';
@@ -568,12 +569,11 @@ function EntryProperties(props: Props) {
     <Root>
       <Grid container>
         <Grid item xs={12}>
-          <TextField
+          <TsTextField
             error={fileNameError.current}
             label={
               openedEntry.isFile ? t('core:fileName') : t('core:folderName')
             }
-            variant="filled"
             InputProps={{
               readOnly: editName === undefined,
               endAdornment: (
@@ -614,13 +614,12 @@ function EntryProperties(props: Props) {
                 </InputAdornment>
               ),
             }}
-            margin="dense"
             name="name"
             size={desktopMode ? 'small' : 'medium'}
-            fullWidth={true}
             data-tid="fileNameProperties"
             defaultValue={entryName} // openedEntry.current.name}
             inputRef={fileNameRef}
+            retrieveValue={() => fileNameRef.current.value}
             onClick={() => {
               if (!isEditMode && editName === undefined) {
                 activateEditNameField();
@@ -761,13 +760,11 @@ function EntryProperties(props: Props) {
 
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={12}>
-            <TextField
-              margin="dense"
-              variant="filled"
-              fullWidth={true}
+            <TsTextField
               size={desktopMode ? 'small' : 'medium'}
               value={ldtm}
               label={t('core:fileLDTM')}
+              retrieveValue={() => ldtm}
               InputProps={{
                 readOnly: true,
               }}
@@ -790,11 +787,9 @@ function EntryProperties(props: Props) {
                   t('core:files')
               }
             >
-              <TextField
-                margin="dense"
-                fullWidth={true}
+              <TsTextField
                 value={fileSize()}
-                variant="filled"
+                retrieveValue={() => fileSize()}
                 size={desktopMode ? 'small' : 'medium'}
                 label={t('core:fileSize')}
                 InputProps={{
@@ -822,16 +817,14 @@ function EntryProperties(props: Props) {
 
         <Grid item xs={12}>
           <FormControl fullWidth={true} className={classes.formControl}>
-            <TextField
-              margin="dense"
+            <TsTextField
               name="path"
-              variant="filled"
               title={openedEntry.url || openedEntry.path}
-              fullWidth={true}
               label={isCloudLocation ? t('cloudPath') : t('core:filePath')}
               size={desktopMode ? 'small' : 'medium'}
               data-tid="filePathProperties"
               value={openedEntry.path || ''}
+              retrieveValue={() => openedEntry.path}
               InputProps={{
                 readOnly: true,
                 // startAdornment: (
@@ -874,14 +867,11 @@ function EntryProperties(props: Props) {
           justifyContent="center"
         >
           <Grid item xs={12}>
-            <TextField
+            <TsTextField
               data-tid="sharingLinkTID"
-              margin="dense"
-              variant="filled"
               name="sharinglink"
               size={desktopMode ? 'small' : 'medium'}
               label={<>{t('core:sharingLink')}</>}
-              fullWidth={true}
               value={sharingLink}
               inputRef={sharingLinkRef}
               InputProps={{
@@ -924,13 +914,10 @@ function EntryProperties(props: Props) {
           </Grid>
           {showLinkForDownloading && (
             <Grid item xs={12}>
-              <TextField
-                margin="dense"
+              <TsTextField
                 name="downloadLink"
-                variant="filled"
                 size={desktopMode ? 'small' : 'medium'}
                 label={<>{t('core:downloadLink')}</>}
-                fullWidth
                 value={' '}
                 InputProps={{
                   readOnly: true,
@@ -971,12 +958,9 @@ function EntryProperties(props: Props) {
 
         {!openedEntry.isFile && (
           <Grid item xs={12} style={{ marginTop: 5 }}>
-            <TextField
-              margin="dense"
+            <TsTextField
               name="path"
-              variant="filled"
               label={<>{t('core:backgroundColor')}</>}
-              fullWidth
               InputProps={{
                 readOnly: true,
                 startAdornment: (
@@ -1192,15 +1176,13 @@ function EntryProperties(props: Props) {
         justifyContent="center"
       >
         <Grid item xs={12}>
-          <TextField
+          <TsTextField
             data-tid="entryIDTID"
-            margin="dense"
             name="entryid"
-            variant="filled"
             size={desktopMode ? 'small' : 'medium'}
             label={t('core:entryId')}
-            fullWidth={true}
             value={openedEntry?.meta?.id}
+            retrieveValue={() => openedEntry?.meta?.id}
             InputProps={{
               readOnly: true,
               // startAdornment: (

@@ -21,7 +21,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -148,13 +148,11 @@ function ObjectStoreForm(props: Props) {
     <Grid container>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorTextName}>
-          <TextField
+          <TsTextField
             required
             autoFocus
-            margin="dense"
             name="storeName"
             inputProps={{ autoCorrect: 'off' }}
-            fullWidth={true}
             data-tid="locationName"
             onChange={(event) => setStoreName(event.target.value)}
             value={storeName}
@@ -167,10 +165,8 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorTextPath}>
-          <TextField
-            margin="dense"
+          <TsTextField
             name="storePath"
-            fullWidth={true}
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
             onChange={(event) => setStorePath(event.target.value)}
@@ -184,11 +180,9 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorAccessKey}>
-          <TextField
-            margin="dense"
+          <TsTextField
             required
             name="accessKeyId"
-            fullWidth={true}
             data-tid="accessKeyId"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setAccessKeyId(event.target.value)}
@@ -202,12 +196,10 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorSecretAccessKey}>
-          <TextField
-            margin="dense"
+          <TsTextField
             required
             name="secretAccessKey"
             type={showSecretAccessKey ? 'text' : 'password'}
-            fullWidth={true}
             data-tid="secretAccessKey"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setSecretAccessKey(event.target.value)}
@@ -231,19 +223,12 @@ function ObjectStoreForm(props: Props) {
               ),
             }}
           />
-          {/* {state.cloudErrorSecretAccessKey && (
-          <FormHelperText>
-            {t('core:invalidSecretAccessKey')}
-          </FormHelperText>
-          )} */}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true}>
-          <TextField
-            margin="dense"
+          <TsTextField
             name="sessionToken"
-            fullWidth={true}
             data-tid="sessionTokenTID"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setSessionToken(event.target.value)}
@@ -254,38 +239,26 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
-          <TextField
-            margin="dense"
+          <TsTextField
             name="bucketName"
-            fullWidth={true}
             data-tid="bucketName"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setBucketName(event.target.value)}
             value={bucketName}
             label={t('core:bucketName')}
           />
-          {/* {state.cloudErrorBucketName && (
-          <FormHelperText>
-            {t('core:invalidBucketName')}
-          </FormHelperText>
-          )} */}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true}>
-          <TextField
-            margin="dense"
+          <TsTextField
             name="endpointURL"
-            fullWidth={true}
             data-tid="endpointURL"
             placeholder={t('s3serviceURL')}
             onChange={(event) => setEndpointURL(event.target.value)}
             value={endpointURL}
             label={t('core:endpointURL')}
           />
-          {/* {state.cloudErrorId && (
-          <FormHelperText>{t('core:missingId')}</FormHelperText>
-          )} */}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
@@ -297,7 +270,7 @@ function ObjectStoreForm(props: Props) {
             onChange={handleRegionChange}
             onInputChange={handleRegionChange}
             renderInput={(params) => (
-              <TextField
+              <TsTextField
                 {...params}
                 label={t('core:regionSearch')}
                 data-tid="regionTID"

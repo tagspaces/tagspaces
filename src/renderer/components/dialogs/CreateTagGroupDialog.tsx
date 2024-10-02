@@ -19,7 +19,6 @@
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -33,6 +32,7 @@ import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -193,8 +193,7 @@ function CreateTagGroupDialog(props: Props) {
       </DialogTitle>
       <DialogContent style={{ paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
-          <TextField
-            fullWidth={true}
+          <TsTextField
             error={inputError}
             autoFocus
             name="title"

@@ -35,7 +35,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import Input from '@mui/material/Input';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -631,9 +631,9 @@ function CreateEditLocationDialog(props: Props) {
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
               <FormControl disabled={disableLocationTypeSwitch} fullWidth>
-                <InputLabel id="locationLabelID">
+                {/* <InputLabel id="locationLabelID">
                   {t('core:locationType')}
-                </InputLabel>
+                </InputLabel> */}
                 <Select
                   labelId="locationLabelID"
                   data-tid="locationTypeTID"
@@ -642,6 +642,7 @@ function CreateEditLocationDialog(props: Props) {
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     setType(event.target.value)
                   }
+                  variant="filled"
                 >
                   {!AppConfig.isWeb && (
                     <MenuItem
@@ -977,10 +978,8 @@ function CreateEditLocationDialog(props: Props) {
                 />
               )}
               <FormControl fullWidth={true}>
-                <TextField
-                  margin="dense"
+                <TsTextField
                   name="autoOpenedFilename"
-                  fullWidth={true}
                   data-tid="autoOpenedFilenameTID"
                   placeholder={
                     t('core:forExample') + ': index.md, index.html or readme.md'
@@ -988,6 +987,10 @@ function CreateEditLocationDialog(props: Props) {
                   onChange={(event) =>
                     setAutoOpenedFilename(event.target.value)
                   }
+                  updateValue={(value) => {
+                    setAutoOpenedFilename(value);
+                  }}
+                  retrieveValue={() => autoOpenedFilename}
                   value={autoOpenedFilename}
                   label={t('core:autoOpenedFilename')}
                 />
@@ -1060,16 +1063,17 @@ function CreateEditLocationDialog(props: Props) {
                 )}
               </>
               <FormControl fullWidth={true} style={{ marginTop: 10 }}>
-                <TextField
+                <TsTextField
                   required
-                  margin="dense"
                   name="newuuid"
-                  fullWidth={true}
                   data-tid="newuuid"
                   placeholder="Unique location identifier"
                   onChange={(event) => setNewLocationID(event.target.value)}
                   value={newuuid}
                   label={t('core:locationId')}
+                  updateValue={(value) => {
+                    setNewLocationID(value);
+                  }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" style={{ height: 32 }}>
@@ -1112,16 +1116,18 @@ function CreateEditLocationDialog(props: Props) {
             <AccordionDetails>
               <FormControl fullWidth={true}>
                 <FormLabel>{t('encryptionExplanation')}</FormLabel>
-                <TextField
-                  margin="dense"
+                <TsTextField
                   name="encryptionKey"
                   type={showEncryptionKey ? 'text' : 'password'}
-                  fullWidth={true}
                   inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                   data-tid="encryptionKeyTID"
                   placeholder={t('encryptionKeyExplanation')}
                   onChange={(event) => setEncryptionKey(event.target.value)}
                   value={encryptionKey}
+                  updateValue={(value) => {
+                    setEncryptionKey(value);
+                  }}
+                  retrieveValue={() => encryptionKey}
                   label={t('core:encryptionKey')}
                   InputProps={{
                     endAdornment: (

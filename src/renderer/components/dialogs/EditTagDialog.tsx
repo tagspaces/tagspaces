@@ -18,7 +18,6 @@
 
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import format from 'date-fns/format';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,6 +27,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
+import TsTextField from '-/components/TsTextField';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
@@ -170,16 +170,14 @@ function EditTagDialog(props: Props) {
               </time>
             </div>
           )}
-          <TextField
+          <TsTextField
             error={inputError}
-            margin="dense"
             name="title"
             autoFocus
             label={t('core:editTag')}
             onChange={handleTagTitleChange}
             value={title}
             data-tid="editTagInput"
-            fullWidth={true}
           />
           {inputError && (
             <FormHelperText style={styles.helpText}>

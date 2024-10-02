@@ -44,7 +44,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
-import { Autocomplete, Box, TextField } from '@mui/material';
+import { Autocomplete, Box } from '@mui/material';
 import {
   accuracy,
   ActionType,
@@ -62,6 +62,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
+import TsTextField from '-/components/TsTextField';
 import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -1455,7 +1456,7 @@ function SearchAutocomplete(props: Props) {
               params.InputProps.endAdornment = [endAdornment];
             }
             return (
-              <TextField
+              <TsTextField
                 {...params}
                 style={{ overflow: 'auto', maxHeight: 40 }}
                 onBlur={() => {
@@ -1466,12 +1467,10 @@ function SearchAutocomplete(props: Props) {
                   isOpen.current = true;
                   forceUpdate();
                 }}
-                fullWidth
                 autoFocus
                 placeholder={t('core:searchTitle')}
                 size="small"
-                margin="dense"
-                variant="outlined"
+                // variant="outlined"
               />
             );
           }}

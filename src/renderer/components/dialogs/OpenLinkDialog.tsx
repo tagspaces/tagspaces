@@ -20,21 +20,15 @@ import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import ListItemText from '@mui/material/ListItemText';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-// import useMediaQuery from '@mui/material/useMediaQuery';
-import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import InfoIcon from '-/components/InfoIcon';
+import TsTextField from '-/components/TsTextField';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
@@ -93,44 +87,6 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  const [contextMenu, setContextMenu] = React.useState<{
-    mouseX: number;
-    mouseY: number;
-  } | null>(null);
-
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
-          }
-        : null,
-    );
-  };
-
-  const handleClose = () => {
-    setContextMenu(null);
-  };
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(linkURL);
-      handleClose();
-    } catch (error) {
-      console.error(error.message);
-      handleClose();
-    }
-  }
-
-  async function handlePaste() {
-    navigator.clipboard.readText().then((clipText) => {
-      setLinkURL(clipText);
-      handleClose();
-    });
-  }
-
   return (
     <Dialog
       open={open}
@@ -150,18 +106,18 @@ function OpenLinkDialog(props: Props) {
       </DialogTitle>
       <DialogContent style={{ minWidth: fullScreen ? 100 : 400 }}>
         <FormControl fullWidth={true} error={inputError}>
-          <TextField
-            fullWidth
-            margin="dense"
+          <TsTextField
             autoFocus
             name="name"
             label={t('core:link')}
-            onContextMenu={handleContextMenu}
-            style={{ cursor: 'context-menu' }}
             onChange={(event) => {
               const { target } = event;
               setLinkURL(target.value);
             }}
+            updateValue={(value) => {
+              setLinkURL(value);
+            }}
+            retrieveValue={() => linkURL}
             value={linkURL}
             data-tid="openLinkTID"
             InputProps={{
@@ -172,28 +128,6 @@ function OpenLinkDialog(props: Props) {
               ),
             }}
           />
-          <Menu
-            open={contextMenu !== null}
-            onClose={handleClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-              contextMenu !== null
-                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                : undefined
-            }
-          >
-            <MenuList dense style={{ minWidth: 150 }}>
-              <MenuItem onClick={handleCopy}>
-                <ListItemText primary={t('core:copy')} />
-                <MenuKeyBinding keyBinding="command+c" />
-              </MenuItem>
-              <MenuItem onClick={handlePaste}>
-                {' '}
-                <ListItemText primary={t('core:paste')} />
-                <MenuKeyBinding keyBinding="command+v" />
-              </MenuItem>
-            </MenuList>
-          </Menu>
         </FormControl>
       </DialogContent>
       <DialogActions>

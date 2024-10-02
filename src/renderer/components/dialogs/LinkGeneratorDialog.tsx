@@ -28,9 +28,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { QRCode } from 'react-qrcode-logo';
 import InfoIcon from '-/components/InfoIcon';
 import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
+import TsTextField from '-/components/TsTextField';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -86,14 +86,13 @@ function LinkGeneratorDialog(props: Props) {
       style={{ marginTop: 12 }}
     >
       <DialogTitle>
-        {t('core:generateDownloadLink')}{' '}
+        {t('core:downloadLink')}{' '}
         <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'auto', height: 450 }}>
-        <TextField
+        <TsTextField
           style={{ marginTop: 8 }}
           select
-          fullWidth={true}
           label={
             <>
               {t('core:linkValidity')}
@@ -111,9 +110,8 @@ function LinkGeneratorDialog(props: Props) {
           <MenuItem value={60 * 60 * 24}>1 {t('core:day')}</MenuItem>
           <MenuItem value={60 * 60 * 24 * 3}>3 {t('core:days')}</MenuItem>
           <MenuItem value={60 * 60 * 24 * 7}>7 {t('core:days')}</MenuItem>
-        </TextField>
-        <TextField
-          margin="dense"
+        </TsTextField>
+        <TsTextField
           name="path"
           style={{ marginTop: 15 }}
           InputProps={{
@@ -143,20 +141,18 @@ function LinkGeneratorDialog(props: Props) {
               </InputAdornment>
             ),
           }}
-          label={<>{t('core:downloadLink')}</>}
-          fullWidth={true}
+          // label={t('core:downloadLink')}
           value={signedLink.current}
         />
-        <TextField
-          margin="dense"
+        <TsTextField
           name="path"
-          label={t('core:qrCode')}
+          // label={t('core:qrCode')}
           value={' '}
           InputProps={{
             readOnly: true,
             style: { height: 380 },
             startAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment title={t('core:qrCode')} position="start">
                 <QRCode
                   id="qr-code-link"
                   value={signedLink.current}
