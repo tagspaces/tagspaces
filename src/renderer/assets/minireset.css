@@ -35,5 +35,5 @@ img { border: 0; pointer-events: none; }
     cursor: default;
 }
 input, button, textarea, :focus {
-    /* outline: none; */
+    outline: none; 
 }
