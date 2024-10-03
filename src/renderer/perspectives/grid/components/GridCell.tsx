@@ -181,7 +181,7 @@ function GridCell(props: Props) {
                     return true;
                   },
                 );
-              } else {
+              } else if (arrayBuffer === undefined) {
                 return getThumbUrl();
               }
             });

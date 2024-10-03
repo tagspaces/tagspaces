@@ -64,7 +64,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 
 //const historyKeys = Pro ? Pro.keys.historyKeys : {};

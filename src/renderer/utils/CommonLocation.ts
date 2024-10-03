@@ -822,16 +822,33 @@ export class CommonLocation implements TS.Location {
     } catch (ex) {}
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
-        return this.ioAPI.loadTextFilePromise(
-          {
-            path: filePath,
-            bucketName: this.bucketName,
-            location: this,
-            ...(this.encryptionKey &&
-              useEncryption && { encryptionKey: this.encryptionKey }),
-          },
-          isPreview,
-        );
+        return this.ioAPI
+          .loadTextFilePromise(
+            {
+              path: filePath,
+              bucketName: this.bucketName,
+              location: this,
+              ...(this.encryptionKey &&
+                useEncryption && { encryptionKey: this.encryptionKey }),
+            },
+            isPreview,
+          )
+          .then((txtContent) => {
+            if (this.encryptionKey && txtContent === undefined) {
+              //handle wrong encryption
+              return this.ioAPI.loadTextFilePromise(
+                {
+                  path: filePath,
+                  bucketName: this.bucketName,
+                  location: this,
+                  ...(this.encryptionKey &&
+                    !useEncryption && { encryptionKey: this.encryptionKey }),
+                },
+                isPreview,
+              );
+            }
+            return txtContent;
+          });
       }
       return this.ioAPI.loadTextFilePromise(filePath, isPreview);
     } else if (AppConfig.isElectron) {
@@ -975,7 +992,7 @@ export class CommonLocation implements TS.Location {
         }
         return this.loadDirMetaDataPromise(path);
       }
-      throw new Error('loadMetaDataPromise not exist' + path);
+      throw new Error('loadMetaDataPromise not exist ' + path);
     });
   };
 

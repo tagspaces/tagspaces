@@ -231,7 +231,8 @@ function EntryProperties(props: Props) {
     saveDirectoryPerspective,
   } = useIOActionsContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
+  const { addTagsToFsEntry, removeTags, removeAllTags } =
+    useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
 
@@ -481,7 +482,8 @@ function EntryProperties(props: Props) {
         : value.filter(
             (tag) => !openedEntry.tags.some((obj) => obj.title === tag.title),
           );
-    return addTags([openedEntry.path], tags);
+    return addTagsToFsEntry(openedEntry, tags);
+    //return addTags([openedEntry.path], tags);
   };
 
   if (!openedEntry || !openedEntry.path || openedEntry.path === '') {

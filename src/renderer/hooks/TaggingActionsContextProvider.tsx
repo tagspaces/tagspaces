@@ -68,6 +68,11 @@ type TaggingActionsContextData = {
     tags: Array<TS.Tag>,
     reflect?: boolean,
   ) => Promise<TS.FileSystemEntry>;
+  addTagsToFsEntry: (
+    fsEntry: TS.FileSystemEntry,
+    tags: Array<TS.Tag>,
+    reflect?: boolean,
+  ) => Promise<TS.FileSystemEntry>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
   removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
   removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
@@ -114,6 +119,7 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   addFilesTags: undefined,
   addTags: undefined,
   addTagsToEntry: undefined,
+  addTagsToFsEntry: undefined,
   editTagForEntry: undefined,
   removeTags: undefined,
   removeTagsFromEntry: undefined,
@@ -407,18 +413,18 @@ export const TaggingActionsContextProvider = ({
     reflect: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     if (entry) {
-      let fsEntryMeta;
+      /*let fsEntryMeta;
       try {
         fsEntryMeta = entry.isFile
           ? await currentLocation.loadFileMetaDataPromise(entry.path)
           : await currentLocation.loadDirMetaDataPromise(entry.path);
       } catch (error) {
         console.log('No sidecar found ' + error);
-      }
+      }*/
 
       if (!entry.isFile || persistTagsInSidecarFile) {
         // Handling adding tags in sidecar
-        if (fsEntryMeta) {
+        if (entry.meta) {
           const uniqueTags = getNonExistingTags(
             tags,
             extractTags(
@@ -426,20 +432,23 @@ export const TaggingActionsContextProvider = ({
               tagDelimiter,
               currentLocation?.getDirSeparator(),
             ),
-            fsEntryMeta.tags,
+            entry.meta.tags,
           );
           if (uniqueTags.length > 0) {
-            const newTags: TS.Tag[] = [...fsEntryMeta.tags, ...uniqueTags];
+            const newTags: TS.Tag[] = [
+              ...(entry.meta.tags ? entry.meta.tags : []),
+              ...uniqueTags,
+            ];
             const updatedFsEntryMeta = {
-              ...fsEntryMeta,
+              ...entry.meta,
               tags: newTags,
             };
             return saveMetaDataPromise(entry, updatedFsEntryMeta)
-              .then((meta) => {
+              .then(() => {
                 if (reflect) {
-                  reflectUpdateMeta({ ...entry, meta });
+                  reflectUpdateMeta({ ...entry, meta: updatedFsEntryMeta });
                 }
-                return { ...entry, meta };
+                return { ...entry, meta: updatedFsEntryMeta };
               })
               .catch((err) => {
                 console.log(
@@ -474,7 +483,7 @@ export const TaggingActionsContextProvider = ({
               return entry;
             });
         }
-      } else if (fsEntryMeta) {
+      } else if (entry.meta) {
         // Handling tags in filename by existing sidecar
         const extractedTags = extractTags(
           entry.path,
@@ -484,7 +493,7 @@ export const TaggingActionsContextProvider = ({
         const uniqueTags = getNonExistingTags(
           tags,
           extractedTags,
-          fsEntryMeta.tags,
+          entry.meta.tags,
         );
         if (uniqueTags.length > 0) {
           const newFilePath = addTagsToFilePath(
@@ -555,16 +564,22 @@ export const TaggingActionsContextProvider = ({
         sideCarTagsArray: Array<TS.Tag>,
       ): TS.Tag[] {
         const newTags = [];
-        for (let i = 0; i < newTagsArray.length; i += 1) {
-          // check if tag is already in the fileTagsArray
-          if (fileTagsArray.indexOf(newTagsArray[i].title) === -1) {
-            // check if tag is already in the sideCarTagsArray
+        if (newTagsArray) {
+          for (let i = 0; i < newTagsArray.length; i += 1) {
+            // check if tag is already in the fileTagsArray
             if (
-              sideCarTagsArray.findIndex(
-                (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
-              ) === -1
+              !fileTagsArray ||
+              fileTagsArray.indexOf(newTagsArray[i].title) === -1
             ) {
-              newTags.push(newTagsArray[i]);
+              // check if tag is already in the sideCarTagsArray
+              if (
+                !sideCarTagsArray ||
+                sideCarTagsArray.findIndex(
+                  (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
+                ) === -1
+              ) {
+                newTags.push(newTagsArray[i]);
+              }
             }
           }
         }
@@ -584,9 +599,9 @@ export const TaggingActionsContextProvider = ({
     tags: Array<TS.Tag>,
     reflect: boolean = true,
   ): Promise<TS.FileSystemEntry> {
-    return currentLocation
-      .getPropertiesPromise(path)
-      .then((entry) => addTagsToFsEntry(entry, tags, reflect));
+    return getAllPropertiesPromise(path).then((entry) =>
+      addTagsToFsEntry(entry, tags, reflect),
+    );
   }
 
   /**
@@ -1474,6 +1489,7 @@ export const TaggingActionsContextProvider = ({
       addFilesTags,
       addTags,
       addTagsToEntry,
+      addTagsToFsEntry,
       editTagForEntry,
       removeTags,
       removeTagsFromEntry,
