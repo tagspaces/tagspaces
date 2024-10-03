@@ -26,7 +26,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import FilledInput from '@mui/material/FilledInput';
 import TsTextField from '-/components/TsTextField';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -124,10 +124,10 @@ function SearchPopover(props: Props) {
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
   const tagTimePeriodFrom = searchQuery.tagTimePeriodFrom // useRef<number | null>(
     ? searchQuery.tagTimePeriodFrom
-    : null;
+    : new Date().getTime();
   const tagTimePeriodTo = searchQuery.tagTimePeriodTo //useRef<number | null>(
     ? searchQuery.tagTimePeriodTo
-    : null;
+    : new Date().getTime();
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
@@ -547,7 +547,11 @@ function SearchPopover(props: Props) {
               >
                 <InputLabel
                   id="saved-searches"
-                  style={{ backgroundColor: theme.palette.background.default }}
+                  style={{
+                    padding: 3,
+                    borderRadius: 4,
+                    backgroundColor: theme.palette.background.default,
+                  }}
                 >
                   {t('core:savedSearchesTitle')}
                 </InputLabel>
@@ -559,6 +563,7 @@ function SearchPopover(props: Props) {
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
+                  variant="filled"
                   value={searchQuery.uuid ? searchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
@@ -798,10 +803,10 @@ function SearchPopover(props: Props) {
               onChange={handleFileTypeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="fileTypes"
                   id="file-type"
-                  label={t('core:fileType')}
+                  // label={t('core:fileType')}
                 />
               }
             >
@@ -928,10 +933,10 @@ function SearchPopover(props: Props) {
               onChange={handleFileSizeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="fileSize"
                   id="file-size"
-                  label={t('core:sizeSearchTitle')}
+                  // label={t('core:sizeSearchTitle')}
                 />
               }
               displayEmpty
@@ -983,10 +988,10 @@ function SearchPopover(props: Props) {
               onChange={handleLastModifiedChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="lastModified"
                   id="modification-date"
-                  label={t('core:lastModifiedSearchTitle')}
+                  // label={t('core:lastModifiedSearchTitle')}
                 />
               }
               displayEmpty
