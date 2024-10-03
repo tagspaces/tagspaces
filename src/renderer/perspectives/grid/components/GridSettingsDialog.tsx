@@ -44,6 +44,7 @@ import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -341,7 +342,7 @@ function GridSettingsDialog(props: Props) {
           fullWidth={true}
           style={{ overflow: 'visible', marginTop: 20 }}
         >
-          <TextField
+          <TsTextField
             select
             label={t('core:pageLimit')}
             name="limit"
@@ -353,7 +354,7 @@ function GridSettingsDialog(props: Props) {
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
             <MenuItem value={1000}>1000</MenuItem>
-          </TextField>
+          </TsTextField>
           <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>

@@ -19,7 +19,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import Switch from '@mui/material/Switch';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -90,11 +90,10 @@ function SettingsKeyBindings() {
           (kb) => kb.name === keyBinding.name,
         )[0];
         return (
-          <TextField
+          <TsTextField
             className={classes.keyBinding}
             key={keyBinding.name}
             InputLabelProps={{ shrink: true }}
-            fullWidth
             onBlur={(event) =>
               setKeyBinding(keyBinding.name, event.target.value)
             }

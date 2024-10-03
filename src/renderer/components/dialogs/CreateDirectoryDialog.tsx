@@ -23,7 +23,6 @@ import {
   DialogActions,
   FormControl,
   DialogContent,
-  TextField,
   DialogTitle,
   Button,
   FormHelperText,
@@ -36,6 +35,7 @@ import {
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -44,7 +44,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
 import { dirNameValidation } from '-/services/utils-io';
 
-const FolderColorTextField = styled(TextField)(({ theme }) => ({
+const FolderColorTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
     height: 100,
   },
@@ -192,11 +192,8 @@ function CreateDirectoryDialog(props: Props) {
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
-          <TextField
-            fullWidth
+          <TsTextField
             error={inputError}
-            variant="filled"
-            margin="dense"
             autoFocus
             name="name"
             label={t('core:folderName')}
@@ -205,6 +202,10 @@ function CreateDirectoryDialog(props: Props) {
               handleValidation(target.value);
               setName(target.value);
             }}
+            updateValue={(value) => {
+              setName(value);
+            }}
+            retrieveValue={() => name}
             value={name}
             data-tid="directoryName"
             id="directoryName"
@@ -216,11 +217,9 @@ function CreateDirectoryDialog(props: Props) {
         <FormControl>
           <FolderColorTextField
             data-tid="folderColorTID"
-            margin="dense"
-            variant="filled"
             size="medium"
             label={t('backgroundColor')}
-            fullWidth={true}
+            retrieveValue={() => backgroundColor.current}
             value={' '}
             style={{ height: 100 }}
             InputProps={{

@@ -21,7 +21,7 @@ import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -79,11 +79,9 @@ function ResolveConflictDialog(props: Props) {
         }}
       >
         {isSaveAs ? (
-          <TextField
+          <TsTextField
             label={t('core:newFileName')}
-            margin="dense"
             name="name"
-            fullWidth={true}
             data-tid="newFileNameTID"
             defaultValue={copyFileName.current}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
