@@ -81,7 +81,7 @@ function DirectoryMenu(props: Props) {
   const { openNewFileDialog } = useNewFileDialogContext();
   const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
-  const { setThumbnailImageChange } = useIOActionsContext();
+  const { setThumbnailImageChange, getMetadataID } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { openFileUpload } = useFileUploadContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
@@ -129,10 +129,16 @@ function DirectoryMenu(props: Props) {
         selectedEntries[0].name,
         currentLocation?.getDirSeparator(),
       );
-      return {
-        url: generateSharingLink(locationID, undefined, relativePath),
-        name: folderName,
-      };
+      return getMetadataID(
+        selectedEntries[0].path,
+        selectedEntries[0].uuid,
+        tmpLoc,
+      ).then((id) => {
+        return {
+          url: generateSharingLink(locationID, undefined, relativePath, id),
+          name: folderName,
+        };
+      });
     });
   }
 

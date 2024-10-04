@@ -115,6 +115,7 @@ function FileMenu(props: Props) {
     duplicateFile,
     setFolderBackgroundPromise,
     downloadFsEntry,
+    getMetadataID,
   } = useIOActionsContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
@@ -136,10 +137,16 @@ function FileMenu(props: Props) {
     }
   }, [currentLocation, selectedFilePath]);
 
-  function generateFileLink() {
+  function generateFileLink(): Promise<string> {
     const entryPath = selectedEntries[0].path;
     const relativePath = getRelativeEntryPath(currentLocationPath, entryPath);
-    return generateSharingLink(currentLocation.uuid, relativePath);
+    return getMetadataID(
+      selectedEntries[0].path,
+      selectedEntries[0].uuid,
+      currentLocation,
+    ).then((id) =>
+      generateSharingLink(currentLocation.uuid, relativePath, undefined, id),
+    );
   }
 
   function showProperties() {
@@ -152,25 +159,26 @@ function FileMenu(props: Props) {
   function copySharingLink() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFileLink();
-      const entryTitle = extractTitle(
-        selectedEntries[0].name,
-        !selectedEntries[0].isFile,
-        currentLocation?.getDirSeparator(),
-      );
+      generateFileLink().then((sharingLink) => {
+        const entryTitle = extractTitle(
+          selectedEntries[0].name,
+          !selectedEntries[0].isFile,
+          currentLocation?.getDirSeparator(),
+        );
 
-      const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
+        const clibboardItem = generateClipboardLink(sharingLink, entryTitle);
 
-      navigator.clipboard
-        .write(clibboardItem)
-        .then(() => {
-          showNotification(t('core:sharingLinkCopied'));
-          return true;
-        })
-        .catch((e) => {
-          console.log('Error copying to clipboard ' + e);
-          showNotification(t('core:sharingLinkFailed'));
-        });
+        navigator.clipboard
+          .write(clibboardItem)
+          .then(() => {
+            showNotification(t('core:sharingLinkCopied'));
+            return true;
+          })
+          .catch((e) => {
+            console.log('Error copying to clipboard ' + e);
+            showNotification(t('core:sharingLinkFailed'));
+          });
+      });
     }
   }
 
@@ -288,10 +296,11 @@ function FileMenu(props: Props) {
   function openInNewWindow() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFileLink();
-      const newInstanceLink =
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      createNewInstance(newInstanceLink);
+      generateFileLink().then((sharingLink) => {
+        const newInstanceLink =
+          window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+        createNewInstance(newInstanceLink);
+      });
     }
   }
 
