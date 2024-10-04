@@ -19,7 +19,6 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-/*import DateFnsUtils from '@date-io/date-fns';*/
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -27,8 +26,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import TextField from '@mui/material/TextField';
+import FilledInput from '@mui/material/FilledInput';
+import TsTextField from '-/components/TsTextField';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
@@ -125,10 +124,10 @@ function SearchPopover(props: Props) {
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
   const tagTimePeriodFrom = searchQuery.tagTimePeriodFrom // useRef<number | null>(
     ? searchQuery.tagTimePeriodFrom
-    : null;
+    : new Date().getTime();
   const tagTimePeriodTo = searchQuery.tagTimePeriodTo //useRef<number | null>(
     ? searchQuery.tagTimePeriodTo
-    : null;
+    : new Date().getTime();
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
@@ -548,7 +547,11 @@ function SearchPopover(props: Props) {
               >
                 <InputLabel
                   id="saved-searches"
-                  style={{ backgroundColor: theme.palette.background.default }}
+                  style={{
+                    padding: 3,
+                    borderRadius: 4,
+                    backgroundColor: theme.palette.background.default,
+                  }}
                 >
                   {t('core:savedSearchesTitle')}
                 </InputLabel>
@@ -560,6 +563,7 @@ function SearchPopover(props: Props) {
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
+                  variant="filled"
                   value={searchQuery.uuid ? searchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
@@ -606,14 +610,13 @@ function SearchPopover(props: Props) {
             </ButtonGroup>
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <TsTextField
               id="searchTerm"
               label={t('core:searchQueryInfo')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
               size={desktopMode ? 'small' : 'medium'}
               onKeyDown={startSearch}
-              style={{ width: '100%' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -800,10 +803,10 @@ function SearchPopover(props: Props) {
               onChange={handleFileTypeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="fileTypes"
                   id="file-type"
-                  label={t('core:fileType')}
+                  // label={t('core:fileType')}
                 />
               }
             >
@@ -930,10 +933,10 @@ function SearchPopover(props: Props) {
               onChange={handleFileSizeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="fileSize"
                   id="file-size"
-                  label={t('core:sizeSearchTitle')}
+                  // label={t('core:sizeSearchTitle')}
                 />
               }
               displayEmpty
@@ -985,10 +988,10 @@ function SearchPopover(props: Props) {
               onChange={handleLastModifiedChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
+                <FilledInput
                   name="lastModified"
                   id="modification-date"
-                  label={t('core:lastModifiedSearchTitle')}
+                  // label={t('core:lastModifiedSearchTitle')}
                 />
               }
               displayEmpty
@@ -1025,7 +1028,7 @@ function SearchPopover(props: Props) {
                       });
                     }
                   }}
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => <TsTextField {...params} />}
                 />
                 <DatePicker
                   label={t('enterTagTimePeriodTo')}
@@ -1042,36 +1045,13 @@ function SearchPopover(props: Props) {
                     }
                   }}
                   renderInput={(params) => (
-                    <TextField style={{ marginLeft: 5 }} {...params} />
+                    <TsTextField style={{ marginLeft: 5 }} {...params} />
                   )}
                 />
               </Box>
             </LocalizationProvider>
-            {/*<TextField
-              id="tagTimePeriod"
-              label={t('enterTimePeriod')}
-              value={tagTimePeriod.current}
-              disabled={indexing || !Pro}
-              onChange={handleTimePeriodChange}
-              onKeyDown={startSearch}
-              helperText={tagTimePeriodHelper.current}
-              error={tagTimePeriodHelper.current.length < 1}
-              style={{ width: '100%' }}
-              InputProps={{
-                endAdornment: (
-                    <InputAdornment
-                      position="end"
-                      title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
-                    >
-                      <IconButton size="large">
-                        <DateIcon />
-                      </IconButton>
-                    </InputAdornment>
-                )
-              }}
-            />*/}
           </ProTooltip>
-          {/* <TextField
+          {/* <TsTextField
                 id="tagPlace"
                 label={t('GPS coordinates or plus code')}
                 value={tagPlace}

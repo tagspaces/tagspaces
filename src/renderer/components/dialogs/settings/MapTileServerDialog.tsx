@@ -22,7 +22,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Switch from '@mui/material/Switch';
@@ -104,10 +104,8 @@ function MapTileServerDialog(props: Props) {
   const renderContent = () => (
     <DialogContent>
       <FormControl fullWidth={true} error={haveError('name')}>
-        <TextField
-          fullWidth
+        <TsTextField
           error={haveError('name')}
-          margin="dense"
           autoFocus
           name="name"
           label={t('core:tileServerNameTitle')}
@@ -116,35 +114,43 @@ function MapTileServerDialog(props: Props) {
             name.current = target.value;
             validateForm();
           }}
+          // updateValue={(value) => {
+          //   name.current = value;
+          // }}
+          retrieveValue={() => name.current}
           defaultValue={name.current}
           data-tid="tileServerNameTID"
         />
       </FormControl>
       <FormControl fullWidth={true}>
-        <TextField
-          fullWidth
-          margin="dense"
+        <TsTextField
           name="serverURL"
           label={t('core:tileServerUrlTitle')}
           onChange={(event) => {
             const { target } = event;
             serverURL.current = target.value;
           }}
+          // updateValue={(value) => {
+          //   serverURL.current = value;
+          // }}
+          retrieveValue={() => serverURL.current}
           defaultValue={serverURL.current}
           data-tid="tileServerUrlTID"
         />
         <FormHelperText>{t('core:tileServerUrlHelp')}</FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
-        <TextField
-          fullWidth
-          margin="dense"
+        <TsTextField
           name="serverInfo"
           label={t('core:tileServerInfoTitle')}
           onChange={(event) => {
             const { target } = event;
             serverInfo.current = target.value;
           }}
+          // updateValue={(value) => {
+          //   serverInfo.current = value;
+          // }}
+          retrieveValue={() => serverInfo.current}
           defaultValue={serverInfo.current}
           data-tid="tileserverInfoTID"
         />

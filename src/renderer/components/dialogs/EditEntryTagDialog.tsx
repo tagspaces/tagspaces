@@ -24,7 +24,6 @@ import React, {
   useRef,
 } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -32,6 +31,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import EditIcon from '@mui/icons-material/Edit';
+import TsTextField from '-/components/TsTextField';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
 import { isDateTimeTag } from '-/utils/dates';
@@ -139,14 +139,16 @@ function EditEntryTagDialog(props: Props) {
         }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>
-          <TextField
-            fullWidth={true}
+          <TsTextField
             error={haveError('tag')}
             disabled={editDisabled}
             inputRef={titleRef}
-            margin="dense"
             name="title"
             autoFocus
+            updateValue={(value) => {
+              setTitle(value);
+            }}
+            retrieveValue={() => title}
             label={t('core:editTag')}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { target } = event;

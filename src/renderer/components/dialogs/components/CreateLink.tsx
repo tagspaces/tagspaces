@@ -19,7 +19,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
+import TsTextField from '-/components/TsTextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation, urlValidation } from '-/services/utils-io';
@@ -125,11 +125,9 @@ function CreateLink(props: Props) {
   return (
     <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
-        <TextField
+        <TsTextField
           error={inputError}
-          margin="dense"
           name="entryName"
-          variant="filled"
           label={t('core:fileName')}
           onChange={handleInputChange}
           onFocus={onInputFocus}
@@ -142,7 +140,6 @@ function CreateLink(props: Props) {
           }}
           defaultValue={fileName}
           disabled={noSuitableLocation}
-          fullWidth={true}
           data-tid={tid('newEntryDialogInputTID')}
         />
         {inputError && (
@@ -150,14 +147,11 @@ function CreateLink(props: Props) {
         )}
       </FormControl>
       <FormControl fullWidth={true} error={urlError}>
-        <TextField
+        <TsTextField
           autoFocus
           error={urlError}
           id="fileLinkID"
           label={t('core:linkURL')}
-          fullWidth
-          variant="filled"
-          margin="dense"
           onChange={handleUrlChange}
         />
         {urlError && (

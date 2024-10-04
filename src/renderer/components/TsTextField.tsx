@@ -82,7 +82,7 @@ function TsTextField(props: TSTextFieldProps) {
         const value = retrieveValue ? retrieveValue() : '';
         const selection = document.getSelection()?.toString();
         let result = '';
-        if (value?.includes(selection)) {
+        if (selection && value?.includes(selection)) {
           result = value.replace(selection, clipText);
         } else {
           result = value + clipText;
