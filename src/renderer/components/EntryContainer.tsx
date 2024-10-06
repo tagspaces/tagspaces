@@ -64,10 +64,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
-
-//const historyKeys = Pro ? Pro.keys.historyKeys : {};
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -276,7 +273,7 @@ function EntryContainer() {
 
   const handleMessage = (data: any) => {
     let message;
-    let textFilePath;
+    let filePath;
     switch (data.command) {
       case 'showAlertDialog':
         message = data.title ? data.title : '';
@@ -304,7 +301,7 @@ function EntryContainer() {
           // || openedEntry.changed) {
           break;
         }
-        textFilePath = openedEntry.path;
+        filePath = openedEntry.path;
 
         if (
           fileViewer &&
@@ -321,10 +318,7 @@ function EntryContainer() {
         //   textFilePath += '/index.html';
         // }
         cLocation
-          .loadTextFilePromise(
-            textFilePath,
-            data.preview ? data.preview : false,
-          )
+          .loadTextFilePromise(filePath, data.preview ? data.preview : false)
           .then((content) => {
             const UTF8_BOM = '\ufeff';
             if (content.indexOf(UTF8_BOM) === 0) {
@@ -332,7 +326,7 @@ function EntryContainer() {
               content = content.substr(1);
             }
             let fileDirectory = extractContainingDirectoryPath(
-              textFilePath,
+              filePath,
               cLocation?.getDirSeparator(),
             );
             if (AppConfig.isWeb) {
@@ -360,6 +354,48 @@ function EntryContainer() {
               );
             }
             return true;
+          })
+          .catch((err) => {
+            console.log('Error loading text content ' + err);
+          });
+        break;
+      case 'loadDefaultBinaryContent':
+        if (!openedEntry || !openedEntry.path) {
+          // || openedEntry.changed) {
+          break;
+        }
+        filePath = openedEntry.path;
+
+        cLocation
+          .getFileContentPromise(filePath, 'arraybuffer')
+          .then((content) => {
+            let fileDirectory = extractContainingDirectoryPath(
+              filePath,
+              cLocation?.getDirSeparator(),
+            );
+            if (AppConfig.isWeb) {
+              const webDir = extractContainingDirectoryPath(
+                // eslint-disable-next-line no-restricted-globals
+                location.href,
+                cLocation?.getDirSeparator(),
+              );
+              fileDirectory =
+                (webDir && webDir !== '/' ? webDir + '/' : '') + fileDirectory;
+            }
+            if (
+              // @ts-ignore
+              fileViewer?.current?.contentWindow?.setContent
+            ) {
+              // @ts-ignore
+              fileViewer.current.contentWindow.setContent(
+                content,
+                fileDirectory,
+                !isEditMode,
+                theme.palette.mode,
+              );
+              //    return true;
+            }
+            // return true;
           })
           .catch((err) => {
             console.log('Error loading text content ' + err);
