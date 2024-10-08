@@ -848,19 +848,19 @@ export const TaggingActionsContextProvider = ({
     return currentLocation
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        const newTags = tagTitlesForRemoving
-          ? fsEntryMeta.tags.filter(
-              (sidecarTag) => !tagTitlesForRemoving.includes(sidecarTag.title),
-            )
-          : [];
-
         return removeTagsFromFilename(fsEntryMeta.isFile, reflect).then(
           (newFilePath) => {
+            const newTags = tagTitlesForRemoving
+              ? fsEntryMeta.tags.filter(
+                  (sidecarTag) =>
+                    !tagTitlesForRemoving.includes(sidecarTag.title),
+                )
+              : [];
             return removeTagsFromSideCar(
               fsEntryMeta,
               newTags,
               newFilePath,
-              reflect,
+              false,
             ).then(() => {
               if (reflect) {
                 getAllPropertiesPromise(newFilePath).then((entry) =>

@@ -305,7 +305,7 @@ export const IOActionsContextProvider = ({
       for (const action of actions) {
         if (action.action === 'add') {
           // reflect visibility change on new KanBan column add
-          if (!action.entry.isFile) {
+          if (action.entry && !action.entry.isFile) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
@@ -323,7 +323,7 @@ export const IOActionsContextProvider = ({
           }
         } else if (action.action === 'update') {
           // reflect visibility change on renamed KanBan column
-          if (!action.entry.isFile) {
+          if (action.entry && !action.entry.isFile) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
@@ -1571,9 +1571,13 @@ export const IOActionsContextProvider = ({
     metaData: any,
   ): Promise<TS.FileSystemEntryMeta> {
     return currentLocation
-      .getPropertiesPromise(path)
-      .then((entryProperties) =>
-        saveMetaDataPromise(entryProperties, metaData),
+      .checkFileEncryptedPromise(path)
+      .then((encryption) =>
+        currentLocation
+          .getPropertiesPromise(path, encryption)
+          .then((entryProperties) =>
+            saveMetaDataPromise(entryProperties, metaData),
+          ),
       );
   }
   /**

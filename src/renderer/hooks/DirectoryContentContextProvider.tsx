@@ -124,7 +124,7 @@ type DirectoryContentContextData = {
   getAllPropertiesPromise: (
     entryPath: string,
     locationID?: string,
-    useEncryption?: boolean,
+    //useEncryption?: boolean,
   ) => Promise<TS.FileSystemEntry>;
   loadCurrentDirMeta: (
     directoryPath: string,
@@ -1094,28 +1094,29 @@ export const DirectoryContentContextProvider = ({
   function getAllPropertiesPromise(
     entryPath: string,
     locationID: string = undefined,
-    useEncryption: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     const location = locationID ? findLocation(locationID) : currentLocation;
-    return location
-      .getPropertiesPromise(entryPath, useEncryption)
-      .then((entryProps: TS.FileSystemEntry) => {
-        if (entryProps) {
-          if (typeof entryProps === 'boolean') {
-            /*if(entryProps){
+    return location.checkFileEncryptedPromise(entryPath).then((encrypted) =>
+      location
+        .getPropertiesPromise(entryPath, encrypted)
+        .then((entryProps: TS.FileSystemEntry) => {
+          if (entryProps) {
+            if (typeof entryProps === 'boolean') {
+              /*if(entryProps){
               showNotification('Can\'t get '+entryPath+' maybe the file is encrypted?');
             }*/
-          } else {
-            const entry = { ...entryProps, locationID: location.uuid };
-            if (!entryProps.isFile) {
-              return getEnhancedDir(entry);
+            } else {
+              const entry = { ...entryProps, locationID: location.uuid };
+              if (!entryProps.isFile) {
+                return getEnhancedDir(entry);
+              }
+              return getEnhancedFile(entry, encrypted);
             }
-            return getEnhancedFile(entry, useEncryption);
           }
-        }
-        console.log('Error getting props for ' + entryPath);
-        return undefined;
-      });
+          console.log('Error getting props for ' + entryPath);
+          return undefined;
+        }),
+    );
   }
 
   // meta-loader
