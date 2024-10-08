@@ -92,8 +92,8 @@ type OpenedEntryContextData = {
     fsEntry: TS.FileSystemEntry,
     showDetails?,
   ) => Promise<boolean>;
-  openNextFile: (entries: TS.FileSystemEntry[]) => TS.FileSystemEntry;
-  openPrevFile: (entries: TS.FileSystemEntry[]) => TS.FileSystemEntry;
+  openNextFile: (entries: TS.FileSystemEntry[]) => void;
+  openPrevFile: (entries: TS.FileSystemEntry[]) => void;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
   //goForward: () => void;
@@ -278,8 +278,8 @@ export const OpenedEntryContextProvider = ({
     }
   }, [currentDirectoryPath]);
 
-  function openNextFile(entries: TS.FileSystemEntry[]): TS.FileSystemEntry {
-    const nextFile = getNextFile(
+  function openNextFile(entries: TS.FileSystemEntry[]) {
+    const nextFile: TS.FileSystemEntry = getNextFile(
       currentEntry.current?.path,
       selectedEntries && selectedEntries.length > 0
         ? selectedEntries[selectedEntries.length - 1].path
@@ -287,15 +287,18 @@ export const OpenedEntryContextProvider = ({
       entries,
     );
     if (nextFile !== undefined) {
-      openFsEntry(nextFile);
-      // dispatch(actions.setLastSelectedEntry(nextFile.path));
-      setSelectedEntries([nextFile]);
-      return nextFile;
+      currentLocation
+        .checkFileEncryptedPromise(nextFile.path)
+        .then((encrypted) => {
+          const file = { ...nextFile, isEncrypted: encrypted };
+          openFsEntry(file);
+          // dispatch(actions.setLastSelectedEntry(nextFile.path));
+          setSelectedEntries([file]);
+        });
     }
-    return undefined;
   }
 
-  function openPrevFile(entries: TS.FileSystemEntry[]): TS.FileSystemEntry {
+  function openPrevFile(entries: TS.FileSystemEntry[]) {
     const prevFile = getPrevFile(
       currentEntry.current?.path,
       selectedEntries && selectedEntries.length > 0
@@ -304,12 +307,15 @@ export const OpenedEntryContextProvider = ({
       entries,
     );
     if (prevFile !== undefined) {
-      openFsEntry(prevFile);
-      // dispatch(actions.setLastSelectedEntry(prevFile.path));
-      setSelectedEntries([prevFile]);
-      return prevFile;
+      currentLocation
+        .checkFileEncryptedPromise(prevFile.path)
+        .then((encrypted) => {
+          const file = { ...prevFile, isEncrypted: encrypted };
+          openFsEntry(file);
+          // dispatch(actions.setLastSelectedEntry(nextFile.path));
+          setSelectedEntries([file]);
+        });
     }
-    return undefined;
   }
 
   function getOpenedDirProps(): Promise<TS.DirProp> {

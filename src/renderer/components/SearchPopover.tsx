@@ -124,10 +124,10 @@ function SearchPopover(props: Props) {
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
   const tagTimePeriodFrom = searchQuery.tagTimePeriodFrom // useRef<number | null>(
     ? searchQuery.tagTimePeriodFrom
-    : new Date().getTime();
+    : undefined;
   const tagTimePeriodTo = searchQuery.tagTimePeriodTo //useRef<number | null>(
     ? searchQuery.tagTimePeriodTo
-    : new Date().getTime();
+    : undefined;
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
@@ -1018,7 +1018,7 @@ function SearchPopover(props: Props) {
                   label={t('enterTagTimePeriodFrom')}
                   disabled={isIndexing !== undefined || !Pro}
                   inputFormat="yyyy-MM-dd"
-                  value={new Date(tagTimePeriodFrom)}
+                  value={tagTimePeriodFrom && new Date(tagTimePeriodFrom)}
                   onChange={(fromDataTime: Date) => {
                     if (fromDataTime) {
                       setSearchQuery({
@@ -1034,7 +1034,7 @@ function SearchPopover(props: Props) {
                   label={t('enterTagTimePeriodTo')}
                   disabled={isIndexing !== undefined || !Pro}
                   inputFormat="yyyy-MM-dd"
-                  value={new Date(tagTimePeriodTo)}
+                  value={tagTimePeriodTo && new Date(tagTimePeriodTo)}
                   onChange={(toDataTime: Date) => {
                     if (toDataTime) {
                       setSearchQuery({
