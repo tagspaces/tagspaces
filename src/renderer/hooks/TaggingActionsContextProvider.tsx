@@ -61,6 +61,10 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import LoadingLazy from '-/components/LoadingLazy';
 
 type TaggingActionsContextData = {
+  addTagsToFsEntries: (
+    files: TS.FileSystemEntry[],
+    tags: TS.Tag[],
+  ) => Promise<boolean>;
   addFilesTags: (files: { [filePath: string]: TS.Tag[] }) => Promise<boolean>;
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
   addTagsToEntry: (
@@ -116,6 +120,7 @@ type TaggingActionsContextData = {
 };
 
 export const TaggingActionsContext = createContext<TaggingActionsContextData>({
+  addTagsToFsEntries: undefined,
   addFilesTags: undefined,
   addTags: undefined,
   addTagsToEntry: undefined,
@@ -226,6 +231,10 @@ export const TaggingActionsContextProvider = ({
     return path;
   }
 
+  /**
+   * @deprecated use addTagsToFsEntries instead
+   * @param files
+   */
   function addFilesTags(files: {
     [filePath: string]: TS.Tag[];
   }): Promise<boolean> {
@@ -399,6 +408,37 @@ export const TaggingActionsContextProvider = ({
       }
     }
     return tagTitle;
+  }
+
+  function addTagsToFsEntries(
+    entries: TS.FileSystemEntry[],
+    tags: Array<TS.Tag>,
+  ): Promise<boolean> {
+    if (entries && entries.length > 0) {
+      const promises = entries.map((entry) =>
+        addTagsToFsEntry(entry, tags, false).then((newEntry) => ({
+          oldEntryPath: entry.path,
+          newEntry,
+        })),
+      );
+      return Promise.all(promises).then((editedPaths) => {
+        const reflects: TS.EditAction[] = [];
+        for (let i = 0; i < editedPaths.length; i++) {
+          const { oldEntryPath, newEntry } = editedPaths[i];
+          if (newEntry !== undefined) {
+            const currentAction: TS.EditAction = {
+              action: 'update',
+              entry: newEntry,
+              oldEntryPath: oldEntryPath,
+            };
+            reflects.push(currentAction);
+          }
+        }
+        setReflectActions(...reflects);
+        return true;
+      });
+    }
+    return Promise.resolve(true);
   }
 
   /**
@@ -1486,6 +1526,7 @@ export const TaggingActionsContextProvider = ({
 
   const context = useMemo(() => {
     return {
+      addTagsToFsEntries,
       addFilesTags,
       addTags,
       addTagsToEntry,
