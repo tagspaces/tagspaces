@@ -91,7 +91,9 @@ function GridOptionsMenu(props: Props) {
         title={t('core:toggleThumbnailModeTitle')}
         aria-label={t('core:toggleThumbnailMode')}
         onClick={() => {
-          setSettings({ thumbnailMode: 'cover' ? 'contain' : 'cover' });
+          setSettings({
+            thumbnailMode: thumbnailMode === 'cover' ? 'contain' : 'cover',
+          });
           saveSettings(false);
         }}
       >

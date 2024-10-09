@@ -166,10 +166,10 @@
     "@mui/lab": "5.0.0-alpha.170",
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
-    "@tagspaces/tagspaces-common": "4.5.22",
-    "@tagspaces/tagspaces-common-aws3": "4.5.22",
-    "@tagspaces/tagspaces-common-cordova": "4.5.22",
-    "@tagspaces/tagspaces-indexer": "4.5.22",
+    "@tagspaces/tagspaces-common": "4.5.25",
+    "@tagspaces/tagspaces-common-aws3": "4.5.25",
+    "@tagspaces/tagspaces-common-cordova": "4.5.25",
+    "@tagspaces/tagspaces-indexer": "4.5.25",
     "@tagspaces/tagspaces-md": "4.5.19",
     "aws-amplify": "^4.3.8",
     "classnames": "^2.3.1",
@@ -235,7 +235,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.78"
+    "@tagspacespro/tagspacespro": "5.0.76-alpha.3"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",

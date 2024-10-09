@@ -56,7 +56,8 @@ function AddRemoveTagsDialog(props: Props) {
   const selected = props.selected ? props.selected : selectedEntries;
 
   const { currentLocation } = useCurrentLocationContext();
-  const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
+  const { addTagsToFsEntries, removeTags, removeAllTags } =
+    useTaggingActionsContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<TS.Tag[]>([]);
   const inputTags = useRef<TS.Tag[]>([]);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -105,8 +106,10 @@ function AddRemoveTagsDialog(props: Props) {
 
   const addTagsAction = () => {
     if (selected && selected.length > 0) {
-      const paths = selected.map((entry) => entry.path);
-      addTags(paths, uniqueTags([...newlyAddedTags, ...inputTags.current]));
+      addTagsToFsEntries(
+        selected,
+        uniqueTags([...newlyAddedTags, ...inputTags.current]),
+      );
     }
     onCloseDialog(true);
   };

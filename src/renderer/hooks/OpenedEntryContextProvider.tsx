@@ -760,27 +760,19 @@ export const OpenedEntryContextProvider = ({
                 const filePath =
                   (locationPath.length > 0 ? locationPath + '/' : '') +
                   entryPath;
-                targetLocation
-                  .checkFileEncryptedPromise(filePath)
-                  .then((encrypted) => {
-                    getAllPropertiesPromise(filePath, lid, encrypted)
-                      .then((fsEntry: TS.FileSystemEntry) => {
-                        if (fsEntry) {
-                          openFsEntry(fsEntry);
-                          if (options.fullWidth) {
-                            setEntryInFullWidth(true);
-                          }
-                        }
-                        return true;
-                      })
-                      .catch(() =>
-                        showNotification(
-                          t('core:invalidLink'),
-                          'warning',
-                          true,
-                        ),
-                      );
-                  });
+                getAllPropertiesPromise(filePath, lid)
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      openFsEntry(fsEntry);
+                      if (options.fullWidth) {
+                        setEntryInFullWidth(true);
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    showNotification(t('core:invalidLink'), 'warning', true),
+                  );
               }
               // });
             } else {

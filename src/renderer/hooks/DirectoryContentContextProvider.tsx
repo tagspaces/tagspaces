@@ -40,7 +40,7 @@ import {
 import { executePromisesInBatches, updateFsEntries } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
-import { updateHistory } from '-/utils/dom';
+import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
 import {
   actions as SettingsActions,
   getDefaultPerspective,
@@ -55,7 +55,6 @@ import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCancelable } from '-/utils/useCancelable';
 import LoadingLazy from '-/components/LoadingLazy';
@@ -125,7 +124,7 @@ type DirectoryContentContextData = {
   getAllPropertiesPromise: (
     entryPath: string,
     locationID?: string,
-    useEncryption?: boolean,
+    //useEncryption?: boolean,
   ) => Promise<TS.FileSystemEntry>;
   loadCurrentDirMeta: (
     directoryPath: string,
@@ -134,6 +133,10 @@ type DirectoryContentContextData = {
   ) => Promise<TS.FileSystemEntry[]>;
   openIsTruncatedConfirmDialog: () => void;
   closeIsTruncatedConfirmDialog: () => void;
+  setThumbnails: (
+    fsEntries: TS.FileSystemEntry[],
+  ) => Promise<TS.FileSystemEntry[]>;
+  setThumbnail: (fsEntries: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext =
@@ -178,6 +181,8 @@ export const DirectoryContentContext =
     loadCurrentDirMeta: undefined,
     openIsTruncatedConfirmDialog: undefined,
     closeIsTruncatedConfirmDialog: undefined,
+    setThumbnails: undefined,
+    setThumbnail: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -205,7 +210,6 @@ export const DirectoryContentContextProvider = ({
   } = useCurrentLocationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
-  const { kanbanActions } = useEditedKanBanMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { signal, abort } = useCancelable();
@@ -326,16 +330,6 @@ export const DirectoryContentContextProvider = ({
   }, [metaActions]);
 
   useEffect(() => {
-    if (kanbanActions && kanbanActions.length > 0) {
-      for (const action of kanbanActions) {
-        if (action.action === 'directoryVisibilityChange') {
-          setDirectoryMeta(action.meta);
-        }
-      }
-    }
-  }, [kanbanActions]);
-
-  useEffect(() => {
     if (!firstRender) {
       reflectActions(actions).catch(console.error);
       reflectSelection(actions);
@@ -444,6 +438,71 @@ export const DirectoryContentContextProvider = ({
         setSelectedEntries(selected);
       }
     }
+  }
+
+  function setThumbUrl(loc, fsEntry): Promise<TS.FileSystemEntry | undefined> {
+    if (loc) {
+      return loc
+        .getThumbPath(fsEntry.meta.thumbPath, fsEntry.meta.lastUpdated)
+        .then((tmbPath) => {
+          if (tmbPath !== fsEntry.meta.thumbPath) {
+            //thumbPath.current) {
+            const meta = { ...fsEntry.meta, thumbPath: tmbPath };
+            return { ...fsEntry, meta };
+          }
+        });
+    }
+    return Promise.resolve(undefined);
+  }
+
+  async function setThumbnails(
+    fsEntries: TS.FileSystemEntry[],
+  ): Promise<TS.FileSystemEntry[]> {
+    const promises = fsEntries.map((fsEntry) =>
+      setThumbnail(fsEntry).then((entry) => {
+        if (entry !== undefined) {
+          return entry;
+        }
+        return fsEntry;
+      }),
+    );
+    const updated = await Promise.all(promises);
+    return updated;
+  }
+
+  function setThumbnail(
+    fsEntry: TS.FileSystemEntry,
+  ): Promise<TS.FileSystemEntry | undefined> {
+    const loc = findLocation(fsEntry.locationID);
+    if (loc && fsEntry.meta) {
+      if (fsEntry.meta.thumbPath) {
+        if (loc.encryptionKey) {
+          let thumbFilePath = getThumbFileLocationForFile(
+            fsEntry.path,
+            loc.getDirSeparator(),
+            false,
+          );
+          return loc
+            .getFileContentPromise(thumbFilePath, 'arraybuffer')
+            .then((arrayBuffer) => {
+              if (arrayBuffer) {
+                return arrayBufferToDataURL(arrayBuffer, 'image/jpeg').then(
+                  (dataURL) => {
+                    const meta = { ...fsEntry.meta, thumbPath: dataURL };
+                    return { ...fsEntry, meta };
+                  },
+                );
+              } else if (arrayBuffer === undefined) {
+                return setThumbUrl(loc, fsEntry);
+              }
+              return undefined;
+            });
+        } else {
+          return setThumbUrl(loc, fsEntry);
+        }
+      }
+    }
+    return Promise.resolve(undefined);
   }
 
   async function reflectAddAction(entry: TS.FileSystemEntry) {
@@ -1035,28 +1094,29 @@ export const DirectoryContentContextProvider = ({
   function getAllPropertiesPromise(
     entryPath: string,
     locationID: string = undefined,
-    useEncryption: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     const location = locationID ? findLocation(locationID) : currentLocation;
-    return location
-      .getPropertiesPromise(entryPath, useEncryption)
-      .then((entryProps: TS.FileSystemEntry) => {
-        if (entryProps) {
-          if (typeof entryProps === 'boolean') {
-            /*if(entryProps){
+    return location.checkFileEncryptedPromise(entryPath).then((encrypted) =>
+      location
+        .getPropertiesPromise(entryPath, encrypted)
+        .then((entryProps: TS.FileSystemEntry) => {
+          if (entryProps) {
+            if (typeof entryProps === 'boolean') {
+              /*if(entryProps){
               showNotification('Can\'t get '+entryPath+' maybe the file is encrypted?');
             }*/
-          } else {
-            const entry = { ...entryProps, locationID: location.uuid };
-            if (!entryProps.isFile) {
-              return getEnhancedDir(entry);
+            } else {
+              const entry = { ...entryProps, locationID: location.uuid };
+              if (!entryProps.isFile) {
+                return getEnhancedDir(entry);
+              }
+              return getEnhancedFile(entry, encrypted);
             }
-            return getEnhancedFile(entry, useEncryption);
           }
-        }
-        console.log('Error getting props for ' + entryPath);
-        return undefined;
-      });
+          console.log('Error getting props for ' + entryPath);
+          return undefined;
+        }),
+    );
   }
 
   // meta-loader
@@ -1408,6 +1468,8 @@ export const DirectoryContentContextProvider = ({
       loadCurrentDirMeta,
       openIsTruncatedConfirmDialog,
       closeIsTruncatedConfirmDialog,
+      setThumbnails,
+      setThumbnail,
     };
   }, [
     currentLocation,

@@ -305,7 +305,7 @@ export const IOActionsContextProvider = ({
       for (const action of actions) {
         if (action.action === 'add') {
           // reflect visibility change on new KanBan column add
-          if (!action.entry.isFile) {
+          if (action.entry && !action.entry.isFile) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
@@ -323,7 +323,7 @@ export const IOActionsContextProvider = ({
           }
         } else if (action.action === 'update') {
           // reflect visibility change on renamed KanBan column
-          if (!action.entry.isFile) {
+          if (action.entry && !action.entry.isFile) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
@@ -1454,8 +1454,14 @@ export const IOActionsContextProvider = ({
           false,
         )
           .then(() => {
+            console.info(
+              'Renaming meta file and thumb successful from ' +
+                filePath +
+                ' to:' +
+                newFilePath,
+            );
             if (reflect) {
-              getAllPropertiesPromise(newFilePath).then(
+              return getAllPropertiesPromise(newFilePath).then(
                 (fsEntry: TS.FileSystemEntry) => {
                   if (reflect) {
                     setReflectActions({
@@ -1464,16 +1470,10 @@ export const IOActionsContextProvider = ({
                       oldEntryPath: filePath,
                     });
                   }
-                  return fsEntry;
+                  return true;
                 },
               );
             }
-            console.info(
-              'Renaming meta file and thumb successful from ' +
-                filePath +
-                ' to:' +
-                newFilePath,
-            );
             return true;
           })
           .catch((err) => {
@@ -1571,9 +1571,13 @@ export const IOActionsContextProvider = ({
     metaData: any,
   ): Promise<TS.FileSystemEntryMeta> {
     return currentLocation
-      .getPropertiesPromise(path)
-      .then((entryProperties) =>
-        saveMetaDataPromise(entryProperties, metaData),
+      .checkFileEncryptedPromise(path)
+      .then((encryption) =>
+        currentLocation
+          .getPropertiesPromise(path, encryption)
+          .then((entryProperties) =>
+            saveMetaDataPromise(entryProperties, metaData),
+          ),
       );
   }
   /**

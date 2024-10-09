@@ -138,7 +138,7 @@ export namespace TS {
   }
 
   interface PerspectiveActions {
-    action: 'openNext' | 'openPrevious';
+    action: 'openNext' | 'openPrevious' | 'reload';
   }
 
   interface KanBanMetaActions {

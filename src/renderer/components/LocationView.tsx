@@ -48,6 +48,8 @@ import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryE
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { TS } from '-/tagspaces.namespace';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 interface Props {
   location: CommonLocation;
@@ -69,6 +71,7 @@ function LocationView(props: Props) {
   } = useCurrentLocationContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
+  const { setActions } = usePerspectiveActionsContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -92,7 +95,10 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      openDirectory(currentLocationPath);
+      openDirectory(currentLocationPath).then(() => {
+        const action: TS.PerspectiveActions = { action: 'reload' };
+        setActions(action);
+      });
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       // setSelectedEntries([]);

@@ -107,7 +107,7 @@ function CellView(props: Props) {
     }
   }, [fileSourceRef.current]);*/
 
-  if (!fsEntry.isFile && !showDirectories) {
+  if (!fsEntry || (!fsEntry.isFile && !showDirectories)) {
     return null;
   }
 
