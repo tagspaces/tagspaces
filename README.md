@@ -1,10 +1,10 @@
-![tagspaces logo](https://raw.github.com/tagspaces/tagspaces/master/app/assets/icons/96x96.png)
+![tagspaces logo](https://www.tagspaces.org/img/tagspaces-logo.svg)
 
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
 
 **TagSpaces** is a free, no vendor lock-in, open source application for organizing, annotating and managing local files with the help of tags. It features advanced note taking functionalities and some capabilities of to-do apps. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox, Edge and Chrome for easy collecting of online content in the form of local files.
 
-![tagspaces with the markdown editor](https://www.tagspaces.org/content/hero/hero-mdeditor-light.jpg)
+![tagspaces with the markdown editor](https://www.tagspaces.org/content/v6/tagspaces-lite-demo.avif)
 
 More information about can be found from the following sources:
 
