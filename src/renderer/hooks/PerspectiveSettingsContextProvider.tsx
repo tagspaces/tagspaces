@@ -103,10 +103,12 @@ export const PerspectiveSettingsContextProvider = ({
   );
   const firstRender = useFirstRender();
 
-  /*useEffect(() => {
-    settings.current = getSettings(getPerspective(), directoryMeta);
-    forceUpdate();
-  }, [perspective, directoryMeta]);*/
+  useEffect(() => {
+    if (!firstRender) {
+      settings.current = getSettings(getPerspective(), directoryMeta);
+      forceUpdate();
+    }
+  }, [currentDirectoryPath]); //, directoryMeta]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
@@ -169,6 +171,8 @@ export const PerspectiveSettingsContextProvider = ({
     removeFolderCustomSettings(currentDirectoryPath, getPerspective()).then(
       (fsEntryMeta: TS.FileSystemEntryMeta) => {
         setDirectoryMeta(fsEntryMeta);
+        settings.current = getSettings(getPerspective(), fsEntryMeta);
+        forceUpdate();
       },
     );
   }
