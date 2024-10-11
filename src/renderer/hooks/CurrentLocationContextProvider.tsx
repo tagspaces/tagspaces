@@ -161,28 +161,32 @@ export const CurrentLocationContextProvider = ({
         openLocationById(defaultLocationId);
       }
     }
-    // Listen for messages from other tabs
-    broadcast.onmessage = (event: MessageEvent) => {
-      const action = event.data as TS.BroadcastMessage;
-      if (instanceId !== action.uuid) {
-        if (action.type === 'addLocation') {
-          const location = action.payload as TS.Location;
-          addLocationInt(new CommonLocation(location));
-        } else if (action.type === 'editLocation') {
-          const location = action.payload as TS.Location;
-          skipInitialDirList.current = true; // don't change location dir after reflect
-          editLocationInt(new CommonLocation(location));
-        } else if (action.type === 'deleteLocation') {
-          deleteLocationInt(action.payload);
-        } else if (action.type === 'moveLocationUp') {
-          moveLocationUpInt(action.payload);
-          forceUpdate();
-        } else if (action.type === 'moveLocationDown') {
-          moveLocationDownInt(action.payload);
-          forceUpdate();
+    try {
+      // Listen for messages from other tabs
+      broadcast.onmessage = (event: MessageEvent) => {
+        const action = event.data as TS.BroadcastMessage;
+        if (instanceId !== action.uuid) {
+          if (action.type === 'addLocation') {
+            const location = action.payload as TS.Location;
+            addLocationInt(new CommonLocation(location));
+          } else if (action.type === 'editLocation') {
+            const location = action.payload as TS.Location;
+            skipInitialDirList.current = true; // don't change location dir after reflect
+            editLocationInt(new CommonLocation(location));
+          } else if (action.type === 'deleteLocation') {
+            deleteLocationInt(action.payload);
+          } else if (action.type === 'moveLocationUp') {
+            moveLocationUpInt(action.payload);
+            forceUpdate();
+          } else if (action.type === 'moveLocationDown') {
+            moveLocationDownInt(action.payload);
+            forceUpdate();
+          }
         }
-      }
-    };
+      };
+    } catch (e) {
+      console.error('broadcast.onmessage error:', e);
+    }
   }, []);
 
   useEffect(() => {
@@ -282,8 +286,12 @@ export const CurrentLocationContextProvider = ({
   }
 
   function sendMessage(type: string, payload?: any) {
-    const message: TS.BroadcastMessage = { uuid: instanceId, type, payload };
-    broadcast.postMessage(message);
+    try {
+      const message: TS.BroadcastMessage = { uuid: instanceId, type, payload };
+      broadcast.postMessage(message);
+    } catch (e) {
+      console.error('broadcast.postMessage error:', e);
+    }
   }
 
   function addLocation(location: CommonLocation) {
