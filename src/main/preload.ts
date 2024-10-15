@@ -25,6 +25,8 @@ export type Channels =
   | 'readMacOSTags'
   | 'reloadWindow'
   | 'watchFolder'
+  | 'newChatSession'
+  | 'newChatMessage'
   | 'postRequest'
   | 'listDirectoryPromise'
   | 'listMetaDirectoryPromise'

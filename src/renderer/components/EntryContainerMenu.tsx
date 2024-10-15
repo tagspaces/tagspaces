@@ -193,6 +193,48 @@ function EntryContainerMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['toggleFullScreen']} />
       </MenuItem>,
     );
+    menuItems.push(
+      <MenuItem
+        key={'chatContainerKey'}
+        data-tid="chatContainer"
+        aria-label={t('core:chatSession')}
+        onClick={() => {
+          if (AppConfig.isElectron) {
+            window.electronIO.ipcRenderer.sendMessage(
+              'newChatSession',
+              '/Users/sytolk/Downloads/gemma-2-2b-it-Q4_K_M.gguf',
+            );
+          }
+          handleClose();
+        }}
+      >
+        <ListItemIcon>
+          <FullScreenIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:chatSession')} />
+      </MenuItem>,
+    );
+    menuItems.push(
+      <MenuItem
+        key={'chatMessageKey'}
+        data-tid="chatMessage"
+        aria-label={t('core:chatMessage')}
+        onClick={() => {
+          if (AppConfig.isElectron) {
+            window.electronIO.ipcRenderer.sendMessage(
+              'newChatMessage',
+              'Do you know something about TagSpaces application?',
+            );
+          }
+          handleClose();
+        }}
+      >
+        <ListItemIcon>
+          <FullScreenIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:chatMessage')} />
+      </MenuItem>,
+    );
     if (desktopMode) {
       menuItems.push(
         <MenuItem
