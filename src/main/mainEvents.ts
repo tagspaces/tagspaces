@@ -53,6 +53,50 @@ export default function loadMainEvents() {
     }
   });
 
+  ipcMain.on('newChatMessage', async (e, message: string) => {
+    try {
+      const result = await postRequest(
+        JSON.stringify({ message }),
+        '/llama-message',
+      );
+      return result;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  });
+
+  ipcMain.on('newChatSession', async (e, path: string) => {
+    try {
+      const wssPort = await postRequest(
+        JSON.stringify({ path }),
+        '/llama-session',
+      );
+      if (!wssPort) {
+        console.error('error newChatSession wssPort');
+      } else {
+        if (wsc) {
+          wsc.close();
+        }
+        // @ts-ignore
+        wsc = new WebSocket('ws://127.0.0.1:' + wssPort.port);
+        wsc.on('message', function message(data) {
+          console.log('received: %s', data);
+          const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+          if (mainWindow.length > 0) {
+            mainWindow.map((window) =>
+              window.webContents.send('ChatMessage', data),
+            );
+          }
+        });
+      }
+    } catch (e) {
+      console.error('wss error:', e);
+    }
+
+    //watchFolder(mainWindow, e, path, depth);
+  });
+
   ipcMain.on('watchFolder', async (e, path: string, depth) => {
     try {
       const wssPort = await postRequest(
