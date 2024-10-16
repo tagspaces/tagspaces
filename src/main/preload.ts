@@ -27,6 +27,7 @@ export type Channels =
   | 'watchFolder'
   | 'newChatSession'
   | 'newChatMessage'
+  | 'ChatMessage'
   | 'postRequest'
   | 'listDirectoryPromise'
   | 'listMetaDirectoryPromise'

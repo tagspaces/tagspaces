@@ -223,7 +223,7 @@ function EntryContainerMenu(props: Props) {
           if (AppConfig.isElectron) {
             window.electronIO.ipcRenderer.sendMessage(
               'newChatMessage',
-              'Do you know something about TagSpaces application?',
+              'Can you say something random but short for testing. Thanks!',
             );
           }
           handleClose();
