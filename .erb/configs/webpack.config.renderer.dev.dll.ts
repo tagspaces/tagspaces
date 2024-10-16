@@ -25,7 +25,7 @@ const configuration: webpack.Configuration = {
 
   target: 'electron-renderer',
 
-  externals: ['fsevents', 'crypto-browserify'],
+  externals: ['fsevents', 'crypto-browserify', 'node-llama-cpp'],
 
   /**
    * Use `module` from `webpack.config.renderer.dev.js`

@@ -79,3 +79,60 @@ if (fs.existsSync(appEnv)) {
     console.log(distEnv + ' exist');
   }
 }
+
+//node-lama-cpp
+const nodeLama = path.join(
+  __dirname,
+  '..',
+  '..',
+  'node_modules',
+  '@node-llama-cpp',
+);
+if (fs.existsSync(nodeLama)) {
+  const targetNodeLama = path.join(
+    __dirname,
+    '..',
+    '..',
+    'release',
+    'app',
+    'node_modules',
+    '@node-llama-cpp',
+  );
+  if (!fs.existsSync(targetNodeLama)) {
+    try {
+      fs.symlinkSync(nodeLama, targetNodeLama, 'junction');
+    } catch (err) {
+      console.error(
+        'Error creating link target:' + targetNodeLama + ':' + err.message,
+      );
+    }
+  }
+}
+
+const nLama = path.join(
+  __dirname,
+  '..',
+  '..',
+  'node_modules',
+  'node-llama-cpp',
+);
+if (fs.existsSync(nLama)) {
+  const targetNLama = path.join(
+    __dirname,
+    '..',
+    '..',
+    'release',
+    'app',
+    'node_modules',
+    'node-llama-cpp',
+  );
+  if (!fs.existsSync(targetNLama)) {
+    try {
+      fs.symlinkSync(nLama, targetNLama, 'junction');
+    } catch (err) {
+      console.error(
+        'Error creating link target:' + targetNLama + ':' + err.message,
+      );
+    }
+  }
+}

@@ -166,11 +166,11 @@
     "@mui/lab": "5.0.0-alpha.170",
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
-    "@tagspaces/tagspaces-common": "4.5.25",
-    "@tagspaces/tagspaces-common-aws3": "4.5.25",
-    "@tagspaces/tagspaces-common-cordova": "4.5.25",
-    "@tagspaces/tagspaces-indexer": "4.5.25",
-    "@tagspaces/tagspaces-md": "4.5.19",
+    "@tagspaces/tagspaces-common": "5.0.0",
+    "@tagspaces/tagspaces-common-aws3": "5.0.0",
+    "@tagspaces/tagspaces-common-cordova": "5.0.0",
+    "@tagspaces/tagspaces-indexer": "5.0.0",
+    "@tagspaces/tagspaces-md": "5.0.0",
     "aws-amplify": "^4.3.8",
     "classnames": "^2.3.1",
     "clone": "^2.1.2",
@@ -196,6 +196,7 @@
     "i18next-http-backend": "^2.2.2",
     "leaflet": "^1.9.4",
     "mgrs": "^1.0.0",
+    "node-llama-cpp": "^3.1.1",
     "open-location-code": "^1.0.3",
     "open-location-code-typescript": "^1.5.0",
     "papaparse": "^5.4.1",
@@ -341,6 +342,13 @@
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.9.0",
     "worker-loader": "^3.0.8"
+  },
+  "overrides": {
+    "electron-builder": {
+      "read-config-file": {
+        "config-file-ts": ">=0.2.8-rc1"
+      }
+    }
   },
   "engines": {
     "npm": ">= 6.14.15",
