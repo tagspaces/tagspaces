@@ -49,6 +49,7 @@ import {
   joinPaths,
   normalizePath,
   extractFileExtension,
+  getMetaContentFileLocation,
 } from '@tagspaces/tagspaces-common/paths';
 import {
   formatDateTime4Tag,
@@ -69,6 +70,7 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { extractPDFcontent } from '-/services/thumbsgenerator';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -640,6 +642,24 @@ export const OpenedEntryContextProvider = ({
       selectedEntries.some((e) => e.path !== fsEntry.path)
     ) {
       setSelectedEntries([fsEntry]);
+    }
+    if (loc.fullTextIndex && entryForOpening.extension === 'pdf') {
+      //extract text from pdf
+      loc
+        .getFileContentPromise(entryForOpening.path, 'arraybuffer')
+        .then((content) => {
+          extractPDFcontent(content).then((txt) => {
+            loc
+              .saveTextFilePromise(
+                { path: getMetaContentFileLocation(entryForOpening.path) },
+                txt,
+                true,
+              )
+              .then(() =>
+                console.log('Content extracted:' + entryForOpening.path),
+              );
+          });
+        });
     }
     return Promise.resolve(true);
   }
