@@ -211,6 +211,7 @@ export const ThumbGenerationContextProvider = ({
   ): Promise<boolean> {
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
+    const pdfEntries: string[] = [];
     dirEntries.map((entry) => {
       if (!entry.isFile) {
         return true;
@@ -221,6 +222,16 @@ export const ThumbGenerationContextProvider = ({
       const extension = entry.extension
         ? entry.extension
         : extractFileExtension(entry.name, location.getDirSeparator());
+      if (
+        isWorkerAvailable &&
+        enableWS &&
+        location.fullTextIndex &&
+        entry.path.toLowerCase().endsWith('pdf') &&
+        !location.haveObjectStoreSupport() &&
+        !location.haveWebDavSupport()
+      ) {
+        pdfEntries.push(entry.path);
+      }
       if (
         isWorkerAvailable &&
         enableWS &&
@@ -243,9 +254,16 @@ export const ThumbGenerationContextProvider = ({
       return true;
     });
 
+    if (pdfEntries.length > 0) {
+      createThumbnailsInWorker(pdfEntries, location.fullTextIndex).catch(
+        (e) => {
+          console.log('createThumbnailsInWorker pdf', e);
+        },
+      );
+    }
     if (workerEntries.length > 0) {
       setGenThumbs(true);
-      return createThumbnailsInWorker(workerEntries)
+      return createThumbnailsInWorker(workerEntries, location.fullTextIndex)
         .then(() =>
           thumbnailMainGeneration(mainEntries, location).then(() => {
             setGenThumbs(false);

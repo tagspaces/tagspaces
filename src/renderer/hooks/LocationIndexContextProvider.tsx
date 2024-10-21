@@ -252,7 +252,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function createDirectoryIndex(
-    param: string | any,
+    param: any,
     extractText = false,
     ignorePatterns: Array<string> = [],
     enableWS = true,
@@ -263,16 +263,8 @@ export const LocationIndexContextProvider = ({
       if (Pro && Pro.Watcher) {
         Pro.Watcher.stopWatching();
       }
-      let directoryPath;
-      let locationID;
-      if (typeof param === 'object' && param !== null) {
-        directoryPath = param.path;
-        ({ locationID } = param);
-      } else {
-        directoryPath = param;
-      }
-      const loc = findLocation(locationID);
-      const dirPath = cleanTrailingDirSeparator(directoryPath);
+      const loc = findLocation(param.locationID);
+      const dirPath = cleanTrailingDirSeparator(param.path);
       if (
         enableWS &&
         !loc.haveObjectStoreSupport() &&
@@ -284,7 +276,7 @@ export const LocationIndexContextProvider = ({
           .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
           .then((result) => {
             if (result && result.success) {
-              return loadIndexFromDisk(dirPath, locationID);
+              return loadIndexFromDisk(dirPath, param.locationID);
             } else if (result && result.error) {
               console.error(
                 'createDirectoryIndexInWorker failed:' + result.error,
@@ -303,9 +295,11 @@ export const LocationIndexContextProvider = ({
         mode.push('extractTextContent');
       }
       return createIndex(
-        param,
-        loc.listDirectoryPromise,
-        loc.loadTextFilePromise,
+        {
+          ...param,
+          listDirectoryPromise: loc.listDirectoryPromise,
+          getFileContentPromise: loc.getFileContentPromise,
+        },
         mode,
         ignorePatterns,
         isWalking,
@@ -313,11 +307,11 @@ export const LocationIndexContextProvider = ({
         .then((directoryIndex) =>
           persistIndex(param, directoryIndex).then((success) => {
             if (success) {
-              console.log('Index generated in folder: ' + directoryPath);
+              console.log('Index generated in folder: ' + dirPath);
               return enhanceDirectoryIndex(
                 directoryIndex,
-                locationID,
-                directoryPath,
+                param.locationID,
+                param.path,
               );
               //return enhanceDirectoryIndex(param, directoryIndex, locationID);
             }
@@ -331,7 +325,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function createDirectoryIndexWrapper(
-    param: string | any,
+    param: any,
     extractText = false,
     ignorePatterns: Array<string> = [],
     enableWS = true,
