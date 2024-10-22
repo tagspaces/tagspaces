@@ -322,6 +322,7 @@ export const LocationIndexContextProvider = ({
           console.log('Error creating index: ', err);
         });
     }
+    return Promise.resolve(undefined);
   }
 
   function createDirectoryIndexWrapper(
@@ -533,6 +534,7 @@ export const LocationIndexContextProvider = ({
     );
     setTimeout(async () => {
       const currentPath = await getLocationPath(currentLocation);
+
       if (!index.current || index.current.length < 1) {
         const directoryIndex = await loadIndexFromDisk(
           currentPath,
@@ -731,22 +733,25 @@ export const LocationIndexContextProvider = ({
     locationID: string,
   ): Promise<TS.FileSystemEntry[]> {
     const loc = findLocation(locationID);
-    const folderIndexPath =
-      getMetaDirectoryPath(folderPath) +
-      loc.getDirSeparator() +
-      AppConfig.folderIndexFile;
-    return loc
-      .loadTextFilePromise(folderIndexPath)
-      .then((jsonContent) => {
-        const directoryIndex = loadJSONString(
-          jsonContent,
-        ) as TS.FileSystemEntry[];
-        return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
-      })
-      .catch((e) => {
-        console.log('cannot load json:' + folderPath, e);
-        return undefined;
-      });
+    if (loc) {
+      const folderIndexPath =
+        getMetaDirectoryPath(folderPath) +
+        loc.getDirSeparator() +
+        AppConfig.folderIndexFile;
+      return loc
+        .loadTextFilePromise(folderIndexPath)
+        .then((jsonContent) => {
+          const directoryIndex = loadJSONString(
+            jsonContent,
+          ) as TS.FileSystemEntry[];
+          return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
+        })
+        .catch((e) => {
+          console.log('cannot load json:' + folderPath, e);
+          return undefined;
+        });
+    }
+    return Promise.resolve(undefined);
   }
 
   /*const context = useMemo(() => {

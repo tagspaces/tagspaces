@@ -510,6 +510,7 @@ function startWS() {
 const createWindow = async (i18n) => {
   let startupParameter = '';
   if (startupFilePath) {
+    //console.log(JSON.stringify(process.env));
     console.log('Startup file path: ' + startupFilePath);
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
