@@ -861,7 +861,8 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('loadTextFilePromise: not implemented'));
   };
 
-  getFileContentPromise = (filePath: string, type?: string): Promise<any> => {
+  getFileContentPromise = (param: any, type?: string): Promise<any> => {
+    const filePath = this.getPath(param);
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.getFileContentPromise(
