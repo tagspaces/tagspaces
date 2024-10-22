@@ -573,6 +573,12 @@ function CreateEditLocationDialog(props: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  let locationTypeName = t('core:localLocation');
+  if (defaultType === locationType.TYPE_CLOUD) {
+    locationTypeName = t('core:objectStorage');
+  }
+
   return (
     <StyledDialog
       open={open}
@@ -593,10 +599,23 @@ function CreateEditLocationDialog(props: Props) {
         // }
       }}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {selectedLocation
-          ? t('core:editLocationTitle')
-          : t('core:createLocationTitle')}
+      <DialogTitle
+        style={{ cursor: 'move', paddingBottom: 0 }}
+        id="draggable-dialog-title"
+      >
+        {selectedLocation ? (
+          <>
+            {t('core:editLocationTitle')}
+            <Typography
+              style={{ display: 'block', marginTop: -5 }}
+              variant="overline"
+            >
+              {t('core:locationType') + ': ' + locationTypeName}
+            </Typography>
+          </>
+        ) : (
+          t('core:createLocationTitle')
+        )}
         <DialogCloseButton
           testId="closeCreateEditLocationTID"
           onClose={onClose}
@@ -630,47 +649,49 @@ function CreateEditLocationDialog(props: Props) {
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
-              <FormControl disabled={disableLocationTypeSwitch} fullWidth>
-                {/* <InputLabel id="locationLabelID">
+              {!selectedLocation && (
+                <FormControl disabled={disableLocationTypeSwitch} fullWidth>
+                  {/* <InputLabel id="locationLabelID">
                   {t('core:locationType')}
                 </InputLabel> */}
-                <Select
-                  labelId="locationLabelID"
-                  data-tid="locationTypeTID"
-                  value={type}
-                  label={t('core:locationType')}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setType(event.target.value)
-                  }
-                  variant="filled"
-                >
-                  {!AppConfig.isWeb && (
-                    <MenuItem
-                      key="TYPE_LOCAL"
-                      value={locationType.TYPE_LOCAL}
-                      data-tid="localLocationTID"
-                    >
-                      {t('core:localLocation')}
-                    </MenuItem>
-                  )}
-                  <MenuItem
-                    key="TYPE_CLOUD"
-                    value={locationType.TYPE_CLOUD}
-                    data-tid="cloudLocationTID"
+                  <Select
+                    labelId="locationLabelID"
+                    data-tid="locationTypeTID"
+                    value={type}
+                    label={t('core:locationType')}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setType(event.target.value)
+                    }
+                    variant="filled"
                   >
-                    {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
-                  </MenuItem>
-                  {Pro && devMode && (
+                    {!AppConfig.isWeb && (
+                      <MenuItem
+                        key="TYPE_LOCAL"
+                        value={locationType.TYPE_LOCAL}
+                        data-tid="localLocationTID"
+                      >
+                        {t('core:localLocation')}
+                      </MenuItem>
+                    )}
                     <MenuItem
-                      key="TYPE_WEBDAV"
-                      value={locationType.TYPE_WEBDAV}
-                      data-tid="webdavLocationTID"
+                      key="TYPE_CLOUD"
+                      value={locationType.TYPE_CLOUD}
+                      data-tid="cloudLocationTID"
                     >
-                      {t('core:webdavLocation') + ' (experimental)'}
+                      {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                     </MenuItem>
-                  )}
-                </Select>
-              </FormControl>
+                    {Pro && devMode && (
+                      <MenuItem
+                        key="TYPE_WEBDAV"
+                        value={locationType.TYPE_WEBDAV}
+                        data-tid="webdavLocationTID"
+                      >
+                        {t('core:webdavLocation') + ' (experimental)'}
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              )}
               {content}
               <FormControlLabel
                 className={classes.formControl}
