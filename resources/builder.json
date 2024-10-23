@@ -4,10 +4,21 @@
   "asarUnpack": [
     "**\\*.{node,dll}",
     "**/node_modules/sharp/**/*",
-    "**/node_modules/@img/**/*"
+    "**/node_modules/@img/**/*",
+    "node_modules/node-llama-cpp/**/*",
+    "node_modules/@node-llama-cpp/*"
   ],
   "includeSubNodeModules": true,
-  "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
+  "files": [
+    "dist/",
+    "node_modules/",
+    "package.json",
+    ".env",
+    "extconfig.js",
+    "!node_modules/@node-llama-cpp/*/bins/**/*",
+    "node_modules/@node-llama-cpp/${os}-${arch}*/bins/**/*",
+    "node_modules/node-llama-cpp/**/*"
+  ],
   "copyright": "Copyright © 2024 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "dmg": {
