@@ -66,6 +66,8 @@ export const types = {
   SET_FILENAMETAGPLACEDATEND: 'SETTINGS/SET_FILENAMETAGPLACEDATEND',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
+  SET_LLAMA_NODE_SETTINGS: 'SETTINGS/SET_LLAMA_NODE_SETTINGS',
+  SET_OLLAMA_SETTINGS: 'SETTINGS/SET_OLLAMA_SETTINGS',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_USETEXTEXTRACTION: 'SETTINGS/SET_USETEXTEXTRACTION',
@@ -247,6 +249,12 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_REVISIONS_ENABLED: {
       return { ...state, isRevisionsEnabled: action.enabled };
+    }
+    case types.SET_LLAMA_NODE_SETTINGS: {
+      return { ...state, llamaNodeSettings: action.llamaNodeSettings };
+    }
+    case types.SET_OLLAMA_SETTINGS: {
+      return { ...state, ollamaSettings: action.settings };
     }
     case types.SET_PREFIX_TAG_CONTAINER: {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
@@ -661,6 +669,14 @@ export const actions = {
     type: types.SET_REVISIONS_ENABLED,
     enabled,
   }),
+  setLlamaNodeSettings: (llamaNodeSettings: any) => ({
+    type: types.SET_LLAMA_NODE_SETTINGS,
+    llamaNodeSettings,
+  }),
+  setOllamaSettings: (settings: any) => ({
+    type: types.SET_OLLAMA_SETTINGS,
+    settings,
+  }),
   setPrefixTagContainer: (prefixTagContainer: boolean) => ({
     type: types.SET_PREFIX_TAG_CONTAINER,
     prefixTagContainer,
@@ -883,6 +899,9 @@ export const isDevMode = (state: any) =>
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
+export const getLlamaNodeSettings = (state: any) =>
+  state.settings.llamaNodeSettings;
+export const getOllamaSettings = (state: any) => state.settings.ollamaSettings;
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getGeoTaggingFormat = (state: any) =>

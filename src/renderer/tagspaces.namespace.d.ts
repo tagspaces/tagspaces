@@ -247,6 +247,7 @@ export namespace TS {
     | 'createDir';
 
   type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
+  //type AIProviders = 'ollama' | 'node-lama' | 'chatgpt';
 
   type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
