@@ -140,7 +140,9 @@ export function generateThumbnailPromise(
       ); //fileURLEscaped);
     }
   } else if (ext === 'pdf') {
-    return generatePDFThumbnail(fileURLEscaped, maxSize);
+    return getFileContentPromise({ path: fileURLEscaped }, 'arraybuffer').then(
+      (buffer) => generatePDFThumbnail(buffer, maxSize),
+    );
   } else if (Pro && ext === 'html') {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(
       fileURLEscaped,
@@ -208,25 +210,20 @@ export async function extractPDFcontent(
 }
 
 export function generatePDFThumbnail(
-  fileURL: string,
+  arrayBuffer: ArrayBuffer,
   maxSize: number,
 ): Promise<string> {
   return new Promise((resolve) => {
     try {
       const errorHandler = (err) => {
-        console.log(
-          'Error while generating thumbnail for: ' +
-            fileURL +
-            ' - ' +
-            JSON.stringify(err),
-        );
+        console.log('Error while generating thumbnail', err);
         resolve('');
       };
 
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       // ensurePDFJS().then(pdfjsLib => {
-      const loadingTask = pdfjs.getDocument(fileURL);
+      const loadingTask = pdfjs.getDocument(arrayBuffer);
       loadingTask.promise
         .then((pdf) => {
           pdf
@@ -272,7 +269,7 @@ export function generatePDFThumbnail(
         .catch(errorHandler);
       return true;
     } catch (e) {
-      console.log(`Error creating PDF thumb for : ${fileURL} with: ${e}`);
+      console.log('Error creating PDF thumb', e);
       resolve('');
     }
   });

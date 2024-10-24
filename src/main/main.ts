@@ -353,10 +353,12 @@ function createNewWindowInstance(url?) {
     show: true,
     center: true,
   });
-  // @ts-ignore
-  mainWindow.fileChanged = false;
-  // @ts-ignore
-  mainWindow.descriptionChanged = false;
+  if (mainWindow) {
+    // @ts-ignore
+    mainWindow.fileChanged = false;
+    // @ts-ignore
+    mainWindow.descriptionChanged = false;
+  }
 
   newWindowInstance.setMenuBarVisibility(false);
 

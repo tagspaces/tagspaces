@@ -60,7 +60,7 @@ type LocationIndexContextData = {
   cancelDirectoryIndexing: () => void;
   createLocationIndex: (location: CommonLocation) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
-  clearDirectoryIndex: () => void;
+  clearDirectoryIndex: (persist?: boolean) => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
@@ -113,7 +113,7 @@ export const LocationIndexContextProvider = ({
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    clearDirectoryIndex();
+    clearDirectoryIndex(false);
   }, [currentLocation]);
 
   useEffect(() => {
@@ -408,9 +408,9 @@ export const LocationIndexContextProvider = ({
     return true;
   }
 
-  function clearDirectoryIndex() {
+  function clearDirectoryIndex(persist = false) {
     isIndexing.current = undefined;
-    setIndex([], currentLocation);
+    setIndex([], persist ? currentLocation : undefined);
     forceUpdate();
   }
 

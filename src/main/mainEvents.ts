@@ -382,14 +382,13 @@ export default function loadMainEvents() {
   );
   ipcMain.handle('deleteFilePromise', async (event, path, useTrash) => {
     if (useTrash) {
-      let ret;
       try {
-        ret = await shell.trashItem(path);
+        await shell.trashItem(path);
       } catch (err) {
         console.error('moveToTrash ' + path + 'error:', err);
         return false;
       }
-      return ret;
+      return true;
     } else {
       const result = await deleteFilePromise(path);
       return result;
