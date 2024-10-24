@@ -384,11 +384,11 @@ export default function loadMainEvents() {
     if (useTrash) {
       try {
         await shell.trashItem(path);
+        return true;
       } catch (err) {
         console.error('moveToTrash ' + path + 'error:', err);
         return false;
       }
-      return true;
     } else {
       const result = await deleteFilePromise(path);
       return result;
