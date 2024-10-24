@@ -109,6 +109,7 @@ export default {
     typeof window.ExtRevisionsEnabled === 'undefined'
       ? true
       : window.ExtRevisionsEnabled,
+  ollamaSettings: { url: 'http://localhost:11434' },
   prefixTagContainer: AppConfig.prefixTagContainer,
   isAutoSaveEnabled:
     typeof window.ExtAutoSaveEnabled === 'undefined'

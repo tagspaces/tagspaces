@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,14 +24,17 @@ import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import PsychologyIcon from '@mui/icons-material/Psychology';
 import { AppDispatch } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
 import Tooltip from '-/components/Tooltip';
 import EntryProperties from '-/components/EntryProperties';
+import { Pro } from '-/pro';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
+  getOllamaSettings,
 } from '-/reducers/settings';
 import {
   FolderPropertiesIcon,
@@ -45,6 +48,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import TsTabPanel from '-/components/TsTabPanel';
+import AppConfig from '-/AppConfig';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -136,13 +140,22 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
+  const ollamaSettings = useSelector(getOllamaSettings);
   const haveRevisions = useRef<boolean>(isEditable);
+  const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
+  const ChatPanel = Pro && Pro.UI ? Pro.UI.ChatPanel : false;
 
   useEffect(() => {
-    if (!isEditable) {
+    selectedTabIndex.current = tabIndex;
+    forceUpdate();
+  }, [tabIndex]);
+
+  useEffect(() => {
+    selectedTabIndex.current = initSelectedTabIndex(tabIndex);
+    if (isEditable) {
       const location: CommonLocation = findLocation(openedEntry.locationID);
       const backupFilePath = getBackupFileDir(
         openedEntry.path,
@@ -155,6 +168,9 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           forceUpdate();
         }
       });
+    } else if (haveRevisions.current) {
+      haveRevisions.current = false;
+      forceUpdate();
     }
   }, [isEditable]);
 
@@ -176,11 +192,16 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
   };
 
-  // directories must be always opened
-  let selectedTabIndex =
-    !openedEntry.isFile && tabIndex === undefined ? 0 : tabIndex;
-  if (!haveRevisions.current && selectedTabIndex === 2) {
-    selectedTabIndex = 0;
+  function initSelectedTabIndex(index) {
+    if (!haveRevisions.current) {
+      if (index === 2) {
+        return 0;
+      } else if (index === 3) {
+        return 2;
+      }
+    }
+    // directories must be always opened
+    return !openedEntry.isFile && index === undefined ? 0 : index;
   }
 
   return (
@@ -199,7 +220,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
-          value={selectedTabIndex}
+          value={selectedTabIndex.current}
           onChange={handleChange}
           aria-label="Switching among description, revisions entry properties"
         >
@@ -231,17 +252,49 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               onClick={handleTabClick}
             />
           )}
+          {Pro &&
+            ollamaSettings.enabled && ( //AppConfig.isElectron && (
+              <StyledTab
+                data-tid="aiTabTID"
+                icon={<PsychologyIcon />}
+                title={t('core:aiTab')}
+                tinyMode={isTinyMode}
+                {...a11yProps(3)}
+                onClick={handleTabClick}
+              />
+            )}
         </StyledTabs>
       </Box>
-      <TsTabPanel key="propertiesTab" value={selectedTabIndex} index={0}>
+      <TsTabPanel
+        key="propertiesTab"
+        value={selectedTabIndex.current}
+        index={0}
+      >
         <EntryProperties key={openedEntry.path} tileServer={tileServer} />
       </TsTabPanel>
-      <TsTabPanel key="descriptionTab" value={selectedTabIndex} index={1}>
+      <TsTabPanel
+        key="descriptionTab"
+        value={selectedTabIndex.current}
+        index={1}
+      >
         <EditDescription />
       </TsTabPanel>
       {haveRevisions.current && (
-        <TsTabPanel key="revisionsTab" value={selectedTabIndex} index={2}>
+        <TsTabPanel
+          key="revisionsTab"
+          value={selectedTabIndex.current}
+          index={2}
+        >
           <Revisions />
+        </TsTabPanel>
+      )}
+      {Pro && AppConfig.isElectron && (
+        <TsTabPanel
+          key="aiTab"
+          value={selectedTabIndex.current}
+          index={haveRevisions.current ? 3 : 2}
+        >
+          <ChatPanel />
         </TsTabPanel>
       )}
     </div>

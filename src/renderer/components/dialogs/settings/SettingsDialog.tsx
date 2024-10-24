@@ -34,6 +34,7 @@ import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
+import SettingsAI from '-/components/dialogs/settings/SettingsAI';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from 'assets/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
@@ -89,6 +90,7 @@ function SettingsDialog(props: Props) {
             data-tid="advancedSettingsDialogTID"
             label={t('core:advancedSettingsTab')}
           />
+          <Tab data-tid="aiSettingsDialogTID" label={t('core:aiSettingsTab')} />
         </Tabs>
       </AppBar>
     </>
@@ -142,6 +144,7 @@ function SettingsDialog(props: Props) {
             showResetSettings={setIsResetSettingsDialogOpened}
           />
         )}
+        {currentTab === 5 && <SettingsAI />}
       </div>
     </DialogContent>
   );
