@@ -188,10 +188,20 @@ export async function startTestingApp(extconfig) {
       ],
       bypassCSP: true,
       env: {
+        // ...process.env,     // Preserve existing environment variables
         ELECTRON_ENABLE_LOGGING: true,
         ELECTRON_ENABLE_STACK_DUMPING: true,
         // NODE_ENV: 'test'
       },
+    });
+    const appPath = await global.app.evaluate(async ({ app }) => {
+      // This runs in the main Electron process, parameter here is always
+      // the result of the require('electron') in the main app script.
+      return app.getAppPath();
+    });
+    console.log('appPath:' + appPath);
+    global.app.on('console', (msg) => {
+      console.log(`[Electron Main] ${msg.type()}: ${msg.text()}`);
     });
 
     // Get the Electron context.

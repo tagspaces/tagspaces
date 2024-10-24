@@ -68,7 +68,6 @@ export const types = {
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
-  SET_USETEXTEXTRACTION: 'SETTINGS/SET_USETEXTEXTRACTION',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
@@ -253,9 +252,6 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_USEGENERATETHUMBNAILS: {
       return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
-    }
-    case types.SET_USETEXTEXTRACTION: {
-      return { ...state, useTextExtraction: action.useTextExtraction };
     }
     case types.SET_EMAIL: {
       return {
@@ -669,10 +665,6 @@ export const actions = {
     type: types.SET_USEGENERATETHUMBNAILS,
     useGenerateThumbnails,
   }),
-  setUseTextExtraction: (useTextExtraction: boolean) => ({
-    type: types.SET_USETEXTEXTRACTION,
-    useTextExtraction,
-  }),
   setAppDataPath: (path: string) => ({
     type: types.SET_APPDATAPATH,
     path,
@@ -927,8 +919,6 @@ export const getFileNameTagPlace = (state: any): boolean =>
   state.settings.filenameTagPlacedAtEnd;
 export const getUseGenerateThumbnails = (state: any) =>
   state.settings.useGenerateThumbnails;
-export const getUseTextExtraction = (state: any) =>
-  state.settings.useTextExtraction;
 export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);

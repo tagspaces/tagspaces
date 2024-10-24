@@ -30,6 +30,8 @@ const pdfjs = (
 ) as typeof pdfjsModule;
 
 import('pdfjs-dist/build/pdf.worker.mjs');
+//import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+//pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 let maxSize = AppConfig.maxThumbSize;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
@@ -138,7 +140,9 @@ export function generateThumbnailPromise(
       ); //fileURLEscaped);
     }
   } else if (ext === 'pdf') {
-    return generatePDFThumbnail(fileURLEscaped, maxSize);
+    return getFileContentPromise({ path: fileURLEscaped }, 'arraybuffer').then(
+      (buffer) => generatePDFThumbnail(buffer, maxSize),
+    );
   } else if (Pro && ext === 'html') {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(
       fileURLEscaped,
@@ -183,26 +187,43 @@ export function generateThumbnailPromise(
   return generateDefaultThumbnail();
 }
 
+export async function extractPDFcontent(
+  arrayBuffer: ArrayBuffer,
+): Promise<string> {
+  let extractedText = '';
+  if (arrayBuffer) {
+    try {
+      const pdfDocument = await pdfjs.getDocument(arrayBuffer).promise;
+
+      for (let i = 1; i <= pdfDocument.numPages; i++) {
+        const page = await pdfDocument.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item) => item.str).join(' ');
+        extractedText += pageText + '\n';
+      }
+      extractedText += '\r\n';
+    } catch (error) {
+      console.error('Error extracting text from PDF:', error);
+    }
+  }
+  return extractedText;
+}
+
 export function generatePDFThumbnail(
-  fileURL: string,
+  arrayBuffer: ArrayBuffer,
   maxSize: number,
 ): Promise<string> {
   return new Promise((resolve) => {
     try {
       const errorHandler = (err) => {
-        console.log(
-          'Error while generating thumbnail for: ' +
-            fileURL +
-            ' - ' +
-            JSON.stringify(err),
-        );
+        console.log('Error while generating thumbnail', err);
         resolve('');
       };
 
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       // ensurePDFJS().then(pdfjsLib => {
-      const loadingTask = pdfjs.getDocument(fileURL);
+      const loadingTask = pdfjs.getDocument(arrayBuffer);
       loadingTask.promise
         .then((pdf) => {
           pdf
@@ -248,7 +269,7 @@ export function generatePDFThumbnail(
         .catch(errorHandler);
       return true;
     } catch (e) {
-      console.log(`Error creating PDF thumb for : ${fileURL} with: ${e}`);
+      console.log('Error creating PDF thumb', e);
       resolve('');
     }
   });
