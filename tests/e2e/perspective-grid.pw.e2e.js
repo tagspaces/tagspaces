@@ -19,6 +19,7 @@ import {
   getGridCellClass,
   getGridFileName,
   getGridFileSelector,
+  openFile,
   selectAllFiles,
   selectFilesByID,
   selectorFile,
@@ -87,11 +88,11 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5002 - Open file with click [web,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
     const fileName = 'sample.txt';
-
+    await openFile(fileName, 'showPropertiesTID');
     // const firstFileName = await getGridFileName(0);
-    await clickOn(getGridFileSelector(fileName));
+    /*await clickOn(getGridFileSelector(fileName));
     await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    await clickOn('[data-tid=detailsTabTID]');
+    await clickOn('[data-tid=detailsTabTID]', 8000);*/
     // Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
     const propsFileName = await getPropertiesFileName();
@@ -170,10 +171,11 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test('TST5008 - Copy file [web,electron]', async () => {
     const fileName = 'sample.svg';
-    await clickOn(getGridFileSelector(fileName));
+    await openFile(fileName, 'showPropertiesTID');
+    /* await clickOn(getGridFileSelector(fileName));
     await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
     //Toggle Properties
-    await clickOn('[data-tid=detailsTabTID]');
+    await clickOn('[data-tid=detailsTabTID]');*/
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
