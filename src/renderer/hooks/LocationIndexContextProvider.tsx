@@ -111,9 +111,13 @@ export const LocationIndexContextProvider = ({
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
+  const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
 
   useEffect(() => {
-    clearDirectoryIndex(false);
+    if (currentLocation) {
+      clearDirectoryIndex(false);
+      maxIndexAge.current = getMaxIndexAge(currentLocation);
+    }
   }, [currentLocation]);
 
   useEffect(() => {
@@ -136,6 +140,11 @@ export const LocationIndexContextProvider = ({
     }
   }, [actions]);
 
+  function getMaxIndexAge(location) {
+    return location && location.maxIndexAge
+      ? location.maxIndexAge
+      : AppConfig.maxIndexAge;
+  }
   function setIndex(i, location: CommonLocation = undefined) {
     index.current = i;
     if (index.current && index.current.length > 0) {
@@ -540,23 +549,22 @@ export const LocationIndexContextProvider = ({
           currentPath,
           currentLocation.uuid,
         );
-        setIndex(directoryIndex);
+        if (directoryIndex) {
+          setIndex(directoryIndex);
+        }
       }
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
       const indexAge = indexLoadedOn.current
         ? currentTime - indexLoadedOn.current
         : 0;
-      const maxIndexAge = currentLocation.maxIndexAge
-        ? currentLocation.maxIndexAge
-        : AppConfig.maxIndexAge;
 
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
           (!index.current ||
             index.current.length < 1 ||
-            indexAge > maxIndexAge))
+            indexAge > maxIndexAge.current))
       ) {
         console.log('Start creating index for : ' + currentPath);
         const newIndex = await createDirectoryIndexWrapper(
@@ -739,15 +747,27 @@ export const LocationIndexContextProvider = ({
         loc.getDirSeparator() +
         AppConfig.folderIndexFile;
       return loc
-        .loadTextFilePromise(folderIndexPath)
-        .then((jsonContent) => {
-          const directoryIndex = loadJSONString(
-            jsonContent,
-          ) as TS.FileSystemEntry[];
-          return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
-        })
-        .catch((e) => {
-          console.log('cannot load json:' + folderPath, e);
+        .getPropertiesPromise(folderIndexPath)
+        .then((indexFile: TS.FileSystemEntry) => {
+          const indexAge = new Date().getTime() - indexFile.lmdt;
+          if (indexFile && indexAge < maxIndexAge.current) {
+            return loc
+              .loadTextFilePromise(folderIndexPath)
+              .then((jsonContent) => {
+                const directoryIndex = loadJSONString(
+                  jsonContent,
+                ) as TS.FileSystemEntry[];
+                return enhanceDirectoryIndex(
+                  directoryIndex,
+                  locationID,
+                  folderPath,
+                );
+              })
+              .catch((e) => {
+                console.log('cannot load json:' + folderPath, e);
+                return undefined;
+              });
+          }
           return undefined;
         });
     }
