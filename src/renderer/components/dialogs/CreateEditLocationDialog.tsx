@@ -729,7 +729,7 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {t('core:createFullTextIndex')}
+                    {t('core:createFullTextIndex') + ' (TXT, HTML, MD, PDF)'}
                     {Pro ? <BetaLabel /> : <ProLabel />}
                   </>
                 }
