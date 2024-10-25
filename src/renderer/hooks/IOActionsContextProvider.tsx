@@ -39,6 +39,7 @@ import {
   cleanTrailingDirSeparator,
   cleanFrontDirSeparator,
   generateFileName,
+  getMetaContentFileLocation,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -467,7 +468,12 @@ export const IOActionsContextProvider = ({
         backupFilePath,
         currentLocation?.getDirSeparator(),
       );
-      // Delete revisions, sidecar file and thumb
+      const metaContentPath = getMetaContentFileLocation(
+        filePath,
+        currentLocation?.getDirSeparator(),
+      );
+
+      // Delete revisions, sidecar file and thumb, pdf content
       return deleteEntriesPromise(
         currentLocation.toFsEntry(backupPath, false),
         currentLocation.toFsEntry(
@@ -485,6 +491,7 @@ export const IOActionsContextProvider = ({
           ),
           true,
         ),
+        currentLocation.toFsEntry(metaContentPath, true),
       )
         .then(() => {
           console.log(
@@ -1446,6 +1453,16 @@ export const IOActionsContextProvider = ({
                 newFilePath,
                 currentLocation?.getDirSeparator(),
                 false,
+              ),
+            ],
+            [
+              getMetaContentFileLocation(
+                filePath,
+                currentLocation?.getDirSeparator(),
+              ),
+              getMetaContentFileLocation(
+                newFilePath,
+                currentLocation?.getDirSeparator(),
               ),
             ],
           ],

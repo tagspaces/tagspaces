@@ -60,7 +60,7 @@ type LocationIndexContextData = {
   cancelDirectoryIndexing: () => void;
   createLocationIndex: (location: CommonLocation) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
-  clearDirectoryIndex: () => void;
+  clearDirectoryIndex: (persist?: boolean) => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
@@ -111,9 +111,13 @@ export const LocationIndexContextProvider = ({
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
+  const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
 
   useEffect(() => {
-    clearDirectoryIndex();
+    if (currentLocation) {
+      clearDirectoryIndex(false);
+      maxIndexAge.current = getMaxIndexAge(currentLocation);
+    }
   }, [currentLocation]);
 
   useEffect(() => {
@@ -136,6 +140,11 @@ export const LocationIndexContextProvider = ({
     }
   }, [actions]);
 
+  function getMaxIndexAge(location) {
+    return location && location.maxIndexAge
+      ? location.maxIndexAge
+      : AppConfig.maxIndexAge;
+  }
   function setIndex(i, location: CommonLocation = undefined) {
     index.current = i;
     if (index.current && index.current.length > 0) {
@@ -252,7 +261,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function createDirectoryIndex(
-    param: string | any,
+    param: any,
     extractText = false,
     ignorePatterns: Array<string> = [],
     enableWS = true,
@@ -263,16 +272,8 @@ export const LocationIndexContextProvider = ({
       if (Pro && Pro.Watcher) {
         Pro.Watcher.stopWatching();
       }
-      let directoryPath;
-      let locationID;
-      if (typeof param === 'object' && param !== null) {
-        directoryPath = param.path;
-        ({ locationID } = param);
-      } else {
-        directoryPath = param;
-      }
-      const loc = findLocation(locationID);
-      const dirPath = cleanTrailingDirSeparator(directoryPath);
+      const loc = findLocation(param.locationID);
+      const dirPath = cleanTrailingDirSeparator(param.path);
       if (
         enableWS &&
         !loc.haveObjectStoreSupport() &&
@@ -284,7 +285,7 @@ export const LocationIndexContextProvider = ({
           .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
           .then((result) => {
             if (result && result.success) {
-              return loadIndexFromDisk(dirPath, locationID);
+              return loadIndexFromDisk(dirPath, param.locationID);
             } else if (result && result.error) {
               console.error(
                 'createDirectoryIndexInWorker failed:' + result.error,
@@ -303,9 +304,11 @@ export const LocationIndexContextProvider = ({
         mode.push('extractTextContent');
       }
       return createIndex(
-        param,
-        loc.listDirectoryPromise,
-        loc.loadTextFilePromise,
+        {
+          ...param,
+          listDirectoryPromise: loc.listDirectoryPromise,
+          getFileContentPromise: loc.getFileContentPromise,
+        },
         mode,
         ignorePatterns,
         isWalking,
@@ -313,11 +316,11 @@ export const LocationIndexContextProvider = ({
         .then((directoryIndex) =>
           persistIndex(param, directoryIndex).then((success) => {
             if (success) {
-              console.log('Index generated in folder: ' + directoryPath);
+              console.log('Index generated in folder: ' + dirPath);
               return enhanceDirectoryIndex(
                 directoryIndex,
-                locationID,
-                directoryPath,
+                param.locationID,
+                param.path,
               );
               //return enhanceDirectoryIndex(param, directoryIndex, locationID);
             }
@@ -328,10 +331,11 @@ export const LocationIndexContextProvider = ({
           console.log('Error creating index: ', err);
         });
     }
+    return Promise.resolve(undefined);
   }
 
   function createDirectoryIndexWrapper(
-    param: string | any,
+    param: any,
     extractText = false,
     ignorePatterns: Array<string> = [],
     enableWS = true,
@@ -413,9 +417,9 @@ export const LocationIndexContextProvider = ({
     return true;
   }
 
-  function clearDirectoryIndex() {
+  function clearDirectoryIndex(persist = false) {
     isIndexing.current = undefined;
-    setIndex([], currentLocation);
+    setIndex([], persist ? currentLocation : undefined);
     forceUpdate();
   }
 
@@ -539,28 +543,28 @@ export const LocationIndexContextProvider = ({
     );
     setTimeout(async () => {
       const currentPath = await getLocationPath(currentLocation);
+
       if (!index.current || index.current.length < 1) {
         const directoryIndex = await loadIndexFromDisk(
           currentPath,
           currentLocation.uuid,
         );
-        setIndex(directoryIndex);
+        if (directoryIndex) {
+          setIndex(directoryIndex);
+        }
       }
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
       const indexAge = indexLoadedOn.current
         ? currentTime - indexLoadedOn.current
         : 0;
-      const maxIndexAge = currentLocation.maxIndexAge
-        ? currentLocation.maxIndexAge
-        : AppConfig.maxIndexAge;
 
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
           (!index.current ||
             index.current.length < 1 ||
-            indexAge > maxIndexAge))
+            indexAge > maxIndexAge.current))
       ) {
         console.log('Start creating index for : ' + currentPath);
         const newIndex = await createDirectoryIndexWrapper(
@@ -737,22 +741,37 @@ export const LocationIndexContextProvider = ({
     locationID: string,
   ): Promise<TS.FileSystemEntry[]> {
     const loc = findLocation(locationID);
-    const folderIndexPath =
-      getMetaDirectoryPath(folderPath) +
-      loc.getDirSeparator() +
-      AppConfig.folderIndexFile;
-    return loc
-      .loadTextFilePromise(folderIndexPath)
-      .then((jsonContent) => {
-        const directoryIndex = loadJSONString(
-          jsonContent,
-        ) as TS.FileSystemEntry[];
-        return enhanceDirectoryIndex(directoryIndex, locationID, folderPath);
-      })
-      .catch((e) => {
-        console.log('cannot load json:' + folderPath, e);
-        return undefined;
-      });
+    if (loc) {
+      const folderIndexPath =
+        getMetaDirectoryPath(folderPath) +
+        loc.getDirSeparator() +
+        AppConfig.folderIndexFile;
+      return loc
+        .getPropertiesPromise(folderIndexPath)
+        .then((indexFile: TS.FileSystemEntry) => {
+          const indexAge = new Date().getTime() - indexFile.lmdt;
+          if (indexFile && indexAge < maxIndexAge.current) {
+            return loc
+              .loadTextFilePromise(folderIndexPath)
+              .then((jsonContent) => {
+                const directoryIndex = loadJSONString(
+                  jsonContent,
+                ) as TS.FileSystemEntry[];
+                return enhanceDirectoryIndex(
+                  directoryIndex,
+                  locationID,
+                  folderPath,
+                );
+              })
+              .catch((e) => {
+                console.log('cannot load json:' + folderPath, e);
+                return undefined;
+              });
+          }
+          return undefined;
+        });
+    }
+    return Promise.resolve(undefined);
   }
 
   /*const context = useMemo(() => {

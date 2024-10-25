@@ -562,11 +562,15 @@ function EntryContainer() {
 
   const toggleEntryPropertiesHeight = () => {
     if (entryPropertiesHeight === 100) {
-      setEntryPropertiesHeight(150);
-    } else if (entryPropertiesHeight === 150) {
+      setEntryPropertiesHeight(200);
+    } else if (entryPropertiesHeight === 200) {
+      setEntryPropertiesHeight(350);
+    } else if (entryPropertiesHeight === 350) {
       setEntryPropertiesHeight(50);
     } else if (entryPropertiesHeight === 50) {
       setEntryPropertiesHeight(100);
+    } else {
+      setEntryPropertiesHeight(200);
     }
   };
 
@@ -780,17 +784,19 @@ function EntryContainer() {
               <div
                 style={{
                   textAlign: 'center',
-                  maxHeight: 9,
-                  minHeight: 9,
+                  // maxHeight: 9,
+                  minHeight: 8,
+                  paddingTop: 2,
                   backgroundColor: theme.palette.background.default,
                   borderBottom: '1px solid ' + theme.palette.divider,
+                  cursor: 's-resize',
                 }}
                 onClick={toggleEntryPropertiesHeight}
               >
                 <div
                   style={{
-                    width: '30%',
-                    border: '1px solid ' + theme.palette.text.secondary,
+                    width: '10%',
+                    border: '1px dashed ' + theme.palette.text.secondary,
                     margin: '2px auto',
                   }}
                 ></div>

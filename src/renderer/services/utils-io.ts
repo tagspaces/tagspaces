@@ -893,13 +893,15 @@ export function isWorkerAvailable(): Promise<boolean> {
 
 export function createThumbnailsInWorker(
   tmbGenerationList: Array<string>,
+  extractPDFcontent: boolean,
 ): Promise<any> {
   if (AppConfig.isElectron) {
     const payload = JSON.stringify(tmbGenerationList);
     return window.electronIO.ipcRenderer.invoke(
       'postRequest',
       payload,
-      '/thumb-gen',
+      '/thumb-gen' +
+        (extractPDFcontent ? '?pdfContent=' + extractPDFcontent : ''),
     );
   }
   return Promise.reject(new Error('createThumbnailsInWorker not Electron!'));

@@ -247,9 +247,11 @@ export const FSWatcherContextProvider = ({
   }
 
   function addToIgnored(path: string) {
-    const index = ignored.current.indexOf(path);
-    if (index === -1) {
-      ignored.current.push(path);
+    if (path) {
+      const index = ignored.current.indexOf(path);
+      if (index === -1) {
+        ignored.current.push(path);
+      }
     }
   }
 

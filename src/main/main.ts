@@ -353,10 +353,12 @@ function createNewWindowInstance(url?) {
     show: true,
     center: true,
   });
-  // @ts-ignore
-  mainWindow.fileChanged = false;
-  // @ts-ignore
-  mainWindow.descriptionChanged = false;
+  if (mainWindow) {
+    // @ts-ignore
+    mainWindow.fileChanged = false;
+    // @ts-ignore
+    mainWindow.descriptionChanged = false;
+  }
 
   newWindowInstance.setMenuBarVisibility(false);
 
@@ -510,6 +512,7 @@ function startWS() {
 const createWindow = async (i18n) => {
   let startupParameter = '';
   if (startupFilePath) {
+    //console.log(JSON.stringify(process.env));
     console.log('Startup file path: ' + startupFilePath);
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =

@@ -400,7 +400,7 @@
   "persistIndexSwitch": "Switch to manual index creation with persisted search index",
   "disableIndexing": "Disable Indexing",
   "disableThumbnailGeneration": "Disable Thumbnail Generation",
-  "createFullTextIndex": "Enable full text search for TXT, MD and HTML files",
+  "createFullTextIndex": "Enable full text search",
   "watchForChangesInLocation": "Watch for external changes in this location",
   "collectedTags": "Collected Tags",
   "pauseResumePlayback": "Pause/Resume Playback",
