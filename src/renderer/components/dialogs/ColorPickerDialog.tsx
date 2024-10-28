@@ -22,7 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { SketchPicker } from 'react-color';
+import ColorPicker from 'react-best-gradient-color-picker';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 
@@ -65,20 +65,14 @@ interface Props {
 function ColorPickerDialog(props: Props) {
   const { t } = useTranslation();
   const [color, setColor] = useState(undefined);
-  const [colorHex, setColorHex] = useState(undefined);
   const { open = false, onClose } = props;
 
   function onConfirm() {
-    if (color && colorHex) {
-      const hexAlphaColor = colorHex + Math.round(color.a * 255).toString(16);
-      props.setColor(hexAlphaColor);
-    }
+    // if (color && colorHex) {
+    //  const hexAlphaColor = colorHex + Math.round(color.a * 255).toString(16);
+    props.setColor(color);
+    //}
     props.onClose();
-  }
-
-  function handleChangeComplete(newColor: any) {
-    setColor(newColor.rgb);
-    setColorHex(newColor.hex);
   }
 
   return (
@@ -107,16 +101,15 @@ function ColorPickerDialog(props: Props) {
           overflowX: 'hidden',
         }}
       >
-        <SketchPicker
-          style={{
-            padding: '0 !important',
-            boxShadow: 'none !important',
-            backgroundColor: 'transparent !important',
-          }}
-          name="color"
-          presetColors={props.presetColors ? props.presetColors : presetColors}
-          color={color || props.color}
-          onChangeComplete={handleChangeComplete}
+        <ColorPicker
+          value={color || props.color}
+          onChange={(newColor) => setColor(newColor)}
+          presets={props.presetColors ? props.presetColors : presetColors}
+          hideEyeDrop
+          disableDarkMode
+          hideControls
+          // @ts-ignore
+          style={{ backgroundColor: 'transparent' }}
         />
       </DialogContent>
       <DialogActions>
