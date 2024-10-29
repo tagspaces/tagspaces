@@ -39,7 +39,6 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
-import { parseNewTags } from '-/services/utils-io';
 import {
   extractContainingDirectoryPath,
   extractFileName,
@@ -88,7 +87,7 @@ type TaggingActionsContextData = {
   ) => Promise<boolean>;
   mergeTagGroup: (entry: TS.TagGroup) => void;
   removeTagGroup: (parentTagGroupUuid: TS.Uuid) => void;
-  addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => void;
+  addTag: (tag: TS.Tag[], parentTagGroupUuid: TS.Uuid) => void;
   editTag: (
     tag: TS.Tag,
     parentTagGroupUuid: TS.Uuid,
@@ -1226,18 +1225,22 @@ export const TaggingActionsContextProvider = ({
    * @param tag
    * @param parentTagGroupUuid - tagGroup ID to add in
    */
-  function addTag(tag: TS.Tag, parentTagGroupUuid: TS.Uuid) {
+  function addTag(tags: TS.Tag[], parentTagGroupUuid: TS.Uuid) {
     const tgIndex = tagGroups.findIndex(
       (tagGroup) => tagGroup.uuid === parentTagGroupUuid,
     );
     if (tgIndex > -1) {
       const tagGroup = tagGroups[tgIndex];
-      if (tagGroup.children.some((t) => t.title === tag.title)) {
-        // tag exist
-        return;
-      }
-      const newTags = tagGroup.children;
-      saveTags([...tagGroup.children, tag], tgIndex);
+
+      const newTags = [
+        ...tagGroup.children,
+        ...tags.map((tag) => ({
+          ...tag,
+          ...(!tag.color && { color: tagGroup.color }),
+          ...(!tag.textcolor && { textcolor: tagGroup.textcolor }),
+        })),
+      ];
+      saveTags(newTags, tgIndex);
 
       if (Pro && tagGroup && tagGroup.locationId) {
         const location: CommonLocation = findLocation(tagGroup.locationId);

@@ -63,7 +63,7 @@ function AddTagToTagGroupDialog(props: Props) {
     if (!selectedTag.color) {
       selectedTag.color = defaultBackgroundColor;
     }
-    addTag(selectedTag, tagGroup);
+    addTag([selectedTag], tagGroup);
     //dispatch(AppActions.addTag(selectedTag, tagGroup));
     props.onClose();
   };
