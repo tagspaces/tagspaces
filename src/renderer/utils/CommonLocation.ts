@@ -891,9 +891,9 @@ export class CommonLocation implements TS.Location {
     extractText: boolean,
     ignorePatterns: Array<string>,
   ): Promise<any> => {
-    if (this.isReadOnly) {
+    /*if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
-    }
+    }*/
     if (
       AppConfig.isElectron &&
       !this.haveObjectStoreSupport() &&

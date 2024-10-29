@@ -338,22 +338,20 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
       // filter out duplicated tags
       tags = tags.filter((t) => t !== tag.title);
     });
-    return taggroupTags.concat(
-      tags.map((tagTitle) => {
-        const tag: TS.Tag = {
-          type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
-          title: tagTitle.trim(),
-          functionality: '',
-          description: '',
-          icon: '',
-          color: tagGroup.color,
-          textcolor: tagGroup.textcolor,
-          style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
-          modified_date: new Date().getTime(),
-        };
-        return tag;
-      }),
-    );
+    return tags.map((tagTitle) => {
+      const tag: TS.Tag = {
+        //type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
+        title: tagTitle.trim(),
+        //functionality: '',
+        //description: '',
+        //icon: '',
+        color: tagGroup.color,
+        textcolor: tagGroup.textcolor,
+        //style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
+        modified_date: new Date().getTime(),
+      };
+      return tag;
+    });
   }
 }
 

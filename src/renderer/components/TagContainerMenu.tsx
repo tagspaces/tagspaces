@@ -42,7 +42,7 @@ function TagContainerMenu(props: Props) {
   return tagMode === 'remove' ? (
     deleteIcon || (
       <RemoveTagIcon
-        data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
+        data-tid={'tagRemoveButton_' + tag.title?.replace(/ /g, '_')}
         style={{
           color: tag.textcolor,
           fontSize: 20,
@@ -54,7 +54,7 @@ function TagContainerMenu(props: Props) {
     )
   ) : (
     <MoreVertIcon
-      data-tid={'tagMoreButton_' + tag.title.replace(/ /g, '_')}
+      data-tid={'tagMoreButton_' + tag.title?.replace(/ /g, '_')}
       style={{
         color: tag.textcolor,
         marginLeft: -5,

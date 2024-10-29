@@ -163,7 +163,7 @@
     "@emotion/styled": "11.11.0",
     "@gorillastack/jmespath": "^1.3.0",
     "@mui/icons-material": "^5.15.19",
-    "@mui/lab": "5.0.0-alpha.170",
+    "@mui/lab": "5.0.0-alpha.173",
     "@mui/material": "^5.15.19",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-common": "4.5.34",

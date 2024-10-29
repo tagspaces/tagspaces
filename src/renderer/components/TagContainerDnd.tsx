@@ -86,11 +86,11 @@ const TagContainerDnd = (props: Props) => {
     // console.log('DropRESULT: ', dropResult);
     if (
       dropResult &&
-      dropResult.tagGroupId &&
-      tagGroup &&
-      dropResult.tagGroupId !== tagGroup.uuid
+      dropResult.tagGroupId
+      //tagGroup &&
+      //dropResult.tagGroupId !== tagGroup.uuid
     ) {
-      if (moveTag) {
+      if (moveTag && tagGroup) {
         // console.log(`Dropped ${item.tagId} from ${tagGroup.uuid} into ${dropResult.tagGroupId}!`);
         moveTag(item.tag.title, tagGroup.uuid, dropResult.tagGroupId);
       } else if (addTag) {
