@@ -243,26 +243,17 @@ function TagLibrary(props: Props) {
           <TagGroupContainer taggroup={tagGroup}>
             {tagGroup.children &&
               tagGroup.children.map((tag: TS.Tag, idx) => {
+                const isSmartTag =
+                  tag.functionality && tag.functionality.length > 0;
                 if (readOnlyMode) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
                       tag={tag}
                       tagGroup={tagGroup}
+                      tagMode={isSmartTag ? 'display' : 'default'}
                       handleTagMenu={handleTagMenuCallback}
                       addTags={addTags}
-                      /*moveTag={(
-                        tagTitle: string,
-                        fromTagGroupId: TS.Uuid,
-                        toTagGroupId: TS.Uuid
-                      ) =>
-                        moveTag(
-                          tagTitle,
-                          fromTagGroupId,
-                          toTagGroupId,
-                          tagGroups
-                        )
-                      }*/
                     />
                   );
                 }
@@ -273,6 +264,7 @@ function TagLibrary(props: Props) {
                     index={idx}
                     tag={tag}
                     tagGroup={tagGroup}
+                    tagMode={isSmartTag ? 'display' : 'default'}
                     handleTagMenu={handleTagMenuCallback}
                     addTags={addTags}
                     moveTag={(

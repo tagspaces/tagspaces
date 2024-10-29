@@ -45,7 +45,7 @@ function Tag(props: Props) {
           whiteSpace: 'nowrap',
           color: textColor,
           backgroundColor: backgroundColor,
-          minHeight: 18,
+          minHeight: 20,
           minWidth: 0,
           margin: 2,
           paddingTop: 0,
