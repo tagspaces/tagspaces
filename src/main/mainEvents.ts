@@ -37,9 +37,11 @@ import {
   getOnProgress,
   isWorkerAvailable,
   newProgress,
+  ollamaGetRequest,
   postRequest,
   readMacOSTags,
 } from './util';
+import { ApiResponse } from './types';
 
 //let watcher: FSWatcher;
 const progress = {};
@@ -244,6 +246,23 @@ export default function loadMainEvents() {
     }
     return result;
   });
+
+  ipcMain.handle('getOllamaModels', async (event, ollamaApiUrl) => {
+    const apiResponse = await ollamaGetRequest(
+      JSON.stringify({}),
+      '/api/tags',
+      ollamaApiUrl,
+    );
+    return (apiResponse as ApiResponse).models;
+  });
+  /*ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl) => {
+    const ApiResponse = await ollamaPostRequest(
+      JSON.stringify({}),
+      '/api/tags',
+      ollamaApiUrl,
+    );
+    return ApiResponse.models;
+  });*/
   ipcMain.handle(
     'copyFilePromiseOverwrite',
     async (event, sourceFilePath, targetFilePath) => {

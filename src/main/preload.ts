@@ -73,7 +73,8 @@ export type Channels =
   | 'panels'
   | 'history'
   | 'progress'
-  | 'uploadAbort';
+  | 'uploadAbort'
+  | 'getOllamaModels';
 
 const electronHandler = {
   ipcRenderer: {

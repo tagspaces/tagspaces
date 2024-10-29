@@ -41,6 +41,7 @@ import {
   DescriptionIcon,
   EditDescriptionIcon,
   RevisionIcon,
+  ExpandIcon,
 } from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
@@ -49,6 +50,8 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import TsTabPanel from '-/components/TsTabPanel';
 import AppConfig from '-/AppConfig';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -147,6 +150,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
   const ChatPanel = Pro && Pro.UI ? Pro.UI.ChatPanel : false;
+  const OllamaChatPanel = Pro && Pro.UI ? Pro.UI.OllamaChatPanel : false;
 
   useEffect(() => {
     selectedTabIndex.current = tabIndex;
@@ -294,7 +298,21 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           value={selectedTabIndex.current}
           index={haveRevisions.current ? 3 : 2}
         >
-          <ChatPanel />
+          {ollamaSettings.enabled && (
+            <Accordion defaultExpanded>
+              <AccordionSummary
+                data-tid="switchOllamaTID"
+                expandIcon={<ExpandIcon />}
+                aria-controls="panelOllama-content"
+                id="panelOllama-header"
+              >
+                <Typography>{t('core:OllamaPanel')}</Typography>
+              </AccordionSummary>
+              <AccordionDetails style={{ paddingTop: 16 }}>
+                <OllamaChatPanel />
+              </AccordionDetails>
+            </Accordion>
+          )}
         </TsTabPanel>
       )}
     </div>

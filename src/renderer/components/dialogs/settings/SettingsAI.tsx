@@ -42,7 +42,6 @@ import { ExpandIcon } from '-/components/CommonIcons';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import InfoIcon from '-/components/InfoIcon';
-import { Box } from '@mui/material/';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();

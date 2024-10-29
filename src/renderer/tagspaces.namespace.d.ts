@@ -248,6 +248,23 @@ export namespace TS {
 
   type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
   //type AIProviders = 'ollama' | 'node-lama' | 'chatgpt';
+  // Ollama Define the type for the model details
+  interface ModelDetails {
+    format: string;
+    family: string;
+    families: string | null;
+    parameter_size: string;
+    quantization_level: string;
+  }
+
+  // Ollama Define the type for a model
+  interface Model {
+    name: string;
+    modified_at: string;
+    size: number;
+    digest: string;
+    details: ModelDetails;
+  }
 
   type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 

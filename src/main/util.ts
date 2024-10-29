@@ -120,6 +120,58 @@ export function postRequest(payload, endpoint) {
 }
 
 /**
+ * @param payload: string
+ * @param endpoint: string
+ * @param ollamaApiUrl string url
+ */
+export function ollamaGetRequest(payload, endpoint, ollamaApiUrl) {
+  const url = new URL(ollamaApiUrl);
+  return new Promise((resolve, reject) => {
+    const option = {
+      hostname: url.hostname,
+      port: url.port || (url.protocol === 'https:' ? '443' : '80'),
+      method: 'GET',
+      path: endpoint,
+      headers: {
+        //Authorization: 'Bearer ' + settings.getToken(),
+        'Content-Type': 'application/json',
+        //'Content-Length': Buffer.byteLength(payload, 'utf8'),
+      },
+    };
+    const reqPost = http
+      .request(option, (resp) => {
+        // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+        let data = '';
+
+        // A chunk of data has been received.
+        resp.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+          if (data) {
+            console.log('ollama data' + data);
+            try {
+              resolve(JSON.parse(data));
+            } catch (ex) {
+              reject(ex);
+            }
+          } else {
+            reject(new Error('Error: no data'));
+          }
+        });
+      })
+      .on('error', (err) => {
+        console.log('Error: ' + err.message);
+        reject(err);
+      });
+    reqPost.write(payload);
+    reqPost.end();
+  });
+}
+
+/**
  * @param filename
  * @returns {Promise<TS.Tag[]>}
  */
