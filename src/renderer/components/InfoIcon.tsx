@@ -20,7 +20,6 @@ import React from 'react';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import Tooltip from '-/components/Tooltip';
-import { opacity } from 'html2canvas/dist/types/css/property-descriptors/opacity';
 
 interface Props {
   tooltip?: string;

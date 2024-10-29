@@ -26,7 +26,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
-import TagContainer from '-/components/TagContainer';
+import Tag from '-/components/Tag';
 import TransparentBackground from '../TransparentBackground';
 import TsTextField from '-/components/TsTextField';
 import { TS } from '-/tagspaces.namespace';
@@ -49,6 +49,9 @@ function EditTagDialog(props: Props) {
     useState<boolean>(false);
   const [inputError, setInputError] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(props.selectedTag.title);
+  const [description, setDescription] = useState<string>(
+    props.selectedTag.description,
+  );
   const [color, setColor] = useState<string>(props.selectedTag.color);
   const [textcolor, setTextcolor] = useState<string>(
     props.selectedTag.textcolor,
@@ -64,6 +67,17 @@ function EditTagDialog(props: Props) {
 
     if (name === 'title') {
       setTitle(value);
+    }
+  };
+
+  const handleTagDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    if (name === 'description') {
+      setDescription(value);
     }
   };
 
@@ -84,6 +98,7 @@ function EditTagDialog(props: Props) {
           title,
           color,
           textcolor,
+          description,
         },
         props.selectedTagGroupEntry.uuid,
         props.selectedTag.title,
@@ -142,7 +157,15 @@ function EditTagDialog(props: Props) {
       <DialogTitle style={{ overflow: 'visible' }}>
         {t('core:editTagTitle')}
         {`  `}
-        <TagContainer tag={{ title, color, textcolor }} tagMode="display" />
+        <Tag
+          backgroundColor={color}
+          textColor={textcolor}
+          isDragging={false}
+          tagTitle={description}
+        >
+          {title}
+          <span style={{ margin: 3 }} />
+        </Tag>
         <DialogCloseButton testId="closeEditTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'visible' }}>
@@ -186,6 +209,15 @@ function EditTagDialog(props: Props) {
               {t('core:tagTitleHelper')}
             </FormHelperText>
           )}
+        </FormControl>
+        <FormControl fullWidth={true} style={{ overflow: 'visible' }}>
+          <TsTextField
+            name="description"
+            label={t('core:editDescription')}
+            onChange={handleTagDescriptionChange}
+            value={description}
+            data-tid="editTagDescription"
+          />
         </FormControl>
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>

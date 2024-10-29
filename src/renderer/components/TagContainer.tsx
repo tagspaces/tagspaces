@@ -29,6 +29,7 @@ import { isDateTimeTag, convertToTimestamp } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import { getTagColors } from '-/services/taglibrary-utils';
 import TagContainerMenu from '-/components/TagContainerMenu';
+import Tag from '-/components/Tag';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
@@ -197,64 +198,46 @@ function TagContainer(props: Props) {
         display: 'inline-block',
       }}
     >
-      <Tooltip title={tagTitle}>
-        <Button
-          size="small"
+      <Tag
+        isDragging={isDragging}
+        tagTitle={tagTitle}
+        textColor={textColor}
+        backgroundColor={backgroundColor}
+      >
+        <span
           style={{
-            opacity: isDragging ? 0.5 : 1,
-            fontSize: 13,
-            fontWeight: 'normal',
-            lineHeight: '10px',
-            textTransform: 'none',
-            textWrap: 'nowrap',
-            whiteSpace: 'nowrap',
-            color: textColor,
-            backgroundColor,
-            minHeight: 18,
-            minWidth: 0,
-            margin: 2,
-            paddingTop: 0,
-            paddingBottom: 0,
-            paddingRight: 0,
-            paddingLeft: 5,
-            borderRadius: 5,
+            flexGrow: 1,
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          <span
-            style={{
-              flexGrow: 1,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {(isTagGeo || isGeoSmartTag) && (
-              <PlaceIcon
-                style={{
-                  color: textColor,
-                  height: 16,
-                  marginLeft: -5,
-                }}
-              />
-            )}
-            {(isTagDate || isDateSmartTag) && (
-              <DateIcon
-                style={{
-                  color: textColor,
-                  height: 16,
-                  marginLeft: -5,
-                }}
-              />
-            )}
-            {!isTagGeo && <span>{title}</span>}
-          </span>
-          <TagContainerMenu
-            handleRemoveTag={handleRemoveTag}
-            tag={tag}
-            tagMode={tagMode}
-            deleteIcon={deleteIcon}
-          />
-        </Button>
-      </Tooltip>
+          {(isTagGeo || isGeoSmartTag) && (
+            <PlaceIcon
+              style={{
+                color: textColor,
+                height: 16,
+                marginLeft: -5,
+              }}
+            />
+          )}
+          {(isTagDate || isDateSmartTag) && (
+            <DateIcon
+              style={{
+                color: textColor,
+                height: 16,
+                marginLeft: -5,
+              }}
+            />
+          )}
+          {!isTagGeo && <span>{title}</span>}
+        </span>
+        <TagContainerMenu
+          handleRemoveTag={handleRemoveTag}
+          tag={tag}
+          tagMode={tagMode}
+          deleteIcon={deleteIcon}
+        />
+      </Tag>
     </div>
   );
 }
