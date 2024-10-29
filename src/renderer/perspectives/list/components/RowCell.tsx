@@ -148,7 +148,7 @@ function RowCell(props: Props) {
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
-    addTag(tag, parentTagGroupUuid);
+    addTag([tag], parentTagGroupUuid);
   };
 
   // remove isNewFile on Cell click it will open file in editMode

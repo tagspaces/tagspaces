@@ -30,6 +30,7 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { parseNewTags } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -75,7 +76,8 @@ function CreateTagsDialog(props: Props) {
 
   const onConfirm = () => {
     if (!inputError) {
-      addTag(tagTitle, selectedTagGroupEntry.uuid);
+      const newTags = parseNewTags(tagTitle, selectedTagGroupEntry);
+      addTag(newTags, selectedTagGroupEntry.uuid);
       onClose();
     }
   };
