@@ -313,20 +313,20 @@ export const LocationIndexContextProvider = ({
         ignorePatterns,
         isWalking,
       )
-        .then((directoryIndex) =>
-          persistIndex(param, directoryIndex).then((success) => {
-            if (success) {
-              console.log('Index generated in folder: ' + dirPath);
-              return enhanceDirectoryIndex(
-                directoryIndex,
-                param.locationID,
-                param.path,
-              );
-              //return enhanceDirectoryIndex(param, directoryIndex, locationID);
-            }
-            return undefined;
-          }),
-        )
+        .then((directoryIndex) => {
+          if (!loc.isReadOnly) {
+            persistIndex(param, directoryIndex).then((success) => {
+              if (success) {
+                console.log('Index generated in folder: ' + dirPath);
+              }
+            });
+          }
+          return enhanceDirectoryIndex(
+            directoryIndex,
+            param.locationID,
+            param.path,
+          );
+        })
         .catch((err) => {
           console.log('Error creating index: ', err);
         });
