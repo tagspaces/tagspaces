@@ -1221,34 +1221,23 @@ export const TaggingActionsContextProvider = ({
     }
   }
 
-  function addTag(tag: any, parentTagGroupUuid: TS.Uuid) {
+  /**
+   * Add tag to tagGroup
+   * @param tag
+   * @param parentTagGroupUuid - tagGroup ID to add in
+   */
+  function addTag(tag: TS.Tag, parentTagGroupUuid: TS.Uuid) {
     const tgIndex = tagGroups.findIndex(
       (tagGroup) => tagGroup.uuid === parentTagGroupUuid,
     );
     if (tgIndex > -1) {
       const tagGroup = tagGroups[tgIndex];
-      let newTags: Array<TS.Tag>;
-      if (typeof tag === 'object' && tag !== null) {
-        if (tagGroup.children.some((t) => t.title === tag.title)) {
-          // tag exist
-          return;
-        }
-        const tagObject: TS.Tag = {
-          ...tag,
-          textcolor: tag.textcolor, // || tagTextColor,
-          color: tag.color, // || tagBackgroundColor
-        };
-        newTags = [tagObject];
-        //tagGroupsReturn = saveTagInt(tagObject, parentTagGroupUuid, tagGroups);
-      } else {
-        const newTagGroup = {
-          ...tagGroup,
-          color: tagGroup.color, // ? tagGroup.color : tagBackgroundColor,
-          textcolor: tagGroup.textcolor, // ? tagGroup.textcolor : tagTextColor
-        };
-        newTags = parseNewTags(tag, newTagGroup);
+      if (tagGroup.children.some((t) => t.title === tag.title)) {
+        // tag exist
+        return;
       }
-      saveTags(newTags, tgIndex);
+      const newTags = tagGroup.children;
+      saveTags([...tagGroup.children, tag], tgIndex);
 
       if (Pro && tagGroup && tagGroup.locationId) {
         const location: CommonLocation = findLocation(tagGroup.locationId);
