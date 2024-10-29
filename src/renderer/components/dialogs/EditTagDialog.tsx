@@ -26,6 +26,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
+import TagContainer from '-/components/TagContainer';
 import TransparentBackground from '../TransparentBackground';
 import TsTextField from '-/components/TsTextField';
 import { TS } from '-/tagspaces.namespace';
@@ -140,7 +141,8 @@ function EditTagDialog(props: Props) {
     >
       <DialogTitle style={{ overflow: 'visible' }}>
         {t('core:editTagTitle')}
-        {` '${title}'`}
+        {`  `}
+        <TagContainer tag={{ title, color, textcolor }} tagMode="display" />
         <DialogCloseButton testId="closeEditTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'visible' }}>
