@@ -38,6 +38,7 @@ import {
   isWorkerAvailable,
   newProgress,
   ollamaGetRequest,
+  ollamaPostRequest,
   postRequest,
   readMacOSTags,
 } from './util';
@@ -248,21 +249,25 @@ export default function loadMainEvents() {
   });
 
   ipcMain.handle('getOllamaModels', async (event, ollamaApiUrl) => {
-    const apiResponse = await ollamaGetRequest(
-      JSON.stringify({}),
-      '/api/tags',
-      ollamaApiUrl,
-    );
+    const apiResponse = await ollamaGetRequest('/api/tags', ollamaApiUrl);
     return (apiResponse as ApiResponse).models;
   });
-  /*ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl) => {
-    const ApiResponse = await ollamaPostRequest(
-      JSON.stringify({}),
-      '/api/tags',
+  ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl, msg) => {
+    const apiResponse = await ollamaPostRequest(
+      JSON.stringify(msg),
+      '/api/chat',
       ollamaApiUrl,
+      (response) => {
+        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+        if (mainWindow.length > 0) {
+          mainWindow.map(
+            (window) => window.webContents.send('ChatMessage', response), // Stream message to renderer process
+          );
+        }
+      },
     );
-    return ApiResponse.models;
-  });*/
+    return apiResponse;
+  });
   ipcMain.handle(
     'copyFilePromiseOverwrite',
     async (event, sourceFilePath, targetFilePath) => {

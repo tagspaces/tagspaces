@@ -124,7 +124,7 @@ export function postRequest(payload, endpoint) {
  * @param endpoint: string
  * @param ollamaApiUrl string url
  */
-export function ollamaGetRequest(payload, endpoint, ollamaApiUrl) {
+export function ollamaGetRequest(endpoint, ollamaApiUrl) {
   const url = new URL(ollamaApiUrl);
   return new Promise((resolve, reject) => {
     const option = {
@@ -164,6 +164,61 @@ export function ollamaGetRequest(payload, endpoint, ollamaApiUrl) {
       })
       .on('error', (err) => {
         console.log('Error: ' + err.message);
+        reject(err);
+      });
+    //reqPost.write(payload);
+    reqPost.end();
+  });
+}
+
+export function ollamaPostRequest(
+  payload,
+  endpoint,
+  ollamaApiUrl,
+  responseCallback,
+) {
+  const url = new URL(ollamaApiUrl);
+  return new Promise((resolve, reject) => {
+    const option = {
+      hostname: url.hostname,
+      port: url.port || (url.protocol === 'https:' ? '443' : '80'),
+      method: 'POST',
+      path: endpoint,
+      headers: {
+        //Authorization: 'Bearer ' + settings.getToken(),
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload, 'utf8'),
+      },
+    };
+    console.log('Ollama option: ', option);
+    console.log('Ollama payload: ', payload);
+    const reqPost = http
+      .request(option, (resp) => {
+        const dataChunks: string[] = [];
+
+        // A chunk of data has been received.
+        resp.on('data', (chunk) => {
+          try {
+            const msgChunk = chunk.toString('utf-8');
+            console.log('Ollama data: ', msgChunk);
+            const message = JSON.parse(msgChunk);
+
+            if (!message.done) {
+              dataChunks.push(message.message.content);
+              responseCallback(message.message.content); // Stream message to renderer process
+            }
+          } catch (e) {
+            console.error('Ollama data err:', e);
+          }
+        });
+
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+          resolve(dataChunks.join(''));
+        });
+      })
+      .on('error', (err) => {
+        console.log('Error: ', err);
         reject(err);
       });
     reqPost.write(payload);
