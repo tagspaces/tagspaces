@@ -751,27 +751,26 @@ export const LocationIndexContextProvider = ({
       return loc
         .getPropertiesPromise(folderIndexPath)
         .then((indexFile: TS.FileSystemEntry) => {
-          const indexAge = new Date().getTime() - indexFile.lmdt;
-          if (
-            loc.disableIndexing ||
-            (indexFile && indexAge < maxIndexAge.current)
-          ) {
-            return loc
-              .loadTextFilePromise(folderIndexPath)
-              .then((jsonContent) => {
-                const directoryIndex = loadJSONString(
-                  jsonContent,
-                ) as TS.FileSystemEntry[];
-                return enhanceDirectoryIndex(
-                  directoryIndex,
-                  locationID,
-                  folderPath,
-                );
-              })
-              .catch((e) => {
-                console.log('cannot load json:' + folderPath, e);
-                return undefined;
-              });
+          if (indexFile) {
+            const indexAge = new Date().getTime() - indexFile.lmdt;
+            if (loc.disableIndexing || indexAge < maxIndexAge.current) {
+              return loc
+                .loadTextFilePromise(folderIndexPath)
+                .then((jsonContent) => {
+                  const directoryIndex = loadJSONString(
+                    jsonContent,
+                  ) as TS.FileSystemEntry[];
+                  return enhanceDirectoryIndex(
+                    directoryIndex,
+                    locationID,
+                    folderPath,
+                  );
+                })
+                .catch((e) => {
+                  console.log('cannot load json:' + folderPath, e);
+                  return undefined;
+                });
+            }
           }
           return undefined;
         });
