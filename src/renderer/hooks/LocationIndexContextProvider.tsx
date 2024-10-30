@@ -752,7 +752,10 @@ export const LocationIndexContextProvider = ({
         .getPropertiesPromise(folderIndexPath)
         .then((indexFile: TS.FileSystemEntry) => {
           const indexAge = new Date().getTime() - indexFile.lmdt;
-          if (indexFile && indexAge < maxIndexAge.current) {
+          if (
+            loc.disableIndexing ||
+            (indexFile && indexAge < maxIndexAge.current)
+          ) {
             return loc
               .loadTextFilePromise(folderIndexPath)
               .then((jsonContent) => {
