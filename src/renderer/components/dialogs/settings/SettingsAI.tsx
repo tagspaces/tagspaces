@@ -16,7 +16,7 @@
  *
  */
 
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Accordion,
@@ -28,7 +28,11 @@ import {
   Select,
   Switch,
   FormControl,
+  CircularProgress,
+  Box,
 } from '@mui/material';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   actions as SettingsActions,
   getOllamaSettings,
@@ -40,14 +44,22 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { ExpandIcon } from '-/components/CommonIcons';
 import Typography from '@mui/material/Typography';
-import Input from '@mui/material/Input';
 import InfoIcon from '-/components/InfoIcon';
+import TsTextField from '-/components/TsTextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Tooltip from '-/components/Tooltip';
+import IconButton from '@mui/material/IconButton';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
   const ollamaSettings = useSelector(getOllamaSettings);
-
+  const ollamaAlive = useRef<boolean | null>(null);
+  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    checkOllamaAlive();
+  }, []);
 
   const handleSwitchChange = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(
@@ -67,6 +79,15 @@ function SettingsAI() {
     );
   };
 
+  function checkOllamaAlive() {
+    window.electronIO.ipcRenderer
+      .invoke('getOllamaModels', ollamaSettings.url)
+      .then((m) => {
+        ollamaAlive.current = !!m;
+        forceUpdate();
+      });
+  }
+
   return (
     <>
       <Accordion defaultExpanded>
@@ -76,10 +97,28 @@ function SettingsAI() {
           id="ollama-header"
           data-tid="ollamaTID"
         >
-          <Typography>
-            {t('core:ollama')}
-            <BetaLabel />
-          </Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            p={2}
+          >
+            <Typography>
+              {t('core:ollama')}
+              <BetaLabel /> Service Status
+            </Typography>
+            {ollamaAlive.current === null ? (
+              <CircularProgress size={12} />
+            ) : (
+              <FiberManualRecordIcon
+                sx={{
+                  color: ollamaAlive.current ? 'green' : 'red',
+                  fontSize: 19,
+                  ml: 1,
+                }}
+              />
+            )}
+          </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 2 }}>
           <FormGroup style={{ width: '100%' }}>
@@ -101,12 +140,28 @@ function SettingsAI() {
                 {t('core:ollamaSocket')}
                 <InfoIcon tooltip={t('core:ollamaSocketHelp')} />
               </Typography>
-              <Input
+              <TsTextField
                 fullWidth
                 name="ollamaSocket"
                 data-tid="ollamaSocketTID"
                 value={ollamaSettings.url}
                 onChange={handleInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" style={{ height: 32 }}>
+                      <Tooltip title="Check Ollama Service Status">
+                        <IconButton
+                          onClick={() => {
+                            checkOllamaAlive();
+                          }}
+                          size="large"
+                        >
+                          <AutorenewIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
           </FormGroup>

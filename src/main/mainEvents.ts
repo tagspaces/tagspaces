@@ -249,8 +249,12 @@ export default function loadMainEvents() {
   });
 
   ipcMain.handle('getOllamaModels', async (event, ollamaApiUrl) => {
-    const apiResponse = await ollamaGetRequest('/api/tags', ollamaApiUrl);
-    return (apiResponse as ApiResponse).models;
+    try {
+      const apiResponse = await ollamaGetRequest('/api/tags', ollamaApiUrl);
+      return (apiResponse as ApiResponse).models;
+    } catch (e) {
+      return undefined;
+    }
   });
   ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl, msg) => {
     const apiResponse = await ollamaPostRequest(
