@@ -160,11 +160,9 @@ export const ThumbGenerationContextProvider = ({
   function genThumbnailsEnabled(location: CommonLocation): boolean {
     if (
       currentDirectoryPath === undefined ||
-      currentDirectoryPath.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder,
-      ) ||
+      currentDirectoryPath.endsWith(AppConfig.metaFolder) ||
       currentDirectoryPath.indexOf(
-        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator,
+        AppConfig.metaFolder + AppConfig.dirSeparator,
       ) !== -1
     ) {
       return false; // dont generate thumbnails in meta folder
