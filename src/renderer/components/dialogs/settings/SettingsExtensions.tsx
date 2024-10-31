@@ -104,7 +104,7 @@ function SettingsExtensions() {
   };
 
   return (
-    <div style={{ minHeight: 400 }}>
+    <div style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

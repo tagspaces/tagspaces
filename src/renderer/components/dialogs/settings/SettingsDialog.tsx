@@ -22,16 +22,17 @@ import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import ConfirmDialog from '../ConfirmDialog';
-import SettingsGeneral from '../settings/SettingsGeneral';
-import SettingsKeyBindings from '../settings/SettingsKeyBindings';
-import SettingsFileTypes from '../settings/SettingsFileTypes';
+import { isDesktopMode } from '-/reducers/settings';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import SettingsGeneral from '-/components/dialogs/settings/SettingsGeneral';
+import SettingsKeyBindings from '-/components/dialogs/settings/SettingsKeyBindings';
+import SettingsFileTypes from '-/components/dialogs/settings/SettingsFileTypes';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -51,56 +52,110 @@ interface Props {
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
+  const desktopMode = useSelector(isDesktopMode);
   const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
     useState<boolean>(false);
+  const { open, onClose } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleTabClick = (event, tab) => {
     setCurrentTab(tab);
   };
 
   const renderTitle = () => (
-    <>
-      <DialogTitle>
-        {t('core:settings')}
-        <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
-      </DialogTitle>
-      <AppBar position="static" color="default">
-        <Tabs
-          value={currentTab}
-          onChange={handleTabClick}
-          indicatorColor="primary"
-          scrollButtons="auto"
-          variant="scrollable"
-        >
-          <Tab data-tid="generalSettingsDialog" label={t('core:generalTab')} />
-          <Tab
-            data-tid="fileTypeSettingsDialog"
-            label={t('core:fileTypeTab')}
-          />
-          <Tab
-            data-tid="keyBindingsSettingsDialog"
-            label={t('core:keyBindingsTab')}
-          />
-          <Tab
-            data-tid="extensionsSettingsDialog"
-            label={t('core:extensionsTab')}
-          />
-          <Tab
-            data-tid="advancedSettingsDialogTID"
-            label={t('core:advancedSettingsTab')}
-          />
-        </Tabs>
-      </AppBar>
-    </>
+    <DialogTitle>
+      {t('core:settings')}
+      <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
+    </DialogTitle>
   );
 
   const renderContent = () => (
     <DialogContent
       style={{
-        overflowY: 'auto',
+        overflowY: 'hidden',
         overflowX: 'hidden',
+        display: fullScreen ? 'block' : 'flex',
+        flexGrow: 1,
       }}
     >
+      <Tabs
+        value={currentTab}
+        centered
+        onChange={handleTabClick}
+        indicatorColor="primary"
+        scrollButtons="auto"
+        variant={fullScreen ? 'scrollable' : 'standard'}
+        orientation={fullScreen ? 'horizontal' : 'vertical'}
+        style={{
+          width: fullScreen ? '100%' : '150px',
+        }}
+      >
+        <Tab
+          style={{
+            // textTransform: 'unset',
+            alignItems: 'baseline',
+            paddingLeft: 0,
+          }}
+          data-tid="generalSettingsDialog"
+          label={t('core:generalTab')}
+        />
+        <Tab
+          style={{
+            // textTransform: 'unset',
+            alignItems: 'baseline',
+            paddingLeft: 0,
+          }}
+          data-tid="fileTypeSettingsDialog"
+          label={t('core:fileTypeTab')}
+        />
+        <Tab
+          style={{
+            // textTransform: 'unset',
+            alignItems: 'baseline',
+            paddingLeft: 0,
+          }}
+          data-tid="keyBindingsSettingsDialog"
+          label={t('core:keyBindingsTab')}
+        />
+        <Tab
+          style={{
+            // textTransform: 'unset',
+            alignItems: 'baseline',
+            paddingLeft: 0,
+          }}
+          data-tid="extensionsSettingsDialog"
+          label={t('core:extensionsTab')}
+        />
+        <Tab
+          style={{
+            // textTransform: 'unset',
+            alignItems: 'baseline',
+            paddingLeft: 0,
+          }}
+          data-tid="advancedSettingsDialogTID"
+          label={t('core:advancedSettingsTab')}
+        />
+      </Tabs>
+      <div
+        data-tid="settingsDialog"
+        style={{
+          height: 'calc(100% - 50px)',
+          minHeight: 400,
+          minWidth: 600,
+          maxWidth: 600,
+        }}
+      >
+        {currentTab === 0 && <SettingsGeneral />}
+        {currentTab === 1 && <SettingsFileTypes />}
+        {currentTab === 2 && <SettingsKeyBindings />}
+        {currentTab === 3 && <SettingsExtensions />}
+        {currentTab === 4 && (
+          <SettingsAdvanced
+            showResetSettings={setIsResetSettingsDialogOpened}
+          />
+        )}
+      </div>
       {isResetSettingsDialogOpened && (
         <ConfirmDialog
           open={isResetSettingsDialogOpened}
@@ -119,11 +174,6 @@ function SettingsDialog(props: Props) {
               } else {
                 window.location.reload();
               }
-
-              /* const electron = window.require('electron');
-              const webContents = electron.remote.getCurrentWebContents();
-              webContents.session.clearStorageData();
-              webContents.reload(); */
             }
           }}
           cancelDialogTID="cancelResetSettingsDialogTID"
@@ -131,18 +181,6 @@ function SettingsDialog(props: Props) {
           confirmDialogContentTID="confirmResetSettingsDialogContentTID"
         />
       )}
-
-      <div data-tid="settingsDialog">
-        {currentTab === 0 && <SettingsGeneral />}
-        {currentTab === 1 && <SettingsFileTypes />}
-        {currentTab === 2 && <SettingsKeyBindings />}
-        {currentTab === 3 && <SettingsExtensions />}
-        {currentTab === 4 && (
-          <SettingsAdvanced
-            showResetSettings={setIsResetSettingsDialogOpened}
-          />
-        )}
-      </div>
     </DialogContent>
   );
 
@@ -162,7 +200,6 @@ function SettingsDialog(props: Props) {
       >
         {t('core:help')}
       </Button>
-
       <Button
         data-tid="closeSettingsDialog"
         onClick={props.onClose}
@@ -174,21 +211,29 @@ function SettingsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { open, onClose } = props;
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <TranslucentDialog
+    <Dialog
+      sx={{
+        '& .MuiDialog-paper': {
+          maxWidth: 'unset',
+          height: '100%',
+          // background: props.fullScreen
+          //   ? theme.palette.background.default
+          //   : alpha(theme.palette.background.default, 0.85),
+          // backdropFilter: props.fullScreen ? 'unset' : 'blur(5px)',
+        },
+      }}
       fullScreen={fullScreen}
       open={open}
       keepMounted
       scroll="paper"
       onClose={onClose}
+      style={{ maxWidth: 'auto' }}
     >
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </TranslucentDialog>
+    </Dialog>
   );
 }
 
