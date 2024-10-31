@@ -19,6 +19,7 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractFileName,
   normalizePath,
@@ -160,9 +161,13 @@ export const ThumbGenerationContextProvider = ({
   function genThumbnailsEnabled(location: CommonLocation): boolean {
     if (
       currentDirectoryPath === undefined ||
-      currentDirectoryPath.endsWith(AppConfig.metaFolder) ||
+      cleanTrailingDirSeparator(currentDirectoryPath) ===
+        AppConfig.metaFolder ||
+      cleanTrailingDirSeparator(currentDirectoryPath).endsWith(
+        AppConfig.dirSeparator + AppConfig.metaFolder,
+      ) ||
       currentDirectoryPath.indexOf(
-        AppConfig.metaFolder + AppConfig.dirSeparator,
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator,
       ) !== -1
     ) {
       return false; // dont generate thumbnails in meta folder
