@@ -18,12 +18,19 @@
 
 import React, { useEffect, useReducer, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import { AppDispatch } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
@@ -50,8 +57,6 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import TsTabPanel from '-/components/TsTabPanel';
 import AppConfig from '-/AppConfig';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import Typography from '@mui/material/Typography';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -149,7 +154,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
-  const ChatPanel = Pro && Pro.UI ? Pro.UI.ChatPanel : false;
   const OllamaChatPanel = Pro && Pro.UI ? Pro.UI.OllamaChatPanel : false;
 
   useEffect(() => {
