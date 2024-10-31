@@ -76,6 +76,18 @@ function ListPerspectiveAsync(props) {
   );
 }
 
+const ChatPerspective = React.lazy(
+  () =>
+    import(/* webpackChunkName: "ChatPerspective" */ '../perspectives/chat'),
+);
+function ChatPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ChatPerspective {...props} />
+    </React.Suspense>
+  );
+}
+
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
   // GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
@@ -185,6 +197,9 @@ function RenderPerspective(props: Props) {
       return (
         <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
       );
+    }
+    if (perspective === PerspectiveIDs.CHAT) {
+      return <ChatPerspectiveAsync />;
     }
     if (Pro && perspective === PerspectiveIDs.GALLERY) {
       return <GalleryPerspectiveAsync />;

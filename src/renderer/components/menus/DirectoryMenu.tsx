@@ -172,7 +172,8 @@ function DirectoryMenu(props: Props) {
     if (
       Pro ||
       perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST
+      perspectiveId === PerspectiveIDs.LIST ||
+      perspectiveId === PerspectiveIDs.CHAT
     ) {
       if (switchPerspective) {
         switchPerspective(perspectiveId);

@@ -37,6 +37,7 @@ import {
   getOnProgress,
   isWorkerAvailable,
   newProgress,
+  ollamaDeleteRequest,
   ollamaGetRequest,
   ollamaPostRequest,
   postRequest,
@@ -266,6 +267,39 @@ export default function loadMainEvents() {
         if (mainWindow.length > 0) {
           mainWindow.map(
             (window) => window.webContents.send('ChatMessage', response), // Stream message to renderer process
+          );
+        }
+      },
+    );
+    return apiResponse;
+  });
+  ipcMain.handle('pullOllamaModel', async (event, ollamaApiUrl, msg) => {
+    const apiResponse = await ollamaPostRequest(
+      JSON.stringify(msg),
+      '/api/pull',
+      ollamaApiUrl,
+      (response, replace) => {
+        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+        if (mainWindow.length > 0) {
+          mainWindow.map(
+            (window) =>
+              window.webContents.send('ChatMessage', response, replace), // Stream message to renderer process
+          );
+        }
+      },
+    );
+    return apiResponse;
+  });
+  ipcMain.handle('deleteOllamaModel', async (event, ollamaApiUrl, msg) => {
+    const apiResponse = await ollamaDeleteRequest(
+      JSON.stringify(msg),
+      '/api/delete',
+      ollamaApiUrl,
+      (response) => {
+        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+        if (mainWindow.length > 0) {
+          mainWindow.map(
+            (window) => window.webContents.send('ChatMessage', response, false), // Stream message to renderer process
           );
         }
       },

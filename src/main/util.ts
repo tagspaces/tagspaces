@@ -170,6 +170,45 @@ export function ollamaGetRequest(endpoint, ollamaApiUrl) {
     reqPost.end();
   });
 }
+export function ollamaDeleteRequest(
+  payload,
+  endpoint,
+  ollamaApiUrl,
+  responseCallback,
+) {
+  const url = new URL(ollamaApiUrl);
+  return new Promise((resolve, reject) => {
+    const option = {
+      hostname: url.hostname,
+      port: url.port || (url.protocol === 'https:' ? '443' : '80'),
+      method: 'DELETE',
+      path: endpoint,
+      headers: {
+        //Authorization: 'Bearer ' + settings.getToken(),
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload, 'utf8'),
+      },
+    };
+    const reqPost = http
+      .request(option, (resp) => {
+        console.log('ollamaDeleteRequest: ' + resp.statusCode);
+        if (resp.statusCode === 200) {
+          responseCallback('Model deleted successful!');
+          resolve(true);
+        }
+        if (resp.statusCode === 400) {
+          responseCallback('Model not deleted!');
+          resolve(false);
+        }
+      })
+      .on('error', (err) => {
+        console.log('Error: ' + err.message);
+        reject(err);
+      });
+    reqPost.write(payload);
+    reqPost.end();
+  });
+}
 
 export function ollamaPostRequest(
   payload,
@@ -203,9 +242,19 @@ export function ollamaPostRequest(
             console.log('Ollama data: ', msgChunk);
             const message = JSON.parse(msgChunk);
 
-            if (!message.done) {
-              dataChunks.push(message.message.content);
-              responseCallback(message.message.content); // Stream message to renderer process
+            if (!message.done || message.status !== 'success') {
+              if (message.message) {
+                dataChunks.push(message.message.content);
+                responseCallback(message.message.content, false); // Stream message to renderer process
+              } else if (message.status) {
+                const progress =
+                  message.completed && message.total
+                    ? ' ' +
+                      Math.floor((message.completed / message.total) * 100) +
+                      '%'
+                    : '';
+                responseCallback(message.status + progress, true);
+              }
             }
           } catch (e) {
             console.error('Ollama data err:', e);

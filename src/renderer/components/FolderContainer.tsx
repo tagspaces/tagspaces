@@ -133,7 +133,8 @@ function FolderContainer(props: Props) {
     if (
       Pro ||
       perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST
+      perspectiveId === PerspectiveIDs.LIST ||
+      perspectiveId === PerspectiveIDs.CHAT
     ) {
       setManualDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {

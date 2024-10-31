@@ -22,6 +22,7 @@ import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
 import FolderVizPerspectiveIcon from '@mui/icons-material/Hub';
+import ChatIcon from '@mui/icons-material/Chat';
 
 export const PerspectiveIDs = {
   UNSPECIFIED: 'unspecified',
@@ -31,6 +32,7 @@ export const PerspectiveIDs = {
   FOLDERVIZ: 'folderviz',
   MAPIQUE: 'mapique',
   KANBAN: 'kanban',
+  CHAT: 'chat',
   // WIKI: 'wiki'
 };
 
@@ -50,6 +52,15 @@ export const ListPerspectiveMeta = {
   beta: false,
   icon: <ListPerspectiveIcon />,
   title: 'List Perspective',
+};
+
+export const ChatPerspectiveMeta = {
+  id: PerspectiveIDs.CHAT,
+  key: 'openChatPerspective',
+  pro: false,
+  beta: true,
+  icon: <ChatIcon />,
+  title: 'Chat Perspective',
 };
 
 export const MapiquePerspectiveMeta = {
@@ -97,4 +108,5 @@ AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
 AvailablePerspectives.push(KanbanPerspectiveMeta);
 AvailablePerspectives.push(FolderVizPerspectiveMeta);
+AvailablePerspectives.push(ChatPerspectiveMeta);
 // AvailablePerspectives.push(WikiPerspectiveMeta);
