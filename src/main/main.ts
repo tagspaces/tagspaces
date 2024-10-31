@@ -67,6 +67,8 @@ if (isDebug) {
     // temp fix https://github.com/electron/electron/issues/43415#issuecomment-2359194469
     app.disableHardwareAcceleration();
   }
+} else {
+  console.log = () => {};
 }
 
 const testMode = process.env.NODE_ENV === 'test';
