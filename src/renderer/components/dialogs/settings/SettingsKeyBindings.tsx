@@ -36,19 +36,6 @@ import Typography from '@mui/material/Typography';
 import { setGlobalShortcuts } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 
-const PREFIX = 'SettingsKeyBindings';
-
-const classes = {
-  keyBinding: `${PREFIX}-keyBinding`,
-};
-
-const Root = styled('form')(({ theme }) => ({
-  [`& .${classes.keyBinding}`]: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-}));
-
 function SettingsKeyBindings() {
   const { t } = useTranslation();
   const keyBindings = useSelector(getKeyBindings);
@@ -65,7 +52,14 @@ function SettingsKeyBindings() {
   };
 
   return (
-    <Root className={classes.keyBinding} noValidate autoComplete="off">
+    <div
+      style={{
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        height: '100%',
+        marginLeft: 10,
+      }}
+    >
       <Typography variant="body2" style={{ marginBottom: 10 }}>
         The following key names can be used for defining key bindings:{' '}
         <Typography variant="overline">
@@ -91,8 +85,9 @@ function SettingsKeyBindings() {
         )[0];
         return (
           <TsTextField
-            className={classes.keyBinding}
+            style={{ marginTop: 10, marginBottom: 10 }}
             key={keyBinding.name}
+            autoComplete="off"
             InputLabelProps={{ shrink: true }}
             onBlur={(event) =>
               setKeyBinding(keyBinding.name, event.target.value)
@@ -106,7 +101,7 @@ function SettingsKeyBindings() {
           />
         );
       })}
-    </Root>
+    </div>
   );
 }
 

@@ -363,7 +363,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function createLocationIndex(location: CommonLocation): Promise<boolean> {
-    if (location) {
+    if (location && !location.disableIndexing) {
       return getLocationPath(location).then((locationPath) => {
         const isCurrentLocation =
           currentLocation && currentLocation.uuid === location.uuid;
@@ -398,15 +398,17 @@ export const LocationIndexContextProvider = ({
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
     for (let location of locations) {
       try {
-        const locationPath = await getLocationPath(location);
-        isIndexing.current = locationPath;
-        forceUpdate();
-        await createDirectoryIndexWrapper(
-          { path: locationPath, locationID: location.uuid },
-          extractText,
-          location.ignorePatternPaths,
-          enableWS,
-        );
+        if (!location.disableIndexing) {
+          const locationPath = await getLocationPath(location);
+          isIndexing.current = locationPath;
+          forceUpdate();
+          await createDirectoryIndexWrapper(
+            { path: locationPath, locationID: location.uuid },
+            extractText,
+            location.ignorePatternPaths,
+            enableWS,
+          );
+        }
       } catch (error) {
         console.error('An error occurred:', error);
       }
@@ -749,24 +751,26 @@ export const LocationIndexContextProvider = ({
       return loc
         .getPropertiesPromise(folderIndexPath)
         .then((indexFile: TS.FileSystemEntry) => {
-          const indexAge = new Date().getTime() - indexFile.lmdt;
-          if (indexFile && indexAge < maxIndexAge.current) {
-            return loc
-              .loadTextFilePromise(folderIndexPath)
-              .then((jsonContent) => {
-                const directoryIndex = loadJSONString(
-                  jsonContent,
-                ) as TS.FileSystemEntry[];
-                return enhanceDirectoryIndex(
-                  directoryIndex,
-                  locationID,
-                  folderPath,
-                );
-              })
-              .catch((e) => {
-                console.log('cannot load json:' + folderPath, e);
-                return undefined;
-              });
+          if (indexFile) {
+            const indexAge = new Date().getTime() - indexFile.lmdt;
+            if (loc.disableIndexing || indexAge < maxIndexAge.current) {
+              return loc
+                .loadTextFilePromise(folderIndexPath)
+                .then((jsonContent) => {
+                  const directoryIndex = loadJSONString(
+                    jsonContent,
+                  ) as TS.FileSystemEntry[];
+                  return enhanceDirectoryIndex(
+                    directoryIndex,
+                    locationID,
+                    folderPath,
+                  );
+                })
+                .catch((e) => {
+                  console.log('cannot load json:' + folderPath, e);
+                  return undefined;
+                });
+            }
           }
           return undefined;
         });

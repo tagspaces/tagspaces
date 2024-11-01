@@ -47,34 +47,7 @@ import { DeleteIcon } from '-/components/CommonIcons';
 import { ListItemIcon } from '@mui/material';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { AppDispatch } from '-/reducers/app';
-import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-
-const PREFIX = 'SettingsGeneral';
-
-const classes = {
-  root: `${PREFIX}-root`,
-  listItem: `${PREFIX}-listItem`,
-  pro: `${PREFIX}-pro`,
-  colorChooserButton: `${PREFIX}-colorChooserButton`,
-};
-
-const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.root}`]: {
-    overflowX: 'hidden',
-  },
-  [`& .${classes.listItem}`]: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  [`& .${classes.pro}`]: {
-    backgroundColor: '#1DD19F',
-  },
-  [`& .${classes.colorChooserButton}`]: {
-    minHeight: 30,
-    border: '1px solid lightgray',
-  },
-}));
 
 interface Props {
   showResetSettings: (showDialog: boolean) => void;
@@ -91,7 +64,6 @@ function SettingsAdvanced(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
-  //const enableWS = useSelector(getEnableWS);
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const [confirmDialogKey, setConfirmDialogKey] = useState<null | string>(null);
@@ -135,341 +107,337 @@ function SettingsAdvanced(props: Props) {
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
   return (
-    <Root style={{ width: '100%' }}>
-      <List className={classes.root}>
-        <ListItem className={classes.listItem}>
-          <Button
-            data-tid="resetSettingsTID"
-            onClick={() => showResetSettings(true)}
-            color="secondary"
-            style={{ marginLeft: -7 }}
-          >
-            {t('core:resetSettings')}
-          </Button>
-          <Button
-            data-tid="reloadAppTID"
-            onClick={() => {
-              if (AppConfig.isElectron) {
-                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
-              } else {
-                window.location.reload();
+    <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
+      <ListItem>
+        <Button
+          data-tid="resetSettingsTID"
+          onClick={() => showResetSettings(true)}
+          color="secondary"
+          style={{ marginLeft: -7 }}
+        >
+          {t('core:resetSettings')}
+        </Button>
+        <Button
+          data-tid="reloadAppTID"
+          onClick={() => {
+            if (AppConfig.isElectron) {
+              window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+            } else {
+              window.location.reload();
+            }
+          }}
+          color="secondary"
+        >
+          {t('core:reloadApplication')}
+        </Button>
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('enableMobileMode')} />
+        <Switch
+          data-tid="settingsSetDesktopMode"
+          disabled={!(typeof window.ExtDisplayMode === 'undefined')}
+          onClick={() => setDesktopMode(!settings.desktopMode)}
+          checked={!settings.desktopMode}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('enableDevMode')} />
+        <Switch
+          data-tid="settingsEnableDevMode"
+          disabled={window.ExtDevMode && window.ExtDevMode === true}
+          onClick={() => setDevMode(!devMode)}
+          checked={devMode}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('enableWS')} />
+        <Switch
+          data-tid="settingsEnableWS"
+          disabled={!AppConfig.isElectron}
+          onClick={() => setEnableWS(!settings.enableWS)}
+          checked={settings.enableWS}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('warningOpeningFilesExternally')} />
+        <Switch
+          data-tid="warningOpeningFilesExternally"
+          onClick={() =>
+            setWarningOpeningFilesExternally(
+              !settings.warningOpeningFilesExternally,
+            )
+          }
+          checked={settings.warningOpeningFilesExternally}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:prefixTagContainer')} />
+        <Input
+          style={{ maxWidth: '100px' }}
+          data-tid="prefixTagContainerTID"
+          value={settings.prefixTagContainer}
+          onChange={(event) => setPrefixTagContainer(event.target.value)}
+        />
+      </ListItem>
+      {Pro && (
+        <>
+          <ListItem>
+            <ListItemText primary={t('core:fileOpenHistory')} />
+            <ListItemIcon>
+              <Tooltip title={t('clearHistory')}>
+                <IconButton
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </ListItemIcon>
+            <Select
+              data-tid="fileOpenTID"
+              title={t('core:fileOpenHistoryTitle')}
+              value={settings[historyKeys.fileOpenKey]}
+              onChange={(event) =>
+                setHistory(historyKeys.fileOpenKey, event.target.value)
+              }
+              input={<Input id="fileOpenSelector" />}
+            >
+              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary={t('core:folderOpenHistory')} />
+            <ListItemIcon>
+              <Tooltip title={t('clearHistory')}>
+                <IconButton
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </ListItemIcon>
+            <Select
+              data-tid="folderOpenTID"
+              title={t('core:folderOpenHistoryTitle')}
+              value={settings[historyKeys.folderOpenKey]}
+              onChange={(event: any) =>
+                setHistory(historyKeys.folderOpenKey, event.target.value)
+              }
+              input={<Input id="folderOpenSelector" />}
+            >
+              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary={t('core:fileEditHistory')} />
+            <ListItemIcon>
+              <Tooltip title={t('clearHistory')}>
+                <IconButton
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </ListItemIcon>
+            <Select
+              data-tid="fileEditTID"
+              title={t('core:fileEditHistoryTitle')}
+              value={settings[historyKeys.fileEditKey]}
+              onChange={(event: any) =>
+                setHistory(historyKeys.fileEditKey, event.target.value)
+              }
+              input={<Input id="fileEditSelector" />}
+            >
+              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary={t('core:searchHistory')} />
+            <ListItemIcon>
+              <Tooltip title={t('clearHistory')}>
+                <IconButton
+                  aria-label={t('core:clearHistory')}
+                  onClick={() =>
+                    setConfirmDialogKey(historyKeys.searchHistoryKey)
+                  }
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </ListItemIcon>
+            <Select
+              data-tid="searchHistoryTID"
+              title={t('core:searchHistoryTitle')}
+              value={settings[historyKeys.searchHistoryKey]}
+              onChange={(event: any) =>
+                setHistory(historyKeys.searchHistoryKey, event.target.value)
+              }
+              input={<Input id="searchHistorySelector" />}
+            >
+              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </ListItem>
+          <ConfirmDialog
+            open={confirmDialogKey !== null}
+            onClose={() => {
+              setConfirmDialogKey(null);
+            }}
+            title="Confirm"
+            content={t('core:confirm' + confirmDialogKey + 'Deletion')}
+            confirmCallback={(result) => {
+              if (result) {
+                historyContext.delAllHistory(confirmDialogKey);
               }
             }}
-            color="secondary"
-          >
-            {t('core:reloadApplication')}
-          </Button>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('enableMobileMode')} />
-          <Switch
-            data-tid="settingsSetDesktopMode"
-            disabled={!(typeof window.ExtDisplayMode === 'undefined')}
-            onClick={() => setDesktopMode(!settings.desktopMode)}
-            checked={!settings.desktopMode}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('enableDevMode')} />
-          <Switch
-            data-tid="settingsEnableDevMode"
-            disabled={window.ExtDevMode && window.ExtDevMode === true}
-            onClick={() => setDevMode(!devMode)}
-            checked={devMode}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('enableWS')} />
-          <Switch
-            data-tid="settingsEnableWS"
-            disabled={!AppConfig.isElectron}
-            onClick={() => setEnableWS(!settings.enableWS)}
-            checked={settings.enableWS}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('warningOpeningFilesExternally')} />
-          <Switch
-            data-tid="warningOpeningFilesExternally"
-            onClick={() =>
-              setWarningOpeningFilesExternally(
-                !settings.warningOpeningFilesExternally,
-              )
-            }
-            checked={settings.warningOpeningFilesExternally}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('core:prefixTagContainer')} />
-          <Input
-            style={{ maxWidth: '100px' }}
-            data-tid="prefixTagContainerTID"
-            value={settings.prefixTagContainer}
-            onChange={(event) => setPrefixTagContainer(event.target.value)}
-          />
-        </ListItem>
-        {Pro && (
-          <>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary={t('core:fileOpenHistory')} />
-              <ListItemIcon>
-                <Tooltip title={t('clearHistory')}>
-                  <IconButton
-                    aria-label={t('core:clearHistory')}
-                    onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
-                    data-tid="clearSearchTID"
-                    size="small"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </ListItemIcon>
-              <Select
-                data-tid="fileOpenTID"
-                title={t('core:fileOpenHistoryTitle')}
-                value={settings[historyKeys.fileOpenKey]}
-                onChange={(event) =>
-                  setHistory(historyKeys.fileOpenKey, event.target.value)
-                }
-                input={<Input id="fileOpenSelector" />}
-              >
-                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </Select>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary={t('core:folderOpenHistory')} />
-              <ListItemIcon>
-                <Tooltip title={t('clearHistory')}>
-                  <IconButton
-                    aria-label={t('core:clearHistory')}
-                    onClick={() =>
-                      setConfirmDialogKey(historyKeys.folderOpenKey)
-                    }
-                    data-tid="clearSearchTID"
-                    size="small"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </ListItemIcon>
-              <Select
-                data-tid="folderOpenTID"
-                title={t('core:folderOpenHistoryTitle')}
-                value={settings[historyKeys.folderOpenKey]}
-                onChange={(event: any) =>
-                  setHistory(historyKeys.folderOpenKey, event.target.value)
-                }
-                input={<Input id="folderOpenSelector" />}
-              >
-                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </Select>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary={t('core:fileEditHistory')} />
-              <ListItemIcon>
-                <Tooltip title={t('clearHistory')}>
-                  <IconButton
-                    aria-label={t('core:clearHistory')}
-                    onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
-                    data-tid="clearSearchTID"
-                    size="small"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </ListItemIcon>
-              <Select
-                data-tid="fileEditTID"
-                title={t('core:fileEditHistoryTitle')}
-                value={settings[historyKeys.fileEditKey]}
-                onChange={(event: any) =>
-                  setHistory(historyKeys.fileEditKey, event.target.value)
-                }
-                input={<Input id="fileEditSelector" />}
-              >
-                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </Select>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary={t('core:searchHistory')} />
-              <ListItemIcon>
-                <Tooltip title={t('clearHistory')}>
-                  <IconButton
-                    aria-label={t('core:clearHistory')}
-                    onClick={() =>
-                      setConfirmDialogKey(historyKeys.searchHistoryKey)
-                    }
-                    data-tid="clearSearchTID"
-                    size="small"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </ListItemIcon>
-              <Select
-                data-tid="searchHistoryTID"
-                title={t('core:searchHistoryTitle')}
-                value={settings[historyKeys.searchHistoryKey]}
-                onChange={(event: any) =>
-                  setHistory(historyKeys.searchHistoryKey, event.target.value)
-                }
-                input={<Input id="searchHistorySelector" />}
-              >
-                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </Select>
-            </ListItem>
-            <ConfirmDialog
-              open={confirmDialogKey !== null}
-              onClose={() => {
-                setConfirmDialogKey(null);
-              }}
-              title="Confirm"
-              content={t('core:confirm' + confirmDialogKey + 'Deletion')}
-              confirmCallback={(result) => {
-                if (result) {
-                  historyContext.delAllHistory(confirmDialogKey);
-                }
-              }}
-              cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
-              confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
-              confirmDialogContentTID={
-                'confirmDelete' + confirmDialogKey + 'DialogContent'
-              }
-            />
-          </>
-        )}
-        <ListItem className={classes.listItem}>
-          <ListItemText
-            primary={
-              <>
-                {t('setRevisionsEnabled')}
-                <InfoIcon tooltip={t('core:setRevisionsEnabledHelp')} />
-                <ProLabel />
-              </>
+            cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
+            confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
+            confirmDialogContentTID={
+              'confirmDelete' + confirmDialogKey + 'DialogContent'
             }
           />
-          <Switch
-            data-tid="setRevisionsEnabledTID"
-            disabled={!Pro}
-            onClick={() => setRevisionsEnabled(!settings.isRevisionsEnabled)}
-            checked={settings.isRevisionsEnabled}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText
-            primary={
-              <>
-                {t('enableTagsFromLocation')}
-                <InfoIcon tooltip={t('core:enableTagsFromLocationHelp')} />
-                <ProLabel />
-              </>
-            }
-          />
-          <Switch
-            data-tid="saveTagInLocationTID"
-            disabled={!Pro}
-            onClick={() => setSaveTagInLocation(!settings.saveTagInLocation)}
-            checked={settings.saveTagInLocation}
-          />
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('core:geoTaggingFormat')} />
-          <Select
-            disabled={geoTaggingFormatDisabled}
-            data-tid="geoTaggingFormatTID"
-            title={
-              geoTaggingFormatDisabled
-                ? t('core:settingExternallyConfigured')
-                : ''
-            }
-            value={
-              geoTaggingFormatDisabled
-                ? AppConfig.geoTaggingFormat
-                : settings.geoTaggingFormat
-            }
-            onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
-            input={<Input id="geoTaggingFormatSelector" />}
-          >
-            {settings.supportedGeoTagging.map((geoTagging) => (
-              <MenuItem key={geoTagging} value={geoTagging}>
-                {geoTagging.toUpperCase()}
-              </MenuItem>
-            ))}
-          </Select>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={t('core:tileServerTitle')} />
-          <ListItemSecondaryAction style={{ right: 0 }}>
-            <Button
-              color="primary"
-              onClick={(event) => handleEditTileServerClick(event, {}, true)}
-            >
-              {t('tileServerDialogAdd')}
-            </Button>
-          </ListItemSecondaryAction>
-        </ListItem>
-        <List
-          style={{
-            padding: 5,
-            paddingLeft: 10,
-            backgroundColor: '#d3d3d34a',
-            borderRadius: 10,
-          }}
-          dense
+        </>
+      )}
+      <ListItem>
+        <ListItemText
+          primary={
+            <>
+              {t('setRevisionsEnabled')}
+              <InfoIcon tooltip={t('core:setRevisionsEnabledHelp')} />
+              <ProLabel />
+            </>
+          }
+        />
+        <Switch
+          data-tid="setRevisionsEnabledTID"
+          disabled={!Pro}
+          onClick={() => setRevisionsEnabled(!settings.isRevisionsEnabled)}
+          checked={settings.isRevisionsEnabled}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText
+          primary={
+            <>
+              {t('enableTagsFromLocation')}
+              <InfoIcon tooltip={t('core:enableTagsFromLocationHelp')} />
+              <ProLabel />
+            </>
+          }
+        />
+        <Switch
+          data-tid="saveTagInLocationTID"
+          disabled={!Pro}
+          onClick={() => setSaveTagInLocation(!settings.saveTagInLocation)}
+          checked={settings.saveTagInLocation}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:geoTaggingFormat')} />
+        <Select
+          disabled={geoTaggingFormatDisabled}
+          data-tid="geoTaggingFormatTID"
+          title={
+            geoTaggingFormatDisabled
+              ? t('core:settingExternallyConfigured')
+              : ''
+          }
+          value={
+            geoTaggingFormatDisabled
+              ? AppConfig.geoTaggingFormat
+              : settings.geoTaggingFormat
+          }
+          onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
+          input={<Input id="geoTaggingFormatSelector" />}
         >
-          {tileServers.length > 0 ? (
-            tileServers.map((tileServer, index) => (
-              <ListItem key={tileServer.uuid} className={classes.listItem}>
-                <ListItemText
-                  primary={tileServer.name}
-                  secondary={tileServer.serverURL}
-                  style={{ maxWidth: 470 }}
-                />
-                <ListItemSecondaryAction>
-                  {index === 0 && (
-                    <Tooltip title={t('core:serverIsDefaultHelp')}>
-                      <CheckIcon
-                        data-tid="tileServerDefaultIndication"
-                        style={{ marginLeft: 10 }}
-                      />
-                    </Tooltip>
-                  )}
-                  <IconButton
-                    aria-label={t('core:options')}
-                    aria-haspopup="true"
-                    edge="end"
-                    data-tid={'tileServerEdit_' + tileServer.name}
-                    onClick={(event) =>
-                      handleEditTileServerClick(event, tileServer, index === 0)
-                    }
-                    size="large"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))
-          ) : (
-            <ListItem key="noTileServers" className={classes.listItem}>
+          {settings.supportedGeoTagging.map((geoTagging) => (
+            <MenuItem key={geoTagging} value={geoTagging}>
+              {geoTagging.toUpperCase()}
+            </MenuItem>
+          ))}
+        </Select>
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:tileServerTitle')} />
+        <ListItemSecondaryAction style={{ right: 0 }}>
+          <Button
+            color="primary"
+            onClick={(event) => handleEditTileServerClick(event, {}, true)}
+          >
+            {t('tileServerDialogAdd')}
+          </Button>
+        </ListItemSecondaryAction>
+      </ListItem>
+      <List
+        style={{
+          padding: 5,
+          paddingLeft: 10,
+          backgroundColor: '#d3d3d34a',
+          borderRadius: 10,
+        }}
+        dense
+      >
+        {tileServers.length > 0 ? (
+          tileServers.map((tileServer, index) => (
+            <ListItem key={tileServer.uuid}>
               <ListItemText
-                primary={t('core:noTileServersTitle')}
-                secondary={t('core:addTileServersHelp')}
+                primary={tileServer.name}
+                secondary={tileServer.serverURL}
+                style={{ maxWidth: 470 }}
               />
+              <ListItemSecondaryAction>
+                {index === 0 && (
+                  <Tooltip title={t('core:serverIsDefaultHelp')}>
+                    <CheckIcon
+                      data-tid="tileServerDefaultIndication"
+                      style={{ marginLeft: 10 }}
+                    />
+                  </Tooltip>
+                )}
+                <IconButton
+                  aria-label={t('core:options')}
+                  aria-haspopup="true"
+                  edge="end"
+                  data-tid={'tileServerEdit_' + tileServer.name}
+                  onClick={(event) =>
+                    handleEditTileServerClick(event, tileServer, index === 0)
+                  }
+                  size="large"
+                >
+                  <EditIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
-          )}
-        </List>
+          ))
+        ) : (
+          <ListItem key="noTileServers">
+            <ListItemText
+              primary={t('core:noTileServersTitle')}
+              secondary={t('core:addTileServersHelp')}
+            />
+          </ListItem>
+        )}
       </List>
       {tileServerDialog && (
         <MapTileServerDialog
@@ -479,7 +447,7 @@ function SettingsAdvanced(props: Props) {
           isDefault={tileServerDialog.isDefault}
         />
       )}
-    </Root>
+    </List>
   );
 }
 

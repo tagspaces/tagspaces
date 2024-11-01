@@ -401,9 +401,10 @@ function RowCell(props: Props) {
             <Typography
               variant="body2"
               style={{
-                overflowX: 'clip',
+                overflowX: 'hidden',
                 textWrap: 'nowrap',
                 alignSelf: 'center',
+                marginRight: 5,
               }}
               title={
                 fsEntry.name +
