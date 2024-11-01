@@ -3,8 +3,6 @@ Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
 */
 
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import { useTranslation } from 'react-i18next';
@@ -36,16 +34,18 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Pro } from '-/pro';
 import { RemoveIcon } from '-/components/CommonIcons';
+import { MilkdownEditor } from '@tagspaces/tagspaces-md';
+import { format } from 'date-fns';
 
 interface Props {
   onClose: (event?: object, reason?: string) => void;
 }
 
-type timelineItem = {
+type ChatItem = {
   request: string;
   response?: string;
+  timestamp: number;
 };
 
 function MainContainer(props: Props) {
@@ -55,7 +55,7 @@ function MainContainer(props: Props) {
   const chatMsg = useRef<string>(undefined);
   const currentModel = useRef<TS.Model>(undefined);
   const models = useRef<TS.Model[]>([]);
-  const timelineItems = useRef<timelineItem[]>([]);
+  const chatHistoryItems = useRef<ChatItem[]>([]);
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -155,14 +155,17 @@ function MainContainer(props: Props) {
 
   function addTimeLineRequest(txt) {
     if (txt) {
-      const newItem: timelineItem = { request: txt };
-      timelineItems.current = [newItem, ...timelineItems.current];
+      const newItem: ChatItem = {
+        request: txt,
+        timestamp: new Date().getTime(),
+      };
+      chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
       forceUpdate();
     }
   }
   function addTimeLineResponse(txt, replace) {
-    if (timelineItems.current.length > 0) {
-      const firstItem = timelineItems.current[0];
+    if (chatHistoryItems.current.length > 0) {
+      const firstItem = chatHistoryItems.current[0];
       firstItem.response =
         (!replace && firstItem.response ? firstItem.response : '') + txt;
       forceUpdate();
@@ -264,15 +267,27 @@ function MainContainer(props: Props) {
     }
   };
 
+  function formatChatItems(chatItems: ChatItem[]): string {
+    const formattedItems = chatItems.map((item) => {
+      const date = item.timestamp
+        ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm') + ']'
+        : '';
+      return (
+        '\n | `user' +
+        date +
+        ':` ' +
+        item.request +
+        ' |\n|-------------| \n\n ' +
+        item.response +
+        ' \n '
+      );
+    });
+    return formattedItems.join(' ');
+  }
+
   return (
-    <div
-      style={{
-        width: '100%',
-        textAlign: 'center',
-        flexGrow: 1,
-      }}
-    >
-      <FormControl variant="outlined">
+    <>
+      <FormControl variant="filled">
         <Box sx={{ width: '100%' }}>
           <InputLabel id="select-label">Select a model</InputLabel>
           <Select
@@ -361,8 +376,13 @@ function MainContainer(props: Props) {
         />
         <FormHelperText>{t('core:aiHelp')}</FormHelperText>
       </FormControl>
-      <Timeline>
-        {timelineItems.current.map((item) => (
+      <MilkdownEditor
+        content={formatChatItems(chatHistoryItems.current)}
+        readOnly={true}
+        lightMode={true}
+      />
+      {/*<Timeline>
+        {chatHistoryItems.current.map((item) => (
           <TimelineItem key={item.request}>
             <TimelineOppositeContent color="text.secondary">
               {item.request}
@@ -374,8 +394,8 @@ function MainContainer(props: Props) {
             <TimelineContent>{item.response}</TimelineContent>
           </TimelineItem>
         ))}
-      </Timeline>
-    </div>
+      </Timeline>*/}
+    </>
   );
 }
 
