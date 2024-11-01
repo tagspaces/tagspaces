@@ -129,7 +129,7 @@ function MainContainer(props: Props) {
         window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
         if (currentModel.current) {
           //unload model
-          newChatMessage(undefined, true);
+          newChatMessage(undefined, undefined, true);
         }
       };
     }
@@ -174,9 +174,10 @@ function MainContainer(props: Props) {
 
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
+   * @param images (optional): a list of images to include in the message (for multimodal models such as llava)
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
    */
-  function newChatMessage(msg, unload = false) {
+  function newChatMessage(msg = undefined, images = undefined, unload = false) {
     if (currentModel.current === undefined) {
       showNotification(t('core:chooseModel'));
       return;
@@ -187,6 +188,7 @@ function MainContainer(props: Props) {
             {
               role: 'user',
               content: msg,
+              ...(images && { images }),
             },
           ]
         : [];
@@ -217,7 +219,7 @@ function MainContainer(props: Props) {
     if (currentModel.current !== model) {
       currentModel.current = model;
       //load model
-      newChatMessage(undefined, false);
+      newChatMessage();
       forceUpdate();
     }
   }
@@ -291,14 +293,15 @@ function MainContainer(props: Props) {
         <Box sx={{ width: '100%' }}>
           <InputLabel id="select-label">Select a model</InputLabel>
           <Select
+            displayEmpty
             sx={{ minWidth: 400 }}
             labelId="select-label"
             id="select-menu"
-            value={currentModel.current?.name}
+            value={currentModel.current ? currentModel.current.name : 'init'}
             onChange={handleChangeModel}
             label="Select Model"
           >
-            <MenuItem value="" disabled>
+            <MenuItem value="init" disabled>
               Choose an model
             </MenuItem>
             {models.current.length > 0 ? (
