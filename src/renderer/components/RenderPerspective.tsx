@@ -34,6 +34,7 @@ import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { ChatContextProvider } from '-/perspectives/chat/hooks/ChatProvider';
 
 const GridPerspective = React.lazy(
   () =>
@@ -83,7 +84,9 @@ const ChatPerspective = React.lazy(
 function ChatPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ChatPerspective {...props} />
+      <ChatContextProvider>
+        <ChatPerspective {...props} />
+      </ChatContextProvider>
     </React.Suspense>
   );
 }

@@ -8,26 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import TsTextField from '-/components/TsTextField';
-import {
-  Timeline,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineItem,
-  TimelineOppositeContent,
-  TimelineSeparator,
-} from '@mui/lab';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import {
-  Box,
-  InputLabel,
-  List,
-  ListItem,
-  MenuItem,
-  Select,
-} from '@mui/material';
-import { useSelector } from 'react-redux';
-import { getOllamaSettings } from '-/reducers/settings';
+import { Box, InputLabel, MenuItem, Select } from '@mui/material';
 import { TS } from '-/tagspaces.namespace';
 import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '-/components/Tooltip';
@@ -37,29 +18,35 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { RemoveIcon } from '-/components/CommonIcons';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
+import {
+  ChatContextProvider,
+  ChatItem,
+} from '-/perspectives/chat/hooks/ChatProvider';
+import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
+import ChatDndTargetFile from '-/perspectives/chat/components/ChatDndTargetFile';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 interface Props {
   onClose: (event?: object, reason?: string) => void;
 }
 
-type ChatItem = {
-  request: string;
-  response?: string;
-  timestamp: number;
-};
-
 function MainContainer(props: Props) {
   const { t } = useTranslation();
-
-  const { showNotification } = useNotificationContext();
+  const {
+    isTyping,
+    models,
+    images,
+    currentModel,
+    chatHistoryItems,
+    addTimeLineResponse,
+    unloadCurrentModel,
+    changeCurrentModel,
+    newChatMessage,
+    removeModel,
+  } = useChatContext();
   const chatMsg = useRef<string>(undefined);
-  const currentModel = useRef<TS.Model>(undefined);
-  const models = useRef<TS.Model[]>([]);
-  const chatHistoryItems = useRef<ChatItem[]>([]);
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
-  const ollamaSettings = useSelector(getOllamaSettings);
 
   const ollamaAvailableModels: TS.Model[] = [
     {
@@ -99,19 +86,11 @@ function MainContainer(props: Props) {
     },
   ];
 
-  // const [inputError, setInputError] = useState<boolean>(false);
-  const [isTyping, setTyping] = useState<boolean>(false);
-
   const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
       //console.log(`Chat ${msg}`);
-      setTyping(true);
       addTimeLineResponse(msg, replace);
     };
-  }, []);
-
-  useEffect(() => {
-    refreshOllamaModels();
   }, []);
 
   useEffect(() => {
@@ -127,165 +106,52 @@ function MainContainer(props: Props) {
 
       return () => {
         window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
-        if (currentModel.current) {
-          //unload model
-          newChatMessage(undefined, undefined, true);
-        }
+        unloadCurrentModel();
       };
     }
   }, [chatMessageHandler]);
-
-  function refreshOllamaModels(modelName = undefined) {
-    window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', ollamaSettings.url)
-      .then((m) => {
-        if (m && m.length > 0) {
-          models.current = m;
-          if (modelName) {
-            const model = models.current.find((m) => m.name === modelName);
-            if (model) {
-              setModel(model);
-            }
-          } else {
-            forceUpdate();
-          }
-        }
-      });
-  }
-
-  function addTimeLineRequest(txt) {
-    if (txt) {
-      const newItem: ChatItem = {
-        request: txt,
-        timestamp: new Date().getTime(),
-      };
-      chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
-      forceUpdate();
-    }
-  }
-  function addTimeLineResponse(txt, replace) {
-    if (chatHistoryItems.current.length > 0) {
-      const firstItem = chatHistoryItems.current[0];
-      firstItem.response =
-        (!replace && firstItem.response ? firstItem.response : '') + txt;
-      forceUpdate();
-    }
-  }
-
-  /**
-   * @param msg If the messages array is empty, the model will be loaded into memory.
-   * @param images (optional): a list of images to include in the message (for multimodal models such as llava)
-   * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
-   */
-  function newChatMessage(msg = undefined, images = undefined, unload = false) {
-    if (currentModel.current === undefined) {
-      showNotification(t('core:chooseModel'));
-      return;
-    }
-    const messages =
-      msg && !unload
-        ? [
-            {
-              role: 'user',
-              content: msg,
-              ...(images && { images }),
-            },
-          ]
-        : [];
-    addTimeLineRequest(msg);
-    window.electronIO.ipcRenderer
-      .invoke('newOllamaMessage', ollamaSettings.url, {
-        model: currentModel.current.name, // Adjust model name as needed
-        messages,
-        stream: true,
-        ...(unload && { keep_alive: 0 }),
-      })
-      .then((response) => {
-        console.log('newOllamaMessage response:' + response);
-        chatMsg.current = '';
-        /*if (txtInputRef.current) {
-          txtInputRef.current.value = '';
-        }*/
-        setTyping(false);
-      });
-  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
     forceUpdate();
   };
 
-  function setModel(model) {
-    if (currentModel.current !== model) {
-      currentModel.current = model;
-      //load model
-      newChatMessage();
-      forceUpdate();
-    }
-  }
-  const handleRemoveModel = () => {
-    if (currentModel.current) {
-      const result = confirm(
-        'Do you want to remove ' + currentModel.current.name + ' model?',
-      );
-      if (result) {
-        addTimeLineRequest('deleting ' + currentModel.current.name);
-        window.electronIO.ipcRenderer
-          .invoke('deleteOllamaModel', ollamaSettings.url, {
-            name: currentModel.current.name,
-          })
-          .then((response) => {
-            console.log('deleteOllamaModel response:' + response);
-            if (response) {
-              currentModel.current = undefined;
-              refreshOllamaModels();
-            }
-          });
-      }
-    }
-  };
-
-  const handleChangeModel = (event: SelectChangeEvent) => {
-    const newModelName = event.target.value;
-    const model = models.current.find((m) => m.name === newModelName);
-    if (model) {
-      setModel(model);
-    } else {
-      const result = confirm(
-        'Do you want to download and install ' + newModelName + ' model?',
-      );
-      if (result) {
-        addTimeLineRequest('downloading ' + newModelName);
-        window.electronIO.ipcRenderer
-          .invoke('pullOllamaModel', ollamaSettings.url, {
-            name: newModelName,
-            stream: true,
-          })
-          .then((response) => {
-            console.log('pullOllamaModel response:' + response);
-            refreshOllamaModels(newModelName);
-          });
-      }
-    }
-  };
-
   function formatChatItems(chatItems: ChatItem[]): string {
     const formattedItems = chatItems.map((item) => {
       const date = item.timestamp
-        ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm') + ']'
+        ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
         : '';
+      const request = item.request ? item.request : '';
+      const response = item.response ? item.response : '';
       return (
-        '\n | `user' +
+        '\n | `' +
         date +
         ':` ' +
-        item.request +
+        request +
         ' |\n|-------------| \n\n ' +
-        item.response +
+        response +
         ' \n '
       );
     });
     return formattedItems.join(' ');
   }
+
+  const handleChangeModel = (event: SelectChangeEvent) => {
+    const newModelName = event.target.value;
+    changeCurrentModel(newModelName);
+  };
+
+  const handleRemoveModel = () => {
+    removeModel();
+  };
+
+  const handleChatMessage = () => {
+    newChatMessage(chatMsg.current).then((response) => {
+      console.log('newOllamaMessage response:' + response);
+      chatMsg.current = '';
+    });
+  };
+  const { FILE } = NativeTypes;
 
   return (
     <>
@@ -297,15 +163,15 @@ function MainContainer(props: Props) {
             sx={{ minWidth: 400 }}
             labelId="select-label"
             id="select-menu"
-            value={currentModel.current ? currentModel.current.name : 'init'}
+            value={currentModel ? currentModel.name : 'init'}
             onChange={handleChangeModel}
             label="Select Model"
           >
             <MenuItem value="init" disabled>
               Choose an model
             </MenuItem>
-            {models.current.length > 0 ? (
-              models.current.map((model) => (
+            {models.length > 0 ? (
+              models.map((model) => (
                 <MenuItem
                   key={model.name}
                   value={model.name}
@@ -332,7 +198,7 @@ function MainContainer(props: Props) {
               </MenuItem>
             ))}
           </Select>
-          {currentModel.current && (
+          {currentModel && (
             <IconButton
               aria-label={t('core:deleteModel')}
               onClick={handleRemoveModel}
@@ -345,59 +211,49 @@ function MainContainer(props: Props) {
         </Box>
       </FormControl>
 
-      <FormControl fullWidth={true}>
-        <TsTextField
-          autoFocus
-          disabled={isTyping}
-          name="entryName"
-          label={t('core:newChatMessage')}
-          onChange={handleInputChange}
-          value={chatMsg.current}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.code === 'Enter') {
-              event.preventDefault();
-              event.stopPropagation();
-              newChatMessage(chatMsg.current);
-            }
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end" style={{ height: 32 }}>
-                <Tooltip title="Send Message">
-                  <IconButton
-                    onClick={() => {
-                      newChatMessage(chatMsg.current);
-                    }}
-                    size="large"
-                  >
-                    <SendIcon />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <FormHelperText>{t('core:aiHelp')}</FormHelperText>
-      </FormControl>
+      <ChatDndTargetFile accepts={[FILE]}>
+        <FormControl fullWidth={true}>
+          <TsTextField
+            autoFocus
+            disabled={isTyping}
+            name="entryName"
+            label={t('core:newChatMessage')}
+            onChange={handleInputChange}
+            value={chatMsg.current}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.code === 'Enter') {
+                event.preventDefault();
+                event.stopPropagation();
+                handleChatMessage();
+              }
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" style={{ height: 32 }}>
+                  {images.length > 0 &&
+                    images.map((image) => (
+                      <img
+                        src={'data:image/*;base64,' + image}
+                        style={{ maxHeight: 50 }}
+                      />
+                    ))}
+                  <Tooltip title="Send Message">
+                    <IconButton onClick={handleChatMessage} size="large">
+                      <SendIcon />
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormHelperText>{t('core:aiHelp')}</FormHelperText>
+        </FormControl>
+      </ChatDndTargetFile>
       <MilkdownEditor
-        content={formatChatItems(chatHistoryItems.current)}
+        content={formatChatItems(chatHistoryItems)}
         readOnly={true}
         lightMode={true}
       />
-      {/*<Timeline>
-        {chatHistoryItems.current.map((item) => (
-          <TimelineItem key={item.request}>
-            <TimelineOppositeContent color="text.secondary">
-              {item.request}
-            </TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>{item.response}</TimelineContent>
-          </TimelineItem>
-        ))}
-      </Timeline>*/}
     </>
   );
 }
