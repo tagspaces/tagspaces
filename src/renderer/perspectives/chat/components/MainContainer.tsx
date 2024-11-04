@@ -177,7 +177,8 @@ function MainContainer(props: Props) {
                   value={model.name}
                   title={model.modified_at}
                 >
-                  {model.name}
+                  {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)}{' '}
+                  GB
                 </MenuItem>
               ))
             ) : (

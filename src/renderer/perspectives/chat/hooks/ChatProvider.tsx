@@ -97,9 +97,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           if (m && m.length > 0) {
             models.current = m;
             if (modelName) {
-              const model = models.current.find((m) =>
-                m.name.startsWith(modelName),
-              );
+              const model = findModel(modelName);
               if (model) {
                 setModel(model);
               } else {
@@ -166,8 +164,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
+  function findModel(modelName: string) {
+    return models.current.find(
+      (m) => m.name === modelName || m.name === modelName + ':latest',
+    );
+  }
+
   function changeCurrentModel(newModelName: string) {
-    const model = models.current.find((m) => m.name === newModelName);
+    const model = findModel(newModelName);
     if (model) {
       setModel(model);
     } else {
