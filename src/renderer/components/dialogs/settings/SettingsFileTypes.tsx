@@ -479,6 +479,7 @@ function SettingsFileTypes() {
           width: '100%',
           minWidth: 550,
           overflow: 'hidden',
+          background: 'transparent',
         }}
       >
         <Button
@@ -528,6 +529,7 @@ function SettingsFileTypes() {
             overflowX: 'hidden',
             height: 'calc(100% - 30px)',
             overflowY: 'auto',
+            background: 'transparent',
           }}
           data={items.current}
           components={VirtuosoTableComponents}

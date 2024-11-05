@@ -24,6 +24,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import Tag from '-/components/Tag';
@@ -108,32 +110,6 @@ function EditTagDialog(props: Props) {
   };
 
   const { open, onClose } = props;
-  const styles = {
-    color: {
-      width: '100%',
-      height: 30,
-      borderRadius: 2,
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'gray',
-      padding: '5px',
-      background: color,
-    },
-    textcolor: {
-      width: '100%',
-      height: 30,
-      borderRadius: 2,
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'gray',
-      padding: '5px',
-      background: textcolor,
-    },
-    helpText: {
-      marginBottom: '5px',
-      fontSize: '1rem',
-    },
-  };
 
   // const theme = useTheme();
   // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -205,12 +181,10 @@ function EditTagDialog(props: Props) {
             data-tid="editTagInput"
           />
           {inputError && (
-            <FormHelperText style={styles.helpText}>
-              {t('core:tagTitleHelper')}
-            </FormHelperText>
+            <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
-        <FormControl fullWidth={true} style={{ overflow: 'visible' }}>
+        <FormControl fullWidth={true}>
           <TsTextField
             name="description"
             label={t('core:editDescription')}
@@ -219,15 +193,21 @@ function EditTagDialog(props: Props) {
             data-tid="editTagDescription"
           />
         </FormControl>
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagBackgroundColor')}
-          </FormHelperText>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
             <Button
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
               data-tid="tagBackgroundColorEditTagDialog"
-              style={styles.color}
+              style={{
+                height: 30,
+                borderRadius: 2,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: color,
+              }}
               role="presentation"
             >
               &nbsp;
@@ -241,16 +221,22 @@ function EditTagDialog(props: Props) {
               color={color}
             />
           )}
-        </FormControl>
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagForegroundColor')}
-          </FormHelperText>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <Button
               onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               data-tid="tagForegroundColorEditTagDialog"
-              style={styles.textcolor}
+              style={{
+                height: 30,
+                borderRadius: 2,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: textcolor,
+              }}
               role="presentation"
             >
               &nbsp;
@@ -264,7 +250,7 @@ function EditTagDialog(props: Props) {
               color={textcolor}
             />
           )}
-        </FormControl>
+        </ListItem>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose} data-tid="closeEditTagDialog">

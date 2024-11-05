@@ -36,7 +36,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import TsTextField from '-/components/TsTextField';
-import Input from '@mui/material/Input';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
@@ -50,7 +49,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  InputLabel,
   MenuItem,
   FormLabel,
   Select,
@@ -91,8 +89,7 @@ const classes = {
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   [`& .${classes.formControl}`]: {
-    marginLeft: theme.spacing(0),
-    width: '100%',
+    marginLeft: 0,
   },
 }));
 
@@ -652,17 +649,17 @@ function CreateEditLocationDialog(props: Props) {
               {!selectedLocation && (
                 <FormControl disabled={disableLocationTypeSwitch} fullWidth>
                   {/* <InputLabel id="locationLabelID">
-                  {t('core:locationType')}
-                </InputLabel> */}
+                    {t('core:locationType')}
+                  </InputLabel> */}
                   <Select
                     labelId="locationLabelID"
                     data-tid="locationTypeTID"
                     value={type}
-                    label={t('core:locationType')}
+                    // label={t('core:locationType')}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                       setType(event.target.value)
                     }
-                    variant="filled"
+                    variant="outlined"
                   >
                     {!AppConfig.isWeb && (
                       <MenuItem
@@ -859,12 +856,10 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
-                  <Input
+                  <TsTextField
                     name="maxIndexAge"
                     style={{
-                      maxWidth: 70,
-                      marginLeft: 15,
-                      marginBottom: 15,
+                      width: 100,
                     }}
                     type="number"
                     data-tid="maxIndexAgeTID"

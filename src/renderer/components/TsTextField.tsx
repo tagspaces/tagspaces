@@ -21,6 +21,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
 import MenuList from '@mui/material/MenuList';
 import ListItemText from '@mui/material/ListItemText';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
@@ -33,7 +34,7 @@ type TSTextFieldProps = TextFieldProps & {
 };
 
 function TsTextField(props: TSTextFieldProps) {
-  const { updateValue, retrieveValue, children } = props;
+  const { updateValue, retrieveValue, children, label } = props;
   const { t } = useTranslation();
   // const desktopMode = useSelector(isDesktopMode);
   const textFieldRef = useRef(null);
@@ -95,15 +96,19 @@ function TsTextField(props: TSTextFieldProps) {
 
   return (
     <>
+      <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+        {label}
+      </FormHelperText>
       <TextField
         onContextMenu={handleContextMenu}
-        style={{ cursor: 'context-menu' }}
+        style={{ cursor: 'context-menu', marginTop: 0 }}
         margin="dense"
-        // size={desktopMode ? 'small' : 'medium'}
-        variant="filled"
+        size="small" //{desktopMode ? 'small' : 'medium'}
+        variant="outlined"
         fullWidth={true}
         ref={textFieldRef}
         {...props}
+        label={undefined}
       >
         {children}
       </TextField>
