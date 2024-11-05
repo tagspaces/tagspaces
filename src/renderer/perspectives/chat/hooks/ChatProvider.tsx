@@ -29,6 +29,11 @@ import { TS } from '-/tagspaces.namespace';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import {
+  DEFAULT_QUESTION_PROMPT,
+  DEFAULT_SYSTEM_PROMPT,
+  SUMMARIZE_PROMPT,
+} from '-/perspectives/chat/components/OllamaTemplates';
 
 type ChatData = {
   models: TS.Model[];
@@ -72,7 +77,11 @@ export type ChatItem = {
   request: string;
   response?: string;
   timestamp: number;
+  role?: ChatRole;
 };
+
+export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
+export type ChatMode = 'summary' | 'helpful' | 'rephrase';
 
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
@@ -120,6 +129,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         const newItem: ChatItem = {
           request: 'Model ' + model.name + ' loaded',
           timestamp: new Date().getTime(),
+          role: 'system',
         };
         chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
       });
@@ -227,13 +237,58 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return chatHistoryItems.current;
   }
 
+  function getOllamaMessages(items: ChatItem[]) {
+    const messages = [];
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      if (item.role !== 'system') {
+        if (item.request) {
+          messages.push({
+            role: 'user',
+            content: item.request,
+          });
+        }
+        if (item.response) {
+          messages.push({
+            role: 'assistant',
+            content: item.response,
+          });
+        }
+      }
+    }
+    return messages;
+  }
+
+  function getMessage(msg: string, mode: ChatMode) {
+    if (mode === 'helpful') {
+      return DEFAULT_SYSTEM_PROMPT.replace('{question}', msg);
+    } else if (mode === 'summary') {
+      return SUMMARIZE_PROMPT.replace('{question}', msg);
+    } else if (mode === 'rephrase') {
+      const historyMap = chatHistoryItems.current.map((item) =>
+        item.role !== 'system'
+          ? `${item.request ? 'Human: ' + item.request : ''}${item.response ? ' Assistant: ' + item.response : ''}`
+          : '',
+      );
+      return DEFAULT_QUESTION_PROMPT.replace('{question}', msg).replace(
+        '{chat_history}',
+        historyMap.join(' '),
+      );
+    }
+    return msg;
+  }
+
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
+   * @param role
+   * @param mode
    */
   function newChatMessage(
     msg: string = undefined,
     unload = false,
+    role: ChatRole = 'user',
+    mode: ChatMode = 'helpful',
   ): Promise<boolean> {
     if (currentModel.current === undefined) {
       showNotification(t('core:chooseModel'));
@@ -242,9 +297,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const messages =
       msg && !unload
         ? [
+            ...getOllamaMessages(chatHistoryItems.current),
             {
-              role: 'user',
-              content: msg,
+              role: role,
+              content: getMessage(msg, mode),
               ...(images.current.length > 0 && { images: images.current }),
             },
           ]

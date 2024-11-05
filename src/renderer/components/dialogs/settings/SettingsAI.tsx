@@ -49,6 +49,7 @@ import TsTextField from '-/components/TsTextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import { OllamaIcon } from '-/components/dialogs/settings/Ollama';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
@@ -104,7 +105,7 @@ function SettingsAI() {
             p={2}
           >
             <Typography>
-              {t('core:ollama')}
+              <OllamaIcon width={20} /> {t('core:ollama')}
               <BetaLabel /> Service Status
             </Typography>
             {ollamaAlive.current === null ? (
