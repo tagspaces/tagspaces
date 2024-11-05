@@ -16,7 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { RemoveIcon } from '-/components/CommonIcons';
-import { MilkdownEditor } from '@tagspaces/tagspaces-md';
+import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
 import {
   ChatContextProvider,
@@ -25,6 +25,7 @@ import {
 import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
 import ChatDndTargetFile from '-/perspectives/chat/components/ChatDndTargetFile';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
   onClose: (event?: object, reason?: string) => void;
@@ -32,8 +33,8 @@ interface Props {
 
 function MainContainer(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const {
-    isTyping,
     models,
     images,
     currentModel,
@@ -44,6 +45,8 @@ function MainContainer(props: Props) {
     newChatMessage,
     removeModel,
   } = useChatContext();
+  const isTyping = useRef<boolean>(false);
+  const editorRef = useRef<MilkdownRef>(null);
   const chatMsg = useRef<string>(undefined);
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -89,9 +92,14 @@ function MainContainer(props: Props) {
   const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
       //console.log(`Chat ${msg}`);
-      addTimeLineResponse(msg, replace);
+      const items = addTimeLineResponse(msg, replace);
+      editorRef.current?.update(formatChatItems(items));
     };
   }, []);
+
+  useEffect(() => {
+    editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
+  }, [theme]);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -146,9 +154,15 @@ function MainContainer(props: Props) {
   };
 
   const handleChatMessage = () => {
+    isTyping.current = true;
+    forceUpdate();
     newChatMessage(chatMsg.current).then((response) => {
       console.log('newOllamaMessage response:' + response);
-      chatMsg.current = '';
+      if (response) {
+        chatMsg.current = '';
+      }
+      isTyping.current = false;
+      forceUpdate();
     });
   };
   const { FILE } = NativeTypes;
@@ -216,7 +230,7 @@ function MainContainer(props: Props) {
         <FormControl fullWidth={true}>
           <TsTextField
             autoFocus
-            disabled={isTyping}
+            disabled={isTyping.current}
             name="entryName"
             label={t('core:newChatMessage')}
             onChange={handleInputChange}
@@ -251,6 +265,7 @@ function MainContainer(props: Props) {
         </FormControl>
       </ChatDndTargetFile>
       <MilkdownEditor
+        ref={editorRef}
         content={formatChatItems(chatHistoryItems)}
         readOnly={true}
         lightMode={true}

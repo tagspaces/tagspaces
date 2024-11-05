@@ -35,7 +35,7 @@ type ChatData = {
   images: string[];
   currentModel: TS.Model;
   chatHistoryItems: ChatItem[];
-  isTyping: boolean;
+  //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
   setModel: (model: TS.Model) => void;
   setImage: (base64: string) => void;
@@ -43,7 +43,7 @@ type ChatData = {
   removeModel: (model?: TS.Model) => void;
   changeCurrentModel: (newModelName: string) => void;
   addTimeLineRequest: (txt: string) => void;
-  addTimeLineResponse: (txt: string, replace?: boolean) => void;
+  addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (msg?: string, unload?: boolean) => Promise<boolean>;
 };
 
@@ -52,7 +52,7 @@ export const ChatContext = createContext<ChatData>({
   images: [],
   currentModel: undefined,
   chatHistoryItems: [],
-  isTyping: false,
+  //isTyping: false,
   refreshOllamaModels: undefined,
   setModel: undefined,
   setImage: undefined,
@@ -82,7 +82,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const images = useRef<string[]>([]);
   const ollamaSettings = useSelector(getOllamaSettings);
   const chatHistoryItems = useRef<ChatItem[]>([]);
-  const isTyping = useRef<boolean>(false);
+  // const isTyping = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -215,15 +215,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return '';
   }
 
-  function addTimeLineResponse(txt, replace = false) {
+  function addTimeLineResponse(txt, replace = false): ChatItem[] {
     if (chatHistoryItems.current.length > 0) {
-      const updates = [...chatHistoryItems.current];
-      updates[0].response =
-        (!replace && updates[0].response ? updates[0].response : '') + txt;
-      chatHistoryItems.current = updates; // Update the original array with the updated data
-      isTyping.current = true;
-      forceUpdate();
+      chatHistoryItems.current[0].response =
+        (!replace && chatHistoryItems.current[0].response
+          ? chatHistoryItems.current[0].response
+          : '') + txt;
+      //isTyping.current = true;
+      // forceUpdate(); don't refresh chatHistoryItems this will reload milkdown editor just update(content)
     }
+    return chatHistoryItems.current;
   }
 
   /**
@@ -257,8 +258,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ...(unload && { keep_alive: 0 }),
       })
       .then(() => {
-        isTyping.current = false;
-        forceUpdate();
+        //isTyping.current = false;
+        //forceUpdate();
         return true;
       });
   }
@@ -269,7 +270,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       images: images.current,
       currentModel: currentModel.current,
       chatHistoryItems: chatHistoryItems.current,
-      isTyping: isTyping.current,
+      //isTyping: isTyping.current,
       refreshOllamaModels,
       setModel,
       setImage,
@@ -285,7 +286,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     images.current,
     currentModel.current,
     chatHistoryItems.current,
-    isTyping.current,
+    // isTyping.current,
   ]);
 
   return (
