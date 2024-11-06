@@ -1012,7 +1012,7 @@ function CreateEditLocationDialog(props: Props) {
                   className={classes.formControl}
                   disabled={!Pro}
                   labelPlacement="start"
-                  style={{ justifyContent: 'space-between' }}
+                  style={{ justifyContent: 'space-between', marginTop: 15 }}
                   control={
                     <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
                       <TsButton
