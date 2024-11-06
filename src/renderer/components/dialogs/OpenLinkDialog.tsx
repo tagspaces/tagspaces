@@ -105,7 +105,7 @@ function OpenLinkDialog(props: Props) {
         <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minWidth: fullScreen ? 100 : 400 }}>
-        <FormControl fullWidth={true} error={inputError}>
+        <FormControl fullWidth={true}>
           <TsTextField
             autoFocus
             name="name"

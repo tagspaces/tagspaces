@@ -920,6 +920,7 @@ function EntryProperties(props: Props) {
                       <Tooltip title={t('core:generateDownloadLink')}>
                         <TsButton
                           onClick={() => setShowSharingLinkDialog(true)}
+                          variant="text"
                           startIcon={
                             <QRCodeIcon
                               style={{ color: theme.palette.text.secondary }}
@@ -1078,6 +1079,7 @@ function EntryProperties(props: Props) {
                             <TsButton
                               data-tid="changeThumbnailTID"
                               fullWidth
+                              variant="text"
                               onClick={toggleThumbFilesDialog}
                             >
                               {t('core:change')}
@@ -1129,6 +1131,7 @@ function EntryProperties(props: Props) {
                               <TsButton
                                 data-tid="changeBackgroundImageTID"
                                 fullWidth
+                                variant="text"
                                 onClick={toggleBgndImgDialog}
                               >
                                 {t('core:change')}

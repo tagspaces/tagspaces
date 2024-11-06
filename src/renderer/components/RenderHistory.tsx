@@ -70,6 +70,7 @@ function RenderHistory(props: Props) {
               <Grid item xs={10} style={{ minWidth: 245, maxWidth: 245 }}>
                 <TsButton
                   data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
+                  variant="text"
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
