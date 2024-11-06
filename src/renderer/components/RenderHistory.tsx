@@ -19,7 +19,7 @@
 import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid';
 import React, { useContext } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import ListItem from '@mui/material/ListItem';
 import { Tooltip } from '@mui/material';
 import { Pro } from '-/pro';
@@ -68,7 +68,7 @@ function RenderHistory(props: Props) {
               key={item.creationTimeStamp}
             >
               <Grid item xs={10} style={{ minWidth: 245, maxWidth: 245 }}>
-                <Button
+                <TsButton
                   data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
                   style={{
                     textTransform: 'none',
@@ -109,7 +109,7 @@ function RenderHistory(props: Props) {
                   >
                     {itemName}
                   </span>
-                </Button>
+                </TsButton>
               </Grid>
               {showDelete && (
                 <Grid item xs={2}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -275,7 +275,7 @@ function HowToStart() {
   function SlideButton(props) {
     const { title, link } = props;
     return (
-      <Button
+      <TsButton
         onClick={() => {
           openURLExternally(link, true);
         }}
@@ -283,7 +283,7 @@ function HowToStart() {
         color="primary"
       >
         {title}
-      </Button>
+      </TsButton>
     );
   }
 
@@ -350,7 +350,7 @@ function HowToStart() {
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <div>
-                  <Button
+                  <TsButton
                     // variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
@@ -358,14 +358,14 @@ function HowToStart() {
                     {index === steps.length - 1
                       ? t('core:finish')
                       : t('core:goforward')}
-                  </Button>
-                  <Button
+                  </TsButton>
+                  <TsButton
                     disabled={index === 0}
                     onClick={handleBack}
                     sx={{ mt: 1, mr: 1 }}
                   >
                     {t('core:goback')}
-                  </Button>
+                  </TsButton>
                 </div>
               </Box>
             </StepContent>
@@ -380,9 +380,9 @@ function HowToStart() {
           style={{ backgroundColor: 'transparent' }}
         >
           <Typography>All steps completed - you&apos;re finished.</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+          <TsButton onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {t('core:resetBtn')}
-          </Button>
+          </TsButton>
         </Paper>
       )}
     </Box>

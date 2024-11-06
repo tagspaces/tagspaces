@@ -27,7 +27,7 @@ import Fuse from 'fuse.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -1347,12 +1347,12 @@ function SearchAutocomplete(props: Props) {
                     </Box>
                   ) : (
                     <Tooltip title={option}>
-                      <Button
+                      <TsButton
                         onClick={() => {
                           changeOptions(action.action, false);
                         }}
                         data-tid={dataTidFormat('menu' + option)}
-                        size="small"
+                        variant="text"
                         style={{
                           backgroundColor: 'transparent',
                           textTransform: 'lowercase',
@@ -1367,7 +1367,7 @@ function SearchAutocomplete(props: Props) {
                         }
                       >
                         {removePrefix(option, action.action)}
-                      </Button>
+                      </TsButton>
                     </Tooltip>
                   )}
 
@@ -1386,7 +1386,6 @@ function SearchAutocomplete(props: Props) {
                           textTransform: 'lowercase',
                         }}
                         data-tid={dataTidFormat('close' + option)}
-                        size="small"
                       >
                         <CloseIcon fontSize="small" />
                       </IconButton>
@@ -1415,8 +1414,8 @@ function SearchAutocomplete(props: Props) {
           renderOption={(props, option) => (
             <Box component="li" {...props}>
               {option.color ? (
-                <Button
-                  size="small"
+                <TsButton
+                  variant="text"
                   style={{
                     fontSize: 13,
                     textTransform: 'none',
@@ -1433,7 +1432,7 @@ function SearchAutocomplete(props: Props) {
                   }}
                 >
                   {option.label}
-                </Button>
+                </TsButton>
               ) : (
                 <>
                   <b>{option.label}</b>
@@ -1470,16 +1469,13 @@ function SearchAutocomplete(props: Props) {
                 autoFocus
                 placeholder={t('core:searchTitle')}
                 size="small"
-                // variant="outlined"
               />
             );
           }}
         />
         <Tooltip title={isIndexing ? t('searchDisabledWhileIndexing') : ''}>
-          <Button
+          <TsButton
             id="searchButton"
-            variant="outlined"
-            size="small"
             disabled={isIndexing !== undefined}
             style={{
               marginRight: 10,
@@ -1490,7 +1486,7 @@ function SearchAutocomplete(props: Props) {
             onClick={clickSearchButton}
           >
             {t('searchTitle')}
-          </Button>
+          </TsButton>
         </Tooltip>
       </div>
     </>

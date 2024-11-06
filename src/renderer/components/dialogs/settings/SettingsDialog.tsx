@@ -19,7 +19,7 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
@@ -192,7 +192,7 @@ function SettingsDialog(props: Props) {
         padding: fullScreen ? '10px 30px 30px 30px' : undefined,
       }}
     >
-      <Button
+      <TsButton
         onClick={() =>
           openURLExternally(Links.documentationLinks.settings, true)
         }
@@ -200,15 +200,10 @@ function SettingsDialog(props: Props) {
         style={{ float: 'left' }}
       >
         {t('core:help')}
-      </Button>
-      <Button
-        data-tid="closeSettingsDialog"
-        onClick={props.onClose}
-        color="primary"
-        variant="contained"
-      >
+      </TsButton>
+      <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
         {t('core:closeButton')}
-      </Button>
+      </TsButton>
     </DialogActions>
   );
 

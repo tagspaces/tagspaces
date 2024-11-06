@@ -27,10 +27,11 @@ import React, {
 import { useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -603,19 +604,21 @@ function EntryContainer() {
         editFile = (
           <ButtonGroup>
             <Tooltip title={t('core:cancelEditing')}>
-              <Button
+              <TsButton
                 onClick={() => {
                   setEditMode(false);
                   setFileChanged(false);
                 }}
+                style={{
+                  borderRadius: 'unset',
+                  borderTopLeftRadius: 10,
+                  borderBottomLeftRadius: 10,
+                }}
                 aria-label={t('core:cancelEditing')}
-                size="small"
-                variant="outlined"
-                color="primary"
                 startIcon={closeCancelIcon}
               >
                 {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
-              </Button>
+              </TsButton>
             </Tooltip>
             {fileChanged && (
               <Tooltip
@@ -636,6 +639,11 @@ function EntryContainer() {
                   color="primary"
                   startIcon={desktopMode && <SaveIcon />}
                   loading={isSavingInProgress.current}
+                  style={{
+                    borderRadius: 'unset',
+                    borderTopRightRadius: 10,
+                    borderBottomRightRadius: 10,
+                  }}
                 >
                   {t('core:save')}
                 </LoadingButton>
@@ -646,18 +654,15 @@ function EntryContainer() {
       } else {
         editFile = (
           <Tooltip title={t('core:editFile')}>
-            <Button
+            <TsButton
               disabled={isEditDescriptionMode}
-              size="small"
-              variant="outlined"
-              color="primary"
               onClick={editOpenedFile}
               aria-label={t('core:editFile')}
               data-tid="fileContainerEditFile"
               startIcon={<EditIcon />}
             >
               {t('core:edit')}
-            </Button>
+            </TsButton>
           </Tooltip>
         );
       }

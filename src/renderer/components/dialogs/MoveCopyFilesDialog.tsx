@@ -2,7 +2,7 @@ import React, { useState, useRef, useReducer, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -246,11 +246,11 @@ function MoveCopyFilesDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
+        <TsButton data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
-        </Button>
+        </TsButton>
         {(!AppConfig.isAndroid || selectedDirs.length === 0) && (
-          <Button
+          <TsButton
             data-tid="confirmMoveFiles"
             disabled={
               !targetPath ||
@@ -262,9 +262,9 @@ function MoveCopyFilesDialog(props: Props) {
             variant="contained"
           >
             {t('core:moveEntriesButton')}
-          </Button>
+          </TsButton>
         )}
-        <Button
+        <TsButton
           onClick={() => copyMove(true)}
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === currentDirectoryPath}
@@ -272,7 +272,7 @@ function MoveCopyFilesDialog(props: Props) {
           variant="contained"
         >
           {t('core:copyEntriesButton')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

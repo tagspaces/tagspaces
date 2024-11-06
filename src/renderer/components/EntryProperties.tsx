@@ -33,7 +33,6 @@ import {
   Typography,
   TextField,
   inputBaseClasses,
-  Button,
   InputAdornment,
   Popover,
   Box,
@@ -53,7 +52,7 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { ButtonGroup, IconButton } from '@mui/material';
+import { ButtonGroup, IconButton, Button } from '@mui/material';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
@@ -83,6 +82,7 @@ import NoTileServer from '-/components/NoTileServer';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TsTextField from '-/components/TsTextField';
+import TsButton from '-/components/TsButton';
 import FormHelperText from '@mui/material/FormHelperText';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { useTranslation } from 'react-i18next';
@@ -583,32 +583,30 @@ function EntryProperties(props: Props) {
                     <div style={{ textAlign: 'right' }}>
                       {editName !== undefined ? (
                         <div>
-                          <Button
+                          <TsButton
                             data-tid="cancelRenameEntryTID"
                             onClick={deactivateEditNameField}
-                            size="small"
+                            variant="text"
                           >
                             {t('core:cancel')}
-                          </Button>
-                          <Button
+                          </TsButton>
+                          <TsButton
                             data-tid="confirmRenameEntryTID"
-                            color="primary"
                             onClick={renameEntry}
-                            size="small"
+                            variant="text"
                             disabled={disableConfirmButton.current}
                           >
                             {t('core:confirmSaveButton')}
-                          </Button>
+                          </TsButton>
                         </div>
                       ) : (
-                        <Button
+                        <TsButton
                           data-tid="startRenameEntryTID"
-                          color="primary"
-                          size="small"
+                          variant="text"
                           onClick={activateEditNameField}
                         >
                           {t('core:rename')}
-                        </Button>
+                        </TsButton>
                       )}
                     </div>
                   )}
@@ -705,11 +703,9 @@ function EntryProperties(props: Props) {
                       {t('core:lat') + ' : ' + geoLocation.lng}
                     </Typography>
                     <br />
-                    <ButtonGroup>
-                      <Button
-                        size="small"
+                    <p>
+                      <TsButton
                         color="primary"
-                        variant="outlined"
                         onClick={() => {
                           openUrl(
                             'https://www.openstreetmap.org/?mlat=' +
@@ -727,11 +723,10 @@ function EntryProperties(props: Props) {
                         Open in
                         <br />
                         OpenStreetMap
-                      </Button>
-                      <Button
-                        size="small"
+                      </TsButton>
+                      <TsButton
                         color="primary"
-                        variant="outlined"
+                        style={{ marginLeft: 5 }}
                         onClick={() => {
                           openUrl(
                             'https://maps.google.com/?q=' +
@@ -749,8 +744,8 @@ function EntryProperties(props: Props) {
                         Open in
                         <br />
                         Google Maps
-                      </Button>
-                    </ButtonGroup>
+                      </TsButton>
+                    </p>
                   </Popup>
                 </Marker>
               </LayerGroup>
@@ -797,8 +792,8 @@ function EntryProperties(props: Props) {
                   readOnly: true,
                   ...(!openedEntry.isFile && {
                     endAdornment: (
-                      <Button
-                        size="small"
+                      <TsButton
+                        variant="text"
                         onClick={() =>
                           getOpenedDirProps().then((props) => {
                             dirProps.current = props;
@@ -807,7 +802,7 @@ function EntryProperties(props: Props) {
                         }
                       >
                         {t('core:calculate')}
-                      </Button>
+                      </TsButton>
                     ),
                   }),
                 }}
@@ -844,14 +839,13 @@ function EntryProperties(props: Props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     {!readOnlyMode && !isEditMode && editName === undefined && (
-                      <Button
+                      <TsButton
                         data-tid="moveCopyEntryTID"
-                        color="primary"
                         onClick={toggleMoveCopyFilesDialog}
-                        size="small"
+                        variant="text"
                       >
                         {t('core:move')}
-                      </Button>
+                      </TsButton>
                     )}
                   </InputAdornment>
                 ),
@@ -885,10 +879,9 @@ function EntryProperties(props: Props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     <Tooltip title={t('core:copyLinkToClipboard')}>
-                      <Button
+                      <TsButton
                         data-tid="copyLinkToClipboardTID"
-                        size="small"
-                        color="primary"
+                        variant="text"
                         onClick={() => {
                           const entryTitle = extractTitle(
                             openedEntry.name,
@@ -905,7 +898,7 @@ function EntryProperties(props: Props) {
                         }}
                       >
                         {t('core:copy')}
-                      </Button>
+                      </TsButton>
                     </Tooltip>
                     <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
                   </InputAdornment>
@@ -925,9 +918,8 @@ function EntryProperties(props: Props) {
                   endAdornment: (
                     <InputAdornment position="end">
                       <Tooltip title={t('core:generateDownloadLink')}>
-                        <Button
+                        <TsButton
                           onClick={() => setShowSharingLinkDialog(true)}
-                          size="small"
                           startIcon={
                             <QRCodeIcon
                               style={{ color: theme.palette.text.secondary }}
@@ -935,7 +927,7 @@ function EntryProperties(props: Props) {
                           }
                         >
                           {t('core:generateDownloadLink')}
-                        </Button>
+                        </TsButton>
                       </Tooltip>
                       <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
                     </InputAdornment>
@@ -968,7 +960,7 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="start">
                     <TransparentBackground>
                       <Tooltip title={t('editBackgroundColor')}>
-                        <Button
+                        <TsButton
                           fullWidth
                           style={{
                             width: 160,
@@ -978,7 +970,7 @@ function EntryProperties(props: Props) {
                           onClick={toggleBackgroundColorPicker}
                         >
                           &nbsp;
-                        </Button>
+                        </TsButton>
                       </Tooltip>
                     </TransparentBackground>
                   </InputAdornment>
@@ -1083,14 +1075,13 @@ function EntryProperties(props: Props) {
                         !isEditMode &&
                         editName === undefined && (
                           <ProTooltip tooltip={t('changeThumbnail')}>
-                            <Button
+                            <TsButton
                               data-tid="changeThumbnailTID"
                               fullWidth
                               onClick={toggleThumbFilesDialog}
-                              size="small"
                             >
                               {t('core:change')}
-                            </Button>
+                            </TsButton>
                           </ProTooltip>
                         )}
                       <div
@@ -1135,14 +1126,13 @@ function EntryProperties(props: Props) {
                           !isEditMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeBackgroundImage')}>
-                              <Button
+                              <TsButton
                                 data-tid="changeBackgroundImageTID"
                                 fullWidth
                                 onClick={toggleBgndImgDialog}
-                                size="small"
                               >
                                 {t('core:change')}
-                              </Button>
+                              </TsButton>
                             </ProTooltip>
                           )}
                         <div
@@ -1197,10 +1187,9 @@ function EntryProperties(props: Props) {
               endAdornment: (
                 <InputAdornment position="end">
                   <Tooltip title={t('core:copyIdToClipboard')}>
-                    <Button
+                    <TsButton
                       data-tid="copyIdToClipboardTID"
-                      color="primary"
-                      size="small"
+                      variant="text"
                       disabled={!openedEntry?.meta?.id}
                       onClick={() => {
                         const entryId = openedEntry?.meta?.id;
@@ -1216,7 +1205,7 @@ function EntryProperties(props: Props) {
                       }}
                     >
                       {t('core:copy')}
-                    </Button>
+                    </TsButton>
                   </Tooltip>
                   <InfoIcon tooltip={t('core:entryIdTooltip')} />
                 </InputAdornment>

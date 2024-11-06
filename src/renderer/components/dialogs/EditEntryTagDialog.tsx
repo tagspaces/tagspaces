@@ -23,7 +23,7 @@ import React, {
   ChangeEvent,
   useRef,
 } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -192,30 +192,31 @@ function EditEntryTagDialog(props: Props) {
         }}
       >
         {GeoTagEditor && isGeoTag(title) ? (
-          <Button
+          <TsButton
             data-tid="switchAdvancedModeTID"
             onClick={() => setShowAdvancedMode(!showAdvancedMode)}
           >
             {showAdvancedMode
               ? t('core:switchSimpleMode')
               : t('core:switchAdvancedMode')}
-          </Button>
+          </TsButton>
         ) : (
           <div />
         )}
         <div>
-          <Button data-tid="closeEditTagEntryDialog" onClick={props.onClose}>
+          <TsButton data-tid="closeEditTagEntryDialog" onClick={props.onClose}>
             {t('core:cancel')}
-          </Button>
-          <Button
+          </TsButton>
+          <TsButton
             disabled={haveError()}
+            style={{ marginLeft: 5 }}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             color="primary"
             variant="contained"
           >
             {t('core:ok')}
-          </Button>
+          </TsButton>
         </div>
       </DialogActions>
     );

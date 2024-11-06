@@ -32,7 +32,12 @@ function TsButton(props: TSButtonProps) {
       size={desktopMode ? 'small' : 'medium'}
       variant="outlined" // text outlined contained
       {...props}
-      style={{ borderRadius: 10, textTransform: 'initial', ...style }}
+      style={{
+        borderRadius: 10,
+        // fontSize: 14,
+        // textTransform: 'capitalize',
+        ...style,
+      }}
     >
       {children}
     </Button>

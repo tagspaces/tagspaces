@@ -25,7 +25,7 @@ import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import RemoveIcon from '@mui/icons-material/RemoveCircle';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Select from '@mui/material/Select';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -438,7 +438,7 @@ function SettingsFileTypes() {
         <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <TransparentBackground>
             <Tooltip title={t('core:colorPickerDialogTitle')}>
-              <Button
+              <TsButton
                 data-tid="settingsFileTypes_openColorPicker_"
                 className={classes.colorChooserButton}
                 style={{
@@ -453,7 +453,7 @@ function SettingsFileTypes() {
               >
                 &nbsp;
                 <div />
-              </Button>
+              </TsButton>
             </Tooltip>
           </TransparentBackground>
           <Tooltip title={t('removeFileType', { itemType: item.type })}>
@@ -482,16 +482,16 @@ function SettingsFileTypes() {
           background: 'transparent',
         }}
       >
-        <Button
+        <TsButton
           data-tid="addNewFileTypeTID"
           onClick={onAddFileType}
           color="secondary"
           style={{ width: '50%' }}
         >
           {t('core:addNewFileType')}
-        </Button>
+        </TsButton>
         {devMode && (
-          <Button
+          <TsButton
             data-tid="resetFileTypesTID"
             onClick={() => {
               selectedItem.current = undefined;
@@ -504,7 +504,7 @@ function SettingsFileTypes() {
             style={{ width: '50%' }}
           >
             {t('core:resetFileType')}
-          </Button>
+          </TsButton>
         )}
         {isConfirmDialogOpened && (
           <ConfirmDialog

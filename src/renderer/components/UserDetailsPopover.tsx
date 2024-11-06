@@ -24,7 +24,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '-/components/Tooltip';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useSelector } from 'react-redux';
@@ -151,26 +151,23 @@ function UserDetailsPopover(props: Props) {
             )}
             {'SOFTWARE_TOKEN_MFA'.indexOf(currentUser.preferredMFA) === -1 ? (
               <Tooltip title={t('core:setupTOTPHelp')}>
-                <Button
+                <TsButton
                   data-tid="setupTOTP"
                   className={classes.mainActionButton}
                   onClick={() => {
                     setSetupTOTPOpened(true);
                   }}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
                   style={{ width: '95%' }}
                 >
                   {t('core:setupTOTP')}
-                </Button>
+                </TsButton>
               </Tooltip>
             ) : (
               <>
                 <Typography style={{ color: theme.palette.text.primary }}>
                   {t('core:TOTPEnabled')}
                 </Typography>
-                <Button
+                <TsButton
                   className={classes.mainActionButton}
                   onClick={async () => {
                     try {
@@ -180,13 +177,10 @@ function UserDetailsPopover(props: Props) {
                       console.log(error);
                     }
                   }}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
                   style={{ width: '95%' }}
                 >
                   {t('core:disableTOTP')}
-                </Button>
+                </TsButton>
               </>
             )}
           </Box>
@@ -198,19 +192,16 @@ function UserDetailsPopover(props: Props) {
             marginBottom: 10,
           }}
         >
-          <Button
+          <TsButton
             data-tid="signOutTID"
             title={t('core:signOut')}
             className={classes.mainActionButton}
             onClick={signOut}
-            size="small"
-            variant="outlined"
-            color="primary"
             style={{ width: '95%' }}
           >
             <ExitToAppIcon className={classNames(classes.leftIcon)} />
             {t('core:signOut')}
-          </Button>
+          </TsButton>
         </Box>
       </Box>
     </Root>

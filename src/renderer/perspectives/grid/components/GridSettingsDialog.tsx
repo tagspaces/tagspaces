@@ -28,7 +28,6 @@ import {
   Switch,
   Divider,
   MenuItem,
-  Button,
   FormHelperText,
   Typography,
   Paper,
@@ -43,8 +42,8 @@ import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import TsTextField from '-/components/TsTextField';
 import TsSelect from '-/components/TsSelect';
+import TsButton from '-/components/TsButton';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -138,7 +137,7 @@ function GridSettingsDialog(props: Props) {
               {t('core:folderWithCustomPerspectiveSetting')}
             </Typography>
             <br />
-            <Button
+            <TsButton
               data-tid="resetLocalSettingsTID"
               title={t('core:resetLocalSettings')}
               onClick={() => {
@@ -148,7 +147,7 @@ function GridSettingsDialog(props: Props) {
               }}
             >
               {t('core:resetLocalSettings')}
-            </Button>
+            </TsButton>
           </>
         )}
         <Divider />
@@ -355,10 +354,10 @@ function GridSettingsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
-        <Button data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
+        <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
           {t('core:help')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           data-tid="defaultSettings"
           onClick={() => {
             saveSettings(true);
@@ -367,9 +366,9 @@ function GridSettingsDialog(props: Props) {
           color="primary"
         >
           {t('core:defaultSettings')}
-        </Button>
+        </TsButton>
         {Pro && (
-          <Button
+          <TsButton
             data-tid="directorySettings"
             onClick={() => {
               saveSettings(false);
@@ -378,7 +377,7 @@ function GridSettingsDialog(props: Props) {
             color="primary"
           >
             {t('core:directorySettings')}
-          </Button>
+          </TsButton>
         )}
       </DialogActions>
     </Dialog>

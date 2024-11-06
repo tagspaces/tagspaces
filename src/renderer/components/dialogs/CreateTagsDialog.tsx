@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -120,8 +120,8 @@ function CreateTagsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('core:cancel')}</Button>
-        <Button
+        <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+        <TsButton
           disabled={inputError}
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
@@ -129,7 +129,7 @@ function CreateTagsDialog(props: Props) {
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

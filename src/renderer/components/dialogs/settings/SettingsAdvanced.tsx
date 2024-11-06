@@ -22,7 +22,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '-/components/Tooltip';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
@@ -109,16 +109,17 @@ function SettingsAdvanced(props: Props) {
   return (
     <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <ListItem>
-        <Button
+        <TsButton
           data-tid="resetSettingsTID"
           onClick={() => showResetSettings(true)}
           color="secondary"
           style={{ marginLeft: -7 }}
         >
           {t('core:resetSettings')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           data-tid="reloadAppTID"
+          style={{ marginLeft: 5 }}
           onClick={() => {
             if (AppConfig.isElectron) {
               window.electronIO.ipcRenderer.sendMessage('reloadWindow');
@@ -129,7 +130,7 @@ function SettingsAdvanced(props: Props) {
           color="secondary"
         >
           {t('core:reloadApplication')}
-        </Button>
+        </TsButton>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('enableMobileMode')} />
@@ -381,12 +382,12 @@ function SettingsAdvanced(props: Props) {
       <ListItem>
         <ListItemText primary={t('core:tileServerTitle')} />
         <ListItemSecondaryAction style={{ right: 0 }}>
-          <Button
+          <TsButton
             color="primary"
             onClick={(event) => handleEditTileServerClick(event, {}, true)}
           >
             {t('tileServerDialogAdd')}
-          </Button>
+          </TsButton>
         </ListItemSecondaryAction>
       </ListItem>
       <List

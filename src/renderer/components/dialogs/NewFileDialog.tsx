@@ -36,7 +36,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import AppConfig from '-/AppConfig';
 import versionMeta from '-/version.json';
@@ -176,7 +176,7 @@ function NewFileDialog(props: Props) {
         <DialogActions
           style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
         >
-          <Button
+          <TsButton
             data-tid="backTID"
             onClick={() => {
               onClose();
@@ -184,8 +184,8 @@ function NewFileDialog(props: Props) {
             color="primary"
           >
             {t('core:cancel')}
-          </Button>
-          <Button
+          </TsButton>
+          <TsButton
             data-tid="createTID"
             variant="contained"
             onClick={() => {
@@ -195,7 +195,7 @@ function NewFileDialog(props: Props) {
             disabled={haveError.current}
           >
             {t('core:ok')}
-          </Button>
+          </TsButton>
         </DialogActions>
       )}
     </Dialog>

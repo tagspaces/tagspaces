@@ -27,7 +27,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
 import Switch from '@mui/material/Switch';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -211,13 +211,13 @@ function SettingsExtensions() {
             )}
           {devMode && AppConfig.isElectron && (
             <Box style={{ textAlign: 'center' }}>
-              <Button
+              <TsButton
                 data-tid="installExtensionTID"
                 onClick={() => fileInputRef.current.click()}
                 color="secondary"
               >
                 {t('core:installExtension')}
-              </Button>
+              </TsButton>
               <input
                 style={{ display: 'none' }}
                 ref={fileInputRef}

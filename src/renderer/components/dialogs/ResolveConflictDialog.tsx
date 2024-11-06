@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -97,7 +97,7 @@ function ResolveConflictDialog(props: Props) {
       >
         {isSaveAs ? (
           <>
-            <Button
+            <TsButton
               data-tid="backTID"
               title={t('core:cancel')}
               onClick={() => {
@@ -107,8 +107,8 @@ function ResolveConflictDialog(props: Props) {
               color="primary"
             >
               {t('core:cancel')}
-            </Button>
-            <Button
+            </TsButton>
+            <TsButton
               data-tid="saveTID"
               title={t('core:save')}
               onClick={() => {
@@ -125,11 +125,11 @@ function ResolveConflictDialog(props: Props) {
               color="primary"
             >
               {t('core:save')}
-            </Button>
+            </TsButton>
           </>
         ) : (
           <>
-            <Button
+            <TsButton
               data-tid="saveas"
               title={t('core:saveAs')}
               onClick={() => {
@@ -138,8 +138,8 @@ function ResolveConflictDialog(props: Props) {
               color="primary"
             >
               {t('core:saveAs')}
-            </Button>
-            <Button
+            </TsButton>
+            <TsButton
               data-tid="overrideTID"
               title={t('core:override')}
               onClick={() => {
@@ -151,7 +151,7 @@ function ResolveConflictDialog(props: Props) {
               variant="contained"
             >
               {t('core:override')}
-            </Button>
+            </TsButton>
           </>
         )}
       </DialogActions>

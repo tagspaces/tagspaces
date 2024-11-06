@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -244,14 +244,14 @@ function CreateTagGroupDialog(props: Props) {
             {t('core:tagBackgroundColor')}
           </FormHelperText>
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={toggleDefaultTagBackgroundColorPicker}
               data-tid="createTagGroupBackgroundColor"
               style={styles.color}
               role="presentation"
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayColorPicker && (
             <ColorPickerDialog
@@ -267,14 +267,14 @@ function CreateTagGroupDialog(props: Props) {
             {t('core:tagForegroundColor')}
           </FormHelperText>
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={toggleDefaultTagTextColorPicker}
               data-tid="createTagGroupForegroundColor"
               style={styles.textcolor}
               role="presentation"
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayTextColorPicker && (
             <ColorPickerDialog
@@ -287,10 +287,10 @@ function CreateTagGroupDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="createTagGroupCancelButton" onClick={onClose}>
+        <TsButton data-tid="createTagGroupCancelButton" onClick={onClose}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           disabled={disableConfirmButton.current}
           onClick={onConfirm}
           variant="contained"
@@ -298,7 +298,7 @@ function CreateTagGroupDialog(props: Props) {
           color="primary"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -178,7 +178,7 @@ function MapTileServerDialog(props: Props) {
       }}
     >
       {props.tileServer.uuid && (
-        <Button
+        <TsButton
           style={{
             marginLeft: 10,
           }}
@@ -189,24 +189,24 @@ function MapTileServerDialog(props: Props) {
           }}
         >
           {t('core:delete')}
-        </Button>
+        </TsButton>
       )}
       <div>
-        <Button
+        <TsButton
           data-tid="closeTileServerDialogTID"
           onClick={props.onClose}
           color="primary"
         >
           {t('core:closeButton')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           data-tid="saveTileServerDialogTID"
           onClick={saveTileServer}
           color="primary"
           variant="contained"
         >
           {t('core:confirmSaveButton')}
-        </Button>
+        </TsButton>
       </div>
     </DialogActions>
   );

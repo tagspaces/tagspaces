@@ -18,7 +18,7 @@
 
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import PlaceIcon from '@mui/icons-material/Place';
 import DateIcon from '@mui/icons-material/DateRange';
 import Tooltip from '-/components/Tooltip';

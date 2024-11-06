@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -157,7 +157,7 @@ function DirectoryListView(props: Props) {
   return (
     <div style={{ marginTop: 10 }}>
       {getDirLocations()}
-      <Button
+      <TsButton
         variant="text"
         startIcon={<ParentFolderIcon />}
         style={{ margin: 5 }}
@@ -175,8 +175,8 @@ function DirectoryListView(props: Props) {
         }}
       >
         {t('core:navigateToParentDirectory')}
-      </Button>
-      <Button
+      </TsButton>
+      <TsButton
         variant="text"
         startIcon={<NewFolderIcon />}
         style={{ margin: 5 }}
@@ -190,7 +190,7 @@ function DirectoryListView(props: Props) {
         }}
       >
         {t('core:newSubdirectory')}
-      </Button>
+      </TsButton>
       <List
         dense
         style={{

@@ -24,7 +24,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
 import ToggleButton from '@mui/material/ToggleButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
@@ -198,7 +198,7 @@ function MobileNavigation(props: Props) {
               }}
             >
               <Tooltip title={t('core:createNew')}>
-                <Button
+                <TsButton
                   aria-controls={
                     openedCreateMenu ? 'split-button-menu' : undefined
                   }
@@ -206,9 +206,12 @@ function MobileNavigation(props: Props) {
                   aria-haspopup="menu"
                   data-tid="createNewDropdownButtonTID"
                   onClick={handleToggle}
-                  size="small"
                   startIcon={<CreateFileIcon />}
-                  // endIcon={<ArrowDropDownIcon />}
+                  style={{
+                    borderRadius: 'unset',
+                    borderTopLeftRadius: 10,
+                    borderBottomLeftRadius: 10,
+                  }}
                 >
                   <Box
                     style={{
@@ -220,14 +223,18 @@ function MobileNavigation(props: Props) {
                   >
                     {t('core:createNew')}
                   </Box>
-                </Button>
+                </TsButton>
               </Tooltip>
               <Tooltip title={t('core:openSharingLink')}>
-                <Button
-                  size="small"
+                <TsButton
                   data-tid="openLinkNavigationTID"
                   onClick={() => {
                     openLinkDialog();
+                  }}
+                  style={{
+                    borderRadius: 'unset',
+                    borderTopRightRadius: 10,
+                    borderBottomRightRadius: 10,
                   }}
                   startIcon={<OpenLinkIcon />}
                 >
@@ -241,7 +248,7 @@ function MobileNavigation(props: Props) {
                   >
                     {t('core:openLink')}
                   </Box>
-                </Button>
+                </TsButton>
               </Tooltip>
             </ButtonGroup>
           </Box>

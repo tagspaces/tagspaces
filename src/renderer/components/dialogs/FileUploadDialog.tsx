@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -242,9 +242,9 @@ function FileUploadDialog(props: Props) {
                   </Grid>
                   <Grid item xs={2}>
                     {abort && typeof abort === 'function' && (
-                      <Button onClick={() => abort()}>
+                      <TsButton onClick={() => abort()}>
                         <CloseIcon />
-                      </Button>
+                      </TsButton>
                     )}
                   </Grid>
                   <Grid item xs={12}>
@@ -258,7 +258,7 @@ function FileUploadDialog(props: Props) {
       </DialogContent>
       <DialogActions style={{ padding: '10px 30px 30px 30px' }}>
         {!haveProgress && (
-          <Button
+          <TsButton
             data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
@@ -267,19 +267,23 @@ function FileUploadDialog(props: Props) {
             color="primary"
           >
             {t('core:closeAndClear')}
-          </Button>
+          </TsButton>
         )}
-        <Button
+        <TsButton
           data-tid="uploadMinimizeDialogTID"
           onClick={onClose}
           color="primary"
         >
           {t('core:minimize')}
-        </Button>
+        </TsButton>
         {haveProgress && (
-          <Button data-tid="uploadStopAllTID" onClick={stopAll} color="primary">
+          <TsButton
+            data-tid="uploadStopAllTID"
+            onClick={stopAll}
+            color="primary"
+          >
             {t('core:stopAll')}
-          </Button>
+          </TsButton>
         )}
       </DialogActions>
     </Dialog>

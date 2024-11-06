@@ -17,7 +17,7 @@
  */
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -193,7 +193,7 @@ function EditTagGroupDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('tagBackgroundColor')} />
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
               data-tid="editTagGroupBackgroundColor"
               style={{
@@ -207,7 +207,7 @@ function EditTagGroupDialog(props: Props) {
               }}
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayColorPicker && (
             <ColorPickerDialog
@@ -221,7 +221,7 @@ function EditTagGroupDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               data-tid="editTagGroupForegroundColor"
               style={{
@@ -236,7 +236,7 @@ function EditTagGroupDialog(props: Props) {
               role="presentation"
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayTextColorPicker && (
             <ColorPickerDialog
@@ -261,8 +261,8 @@ function EditTagGroupDialog(props: Props) {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={onClose}>{t('core:cancel')}</Button>
-      <Button
+      <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+      <TsButton
         disabled={disableConfirmButton()}
         onClick={onConfirm}
         data-tid="editTagGroupConfirmButton"
@@ -270,7 +270,7 @@ function EditTagGroupDialog(props: Props) {
         variant="contained"
       >
         {t('core:ok')}
-      </Button>
+      </TsButton>
     </DialogActions>
   );
 

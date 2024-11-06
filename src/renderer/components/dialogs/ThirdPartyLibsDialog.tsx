@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -58,14 +58,14 @@ function ThirdPartyLibsDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button
+        <TsButton
           data-tid="confirmThirdPartyLibsDialog"
           onClick={onClose}
           color="primary"
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

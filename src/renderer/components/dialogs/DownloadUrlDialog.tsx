@@ -29,7 +29,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -201,15 +201,15 @@ function DownloadUrlDialog(props: Props) {
             <TargetPath />
           </DialogContent>
           <DialogActions>
-            <Button onClick={onClose}>{t('core:cancel')}</Button>
-            <Button
+            <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+            <TsButton
               variant="contained"
               data-tid={'downloadFileUrlTID'}
               className={classes.createButton}
               onClick={() => downloadURL()}
             >
               {t('core:ok')}
-            </Button>
+            </TsButton>
           </DialogActions>
         </Dialog>
       </TargetPathContextProvider>

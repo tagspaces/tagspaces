@@ -17,7 +17,7 @@
  */
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -116,7 +116,7 @@ function LinkGeneratorDialog(props: Props) {
             readOnly: true,
             endAdornment: (
               <InputAdornment position="start">
-                <Button
+                <TsButton
                   data-tid="copySharingLinkTID"
                   onClick={() => {
                     const entryTitle = extractTitle(
@@ -135,7 +135,7 @@ function LinkGeneratorDialog(props: Props) {
                   color="primary"
                 >
                   {t('core:copy')}
-                </Button>
+                </TsButton>
               </InputAdornment>
             ),
           }}
@@ -171,7 +171,7 @@ function LinkGeneratorDialog(props: Props) {
           padding: fullScreen ? '10px 30px 30px 30px' : undefined,
         }}
       >
-        <Button
+        <TsButton
           variant="text"
           data-tid="helpSearchButtonTID"
           onClick={() => {
@@ -179,15 +179,15 @@ function LinkGeneratorDialog(props: Props) {
           }}
         >
           {t('help')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           data-tid="closeLinkTID"
           onClick={onClose}
           variant="contained"
           color="primary"
         >
           {t('core:close')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

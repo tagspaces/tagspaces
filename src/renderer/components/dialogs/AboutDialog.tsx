@@ -183,6 +183,7 @@ function AboutDialog(props: Props) {
             {imprintURL && (
               <TsButton
                 style={{ marginRight: 5 }}
+                variant="text"
                 onClick={() => {
                   openURLExternally(imprintURL, true);
                 }}
@@ -193,6 +194,7 @@ function AboutDialog(props: Props) {
             {privacyURL && (
               <TsButton
                 style={{ marginRight: 5 }}
+                variant="text"
                 onClick={() => {
                   openURLExternally(privacyURL, true);
                 }}
@@ -202,6 +204,7 @@ function AboutDialog(props: Props) {
             )}
             <TsButton
               style={{ marginRight: 5 }}
+              variant="text"
               onClick={() => {
                 openURLExternally(Links.links.changelogURL, true);
               }}
@@ -210,6 +213,7 @@ function AboutDialog(props: Props) {
             </TsButton>
             <TsButton
               style={{ marginRight: 5 }}
+              variant="text"
               data-tid="openLicenseDialog"
               onClick={() => openLicenseDialog()}
             >
@@ -218,7 +222,9 @@ function AboutDialog(props: Props) {
           </div>
         </Typography>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {!Pro && (
           <TsButton
             data-tid="checkForUpdates"

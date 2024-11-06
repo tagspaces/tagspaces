@@ -19,7 +19,7 @@
 import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -131,10 +131,10 @@ function OpenLinkDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeOpenLinkDialog" onClick={onCancel}>
+        <TsButton data-tid="closeOpenLinkDialog" onClick={onCancel}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           disabled={disableConfirmButton}
           onClick={onConfirm}
           data-tid="confirmOpenLink"
@@ -142,7 +142,7 @@ function OpenLinkDialog(props: Props) {
           variant="contained"
         >
           {t('core:open')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

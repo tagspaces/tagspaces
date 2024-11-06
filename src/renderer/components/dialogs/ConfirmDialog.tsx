@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -88,20 +88,20 @@ function ConfirmDialog(props: Props) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button
+        <TsButton
           onClick={() => onConfirm(false)}
           color="primary"
           data-tid={props.cancelDialogTID}
         >
           {t('core:no')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           data-tid={props.confirmDialogTID}
           onClick={() => onConfirm(true)}
           color="primary"
         >
           {t('core:yes')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

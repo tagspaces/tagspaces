@@ -20,7 +20,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { getLastPublishedVersion } from '-/reducers/settings';
@@ -125,15 +125,14 @@ function PageNotification() {
         autoHideDuration={undefined}
         message={i18n.t('indexing') + ': ' + isIndexing}
         action={[
-          <Button
+          <TsButton
             key="cancelIndexButton"
             color="secondary"
-            size="small"
             onClick={() => cancelDirectoryIndexing()}
             data-tid="cancelDirectoryIndexing"
           >
             {t('core:cancelIndexing')}
-          </Button>,
+          </TsButton>,
         ]}
       />
       <TSNotification
@@ -142,30 +141,23 @@ function PageNotification() {
         autoHideDuration={undefined}
         message={'Version ' + lastPublishedVersion + ' available.'}
         action={[
-          <Button
-            key="laterButton"
-            color="secondary"
-            size="small"
-            onClick={skipRelease}
-          >
+          <TsButton key="laterButton" color="secondary" onClick={skipRelease}>
             {t('core:later')}
-          </Button>,
-          <Button
+          </TsButton>,
+          <TsButton
             key="changelogButton"
             color="secondary"
-            size="small"
             onClick={openChangelogPage}
           >
             {t('core:releaseNotes')}
-          </Button>,
-          <Button
+          </TsButton>,
+          <TsButton
             key="latestVersionButton"
             color="primary"
-            size="small"
             onClick={getLatestVersion}
           >
             {t('core:getItNow')}
-          </Button>,
+          </TsButton>,
         ]}
       />
     </>
