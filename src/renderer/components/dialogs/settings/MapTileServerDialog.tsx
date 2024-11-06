@@ -33,6 +33,8 @@ import { actions as SettingsActions } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import ListItemText from '@mui/material/ListItemText';
+import ListItem from '@mui/material/ListItem/ListItem';
 
 interface Props {
   open: boolean;
@@ -137,7 +139,11 @@ function MapTileServerDialog(props: Props) {
           defaultValue={serverURL.current}
           data-tid="tileServerUrlTID"
         />
-        <FormHelperText>{t('core:tileServerUrlHelp')}</FormHelperText>
+        <FormHelperText
+          style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+        >
+          {t('core:tileServerUrlHelp')}
+        </FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
         <TsTextField
@@ -147,15 +153,13 @@ function MapTileServerDialog(props: Props) {
             const { target } = event;
             serverInfo.current = target.value;
           }}
-          // updateValue={(value) => {
-          //   serverInfo.current = value;
-          // }}
           retrieveValue={() => serverInfo.current}
           defaultValue={serverInfo.current}
           data-tid="tileserverInfoTID"
         />
       </FormControl>
-      <FormControl fullWidth={true}>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('core:serverIsDefaultHelp')} />
         <Switch
           data-tid="serverIsDefaultTID"
           onClick={() => {
@@ -163,8 +167,7 @@ function MapTileServerDialog(props: Props) {
           }}
           defaultChecked={isDefault.current}
         />
-        <FormHelperText>{t('core:serverIsDefaultHelp')}</FormHelperText>
-      </FormControl>
+      </ListItem>
     </DialogContent>
   );
 

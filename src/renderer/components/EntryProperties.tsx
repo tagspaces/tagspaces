@@ -165,7 +165,6 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 const ThumbnailTextField = styled(TextField)(({ theme }) => ({
-  //[`& .MuiInputBase-root}`]: {
   [`& .${inputBaseClasses.root}`]: {
     height: 220,
   },
@@ -635,7 +634,7 @@ function EntryProperties(props: Props) {
             onChange={handleFileNameChange}
           />
           {fileNameError.current && (
-            <FormHelperText>
+            <FormHelperText style={{ marginTop: 0 }}>
               {t(
                 'core:' +
                   (openedEntry.isFile ? 'fileNameHelp' : 'directoryNameHelp'),
@@ -643,7 +642,7 @@ function EntryProperties(props: Props) {
             </FormHelperText>
           )}
         </Grid>
-        <Grid item xs={12} style={{ marginTop: 10 }}>
+        <Grid item xs={12}>
           <TagDropContainer entryPath={openedEntry.path}>
             <TagsSelect
               label={t('core:fileTags')}
@@ -948,7 +947,7 @@ function EntryProperties(props: Props) {
         </Grid>
 
         {!openedEntry.isFile && (
-          <Grid item xs={12} style={{ marginTop: 10 }}>
+          <Grid item xs={12}>
             <PerspectiveSelector
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
@@ -966,7 +965,7 @@ function EntryProperties(props: Props) {
               InputProps={{
                 readOnly: true,
                 startAdornment: (
-                  <InputAdornment position="start" style={{ marginTop: 14 }}>
+                  <InputAdornment position="start">
                     <TransparentBackground>
                       <Tooltip title={t('editBackgroundColor')}>
                         <Button
@@ -1065,10 +1064,11 @@ function EntryProperties(props: Props) {
         )}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={openedEntry.isFile ? 12 : 6}>
+            <FormHelperText>{t('core:thumbnail')}</FormHelperText>
             <ThumbnailTextField
               margin="dense"
-              label={t('core:thumbnail')}
-              variant="filled"
+              variant="outlined"
+              style={{ marginTop: 0 }}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -1116,11 +1116,12 @@ function EntryProperties(props: Props) {
           </Grid>
           {!openedEntry.isFile && (
             <Grid item xs={6}>
+              <FormHelperText>{t('core:backgroundImage')}</FormHelperText>
               <ThumbnailTextField
                 margin="dense"
-                label={t('core:backgroundImage')}
                 fullWidth
-                variant="filled"
+                style={{ marginTop: 0 }}
+                variant="outlined"
                 InputProps={{
                   readOnly: true,
                   startAdornment: (

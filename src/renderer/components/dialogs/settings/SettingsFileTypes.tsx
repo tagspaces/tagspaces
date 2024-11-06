@@ -244,7 +244,7 @@ function SettingsFileTypes() {
   interface ColumnData {
     dataKey: keyof TS.FileTypes;
     label: string;
-    width: number;
+    width?: number | string;
   }
 
   const columns: ColumnData[] = [
@@ -254,17 +254,17 @@ function SettingsFileTypes() {
       dataKey: 'type',
     },
     {
-      width: 170,
+      //width: '35%',
       label: t('core:fileOpener'),
       dataKey: 'viewer',
     },
     {
-      width: 170,
+      // width: '45%',
       label: t('core:fileEditor'),
       dataKey: 'editor',
     },
     {
-      width: 80,
+      //width: 80,
       label: t('core:actions'),
       dataKey: 'color',
     },
@@ -475,10 +475,11 @@ function SettingsFileTypes() {
     <Root>
       <Paper
         style={{
-          height: 600,
+          height: 500,
           width: '100%',
           minWidth: 550,
           overflow: 'hidden',
+          background: 'transparent',
         }}
       >
         <Button
@@ -528,6 +529,7 @@ function SettingsFileTypes() {
             overflowX: 'hidden',
             height: 'calc(100% - 30px)',
             overflowY: 'auto',
+            background: 'transparent',
           }}
           data={items.current}
           components={VirtuosoTableComponents}

@@ -31,7 +31,6 @@ import {
   Button,
   FormHelperText,
   Typography,
-  TextField,
   Paper,
   Box,
 } from '@mui/material';
@@ -45,6 +44,7 @@ import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -338,13 +338,9 @@ function GridSettingsDialog(props: Props) {
           <ListItemText primary={t('core:singleClickSelects')} />
         </MenuItem>
         <Divider />
-        <FormControl
-          fullWidth={true}
-          style={{ overflow: 'visible', marginTop: 20 }}
-        >
-          <TsTextField
-            select
-            label={t('core:pageLimit')}
+        <FormControl fullWidth={true}>
+          <TsSelect
+            label={t('core:pageLimitHelp')}
             name="limit"
             defaultValue={gridPageLimit}
             onChange={handleGridPaginationLimit}
@@ -354,8 +350,8 @@ function GridSettingsDialog(props: Props) {
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
             <MenuItem value={1000}>1000</MenuItem>
-          </TsTextField>
-          <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText>
+          </TsSelect>
+          {/* <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText> */}
         </FormControl>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>

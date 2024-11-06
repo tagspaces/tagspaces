@@ -25,8 +25,6 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import Tooltip from '-/components/Tooltip';
-import Input from '@mui/material/Input';
-import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
 import InfoIcon from '-/components/InfoIcon';
@@ -38,16 +36,16 @@ import {
   actions as SettingsActions,
   getFileNameTagPlace,
   getPersistTagsInSidecarFile,
-  //getCurrentLanguage,
   getSettings,
 } from '-/reducers/settings';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
+import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { BetaLabel } from '-/components/HelperComponents';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
-import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { setLanguage } from '-/services/utils-io';
@@ -89,8 +87,9 @@ function SettingsGeneral() {
     <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <ListItem>
         <ListItemText primary={t('core:interfaceLanguage')} />
-        <Select
+        <TsSelect
           data-tid="settingsSetLanguage"
+          fullWidth={false}
           value={settings.interfaceLanguage}
           onChange={(event: any) => {
             return i18n.changeLanguage(event.target.value).then(() => {
@@ -99,24 +98,23 @@ function SettingsGeneral() {
               return true;
             });
           }}
-          input={<Input id="languageSelector" />}
         >
           {settings.supportedLanguages.map((language) => (
             <MenuItem key={language.iso} value={language.iso}>
               {language.title}
             </MenuItem>
           ))}
-        </Select>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeSelector')} />
-        <Select
+        <TsSelect
           data-tid="settingsSetCurrentTheme"
+          fullWidth={false}
           value={settings.currentTheme}
           onChange={(event: any) =>
             dispatch(SettingsActions.setCurrentTheme(event.target.value))
           }
-          input={<Input id="themeSelector" />}
         >
           {settings.supportedThemes.map((theme) => (
             <MenuItem key={theme} value={theme}>
@@ -125,45 +123,46 @@ function SettingsGeneral() {
               {theme === 'system' && t('core:systemScheme')}
             </MenuItem>
           ))}
-        </Select>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeRegularSelector')} />
-        <Select
+        <TsSelect
           data-tid="settingsCurrentRegularThemeTID"
+          fullWidth={false}
           value={settings.currentRegularTheme}
           onChange={(event: any) =>
             dispatch(SettingsActions.setCurrentRegularTheme(event.target.value))
           }
-          input={<Input id="themeRegularSelector" />}
         >
           {settings.supportedRegularThemes.map((theme) => (
             <MenuItem key={theme} value={theme}>
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
-        </Select>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeDarkSelector')} />
-        <Select
+        <TsSelect
           data-tid="settingsCurrentDarkThemeTID"
+          fullWidth={false}
           value={settings.currentDarkTheme}
           onChange={(event: any) =>
             dispatch(SettingsActions.setCurrentDarkTheme(event.target.value))
           }
-          input={<Input id="themeDarkSelector" />}
         >
           {settings.supportedDarkThemes.map((theme) => (
             <MenuItem key={theme} value={theme}>
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
-        </Select>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('createLocationDefaultPerspective')} />
         <PerspectiveSelector
+          fullWidth={false}
           onChange={changePerspective}
           defaultValue={defaultPerspective}
           testId="changePerspectiveInSettingsTID"
@@ -449,7 +448,7 @@ function SettingsGeneral() {
         </ListItem> */}
       <ListItem>
         <ListItemText primary={t('core:maxSearchResultChoose')} />
-        <Input
+        <TsTextField
           style={{ maxWidth: '100px' }}
           type="number"
           data-tid="settingsMaxSearchResult"

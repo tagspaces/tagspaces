@@ -28,8 +28,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Switch from '@mui/material/Switch';
-import Select from '@mui/material/Select';
-import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
 import {
@@ -40,6 +38,8 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
+import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -172,7 +172,7 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:prefixTagContainer')} />
-        <Input
+        <TsTextField
           style={{ maxWidth: '100px' }}
           data-tid="prefixTagContainerTID"
           value={settings.prefixTagContainer}
@@ -195,20 +195,20 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <Select
+            <TsSelect
               data-tid="fileOpenTID"
+              fullWidth={false}
               title={t('core:fileOpenHistoryTitle')}
               value={settings[historyKeys.fileOpenKey]}
               onChange={(event) =>
                 setHistory(historyKeys.fileOpenKey, event.target.value)
               }
-              input={<Input id="fileOpenSelector" />}
             >
               <MenuItem value={0}>{t('core:disabled')}</MenuItem>
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </Select>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:folderOpenHistory')} />
@@ -224,20 +224,20 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <Select
+            <TsSelect
               data-tid="folderOpenTID"
+              fullWidth={false}
               title={t('core:folderOpenHistoryTitle')}
               value={settings[historyKeys.folderOpenKey]}
               onChange={(event: any) =>
                 setHistory(historyKeys.folderOpenKey, event.target.value)
               }
-              input={<Input id="folderOpenSelector" />}
             >
               <MenuItem value={0}>{t('core:disabled')}</MenuItem>
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </Select>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:fileEditHistory')} />
@@ -253,20 +253,20 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <Select
+            <TsSelect
               data-tid="fileEditTID"
+              fullWidth={false}
               title={t('core:fileEditHistoryTitle')}
               value={settings[historyKeys.fileEditKey]}
               onChange={(event: any) =>
                 setHistory(historyKeys.fileEditKey, event.target.value)
               }
-              input={<Input id="fileEditSelector" />}
             >
               <MenuItem value={0}>{t('core:disabled')}</MenuItem>
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </Select>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:searchHistory')} />
@@ -284,20 +284,20 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <Select
+            <TsSelect
               data-tid="searchHistoryTID"
+              fullWidth={false}
               title={t('core:searchHistoryTitle')}
               value={settings[historyKeys.searchHistoryKey]}
               onChange={(event: any) =>
                 setHistory(historyKeys.searchHistoryKey, event.target.value)
               }
-              input={<Input id="searchHistorySelector" />}
             >
               <MenuItem value={0}>{t('core:disabled')}</MenuItem>
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </Select>
+            </TsSelect>
           </ListItem>
           <ConfirmDialog
             open={confirmDialogKey !== null}
@@ -355,8 +355,9 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:geoTaggingFormat')} />
-        <Select
+        <TsSelect
           disabled={geoTaggingFormatDisabled}
+          fullWidth={false}
           data-tid="geoTaggingFormatTID"
           title={
             geoTaggingFormatDisabled
@@ -369,14 +370,13 @@ function SettingsAdvanced(props: Props) {
               : settings.geoTaggingFormat
           }
           onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
-          input={<Input id="geoTaggingFormatSelector" />}
         >
           {settings.supportedGeoTagging.map((geoTagging) => (
             <MenuItem key={geoTagging} value={geoTagging}>
               {geoTagging.toUpperCase()}
             </MenuItem>
           ))}
-        </Select>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:tileServerTitle')} />

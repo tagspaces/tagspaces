@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
@@ -160,15 +160,10 @@ function AboutDialog(props: Props) {
           </strong>
           is made possible by the TagSpaces project and other open source
           software listed in the:
-          <br />
-          <Button
-            size="small"
-            color="primary"
-            style={{ marginLeft: -5 }}
-            onClick={() => openThirdPartyLibsDialog()}
-          >
+          <p style={{ marginBottom: 5 }} />
+          <TsButton onClick={() => openThirdPartyLibsDialog()}>
             Software Acknowledgements
-          </Button>
+          </TsButton>
           <br />
           {!Pro && (
             <span>
@@ -184,92 +179,83 @@ function AboutDialog(props: Props) {
           for more details.
           <br />
           <br />
-          {imprintURL && (
-            <Button
-              size="small"
-              color="primary"
+          <div>
+            {imprintURL && (
+              <TsButton
+                style={{ marginRight: 5 }}
+                onClick={() => {
+                  openURLExternally(imprintURL, true);
+                }}
+              >
+                Imprint
+              </TsButton>
+            )}
+            {privacyURL && (
+              <TsButton
+                style={{ marginRight: 5 }}
+                onClick={() => {
+                  openURLExternally(privacyURL, true);
+                }}
+              >
+                Privacy Policy
+              </TsButton>
+            )}
+            <TsButton
+              style={{ marginRight: 5 }}
               onClick={() => {
-                openURLExternally(imprintURL, true);
+                openURLExternally(Links.links.changelogURL, true);
               }}
             >
-              Imprint
-            </Button>
-          )}
-          {privacyURL && (
-            <Button
-              size="small"
-              color="primary"
-              onClick={() => {
-                openURLExternally(privacyURL, true);
-              }}
+              Changelog
+            </TsButton>
+            <TsButton
+              style={{ marginRight: 5 }}
+              data-tid="openLicenseDialog"
+              onClick={() => openLicenseDialog()}
             >
-              Privacy Policy
-            </Button>
-          )}
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => {
-              openURLExternally(Links.links.changelogURL, true);
-            }}
-          >
-            Changelog
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            data-tid="openLicenseDialog"
-            onClick={() => openLicenseDialog()}
-          >
-            License Agreement
-          </Button>
+              {t('core:license')}
+            </TsButton>
+          </div>
         </Typography>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <DialogActions>
         {!Pro && (
-          <Button
+          <TsButton
             data-tid="checkForUpdates"
             title={t('core:checkForNewVersion')}
             onClick={() => {
               openURLExternally(Links.links.productsOverview, true);
             }}
-            color="primary"
-            // variant="outlined"
           >
             Upgrade to PRO
-          </Button>
+          </TsButton>
         )}
-        <Button
+        <TsButton
           data-tid="checkForUpdates"
           title={t('core:checkForNewVersion')}
           onClick={checkForUpdates}
-          // variant="outlined"
-          color="primary"
         >
           {versionInfo}
-        </Button>
-        {/* <Button
+        </TsButton>
+        {/* <TsButton
         data-tid="openLicenseDialog"
         onClick={this.props.toggleLicenseDialog}
       >
         {t('core:license')}
-      </Button>
-      <Button
+      </TsButton>
+      <TsButton
         data-tid="openThirdPartyLibsDialog"
         onClick={this.props.toggleThirdPartyLibsDialog}
       >
         {t('core:thirdPartyLibs')}
-      </Button> */}
-        <Button
+      </TsButton> */}
+        <TsButton
           data-tid="closeAboutDialog"
           onClick={onClose}
           variant="contained"
-          color="primary"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </TranslucentDialog>
   );

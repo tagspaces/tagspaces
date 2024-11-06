@@ -135,9 +135,9 @@ function NewFileDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
+          paddingTop: 10,
           minWidth: 200,
-          minHeight: 200,
-          marginBottom: 20,
+          // minHeight: 200,
           overflow: 'overlay',
         }}
         data-tid="newFileDialog"

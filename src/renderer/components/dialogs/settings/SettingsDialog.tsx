@@ -152,8 +152,9 @@ function SettingsDialog(props: Props) {
         style={{
           height: 'calc(100% - 50px)',
           minHeight: 400,
-          minWidth: 600,
-          maxWidth: 600,
+          width: fullScreen ? '100%' : 600,
+          //minWidth: 600,
+          //maxWidth: 600,
         }}
       >
         {currentTab === 0 && <SettingsGeneral />}

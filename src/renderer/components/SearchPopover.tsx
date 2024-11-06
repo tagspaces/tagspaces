@@ -26,9 +26,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import FilledInput from '@mui/material/FilledInput';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import TsTextField from '-/components/TsTextField';
 import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
 import IconButton from '@mui/material/IconButton';
@@ -545,16 +546,9 @@ function SearchPopover(props: Props) {
                 variant="outlined"
                 style={{ width: '100%', marginTop: 6 }}
               >
-                <InputLabel
-                  id="saved-searches"
-                  style={{
-                    padding: 3,
-                    borderRadius: 4,
-                    backgroundColor: theme.palette.background.default,
-                  }}
-                >
+                <FormHelperText style={{ marginLeft: 0 }}>
                   {t('core:savedSearchesTitle')}
-                </InputLabel>
+                </FormHelperText>
                 <Select
                   name="savedSearch"
                   labelId="saved-searches"
@@ -563,7 +557,7 @@ function SearchPopover(props: Props) {
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
-                  variant="filled"
+                  variant="outlined"
                   value={searchQuery.uuid ? searchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
@@ -796,14 +790,16 @@ function SearchPopover(props: Props) {
           disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterByTypTooltip')}>
-            <InputLabel htmlFor="file-type">{t('core:fileType')}</InputLabel>
+            <FormHelperText style={{ marginLeft: 0 }}>
+              {t('core:fileType')}
+            </FormHelperText>
             <Select
               fullWidth
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <FilledInput
+                <OutlinedInput
                   name="fileTypes"
                   id="file-type"
                   // label={t('core:fileType')}
@@ -920,20 +916,16 @@ function SearchPopover(props: Props) {
           disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterBySizeTooltip')}>
-            <InputLabel
-              style={{ backgroundColor: theme.palette.background.default }}
-              shrink
-              htmlFor="file-size"
-            >
+            <FormHelperText style={{ marginLeft: 0 }}>
               {t('core:sizeSearchTitle')}
-            </InputLabel>
+            </FormHelperText>
             <Select
               fullWidth
               value={fileSize.current}
               onChange={handleFileSizeChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <FilledInput
+                <OutlinedInput
                   name="fileSize"
                   id="file-size"
                   // label={t('core:sizeSearchTitle')}
@@ -975,20 +967,16 @@ function SearchPopover(props: Props) {
           disabled={isIndexing !== undefined || !Pro}
         >
           <ProTooltip tooltip={t('filterByLastModifiedDateTooltip')}>
-            <InputLabel
-              style={{ backgroundColor: theme.palette.background.default }}
-              shrink
-              htmlFor="modification-date"
-            >
+            <FormHelperText style={{ marginLeft: 0 }}>
               {t('core:lastModifiedSearchTitle')}
-            </InputLabel>
+            </FormHelperText>
             <Select
               fullWidth
               value={lastModified.current}
               onChange={handleLastModifiedChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <FilledInput
+                <OutlinedInput
                   name="lastModified"
                   id="modification-date"
                   // label={t('core:lastModifiedSearchTitle')}
@@ -1009,45 +997,49 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl className={classes.formControl}>
           <ProTooltip tooltip={t('enterTimePeriodTooltip')}>
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              /*utils={DateFnsUtils}*/
-            >
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <Box position="relative" display="inline-flex">
-                <DatePicker
-                  label={t('enterTagTimePeriodFrom')}
-                  disabled={isIndexing !== undefined || !Pro}
-                  inputFormat="yyyy-MM-dd"
-                  value={tagTimePeriodFrom && new Date(tagTimePeriodFrom)}
-                  onChange={(fromDataTime: Date) => {
-                    if (fromDataTime) {
-                      setSearchQuery({
-                        ...searchQuery,
-                        tagTimePeriodFrom: fromDataTime.getTime(),
-                        executeSearch: false,
-                      });
-                    }
-                  }}
-                  renderInput={(params) => <TsTextField {...params} />}
-                />
-                <DatePicker
-                  label={t('enterTagTimePeriodTo')}
-                  disabled={isIndexing !== undefined || !Pro}
-                  inputFormat="yyyy-MM-dd"
-                  value={tagTimePeriodTo && new Date(tagTimePeriodTo)}
-                  onChange={(toDataTime: Date) => {
-                    if (toDataTime) {
-                      setSearchQuery({
-                        ...searchQuery,
-                        tagTimePeriodTo: toDataTime.getTime(),
-                        executeSearch: false,
-                      });
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TsTextField style={{ marginLeft: 5 }} {...params} />
-                  )}
-                />
+                <div>
+                  <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+                    {t('core:enterTagTimePeriodFrom')}
+                  </FormHelperText>
+                  <DatePicker
+                    disabled={isIndexing !== undefined || !Pro}
+                    format="yyyy-MM-dd"
+                    value={tagTimePeriodFrom && new Date(tagTimePeriodFrom)}
+                    onChange={(fromDataTime: Date) => {
+                      if (fromDataTime) {
+                        setSearchQuery({
+                          ...searchQuery,
+                          tagTimePeriodFrom: fromDataTime.getTime(),
+                          executeSearch: false,
+                        });
+                      }
+                    }}
+                    // renderInput={(params) => <TsTextField {...params} />}
+                  />
+                </div>
+                <div style={{ marginLeft: 5 }}>
+                  <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+                    {t('core:enterTagTimePeriodTo')}
+                  </FormHelperText>
+                  <DatePicker
+                    // label={t('enterTagTimePeriodTo')}
+                    disabled={isIndexing !== undefined || !Pro}
+                    format="yyyy-MM-dd"
+                    value={tagTimePeriodTo && new Date(tagTimePeriodTo)}
+                    onChange={(toDataTime: Date) => {
+                      if (toDataTime) {
+                        setSearchQuery({
+                          ...searchQuery,
+                          tagTimePeriodTo: toDataTime.getTime(),
+                          executeSearch: false,
+                        });
+                      }
+                    }}
+                    // renderInput={(params) => <TsTextField {...params} />}
+                  />
+                </div>
               </Box>
             </LocalizationProvider>
           </ProTooltip>

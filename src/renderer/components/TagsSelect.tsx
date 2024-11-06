@@ -198,10 +198,11 @@ function TagsSelect(props: Props) {
         )}
         renderInput={(params) => (
           <>
+            <FormHelperText style={{ marginLeft: 0 }}>{label}</FormHelperText>
             <TextField
               {...params}
-              variant="filled"
-              label={label}
+              variant="outlined"
+              label={undefined}
               placeholder={placeholderText}
               margin="normal"
               autoFocus={autoFocus}

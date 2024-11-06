@@ -23,9 +23,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText/ListItemText';
 import Switch from '@mui/material/Switch';
 import Dialog from '@mui/material/Dialog';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useSelector } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
@@ -34,6 +35,8 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
+import Tag from '-/components/Tag';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -131,40 +134,16 @@ function EditTagGroupDialog(props: Props) {
 
   const renderTitle = () => (
     <DialogTitle style={{ overflow: 'visible' }}>
-      {t('core:editTagGroupTitle')}
+      {t('core:editTagGroupTitle')}{' '}
+      <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
+        tag-preview
+        <span style={{ margin: 3 }} />
+      </Tag>
       <DialogCloseButton testId="closeEditTagGroupTID" onClose={onClose} />
     </DialogTitle>
   );
 
   const renderContent = () => {
-    const styles = {
-      color: {
-        width: '100%',
-        height: 30,
-        borderRadius: 2,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        padding: '5px',
-        background: color,
-      },
-      textcolor: {
-        width: '100%',
-        height: 30,
-        borderRadius: 2,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        padding: '5px',
-        background: textcolor,
-      },
-      helpText: {
-        marginTop: '15px',
-        marginBottom: '5px',
-        fontSize: '1rem',
-      },
-    };
-
     return (
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl
@@ -172,12 +151,11 @@ function EditTagGroupDialog(props: Props) {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          <FormHelperText>{t('core:editTagGroupNewName')}</FormHelperText>
           <TsTextField
             error={inputError}
             name="title"
             autoFocus
-            // label={t('core:editTagGroupNewName')}
+            label={t('core:editTagGroupNewName')}
             onChange={handleTagGroupTitleChange}
             value={title}
             data-tid="editTagGroupInput"
@@ -188,10 +166,11 @@ function EditTagGroupDialog(props: Props) {
         </FormControl>
         {saveTagInLocation && (
           <FormControl fullWidth={true} error={inputError}>
-            <FormHelperText style={styles.helpText}>
+            <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
               {t('core:tagGroupLocation')}
             </FormHelperText>
-            <Select
+            <TsSelect
+              fullWidth={false}
               defaultValue={locationId}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setLocationId(event.target.value);
@@ -208,18 +187,24 @@ function EditTagGroupDialog(props: Props) {
                   {t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}
-            </Select>
+            </TsSelect>
           </FormControl>
         )}
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagBackgroundColor')}
-          </FormHelperText>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('tagBackgroundColor')} />
           <TransparentBackground>
             <Button
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
               data-tid="editTagGroupBackgroundColor"
-              style={styles.color}
+              style={{
+                height: 30,
+                borderRadius: 2,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: color,
+              }}
             >
               &nbsp;
             </Button>
@@ -232,16 +217,22 @@ function EditTagGroupDialog(props: Props) {
               color={color}
             />
           )}
-        </FormControl>
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagForegroundColor')}
-          </FormHelperText>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <Button
               onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               data-tid="editTagGroupForegroundColor"
-              style={styles.textcolor}
+              style={{
+                height: 30,
+                borderRadius: 2,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: textcolor,
+              }}
               role="presentation"
             >
               &nbsp;
@@ -255,17 +246,15 @@ function EditTagGroupDialog(props: Props) {
               color={textcolor}
             />
           )}
-        </FormControl>
-        <FormControl>
-          <FormHelperText style={styles.helpText}>
-            {t('core:colorChangesToAllTags')}
-          </FormHelperText>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:colorChangesToAllTags')} />
           <Switch
             data-tid="editTagGroupSwitch"
             onClick={() => setApplyChanges(!applyChanges)}
             checked={applyChanges}
           />
-        </FormControl>
+        </ListItem>
       </DialogContent>
     );
   };
