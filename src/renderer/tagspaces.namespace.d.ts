@@ -247,7 +247,7 @@ export namespace TS {
     | 'createDir';
 
   type EntrySizes = 'huge' | 'big' | 'normal' | 'small' | 'tiny';
-  //type AIProviders = 'ollama' | 'node-lama' | 'chatgpt';
+  type AIProviders = 'ollama' | 'node-lama' | 'chatgpt';
   // Ollama Define the type for the model details
   interface ModelDetails {
     format: string;

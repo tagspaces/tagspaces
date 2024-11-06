@@ -47,6 +47,7 @@ type ChatData = {
   setImage: (base64: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (model: TS.Model) => void;
+  findModel: (modelName: string) => TS.Model;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
   addTimeLineRequest: (txt: string) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
@@ -69,6 +70,7 @@ export const ChatContext = createContext<ChatData>({
   setImage: undefined,
   unloadCurrentModel: undefined,
   removeModel: undefined,
+  findModel: undefined,
   changeCurrentModel: undefined,
   addTimeLineRequest: undefined,
   addTimeLineResponse: undefined,
@@ -357,6 +359,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       addTimeLineRequest,
       addTimeLineResponse,
       newChatMessage,
+      findModel,
     };
   }, [
     models.current,

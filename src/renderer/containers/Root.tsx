@@ -51,6 +51,7 @@ import { UserContextProvider } from '-/hooks/UserContextProvider';
 import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
 import DialogsRoot from '-/containers/DialogsRoot';
 import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
+import { ChatContextProvider } from '-/perspectives/chat/hooks/ChatProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -94,21 +95,23 @@ export default function Root({ store, persistor }: RootType) {
                                             <UserContextProvider>
                                               <SavedSearchesContextProvider>
                                                 <BrowserHistoryContextProvider>
-                                                  {Pro ? (
-                                                    <Pro.contextProviders.BookmarksContextProvider>
-                                                      <Pro.contextProviders.HistoryContextProvider>
-                                                        <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                          <DialogsRoot>
-                                                            <MainPage />
-                                                          </DialogsRoot>
-                                                        </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                      </Pro.contextProviders.HistoryContextProvider>
-                                                    </Pro.contextProviders.BookmarksContextProvider>
-                                                  ) : (
-                                                    <DialogsRoot>
-                                                      <MainPage />
-                                                    </DialogsRoot>
-                                                  )}
+                                                  <ChatContextProvider>
+                                                    {Pro ? (
+                                                      <Pro.contextProviders.BookmarksContextProvider>
+                                                        <Pro.contextProviders.HistoryContextProvider>
+                                                          <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                            <DialogsRoot>
+                                                              <MainPage />
+                                                            </DialogsRoot>
+                                                          </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                        </Pro.contextProviders.HistoryContextProvider>
+                                                      </Pro.contextProviders.BookmarksContextProvider>
+                                                    ) : (
+                                                      <DialogsRoot>
+                                                        <MainPage />
+                                                      </DialogsRoot>
+                                                    )}
+                                                  </ChatContextProvider>
                                                 </BrowserHistoryContextProvider>
                                               </SavedSearchesContextProvider>
                                             </UserContextProvider>

@@ -84,9 +84,7 @@ const ChatPerspective = React.lazy(
 function ChatPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ChatContextProvider>
-        <ChatPerspective {...props} />
-      </ChatContextProvider>
+      <ChatPerspective {...props} />
     </React.Suspense>
   );
 }

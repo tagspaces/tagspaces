@@ -35,6 +35,7 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   actions as SettingsActions,
+  getDefaultAIProvider,
   getOllamaSettings,
 } from '-/reducers/settings';
 import { BetaLabel } from '-/components/HelperComponents';
@@ -42,7 +43,7 @@ import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { ExpandIcon } from '-/components/CommonIcons';
+import { ExpandIcon, RemoveIcon } from '-/components/CommonIcons';
 import Typography from '@mui/material/Typography';
 import InfoIcon from '-/components/InfoIcon';
 import TsTextField from '-/components/TsTextField';
@@ -50,10 +51,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { OllamaIcon } from '-/components/dialogs/settings/Ollama';
+import SelectChatModel from '-/perspectives/chat/components/SelectChatModel';
+import TsSelect from '-/components/TsSelect';
+import { TS } from '-/tagspaces.namespace';
+import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
+  const { findModel } = useChatContext();
   const ollamaSettings = useSelector(getOllamaSettings);
+  const aiProvider: TS.AIProviders = useSelector(getDefaultAIProvider);
   const ollamaAlive = useRef<boolean | null>(null);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
@@ -89,9 +96,75 @@ function SettingsAI() {
       });
   }
 
+  const handleChangeTextModel = (modelName: string) => {
+    dispatch(
+      SettingsActions.setOllamaSettings({
+        ...ollamaSettings,
+        textModel: modelName,
+      }),
+    );
+  };
+
+  const handleChangeImageModel = (modelName: string) => {
+    dispatch(
+      SettingsActions.setOllamaSettings({
+        ...ollamaSettings,
+        imageModel: modelName,
+      }),
+    );
+  };
+
+  const changeAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
+    const provider: TS.AIProviders = event.target.value as TS.AIProviders;
+    dispatch(SettingsActions.setAiProvider(provider));
+  };
+
   return (
     <>
       <Accordion defaultExpanded>
+        <AccordionSummary
+          expandIcon={<ExpandIcon />}
+          aria-controls="ai-general"
+          id="ai-general-header"
+          data-tid="aiGeneralTID"
+        >
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            p={2}
+          >
+            <Typography>AI General Settings</Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 2 }}>
+          <TsSelect
+            value={aiProvider}
+            onChange={changeAiProvider}
+            label={'Default AI'}
+          >
+            <MenuItem value="ollama">
+              <OllamaIcon width={10} style={{ marginRight: 5 }} />
+              ollama
+            </MenuItem>
+          </TsSelect>
+          {aiProvider && aiProvider === 'ollama' && (
+            <>
+              <SelectChatModel
+                label="default text model"
+                handleChangeModel={handleChangeTextModel}
+                chosenModel={findModel(ollamaSettings.textModel)}
+              />
+              <SelectChatModel
+                label="default image model"
+                handleChangeModel={handleChangeImageModel}
+                chosenModel={findModel(ollamaSettings.imageModel)}
+              />
+            </>
+          )}
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
         <AccordionSummary
           expandIcon={<ExpandIcon />}
           aria-controls="ollama-content"

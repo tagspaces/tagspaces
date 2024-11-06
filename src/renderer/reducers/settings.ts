@@ -68,6 +68,7 @@ export const types = {
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
   SET_LLAMA_NODE_SETTINGS: 'SETTINGS/SET_LLAMA_NODE_SETTINGS',
   SET_OLLAMA_SETTINGS: 'SETTINGS/SET_OLLAMA_SETTINGS',
+  SET_AI_PROVIDER: 'SETTINGS/SET_AI_PROVIDER',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -254,6 +255,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_OLLAMA_SETTINGS: {
       return { ...state, ollamaSettings: action.settings };
+    }
+    case types.SET_AI_PROVIDER: {
+      return { ...state, aiProvider: action.aiProvider };
     }
     case types.SET_PREFIX_TAG_CONTAINER: {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
@@ -673,6 +677,10 @@ export const actions = {
     type: types.SET_OLLAMA_SETTINGS,
     settings,
   }),
+  setAiProvider: (aiProvider: TS.AIProviders) => ({
+    type: types.SET_AI_PROVIDER,
+    aiProvider,
+  }),
   setPrefixTagContainer: (prefixTagContainer: boolean) => ({
     type: types.SET_PREFIX_TAG_CONTAINER,
     prefixTagContainer,
@@ -894,6 +902,7 @@ export const isReorderTags = (state: any) => state.settings.reorderTags;
 export const getLlamaNodeSettings = (state: any) =>
   state.settings.llamaNodeSettings;
 export const getOllamaSettings = (state: any) => state.settings.ollamaSettings;
+export const getDefaultAIProvider = (state: any) => state.settings.aiProvider;
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getGeoTaggingFormat = (state: any) =>

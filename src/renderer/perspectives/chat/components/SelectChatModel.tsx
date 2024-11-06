@@ -13,13 +13,15 @@ import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
 import TsSelect from '-/components/TsSelect';
 
 interface Props {
+  label?: string;
+  chosenModel: TS.Model;
   handleChangeModel: (newModelName: string) => void;
 }
 
 function SelectChatModel(props: Props) {
   const { t } = useTranslation();
-  const { handleChangeModel } = props;
-  const { models, currentModel, removeModel } = useChatContext();
+  const { label, chosenModel, handleChangeModel } = props;
+  const { models, removeModel } = useChatContext();
 
   const ollamaAvailableModels: TS.Model[] = [
     {
@@ -64,17 +66,16 @@ function SelectChatModel(props: Props) {
   };
 
   const handleRemoveModel = () => {
-    removeModel(currentModel);
+    removeModel(chosenModel);
   };
 
   return (
     <TsSelect
-      id="select-menu"
-      value={currentModel ? currentModel.name : 'init'}
+      value={chosenModel ? chosenModel.name : 'init'}
       onChange={changeModel}
-      label="Select a Model"
+      label={label ? label : 'Select a Model'}
       InputProps={{
-        endAdornment: currentModel && (
+        endAdornment: chosenModel && (
           <InputAdornment position="start">
             <IconButton
               aria-label={t('core:deleteModel')}

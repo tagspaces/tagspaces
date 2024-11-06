@@ -39,6 +39,7 @@ function MainContainer() {
     unloadCurrentModel,
     newChatMessage,
     changeCurrentModel,
+    currentModel,
   } = useChatContext();
   const isTyping = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
@@ -138,7 +139,10 @@ function MainContainer() {
       <Grid2 container spacing={2}>
         <Grid2 size={8}>
           <FormControl fullWidth>
-            <SelectChatModel handleChangeModel={handleChangeModel} />
+            <SelectChatModel
+              handleChangeModel={handleChangeModel}
+              chosenModel={currentModel}
+            />
           </FormControl>
         </Grid2>
         <Grid2 size={4}>
