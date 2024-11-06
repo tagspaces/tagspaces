@@ -46,7 +46,7 @@ type ChatData = {
   setModel: (model: TS.Model) => Promise<boolean>;
   setImage: (base64: string) => void;
   unloadCurrentModel: () => void;
-  removeModel: (model?: TS.Model) => void;
+  removeModel: (model: TS.Model) => void;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
   addTimeLineRequest: (txt: string) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
@@ -162,7 +162,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function removeModel(model: TS.Model = currentModel.current) {
+  function removeModel(model: TS.Model) {
     if (model) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
