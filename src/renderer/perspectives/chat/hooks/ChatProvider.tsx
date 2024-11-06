@@ -34,6 +34,7 @@ import {
   DEFAULT_SYSTEM_PROMPT,
   SUMMARIZE_PROMPT,
 } from '-/perspectives/chat/components/OllamaTemplates';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type ChatData = {
   models: TS.Model[];
@@ -42,14 +43,19 @@ type ChatData = {
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
-  setModel: (model: TS.Model) => void;
+  setModel: (model: TS.Model) => Promise<boolean>;
   setImage: (base64: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (model?: TS.Model) => void;
-  changeCurrentModel: (newModelName: string) => void;
+  changeCurrentModel: (newModelName: string) => Promise<boolean>;
   addTimeLineRequest: (txt: string) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
-  newChatMessage: (msg?: string, unload?: boolean) => Promise<boolean>;
+  newChatMessage: (
+    msg?: string,
+    unload?: boolean,
+    role?: ChatRole,
+    mode?: ChatMode,
+  ) => Promise<boolean>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -86,6 +92,7 @@ export type ChatMode = 'summary' | 'helpful' | 'rephrase';
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const currentModel = useRef<TS.Model>(undefined);
   const models = useRef<TS.Model[]>([]);
   const images = useRef<string[]>([]);
@@ -120,20 +127,23 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function setModel(model: TS.Model) {
+  function setModel(model: TS.Model): Promise<boolean> {
     if (currentModel.current !== model) {
       currentModel.current = model;
       forceUpdate();
       //load model
-      newChatMessage().then(() => {
+      return newChatMessage().then(() => {
         const newItem: ChatItem = {
           request: 'Model ' + model.name + ' loaded',
           timestamp: new Date().getTime(),
           role: 'system',
         };
         chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
+        forceUpdate();
+        return true;
       });
     }
+    return Promise.resolve(false);
   }
 
   function setImage(base64: string) {
@@ -180,17 +190,17 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     );
   }
 
-  function changeCurrentModel(newModelName: string) {
+  function changeCurrentModel(newModelName: string): Promise<boolean> {
     const model = findModel(newModelName);
     if (model) {
-      setModel(model);
+      return setModel(model);
     } else {
       const result = confirm(
         'Do you want to download and install ' + newModelName + ' model?',
       );
       if (result) {
         addTimeLineRequest('downloading ' + newModelName);
-        window.electronIO.ipcRenderer
+        return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', ollamaSettings.url, {
             name: newModelName,
             stream: true,
@@ -198,9 +208,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           .then((response) => {
             console.log('pullOllamaModel response:' + response);
             refreshOllamaModels(newModelName);
+            return true;
           });
       }
     }
+    return Promise.resolve(false);
   }
 
   function addTimeLineRequest(txt) {
@@ -226,7 +238,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function addTimeLineResponse(txt, replace = false): ChatItem[] {
-    if (chatHistoryItems.current.length > 0) {
+    if (txt && chatHistoryItems.current.length > 0) {
       chatHistoryItems.current[0].response =
         (!replace && chatHistoryItems.current[0].response
           ? chatHistoryItems.current[0].response
@@ -263,7 +275,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (mode === 'helpful') {
       return DEFAULT_SYSTEM_PROMPT.replace('{question}', msg);
     } else if (mode === 'summary') {
-      return SUMMARIZE_PROMPT.replace('{question}', msg);
+      let prompt = SUMMARIZE_PROMPT.replace('{summarize_text}', msg);
+      if (selectedEntries && selectedEntries.length > 0) {
+        prompt = prompt.replace(
+          '{file_path}',
+          ' of ' + selectedEntries[0].name,
+        );
+      } else {
+        prompt = prompt.replace('{file_path}', '');
+      }
+      return prompt;
     } else if (mode === 'rephrase') {
       const historyMap = chatHistoryItems.current.map((item) =>
         item.role !== 'system'
@@ -288,7 +309,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     msg: string = undefined,
     unload = false,
     role: ChatRole = 'user',
-    mode: ChatMode = 'helpful',
+    mode: ChatMode = undefined,
   ): Promise<boolean> {
     if (currentModel.current === undefined) {
       showNotification(t('core:chooseModel'));

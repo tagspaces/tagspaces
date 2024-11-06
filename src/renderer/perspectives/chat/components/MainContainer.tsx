@@ -2,7 +2,7 @@
 Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
 */
 
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef } from 'react';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import { useTranslation } from 'react-i18next';
@@ -18,10 +18,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { RemoveIcon } from '-/components/CommonIcons';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import {
-  ChatContextProvider,
-  ChatItem,
-} from '-/perspectives/chat/hooks/ChatProvider';
+import { ChatItem, ChatMode } from '-/perspectives/chat/hooks/ChatProvider';
 import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
 import ChatDndTargetFile from '-/perspectives/chat/components/ChatDndTargetFile';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -46,6 +43,7 @@ function MainContainer(props: Props) {
     removeModel,
   } = useChatContext();
   const isTyping = useRef<boolean>(false);
+  const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
   const chatMsg = useRef<string>(undefined);
   //const txtInputRef = useRef<HTMLInputElement>(null);
@@ -146,7 +144,18 @@ function MainContainer(props: Props) {
 
   const handleChangeModel = (event: SelectChangeEvent) => {
     const newModelName = event.target.value;
-    changeCurrentModel(newModelName);
+    changeCurrentModel(newModelName).then((success) => {
+      if (success) {
+        //forceUpdate();
+      }
+    });
+  };
+
+  const handleChangeMode = (event: SelectChangeEvent) => {
+    currentMode.current = event.target.value
+      ? (event.target.value as ChatMode)
+      : undefined;
+    forceUpdate();
   };
 
   const handleRemoveModel = () => {
@@ -156,20 +165,22 @@ function MainContainer(props: Props) {
   const handleChatMessage = () => {
     isTyping.current = true;
     forceUpdate();
-    newChatMessage(chatMsg.current).then((response) => {
-      console.log('newOllamaMessage response:' + response);
-      if (response) {
-        chatMsg.current = '';
-      }
-      isTyping.current = false;
-      forceUpdate();
-    });
+    newChatMessage(chatMsg.current, false, 'user', currentMode.current).then(
+      (response) => {
+        console.log('newOllamaMessage response:' + response);
+        if (response) {
+          chatMsg.current = '';
+        }
+        isTyping.current = false;
+        forceUpdate();
+      },
+    );
   };
   const { FILE } = NativeTypes;
 
   return (
     <>
-      <FormControl variant="filled">
+      <FormControl variant="filled" fullWidth>
         <Box sx={{ width: '100%' }}>
           <InputLabel id="select-label">Select a model</InputLabel>
           <Select
@@ -223,6 +234,28 @@ function MainContainer(props: Props) {
               <RemoveIcon />
             </IconButton>
           )}
+
+          <Select
+            displayEmpty
+            placeholder="Chat mode"
+            sx={{ minWidth: 200, float: 'right' }}
+            labelId="select-mode-label"
+            id="select-mode"
+            value={currentMode.current}
+            onChange={handleChangeMode}
+            label="Select Mode"
+          >
+            <MenuItem value="">None</MenuItem>
+            <MenuItem
+              value="helpful"
+              title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
+            >
+              Helpful assistant
+            </MenuItem>
+            <MenuItem value="summary" title="Generate a concise summary">
+              Generate Summary
+            </MenuItem>
+          </Select>
         </Box>
       </FormControl>
 
