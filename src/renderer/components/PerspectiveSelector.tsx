@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 import ListItemText from '@mui/material/ListItemText';
-import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
@@ -32,12 +32,13 @@ import { isDesktopMode } from '-/reducers/settings';
 interface Props {
   defaultValue: string;
   onChange: (event: any) => void;
+  fullWidth?: boolean;
   testId: string;
   label?: string;
 }
 
 function PerspectiveSelector(props: Props) {
-  const { defaultValue, onChange, testId, label } = props;
+  const { defaultValue, onChange, testId, label, fullWidth = true } = props;
   const desktopMode = useSelector(isDesktopMode);
   const { t } = useTranslation();
 
@@ -80,16 +81,15 @@ function PerspectiveSelector(props: Props) {
   });
 
   return (
-    <TsTextField
+    <TsSelect
       data-tid={testId}
       defaultValue={defaultValue}
       onChange={onChange}
-      select
       label={label}
-      size={desktopMode ? 'small' : 'medium'}
+      fullWidth={fullWidth}
     >
       {perspectiveSelectorMenuItems}
-    </TsTextField>
+    </TsSelect>
   );
 }
 

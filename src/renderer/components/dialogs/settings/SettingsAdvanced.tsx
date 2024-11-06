@@ -28,8 +28,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Switch from '@mui/material/Switch';
-import Select from '@mui/material/Select';
-import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
 import {
@@ -41,6 +39,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -196,10 +195,8 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <TsTextField
+            <TsSelect
               data-tid="fileOpenTID"
-              variant="outlined"
-              select
               fullWidth={false}
               title={t('core:fileOpenHistoryTitle')}
               value={settings[historyKeys.fileOpenKey]}
@@ -211,7 +208,7 @@ function SettingsAdvanced(props: Props) {
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </TsTextField>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:folderOpenHistory')} />
@@ -227,10 +224,8 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <TsTextField
+            <TsSelect
               data-tid="folderOpenTID"
-              variant="outlined"
-              select
               fullWidth={false}
               title={t('core:folderOpenHistoryTitle')}
               value={settings[historyKeys.folderOpenKey]}
@@ -242,7 +237,7 @@ function SettingsAdvanced(props: Props) {
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </TsTextField>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:fileEditHistory')} />
@@ -258,10 +253,8 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <TsTextField
+            <TsSelect
               data-tid="fileEditTID"
-              variant="outlined"
-              select
               fullWidth={false}
               title={t('core:fileEditHistoryTitle')}
               value={settings[historyKeys.fileEditKey]}
@@ -273,7 +266,7 @@ function SettingsAdvanced(props: Props) {
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </TsTextField>
+            </TsSelect>
           </ListItem>
           <ListItem>
             <ListItemText primary={t('core:searchHistory')} />
@@ -291,10 +284,8 @@ function SettingsAdvanced(props: Props) {
                 </IconButton>
               </Tooltip>
             </ListItemIcon>
-            <TsTextField
+            <TsSelect
               data-tid="searchHistoryTID"
-              variant="outlined"
-              select
               fullWidth={false}
               title={t('core:searchHistoryTitle')}
               value={settings[historyKeys.searchHistoryKey]}
@@ -306,7 +297,7 @@ function SettingsAdvanced(props: Props) {
               <MenuItem value={10}>10</MenuItem>
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
-            </TsTextField>
+            </TsSelect>
           </ListItem>
           <ConfirmDialog
             open={confirmDialogKey !== null}
@@ -364,10 +355,8 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:geoTaggingFormat')} />
-        <TsTextField
+        <TsSelect
           disabled={geoTaggingFormatDisabled}
-          variant="outlined"
-          select
           fullWidth={false}
           data-tid="geoTaggingFormatTID"
           title={
@@ -387,7 +376,7 @@ function SettingsAdvanced(props: Props) {
               {geoTagging.toUpperCase()}
             </MenuItem>
           ))}
-        </TsTextField>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:tileServerTitle')} />

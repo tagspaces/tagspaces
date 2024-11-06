@@ -42,6 +42,7 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { BetaLabel } from '-/components/HelperComponents';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
@@ -86,10 +87,8 @@ function SettingsGeneral() {
     <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <ListItem>
         <ListItemText primary={t('core:interfaceLanguage')} />
-        <TsTextField
+        <TsSelect
           data-tid="settingsSetLanguage"
-          variant="outlined"
-          select
           fullWidth={false}
           value={settings.interfaceLanguage}
           onChange={(event: any) => {
@@ -105,14 +104,12 @@ function SettingsGeneral() {
               {language.title}
             </MenuItem>
           ))}
-        </TsTextField>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeSelector')} />
-        <TsTextField
+        <TsSelect
           data-tid="settingsSetCurrentTheme"
-          variant="outlined"
-          select
           fullWidth={false}
           value={settings.currentTheme}
           onChange={(event: any) =>
@@ -126,14 +123,12 @@ function SettingsGeneral() {
               {theme === 'system' && t('core:systemScheme')}
             </MenuItem>
           ))}
-        </TsTextField>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeRegularSelector')} />
-        <TsTextField
+        <TsSelect
           data-tid="settingsCurrentRegularThemeTID"
-          variant="outlined"
-          select
           fullWidth={false}
           value={settings.currentRegularTheme}
           onChange={(event: any) =>
@@ -145,14 +140,12 @@ function SettingsGeneral() {
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
-        </TsTextField>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:themeDarkSelector')} />
-        <TsTextField
+        <TsSelect
           data-tid="settingsCurrentDarkThemeTID"
-          variant="outlined"
-          select
           fullWidth={false}
           value={settings.currentDarkTheme}
           onChange={(event: any) =>
@@ -164,11 +157,12 @@ function SettingsGeneral() {
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
-        </TsTextField>
+        </TsSelect>
       </ListItem>
       <ListItem>
         <ListItemText primary={t('createLocationDefaultPerspective')} />
         <PerspectiveSelector
+          fullWidth={false}
           onChange={changePerspective}
           defaultValue={defaultPerspective}
           testId="changePerspectiveInSettingsTID"

@@ -31,6 +31,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -90,9 +91,7 @@ function LinkGeneratorDialog(props: Props) {
         <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'auto', height: 450 }}>
-        <TsTextField
-          style={{ marginTop: 8 }}
-          select
+        <TsSelect
           label={
             <>
               {t('core:linkValidity')}
@@ -110,10 +109,9 @@ function LinkGeneratorDialog(props: Props) {
           <MenuItem value={60 * 60 * 24}>1 {t('core:day')}</MenuItem>
           <MenuItem value={60 * 60 * 24 * 3}>3 {t('core:days')}</MenuItem>
           <MenuItem value={60 * 60 * 24 * 7}>7 {t('core:days')}</MenuItem>
-        </TsTextField>
+        </TsSelect>
         <TsTextField
           name="path"
-          style={{ marginTop: 15 }}
           InputProps={{
             readOnly: true,
             endAdornment: (
@@ -141,12 +139,12 @@ function LinkGeneratorDialog(props: Props) {
               </InputAdornment>
             ),
           }}
-          // label={t('core:downloadLink')}
+          label={t('core:downloadLink')}
           value={signedLink.current}
         />
         <TsTextField
           name="path"
-          // label={t('core:qrCode')}
+          label={t('core:qrCode')}
           value={' '}
           InputProps={{
             readOnly: true,

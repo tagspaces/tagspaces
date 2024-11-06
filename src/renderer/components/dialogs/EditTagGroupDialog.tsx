@@ -35,6 +35,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsSelect from '-/components/TsSelect';
 import Tag from '-/components/Tag';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
@@ -168,9 +169,7 @@ function EditTagGroupDialog(props: Props) {
             <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
               {t('core:tagGroupLocation')}
             </FormHelperText>
-            <TsTextField
-              variant="outlined"
-              select
+            <TsSelect
               fullWidth={false}
               defaultValue={locationId}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -188,7 +187,7 @@ function EditTagGroupDialog(props: Props) {
                   {t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}
-            </TsTextField>
+            </TsSelect>
           </FormControl>
         )}
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>

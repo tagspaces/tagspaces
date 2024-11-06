@@ -221,7 +221,7 @@ function AboutDialog(props: Props) {
             data-tid="openLicenseDialog"
             onClick={() => openLicenseDialog()}
           >
-            License Agreement
+            {t('core:license')}
           </Button>
         </Typography>
       </DialogContent>
