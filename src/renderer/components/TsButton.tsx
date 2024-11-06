@@ -23,7 +23,7 @@ import { isDesktopMode } from '-/reducers/settings';
 
 export type TSButtonProps = ButtonProps & {};
 
-export function TsButton(props: TSButtonProps) {
+function TsButton(props: TSButtonProps) {
   const { children, style } = props;
   const desktopMode = useSelector(isDesktopMode);
 
@@ -38,3 +38,5 @@ export function TsButton(props: TSButtonProps) {
     </Button>
   );
 }
+
+export default TsButton;

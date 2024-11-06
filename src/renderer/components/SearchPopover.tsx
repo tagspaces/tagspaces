@@ -997,19 +997,15 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl className={classes.formControl}>
           <ProTooltip tooltip={t('enterTimePeriodTooltip')}>
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              /*utils={DateFnsUtils}*/
-            >
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <Box position="relative" display="inline-flex">
                 <div>
                   <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                     {t('core:enterTagTimePeriodFrom')}
                   </FormHelperText>
                   <DatePicker
-                    // label={t('enterTagTimePeriodFrom')}
                     disabled={isIndexing !== undefined || !Pro}
-                    inputFormat="yyyy-MM-dd"
+                    format="yyyy-MM-dd"
                     value={tagTimePeriodFrom && new Date(tagTimePeriodFrom)}
                     onChange={(fromDataTime: Date) => {
                       if (fromDataTime) {
@@ -1020,7 +1016,7 @@ function SearchPopover(props: Props) {
                         });
                       }
                     }}
-                    renderInput={(params) => <TsTextField {...params} />}
+                    // renderInput={(params) => <TsTextField {...params} />}
                   />
                 </div>
                 <div style={{ marginLeft: 5 }}>
@@ -1030,7 +1026,7 @@ function SearchPopover(props: Props) {
                   <DatePicker
                     // label={t('enterTagTimePeriodTo')}
                     disabled={isIndexing !== undefined || !Pro}
-                    inputFormat="yyyy-MM-dd"
+                    format="yyyy-MM-dd"
                     value={tagTimePeriodTo && new Date(tagTimePeriodTo)}
                     onChange={(toDataTime: Date) => {
                       if (toDataTime) {
@@ -1041,7 +1037,7 @@ function SearchPopover(props: Props) {
                         });
                       }
                     }}
-                    renderInput={(params) => <TsTextField {...params} />}
+                    // renderInput={(params) => <TsTextField {...params} />}
                   />
                 </div>
               </Box>

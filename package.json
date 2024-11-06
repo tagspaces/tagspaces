@@ -162,10 +162,10 @@
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@gorillastack/jmespath": "^1.3.0",
-    "@mui/icons-material": "^5.15.19",
-    "@mui/lab": "5.0.0-alpha.173",
-    "@mui/material": "^5.15.19",
-    "@mui/x-date-pickers": "^5.0.20",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/lab": "6.0.0-beta.14",
+    "@mui/material": "^6.1.6",
+    "@mui/x-date-pickers": "^7.22.1",
     "@tagspaces/tagspaces-common": "4.5.34",
     "@tagspaces/tagspaces-common-aws3": "4.5.34",
     "@tagspaces/tagspaces-common-cordova": "4.5.34",
@@ -234,7 +234,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.81"
+    "@tagspacespro/tagspacespro": "5.0.82"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
