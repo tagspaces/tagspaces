@@ -1131,7 +1131,9 @@ function CreateEditLocationDialog(props: Props) {
             </AccordionSummary>
             <AccordionDetails>
               <FormControl fullWidth={true}>
-                <FormLabel>{t('encryptionExplanation')}</FormLabel>
+                <FormLabel style={{ marginBottom: 15 }}>
+                  {t('encryptionExplanation')}
+                </FormLabel>
                 <TsTextField
                   name="encryptionKey"
                   type={showEncryptionKey ? 'text' : 'password'}

@@ -32,7 +32,7 @@ function TsSelect(props: TSTextFieldProps) {
   const desktopMode = useSelector(isDesktopMode);
 
   return (
-    <>
+    <div>
       <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
         {label}
       </FormHelperText>
@@ -48,7 +48,7 @@ function TsSelect(props: TSTextFieldProps) {
       >
         {children}
       </TextField>
-    </>
+    </div>
   );
 }
 
