@@ -61,7 +61,7 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
+import TsMenuList from '-/components/TsMenuList';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { AppDispatch } from '-/reducers/app';
@@ -271,7 +271,7 @@ function MobileNavigation(props: Props) {
             >
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList id="split-button-menu" autoFocusItem>
+                  <TsMenuList id="split-button-menu" autoFocusItem>
                     <MenuItem
                       key="createNewTextFileTID"
                       ata-tid="createNewTextFileTID"
@@ -454,7 +454,7 @@ function MobileNavigation(props: Props) {
                         </MenuItem>
                       </>
                     )}
-                  </MenuList>
+                  </TsMenuList>
                 </ClickAwayListener>
               </Paper>
             </Grow>

@@ -22,7 +22,7 @@ import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
-import MenuList from '@mui/material/MenuList';
+import TsMenuList from '-/components/TsMenuList';
 import ListItemText from '@mui/material/ListItemText';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useTranslation } from 'react-i18next';
@@ -127,7 +127,7 @@ function TsTextField(props: TSTextFieldProps) {
             : undefined
         }
       >
-        <MenuList dense style={{ minWidth: 150 }}>
+        <TsMenuList style={{ minWidth: 150 }}>
           <MenuItem onClick={handleCopy}>
             <ListItemText primary={t('core:copy')} />
             <MenuKeyBinding keyBinding="command+c" />
@@ -138,7 +138,7 @@ function TsTextField(props: TSTextFieldProps) {
               <MenuKeyBinding keyBinding="command+v" />
             </MenuItem>
           )}
-        </MenuList>
+        </TsMenuList>
       </Menu>
     </div>
   );

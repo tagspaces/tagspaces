@@ -20,7 +20,7 @@ import React, { useEffect, useReducer, useRef } from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ShareIcon from '@mui/icons-material/Share';
-import { Menu, MenuList, MenuItem } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
 import OpenFileNatively from '@mui/icons-material/Launch';
@@ -67,6 +67,7 @@ import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import TsMenuList from '-/components/TsMenuList';
 
 interface Props {
   anchorEl: Element;
@@ -625,7 +626,7 @@ function FileMenu(props: Props) {
       open={open}
       onClose={onClose}
     >
-      <MenuList>{menuItems}</MenuList>
+      <TsMenuList>{menuItems}</TsMenuList>
     </Menu>
   );
 }

@@ -8,7 +8,7 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
+import TsMenuList from '-/components/TsMenuList';
 
 interface Props {
   options: Array<any>;
@@ -92,7 +92,7 @@ export default function SplitButton(props: Props) {
             >
               <Paper>
                 {/* <ClickAwayListener onClickAway={handleClose}> */}
-                <MenuList id="split-button-menu">
+                <TsMenuList id="split-button-menu">
                   {options.map((option, index) => (
                     <MenuItem
                       key={option.key}
@@ -103,7 +103,7 @@ export default function SplitButton(props: Props) {
                       {option.value}
                     </MenuItem>
                   ))}
-                </MenuList>
+                </TsMenuList>
                 {/* </ClickAwayListener> */}
               </Paper>
             </Grow>

@@ -66,6 +66,7 @@ const newlightTheme = createTheme({
     },
     divider: '#ddd',
   },
+  // shape: { borderRadius: 10 },
 });
 
 // https://mui.com/material-ui/customization/dark-mode/
