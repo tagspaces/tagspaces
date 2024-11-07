@@ -25,7 +25,7 @@ import { useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { isDesktopMode } from '-/reducers/settings';
@@ -191,10 +191,9 @@ function SettingsDialog(props: Props) {
   );
 
   const renderActions = () => (
-    <DialogActions
+    <TsDialogActions
       style={{
         justifyContent: 'space-between',
-        padding: fullScreen ? '10px 30px 30px 30px' : undefined,
       }}
     >
       <TsButton
@@ -209,7 +208,7 @@ function SettingsDialog(props: Props) {
       <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
         {t('core:closeButton')}
       </TsButton>
-    </DialogActions>
+    </TsDialogActions>
   );
 
   return (

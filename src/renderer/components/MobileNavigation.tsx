@@ -479,11 +479,11 @@ function MobileNavigation(props: Props) {
         <ToggleButtonGroup exclusive>
           <ToggleButton
             onClick={() => showPanel('locationManagerPanel')}
-            // className={
-            //   currentOpenedPanel === 'locationManagerPanel'
-            //     ? classNames(classes.button, classes.selectedButton)
-            //     : classes.button
-            // }
+            className={
+              currentOpenedPanel === 'locationManagerPanel'
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
             data-tid="locationManager"
             value="check"
           >

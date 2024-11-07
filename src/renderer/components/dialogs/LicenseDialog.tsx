@@ -18,7 +18,7 @@
 
 import React from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -80,9 +80,7 @@ function LicenseDialog(props: Props) {
           {Pro ? Pro.EULAContent : LicenseContent}
         </pre>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         {/* <TsButton
           onClick={printLicense}
         >
@@ -98,7 +96,7 @@ function LicenseDialog(props: Props) {
         >
           {t('core:agreeLicense')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

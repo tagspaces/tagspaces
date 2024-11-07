@@ -1,3 +1,4 @@
+/** 
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -16,11 +17,6 @@ interface Props {
   onChange: (selected: string) => void;
 }
 
-/**
- * https://material-ui.com/components/button-group/#split-button
- * @param props
- * @constructor
- */
 export default function SplitButton(props: Props) {
   const { options, selected, onChange } = props;
   const [open, setOpen] = React.useState(false);
@@ -113,3 +109,5 @@ export default function SplitButton(props: Props) {
     </Grid>
   );
 }
+
+*/

@@ -31,7 +31,6 @@ import TsButton from '-/components/TsButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';

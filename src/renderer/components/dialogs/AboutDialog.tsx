@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 import TsButton from '-/components/TsButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '-/components/Tooltip';
@@ -222,9 +222,7 @@ function AboutDialog(props: Props) {
           </div>
         </Typography>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         {!Pro && (
           <TsButton
             data-tid="checkForUpdates"
@@ -262,7 +260,7 @@ function AboutDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </TranslucentDialog>
   );
 }
