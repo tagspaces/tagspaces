@@ -168,3 +168,9 @@ export const PrevDocumentIcon = (props) => (
 );
 
 export { default as NextDocumentIcon } from '@mui/icons-material/ExpandCircleDownOutlined';
+
+export { default as ThemingIcon } from '@mui/icons-material/InvertColors';
+
+export { default as TagLibraryIcon } from '@mui/icons-material/LocalOfferOutlined';
+
+export { default as RecentThingsIcon } from '@mui/icons-material/BookmarksOutlined';
