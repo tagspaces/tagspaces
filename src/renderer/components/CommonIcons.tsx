@@ -21,8 +21,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownload';
 
 export const ParentFolderIcon = (props) => (
-  <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
-  // <ParentFolder {...props} />
+  <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
 export const MarkdownFileIcon = (props) => (
@@ -152,3 +151,20 @@ export { default as HTMLFileIcon } from '@mui/icons-material/Description';
 export { default as LinkFileIcon } from '@mui/icons-material/FileOpen';
 
 export { default as AccountIcon } from '@mui/icons-material/AccountCircle';
+
+export { default as PreviewIcon } from '@mui/icons-material/Preview';
+
+export { default as RestoreIcon } from '@mui/icons-material/SettingsBackupRestore';
+
+export { default as CloseEntryIcon } from '@mui/icons-material/HighlightOffOutlined';
+
+import ExpandCircleDownOutlined from '@mui/icons-material/ExpandCircleDownOutlined';
+
+export const PrevDocumentIcon = (props) => (
+  <ExpandCircleDownOutlined
+    style={{ transform: 'rotate(180deg)' }}
+    {...props}
+  />
+);
+
+export { default as NextDocumentIcon } from '@mui/icons-material/ExpandCircleDownOutlined';

@@ -94,7 +94,7 @@ function LocalForm(props: Props) {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" style={{ height: 32 }}>
-                  <IconButton onClick={openDirectory} size="large">
+                  <IconButton onClick={openDirectory}>
                     <FolderIcon />
                   </IconButton>
                 </InputAdornment>

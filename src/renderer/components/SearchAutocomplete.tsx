@@ -30,10 +30,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import TsButton from '-/components/TsButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '-/components/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import ClearSearchIcon from '@mui/icons-material/Close';
+import TsIconButton from '-/components/TsIconButton';
 import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
-import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import {
   getMaxSearchResults,
@@ -42,7 +40,6 @@ import {
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
-import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
 import { Autocomplete, Box } from '@mui/material';
 import {
@@ -59,7 +56,7 @@ import {
   SearchOptionType,
   SearchQueryComposition,
 } from '-/components/SearchOptions';
-import CloseIcon from '@mui/icons-material/Close';
+import { CloseIcon } from '-/components/CommonIcons';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import TsTextField from '-/components/TsTextField';
@@ -456,9 +453,9 @@ function SearchAutocomplete(props: Props) {
           </span>
         }
       >
-        <IconButton edge="end">
+        <TsIconButton edge="end">
           <HelpOutlineIcon style={{ color: 'lightgray' }} />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
     );
   }
@@ -1192,7 +1189,7 @@ function SearchAutocomplete(props: Props) {
   const endAdornment = (
     <>
       <Tooltip title={t('core:advancedSearch')}>
-        <IconButton
+        <TsIconButton
           id="advancedButton"
           data-tid="advancedSearch"
           style={{ maxHeight: 34 }}
@@ -1203,10 +1200,10 @@ function SearchAutocomplete(props: Props) {
         >
           <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
           {/* <DropDownIcon /> */}
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <Tooltip title={t('clearSearch') + ' (ESC)'}>
-        <IconButton
+        <TsIconButton
           id="clearSearchID"
           onClick={() => {
             clearSearch();
@@ -1215,8 +1212,8 @@ function SearchAutocomplete(props: Props) {
           size={desktopMode ? 'small' : 'medium'}
           edge="end"
         >
-          <ClearSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
-        </IconButton>
+          <CloseIcon fontSize={desktopMode ? 'small' : 'medium'} />
+        </TsIconButton>
       </Tooltip>
     </>
   );
@@ -1376,7 +1373,7 @@ function SearchAutocomplete(props: Props) {
                       action.action,
                       SearchQueryComposition.ACCURACY,
                     ) && (
-                      <IconButton
+                      <TsIconButton
                         onClick={() => {
                           handleChange(null, [option], 'remove-value');
                         }}
@@ -1388,7 +1385,7 @@ function SearchAutocomplete(props: Props) {
                         data-tid={dataTidFormat('close' + option)}
                       >
                         <CloseIcon fontSize="small" />
-                      </IconButton>
+                      </TsIconButton>
                     )}
                 </Box>
               );

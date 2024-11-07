@@ -20,14 +20,13 @@ import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
-import Button from '@mui/material/Button';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
@@ -208,7 +207,7 @@ function FolderContainer(props: Props) {
               : 0,
         }}
       >
-        <IconButton
+        <TsIconButton
           id="mobileMenuButton"
           style={{
             // @ts-ignore
@@ -218,13 +217,13 @@ function FolderContainer(props: Props) {
           onClick={toggleDrawer}
         >
           <MainMenuIcon />
-        </IconButton>
+        </TsIconButton>
         <Tooltip
           title={
             t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
           }
         >
-          <IconButton
+          <TsIconButton
             id="goBackButton"
             disabled={historyIndex === 0}
             onClick={goBack}
@@ -234,11 +233,11 @@ function FolderContainer(props: Props) {
             }}
           >
             <GoBackIcon />
-          </IconButton>
+          </TsIconButton>
         </Tooltip>
         {isTinyMode && (
           <Tooltip title={t('core:goforward') + ' - BETA'}>
-            <IconButton
+            <TsIconButton
               id="goForwardButton"
               disabled={historyIndex === 0}
               onClick={goForward}
@@ -248,7 +247,7 @@ function FolderContainer(props: Props) {
               }}
             >
               <GoForwardIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         )}
         {isSearchMode ? (
@@ -267,7 +266,7 @@ function FolderContainer(props: Props) {
               <Tooltip
                 title={t('core:openSearch') + ' (' + openSearchKeyBinding + ')'}
               >
-                <IconButton
+                <TsIconButton
                   data-tid="toggleSearch"
                   onClick={openSearchMode}
                   style={{
@@ -276,7 +275,7 @@ function FolderContainer(props: Props) {
                   }}
                 >
                   <SearchIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             ) : (
               <TsButton
@@ -298,7 +297,7 @@ function FolderContainer(props: Props) {
             )}
 
             {progress?.length > 0 && (
-              <IconButton
+              <TsIconButton
                 id="progressButton"
                 title={t('core:progress')}
                 data-tid="uploadProgress"
@@ -312,7 +311,7 @@ function FolderContainer(props: Props) {
                 }}
               >
                 <CircularProgressWithLabel value={getProgressValue()} />
-              </IconButton>
+              </TsIconButton>
             )}
             <PathBreadcrumbs
               switchPerspective={switchPerspective}

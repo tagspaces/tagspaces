@@ -25,10 +25,7 @@ import {
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PreviewIcon from '@mui/icons-material/Preview';
-import RestoreIcon from '@mui/icons-material/SettingsBackupRestore';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import AppConfig from '-/AppConfig';
 import {
   Paper,
@@ -41,6 +38,7 @@ import {
   TableRow,
 } from '@mui/material';
 import { Pro } from '-/pro';
+import { DeleteIcon, PreviewIcon, RestoreIcon } from '-/components/CommonIcons';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -201,7 +199,7 @@ function Revisions() {
               <TableCell>
                 {t('revisions')}
                 <Tooltip title={t('core:deleteAllRevisions')}>
-                  <IconButton
+                  <TsIconButton
                     aria-label="delete all revisions"
                     onClick={() =>
                       confirm(
@@ -209,10 +207,9 @@ function Revisions() {
                       ) && deleteRevisions()
                     }
                     data-tid="deleteRevisionsTID"
-                    size="large"
                   >
                     <DeleteIcon />
-                  </IconButton>
+                  </TsIconButton>
                 </Tooltip>
               </TableCell>
               <TableCell align="right">{t('created')}</TableCell>
@@ -238,34 +235,31 @@ function Revisions() {
                 </TableCell>
                 <TableCell align="right">
                   <Tooltip title={t('core:view')}>
-                    <IconButton
+                    <TsIconButton
                       aria-label="view revision"
                       onClick={() => setPreviewDialogEntry(row)}
                       data-tid="viewRevisionTID"
-                      size="large"
                     >
                       <PreviewIcon />
-                    </IconButton>
+                    </TsIconButton>
                   </Tooltip>
                   <Tooltip title={t('core:restore')}>
-                    <IconButton
+                    <TsIconButton
                       aria-label="restore revision"
                       onClick={() => restoreRevision(row.path)}
                       data-tid="restoreRevisionTID"
-                      size="large"
                     >
                       <RestoreIcon />
-                    </IconButton>
+                    </TsIconButton>
                   </Tooltip>
                   <Tooltip title={t('core:delete')}>
-                    <IconButton
+                    <TsIconButton
                       aria-label="delete revision"
                       onClick={() => deleteRevision(row.path)}
                       data-tid="deleteRevisionTID"
-                      size="large"
                     >
                       <DeleteIcon />
-                    </IconButton>
+                    </TsIconButton>
                   </Tooltip>
                 </TableCell>
               </TableRow>

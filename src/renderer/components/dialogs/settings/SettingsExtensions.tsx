@@ -25,7 +25,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import Switch from '@mui/material/Switch';
 import TsButton from '-/components/TsButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -168,16 +168,15 @@ function SettingsExtensions() {
                       }}
                     />
                     <Tooltip title={t('core:removeExtension')}>
-                      <IconButton
+                      <TsIconButton
                         aria-label={t('core:delete')}
                         onClick={() => {
                           setRemoveExtDialogOpened(ext);
                         }}
                         data-tid="removeExtensionTID"
-                        size="large"
                       >
                         <DeleteIcon color={'action'} />
-                      </IconButton>
+                      </TsIconButton>
                     </Tooltip>
                   </ListItem>
                 ))}

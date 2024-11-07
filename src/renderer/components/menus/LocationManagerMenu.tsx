@@ -26,7 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import UpdateIndexIcon from '@mui/icons-material/Update';
 import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../../pro';
@@ -207,15 +207,14 @@ function LocationManagerMenu(props: Props) {
         >
           {t('core:locationManager')}
         </Typography>
-        <IconButton
+        <TsIconButton
           data-tid="locationManagerMenu"
           onClick={(event) =>
             setLocationManagerMenuAnchorEl(event.currentTarget)
           }
-          size="large"
         >
           <MoreVertIcon />
-        </IconButton>
+        </TsIconButton>
       </div>
       <Menu
         anchorEl={locationManagerMenuAnchorEl}

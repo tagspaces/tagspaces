@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';
 import TsButton from '-/components/TsButton';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { getLastPublishedVersion } from '-/reducers/settings';
 import {
@@ -89,16 +89,15 @@ function PageNotification() {
         autoHideDuration={notificationStatus.autohide ? 3000 : undefined}
         message={notificationStatus.text}
         action={[
-          <IconButton
+          <TsIconButton
             data-tid={'close' + notificationStatus.tid}
             key="close"
             aria-label={t('core:closeButton')}
             color="inherit"
             onClick={() => hideNotifications()}
-            size="large"
           >
             <CloseIcon />
-          </IconButton>,
+          </TsIconButton>,
         ]}
       />
       {isGeneratingThumbs && (
@@ -108,15 +107,14 @@ function PageNotification() {
           autoHideDuration={undefined}
           message={t('core:loadingOrGeneratingThumbnails')}
           action={[
-            <IconButton
+            <TsIconButton
               key="closeButton"
               aria-label={t('core:closeButton')}
               color="inherit"
               onClick={() => setGeneratingThumbs(false)}
-              size="large"
             >
               <CloseIcon />
-            </IconButton>,
+            </TsIconButton>,
           ]}
         />
       )}

@@ -23,7 +23,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import RemoveIcon from '@mui/icons-material/RemoveCircle';
 import TsButton from '-/components/TsButton';
 import Select from '@mui/material/Select';
@@ -457,14 +457,13 @@ function SettingsFileTypes() {
             </Tooltip>
           </TransparentBackground>
           <Tooltip title={t('removeFileType', { itemType: item.type })}>
-            <IconButton
+            <TsIconButton
               data-tid="settingsFileTypes_remove_"
               className={classes.fileExtRemove}
               onClick={() => onRemoveItem(item)}
-              size="large"
             >
               <RemoveIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         </TableCell>
       </React.Fragment>

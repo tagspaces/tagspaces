@@ -1098,7 +1098,6 @@ function CreateEditLocationDialog(props: Props) {
                                 setNewLocationID(getUuid());
                               }
                             }}
-                            size="large"
                           >
                             <IDIcon />
                           </IconButton>

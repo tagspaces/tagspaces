@@ -52,7 +52,7 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { ButtonGroup, IconButton, Button } from '@mui/material';
+import TsIconButton from '-/components/TsIconButton';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
@@ -981,14 +981,14 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Box>
                       <ProTooltip tooltip={t('changeBackgroundColor')}>
-                        <IconButton
+                        <TsIconButton
                           data-tid="changeBackgroundColorTID"
                           aria-describedby={popoverId}
                           onClick={handlePopeverClick}
                           disabled={!Pro}
                         >
                           <ColorPaletteIcon />
-                        </IconButton>
+                        </TsIconButton>
                       </ProTooltip>
                       <Popover
                         open={popoverOpen}
@@ -1007,7 +1007,7 @@ function EntryProperties(props: Props) {
                         <Box style={{ padding: 10 }}>
                           {defaultBackgrounds.map((background, cnt) => (
                             <>
-                              <IconButton
+                              <TsIconButton
                                 key={cnt}
                                 data-tid={'backgroundTID' + cnt}
                                 aria-label="changeFolderBackround"
@@ -1022,7 +1022,7 @@ function EntryProperties(props: Props) {
                                 }}
                               >
                                 <SetBackgroundIcon />
-                              </IconButton>
+                              </TsIconButton>
                               {cnt % 4 === 3 && <br />}
                             </>
                           ))}
@@ -1032,7 +1032,7 @@ function EntryProperties(props: Props) {
                     {openedEntry.meta && openedEntry.meta.color && (
                       <>
                         <ProTooltip tooltip={t('clearFolderColor')}>
-                          <IconButton
+                          <TsIconButton
                             data-tid={'backgroundClearTID'}
                             disabled={!Pro}
                             aria-label="clear"
@@ -1041,7 +1041,7 @@ function EntryProperties(props: Props) {
                             }
                           >
                             <ClearBackgroundIcon />
-                          </IconButton>
+                          </TsIconButton>
                         </ProTooltip>
                       </>
                     )}

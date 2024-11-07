@@ -25,9 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import ShareIcon from '@mui/icons-material/Share';
-// import DragOnIcon from '@mui/icons-material/PanTool';
 import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
-// import DragOffIcon from '@mui/icons-material/PanToolOutlined';
 import DragOffIcon from '@mui/icons-material/CopyAll';
 import {
   SelectedIcon,
