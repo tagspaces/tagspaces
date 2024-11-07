@@ -20,7 +20,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import Collapse from '@mui/material/Collapse';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppConfig from '-/AppConfig';
@@ -318,13 +318,12 @@ function TagLibrary(props: Props) {
           {t('core:tagLibrary')}
         </Typography>
         {!isTagLibraryReadOnly && (
-          <IconButton
+          <TsIconButton
             data-tid="tagLibraryMenu"
             onClick={handleTagLibraryMenu}
-            size="large"
           >
             <MoreVertIcon />
-          </IconButton>
+          </TsIconButton>
         )}
       </div>
       {isDeleteTagGroupDialogOpened && (

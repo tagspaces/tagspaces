@@ -51,7 +51,6 @@ function EntryContainerNav(props: Props) {
                 setActions(action);
                 //window.dispatchEvent(new Event('previous-file'));
               }}
-              // size="large"
             >
               <PrevDocumentIcon style={{ transform: 'rotate(180deg)' }} />
             </IconButton>
@@ -68,7 +67,6 @@ function EntryContainerNav(props: Props) {
                 setActions(action);
                 //window.dispatchEvent(new Event('next-file'));
               }}
-              // size="large"
             >
               <NextDocumentIcon />
             </IconButton>
@@ -83,7 +81,6 @@ function EntryContainerNav(props: Props) {
           onClick={startClosingEntry}
           aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
-          // size="large"
         >
           <CloseIcon />
         </IconButton>

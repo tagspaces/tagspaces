@@ -37,6 +37,7 @@ import {
   HelpIcon,
   LocalLocationIcon,
 } from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -223,7 +224,7 @@ function LocationManagerMenu(props: Props) {
           setLocationManagerMenuAnchorEl(null);
         }}
       >
-        {menuItems}
+        <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
     </>
   );

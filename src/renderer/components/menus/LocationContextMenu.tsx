@@ -32,6 +32,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
@@ -268,7 +269,7 @@ function LocationContextMenu(props: Props) {
       open={Boolean(locationDirectoryContextMenuAnchorEl)}
       onClose={() => setLocationDirectoryContextMenuAnchorEl(null)}
     >
-      {menuItems}
+      <TsMenuList>{menuItems}</TsMenuList>
     </Menu>
   );
 }

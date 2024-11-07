@@ -28,7 +28,8 @@ import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TsTextField from '-/components/TsTextField';
-import InputLabel from '@mui/material/InputLabel';
+import TsSelect from '-/components/TsSelect';
+import TsMenuList from '-/components/TsMenuList';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
@@ -514,7 +515,6 @@ function SearchPopover(props: Props) {
           style={{ marginLeft: 'auto' }}
           data-tid="closeSearchTID"
           onClick={props.onClose}
-          size="large"
         >
           <CloseIcon />
         </IconButton>
@@ -799,31 +799,26 @@ function SearchPopover(props: Props) {
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
               size={desktopMode ? 'small' : 'medium'}
-              input={
-                <OutlinedInput
-                  name="fileTypes"
-                  id="file-type"
-                  // label={t('core:fileType')}
-                />
-              }
+              input={<OutlinedInput name="fileTypes" id="file-type" />}
             >
+              {/* <TsMenuList> */}
               <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                 {t('core:anyType')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                <IconButton size="large">
+                <IconButton>
                   <FolderIcon />
                 </IconButton>
                 {t('core:searchFolders')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                <IconButton size="large">
+                <IconButton>
                   <FileIcon />
                 </IconButton>
                 {t('core:searchFiles')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                <IconButton size="large">
+                <IconButton>
                   <UntaggedIcon />
                 </IconButton>
                 {t('core:searchUntaggedEntries')}
@@ -832,7 +827,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.images)}
                 title={FileTypeGroups.images.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <PictureIcon />
                 </IconButton>
                 {t('core:searchPictures')}
@@ -841,7 +836,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.documents)}
                 title={FileTypeGroups.documents.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <DocumentIcon />
                 </IconButton>
                 {t('core:searchDocuments')}
@@ -850,7 +845,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.notes)}
                 title={FileTypeGroups.notes.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <NoteIcon />
                 </IconButton>
                 {t('core:searchNotes')}
@@ -859,7 +854,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.audio)}
                 title={FileTypeGroups.audio.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <AudioIcon />
                 </IconButton>
                 {t('core:searchAudio')}
@@ -868,7 +863,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.video)}
                 title={FileTypeGroups.video.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <VideoIcon />
                 </IconButton>
                 {t('core:searchVideoFiles')}
@@ -877,7 +872,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.archives)}
                 title={FileTypeGroups.archives.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <ArchiveIcon />
                 </IconButton>
                 {t('core:searchArchives')}
@@ -886,7 +881,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.bookmarks)}
                 title={FileTypeGroups.bookmarks.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <BookmarkIcon />
                 </IconButton>
                 {t('core:searchBookmarks')}
@@ -895,7 +890,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.ebooks)}
                 title={FileTypeGroups.ebooks.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <BookIcon />
                 </IconButton>
                 {t('core:searchEbooks')}
@@ -904,11 +899,12 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.emails)}
                 title={FileTypeGroups.emails.toString()}
               >
-                <IconButton size="large">
+                <IconButton>
                   <EmailIcon />
                 </IconButton>
                 {t('core:searchEmails')}
               </MenuItem>
+              {/* </TsMenuList> */}
             </Select>
           </ProTooltip>
         </FormControl>
