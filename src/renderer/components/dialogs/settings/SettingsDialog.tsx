@@ -88,12 +88,13 @@ function SettingsDialog(props: Props) {
         variant={fullScreen ? 'scrollable' : 'standard'}
         orientation={fullScreen ? 'horizontal' : 'vertical'}
         style={{
-          width: fullScreen ? '100%' : '150px',
+          width: fullScreen ? '100%' : '170px',
         }}
       >
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -102,7 +103,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -111,7 +113,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -120,7 +123,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -129,7 +133,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
