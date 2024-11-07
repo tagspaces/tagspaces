@@ -35,6 +35,7 @@ import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem/ListItem';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -198,6 +199,7 @@ function MapTileServerDialog(props: Props) {
         <TsButton
           data-tid="saveTileServerDialogTID"
           onClick={saveTileServer}
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           variant="contained"
         >
           {t('core:confirmSaveButton')}

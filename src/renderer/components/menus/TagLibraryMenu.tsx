@@ -28,6 +28,7 @@ import ReloadIcon from '@mui/icons-material/Sync';
 import AppConfig from '-/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import Links from 'assets/links';
+import TsMenuList from '-/components/TsMenuList';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
@@ -112,69 +113,71 @@ function TagLibraryMenu(props: Props) {
         />
       )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        <MenuItem
-          data-tid="createNewTagGroup"
-          onClick={() => {
-            props.onClose();
-            props.showCreateTagGroupDialog();
-          }}
-        >
-          <ListItemIcon>
-            <AddIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('core:createTagGroupTitle')} />
-        </MenuItem>
-        <ProTooltip
-          placement="right"
-          tooltip={t('core:enableTagsFromLocationHelp')}
-        >
+        <TsMenuList>
           <MenuItem
-            disabled={!Pro || !saveTagInLocation}
-            data-tid="refreshTagGroups"
+            data-tid="createNewTagGroup"
             onClick={() => {
-              props.refreshTagsFromLocation();
               props.onClose();
+              props.showCreateTagGroupDialog();
             }}
           >
             <ListItemIcon>
-              <ReloadIcon />
+              <AddIcon />
             </ListItemIcon>
-            <ListItemText
-              primary={
-                <>
-                  {t('core:refreshTagGroups')}
-                  <ProLabel />
-                </>
-              }
-            />
+            <ListItemText primary={t('core:createTagGroupTitle')} />
           </MenuItem>
-        </ProTooltip>
-        <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
-          <ListItemIcon>
-            <ImportExportIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('core:importTags')} />
-        </MenuItem>
-        {!AppConfig.isCordovaAndroid && (
-          <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
+          <ProTooltip
+            placement="right"
+            tooltip={t('core:enableTagsFromLocationHelp')}
+          >
+            <MenuItem
+              disabled={!Pro || !saveTagInLocation}
+              data-tid="refreshTagGroups"
+              onClick={() => {
+                props.refreshTagsFromLocation();
+                props.onClose();
+              }}
+            >
+              <ListItemIcon>
+                <ReloadIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <>
+                    {t('core:refreshTagGroups')}
+                    <ProLabel />
+                  </>
+                }
+              />
+            </MenuItem>
+          </ProTooltip>
+          <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
             <ListItemIcon>
               <ImportExportIcon />
             </ListItemIcon>
-            <ListItemText primary={t('core:exportTagGroupsButton')} />
+            <ListItemText primary={t('core:importTags')} />
           </MenuItem>
-        )}
-        <MenuItem
-          data-tid="taglibraryHelp"
-          onClick={() => {
-            props.onClose();
-            openURLExternally(Links.documentationLinks.taglibrary, true);
-          }}
-        >
-          <ListItemIcon>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('core:help')} />
-        </MenuItem>
+          {!AppConfig.isCordovaAndroid && (
+            <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
+              <ListItemIcon>
+                <ImportExportIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('core:exportTagGroupsButton')} />
+            </MenuItem>
+          )}
+          <MenuItem
+            data-tid="taglibraryHelp"
+            onClick={() => {
+              props.onClose();
+              openURLExternally(Links.documentationLinks.taglibrary, true);
+            }}
+          >
+            <ListItemIcon>
+              <HelpIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('core:help')} />
+          </MenuItem>
+        </TsMenuList>
       </Menu>
       <input
         style={{ display: 'none' }}

@@ -24,7 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import { getKeyBindingObject } from '-/reducers/settings';
@@ -95,7 +95,7 @@ function KeyboardDialog(props: Props) {
             Object.keys(keyBindings).map((shortcutKey) => (
               <ListItem key={shortcutKey}>
                 <ListItemText primary={t('core:' + shortcutKey)} />
-                <ListItemSecondaryAction
+                <Box
                   style={{
                     backgroundColor: 'gray',
                     color: 'white',
@@ -106,7 +106,7 @@ function KeyboardDialog(props: Props) {
                   }}
                 >
                   {adjustKeyBinding(keyBindings[shortcutKey])}
-                </ListItemSecondaryAction>
+                </Box>
               </ListItem>
             ))}
         </List>

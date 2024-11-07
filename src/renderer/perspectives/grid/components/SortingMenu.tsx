@@ -24,6 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
+import TsMenuList from '-/components/TsMenuList';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -43,92 +44,94 @@ function SortingMenu(props: Props) {
   const { isSearchMode } = useDirectoryContentContext();
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-      {/* <ListSubHeader>Sort by</ListSubHeader> */}
-      {isSearchMode && (
+      <TsMenuList>
+        {/* <ListSubHeader>Sort by</ListSubHeader> */}
+        {isSearchMode && (
+          <MenuItem
+            data-tid="gridPerspectiveSortByRelevance"
+            onClick={() => {
+              handleSortBy('byRelevance');
+            }}
+          >
+            <ListItemIcon style={{ minWidth: 25 }}>
+              {sortBy === 'byRelevance' &&
+                (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+            </ListItemIcon>
+            <ListItemText primary={t('core:relevance')} />
+          </MenuItem>
+        )}
         <MenuItem
-          data-tid="gridPerspectiveSortByRelevance"
+          data-tid="gridPerspectiveSortByName"
           onClick={() => {
-            handleSortBy('byRelevance');
+            handleSortBy('byName');
           }}
         >
           <ListItemIcon style={{ minWidth: 25 }}>
-            {sortBy === 'byRelevance' &&
+            {sortBy === 'byName' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
-          <ListItemText primary={t('core:relevance')} />
+          <ListItemText primary={t('core:sortByName')} />
         </MenuItem>
-      )}
-      <MenuItem
-        data-tid="gridPerspectiveSortByName"
-        onClick={() => {
-          handleSortBy('byName');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'byName' &&
-            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
-        </ListItemIcon>
-        <ListItemText primary={t('core:sortByName')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="gridPerspectiveSortBySize"
-        onClick={() => {
-          handleSortBy('byFileSize');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'byFileSize' &&
-            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
-        </ListItemIcon>
-        <ListItemText primary={t('core:fileSize')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="gridPerspectiveSortByDate"
-        onClick={() => {
-          handleSortBy('byDateModified');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'byDateModified' &&
-            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
-        </ListItemIcon>
-        <ListItemText primary={t('core:fileLDTM')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="gridPerspectiveSortByFirstTag"
-        onClick={() => {
-          handleSortBy('byFirstTag');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'byFirstTag' &&
-            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
-        </ListItemIcon>
-        <ListItemText primary={t('core:fileFirstTag')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="gridPerspectiveSortByExt"
-        onClick={() => {
-          handleSortBy('byExtension');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'byExtension' &&
-            (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
-        </ListItemIcon>
-        <ListItemText primary={t('core:fileExtension')} />
-      </MenuItem>
-      <MenuItem
-        data-tid="gridPerspectiveSortRandom"
-        onClick={() => {
-          handleSortBy('random');
-        }}
-      >
-        <ListItemIcon style={{ minWidth: 25 }}>
-          {sortBy === 'random' && <ArrowDownIcon />}
-        </ListItemIcon>
-        <ListItemText primary={t('core:random')} />
-      </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSortBySize"
+          onClick={() => {
+            handleSortBy('byFileSize');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'byFileSize' &&
+              (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+          </ListItemIcon>
+          <ListItemText primary={t('core:fileSize')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSortByDate"
+          onClick={() => {
+            handleSortBy('byDateModified');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'byDateModified' &&
+              (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+          </ListItemIcon>
+          <ListItemText primary={t('core:fileLDTM')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSortByFirstTag"
+          onClick={() => {
+            handleSortBy('byFirstTag');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'byFirstTag' &&
+              (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+          </ListItemIcon>
+          <ListItemText primary={t('core:fileFirstTag')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSortByExt"
+          onClick={() => {
+            handleSortBy('byExtension');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'byExtension' &&
+              (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+          </ListItemIcon>
+          <ListItemText primary={t('core:fileExtension')} />
+        </MenuItem>
+        <MenuItem
+          data-tid="gridPerspectiveSortRandom"
+          onClick={() => {
+            handleSortBy('random');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'random' && <ArrowDownIcon />}
+          </ListItemIcon>
+          <ListItemText primary={t('core:random')} />
+        </MenuItem>
+      </TsMenuList>
     </Menu>
   );
 }

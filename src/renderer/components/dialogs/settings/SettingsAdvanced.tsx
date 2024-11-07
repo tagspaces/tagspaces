@@ -26,7 +26,6 @@ import TsButton from '-/components/TsButton';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
@@ -381,13 +380,11 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:tileServerTitle')} />
-        <ListItemSecondaryAction style={{ right: 0 }}>
-          <TsButton
-            onClick={(event) => handleEditTileServerClick(event, {}, true)}
-          >
-            {t('tileServerDialogAdd')}
-          </TsButton>
-        </ListItemSecondaryAction>
+        <TsButton
+          onClick={(event) => handleEditTileServerClick(event, {}, true)}
+        >
+          {t('tileServerDialogAdd')}
+        </TsButton>
       </ListItem>
       <List
         style={{
@@ -406,28 +403,26 @@ function SettingsAdvanced(props: Props) {
                 secondary={tileServer.serverURL}
                 style={{ maxWidth: 470 }}
               />
-              <ListItemSecondaryAction>
-                {index === 0 && (
-                  <Tooltip title={t('core:serverIsDefaultHelp')}>
-                    <CheckIcon
-                      data-tid="tileServerDefaultIndication"
-                      style={{ marginLeft: 10 }}
-                    />
-                  </Tooltip>
-                )}
-                <IconButton
-                  aria-label={t('core:options')}
-                  aria-haspopup="true"
-                  edge="end"
-                  data-tid={'tileServerEdit_' + tileServer.name}
-                  onClick={(event) =>
-                    handleEditTileServerClick(event, tileServer, index === 0)
-                  }
-                  size="large"
-                >
-                  <EditIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
+              <IconButton
+                aria-label={t('core:options')}
+                aria-haspopup="true"
+                edge="end"
+                data-tid={'tileServerEdit_' + tileServer.name}
+                onClick={(event) =>
+                  handleEditTileServerClick(event, tileServer, index === 0)
+                }
+                size="large"
+              >
+                <EditIcon />
+              </IconButton>
+              {index === 0 && (
+                <Tooltip title={t('core:serverIsDefaultHelp')}>
+                  <CheckIcon
+                    data-tid="tileServerDefaultIndication"
+                    style={{ marginLeft: 10 }}
+                  />
+                </Tooltip>
+              )}
             </ListItem>
           ))
         ) : (

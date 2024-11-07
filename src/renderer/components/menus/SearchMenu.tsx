@@ -23,7 +23,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import HelpIcon from '@mui/icons-material/Help';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
-import { Pro } from '../../pro';
+import TsMenuList from '-/components/TsMenuList';
+import { Pro } from '-/pro';
 import Links from 'assets/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
@@ -106,7 +107,7 @@ function SearchMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        {menuItems}
+        <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
     </div>
   );

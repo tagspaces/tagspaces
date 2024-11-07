@@ -21,7 +21,6 @@ import { useDispatch } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -50,6 +49,7 @@ import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { TS } from '-/tagspaces.namespace';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { ListItemText } from '@mui/material';
 
 interface Props {
   location: CommonLocation;
@@ -100,18 +100,12 @@ function LocationView(props: Props) {
         setActions(action);
       });
     } else {
-      // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      // setSelectedEntries([]);
       openLocation(location);
       if (hideDrawer) {
         hideDrawer();
       }
     }
   };
-
-  /*const closeLocationTree = () => {
-    directoryTreeRef.current.closeLocation();
-  };*/
 
   const handleLocationContextMenuClick = (event: any, chosenLocation) => {
     event.preventDefault();
@@ -145,14 +139,6 @@ function LocationView(props: Props) {
         showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }
-      /*if (!AppConfig.isWin && !path.startsWith('/')) {
-        showNotification(t('Moving file not possible'), 'error', true);
-        return;
-      }
-      if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        showNotification(t('Moving file not possible'), 'error', true);
-        return;
-      }*/
       const targetLocation = item.targetLocation;
       let targetPath = targetLocation ? targetLocation.path : undefined;
       if (targetPath === undefined) {
@@ -235,15 +221,7 @@ function LocationView(props: Props) {
   );
   const { FILE } = NativeTypes;
   return (
-    /* <div key={location.uuid}> */
     <SidePanel>
-      {/*{locationDirectoryContextMenuAnchorEl && (
-        <LocationContextMenu
-          setEditLocationDialogOpened={setEditLocationDialogOpened}
-          setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
-          closeLocationTree={closeLocationTree}
-        />
-      )}*/}
       <TargetFileBox
         accepts={[FILE]}
         directoryPath={location.path}
@@ -263,10 +241,6 @@ function LocationView(props: Props) {
           }
         >
           <ListItemIcon
-            // onClick={(e) => {
-            //   e.preventDefault();
-            //   this.loadSubDirectories(location, 1);
-            // }}
             style={{
               minWidth: 'auto',
               cursor: 'pointer',
@@ -291,40 +265,41 @@ function LocationView(props: Props) {
               )}
             </Tooltip>
           </ListItemIcon>
-          {isCloudLocation && !AppConfig.isElectron ? (
-            <>{LocationTitle}</>
-          ) : (
-            <TargetMoveFileBox
-              accepts={[DragItemTypes.FILE]}
-              onDrop={handleFileMoveDrop}
-              targetPath={currentLocationPath}
-              targetLocation={location}
-            >
-              {LocationTitle}
-            </TargetMoveFileBox>
+          <ListItemText>
+            {isCloudLocation && !AppConfig.isElectron ? (
+              <>{LocationTitle}</>
+            ) : (
+              <TargetMoveFileBox
+                accepts={[DragItemTypes.FILE]}
+                onDrop={handleFileMoveDrop}
+                targetPath={currentLocationPath}
+                targetLocation={location}
+              >
+                {LocationTitle}
+              </TargetMoveFileBox>
+            )}
+          </ListItemText>
+          {location.isDefault && (
+            <Tooltip title={t('core:thisIsStartupLocation')}>
+              <DefaultLocationIcon
+                color="primary"
+                data-tid="startupIndication"
+              />
+            </Tooltip>
           )}
-          <ListItemSecondaryAction>
-            <IconButton
-              aria-label={t('core:options')}
-              aria-haspopup="true"
-              edge="end"
-              data-tid={'locationMoreButton_' + location.name}
-              onClick={(event) =>
-                handleLocationContextMenuClick(event, location)
-              }
-              onContextMenu={(event) =>
-                handleLocationContextMenuClick(event, location)
-              }
-              size="large"
-            >
-              {location.isDefault && (
-                <Tooltip title={t('core:thisIsStartupLocation')}>
-                  <DefaultLocationIcon data-tid="startupIndication" />
-                </Tooltip>
-              )}
-              <MoreVertIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
+          <IconButton
+            aria-label={t('core:options')}
+            aria-haspopup="true"
+            edge="end"
+            data-tid={'locationMoreButton_' + location.name}
+            onClick={(event) => handleLocationContextMenuClick(event, location)}
+            onContextMenu={(event) =>
+              handleLocationContextMenuClick(event, location)
+            }
+            size="large"
+          >
+            <MoreVertIcon />
+          </IconButton>
         </ListItem>
       </TargetFileBox>
       <DirectoryTreeView

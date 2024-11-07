@@ -26,7 +26,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ConfirmDialog from '../dialogs/ConfirmDialog';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import TsMenuList from '-/components/TsMenuList';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -160,7 +161,7 @@ function EntryTagMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-        {menuItems}
+        <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
       <ConfirmDialog
         open={isDeleteTagDialogOpened}

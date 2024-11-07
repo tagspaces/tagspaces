@@ -28,6 +28,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import TsMenuList from '-/components/TsMenuList';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -96,42 +97,44 @@ function TagMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-        {!isSmartTag && (
-          <MenuItem
-            data-tid="showFilesWithThisTag"
-            onClick={showFilesWithThisTag}
-          >
-            <ListItemIcon>
-              <ShowEntriesWithTagIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('core:showFilesWithThisTag')} />
-          </MenuItem>
-        )}
+        <TsMenuList>
+          {!isSmartTag && (
+            <MenuItem
+              data-tid="showFilesWithThisTag"
+              onClick={showFilesWithThisTag}
+            >
+              <ListItemIcon>
+                <ShowEntriesWithTagIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('core:showFilesWithThisTag')} />
+            </MenuItem>
+          )}
 
-        {selectedEntries && selectedEntries.length > 0 && !readOnlyMode && (
-          <MenuItem data-tid="applyTagTID" onClick={applyTag}>
-            <ListItemIcon>
-              <ApplyTagIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('core:applyTag')} />
-          </MenuItem>
-        )}
-        {!isSmartTag && !isTagLibraryReadOnly && (
-          <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
-            <ListItemIcon>
-              <Edit />
-            </ListItemIcon>
-            <ListItemText primary={t('core:editTag')} />
-          </MenuItem>
-        )}
-        {!isSmartTag && !isTagLibraryReadOnly && (
-          <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('core:deleteTagFromTagGroup')} />
-          </MenuItem>
-        )}
+          {selectedEntries && selectedEntries.length > 0 && !readOnlyMode && (
+            <MenuItem data-tid="applyTagTID" onClick={applyTag}>
+              <ListItemIcon>
+                <ApplyTagIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('core:applyTag')} />
+            </MenuItem>
+          )}
+          {!isSmartTag && !isTagLibraryReadOnly && (
+            <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
+              <ListItemIcon>
+                <Edit />
+              </ListItemIcon>
+              <ListItemText primary={t('core:editTag')} />
+            </MenuItem>
+          )}
+          {!isSmartTag && !isTagLibraryReadOnly && (
+            <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
+              <ListItemIcon>
+                <DeleteIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('core:deleteTagFromTagGroup')} />
+            </MenuItem>
+          )}
+        </TsMenuList>
       </Menu>
     </div>
   );
