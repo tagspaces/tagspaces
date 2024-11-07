@@ -150,10 +150,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         location?.getDirSeparator(),
       );
       location?.checkDirExist(backupFilePath).then((exist) => {
-        if (exist) {
-          haveRevisions.current = exist;
-          forceUpdate();
-        }
+        haveRevisions.current = exist;
+        forceUpdate();
       });
     }
   }, [isEditable]);
