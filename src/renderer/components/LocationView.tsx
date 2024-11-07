@@ -23,7 +23,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -281,13 +281,10 @@ function LocationView(props: Props) {
           </ListItemText>
           {location.isDefault && (
             <Tooltip title={t('core:thisIsStartupLocation')}>
-              <DefaultLocationIcon
-                // color="primary"
-                data-tid="startupIndication"
-              />
+              <DefaultLocationIcon data-tid="startupIndication" />
             </Tooltip>
           )}
-          <IconButton
+          <TsIconButton
             aria-label={t('core:options')}
             aria-haspopup="true"
             edge="end"
@@ -296,10 +293,9 @@ function LocationView(props: Props) {
             onContextMenu={(event) =>
               handleLocationContextMenuClick(event, location)
             }
-            size="large"
           >
             <MoreVertIcon />
-          </IconButton>
+          </TsIconButton>
         </ListItem>
       </TargetFileBox>
       <DirectoryTreeView

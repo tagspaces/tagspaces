@@ -28,7 +28,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
-  Grid,
   FormControl,
   Typography,
   TextField,
@@ -39,6 +38,7 @@ import {
 } from '@mui/material';
 import Tooltip from '-/components/Tooltip';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import InfoIcon from '-/components/InfoIcon';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import ColorPaletteIcon from '@mui/icons-material/ColorLens';

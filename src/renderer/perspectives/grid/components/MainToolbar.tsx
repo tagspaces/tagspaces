@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveAs } from 'file-saver';
 import { Toolbar, Box, Divider, Badge } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import ShareIcon from '@mui/icons-material/Share';
 // import DragOnIcon from '@mui/icons-material/PanTool';
@@ -153,7 +153,7 @@ function MainToolbar(props: Props) {
         title={t('core:navigateToParentDirectory')}
         keyBinding={keyBindings['openParentDirectory']}
       >
-        <IconButton
+        <TsIconButton
           aria-label={t('core:navigateToParentDirectory')}
           data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
           onClick={() => {
@@ -161,27 +161,27 @@ function MainToolbar(props: Props) {
           }}
         >
           <ParentFolderIcon />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <Tooltip
         title={t('core:toggleSelectAllFiles')}
         keyBinding={keyBindings['selectAll']}
       >
-        <IconButton
+        <TsIconButton
           data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
           onClick={toggleSelectAllFiles}
         >
           {selectedEntries.length > 1 ? <SelectedIcon /> : <UnSelectedIcon />}
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <Tooltip title={t('core:directoryPropertiesTitle')}>
-        <IconButton
+        <TsIconButton
           aria-label={t('core:directoryPropertiesTitle')}
           data-tid="openFolderProperties"
           onClick={showProperties}
         >
           <FolderPropertiesIcon />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
@@ -191,13 +191,13 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['addRemoveTags']}
           >
             <span>
-              <IconButton
+              <TsIconButton
                 aria-label={t('core:tagSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
                 onClick={openAddRemoveTagsDialog}
               >
                 <TagIcon />
-              </IconButton>
+              </TsIconButton>
             </span>
           </Tooltip>
         )}
@@ -207,13 +207,13 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['copyMoveSelectedEntries']}
           >
             <span>
-              <IconButton
+              <TsIconButton
                 aria-label={t('core:copyMoveSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
                 onClick={openMoveCopyFilesDialog}
               >
                 <CopyIcon />
-              </IconButton>
+              </TsIconButton>
             </span>
           </Tooltip>
         )}
@@ -223,35 +223,34 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['deleteDocument']}
           >
             <span>
-              <IconButton
+              <TsIconButton
                 aria-label={t('core:deleteSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
                 onClick={() => openDeleteMultipleEntriesDialog()}
-                // </span>size="large"
               >
                 <DeleteIcon />
-              </IconButton>
+              </TsIconButton>
             </span>
           </Tooltip>
         )}
         {openShareFilesDialog && (
           <ProTooltip tooltip={t('core:shareFiles')}>
             <span>
-              <IconButton
+              <TsIconButton
                 aria-label={t('core:shareFiles')}
                 data-tid={prefixDataTID + 'PerspectiveShareFiles'}
                 onClick={openShareFilesDialog}
                 disabled={selectedEntries.length < 1}
               >
                 <ShareIcon />
-              </IconButton>
+              </TsIconButton>
             </span>
           </ProTooltip>
         )}
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
       <Tooltip title={t('core:sort')}>
-        <IconButton
+        <TsIconButton
           aria-label={t('core:sort')}
           data-tid={prefixDataTID + 'PerspectiveSortMenu'}
           onClick={(e) => {
@@ -259,28 +258,28 @@ function MainToolbar(props: Props) {
           }}
         >
           <SortingIcon />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       {showDownloadButton && (
         <Tooltip title={t('core:downloadFiles')}>
-          <IconButton
+          <TsIconButton
             data-tid={prefixDataTID + 'PerspectiveDownloadMultipleMenuTID'}
             onClick={multipleDownload}
           >
             <DownloadIcon />
-          </IconButton>
+          </TsIconButton>
         </Tooltip>
       )}
       {Pro &&
         !AppConfig.isCordovaAndroid && ( // SaveAs do not worlk on Android
           <Tooltip title={t('core:exportCsv')}>
-            <IconButton
+            <TsIconButton
               data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
               onClick={handleExportCsvMenu}
               style={{ transform: 'scale(-1, 1)' }}
             >
               <ExportIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         )}
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
@@ -290,14 +289,14 @@ function MainToolbar(props: Props) {
       </Box>
       {AppConfig.isElectron && !currentLocation.haveObjectStoreSupport() && (
         <Tooltip title={t('core:dragMode')}>
-          <IconButton
+          <TsIconButton
             data-tid={prefixDataTID + 'PerspectiveDragNative'}
             onClick={() => {
               setNativeDragModeEnabled(!nativeDragModeEnabled);
             }}
           >
             {nativeDragModeEnabled ? <DragOnIcon /> : <DragOffIcon />}
-          </IconButton>
+          </TsIconButton>
         </Tooltip>
       )}
       <Box sx={{ flexGrow: 1 }} />
@@ -308,7 +307,7 @@ function MainToolbar(props: Props) {
             (folderSettingsAvailable ? ' - folder specific' : '')
           }
         >
-          <IconButton
+          <TsIconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
           >
@@ -317,7 +316,7 @@ function MainToolbar(props: Props) {
             ) : (
               <PerspectiveSettingsIcon />
             )}
-          </IconButton>
+          </TsIconButton>
         </Tooltip>
       </Box>
     </Toolbar>

@@ -456,7 +456,7 @@ function SearchAutocomplete(props: Props) {
           </span>
         }
       >
-        <IconButton size="small" edge="end">
+        <IconButton edge="end">
           <HelpOutlineIcon style={{ color: 'lightgray' }} />
         </IconButton>
       </Tooltip>

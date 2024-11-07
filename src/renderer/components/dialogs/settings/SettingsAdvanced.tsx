@@ -25,7 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
@@ -185,14 +185,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:fileOpenHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -214,14 +213,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:folderOpenHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -243,14 +241,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:fileEditHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -272,16 +269,15 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:searchHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() =>
                     setConfirmDialogKey(historyKeys.searchHistoryKey)
                   }
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -403,7 +399,7 @@ function SettingsAdvanced(props: Props) {
                 secondary={tileServer.serverURL}
                 style={{ maxWidth: 470 }}
               />
-              <IconButton
+              <TsIconButton
                 aria-label={t('core:options')}
                 aria-haspopup="true"
                 edge="end"
@@ -411,10 +407,9 @@ function SettingsAdvanced(props: Props) {
                 onClick={(event) =>
                   handleEditTileServerClick(event, tileServer, index === 0)
                 }
-                size="large"
               >
                 <EditIcon />
-              </IconButton>
+              </TsIconButton>
               {index === 0 && (
                 <Tooltip title={t('core:serverIsDefaultHelp')}>
                   <CheckIcon
