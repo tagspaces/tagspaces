@@ -17,10 +17,8 @@
  */
 
 import React, { useReducer, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
-import TextField from '@mui/material/TextField';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -190,9 +188,6 @@ function RenameEntryDialog(props: Props) {
             )}
             onChange={handleInputChange}
             onFocus={onInputFocus}
-            // updateValue={(value) => {
-            //   name.current = value;
-            // }}
             defaultValue={name.current}
             data-tid="renameEntryDialogInput"
           />
@@ -201,7 +196,7 @@ function RenameEntryDialog(props: Props) {
           </FormHelperText>
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="closeRenameEntryDialog" onClick={onClose}>
           {t('core:cancel')}
         </TsButton>
@@ -213,7 +208,7 @@ function RenameEntryDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

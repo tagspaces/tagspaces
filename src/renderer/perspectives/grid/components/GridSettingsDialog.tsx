@@ -19,7 +19,6 @@
 import React, { useEffect, useReducer } from 'react';
 import {
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -28,11 +27,11 @@ import {
   Switch,
   Divider,
   MenuItem,
-  FormHelperText,
   Typography,
   Paper,
   Box,
 } from '@mui/material';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -348,7 +347,7 @@ function GridSettingsDialog(props: Props) {
           {/* <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText> */}
         </FormControl>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'space-between' }}>
+      <TsDialogActions style={{ justifyContent: 'space-between' }}>
         <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
           {t('core:help')}
         </TsButton>
@@ -372,7 +371,7 @@ function GridSettingsDialog(props: Props) {
             {t('core:directorySettings')}
           </TsButton>
         )}
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

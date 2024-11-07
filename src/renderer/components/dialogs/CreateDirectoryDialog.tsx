@@ -20,7 +20,6 @@ import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Dialog,
-  DialogActions,
   FormControl,
   DialogContent,
   DialogTitle,
@@ -29,6 +28,7 @@ import {
   InputAdornment,
   inputBaseClasses,
 } from '@mui/material';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -253,7 +253,7 @@ function CreateDirectoryDialog(props: Props) {
           />
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="closeCreateNewDirectory" onClick={onCancel}>
           {t('core:cancel')}
         </TsButton>
@@ -266,7 +266,7 @@ function CreateDirectoryDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

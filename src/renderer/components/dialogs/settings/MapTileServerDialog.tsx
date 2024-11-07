@@ -17,9 +17,11 @@
  */
 
 import React, { useRef } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TsTextField from '-/components/TsTextField';
@@ -51,6 +53,8 @@ function MapTileServerDialog(props: Props) {
   const serverURL = useRef<string>(props.tileServer.serverURL);
   const serverInfo = useRef<string>(props.tileServer.serverInfo);
   const isDefault = useRef<boolean>(props.isDefault);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const { setError, haveError } = useValidation();
   const renderTitle = () => (
@@ -173,7 +177,7 @@ function MapTileServerDialog(props: Props) {
   );
 
   const renderActions = () => (
-    <DialogActions
+    <TsDialogActions
       style={{
         justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
       }}
@@ -205,12 +209,18 @@ function MapTileServerDialog(props: Props) {
           {t('core:confirmSaveButton')}
         </TsButton>
       </div>
-    </DialogActions>
+    </TsDialogActions>
   );
 
   const { open, onClose } = props;
   return (
-    <Dialog open={open} keepMounted scroll="paper" onClose={onClose}>
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      keepMounted
+      scroll="paper"
+      onClose={onClose}
+    >
       {renderTitle()}
       {renderContent()}
       {renderActions()}

@@ -19,7 +19,7 @@
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -286,7 +286,7 @@ function CreateTagGroupDialog(props: Props) {
           )}
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="createTagGroupCancelButton" onClick={onClose}>
           {t('core:cancel')}
         </TsButton>
@@ -298,7 +298,7 @@ function CreateTagGroupDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

@@ -20,7 +20,7 @@ import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -132,7 +132,7 @@ function OpenLinkDialog(props: Props) {
           />
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="closeOpenLinkDialog" onClick={onCancel}>
           {t('core:cancel')}
         </TsButton>
@@ -144,7 +144,7 @@ function OpenLinkDialog(props: Props) {
         >
           {t('core:open')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

@@ -17,8 +17,10 @@
  */
 
 import React, { useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -54,7 +56,8 @@ function FileUploadDialog(props: Props) {
   const { open = false, title, onClose } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
@@ -166,6 +169,7 @@ function FileUploadDialog(props: Props) {
       keepMounted
       scroll="paper"
       fullWidth={true}
+      fullScreen={fullScreen}
       maxWidth="sm"
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
@@ -256,7 +260,7 @@ function FileUploadDialog(props: Props) {
               );
             })}
       </DialogContent>
-      <DialogActions style={{ padding: '10px 30px 30px 30px' }}>
+      <TsDialogActions>
         {!haveProgress && (
           <TsButton
             data-tid="uploadCloseAndClearTID"
@@ -276,7 +280,7 @@ function FileUploadDialog(props: Props) {
             {t('core:stopAll')}
           </TsButton>
         )}
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }
