@@ -91,7 +91,7 @@ function OpenLinkDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      //fullScreen={fullScreen}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -120,12 +120,14 @@ function OpenLinkDialog(props: Props) {
             retrieveValue={() => linkURL}
             value={linkURL}
             data-tid="openLinkTID"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </FormControl>
