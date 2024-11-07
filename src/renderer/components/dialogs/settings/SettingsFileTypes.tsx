@@ -475,7 +475,7 @@ function SettingsFileTypes() {
       style={{
         height: 500,
         width: '100%',
-        minWidth: 550,
+        minWidth: 350,
         overflow: 'hidden',
         background: 'transparent',
         paddingLeft: 10,
@@ -486,7 +486,7 @@ function SettingsFileTypes() {
         onClick={onAddFileType}
         color="secondary"
         style={{
-          width: 300,
+          marginTop: AppConfig.defaultSpaceBetweenButtons,
           marginBottom: AppConfig.defaultSpaceBetweenButtons,
         }}
       >
@@ -501,7 +501,9 @@ function SettingsFileTypes() {
             dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
           }}
           color="secondary"
-          style={{ width: '50%' }}
+          style={{
+            margin: AppConfig.defaultSpaceBetweenButtons,
+          }}
         >
           {t('core:resetFileType')}
         </TsButton>
