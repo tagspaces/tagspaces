@@ -103,7 +103,10 @@ function TsTextField(props: TSTextFieldProps) {
       )}
       <TextField
         onContextMenu={handleContextMenu}
-        style={{ cursor: 'context-menu', marginTop: 0 }}
+        style={{
+          cursor: 'context-menu',
+          marginTop: 0,
+        }}
         margin="dense"
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"

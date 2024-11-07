@@ -264,24 +264,15 @@ function FileUploadDialog(props: Props) {
               onClose();
               dispatch(AppActions.resetProgress());
             }}
-            color="primary"
           >
             {t('core:closeAndClear')}
           </TsButton>
         )}
-        <TsButton
-          data-tid="uploadMinimizeDialogTID"
-          onClick={onClose}
-          color="primary"
-        >
+        <TsButton data-tid="uploadMinimizeDialogTID" onClick={onClose}>
           {t('core:minimize')}
         </TsButton>
         {haveProgress && (
-          <TsButton
-            data-tid="uploadStopAllTID"
-            onClick={stopAll}
-            color="primary"
-          >
+          <TsButton data-tid="uploadStopAllTID" onClick={stopAll}>
             {t('core:stopAll')}
           </TsButton>
         )}

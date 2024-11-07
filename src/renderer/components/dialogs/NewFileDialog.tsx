@@ -181,7 +181,6 @@ function NewFileDialog(props: Props) {
             onClick={() => {
               onClose();
             }}
-            color="primary"
           >
             {t('core:cancel')}
           </TsButton>
@@ -191,7 +190,6 @@ function NewFileDialog(props: Props) {
             onClick={() => {
               createFile(fileType, targetDirectoryPath);
             }}
-            color="primary"
             disabled={haveError.current}
           >
             {t('core:ok')}

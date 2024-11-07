@@ -588,7 +588,6 @@ function EntryContainer() {
           checked={openedEntry.meta && openedEntry.meta.autoSave}
           onChange={toggleAutoSave}
           name="autoSave"
-          color="primary"
         />
       </Tooltip>
     );
@@ -636,13 +635,12 @@ function EntryContainer() {
                   data-tid="fileContainerSaveFile"
                   size="small"
                   variant="outlined"
-                  color="primary"
                   startIcon={desktopMode && <SaveIcon />}
                   loading={isSavingInProgress.current}
                   style={{
                     borderRadius: 'unset',
-                    borderTopRightRadius: 10,
-                    borderBottomRightRadius: 10,
+                    borderTopRightRadius: AppConfig.defaultCSSRadius,
+                    borderBottomRightRadius: AppConfig.defaultCSSRadius,
                   }}
                 >
                   {t('core:save')}

@@ -61,14 +61,11 @@ export default function SplitButton(props: Props) {
       <Grid item xs={12}>
         <ButtonGroup
           variant="contained"
-          color="primary"
           ref={anchorRef}
           aria-label="split button"
         >
           <Button onClick={handleToggle}>{options[selectedIndex].value}</Button>
           <Button
-            color="primary"
-            size="small"
             aria-controls={open ? 'split-button-menu' : undefined}
             aria-expanded={open ? 'true' : undefined}
             aria-label="select merge strategy"

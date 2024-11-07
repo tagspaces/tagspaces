@@ -266,7 +266,6 @@ function EditTagGroupDialog(props: Props) {
         disabled={disableConfirmButton()}
         onClick={onConfirm}
         data-tid="editTagGroupConfirmButton"
-        color="primary"
         variant="contained"
       >
         {t('core:ok')}

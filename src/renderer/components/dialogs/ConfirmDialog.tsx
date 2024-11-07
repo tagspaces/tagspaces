@@ -90,7 +90,6 @@ function ConfirmDialog(props: Props) {
       <DialogActions>
         <TsButton
           onClick={() => onConfirm(false)}
-          color="primary"
           data-tid={props.cancelDialogTID}
         >
           {t('core:no')}
@@ -98,7 +97,6 @@ function ConfirmDialog(props: Props) {
         <TsButton
           data-tid={props.confirmDialogTID}
           onClick={() => onConfirm(true)}
-          color="primary"
         >
           {t('core:yes')}
         </TsButton>

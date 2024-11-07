@@ -76,6 +76,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import AppConfig from '-/AppConfig';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -1087,7 +1088,7 @@ function SearchPopover(props: Props) {
             {t('resetBtn')}
           </TsButton>
           <TsButton
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             variant="contained"
             disabled={isIndexing !== undefined}
             id="searchButtonAdvTID"

@@ -172,7 +172,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showDirectories: !showDirectories });
                 }}
                 name="checkedD"
-                color="primary"
               />
             }
             label={t('core:showHideDirectories')}
@@ -187,7 +186,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showTags: !showTags });
                 }}
                 name="checkedT"
-                color="primary"
               />
             }
             label={t('core:showTags')}
@@ -204,7 +202,6 @@ function GridSettingsDialog(props: Props) {
                   });
                 }}
                 name={t('core:showHideEntriesDescription')}
-                color="primary"
               />
             }
             label={t('core:showHideEntriesDescription')}
@@ -219,7 +216,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showDetails: !showDetails });
                 }}
                 name={t('core:showHideDetails')}
-                color="primary"
               />
             }
             label={t('core:showHideDetails')}
@@ -234,7 +230,6 @@ function GridSettingsDialog(props: Props) {
                     setSettings({ showDescription: !showDescription });
                   }}
                   name={t('core:showHideDescription')}
-                  color="primary"
                 />
               }
               label={t('core:showHideDescription')}
@@ -363,7 +358,6 @@ function GridSettingsDialog(props: Props) {
             saveSettings(true);
             onClose();
           }}
-          color="primary"
         >
           {t('core:defaultSettings')}
         </TsButton>
@@ -374,7 +368,6 @@ function GridSettingsDialog(props: Props) {
               saveSettings(false);
               onClose();
             }}
-            color="primary"
           >
             {t('core:directorySettings')}
           </TsButton>

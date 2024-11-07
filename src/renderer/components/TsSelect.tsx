@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { isDesktopMode } from '-/reducers/settings';
+import AppConfig from '-/AppConfig';
 
 type TSSelectProps = TextFieldProps & {};
 
@@ -34,7 +35,10 @@ function TsSelect(props: TSSelectProps) {
         {label}
       </FormHelperText>
       <TextField
-        style={{ cursor: 'context-menu', marginTop: 0 }}
+        style={{
+          cursor: 'context-menu',
+          marginTop: 0,
+        }}
         margin="dense"
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"

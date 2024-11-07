@@ -183,7 +183,6 @@ function MoveOrCopyFilesDialog(props: Props) {
             onClose();
           }}
           data-tid="confirmMoveFilesTID"
-          color="primary"
           variant="contained"
         >
           {t('core:moveEntriesButton')}
@@ -206,7 +205,6 @@ function MoveOrCopyFilesDialog(props: Props) {
             onClose();
           }}
           data-tid="confirmCopyFilesTID"
-          color="primary"
           variant="contained"
         >
           {t('core:copyEntriesButton')}

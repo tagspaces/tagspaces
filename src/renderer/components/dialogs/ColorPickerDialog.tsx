@@ -117,10 +117,9 @@ function ColorPickerDialog(props: Props) {
           {t('core:cancel')}
         </TsButton>
         <TsButton
-          onClick={onConfirm}
           variant="contained"
+          onClick={onConfirm}
           data-tid="colorPickerConfirm"
-          color="primary"
         >
           {t('core:ok')}
         </TsButton>

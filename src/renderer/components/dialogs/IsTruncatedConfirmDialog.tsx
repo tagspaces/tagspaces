@@ -109,9 +109,7 @@ function IsTruncatedConfirmDialog(props: Props) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <TsButton onClick={() => onClose()} color="primary">
-          {t('core:continue')}
-        </TsButton>
+        <TsButton onClick={() => onClose()}>{t('core:continue')}</TsButton>
       </DialogActions>
     </Dialog>
   );

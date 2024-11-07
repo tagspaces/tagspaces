@@ -95,6 +95,7 @@ import { generateClipboardLink } from '-/utils/dom';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'EntryProperties';
 
@@ -705,7 +706,6 @@ function EntryProperties(props: Props) {
                     <br />
                     <p>
                       <TsButton
-                        color="primary"
                         onClick={() => {
                           openUrl(
                             'https://www.openstreetmap.org/?mlat=' +
@@ -725,8 +725,9 @@ function EntryProperties(props: Props) {
                         OpenStreetMap
                       </TsButton>
                       <TsButton
-                        color="primary"
-                        style={{ marginLeft: 5 }}
+                        style={{
+                          marginLeft: AppConfig.defaultSpaceBetweenButtons,
+                        }}
                         onClick={() => {
                           openUrl(
                             'https://maps.google.com/?q=' +

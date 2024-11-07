@@ -258,7 +258,6 @@ function MoveCopyFilesDialog(props: Props) {
               targetPath === currentDirectoryPath
             }
             onClick={() => copyMove(false)}
-            color="primary"
             variant="contained"
           >
             {t('core:moveEntriesButton')}
@@ -268,7 +267,6 @@ function MoveCopyFilesDialog(props: Props) {
           onClick={() => copyMove(true)}
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === currentDirectoryPath}
-          color="primary"
           variant="contained"
         >
           {t('core:copyEntriesButton')}

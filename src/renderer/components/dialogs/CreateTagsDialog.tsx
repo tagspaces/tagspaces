@@ -125,7 +125,6 @@ function CreateTagsDialog(props: Props) {
           disabled={inputError}
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

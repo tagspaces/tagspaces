@@ -36,12 +36,13 @@ import { useTranslation } from 'react-i18next';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import i18n from '-/services/i18n';
+import AppConfig from '-/AppConfig';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
     root: {
       '& .MuiSnackbarContent-root': {
-        borderRadius: 10,
+        borderRadius: AppConfig.defaultCSSRadius,
       },
     },
   };
@@ -151,11 +152,7 @@ function PageNotification() {
           >
             {t('core:releaseNotes')}
           </TsButton>,
-          <TsButton
-            key="latestVersionButton"
-            color="primary"
-            onClick={getLatestVersion}
-          >
+          <TsButton key="latestVersionButton" onClick={getLatestVersion}>
             {t('core:getItNow')}
           </TsButton>,
         ]}

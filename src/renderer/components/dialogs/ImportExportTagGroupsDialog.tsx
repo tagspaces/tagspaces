@@ -141,7 +141,7 @@ function ImportExportTagGroupsDialog(props: Props) {
         <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        <TsButton color="primary" onClick={handleToggleSelectAll}>
+        <TsButton onClick={handleToggleSelectAll}>
           {t('core:selectAllTagGroups')}
         </TsButton>
         <FormControl fullWidth={true}>
@@ -156,7 +156,6 @@ function ImportExportTagGroupsDialog(props: Props) {
           disabled={!isSelected()}
           onClick={onConfirm}
           data-tid="confirmImportExport"
-          color="primary"
           variant="contained"
         >
           {props.dialogModeImport ? 'Import' : 'Export'}

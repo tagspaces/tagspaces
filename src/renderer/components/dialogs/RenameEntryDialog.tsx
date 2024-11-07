@@ -209,7 +209,6 @@ function RenameEntryDialog(props: Props) {
           disabled={disableConfirmButton.current}
           onClick={onConfirm}
           data-tid="confirmRenameEntry"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

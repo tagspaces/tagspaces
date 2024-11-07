@@ -43,6 +43,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { tagsValidation } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -209,10 +210,9 @@ function EditEntryTagDialog(props: Props) {
           </TsButton>
           <TsButton
             disabled={haveError()}
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
-            color="primary"
             variant="contained"
           >
             {t('core:ok')}

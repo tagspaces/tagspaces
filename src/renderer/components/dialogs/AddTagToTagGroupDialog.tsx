@@ -116,7 +116,6 @@ function AddTagToTagGroupDialog(props: Props) {
           disabled={tagGroup === undefined}
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

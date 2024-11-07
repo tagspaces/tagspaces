@@ -260,10 +260,9 @@ function CreateDirectoryDialog(props: Props) {
         <TsButton
           disabled={disableConfirmButton}
           onClick={onConfirm}
-          variant="contained"
           data-tid="confirmCreateNewDirectory"
           id="confirmCreateNewDirectory"
-          color="primary"
+          variant="contained"
         >
           {t('core:ok')}
         </TsButton>

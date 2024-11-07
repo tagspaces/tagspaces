@@ -61,7 +61,6 @@ function ThirdPartyLibsDialog(props: Props) {
         <TsButton
           data-tid="confirmThirdPartyLibsDialog"
           onClick={onClose}
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

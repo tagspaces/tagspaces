@@ -138,7 +138,6 @@ function OpenLinkDialog(props: Props) {
           disabled={disableConfirmButton}
           onClick={onConfirm}
           data-tid="confirmOpenLink"
-          color="primary"
           variant="contained"
         >
           {t('core:open')}

@@ -869,5 +869,6 @@
   "invalidSharingLink": "Invalid Sharing Link",
   "confirmSearchById": "Do you want to search for the file or folder by its ID?",
   "uploadDirsNotSupported": "Uploading folders not supported!",
+  "targetLocation": "Target location",
   "-": "-"
 }

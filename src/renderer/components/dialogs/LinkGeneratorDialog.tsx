@@ -132,7 +132,6 @@ function LinkGeneratorDialog(props: Props) {
                       showNotification(t('core:linkCopied'));
                     });
                   }}
-                  color="primary"
                 >
                   {t('core:copy')}
                 </TsButton>
@@ -172,7 +171,6 @@ function LinkGeneratorDialog(props: Props) {
         }}
       >
         <TsButton
-          variant="text"
           data-tid="helpSearchButtonTID"
           onClick={() => {
             openUrl(Links.documentationLinks.sharing);
@@ -180,12 +178,7 @@ function LinkGeneratorDialog(props: Props) {
         >
           {t('help')}
         </TsButton>
-        <TsButton
-          data-tid="closeLinkTID"
-          onClick={onClose}
-          variant="contained"
-          color="primary"
-        >
+        <TsButton data-tid="closeLinkTID" onClick={onClose} variant="contained">
           {t('core:close')}
         </TsButton>
       </DialogActions>

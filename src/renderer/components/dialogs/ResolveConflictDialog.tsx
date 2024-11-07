@@ -104,7 +104,6 @@ function ResolveConflictDialog(props: Props) {
                 setSaveAs(false);
                 onClose();
               }}
-              color="primary"
             >
               {t('core:cancel')}
             </TsButton>
@@ -122,7 +121,6 @@ function ResolveConflictDialog(props: Props) {
                   onClose();
                 });
               }}
-              color="primary"
             >
               {t('core:save')}
             </TsButton>
@@ -135,7 +133,6 @@ function ResolveConflictDialog(props: Props) {
               onClick={() => {
                 setSaveAs(true);
               }}
-              color="primary"
             >
               {t('core:saveAs')}
             </TsButton>
@@ -147,7 +144,6 @@ function ResolveConflictDialog(props: Props) {
                   onClose();
                 });
               }}
-              color="primary"
               variant="contained"
             >
               {t('core:override')}

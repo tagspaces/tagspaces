@@ -85,21 +85,15 @@ function LicenseDialog(props: Props) {
       >
         {/* <TsButton
           onClick={printLicense}
-          color="primary"
         >
           {t('core:print')}
         </TsButton> */}
-        <TsButton
-          data-tid="confirmLicenseDialog"
-          onClick={quitApp}
-          color="primary"
-        >
+        <TsButton data-tid="confirmLicenseDialog" onClick={quitApp}>
           {t('core:quit')}
         </TsButton>
         <TsButton
           data-tid="agreeLicenseDialog"
           onClick={props.onClose}
-          color="primary"
           variant="contained"
         >
           {t('core:agreeLicense')}

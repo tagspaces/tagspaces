@@ -119,7 +119,7 @@ function SettingsAdvanced(props: Props) {
         </TsButton>
         <TsButton
           data-tid="reloadAppTID"
-          style={{ marginLeft: 5 }}
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           onClick={() => {
             if (AppConfig.isElectron) {
               window.electronIO.ipcRenderer.sendMessage('reloadWindow');
@@ -383,7 +383,6 @@ function SettingsAdvanced(props: Props) {
         <ListItemText primary={t('core:tileServerTitle')} />
         <ListItemSecondaryAction style={{ right: 0 }}>
           <TsButton
-            color="primary"
             onClick={(event) => handleEditTileServerClick(event, {}, true)}
           >
             {t('tileServerDialogAdd')}
@@ -395,7 +394,7 @@ function SettingsAdvanced(props: Props) {
           padding: 5,
           paddingLeft: 10,
           backgroundColor: '#d3d3d34a',
-          borderRadius: 10,
+          borderRadius: AppConfig.defaultCSSRadius,
         }}
         dense
       >

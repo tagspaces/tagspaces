@@ -117,7 +117,6 @@ function KeyboardDialog(props: Props) {
         <TsButton
           data-tid="closeKeyboardDialog"
           onClick={onClose}
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

@@ -207,7 +207,6 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="cleanTagsMultipleEntries"
           disabled={selected.length < 1}
-          color="primary"
           onClick={removeAllTagsAction}
         >
           {t('core:tagOperationCleanTags')}
@@ -215,7 +214,6 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="removeTagsMultipleEntries"
           disabled={disabledButtons}
-          color="primary"
           onClick={removeTagsAction}
         >
           {t('core:tagOperationRemoveTag')}
@@ -223,7 +221,6 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="addTagsMultipleEntries"
           disabled={disabledButtons}
-          color="primary"
           variant="contained"
           onClick={addTagsAction}
         >

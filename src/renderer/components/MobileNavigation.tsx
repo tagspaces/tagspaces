@@ -189,10 +189,8 @@ function MobileNavigation(props: Props) {
           <CustomLogo />
           <Box style={{ width: '100%', textAlign: 'center' }}>
             <ButtonGroup
-              // variant="contained"
               ref={anchorRef}
               aria-label="split button"
-              color="primary"
               style={{
                 textAlign: 'center',
               }}
@@ -209,8 +207,8 @@ function MobileNavigation(props: Props) {
                   startIcon={<CreateFileIcon />}
                   style={{
                     borderRadius: 'unset',
-                    borderTopLeftRadius: 10,
-                    borderBottomLeftRadius: 10,
+                    borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                    borderBottomLeftRadius: AppConfig.defaultCSSRadius,
                   }}
                 >
                   <Box
@@ -233,8 +231,8 @@ function MobileNavigation(props: Props) {
                   }}
                   style={{
                     borderRadius: 'unset',
-                    borderTopRightRadius: 10,
-                    borderBottomRightRadius: 10,
+                    borderTopRightRadius: AppConfig.defaultCSSRadius,
+                    borderBottomRightRadius: AppConfig.defaultCSSRadius,
                   }}
                   startIcon={<OpenLinkIcon />}
                 >

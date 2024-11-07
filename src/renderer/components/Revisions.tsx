@@ -211,7 +211,7 @@ function Revisions() {
                     data-tid="deleteRevisionsTID"
                     size="large"
                   >
-                    <DeleteIcon color="primary" />
+                    <DeleteIcon />
                   </IconButton>
                 </Tooltip>
               </TableCell>
@@ -244,7 +244,7 @@ function Revisions() {
                       data-tid="viewRevisionTID"
                       size="large"
                     >
-                      <PreviewIcon color="primary" />
+                      <PreviewIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={t('core:restore')}>
@@ -254,7 +254,7 @@ function Revisions() {
                       data-tid="restoreRevisionTID"
                       size="large"
                     >
-                      <RestoreIcon color="primary" />
+                      <RestoreIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={t('core:delete')}>
@@ -264,7 +264,7 @@ function Revisions() {
                       data-tid="deleteRevisionTID"
                       size="large"
                     >
-                      <DeleteIcon color="primary" />
+                      <DeleteIcon />
                     </IconButton>
                   </Tooltip>
                 </TableCell>

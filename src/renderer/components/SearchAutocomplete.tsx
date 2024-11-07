@@ -1482,7 +1482,6 @@ function SearchAutocomplete(props: Props) {
               marginLeft: 10,
               marginTop: 3,
             }}
-            color="primary"
             onClick={clickSearchButton}
           >
             {t('searchTitle')}

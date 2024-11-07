@@ -1016,7 +1016,6 @@ function CreateEditLocationDialog(props: Props) {
                   control={
                     <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
                       <TsButton
-                        color="primary"
                         disabled={!Pro}
                         onClick={() => {
                           setIgnorePatternDialogOpen(true);
@@ -1191,7 +1190,6 @@ function CreateEditLocationDialog(props: Props) {
           disabled={disableConfirmButton()}
           onClick={preConfirm}
           data-tid="confirmLocationCreation"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}

@@ -192,17 +192,12 @@ function MapTileServerDialog(props: Props) {
         </TsButton>
       )}
       <div>
-        <TsButton
-          data-tid="closeTileServerDialogTID"
-          onClick={props.onClose}
-          color="primary"
-        >
+        <TsButton data-tid="closeTileServerDialogTID" onClick={props.onClose}>
           {t('core:closeButton')}
         </TsButton>
         <TsButton
           data-tid="saveTileServerDialogTID"
           onClick={saveTileServer}
-          color="primary"
           variant="contained"
         >
           {t('core:confirmSaveButton')}

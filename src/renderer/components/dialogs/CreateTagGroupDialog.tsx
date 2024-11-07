@@ -295,7 +295,6 @@ function CreateTagGroupDialog(props: Props) {
           onClick={onConfirm}
           variant="contained"
           data-tid="createTagGroupConfirmButton"
-          color="primary"
         >
           {t('core:ok')}
         </TsButton>

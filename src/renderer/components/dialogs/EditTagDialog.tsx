@@ -260,7 +260,6 @@ function EditTagDialog(props: Props) {
           disabled={inputError}
           onClick={onConfirm}
           data-tid="editTagConfirm"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}
