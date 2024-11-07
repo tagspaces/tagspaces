@@ -282,7 +282,7 @@ function LocationView(props: Props) {
           {location.isDefault && (
             <Tooltip title={t('core:thisIsStartupLocation')}>
               <DefaultLocationIcon
-                color="primary"
+                // color="primary"
                 data-tid="startupIndication"
               />
             </Tooltip>
