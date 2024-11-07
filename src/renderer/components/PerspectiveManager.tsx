@@ -30,7 +30,7 @@ function PerspectiveManager(props: Props) {
       <Typography className={classes.panelTitle}>Perspectives</Typography>
     </SidePanel>
   );
-  //         <Button onClick={() => history.push('/login')}>Login</Button>
+  //         <TsButton onClick={() => history.push('/login')}>Login</TsButton>
 }
 
 export default PerspectiveManager;

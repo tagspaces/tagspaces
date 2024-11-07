@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
@@ -135,28 +135,22 @@ function Slide(props: SlideProps) {
         )}
         <br />
         {/* </div> */}
-        <Button
+        <TsButton
           onClick={() => {
             openURLExternally(Links.links.productsOverview, true);
           }}
-          variant="outlined"
-          color="primary"
-          size="small"
         >
           Compare & Upgrade
-        </Button>
+        </TsButton>
         {ctaTitle && (
-          <Button
+          <TsButton
             onClick={() => {
               openURLExternally(ctaURL, true);
             }}
-            style={{ marginLeft: 10 }}
-            // variant="outlined"
-            color="primary"
-            size="small"
+            style={{ marginLeft: 5 }}
           >
             {ctaTitle}
-          </Button>
+          </TsButton>
         )}
       </div>
     </div>

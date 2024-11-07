@@ -39,6 +39,12 @@ function SelectChatModel(props: Props) {
       },
     },
     {
+      name: 'llama3.2-vision:11b',
+      details: {
+        format: 'requires least 8GB of VRAM.',
+      },
+    },
+    {
       name: 'gemma2',
       details: {
         format:

@@ -20,7 +20,8 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CryptoJS from 'crypto-js';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -648,18 +649,13 @@ function CreateEditLocationDialog(props: Props) {
             <FormGroup>
               {!selectedLocation && (
                 <FormControl disabled={disableLocationTypeSwitch} fullWidth>
-                  {/* <InputLabel id="locationLabelID">
-                    {t('core:locationType')}
-                  </InputLabel> */}
-                  <Select
-                    labelId="locationLabelID"
+                  <TsSelect
                     data-tid="locationTypeTID"
                     value={type}
-                    // label={t('core:locationType')}
+                    label={t('core:locationType')}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                       setType(event.target.value)
                     }
-                    variant="outlined"
                   >
                     {!AppConfig.isWeb && (
                       <MenuItem
@@ -686,7 +682,7 @@ function CreateEditLocationDialog(props: Props) {
                         {t('core:webdavLocation') + ' (experimental)'}
                       </MenuItem>
                     )}
-                  </Select>
+                  </TsSelect>
                 </FormControl>
               )}
               {content}
@@ -900,11 +896,11 @@ function CreateEditLocationDialog(props: Props) {
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
-                    <Button size="small" variant="outlined" disabled>
+                    <TsButton disabled>
                       {currentTagsSetting
                         ? t('core:useSidecarFile')
                         : t('core:renameFile')}
-                    </Button>
+                    </TsButton>
                   }
                   label={
                     <Typography variant="caption" display="block" gutterBottom>
@@ -1016,10 +1012,10 @@ function CreateEditLocationDialog(props: Props) {
                   className={classes.formControl}
                   disabled={!Pro}
                   labelPlacement="start"
-                  style={{ justifyContent: 'space-between' }}
+                  style={{ justifyContent: 'space-between', marginTop: 15 }}
                   control={
                     <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
-                      <Button
+                      <TsButton
                         color="primary"
                         disabled={!Pro}
                         onClick={() => {
@@ -1027,7 +1023,7 @@ function CreateEditLocationDialog(props: Props) {
                         }}
                       >
                         {t('addEntryTags')}
-                      </Button>
+                      </TsButton>
                     </ProTooltip>
                   }
                   label={
@@ -1190,8 +1186,8 @@ function CreateEditLocationDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button onClick={() => onClose()}>{t('core:cancel')}</Button>
-        <Button
+        <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
+        <TsButton
           disabled={disableConfirmButton()}
           onClick={preConfirm}
           data-tid="confirmLocationCreation"
@@ -1199,7 +1195,7 @@ function CreateEditLocationDialog(props: Props) {
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </StyledDialog>
   );

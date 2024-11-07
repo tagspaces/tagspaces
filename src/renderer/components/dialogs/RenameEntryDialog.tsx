@@ -18,7 +18,7 @@
 
 import React, { useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -202,10 +202,10 @@ function RenameEntryDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeRenameEntryDialog" onClick={onClose}>
+        <TsButton data-tid="closeRenameEntryDialog" onClick={onClose}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           disabled={disableConfirmButton.current}
           onClick={onConfirm}
           data-tid="confirmRenameEntry"
@@ -213,7 +213,7 @@ function RenameEntryDialog(props: Props) {
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

@@ -23,7 +23,7 @@
 
 import React from 'react';
 import { joinPaths, extractFileName } from '@tagspaces/tagspaces-common/paths';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -162,10 +162,10 @@ function MoveOrCopyFilesDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button data-tid="closeMoveOrCopyDialog" onClick={() => onClose()}>
+        <TsButton data-tid="closeMoveOrCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           onClick={() => {
             if (selectedFiles) {
               handleEntryExist(selectedFiles, targetDir, targetLocationId).then(
@@ -187,8 +187,8 @@ function MoveOrCopyFilesDialog(props: Props) {
           variant="contained"
         >
           {t('core:moveEntriesButton')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           onClick={() => {
             if (selectedFiles) {
               handleEntryExist(selectedFiles, targetDir, targetLocationId).then(
@@ -210,7 +210,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           variant="contained"
         >
           {t('core:copyEntriesButton')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

@@ -25,7 +25,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import Tooltip from '-/components/Tooltip';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
 import InfoIcon from '-/components/InfoIcon';
 import CheckIcon from '@mui/icons-material/Check';
@@ -177,11 +177,11 @@ function SettingsGeneral() {
       >
         <ListItemText primary={t('core:fileTaggingSetting')} />
         {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
-          <Button size="small" variant="outlined" disabled>
+          <TsButton disabled>
             {persistTagsInSidecarFile
               ? t('core:useSidecarFile')
               : t('core:renameFile')}
-          </Button>
+          </TsButton>
         ) : (
           <ToggleButtonGroup
             value={persistTagsInSidecarFile}
@@ -350,9 +350,8 @@ function SettingsGeneral() {
       <ListItem>
         <ListItemText primary={t('core:tagBackgroundColor')} />
         <TransparentBackground>
-          <Button
+          <TsButton
             data-tid="settingsToggleDefaultTagBackgroundColor"
-            size="small"
             style={{
               backgroundColor: settings.tagBackgroundColor,
               border: '1px solid lightgray',
@@ -360,7 +359,7 @@ function SettingsGeneral() {
             onClick={toggleDefaultTagBackgroundColorPicker}
           >
             &nbsp;
-          </Button>
+          </TsButton>
         </TransparentBackground>
         {displayColorPicker && (
           <ColorPickerDialog
@@ -376,9 +375,8 @@ function SettingsGeneral() {
       <ListItem>
         <ListItemText primary={t('core:tagForegroundColor')} />
         <TransparentBackground>
-          <Button
+          <TsButton
             data-tid="settingsToggleDefaultTagForegroundColor"
-            size="small"
             style={{
               border: '1px solid lightgray',
               backgroundColor: settings.tagTextColor,
@@ -386,7 +384,7 @@ function SettingsGeneral() {
             onClick={toggleDefaultTagTextColorPicker}
           >
             &nbsp;
-          </Button>
+          </TsButton>
         </TransparentBackground>
         {displayTextColorPicker && (
           <ColorPickerDialog

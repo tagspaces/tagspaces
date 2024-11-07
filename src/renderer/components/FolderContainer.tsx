@@ -21,12 +21,13 @@ import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
+import Button from '@mui/material/Button';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
@@ -279,9 +280,7 @@ function FolderContainer(props: Props) {
                 </IconButton>
               </Tooltip>
             ) : (
-              <Button
-                variant="outlined"
-                size="small"
+              <TsButton
                 data-tid="toggleSearch"
                 onClick={openSearchMode}
                 startIcon={<SearchIcon />}
@@ -296,7 +295,7 @@ function FolderContainer(props: Props) {
                 {t('core:searchTitle')}
                 <span style={{ width: 10 }} />
                 {openSearchKeyBinding}
-              </Button>
+              </TsButton>
             )}
 
             {progress?.length > 0 && (

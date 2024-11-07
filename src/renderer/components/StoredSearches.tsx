@@ -21,7 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
 import MenuIcon from '@mui/icons-material/MoreVert';
@@ -251,7 +251,7 @@ function StoredSearches(props: Props) {
           searches.map((search) => (
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
               <Grid item xs={10} style={{ width: 250 }}>
-                <Button
+                <TsButton
                   data-tid={
                     'StoredSearchTID' +
                     search.title.trim().replaceAll(/\s+/g, '-')
@@ -275,7 +275,7 @@ function StoredSearches(props: Props) {
                   >
                     {search.title}
                   </span>
-                </Button>
+                </TsButton>
               </Grid>
               <Grid item xs={2}>
                 <IconButton

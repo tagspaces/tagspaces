@@ -18,7 +18,7 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -111,8 +111,8 @@ function AddTagToTagGroupDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('core:cancel')}</Button>
-        <Button
+        <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+        <TsButton
           disabled={tagGroup === undefined}
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
@@ -120,7 +120,7 @@ function AddTagToTagGroupDialog(props: Props) {
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

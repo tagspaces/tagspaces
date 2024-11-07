@@ -24,7 +24,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TsTextField from '-/components/TsTextField';
@@ -1074,36 +1074,29 @@ function SearchPopover(props: Props) {
           padding: 5,
         }}
       >
-        <Button
-          size="small"
-          variant="text"
+        <TsButton
           data-tid="helpSearchButtonTID"
           onClick={() =>
             openURLExternally(Links.documentationLinks.search, true)
           }
         >
           {t('help')}
-        </Button>
+        </TsButton>
         <div>
-          <Button
-            variant="text"
-            size="small"
-            onClick={clearSearch}
-            id="resetSearchButton"
-          >
+          <TsButton onClick={clearSearch} id="resetSearchButton">
             {t('resetBtn')}
-          </Button>
-          <Button
-            disabled={isIndexing !== undefined}
+          </TsButton>
+          <TsButton
+            style={{ marginLeft: 5 }}
             variant="contained"
+            disabled={isIndexing !== undefined}
             id="searchButtonAdvTID"
             onClick={executeSearch}
-            size="small"
           >
             {isIndexing !== undefined
               ? 'Search disabled while indexing'
               : t('searchTitle')}
-          </Button>
+          </TsButton>
         </div>
       </div>
       {SaveSearchDialog && saveSearchDialogOpened !== undefined && (

@@ -18,7 +18,7 @@
 
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -96,8 +96,7 @@ function ProTeaser(props: Props) {
           marginTop: -10,
         }}
       >
-        <Button
-          size="small"
+        <TsButton
           onClick={(event: any) => {
             event.preventDefault();
             event.stopPropagation();
@@ -105,9 +104,9 @@ function ProTeaser(props: Props) {
           }}
         >
           {t('showMeMore')}
-        </Button>
-        <Button
-          size="small"
+        </TsButton>
+        <TsButton
+          style={{ marginLeft: 5 }}
           onClick={(event: any) => {
             event.preventDefault();
             event.stopPropagation();
@@ -115,7 +114,7 @@ function ProTeaser(props: Props) {
           }}
         >
           {t('upgrade')}
-        </Button>
+        </TsButton>
       </CardActions>
     </>
   );

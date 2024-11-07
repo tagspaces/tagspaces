@@ -483,11 +483,11 @@ export async function setGridOptions(
   await clickOn('[data-tid=' + perspective + 'PerspectiveOptionsMenu]');
   if (showDirectories) {
     await global.client.check(
-      '[data-tid=gridPerspectiveToggleShowDirectories] input',
+      '[data-tid=' + perspective + 'PerspectiveToggleShowDirectories] input',
     );
   } else {
     await global.client.uncheck(
-      '[data-tid=gridPerspectiveToggleShowDirectories] input',
+      '[data-tid=' + perspective + 'PerspectiveToggleShowDirectories] input',
     );
   }
 
@@ -547,7 +547,9 @@ export async function selectRowFiles(arrIndex = []) {
         const divEl = await filesList[index].$('div div');
         const id = await divEl.getAttribute('data-entry-id');
         arrElements.push(id);
-        const spanEl = await divEl.$('div:nth-child(3) div span');
+        const spanEl = await divEl.$(
+          'div:nth-child(3) div ' + (i > 1 ? 'button' : 'span'),
+        );
         await spanEl.click();
       }
     }

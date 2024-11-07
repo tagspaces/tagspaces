@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
@@ -57,22 +57,22 @@ const EditDescriptionButtons: React.FC = () => {
   return (
     <span style={{ float: 'left' }}>
       {isEditDescriptionMode && (
-        <Button
+        <TsButton
           onClick={() => {
             setEditDescriptionMode(false);
           }}
         >
           {t('core:cancel')}
           {/* {t(isDescriptionChanged ? 'core:cancel' : 'core:close')} */}
-        </Button>
+        </TsButton>
       )}
       {/* {!editMode && (
-        <Button className={classes.button} onClick={printHTML}>
+        <TsButton className={classes.button} onClick={printHTML}>
           {t('core:print')}
-        </Button>
+        </TsButton>
       )} */}
       <ProTooltip tooltip={t('editDescription')}>
-        <Button
+        <TsButton
           data-tid="editDescriptionTID"
           color="primary"
           disabled={!Pro || isEditMode}
@@ -86,7 +86,7 @@ const EditDescriptionButtons: React.FC = () => {
           {isEditDescriptionMode
             ? t('core:confirmSaveButton')
             : t('core:editDescription')}
-        </Button>
+        </TsButton>
       </ProTooltip>
     </span>
   );

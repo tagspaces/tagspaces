@@ -20,6 +20,7 @@ import React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
 import TsTextField from '-/components/TsTextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -147,7 +148,7 @@ function ObjectStoreForm(props: Props) {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={cloudErrorTextName}>
+        <FormControl fullWidth={true}>
           <TsTextField
             required
             autoFocus
@@ -156,15 +157,19 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationName"
             onChange={(event) => setStoreName(event.target.value)}
             value={storeName}
-            label={t('core:createLocationName')}
+            label={t('core:createLocationName') + ' *'}
           />
-          {/* {state.cloudErrorTextName && (
-          <FormHelperText>{t('core:invalidName')}</FormHelperText>
-          )} */}
+          {cloudErrorTextName && (
+            <FormHelperText
+              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+            >
+              {t('core:invalidName')}
+            </FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={cloudErrorTextPath}>
+        <FormControl fullWidth={true}>
           <TsTextField
             name="storePath"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
@@ -173,13 +178,17 @@ function ObjectStoreForm(props: Props) {
             value={storePath}
             label={t('core:createLocationPath')}
           />
-          {/* {state.cloudErrorTextPath && (
-          <FormHelperText>{t('core:invalidPath')}</FormHelperText>
-          )} */}
+          {cloudErrorTextPath && (
+            <FormHelperText
+              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+            >
+              {t('core:invalidPath')}
+            </FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={cloudErrorAccessKey}>
+        <FormControl fullWidth={true}>
           <TsTextField
             required
             name="accessKeyId"
@@ -187,15 +196,20 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setAccessKeyId(event.target.value)}
             value={accessKeyId}
-            label={t('core:accessKeyId')}
+            label={t('core:accessKeyId') + ' *'}
           />
-          {/* {state.cloudErrorAccessKey && (
-          <FormHelperText>{t('core:invalidAccessKey')}</FormHelperText>
-          )} */}
+          {cloudErrorAccessKey && (
+            <FormHelperText
+              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+            >
+              {t('core:invalidAccessKey')}
+            </FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={cloudErrorSecretAccessKey}>
+        {/* error={cloudErrorSecretAccessKey} */}
+        <FormControl fullWidth={true}>
           <TsTextField
             required
             name="secretAccessKey"
@@ -204,7 +218,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
-            label={t('core:secretAccessKey')}
+            label={t('core:secretAccessKey') + ' *'}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

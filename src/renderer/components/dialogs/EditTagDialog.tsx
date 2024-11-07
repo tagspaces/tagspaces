@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import format from 'date-fns/format';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -196,7 +196,7 @@ function EditTagDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
               data-tid="tagBackgroundColorEditTagDialog"
               style={{
@@ -211,7 +211,7 @@ function EditTagDialog(props: Props) {
               role="presentation"
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayColorPicker && (
             <ColorPickerDialog
@@ -225,7 +225,7 @@ function EditTagDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
-            <Button
+            <TsButton
               onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               data-tid="tagForegroundColorEditTagDialog"
               style={{
@@ -240,7 +240,7 @@ function EditTagDialog(props: Props) {
               role="presentation"
             >
               &nbsp;
-            </Button>
+            </TsButton>
           </TransparentBackground>
           {displayTextColorPicker && (
             <ColorPickerDialog
@@ -253,10 +253,10 @@ function EditTagDialog(props: Props) {
         </ListItem>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.onClose} data-tid="closeEditTagDialog">
+        <TsButton onClick={props.onClose} data-tid="closeEditTagDialog">
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           disabled={inputError}
           onClick={onConfirm}
           data-tid="editTagConfirm"
@@ -264,7 +264,7 @@ function EditTagDialog(props: Props) {
           variant="contained"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

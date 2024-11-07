@@ -24,11 +24,8 @@ import {
   FormControl,
   DialogContent,
   DialogTitle,
-  Button,
   FormHelperText,
   IconButton,
-  FormLabel,
-  Box,
   InputAdornment,
   inputBaseClasses,
 } from '@mui/material';
@@ -36,6 +33,7 @@ import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsButton from '-/components/TsButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -221,7 +219,7 @@ function CreateDirectoryDialog(props: Props) {
             label={t('backgroundColor')}
             retrieveValue={() => backgroundColor.current}
             value={' '}
-            style={{ height: 100 }}
+            style={{ height: 100, marginTop: 0 }}
             InputProps={{
               readOnly: true,
               endAdornment: (
@@ -256,10 +254,10 @@ function CreateDirectoryDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeCreateNewDirectory" onClick={onCancel}>
+        <TsButton data-tid="closeCreateNewDirectory" onClick={onCancel}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           disabled={disableConfirmButton}
           onClick={onConfirm}
           variant="contained"
@@ -268,7 +266,7 @@ function CreateDirectoryDialog(props: Props) {
           color="primary"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

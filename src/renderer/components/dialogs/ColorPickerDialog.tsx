@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -113,17 +113,17 @@ function ColorPickerDialog(props: Props) {
         />
       </DialogContent>
       <DialogActions>
-        <Button data-tid="colorPickerCloseDialog" onClick={props.onClose}>
+        <TsButton data-tid="colorPickerCloseDialog" onClick={props.onClose}>
           {t('core:cancel')}
-        </Button>
-        <Button
+        </TsButton>
+        <TsButton
           onClick={onConfirm}
           variant="contained"
           data-tid="colorPickerConfirm"
           color="primary"
         >
           {t('core:ok')}
-        </Button>
+        </TsButton>
       </DialogActions>
     </Dialog>
   );

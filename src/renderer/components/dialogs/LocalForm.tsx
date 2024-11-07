@@ -67,7 +67,7 @@ function LocalForm(props: Props) {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextName}>
+        <FormControl fullWidth={true}>
           <TsTextField
             required
             autoFocus
@@ -77,12 +77,12 @@ function LocalForm(props: Props) {
             value={name}
             data-tid="locationName"
             // helperText="Please enter location name"
-            label={t('core:createLocationName')}
+            label={t('core:createLocationName') + ' *'}
           />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextPath}>
+        <FormControl fullWidth={true}>
           <TsTextField
             required
             name="path"
@@ -100,7 +100,7 @@ function LocalForm(props: Props) {
                 </InputAdornment>
               ),
             }}
-            label={t('core:createLocationPath')}
+            label={t('core:createLocationPath') + ' *'}
           />
           {AppConfig.isCordovaAndroid && (
             <FormHelperText>

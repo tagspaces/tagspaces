@@ -18,6 +18,7 @@
 
 import React, { useEffect, useReducer, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import TsButton from '-/components/TsButton';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';

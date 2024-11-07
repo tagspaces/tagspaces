@@ -17,7 +17,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -26,7 +26,7 @@ import MenuList from '@mui/material/MenuList';
 import ListItemText from '@mui/material/ListItemText';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useTranslation } from 'react-i18next';
-// import { isDesktopMode } from '-/reducers/settings';
+import { isDesktopMode } from '-/reducers/settings';
 
 type TSTextFieldProps = TextFieldProps & {
   updateValue?: (string) => void;
@@ -36,7 +36,7 @@ type TSTextFieldProps = TextFieldProps & {
 function TsTextField(props: TSTextFieldProps) {
   const { updateValue, retrieveValue, children, label } = props;
   const { t } = useTranslation();
-  // const desktopMode = useSelector(isDesktopMode);
+  const desktopMode = useSelector(isDesktopMode);
   const textFieldRef = useRef(null);
 
   const [contextMenu, setContextMenu] = React.useState<{
@@ -96,14 +96,16 @@ function TsTextField(props: TSTextFieldProps) {
 
   return (
     <div>
-      <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-        {label}
-      </FormHelperText>
+      {label && (
+        <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+          {label}
+        </FormHelperText>
+      )}
       <TextField
         onContextMenu={handleContextMenu}
         style={{ cursor: 'context-menu', marginTop: 0 }}
         margin="dense"
-        size="small" //{desktopMode ? 'small' : 'medium'}
+        size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
         fullWidth={true}
         ref={textFieldRef}

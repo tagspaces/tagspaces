@@ -19,7 +19,7 @@
 import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Slider from 'react-slick';
-import Button from '@mui/material/Button';
+import TsButton from '-/components/TsButton';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
@@ -296,7 +296,7 @@ function OnboardingDialog(props: Props) {
                 Firefox. It is available for free in the official browser
                 stores.
               </Typography>
-              <Button
+              <TsButton
                 style={{
                   marginTop: 20,
                   marginLeft: 'auto',
@@ -307,12 +307,9 @@ function OnboardingDialog(props: Props) {
                 onClick={() => {
                   openURLExternally(Links.links.webClipper, true);
                 }}
-                variant="outlined"
-                size="small"
-                color="primary"
               >
                 Get the web clipper
-              </Button>
+              </TsButton>
             </div>
           </div>
           <div>
@@ -344,7 +341,7 @@ function OnboardingDialog(props: Props) {
                 offer various views for your folders which call{' '}
                 <b>perspectives</b>.
               </Typography>
-              <Button
+              <TsButton
                 style={{
                   marginTop: 20,
                   marginLeft: 'auto',
@@ -355,12 +352,9 @@ function OnboardingDialog(props: Props) {
                 onClick={() => {
                   openURLExternally(Links.links.productPro, true);
                 }}
-                variant="outlined"
-                size="small"
-                color="primary"
               >
                 More about TagSpaces Pro
-              </Button>
+              </TsButton>
             </div>
           </div>
           <div>
@@ -383,7 +377,7 @@ function OnboardingDialog(props: Props) {
                 If you want to learn more about how to use the application,
                 please start the introduction from the following screen.
               </Typography>
-              <Button
+              <TsButton
                 style={{
                   marginTop: 20,
                   marginLeft: 'auto',
@@ -392,12 +386,9 @@ function OnboardingDialog(props: Props) {
                   display: 'block',
                 }}
                 onClick={onClose}
-                variant="outlined"
-                size="small"
-                color="primary"
               >
                 Start using TagSpaces
-              </Button>
+              </TsButton>
             </div>
           </div>
         </Slider>
