@@ -242,7 +242,9 @@ export function ollamaPostRequest(
             console.log('Ollama data: ', msgChunk);
             const message = JSON.parse(msgChunk);
 
-            if (!message.done || message.status !== 'success') {
+            if (message.error) {
+              reject(message.error);
+            } else if (!message.done || message.status !== 'success') {
               if (message.message) {
                 dataChunks.push(message.message.content);
                 responseCallback(message.message.content, false); // Stream message to renderer process

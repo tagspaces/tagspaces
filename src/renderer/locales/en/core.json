@@ -869,5 +869,6 @@
   "invalidSharingLink": "Invalid Sharing Link",
   "confirmSearchById": "Do you want to search for the file or folder by its ID?",
   "uploadDirsNotSupported": "Uploading folders not supported!",
+  "confirmDescriptionReplace": "Do you want to replace description of the opened file with this {{description}}",
   "-": "-"
 }

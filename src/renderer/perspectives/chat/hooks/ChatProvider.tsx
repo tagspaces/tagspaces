@@ -29,12 +29,9 @@ import { TS } from '-/tagspaces.namespace';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
-import {
-  DEFAULT_QUESTION_PROMPT,
-  DEFAULT_SYSTEM_PROMPT,
-  SUMMARIZE_PROMPT,
-} from '-/perspectives/chat/components/OllamaTemplates';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { Pro } from '-/pro';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 type ChatData = {
   models: TS.Model[];
@@ -49,6 +46,7 @@ type ChatData = {
   removeModel: (model: TS.Model) => void;
   findModel: (modelName: string) => TS.Model;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
+  getModel: (modelName: string) => Promise<TS.Model>;
   addTimeLineRequest: (txt: string) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
@@ -56,7 +54,10 @@ type ChatData = {
     unload?: boolean,
     role?: ChatRole,
     mode?: ChatMode,
-  ) => Promise<boolean>;
+    model?: string,
+    stream?: boolean,
+    images?: string[],
+  ) => Promise<any>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -72,6 +73,7 @@ export const ChatContext = createContext<ChatData>({
   removeModel: undefined,
   findModel: undefined,
   changeCurrentModel: undefined,
+  getModel: undefined,
   addTimeLineRequest: undefined,
   addTimeLineResponse: undefined,
   newChatMessage: undefined,
@@ -89,17 +91,25 @@ export type ChatItem = {
 };
 
 export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
-export type ChatMode = 'summary' | 'helpful' | 'rephrase';
+export type ChatMode = 'summary' | 'helpful' | 'rephrase' | 'description';
 
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<TS.Model>(undefined);
   const models = useRef<TS.Model[]>([]);
   const images = useRef<string[]>([]);
   const ollamaSettings = useSelector(getOllamaSettings);
   const chatHistoryItems = useRef<ChatItem[]>([]);
+  const DEFAULT_QUESTION_PROMPT =
+    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
+  const DEFAULT_SYSTEM_PROMPT =
+    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
+  const SUMMARIZE_PROMPT =
+    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
+  const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
   // const isTyping = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -192,6 +202,26 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     );
   }
 
+  /**
+   * check if model is installed and return details
+   * @param modelName
+   */
+  function getModel(modelName: string): Promise<TS.Model> {
+    if (!AppConfig.isElectron || !modelName) {
+      return Promise.resolve(undefined);
+    }
+    return window.electronIO.ipcRenderer
+      .invoke('getOllamaModels', ollamaSettings.url)
+      .then((m) => {
+        if (m && m.length > 0) {
+          return m.find(
+            (mm) => mm.name === modelName || mm.name === modelName + ':latest',
+          );
+        }
+        return undefined;
+      });
+  }
+
   function changeCurrentModel(newModelName: string): Promise<boolean> {
     const model = findModel(newModelName);
     if (model) {
@@ -275,28 +305,38 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function getMessage(msg: string, mode: ChatMode) {
     if (mode === 'helpful') {
-      return DEFAULT_SYSTEM_PROMPT.replace('{question}', msg);
-    } else if (mode === 'summary') {
-      let prompt = SUMMARIZE_PROMPT.replace('{summarize_text}', msg);
-      if (selectedEntries && selectedEntries.length > 0) {
-        prompt = prompt.replace(
-          '{file_path}',
-          ' of ' + selectedEntries[0].name,
-        );
-      } else {
-        prompt = prompt.replace('{file_path}', '');
+      if (DEFAULT_SYSTEM_PROMPT) {
+        return DEFAULT_SYSTEM_PROMPT.replace('{question}', msg);
       }
-      return prompt;
+    } else if (mode === 'summary') {
+      if (SUMMARIZE_PROMPT) {
+        let prompt = SUMMARIZE_PROMPT.replace('{summarize_text}', msg);
+        if (selectedEntries && selectedEntries.length > 0) {
+          prompt = prompt.replace(
+            '{file_path}',
+            ' of ' + selectedEntries[0].name,
+          );
+        } else {
+          prompt = prompt.replace('{file_path}', '');
+        }
+        return prompt;
+      }
+    } else if (mode === 'description') {
+      if (IMAGE_DESCRIPTION && openedEntry) {
+        return IMAGE_DESCRIPTION.replace('{file_name}', openedEntry.name);
+      }
     } else if (mode === 'rephrase') {
-      const historyMap = chatHistoryItems.current.map((item) =>
-        item.role !== 'system'
-          ? `${item.request ? 'Human: ' + item.request : ''}${item.response ? ' Assistant: ' + item.response : ''}`
-          : '',
-      );
-      return DEFAULT_QUESTION_PROMPT.replace('{question}', msg).replace(
-        '{chat_history}',
-        historyMap.join(' '),
-      );
+      if (DEFAULT_QUESTION_PROMPT) {
+        const historyMap = chatHistoryItems.current.map((item) =>
+          item.role !== 'system'
+            ? `${item.request ? 'Human: ' + item.request : ''}${item.response ? ' Assistant: ' + item.response : ''}`
+            : '',
+        );
+        return DEFAULT_QUESTION_PROMPT.replace('{question}', msg).replace(
+          '{chat_history}',
+          historyMap.join(' '),
+        );
+      }
     }
     return msg;
   }
@@ -306,40 +346,46 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
    * @param role
    * @param mode
+   * @param model
+   * @param stream
+   * @param imgArray
    */
   function newChatMessage(
     msg: string = undefined,
     unload = false,
     role: ChatRole = 'user',
     mode: ChatMode = undefined,
-  ): Promise<boolean> {
-    if (currentModel.current === undefined) {
+    model: string = currentModel.current?.name,
+    stream: boolean = true,
+    imgArray: string[] = [],
+  ): Promise<any> {
+    if (!model) {
       showNotification(t('core:chooseModel'));
       return Promise.resolve(false);
     }
+    const msgContent = getMessage(msg, mode);
+    const imagesArray = imgArray.length > 0 ? imgArray : images.current;
     const messages =
-      msg && !unload
+      msgContent && !unload
         ? [
             ...getOllamaMessages(chatHistoryItems.current),
             {
               role: role,
-              content: getMessage(msg, mode),
-              ...(images.current.length > 0 && { images: images.current }),
+              content: msgContent,
+              ...(imagesArray.length > 0 && { images: imagesArray }),
             },
           ]
         : [];
     addTimeLineRequest(msg);
     return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', ollamaSettings.url, {
-        model: currentModel.current.name, // Adjust model name as needed
+        model, // Adjust model name as needed
         messages,
-        stream: true,
+        stream: stream,
         ...(unload && { keep_alive: 0 }),
       })
-      .then(() => {
-        //isTyping.current = false;
-        //forceUpdate();
-        return true;
+      .then((apiResponse) => {
+        return stream ? true : apiResponse;
       });
   }
 
@@ -356,6 +402,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       unloadCurrentModel,
       removeModel,
       changeCurrentModel,
+      getModel,
       addTimeLineRequest,
       addTimeLineResponse,
       newChatMessage,
@@ -366,7 +413,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     images.current,
     currentModel.current,
     chatHistoryItems.current,
-    // isTyping.current,
+    openedEntry,
+    selectedEntries,
   ]);
 
   return (

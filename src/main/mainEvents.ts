@@ -263,11 +263,13 @@ export default function loadMainEvents() {
       '/api/chat',
       ollamaApiUrl,
       (response) => {
-        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
-        if (mainWindow.length > 0) {
-          mainWindow.map(
-            (window) => window.webContents.send('ChatMessage', response), // Stream message to renderer process
-          );
+        if (msg.stream) {
+          const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+          if (mainWindow.length > 0) {
+            mainWindow.map(
+              (window) => window.webContents.send('ChatMessage', response), // Stream message to renderer process
+            );
+          }
         }
       },
     );

@@ -57,12 +57,21 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import TsTabPanel from '-/components/TsTabPanel';
 import AppConfig from '-/AppConfig';
+import AiPropertiesTab from '-/components/AiPropertiesTab';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
   value: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 }
+
+type TabItem = {
+  dataTid: string;
+  icon: React.ReactNode;
+  title: string;
+  name: string;
+  component: React.ReactNode;
+};
 
 const StyledTabs = styled((props: StyledTabsProps) => (
   <Tabs
@@ -150,19 +159,18 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const tileServer = useSelector(getMapTileServer);
   const ollamaSettings = useSelector(getOllamaSettings);
   const haveRevisions = useRef<boolean>(isEditable);
-  const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
+  //const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
-  const OllamaChatPanel = Pro && Pro.UI ? Pro.UI.OllamaChatPanel : false;
 
-  useEffect(() => {
+  /* useEffect(() => {
     selectedTabIndex.current = tabIndex;
     forceUpdate();
-  }, [tabIndex]);
+  }, [tabIndex]);*/
 
   useEffect(() => {
-    selectedTabIndex.current = initSelectedTabIndex(tabIndex);
+    //selectedTabIndex.current = initSelectedTabIndex(tabIndex);
     if (isEditable) {
       const location: CommonLocation = findLocation(openedEntry.locationID);
       const backupFilePath = getBackupFileDir(
@@ -171,10 +179,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         location?.getDirSeparator(),
       );
       location?.checkDirExist(backupFilePath).then((exist) => {
-        if (exist) {
-          haveRevisions.current = exist;
-          forceUpdate();
-        }
+        haveRevisions.current = exist;
+        forceUpdate();
       });
     } else if (haveRevisions.current) {
       haveRevisions.current = false;
@@ -188,19 +194,19 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     openPanel();
     console.log('tab changed to:' + newValue);
   };
-  const handleTabClick = (event: React.SyntheticEvent) => {
+  function handleTabClick(selectedTabIndex, index: number) {
     if (
       openedEntry.isFile &&
-      tabIndex === parseInt(event.currentTarget.id.split('-')[1], 10)
+      selectedTabIndex === index //parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
       dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
-      console.log('tab click:' + tabIndex);
+      console.log('tab click:' + index);
     }
-  };
+  }
 
-  function initSelectedTabIndex(index) {
+  /*function initSelectedTabIndex(index) {
     if (!haveRevisions.current) {
       if (index === 2) {
         return 0;
@@ -210,7 +216,62 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
     // directories must be always opened
     return !openedEntry.isFile && index === undefined ? 0 : index;
+  }*/
+
+  const tab1: TabItem = {
+    dataTid: 'detailsTabTID',
+    icon: <FolderPropertiesIcon />,
+    title: t('core:details'),
+    name: 'propertiesTab',
+    component: (
+      <EntryProperties key={openedEntry.path} tileServer={tileServer} />
+    ),
+  };
+  const tab2: TabItem = {
+    dataTid: 'descriptionTabTID',
+    icon: haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />,
+    title: t('core:filePropertiesDescription'),
+    name: 'propertiesTab',
+    component: <EditDescription />,
+  };
+
+  const tabsArray: TabItem[] = [tab1, tab2];
+  if (haveRevisions.current) {
+    const tab3: TabItem = {
+      dataTid: 'revisionsTabTID',
+      icon: <RevisionIcon />,
+      title: t('core:revisions'),
+      name: 'revisionsTab',
+      component: <Revisions />,
+    };
+    tabsArray.push(tab3);
   }
+
+  if (Pro && AppConfig.isElectron && ollamaSettings.enabled) {
+    const tab4: TabItem = {
+      dataTid: 'aiTabTID',
+      icon: <PsychologyIcon />,
+      title: t('core:aiTab'),
+      name: 'aiTab',
+      component: <AiPropertiesTab />,
+    };
+    tabsArray.push(tab4);
+  }
+
+  function getSelectedTabIndex(maxTabsIndex) {
+    if (!isPanelOpened) {
+      return undefined;
+    }
+    if (!tabIndex) {
+      return 0;
+    }
+    if (tabIndex > maxTabsIndex) {
+      return maxTabsIndex;
+    }
+    return tabIndex;
+  }
+
+  const selectedTabIndex = getSelectedTabIndex(tabsArray.length - 1);
 
   return (
     <div
@@ -228,97 +289,27 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
-          value={selectedTabIndex.current}
+          value={selectedTabIndex}
           onChange={handleChange}
           aria-label="Switching among description, revisions entry properties"
         >
-          <StyledTab
-            data-tid="detailsTabTID"
-            icon={<FolderPropertiesIcon />}
-            title={t('core:details')}
-            tinyMode={isTinyMode}
-            {...a11yProps(0)}
-            onClick={handleTabClick}
-          />
-          <StyledTab
-            data-tid="descriptionTabTID"
-            icon={
-              haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
-            }
-            title={t('core:filePropertiesDescription')}
-            tinyMode={isTinyMode}
-            {...a11yProps(1)}
-            onClick={handleTabClick}
-          />
-          {haveRevisions.current && (
+          {tabsArray.map((tab, index) => (
             <StyledTab
-              data-tid="revisionsTabTID"
-              icon={<RevisionIcon />}
-              title={t('core:revisions')}
+              data-tid={tab.dataTid}
+              icon={tab.icon}
+              title={tab.title}
               tinyMode={isTinyMode}
-              {...a11yProps(2)}
-              onClick={handleTabClick}
+              {...a11yProps(index)}
+              onClick={() => handleTabClick(selectedTabIndex, index)}
             />
-          )}
-          {Pro &&
-            ollamaSettings.enabled && ( //AppConfig.isElectron && (
-              <StyledTab
-                data-tid="aiTabTID"
-                icon={<PsychologyIcon />}
-                title={t('core:aiTab')}
-                tinyMode={isTinyMode}
-                {...a11yProps(3)}
-                onClick={handleTabClick}
-              />
-            )}
+          ))}
         </StyledTabs>
       </Box>
-      <TsTabPanel
-        key="propertiesTab"
-        value={selectedTabIndex.current}
-        index={0}
-      >
-        <EntryProperties key={openedEntry.path} tileServer={tileServer} />
-      </TsTabPanel>
-      <TsTabPanel
-        key="descriptionTab"
-        value={selectedTabIndex.current}
-        index={1}
-      >
-        <EditDescription />
-      </TsTabPanel>
-      {haveRevisions.current && (
-        <TsTabPanel
-          key="revisionsTab"
-          value={selectedTabIndex.current}
-          index={2}
-        >
-          <Revisions />
+      {tabsArray.map((tab, index) => (
+        <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
+          {tab.component}
         </TsTabPanel>
-      )}
-      {Pro && AppConfig.isElectron && (
-        <TsTabPanel
-          key="aiTab"
-          value={selectedTabIndex.current}
-          index={haveRevisions.current ? 3 : 2}
-        >
-          {ollamaSettings.enabled && (
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                data-tid="switchOllamaTID"
-                expandIcon={<ExpandIcon />}
-                aria-controls="panelOllama-content"
-                id="panelOllama-header"
-              >
-                <Typography>{t('core:OllamaPanel')}</Typography>
-              </AccordionSummary>
-              <AccordionDetails style={{ paddingTop: 16 }}>
-                <OllamaChatPanel />
-              </AccordionDetails>
-            </Accordion>
-          )}
-        </TsTabPanel>
-      )}
+      ))}
     </div>
   );
 }

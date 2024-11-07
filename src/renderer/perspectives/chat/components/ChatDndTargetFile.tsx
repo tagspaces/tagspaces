@@ -23,6 +23,7 @@ import AppConfig from '-/AppConfig';
 import { Identifier } from 'dnd-core';
 import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { toBase64Image } from '-/services/utils-io';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = {
@@ -63,17 +64,9 @@ function ChatDndTargetFile(props: Props) {
           files.forEach((file) => {
             const loc = findLocalLocation();
             if (loc && file.path) {
-              loc
-                .getFileContentPromise(file.path, 'arraybuffer')
-                .then((uint8Array) => {
-                  if (uint8Array) {
-                    let binaryString = '';
-                    uint8Array.forEach((byte) => {
-                      binaryString += String.fromCharCode(byte);
-                    });
-                    setImage(btoa(binaryString));
-                  }
-                });
+              toBase64Image(loc, file.path).then((base64Img) =>
+                setImage(base64Img),
+              );
             }
           });
         }
