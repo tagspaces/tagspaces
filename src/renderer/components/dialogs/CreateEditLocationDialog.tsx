@@ -22,7 +22,7 @@ import CryptoJS from 'crypto-js';
 import Paper from '@mui/material/Paper';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Switch from '@mui/material/Switch';
@@ -1181,9 +1181,7 @@ function CreateEditLocationDialog(props: Props) {
           </Accordion>
         )}
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
         <TsButton
           disabled={disableConfirmButton()}
@@ -1193,7 +1191,7 @@ function CreateEditLocationDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </StyledDialog>
   );
 }

@@ -19,7 +19,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
@@ -111,9 +111,7 @@ function KeyboardDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton
           data-tid="closeKeyboardDialog"
           onClick={onClose}
@@ -121,7 +119,7 @@ function KeyboardDialog(props: Props) {
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

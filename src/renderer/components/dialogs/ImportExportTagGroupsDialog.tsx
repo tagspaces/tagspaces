@@ -18,7 +18,7 @@
 
 import React, { useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -148,9 +148,7 @@ function ImportExportTagGroupsDialog(props: Props) {
           {tagGroupList.map(renderTagGroups)}
         </FormControl>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton onClick={props.onClose}>{t('core:cancel')}</TsButton>
         <TsButton
           disabled={!isSelected()}
@@ -160,7 +158,7 @@ function ImportExportTagGroupsDialog(props: Props) {
         >
           {props.dialogModeImport ? 'Import' : 'Export'}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

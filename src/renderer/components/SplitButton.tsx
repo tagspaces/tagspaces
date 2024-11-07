@@ -87,7 +87,6 @@ export default function SplitButton(props: Props) {
               }}
             >
               <Paper>
-                {/* <ClickAwayListener onClickAway={handleClose}> */}
                 <TsMenuList id="split-button-menu">
                   {options.map((option, index) => (
                     <MenuItem
@@ -100,7 +99,6 @@ export default function SplitButton(props: Props) {
                     </MenuItem>
                   ))}
                 </TsMenuList>
-                {/* </ClickAwayListener> */}
               </Paper>
             </Grow>
           )}

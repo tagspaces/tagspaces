@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -164,10 +164,9 @@ function LinkGeneratorDialog(props: Props) {
           }}
         />
       </DialogContent>
-      <DialogActions
+      <TsDialogActions
         style={{
           justifyContent: 'space-between',
-          padding: fullScreen ? '10px 30px 30px 30px' : undefined,
         }}
       >
         <TsButton
@@ -181,7 +180,7 @@ function LinkGeneratorDialog(props: Props) {
         <TsButton data-tid="closeLinkTID" onClick={onClose} variant="contained">
           {t('core:close')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }
