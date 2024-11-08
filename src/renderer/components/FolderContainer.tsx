@@ -218,37 +218,33 @@ function FolderContainer(props: Props) {
         >
           <MainMenuIcon />
         </TsIconButton>
-        <Tooltip
-          title={
+        <TsIconButton
+          tooltip={
             t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
           }
+          id="goBackButton"
+          disabled={historyIndex === 0}
+          onClick={goBack}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
         >
+          <GoBackIcon />
+        </TsIconButton>
+        {isTinyMode && (
           <TsIconButton
-            id="goBackButton"
+            tooltip={t('core:goforward') + ' - BETA'}
+            id="goForwardButton"
             disabled={historyIndex === 0}
-            onClick={goBack}
+            onClick={goForward}
             style={{
               // @ts-ignore
               WebkitAppRegion: 'no-drag',
             }}
           >
-            <GoBackIcon />
+            <GoForwardIcon />
           </TsIconButton>
-        </Tooltip>
-        {isTinyMode && (
-          <Tooltip title={t('core:goforward') + ' - BETA'}>
-            <TsIconButton
-              id="goForwardButton"
-              disabled={historyIndex === 0}
-              onClick={goForward}
-              style={{
-                // @ts-ignore
-                WebkitAppRegion: 'no-drag',
-              }}
-            >
-              <GoForwardIcon />
-            </TsIconButton>
-          </Tooltip>
         )}
         {isSearchMode ? (
           /* todo rethink if open props is needed */
@@ -263,20 +259,19 @@ function FolderContainer(props: Props) {
               }}
             />
             {isTinyMode ? (
-              <Tooltip
-                title={t('core:openSearch') + ' (' + openSearchKeyBinding + ')'}
+              <TsIconButton
+                tooltip={
+                  t('core:openSearch') + ' (' + openSearchKeyBinding + ')'
+                }
+                data-tid="toggleSearch"
+                onClick={openSearchMode}
+                style={{
+                  // @ts-ignore
+                  WebkitAppRegion: 'no-drag',
+                }}
               >
-                <TsIconButton
-                  data-tid="toggleSearch"
-                  onClick={openSearchMode}
-                  style={{
-                    // @ts-ignore
-                    WebkitAppRegion: 'no-drag',
-                  }}
-                >
-                  <SearchIcon />
-                </TsIconButton>
-              </Tooltip>
+                <SearchIcon />
+              </TsIconButton>
             ) : (
               <TsButton
                 data-tid="toggleSearch"

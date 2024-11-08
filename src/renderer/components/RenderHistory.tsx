@@ -114,26 +114,25 @@ function RenderHistory(props: Props) {
               </Grid>
               {showDelete && (
                 <Grid item xs={2}>
-                  <TooltipTS title={t('delete')}>
-                    <TsIconButton
-                      aria-label={t('core:clearHistory')}
-                      onClick={() => {
-                        if (historyKey === Pro.keys.bookmarksKey) {
-                          //del bookmarks
-                          bookmarksContext.delBookmark(item.path);
-                        } else {
-                          historyContext.delHistory(
-                            historyKey,
-                            item.creationTimeStamp,
-                          );
-                        }
-                        update();
-                      }}
-                      data-tid="deleteHistoryItemTID"
-                    >
-                      <RemoveIcon />
-                    </TsIconButton>
-                  </TooltipTS>
+                  <TsIconButton
+                    tooltip={t('delete')}
+                    aria-label={t('core:clearHistory')}
+                    onClick={() => {
+                      if (historyKey === Pro.keys.bookmarksKey) {
+                        //del bookmarks
+                        bookmarksContext.delBookmark(item.path);
+                      } else {
+                        historyContext.delHistory(
+                          historyKey,
+                          item.creationTimeStamp,
+                        );
+                      }
+                      update();
+                    }}
+                    data-tid="deleteHistoryItemTID"
+                  >
+                    <RemoveIcon />
+                  </TsIconButton>
                 </Grid>
               )}
             </ListItem>

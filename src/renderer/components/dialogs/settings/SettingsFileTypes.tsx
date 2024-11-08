@@ -39,7 +39,6 @@ import {
   TableComponents,
   TableVirtuosoHandle,
 } from 'react-virtuoso';
-import Tooltip from '-/components/Tooltip';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
@@ -437,34 +436,32 @@ function SettingsFileTypes() {
         </TableCell>
         <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <TransparentBackground>
-            <Tooltip title={t('core:colorPickerDialogTitle')}>
-              <TsButton
-                data-tid="settingsFileTypes_openColorPicker_"
-                className={classes.colorChooserButton}
-                style={{
-                  backgroundColor: `${item.color}`,
-                  minWidth: 50,
-                  maxWidth: 50,
-                  cursor: 'pointer',
-                }}
-                onClick={() => {
-                  openColorPicker(item);
-                }}
-              >
-                &nbsp;
-                <div />
-              </TsButton>
-            </Tooltip>
-          </TransparentBackground>
-          <Tooltip title={t('removeFileType', { itemType: item.type })}>
-            <TsIconButton
-              data-tid="settingsFileTypes_remove_"
-              className={classes.fileExtRemove}
-              onClick={() => onRemoveItem(item)}
+            <TsButton
+              tooltip={t('core:colorPickerDialogTitle')}
+              data-tid="settingsFileTypes_openColorPicker_"
+              className={classes.colorChooserButton}
+              style={{
+                backgroundColor: `${item.color}`,
+                minWidth: 50,
+                maxWidth: 50,
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                openColorPicker(item);
+              }}
             >
-              <RemoveIcon />
-            </TsIconButton>
-          </Tooltip>
+              &nbsp;
+              <div />
+            </TsButton>
+          </TransparentBackground>
+          <TsIconButton
+            tooltip={t('removeFileType', { itemType: item.type })}
+            data-tid="settingsFileTypes_remove_"
+            className={classes.fileExtRemove}
+            onClick={() => onRemoveItem(item)}
+          >
+            <RemoveIcon />
+          </TsIconButton>
         </TableCell>
       </React.Fragment>
     );

@@ -184,15 +184,14 @@ function SettingsAdvanced(props: Props) {
           <ListItem>
             <ListItemText primary={t('core:fileOpenHistory')} />
             <ListItemIcon>
-              <Tooltip title={t('clearHistory')}>
-                <TsIconButton
-                  aria-label={t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
-                  data-tid="clearSearchTID"
-                >
-                  <DeleteIcon />
-                </TsIconButton>
-              </Tooltip>
+              <TsIconButton
+                tooltip={t('clearHistory')}
+                aria-label={t('core:clearHistory')}
+                onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+                data-tid="clearSearchTID"
+              >
+                <DeleteIcon />
+              </TsIconButton>
             </ListItemIcon>
             <TsSelect
               data-tid="fileOpenTID"
@@ -212,15 +211,14 @@ function SettingsAdvanced(props: Props) {
           <ListItem>
             <ListItemText primary={t('core:folderOpenHistory')} />
             <ListItemIcon>
-              <Tooltip title={t('clearHistory')}>
-                <TsIconButton
-                  aria-label={t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
-                  data-tid="clearSearchTID"
-                >
-                  <DeleteIcon />
-                </TsIconButton>
-              </Tooltip>
+              <TsIconButton
+                tooltip={t('clearHistory')}
+                aria-label={t('core:clearHistory')}
+                onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
+                data-tid="clearSearchTID"
+              >
+                <DeleteIcon />
+              </TsIconButton>
             </ListItemIcon>
             <TsSelect
               data-tid="folderOpenTID"
@@ -240,15 +238,14 @@ function SettingsAdvanced(props: Props) {
           <ListItem>
             <ListItemText primary={t('core:fileEditHistory')} />
             <ListItemIcon>
-              <Tooltip title={t('clearHistory')}>
-                <TsIconButton
-                  aria-label={t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
-                  data-tid="clearSearchTID"
-                >
-                  <DeleteIcon />
-                </TsIconButton>
-              </Tooltip>
+              <TsIconButton
+                tooltip={t('clearHistory')}
+                aria-label={t('core:clearHistory')}
+                onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+                data-tid="clearSearchTID"
+              >
+                <DeleteIcon />
+              </TsIconButton>
             </ListItemIcon>
             <TsSelect
               data-tid="fileEditTID"
@@ -268,17 +265,16 @@ function SettingsAdvanced(props: Props) {
           <ListItem>
             <ListItemText primary={t('core:searchHistory')} />
             <ListItemIcon>
-              <Tooltip title={t('clearHistory')}>
-                <TsIconButton
-                  aria-label={t('core:clearHistory')}
-                  onClick={() =>
-                    setConfirmDialogKey(historyKeys.searchHistoryKey)
-                  }
-                  data-tid="clearSearchTID"
-                >
-                  <DeleteIcon />
-                </TsIconButton>
-              </Tooltip>
+              <TsIconButton
+                tooltip={t('clearHistory')}
+                aria-label={t('core:clearHistory')}
+                onClick={() =>
+                  setConfirmDialogKey(historyKeys.searchHistoryKey)
+                }
+                data-tid="clearSearchTID"
+              >
+                <DeleteIcon />
+              </TsIconButton>
             </ListItemIcon>
             <TsSelect
               data-tid="searchHistoryTID"

@@ -601,23 +601,23 @@ function EntryContainer() {
       if (isEditMode) {
         editFile = (
           <ButtonGroup>
-            <Tooltip title={t('core:cancelEditing')}>
-              <TsButton
-                onClick={() => {
-                  setEditMode(false);
-                  setFileChanged(false);
-                }}
-                style={{
-                  borderRadius: 'unset',
-                  borderTopLeftRadius: 10,
-                  borderBottomLeftRadius: 10,
-                }}
-                aria-label={t('core:cancelEditing')}
-                startIcon={closeCancelIcon}
-              >
-                {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
-              </TsButton>
-            </Tooltip>
+            <TsButton
+              tooltip={t('core:cancelEditing')}
+              onClick={() => {
+                setEditMode(false);
+                setFileChanged(false);
+              }}
+              style={{
+                borderRadius: 'unset',
+                borderTopLeftRadius: 10,
+                borderBottomLeftRadius: 10,
+              }}
+              aria-label={t('core:cancelEditing')}
+              startIcon={closeCancelIcon}
+            >
+              {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
+            </TsButton>
+
             {fileChanged && (
               <Tooltip
                 title={
@@ -650,17 +650,16 @@ function EntryContainer() {
         );
       } else {
         editFile = (
-          <Tooltip title={t('core:editFile')}>
-            <TsButton
-              disabled={isEditDescriptionMode}
-              onClick={editOpenedFile}
-              aria-label={t('core:editFile')}
-              data-tid="fileContainerEditFile"
-              startIcon={<EditIcon />}
-            >
-              {t('core:edit')}
-            </TsButton>
-          </Tooltip>
+          <TsButton
+            tooltip={t('core:editFile')}
+            disabled={isEditDescriptionMode}
+            onClick={editOpenedFile}
+            aria-label={t('core:editFile')}
+            data-tid="fileContainerEditFile"
+            startIcon={<EditIcon />}
+          >
+            {t('core:edit')}
+          </TsButton>
         );
       }
     }

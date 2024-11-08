@@ -28,8 +28,6 @@ import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import TsMenuList from '-/components/TsMenuList';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
@@ -59,7 +57,6 @@ import {
   FileIcon,
   BookmarkIcon,
   BookIcon,
-  DateIcon,
   EmailIcon,
   EditIcon,
   PictureIcon,
@@ -141,10 +138,6 @@ function SearchPopover(props: Props) {
     searchQuery.fileSize ? searchQuery.fileSize : '',
   );
 
-  /*useEffect(() => {
-    props.setTextQuery(searchQuery.textQuery);
-  }, [searchQuery]);*/
-
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
@@ -215,22 +208,6 @@ function SearchPopover(props: Props) {
     //searchBoxing.current = savedSearch.searchBoxing;
     forceIndexing.current = savedSearch.forceIndexing;
 
-    //let ttPeriod;
-    // tagTimePeriodFrom.current = savedSearch.tagTimePeriodFrom;
-    /* if (savedSearch.tagTimePeriodFrom) {
-      ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
-    }*/
-
-    // tagTimePeriodTo.current = savedSearch.tagTimePeriodTo;
-    /*if (savedSearch.tagTimePeriodTo) {
-      ttPeriod +=
-        '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
-    }*/
-
-    /*if (ttPeriod) {
-      tagTimePeriod.current = ttPeriod;
-    }*/
-
     setSearchQuery({
       ...savedSearch,
       tagTimePeriodFrom: savedSearch.tagTimePeriodFrom,
@@ -292,29 +269,6 @@ function SearchPopover(props: Props) {
     const { value } = target;
     props.setTextQuery(value);
   };
-
-  /*const handleTimePeriodChange = event => {
-    const { target } = event;
-    const { value } = target;
-    const { fromDateTime, toDateTime } = extractTimePeriod(value);
-
-    if (toDateTime && fromDateTime) {
-      const tagTPeriodHelper =
-        'From: ' +
-        formatDateTime(fromDateTime) +
-        ' To: ' +
-        formatDateTime(toDateTime);
-      tagTimePeriodFrom.current = fromDateTime.getTime();
-      tagTimePeriodTo.current = toDateTime.getTime();
-      tagTimePeriodHelper.current = tagTPeriodHelper;
-    } else {
-      tagTimePeriodFrom.current = null;
-      tagTimePeriodTo.current = null;
-      tagTimePeriodHelper.current = ' ';
-    }
-    // tagTimePeriod.current = value;
-    forceUpdate();
-  };*/
 
   const handlePlaceChange = (event) => {
     const { target } = event;
@@ -426,9 +380,6 @@ function SearchPopover(props: Props) {
         searchBoxing: boxing,
         executeSearch: false,
       });
-
-      /*searchBoxing.current = boxing;
-      forceUpdate();*/
     }
   };
 
@@ -442,9 +393,6 @@ function SearchPopover(props: Props) {
         searchType: type,
         executeSearch: false,
       });
-
-      /*searchType.current = type;
-      forceUpdate();*/
     }
   };
 
@@ -586,24 +534,22 @@ function SearchPopover(props: Props) {
               }}
             >
               {searchQuery.uuid && (
-                <Tooltip title={t('editSavedSearchTitle')}>
-                  <TsIconButton
-                    data-tid="editSearchBtnTID"
-                    onClick={() => saveSearch(false)}
-                  >
-                    <EditIcon />
-                  </TsIconButton>
-                </Tooltip>
-              )}
-              <Tooltip title={t('createNewSavedSearchTitle')}>
                 <TsIconButton
-                  disabled={!Pro}
-                  data-tid="addSearchBtnTID"
-                  onClick={() => saveSearch()}
+                  tooltip={t('editSavedSearchTitle')}
+                  data-tid="editSearchBtnTID"
+                  onClick={() => saveSearch(false)}
                 >
-                  <CreateFileIcon />
+                  <EditIcon />
                 </TsIconButton>
-              </Tooltip>
+              )}
+              <TsIconButton
+                tooltip={t('createNewSavedSearchTitle')}
+                disabled={!Pro}
+                data-tid="addSearchBtnTID"
+                onClick={() => saveSearch()}
+              >
+                <CreateFileIcon />
+              </TsIconButton>
             </ButtonGroup>
           </Grid>
           <Grid item xs={12}>

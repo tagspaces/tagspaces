@@ -871,5 +871,6 @@
   "uploadDirsNotSupported": "Uploading folders not supported!",
   "targetLocation": "Target location",
   "exportAsPNG": "Export as PNG",
+  "generateNewLocationId": "Generates new unique identifier for this location",
   "-": "-"
 }
