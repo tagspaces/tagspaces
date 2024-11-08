@@ -20,7 +20,7 @@ import React from 'react';
 
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
@@ -94,9 +94,9 @@ function LocalForm(props: Props) {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" style={{ height: 32 }}>
-                  <IconButton onClick={openDirectory}>
+                  <TsIconButton onClick={openDirectory}>
                     <FolderIcon />
-                  </IconButton>
+                  </TsIconButton>
                 </InputAdornment>
               ),
             }}

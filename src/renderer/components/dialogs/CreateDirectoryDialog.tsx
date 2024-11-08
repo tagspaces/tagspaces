@@ -24,7 +24,6 @@ import {
   DialogContent,
   DialogTitle,
   FormHelperText,
-  IconButton,
   InputAdornment,
   inputBaseClasses,
 } from '@mui/material';
@@ -33,6 +32,7 @@ import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -226,7 +226,7 @@ function CreateDirectoryDialog(props: Props) {
                 <InputAdornment position="end">
                   {defaultBackgrounds.map((background, cnt) => (
                     <>
-                      <IconButton
+                      <TsIconButton
                         key={cnt}
                         data-tid={'bgTID' + cnt}
                         aria-label="changeFolderBackground"
@@ -244,7 +244,7 @@ function CreateDirectoryDialog(props: Props) {
                         }}
                       >
                         <SetBackgroundIcon />
-                      </IconButton>
+                      </TsIconButton>
                     </>
                   ))}
                 </InputAdornment>
