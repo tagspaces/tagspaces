@@ -22,8 +22,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { supportedImgs, supportedText } from '-/services/thumbsgenerator';
 import Button from '@mui/material/Button';
-import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
-import { Pro } from '-/pro';
+import { useChatContext } from '-/hooks/useChatContext';
 import { IMAGE_DESCRIPTION } from '../../../tagspacespro/modules/components';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -31,9 +30,21 @@ import { toBase64Image } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelector } from 'react-redux';
 import { getOllamaSettings } from '-/reducers/settings';
+import LoadingLazy from '-/components/LoadingLazy';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
+
+const ChatView = React.lazy(
+  () => import(/* webpackChunkName: "ChatView" */ './chat/ChatView'),
+);
+function ChatViewAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ChatView {...props} />
+    </React.Suspense>
+  );
+}
 
 function AiPropertiesTab(props: Props) {
   const { t } = useTranslation();
@@ -46,6 +57,10 @@ function AiPropertiesTab(props: Props) {
   const ollamaSettings = useSelector(getOllamaSettings);
   const [confirmDescriptionOpened, setConfirmDescriptionOpened] =
     useState<string>(undefined);
+
+  if (!openedEntry.isFile) {
+    return <ChatViewAsync />;
+  }
 
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
   if (IMAGE_DESCRIPTION && supportedImgs.includes(ext)) {

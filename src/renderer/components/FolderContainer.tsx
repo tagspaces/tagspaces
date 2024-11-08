@@ -19,6 +19,7 @@
 import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import ChatIcon from '@mui/icons-material/Chat';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
@@ -29,8 +30,12 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import { getProgress } from '../reducers/app';
+import {
+  actions as SettingsActions,
+  getDesktopMode,
+  getKeyBindingObject,
+} from '-/reducers/settings';
+import { AppDispatch, getProgress } from '../reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -53,6 +58,7 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -61,13 +67,14 @@ interface Props {
 
 function FolderContainer(props: Props) {
   const { toggleDrawer, drawerOpened } = props;
-
+  const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openEntry } = useOpenedEntryContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -133,8 +140,7 @@ function FolderContainer(props: Props) {
     if (
       Pro ||
       perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST ||
-      perspectiveId === PerspectiveIDs.CHAT
+      perspectiveId === PerspectiveIDs.LIST
     ) {
       setManualDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
@@ -344,7 +350,7 @@ function FolderContainer(props: Props) {
           exclusive
           style={{
             bottom: -40,
-            right: 15,
+            right: 55,
             zIndex: 1000,
             opacity: 0.9,
             position: 'absolute',
@@ -352,6 +358,19 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
+          <ToggleButton
+            value=""
+            aria-label="chat-label"
+            data-tid="chatTID"
+            onClick={() => {
+              dispatch(SettingsActions.setEntryContainerTab(3));
+              openEntry(currentDirectoryPath);
+            }}
+          >
+            <Tooltip title="Chat">
+              <ChatIcon />
+            </Tooltip>
+          </ToggleButton>
         </ToggleButtonGroup>
       )}
     </div>

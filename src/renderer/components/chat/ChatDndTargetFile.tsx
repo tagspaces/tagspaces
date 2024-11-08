@@ -21,7 +21,7 @@ import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { alpha, useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { Identifier } from 'dnd-core';
-import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
+import { useChatContext } from '-/hooks/useChatContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { toBase64Image } from '-/services/utils-io';
 

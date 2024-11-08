@@ -51,10 +51,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { OllamaIcon } from '-/components/dialogs/settings/Ollama';
-import SelectChatModel from '-/perspectives/chat/components/SelectChatModel';
+import SelectChatModel from '-/components/chat/SelectChatModel';
 import TsSelect from '-/components/TsSelect';
 import { TS } from '-/tagspaces.namespace';
-import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
+import { useChatContext } from '-/hooks/useChatContext';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();

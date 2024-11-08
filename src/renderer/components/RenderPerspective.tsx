@@ -34,7 +34,6 @@ import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import useFirstRender from '-/utils/useFirstRender';
-import { ChatContextProvider } from '-/perspectives/chat/hooks/ChatProvider';
 
 const GridPerspective = React.lazy(
   () =>
@@ -73,18 +72,6 @@ function ListPerspectiveAsync(props) {
           </PaginationContextProvider>
         </SortedDirContextProvider>
       </PerspectiveSettingsContextProvider>
-    </React.Suspense>
-  );
-}
-
-const ChatPerspective = React.lazy(
-  () =>
-    import(/* webpackChunkName: "ChatPerspective" */ '../perspectives/chat'),
-);
-function ChatPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ChatPerspective {...props} />
     </React.Suspense>
   );
 }
@@ -198,9 +185,6 @@ function RenderPerspective(props: Props) {
       return (
         <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
       );
-    }
-    if (perspective === PerspectiveIDs.CHAT) {
-      return <ChatPerspectiveAsync />;
     }
     if (Pro && perspective === PerspectiveIDs.GALLERY) {
       return <GalleryPerspectiveAsync />;

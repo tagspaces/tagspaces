@@ -9,7 +9,7 @@ import { TS } from '-/tagspaces.namespace';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { RemoveIcon } from '-/components/CommonIcons';
-import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
+import { useChatContext } from '-/hooks/useChatContext';
 import TsSelect from '-/components/TsSelect';
 
 interface Props {

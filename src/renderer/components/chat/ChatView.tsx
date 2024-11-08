@@ -21,15 +21,15 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import { ChatItem, ChatMode } from '-/perspectives/chat/hooks/ChatProvider';
-import { useChatContext } from '-/perspectives/chat/hooks/useChatContext';
-import ChatDndTargetFile from '-/perspectives/chat/components/ChatDndTargetFile';
+import { ChatItem, ChatMode } from '-/hooks/ChatProvider';
+import { useChatContext } from '-/hooks/useChatContext';
+import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTheme } from '@mui/material/styles';
 import TsSelect from '-/components/TsSelect';
-import SelectChatModel from '-/perspectives/chat/components/SelectChatModel';
+import SelectChatModel from '-/components/chat/SelectChatModel';
 
-function MainContainer() {
+function ChatView() {
   const { t } = useTranslation();
   const theme = useTheme();
   const {
@@ -135,9 +135,9 @@ function MainContainer() {
   const { FILE } = NativeTypes;
 
   return (
-    <Box sx={{ flexGrow: 1, margin: 2 }}>
-      <Grid2 container spacing={2}>
-        <Grid2 size={8}>
+    <Box sx={{ flexGrow: 1, margin: 2, height: 'calc(100% - 40px)' }}>
+      <Grid2 container spacing={2} style={{ height: '100%' }}>
+        <Grid2 size={8} style={{ height: 60 }}>
           <FormControl fullWidth>
             <SelectChatModel
               handleChangeModel={handleChangeModel}
@@ -145,7 +145,7 @@ function MainContainer() {
             />
           </FormControl>
         </Grid2>
-        <Grid2 size={4}>
+        <Grid2 size={4} style={{ height: 60 }}>
           <FormControl fullWidth>
             <TsSelect
               placeholder="Chat mode"
@@ -167,7 +167,18 @@ function MainContainer() {
             </TsSelect>
           </FormControl>
         </Grid2>
-        <Grid2 size={12}>
+        <Grid2
+          size="grow"
+          sx={{ padding: 2, height: 'calc(100% - 180px)', overflowY: 'auto' }}
+        >
+          <MilkdownEditor
+            ref={editorRef}
+            content={formatChatItems(chatHistoryItems)}
+            readOnly={true}
+            lightMode={true}
+          />
+        </Grid2>
+        <Grid2 size={12} style={{ height: 100 }}>
           <ChatDndTargetFile accepts={[FILE]}>
             <FormControl fullWidth>
               <TsTextField
@@ -208,14 +219,8 @@ function MainContainer() {
           </ChatDndTargetFile>
         </Grid2>
       </Grid2>
-      <MilkdownEditor
-        ref={editorRef}
-        content={formatChatItems(chatHistoryItems)}
-        readOnly={true}
-        lightMode={true}
-      />
     </Box>
   );
 }
 
-export default MainContainer;
+export default ChatView;

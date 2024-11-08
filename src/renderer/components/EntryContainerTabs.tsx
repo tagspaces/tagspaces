@@ -247,7 +247,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     tabsArray.push(tab3);
   }
 
-  if (Pro && AppConfig.isElectron && ollamaSettings.enabled) {
+  if (
+    !openedEntry.isFile ||
+    (Pro && AppConfig.isElectron && ollamaSettings.enabled)
+  ) {
     const tab4: TabItem = {
       dataTid: 'aiTabTID',
       icon: <PsychologyIcon />,

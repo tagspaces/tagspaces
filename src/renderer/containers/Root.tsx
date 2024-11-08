@@ -51,7 +51,7 @@ import { UserContextProvider } from '-/hooks/UserContextProvider';
 import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
 import DialogsRoot from '-/containers/DialogsRoot';
 import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
-import { ChatContextProvider } from '-/perspectives/chat/hooks/ChatProvider';
+import { ChatContextProvider } from '-/hooks/ChatProvider';
 
 type RootType = {
   store: Store<{}>;

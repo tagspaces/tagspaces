@@ -53,7 +53,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
-import { defaultSettings as defaultChatSettings } from '-/perspectives/chat';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -560,8 +559,6 @@ export const DirectoryContentContextProvider = ({
       return defaultGridSettings;
     } else if (perspective === PerspectiveIDs.LIST) {
       return defaultListSettings;
-    } else if (perspective === PerspectiveIDs.CHAT) {
-      return defaultChatSettings;
     } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
       return Pro.Perspectives.KanBanPerspectiveSettings;
     }
