@@ -28,11 +28,12 @@ import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TsTextField from '-/components/TsTextField';
-import InputLabel from '@mui/material/InputLabel';
+import TsSelect from '-/components/TsSelect';
+import TsMenuList from '-/components/TsMenuList';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import { InfoTooltipIcon } from '-/components/CommonIcons';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -76,6 +77,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import AppConfig from '-/AppConfig';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -509,14 +511,13 @@ function SearchPopover(props: Props) {
         >
           {'(' + indexStatus + ')'}
         </Typography>
-        <IconButton
+        <TsIconButton
           style={{ marginLeft: 'auto' }}
           data-tid="closeSearchTID"
           onClick={props.onClose}
-          size="large"
         >
           <CloseIcon />
-        </IconButton>
+        </TsIconButton>
       </div>
       <div
         style={{
@@ -573,7 +574,11 @@ function SearchPopover(props: Props) {
               </FormControl>
             </ProTooltip>
           </Grid>
-          <Grid item xs={3} style={{ display: 'flex', alignSelf: 'center' }}>
+          <Grid
+            item
+            xs={3}
+            style={{ display: 'flex', alignSelf: 'center', paddingTop: 40 }}
+          >
             <ButtonGroup
               style={{
                 textAlign: 'center',
@@ -582,24 +587,22 @@ function SearchPopover(props: Props) {
             >
               {searchQuery.uuid && (
                 <Tooltip title={t('editSavedSearchTitle')}>
-                  <IconButton
+                  <TsIconButton
                     data-tid="editSearchBtnTID"
-                    size="small"
                     onClick={() => saveSearch(false)}
                   >
                     <EditIcon />
-                  </IconButton>
+                  </TsIconButton>
                 </Tooltip>
               )}
               <Tooltip title={t('createNewSavedSearchTitle')}>
-                <IconButton
+                <TsIconButton
                   disabled={!Pro}
                   data-tid="addSearchBtnTID"
-                  size="small"
                   onClick={() => saveSearch()}
                 >
                   <CreateFileIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ButtonGroup>
           </Grid>
@@ -798,116 +801,112 @@ function SearchPopover(props: Props) {
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
               size={desktopMode ? 'small' : 'medium'}
-              input={
-                <OutlinedInput
-                  name="fileTypes"
-                  id="file-type"
-                  // label={t('core:fileType')}
-                />
-              }
+              input={<OutlinedInput name="fileTypes" id="file-type" />}
             >
+              {/* <TsMenuList> */}
               <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                 {t('core:anyType')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                <IconButton size="large">
+                <TsIconButton>
                   <FolderIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchFolders')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                <IconButton size="large">
+                <TsIconButton>
                   <FileIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchFiles')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                <IconButton size="large">
+                <TsIconButton>
                   <UntaggedIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchUntaggedEntries')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.images)}
                 title={FileTypeGroups.images.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <PictureIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchPictures')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.documents)}
                 title={FileTypeGroups.documents.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <DocumentIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchDocuments')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.notes)}
                 title={FileTypeGroups.notes.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <NoteIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchNotes')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.audio)}
                 title={FileTypeGroups.audio.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <AudioIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchAudio')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.video)}
                 title={FileTypeGroups.video.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <VideoIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchVideoFiles')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.archives)}
                 title={FileTypeGroups.archives.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <ArchiveIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchArchives')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.bookmarks)}
                 title={FileTypeGroups.bookmarks.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <BookmarkIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchBookmarks')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.ebooks)}
                 title={FileTypeGroups.ebooks.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <BookIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchEbooks')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.emails)}
                 title={FileTypeGroups.emails.toString()}
               >
-                <IconButton size="large">
+                <TsIconButton>
                   <EmailIcon />
-                </IconButton>
+                </TsIconButton>
                 {t('core:searchEmails')}
               </MenuItem>
+              {/* </TsMenuList> */}
             </Select>
           </ProTooltip>
         </FormControl>
@@ -1087,7 +1086,7 @@ function SearchPopover(props: Props) {
             {t('resetBtn')}
           </TsButton>
           <TsButton
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             variant="contained"
             disabled={isIndexing !== undefined}
             id="searchButtonAdvTID"

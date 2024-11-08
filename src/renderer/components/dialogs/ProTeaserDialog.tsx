@@ -32,6 +32,7 @@ import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -147,7 +148,7 @@ function Slide(props: SlideProps) {
             onClick={() => {
               openURLExternally(ctaURL, true);
             }}
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           >
             {ctaTitle}
           </TsButton>

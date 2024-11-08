@@ -19,7 +19,7 @@
 import React, { useEffect, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import format from 'date-fns/format';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -252,7 +252,7 @@ function EditTagDialog(props: Props) {
           )}
         </ListItem>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton onClick={props.onClose} data-tid="closeEditTagDialog">
           {t('core:cancel')}
         </TsButton>
@@ -260,12 +260,11 @@ function EditTagDialog(props: Props) {
           disabled={inputError}
           onClick={onConfirm}
           data-tid="editTagConfirm"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

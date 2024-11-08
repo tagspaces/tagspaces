@@ -25,8 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import TsIconButton from '-/components/TsIconButton';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
@@ -119,7 +118,7 @@ function SettingsAdvanced(props: Props) {
         </TsButton>
         <TsButton
           data-tid="reloadAppTID"
-          style={{ marginLeft: 5 }}
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           onClick={() => {
             if (AppConfig.isElectron) {
               window.electronIO.ipcRenderer.sendMessage('reloadWindow');
@@ -186,14 +185,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:fileOpenHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -215,14 +213,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:folderOpenHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -244,14 +241,13 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:fileEditHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -273,16 +269,15 @@ function SettingsAdvanced(props: Props) {
             <ListItemText primary={t('core:searchHistory')} />
             <ListItemIcon>
               <Tooltip title={t('clearHistory')}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:clearHistory')}
                   onClick={() =>
                     setConfirmDialogKey(historyKeys.searchHistoryKey)
                   }
                   data-tid="clearSearchTID"
-                  size="small"
                 >
                   <DeleteIcon />
-                </IconButton>
+                </TsIconButton>
               </Tooltip>
             </ListItemIcon>
             <TsSelect
@@ -381,21 +376,18 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('core:tileServerTitle')} />
-        <ListItemSecondaryAction style={{ right: 0 }}>
-          <TsButton
-            color="primary"
-            onClick={(event) => handleEditTileServerClick(event, {}, true)}
-          >
-            {t('tileServerDialogAdd')}
-          </TsButton>
-        </ListItemSecondaryAction>
+        <TsButton
+          onClick={(event) => handleEditTileServerClick(event, {}, true)}
+        >
+          {t('tileServerDialogAdd')}
+        </TsButton>
       </ListItem>
       <List
         style={{
           padding: 5,
           paddingLeft: 10,
           backgroundColor: '#d3d3d34a',
-          borderRadius: 10,
+          borderRadius: AppConfig.defaultCSSRadius,
         }}
         dense
       >
@@ -407,28 +399,25 @@ function SettingsAdvanced(props: Props) {
                 secondary={tileServer.serverURL}
                 style={{ maxWidth: 470 }}
               />
-              <ListItemSecondaryAction>
-                {index === 0 && (
-                  <Tooltip title={t('core:serverIsDefaultHelp')}>
-                    <CheckIcon
-                      data-tid="tileServerDefaultIndication"
-                      style={{ marginLeft: 10 }}
-                    />
-                  </Tooltip>
-                )}
-                <IconButton
-                  aria-label={t('core:options')}
-                  aria-haspopup="true"
-                  edge="end"
-                  data-tid={'tileServerEdit_' + tileServer.name}
-                  onClick={(event) =>
-                    handleEditTileServerClick(event, tileServer, index === 0)
-                  }
-                  size="large"
-                >
-                  <EditIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
+              <TsIconButton
+                aria-label={t('core:options')}
+                aria-haspopup="true"
+                edge="end"
+                data-tid={'tileServerEdit_' + tileServer.name}
+                onClick={(event) =>
+                  handleEditTileServerClick(event, tileServer, index === 0)
+                }
+              >
+                <EditIcon />
+              </TsIconButton>
+              {index === 0 && (
+                <Tooltip title={t('core:serverIsDefaultHelp')}>
+                  <CheckIcon
+                    data-tid="tileServerDefaultIndication"
+                    style={{ marginLeft: 10 }}
+                  />
+                </Tooltip>
+              )}
             </ListItem>
           ))
         ) : (

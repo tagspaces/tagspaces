@@ -7,6 +7,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { Pro } from '-/pro';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'EditDescription';
 
@@ -15,9 +16,8 @@ const classes = {
 };
 
 const EditDescriptionRoot = styled('div')(({ theme }) => ({
-  height: '90%',
+  height: 'calc(100% - 20px)',
   [`& .${classes.mdHelpers}`]: {
-    borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
     backgroundColor: '#bcc0c561',

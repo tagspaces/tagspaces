@@ -4,6 +4,7 @@ import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import AppConfig from '-/AppConfig';
 
 /*export interface DescriptionChangedRef {
   setDescriptionChanged: (changed: boolean) => void;
@@ -55,9 +56,15 @@ const EditDescriptionButtons: React.FC = () => {
   // };
 
   return (
-    <span style={{ float: 'left' }}>
+    <div
+      style={{
+        float: 'left',
+        marginBottom: AppConfig.defaultSpaceBetweenButtons,
+      }}
+    >
       {isEditDescriptionMode && (
         <TsButton
+          style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
           onClick={() => {
             setEditDescriptionMode(false);
           }}
@@ -74,7 +81,6 @@ const EditDescriptionButtons: React.FC = () => {
       <ProTooltip tooltip={t('editDescription')}>
         <TsButton
           data-tid="editDescriptionTID"
-          color="primary"
           disabled={!Pro || isEditMode}
           onClick={() => {
             if (isEditDescriptionMode) {
@@ -88,7 +94,7 @@ const EditDescriptionButtons: React.FC = () => {
             : t('core:editDescription')}
         </TsButton>
       </ProTooltip>
-    </span>
+    </div>
   );
 };
 

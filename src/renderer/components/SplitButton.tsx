@@ -1,3 +1,4 @@
+/** 
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -8,7 +9,7 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
+import TsMenuList from '-/components/TsMenuList';
 
 interface Props {
   options: Array<any>;
@@ -16,11 +17,6 @@ interface Props {
   onChange: (selected: string) => void;
 }
 
-/**
- * https://material-ui.com/components/button-group/#split-button
- * @param props
- * @constructor
- */
 export default function SplitButton(props: Props) {
   const { options, selected, onChange } = props;
   const [open, setOpen] = React.useState(false);
@@ -61,14 +57,11 @@ export default function SplitButton(props: Props) {
       <Grid item xs={12}>
         <ButtonGroup
           variant="contained"
-          color="primary"
           ref={anchorRef}
           aria-label="split button"
         >
           <Button onClick={handleToggle}>{options[selectedIndex].value}</Button>
           <Button
-            color="primary"
-            size="small"
             aria-controls={open ? 'split-button-menu' : undefined}
             aria-expanded={open ? 'true' : undefined}
             aria-label="select merge strategy"
@@ -94,8 +87,7 @@ export default function SplitButton(props: Props) {
               }}
             >
               <Paper>
-                {/* <ClickAwayListener onClickAway={handleClose}> */}
-                <MenuList id="split-button-menu">
+                <TsMenuList id="split-button-menu">
                   {options.map((option, index) => (
                     <MenuItem
                       key={option.key}
@@ -106,8 +98,7 @@ export default function SplitButton(props: Props) {
                       {option.value}
                     </MenuItem>
                   ))}
-                </MenuList>
-                {/* </ClickAwayListener> */}
+                </TsMenuList>
               </Paper>
             </Grow>
           )}
@@ -116,3 +107,5 @@ export default function SplitButton(props: Props) {
     </Grid>
   );
 }
+
+*/

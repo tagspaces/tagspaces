@@ -18,7 +18,7 @@
 
 import React, { useEffect, useState } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -103,7 +103,7 @@ function CreateTagsDialog(props: Props) {
         {t('core:addTagsToGroupTitle')}
         <DialogCloseButton testId="closeCreateTagTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minWidth: 350, paddingTop: 10 }}>
+      <DialogContent style={{ minWidth: 300, paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}
@@ -119,18 +119,17 @@ function CreateTagsDialog(props: Props) {
           )}
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
         <TsButton
           disabled={inputError}
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

@@ -19,7 +19,6 @@
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import { useSelector } from 'react-redux';
 import Table from 'rc-table';
-import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
@@ -28,6 +27,7 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { FolderOutlineIcon } from '-/components/CommonIcons';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -100,7 +100,7 @@ const DirectoryTreeView = forwardRef(
     const renderNameColumnAction = (field) => {
       const children = (
         <span style={{ fontSize: 15 }} title={field}>
-          <FolderIcon
+          <FolderOutlineIcon
             style={{
               marginTop: 0,
               marginLeft: 3,

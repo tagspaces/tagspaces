@@ -18,7 +18,7 @@
 
 import React from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TsTextField from '-/components/TsTextField';
@@ -92,9 +92,7 @@ function ResolveConflictDialog(props: Props) {
           t('core:resolveConflictDesc')
         )}
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         {isSaveAs ? (
           <>
             <TsButton
@@ -104,7 +102,6 @@ function ResolveConflictDialog(props: Props) {
                 setSaveAs(false);
                 onClose();
               }}
-              color="primary"
             >
               {t('core:cancel')}
             </TsButton>
@@ -122,7 +119,6 @@ function ResolveConflictDialog(props: Props) {
                   onClose();
                 });
               }}
-              color="primary"
             >
               {t('core:save')}
             </TsButton>
@@ -135,7 +131,6 @@ function ResolveConflictDialog(props: Props) {
               onClick={() => {
                 setSaveAs(true);
               }}
-              color="primary"
             >
               {t('core:saveAs')}
             </TsButton>
@@ -147,14 +142,13 @@ function ResolveConflictDialog(props: Props) {
                   onClose();
                 });
               }}
-              color="primary"
               variant="contained"
             >
               {t('core:override')}
             </TsButton>
           </>
         )}
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

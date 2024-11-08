@@ -27,11 +27,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import TsButton from '-/components/TsButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import IconButton from '@mui/material/IconButton';
-import ThemingIcon from '@mui/icons-material/InvertColors';
-import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
-import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
-import HelpIcon from '@mui/icons-material/HelpOutline';
+import TsIconButton from '-/components/TsIconButton';
 import { Divider } from '@mui/material';
 import {
   OpenLinkIcon,
@@ -47,6 +43,10 @@ import {
   LinkFileIcon,
   AccountIcon,
   AddExistingFileIcon,
+  HelpIcon,
+  ThemingIcon,
+  TagLibraryIcon,
+  RecentThingsIcon,
 } from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import Popover from '@mui/material/Popover';
@@ -61,7 +61,7 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
+import TsMenuList from '-/components/TsMenuList';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { AppDispatch } from '-/reducers/app';
@@ -112,7 +112,6 @@ function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
-
   const { setSelectedLocation, currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openFileUpload } = useFileUploadContext();
@@ -125,30 +124,12 @@ function MobileNavigation(props: Props) {
   const { currentOpenedPanel, showPanel } = usePanelsContext();
   const { openDownloadUrl } = useDownloadUrlDialogContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  /* const isLocationManagerPanelOpenedSelector = useSelector(
-    isLocationManagerPanelOpened,
-  );
-  const isTagLibraryPanelOpenedSelector = useSelector(isTagLibraryPanelOpened);
-  const isSearchPanelOpenedSelector = useSelector(isSearchPanelOpened);
-  const isHelpFeedbackPanelOpenedSelector = useSelector(
-    isHelpFeedbackPanelOpened,
-  );*/
   const { currentUser } = useUserContext();
-
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-
   const showProTeaser = !Pro && showTeaserBanner;
-
   const { hideDrawer, width } = props;
-  /*const openLocationManagerPanel = () =>
-    dispatch(AppActions.openLocationManagerPanel());
-  const openTagLibraryPanel = () => dispatch(AppActions.openTagLibraryPanel());
-  const openSearchPanel = () => dispatch(AppActions.openSearchPanel());
-  const openHelpFeedbackPanel = () =>
-    dispatch(AppActions.openHelpFeedbackPanel());*/
   const switchTheme = () => dispatch(SettingsActions.switchTheme());
-
   const [openedCreateMenu, setOpenCreateMenu] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
 
@@ -189,10 +170,8 @@ function MobileNavigation(props: Props) {
           <CustomLogo />
           <Box style={{ width: '100%', textAlign: 'center' }}>
             <ButtonGroup
-              // variant="contained"
               ref={anchorRef}
               aria-label="split button"
-              color="primary"
               style={{
                 textAlign: 'center',
               }}
@@ -209,8 +188,8 @@ function MobileNavigation(props: Props) {
                   startIcon={<CreateFileIcon />}
                   style={{
                     borderRadius: 'unset',
-                    borderTopLeftRadius: 10,
-                    borderBottomLeftRadius: 10,
+                    borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                    borderBottomLeftRadius: AppConfig.defaultCSSRadius,
                   }}
                 >
                   <Box
@@ -233,8 +212,8 @@ function MobileNavigation(props: Props) {
                   }}
                   style={{
                     borderRadius: 'unset',
-                    borderTopRightRadius: 10,
-                    borderBottomRightRadius: 10,
+                    borderTopRightRadius: AppConfig.defaultCSSRadius,
+                    borderBottomRightRadius: AppConfig.defaultCSSRadius,
                   }}
                   startIcon={<OpenLinkIcon />}
                 >
@@ -273,7 +252,7 @@ function MobileNavigation(props: Props) {
             >
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList id="split-button-menu" autoFocusItem>
+                  <TsMenuList id="split-button-menu" autoFocusItem>
                     <MenuItem
                       key="createNewTextFileTID"
                       ata-tid="createNewTextFileTID"
@@ -456,7 +435,7 @@ function MobileNavigation(props: Props) {
                         </MenuItem>
                       </>
                     )}
-                  </MenuList>
+                  </TsMenuList>
                 </ClickAwayListener>
               </Paper>
             </Grow>
@@ -485,7 +464,7 @@ function MobileNavigation(props: Props) {
           <ProTeaser setShowTeaserBanner={setShowTeaserBanner} />
         )}
         <Tooltip title={t('core:settings')}>
-          <IconButton
+          <TsIconButton
             id="verticalNavButton"
             data-tid="settings"
             onClick={() => {
@@ -495,12 +474,11 @@ function MobileNavigation(props: Props) {
             size="large"
           >
             <SettingsIcon />
-          </IconButton>
+          </TsIconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
           <ToggleButton
             onClick={() => showPanel('locationManagerPanel')}
-            size="small"
             className={
               currentOpenedPanel === 'locationManagerPanel'
                 ? classNames(classes.button, classes.selectedButton)
@@ -519,7 +497,6 @@ function MobileNavigation(props: Props) {
           <ToggleButton
             data-tid="tagLibrary"
             onClick={() => showPanel('tagLibraryPanel')}
-            size="small"
             className={
               currentOpenedPanel === 'tagLibraryPanel'
                 ? classNames(classes.button, classes.selectedButton)
@@ -536,7 +513,6 @@ function MobileNavigation(props: Props) {
           </ToggleButton>
           <ToggleButton
             data-tid="quickAccessButton"
-            size="small"
             onClick={() => showPanel('searchPanel')}
             className={
               currentOpenedPanel === 'searchPanel'
@@ -552,7 +528,6 @@ function MobileNavigation(props: Props) {
           <ToggleButton
             data-tid="helpFeedback"
             onClick={() => showPanel('helpFeedbackPanel')}
-            size="small"
             className={
               currentOpenedPanel === 'helpFeedbackPanel'
                 ? classNames(classes.button, classes.selectedButton)
@@ -568,7 +543,7 @@ function MobileNavigation(props: Props) {
         {currentUser ? (
           <>
             <Tooltip title={t('core:userAccount')}>
-              <IconButton
+              <TsIconButton
                 data-tid="accountCircleIconTID"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
                   setAnchorUser(event.currentTarget)
@@ -577,7 +552,7 @@ function MobileNavigation(props: Props) {
                 size="large"
               >
                 <AccountIcon />
-              </IconButton>
+              </TsIconButton>
             </Tooltip>
             <Popover
               open={Boolean(anchorUser)}
@@ -597,14 +572,14 @@ function MobileNavigation(props: Props) {
           </>
         ) : (
           <Tooltip title={t('core:switchTheme')}>
-            <IconButton
+            <TsIconButton
               data-tid="switchTheme"
               onClick={switchTheme}
               style={{ marginTop: -15, marginRight: 2 }}
               size="large"
             >
               <ThemingIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         )}
       </Box>

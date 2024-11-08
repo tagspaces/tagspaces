@@ -18,7 +18,7 @@
 
 import React, { useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -141,27 +141,24 @@ function ImportExportTagGroupsDialog(props: Props) {
         <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        <TsButton color="primary" onClick={handleToggleSelectAll}>
+        <TsButton onClick={handleToggleSelectAll}>
           {t('core:selectAllTagGroups')}
         </TsButton>
         <FormControl fullWidth={true}>
           {tagGroupList.map(renderTagGroups)}
         </FormControl>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton onClick={props.onClose}>{t('core:cancel')}</TsButton>
         <TsButton
           disabled={!isSelected()}
           onClick={onConfirm}
           data-tid="confirmImportExport"
-          color="primary"
           variant="contained"
         >
           {props.dialogModeImport ? 'Import' : 'Export'}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

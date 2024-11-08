@@ -279,8 +279,7 @@ function HowToStart() {
         onClick={() => {
           openURLExternally(link, true);
         }}
-        variant="text"
-        color="primary"
+        //variant="text"
       >
         {title}
       </TsButton>

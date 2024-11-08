@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
-import Select from '@mui/material/Select';
+import TsSelect from '-/components/TsSelect';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import List from '@mui/material/List';
@@ -80,11 +80,11 @@ function DirectoryListView(props: Props) {
         }}
       >
         <Typography style={{ display: 'inline' }} variant="subtitle2">
-          {t('location')}:&nbsp;
+          {t('targetLocation')}:&nbsp;
         </Typography>
-        <Select
-          fullWidth
-          style={{ display: 'inline' }}
+        <TsSelect
+          fullWidth={true}
+          // style={{ display: 'inline' }}
           onChange={handleLocationChange}
           value={chosenLocationId.current}
         >
@@ -95,7 +95,7 @@ function DirectoryListView(props: Props) {
                 <span style={{ width: '100%' }}>{location.name}</span>
               </MenuItem>
             ))}
-        </Select>
+        </TsSelect>
       </FormControl>
     );
   }
@@ -158,9 +158,8 @@ function DirectoryListView(props: Props) {
     <div style={{ marginTop: 10 }}>
       {getDirLocations()}
       <TsButton
-        variant="text"
         startIcon={<ParentFolderIcon />}
-        style={{ margin: 5 }}
+        style={{ marginTop: 10, marginBottom: 10 }}
         data-tid="navigateToParentTID"
         onClick={() => {
           if (chosenDirectory.current) {
@@ -177,9 +176,8 @@ function DirectoryListView(props: Props) {
         {t('core:navigateToParentDirectory')}
       </TsButton>
       <TsButton
-        variant="text"
         startIcon={<NewFolderIcon />}
-        style={{ margin: 5 }}
+        style={{ marginLeft: 5, marginTop: 10, marginBottom: 10 }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
           openCreateDirectoryDialog(chosenDirectory.current, (newDirPath) => {
@@ -194,7 +192,7 @@ function DirectoryListView(props: Props) {
       <List
         dense
         style={{
-          borderRadius: 5,
+          borderRadius: AppConfig.defaultCSSRadius,
           border: '1px solid gray',
           maxHeight: 300,
           overflowY: 'auto',

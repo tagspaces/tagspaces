@@ -21,13 +21,8 @@ import React, { ChangeEvent } from 'react';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import {
-  Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import TsIconButton from '-/components/TsIconButton';
+import { Grid, InputAdornment, MenuItem, Select } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
@@ -146,13 +141,12 @@ function WebdavForm(props: Props) {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
+                      <TsIconButton
                         aria-label="toggle password visibility"
                         onClick={() => setShowPassword(!showPassword)}
-                        size="large"
                       >
                         {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
+                      </TsIconButton>
                     </InputAdornment>
                   ),
                 }}
@@ -177,13 +171,12 @@ function WebdavForm(props: Props) {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
+                    <TsIconButton
                       aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
-                      size="large"
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
+                    </TsIconButton>
                   </InputAdornment>
                 ),
               }}

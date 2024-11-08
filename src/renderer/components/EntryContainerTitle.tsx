@@ -32,7 +32,7 @@ import EntryContainerMenu from '-/components/EntryContainerMenu';
 import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import HttpsIcon from '@mui/icons-material/Https';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
@@ -239,10 +239,9 @@ function EntryContainerTitle(props: Props) {
         </Box>
       </Tooltip>
       <ProTooltip tooltip={t('core:toggleBookmark')}>
-        <IconButton
+        <TsIconButton
           data-tid="toggleBookmarkTID"
           aria-label="bookmark"
-          size="small"
           onClick={bookmarkClick}
           style={{
             // @ts-ignore
@@ -263,7 +262,7 @@ function EntryContainerTitle(props: Props) {
               }}
             />
           )}
-        </IconButton>
+        </TsIconButton>
       </ProTooltip>
       <TagsPreview tags={getAllTags(openedEntry)} />
       {openedEntry.isEncrypted && (

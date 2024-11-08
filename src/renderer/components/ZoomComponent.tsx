@@ -22,7 +22,7 @@ import Box from '@mui/material/Box';
 import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
 import ZoomInIcon from '@mui/icons-material/ControlPoint';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useReducer } from 'react';
 
@@ -90,18 +90,18 @@ export default function ZoomComponent(props: Props) {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <IconButton onClick={zoomOut}>
+      <TsIconButton onClick={zoomOut}>
         <ZoomOutIcon />
-      </IconButton>
+      </TsIconButton>
       <Typography
         variant="overline"
         style={{ color: theme.palette.text.primary, marginTop: 4 }}
       >
         {entrySizePercent}
       </Typography>
-      <IconButton onClick={zoomIn}>
+      <TsIconButton onClick={zoomIn}>
         <ZoomInIcon />
-      </IconButton>
+      </TsIconButton>
     </Box>
   );
 }

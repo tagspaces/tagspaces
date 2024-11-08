@@ -18,39 +18,27 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import FormHelperText from '@mui/material/FormHelperText';
+import MenuList, { MenuListProps } from '@mui/material/MenuList';
 import { isDesktopMode } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 
-type TSSelectProps = TextFieldProps & {};
+export type TSButtonProps = MenuListProps & {};
 
-function TsSelect(props: TSSelectProps) {
-  const { children, label } = props;
+function TsMenuList(props: TSButtonProps) {
+  const { children, style } = props;
   const desktopMode = useSelector(isDesktopMode);
 
   return (
-    <div>
-      <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-        {label}
-      </FormHelperText>
-      <TextField
-        style={{
-          cursor: 'context-menu',
-          marginTop: 0,
-        }}
-        margin="dense"
-        size={desktopMode ? 'small' : 'medium'}
-        variant="outlined"
-        select
-        fullWidth={true}
-        {...props}
-        label={undefined}
-      >
-        {children}
-      </TextField>
-    </div>
+    <MenuList
+      dense={desktopMode ? true : false}
+      {...props}
+      style={{
+        ...style,
+      }}
+    >
+      {children}
+    </MenuList>
   );
 }
 
-export default TsSelect;
+export default TsMenuList;

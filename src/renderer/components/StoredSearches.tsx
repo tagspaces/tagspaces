@@ -20,7 +20,7 @@ import React, { useContext, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -66,7 +66,9 @@ interface Props {
   setFileEditHistory: (value: boolean) => void;
 }
 
-const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
+const SaveSearchDialog = Pro?.UI?.SaveSearchDialog
+  ? Pro.UI.SaveSearchDialog
+  : false;
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
@@ -188,7 +190,7 @@ function StoredSearches(props: Props) {
       >
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid={
                 props.storedSearchesVisible
                   ? 'storedSearchesVisibleTID'
@@ -198,17 +200,15 @@ function StoredSearches(props: Props) {
               onClick={() =>
                 props.setStoredSearchesVisible(!props.storedSearchesVisible)
               }
-              size="large"
             >
               {props.storedSearchesVisible ? (
                 <ArrowDownIcon />
               ) : (
                 <ArrowRightIcon />
               )}
-            </IconButton>
+            </TsIconButton>
             <Typography
               variant="inherit"
-              // className={props.classes.header}
               style={{ display: 'inline' }}
               noWrap
               onClick={() =>
@@ -230,14 +230,12 @@ function StoredSearches(props: Props) {
                 fileInputRef.current.click();
               }}
             />
-            <IconButton
+            <TsIconButton
               data-tid="StoredSearchesMenuTID"
-              style={{ minWidth: 'auto', padding: 7 }}
               onClick={handleSearchMenu}
-              size="large"
             >
               <MenuIcon />
-            </IconButton>
+            </TsIconButton>
           </Grid>
         </Grid>
         <Grid container direction="row">
@@ -256,6 +254,7 @@ function StoredSearches(props: Props) {
                     'StoredSearchTID' +
                     search.title.trim().replaceAll(/\s+/g, '-')
                   }
+                  variant="text"
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
@@ -278,27 +277,25 @@ function StoredSearches(props: Props) {
                 </TsButton>
               </Grid>
               <Grid item xs={2}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:searchEditBtn')}
                   onClick={() => editSearch(search.uuid)}
                   data-tid="editSearchTID"
-                  size="small"
                 >
                   <EditIcon />
-                </IconButton>
+                </TsIconButton>
               </Grid>
             </ListItem>
           ))}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="BookmarksTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
-              size="large"
             >
               {props.showBookmarks ? <ArrowDownIcon /> : <ArrowRightIcon />}
-            </IconButton>
+            </TsIconButton>
             <Typography
               variant="inherit"
               style={{ display: 'inline' }}
@@ -309,17 +306,15 @@ function StoredSearches(props: Props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="BookmarksMenuTID"
-              style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileOpenKey;
                 setBookmarksMenuAnchorEl(event.currentTarget);
               }}
-              size="large"
             >
               <MenuIcon />
-            </IconButton>
+            </TsIconButton>
           </Grid>
         </Grid>
         <Grid container direction="row">
@@ -338,7 +333,7 @@ function StoredSearches(props: Props) {
         )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid={
                 props.fileOpenHistory
                   ? 'fileCloseHistoryTID'
@@ -346,10 +341,9 @@ function StoredSearches(props: Props) {
               }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
-              size="large"
             >
               {props.fileOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-            </IconButton>
+            </TsIconButton>
             <Typography
               variant="inherit"
               style={{ display: 'inline' }}
@@ -360,17 +354,15 @@ function StoredSearches(props: Props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="fileOpenMenuTID"
-              style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileOpenKey;
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
-              size="large"
             >
               <MenuIcon />
-            </IconButton>
+            </TsIconButton>
           </Grid>
         </Grid>
         <Grid container direction="row">
@@ -389,17 +381,15 @@ function StoredSearches(props: Props) {
         )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="fileEditHistoryTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
-              size="large"
             >
               {props.fileEditHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-            </IconButton>
+            </TsIconButton>
             <Typography
               variant="inherit"
-              // className={props.classes.header}
               style={{ display: 'inline' }}
               noWrap
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
@@ -408,17 +398,15 @@ function StoredSearches(props: Props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="FileEditedMenuTID"
-              style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileEditKey;
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
-              size="large"
             >
               <MenuIcon />
-            </IconButton>
+            </TsIconButton>
           </Grid>
         </Grid>
         <Grid container direction="row">
@@ -437,7 +425,7 @@ function StoredSearches(props: Props) {
         )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid={
                 props.folderOpenHistory
                   ? 'folderCloseHistoryTID'
@@ -447,10 +435,9 @@ function StoredSearches(props: Props) {
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)
               }
-              size="large"
             >
               {props.folderOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-            </IconButton>
+            </TsIconButton>
             <Typography
               variant="inherit"
               style={{ display: 'inline' }}
@@ -463,17 +450,15 @@ function StoredSearches(props: Props) {
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
-            <IconButton
+            <TsIconButton
               data-tid="FolderOpenMenuTID"
-              style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.folderOpenKey;
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
-              size="large"
             >
               <MenuIcon />
-            </IconButton>
+            </TsIconButton>
           </Grid>
         </Grid>
         <HistoryMenu
@@ -484,7 +469,7 @@ function StoredSearches(props: Props) {
           clearAll={() => {
             if (Pro) {
               historyContext.delAllHistory(menuHistoryKey.current);
-            } //historyKeys.fileOpenKey);
+            }
             forceUpdate();
           }}
         />
@@ -496,7 +481,7 @@ function StoredSearches(props: Props) {
           clearAll={() => {
             if (Pro && bookmarksContext) {
               bookmarksContext.delAllBookmarks();
-            } //historyKeys.fileOpenKey);
+            }
             forceUpdate();
           }}
         />
@@ -524,18 +509,6 @@ function StoredSearches(props: Props) {
                   ...searchQuery,
                   showUnixHiddenEntries: props.showUnixHiddenEntries,
                 });
-
-                /* if (searchQuery.searchBoxing === 'global') {
-                props.searchAllLocations({
-                  ...searchQuery,
-                  showUnixHiddenEntries: props.showUnixHiddenEntries
-                });
-              } else {
-                props.searchLocationIndex({
-                  ...searchQuery,
-                  showUnixHiddenEntries: props.showUnixHiddenEntries
-                });
-              } */
               }
             }}
             onClearSearch={() => console.log('search deleted')}
@@ -599,11 +572,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.fileOpenHistory === prevProp.fileOpenHistory &&
   nextProp.folderOpenHistory === prevProp.folderOpenHistory &&
   nextProp.fileEditHistory === prevProp.fileEditHistory &&
-  //  nextProp.indexing === prevProp.indexing &&
   nextProp.currentDirectory === prevProp.currentDirectory;
-// nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
-//  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
-//  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
 
 export default connect(
   mapStateToProps,

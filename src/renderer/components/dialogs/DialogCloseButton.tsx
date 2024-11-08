@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import IconButton from '@mui/material/IconButton';
-import { CloseIcon } from '../CommonIcons';
+import TsIconButton from '-/components/TsIconButton';
+import { CloseIcon } from '-/components/CommonIcons';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -30,7 +30,7 @@ function DialogCloseButton(props: Props) {
   const { onClose, testId } = props;
   const { t } = useTranslation();
   return (
-    <IconButton
+    <TsIconButton
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
@@ -41,10 +41,9 @@ function DialogCloseButton(props: Props) {
       }}
       data-tid={testId && testId}
       onClick={onClose}
-      size="large"
     >
       <CloseIcon />
-    </IconButton>
+    </TsIconButton>
   );
 }
 

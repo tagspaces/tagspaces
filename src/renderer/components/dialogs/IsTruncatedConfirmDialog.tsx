@@ -18,7 +18,7 @@
 
 import React from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -108,11 +108,9 @@ function IsTruncatedConfirmDialog(props: Props) {
           />
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <TsButton onClick={() => onClose()} color="primary">
-          {t('core:continue')}
-        </TsButton>
-      </DialogActions>
+      <TsDialogActions>
+        <TsButton onClick={() => onClose()}>{t('core:continue')}</TsButton>
+      </TsDialogActions>
     </Dialog>
   );
 }

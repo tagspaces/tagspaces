@@ -17,8 +17,10 @@
  */
 
 import React, { useState } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -66,6 +68,8 @@ function ColorPickerDialog(props: Props) {
   const { t } = useTranslation();
   const [color, setColor] = useState(undefined);
   const { open = false, onClose } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function onConfirm() {
     // if (color && colorHex) {
@@ -79,6 +83,7 @@ function ColorPickerDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -112,19 +117,18 @@ function ColorPickerDialog(props: Props) {
           style={{ backgroundColor: 'transparent' }}
         />
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="colorPickerCloseDialog" onClick={props.onClose}>
           {t('core:cancel')}
         </TsButton>
         <TsButton
-          onClick={onConfirm}
           variant="contained"
+          onClick={onConfirm}
           data-tid="colorPickerConfirm"
-          color="primary"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

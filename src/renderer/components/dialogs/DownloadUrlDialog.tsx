@@ -30,7 +30,7 @@ import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import TsTextField from '-/components/TsTextField';
@@ -200,7 +200,7 @@ function DownloadUrlDialog(props: Props) {
             />
             <TargetPath />
           </DialogContent>
-          <DialogActions>
+          <TsDialogActions>
             <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
             <TsButton
               variant="contained"
@@ -210,7 +210,7 @@ function DownloadUrlDialog(props: Props) {
             >
               {t('core:ok')}
             </TsButton>
-          </DialogActions>
+          </TsDialogActions>
         </Dialog>
       </TargetPathContextProvider>
     </Root>

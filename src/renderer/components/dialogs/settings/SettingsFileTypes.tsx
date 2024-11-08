@@ -23,7 +23,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import RemoveIcon from '@mui/icons-material/RemoveCircle';
 import TsButton from '-/components/TsButton';
 import Select from '@mui/material/Select';
@@ -457,14 +457,13 @@ function SettingsFileTypes() {
             </Tooltip>
           </TransparentBackground>
           <Tooltip title={t('removeFileType', { itemType: item.type })}>
-            <IconButton
+            <TsIconButton
               data-tid="settingsFileTypes_remove_"
               className={classes.fileExtRemove}
               onClick={() => onRemoveItem(item)}
-              size="large"
             >
               <RemoveIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         </TableCell>
       </React.Fragment>
@@ -472,79 +471,81 @@ function SettingsFileTypes() {
   }
 
   return (
-    <Root>
-      <Paper
+    <Paper
+      style={{
+        height: 500,
+        width: '100%',
+        minWidth: 350,
+        overflow: 'hidden',
+        background: 'transparent',
+        paddingLeft: 10,
+      }}
+    >
+      <TsButton
+        data-tid="addNewFileTypeTID"
+        onClick={onAddFileType}
+        color="secondary"
         style={{
-          height: 500,
-          width: '100%',
-          minWidth: 550,
-          overflow: 'hidden',
-          background: 'transparent',
+          marginTop: AppConfig.defaultSpaceBetweenButtons,
+          marginBottom: AppConfig.defaultSpaceBetweenButtons,
         }}
       >
+        {t('core:addNewFileType')}
+      </TsButton>
+      {devMode && (
         <TsButton
-          data-tid="addNewFileTypeTID"
-          onClick={onAddFileType}
-          color="secondary"
-          style={{ width: '50%' }}
-        >
-          {t('core:addNewFileType')}
-        </TsButton>
-        {devMode && (
-          <TsButton
-            data-tid="resetFileTypesTID"
-            onClick={() => {
-              selectedItem.current = undefined;
-              items.current = defaultSupportedFileTypes;
-              dispatch(
-                SettingsActions.setSupportedFileTypes(supportedFileTypes),
-              );
-            }}
-            color="secondary"
-            style={{ width: '50%' }}
-          >
-            {t('core:resetFileType')}
-          </TsButton>
-        )}
-        {isConfirmDialogOpened && (
-          <ConfirmDialog
-            open={isConfirmDialogOpened}
-            onClose={() => {
-              setIsConfirmDialogOpened(false);
-            }}
-            title="Confirm"
-            content={t('core:confirmFileTypeDeletion')}
-            confirmCallback={(result) => {
-              if (result) {
-                removeItem(selectedItem.current);
-              }
-            }}
-            cancelDialogTID="cancelDeleteFileTypeDialog"
-            confirmDialogTID="confirmDeleteFileTypeDialog"
-            confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
-          />
-        )}
-        <TableVirtuoso
-          style={{
-            overflowX: 'hidden',
-            height: 'calc(100% - 30px)',
-            overflowY: 'auto',
-            background: 'transparent',
+          data-tid="resetFileTypesTID"
+          onClick={() => {
+            selectedItem.current = undefined;
+            items.current = defaultSupportedFileTypes;
+            dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
           }}
-          data={items.current}
-          components={VirtuosoTableComponents}
-          fixedHeaderContent={fixedHeaderContent}
-          itemContent={rowContent}
-          ref={settingsFileTypeRef}
+          color="secondary"
+          style={{
+            margin: AppConfig.defaultSpaceBetweenButtons,
+          }}
+        >
+          {t('core:resetFileType')}
+        </TsButton>
+      )}
+      {isConfirmDialogOpened && (
+        <ConfirmDialog
+          open={isConfirmDialogOpened}
+          onClose={() => {
+            setIsConfirmDialogOpened(false);
+          }}
+          title="Confirm"
+          content={t('core:confirmFileTypeDeletion')}
+          confirmCallback={(result) => {
+            if (result) {
+              removeItem(selectedItem.current);
+            }
+          }}
+          cancelDialogTID="cancelDeleteFileTypeDialog"
+          confirmDialogTID="confirmDeleteFileTypeDialog"
+          confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
         />
-      </Paper>
+      )}
+      <TableVirtuoso
+        style={{
+          overflowX: 'hidden',
+          height: 'calc(100% - 30px)',
+          overflowY: 'auto',
+          background: 'transparent',
+        }}
+        data={items.current}
+        components={VirtuosoTableComponents}
+        fixedHeaderContent={fixedHeaderContent}
+        itemContent={rowContent}
+        ref={settingsFileTypeRef}
+      />
       <ColorPickerDialog
         open={isColorPickerVisible}
         setColor={handleChangeColor}
         onClose={closeColorPicker}
         color={selectedItem.current && selectedItem.current.color}
       />
-    </Root>
+    </Paper>
   );
 }
 

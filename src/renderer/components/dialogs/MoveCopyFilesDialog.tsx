@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
@@ -243,9 +243,7 @@ function MoveCopyFilesDialog(props: Props) {
           )}
         </Box>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
         </TsButton>
@@ -258,7 +256,6 @@ function MoveCopyFilesDialog(props: Props) {
               targetPath === currentDirectoryPath
             }
             onClick={() => copyMove(false)}
-            color="primary"
             variant="contained"
           >
             {t('core:moveEntriesButton')}
@@ -268,12 +265,11 @@ function MoveCopyFilesDialog(props: Props) {
           onClick={() => copyMove(true)}
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === currentDirectoryPath}
-          color="primary"
           variant="contained"
         >
           {t('core:copyEntriesButton')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

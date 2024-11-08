@@ -31,6 +31,7 @@ import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   setShowTeaserBanner: (teaserVisibility: boolean) => void;
@@ -106,7 +107,7 @@ function ProTeaser(props: Props) {
           {t('showMeMore')}
         </TsButton>
         <TsButton
-          style={{ marginLeft: 5 }}
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           onClick={(event: any) => {
             event.preventDefault();
             event.stopPropagation();

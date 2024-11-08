@@ -19,9 +19,10 @@
 import React from 'react';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { Menu, MenuList, MenuItem } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
-import { Pro } from '../../pro';
+import TsMenuList from '-/components/TsMenuList';
+import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -71,7 +72,7 @@ function BookmarksMenu(props: Props) {
 
   return (
     <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-      <MenuList>{menuItems}</MenuList>
+      <TsMenuList>{menuItems}</TsMenuList>
     </Menu>
   );
 }

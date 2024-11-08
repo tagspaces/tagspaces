@@ -18,39 +18,31 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import FormHelperText from '@mui/material/FormHelperText';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions';
 import { isDesktopMode } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 
-type TSSelectProps = TextFieldProps & {};
+export type TSDialogActions = DialogActionsProps & {};
 
-function TsSelect(props: TSSelectProps) {
-  const { children, label } = props;
+function TSDialogActions(props: TSDialogActions) {
+  const { children, style } = props;
   const desktopMode = useSelector(isDesktopMode);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <div>
-      <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-        {label}
-      </FormHelperText>
-      <TextField
-        style={{
-          cursor: 'context-menu',
-          marginTop: 0,
-        }}
-        margin="dense"
-        size={desktopMode ? 'small' : 'medium'}
-        variant="outlined"
-        select
-        fullWidth={true}
-        {...props}
-        label={undefined}
-      >
-        {children}
-      </TextField>
-    </div>
+    <DialogActions
+      {...props}
+      style={{
+        padding: fullScreen ? '10px 30px 30px 30px' : 'inherited',
+        ...style,
+      }}
+    >
+      {children}
+    </DialogActions>
   );
 }
 
-export default TsSelect;
+export default TSDialogActions;

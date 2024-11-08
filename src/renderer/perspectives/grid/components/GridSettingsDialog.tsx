@@ -19,7 +19,6 @@
 import React, { useEffect, useReducer } from 'react';
 import {
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -28,11 +27,11 @@ import {
   Switch,
   Divider,
   MenuItem,
-  FormHelperText,
   Typography,
   Paper,
   Box,
 } from '@mui/material';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -172,7 +171,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showDirectories: !showDirectories });
                 }}
                 name="checkedD"
-                color="primary"
               />
             }
             label={t('core:showHideDirectories')}
@@ -187,7 +185,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showTags: !showTags });
                 }}
                 name="checkedT"
-                color="primary"
               />
             }
             label={t('core:showTags')}
@@ -204,7 +201,6 @@ function GridSettingsDialog(props: Props) {
                   });
                 }}
                 name={t('core:showHideEntriesDescription')}
-                color="primary"
               />
             }
             label={t('core:showHideEntriesDescription')}
@@ -219,7 +215,6 @@ function GridSettingsDialog(props: Props) {
                   setSettings({ showDetails: !showDetails });
                 }}
                 name={t('core:showHideDetails')}
-                color="primary"
               />
             }
             label={t('core:showHideDetails')}
@@ -234,7 +229,6 @@ function GridSettingsDialog(props: Props) {
                     setSettings({ showDescription: !showDescription });
                   }}
                   name={t('core:showHideDescription')}
-                  color="primary"
                 />
               }
               label={t('core:showHideDescription')}
@@ -353,7 +347,7 @@ function GridSettingsDialog(props: Props) {
           {/* <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText> */}
         </FormControl>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'space-between' }}>
+      <TsDialogActions style={{ justifyContent: 'space-between' }}>
         <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
           {t('core:help')}
         </TsButton>
@@ -363,7 +357,6 @@ function GridSettingsDialog(props: Props) {
             saveSettings(true);
             onClose();
           }}
-          color="primary"
         >
           {t('core:defaultSettings')}
         </TsButton>
@@ -374,12 +367,11 @@ function GridSettingsDialog(props: Props) {
               saveSettings(false);
               onClose();
             }}
-            color="primary"
           >
             {t('core:directorySettings')}
           </TsButton>
         )}
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

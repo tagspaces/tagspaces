@@ -29,7 +29,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
@@ -159,9 +159,7 @@ function MoveOrCopyFilesDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton data-tid="closeMoveOrCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
         </TsButton>
@@ -183,7 +181,6 @@ function MoveOrCopyFilesDialog(props: Props) {
             onClose();
           }}
           data-tid="confirmMoveFilesTID"
-          color="primary"
           variant="contained"
         >
           {t('core:moveEntriesButton')}
@@ -206,12 +203,11 @@ function MoveOrCopyFilesDialog(props: Props) {
             onClose();
           }}
           data-tid="confirmCopyFilesTID"
-          color="primary"
           variant="contained"
         >
           {t('core:copyEntriesButton')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

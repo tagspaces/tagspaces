@@ -20,6 +20,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { isDesktopMode } from '-/reducers/settings';
+import AppConfig from '-/AppConfig';
 
 export type TSButtonProps = ButtonProps & {};
 
@@ -33,7 +34,7 @@ function TsButton(props: TSButtonProps) {
       variant="outlined" // text outlined contained
       {...props}
       style={{
-        borderRadius: 10,
+        borderRadius: AppConfig.defaultCSSRadius,
         // fontSize: 14,
         // textTransform: 'capitalize',
         ...style,

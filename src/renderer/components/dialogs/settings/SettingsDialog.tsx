@@ -25,7 +25,7 @@ import { useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { isDesktopMode } from '-/reducers/settings';
@@ -89,12 +89,13 @@ function SettingsDialog(props: Props) {
         variant={fullScreen ? 'scrollable' : 'standard'}
         orientation={fullScreen ? 'horizontal' : 'vertical'}
         style={{
-          width: fullScreen ? '100%' : '150px',
+          width: fullScreen ? '100%' : '170px',
         }}
       >
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -103,7 +104,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -112,7 +114,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -121,7 +124,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -130,7 +134,8 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           style={{
-            // textTransform: 'unset',
+            textTransform: 'unset',
+            fontSize: 16,
             alignItems: 'baseline',
             paddingLeft: 0,
           }}
@@ -197,10 +202,9 @@ function SettingsDialog(props: Props) {
   );
 
   const renderActions = () => (
-    <DialogActions
+    <TsDialogActions
       style={{
         justifyContent: 'space-between',
-        padding: fullScreen ? '10px 30px 30px 30px' : undefined,
       }}
     >
       <TsButton
@@ -215,7 +219,7 @@ function SettingsDialog(props: Props) {
       <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
         {t('core:closeButton')}
       </TsButton>
-    </DialogActions>
+    </TsDialogActions>
   );
 
   return (

@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import AppConfig from '-/AppConfig';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -42,6 +43,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
       : theme.palette.grey[800];
   return {
     backgroundColor,
+    borderRadius: AppConfig.defaultCSSRadius,
     height: theme.spacing(4),
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,

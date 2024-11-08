@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -260,18 +260,17 @@ function EditTagGroupDialog(props: Props) {
   };
 
   const renderActions = () => (
-    <DialogActions>
+    <TsDialogActions>
       <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
       <TsButton
         disabled={disableConfirmButton()}
         onClick={onConfirm}
         data-tid="editTagGroupConfirmButton"
-        color="primary"
         variant="contained"
       >
         {t('core:ok')}
       </TsButton>
-    </DialogActions>
+    </TsDialogActions>
   );
 
   // const theme = useTheme();

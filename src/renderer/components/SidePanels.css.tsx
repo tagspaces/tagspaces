@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import { styled } from '@mui/material/styles';
 
 const PREFIX = 'SidePanel';
@@ -53,11 +54,13 @@ export const SidePanel = styled('div')(({ theme }) => ({
   },
   [`& .${classes.listItem}`]: {
     padding: 0,
-    borderRadius: 5,
+    paddingRight: 15,
+    borderRadius: AppConfig.defaultCSSRadius,
   },
   [`& .${classes.listItemSelected}`]: {
     padding: 0,
-    borderRadius: 5,
+    paddingRight: 15,
+    borderRadius: AppConfig.defaultCSSRadius,
     backgroundColor: theme.palette.primary.light,
   },
   [`& .${classes.panelTitle}`]: {

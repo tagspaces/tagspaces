@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -132,7 +132,6 @@ function LinkGeneratorDialog(props: Props) {
                       showNotification(t('core:linkCopied'));
                     });
                   }}
-                  color="primary"
                 >
                   {t('core:copy')}
                 </TsButton>
@@ -165,14 +164,12 @@ function LinkGeneratorDialog(props: Props) {
           }}
         />
       </DialogContent>
-      <DialogActions
+      <TsDialogActions
         style={{
           justifyContent: 'space-between',
-          padding: fullScreen ? '10px 30px 30px 30px' : undefined,
         }}
       >
         <TsButton
-          variant="text"
           data-tid="helpSearchButtonTID"
           onClick={() => {
             openUrl(Links.documentationLinks.sharing);
@@ -180,15 +177,10 @@ function LinkGeneratorDialog(props: Props) {
         >
           {t('help')}
         </TsButton>
-        <TsButton
-          data-tid="closeLinkTID"
-          onClick={onClose}
-          variant="contained"
-          color="primary"
-        >
+        <TsButton data-tid="closeLinkTID" onClick={onClose} variant="contained">
           {t('core:close')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

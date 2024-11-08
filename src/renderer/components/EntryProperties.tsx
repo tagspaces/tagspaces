@@ -28,7 +28,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import {
-  Grid,
   FormControl,
   Typography,
   TextField,
@@ -39,6 +38,7 @@ import {
 } from '@mui/material';
 import Tooltip from '-/components/Tooltip';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import InfoIcon from '-/components/InfoIcon';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import ColorPaletteIcon from '@mui/icons-material/ColorLens';
@@ -52,7 +52,7 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { ButtonGroup, IconButton, Button } from '@mui/material';
+import TsIconButton from '-/components/TsIconButton';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
@@ -95,6 +95,7 @@ import { generateClipboardLink } from '-/utils/dom';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import AppConfig from '-/AppConfig';
 
 const PREFIX = 'EntryProperties';
 
@@ -705,7 +706,6 @@ function EntryProperties(props: Props) {
                     <br />
                     <p>
                       <TsButton
-                        color="primary"
                         onClick={() => {
                           openUrl(
                             'https://www.openstreetmap.org/?mlat=' +
@@ -725,8 +725,9 @@ function EntryProperties(props: Props) {
                         OpenStreetMap
                       </TsButton>
                       <TsButton
-                        color="primary"
-                        style={{ marginLeft: 5 }}
+                        style={{
+                          marginLeft: AppConfig.defaultSpaceBetweenButtons,
+                        }}
                         onClick={() => {
                           openUrl(
                             'https://maps.google.com/?q=' +
@@ -980,14 +981,14 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Box>
                       <ProTooltip tooltip={t('changeBackgroundColor')}>
-                        <IconButton
+                        <TsIconButton
                           data-tid="changeBackgroundColorTID"
                           aria-describedby={popoverId}
                           onClick={handlePopeverClick}
                           disabled={!Pro}
                         >
                           <ColorPaletteIcon />
-                        </IconButton>
+                        </TsIconButton>
                       </ProTooltip>
                       <Popover
                         open={popoverOpen}
@@ -1006,7 +1007,7 @@ function EntryProperties(props: Props) {
                         <Box style={{ padding: 10 }}>
                           {defaultBackgrounds.map((background, cnt) => (
                             <>
-                              <IconButton
+                              <TsIconButton
                                 key={cnt}
                                 data-tid={'backgroundTID' + cnt}
                                 aria-label="changeFolderBackround"
@@ -1021,7 +1022,7 @@ function EntryProperties(props: Props) {
                                 }}
                               >
                                 <SetBackgroundIcon />
-                              </IconButton>
+                              </TsIconButton>
                               {cnt % 4 === 3 && <br />}
                             </>
                           ))}
@@ -1031,7 +1032,7 @@ function EntryProperties(props: Props) {
                     {openedEntry.meta && openedEntry.meta.color && (
                       <>
                         <ProTooltip tooltip={t('clearFolderColor')}>
-                          <IconButton
+                          <TsIconButton
                             data-tid={'backgroundClearTID'}
                             disabled={!Pro}
                             aria-label="clear"
@@ -1040,7 +1041,7 @@ function EntryProperties(props: Props) {
                             }
                           >
                             <ClearBackgroundIcon />
-                          </IconButton>
+                          </TsIconButton>
                         </ProTooltip>
                       </>
                     )}

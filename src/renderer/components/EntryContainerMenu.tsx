@@ -9,7 +9,6 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  MenuList,
   Divider,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
@@ -41,10 +40,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import {
   createNewInstance,
-  downloadFile,
   openDirectoryMessage,
   openFileMessage,
 } from '-/services/utils-io';
+import TsMenuList from '-/components/TsMenuList';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -449,7 +448,7 @@ function EntryContainerMenu(props: Props) {
           horizontal: 'left',
         }}
       >
-        <MenuList sx={{ minWidth: 300 }}>{menuItems}</MenuList>
+        <TsMenuList sx={{ minWidth: 300 }}>{menuItems}</TsMenuList>
       </Menu>
       {isDeleteEntryModalOpened && (
         <ConfirmDialog

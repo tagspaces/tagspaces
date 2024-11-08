@@ -19,12 +19,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import { getKeyBindingObject } from '-/reducers/settings';
@@ -95,7 +95,7 @@ function KeyboardDialog(props: Props) {
             Object.keys(keyBindings).map((shortcutKey) => (
               <ListItem key={shortcutKey}>
                 <ListItemText primary={t('core:' + shortcutKey)} />
-                <ListItemSecondaryAction
+                <Box
                   style={{
                     backgroundColor: 'gray',
                     color: 'white',
@@ -106,23 +106,20 @@ function KeyboardDialog(props: Props) {
                   }}
                 >
                   {adjustKeyBinding(keyBindings[shortcutKey])}
-                </ListItemSecondaryAction>
+                </Box>
               </ListItem>
             ))}
         </List>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton
           data-tid="closeKeyboardDialog"
           onClick={onClose}
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

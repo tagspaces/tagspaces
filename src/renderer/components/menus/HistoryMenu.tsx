@@ -23,7 +23,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Pro } from '../../pro';
+import TsMenuList from '-/components/TsMenuList';
+import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -74,7 +75,7 @@ function HistoryMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        {menuItems}
+        <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
     </div>
   );

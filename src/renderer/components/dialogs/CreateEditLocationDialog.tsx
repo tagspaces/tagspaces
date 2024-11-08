@@ -22,7 +22,7 @@ import CryptoJS from 'crypto-js';
 import Paper from '@mui/material/Paper';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Switch from '@mui/material/Switch';
@@ -42,7 +42,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import { useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -1016,7 +1016,6 @@ function CreateEditLocationDialog(props: Props) {
                   control={
                     <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
                       <TsButton
-                        color="primary"
                         disabled={!Pro}
                         onClick={() => {
                           setIgnorePatternDialogOpen(true);
@@ -1090,7 +1089,7 @@ function CreateEditLocationDialog(props: Props) {
                     endAdornment: (
                       <InputAdornment position="end" style={{ height: 32 }}>
                         <Tooltip title="Generates new unique identifier for this location">
-                          <IconButton
+                          <TsIconButton
                             onClick={() => {
                               const result = confirm(
                                 'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
@@ -1099,10 +1098,9 @@ function CreateEditLocationDialog(props: Props) {
                                 setNewLocationID(getUuid());
                               }
                             }}
-                            size="large"
                           >
                             <IDIcon />
-                          </IconButton>
+                          </TsIconButton>
                         </Tooltip>
                       </InputAdornment>
                     ),
@@ -1147,7 +1145,7 @@ function CreateEditLocationDialog(props: Props) {
                     endAdornment: (
                       <InputAdornment position="end">
                         <TooltipTS title={t('toggleKeyVisibility')}>
-                          <IconButton
+                          <TsIconButton
                             aria-label="toggle key visibility"
                             onClick={() =>
                               setShowEncryptionKey(!showEncryptionKey)
@@ -1158,10 +1156,10 @@ function CreateEditLocationDialog(props: Props) {
                             ) : (
                               <VisibilityOff />
                             )}
-                          </IconButton>
+                          </TsIconButton>
                         </TooltipTS>
                         <TooltipTS title={t('generateEncryptionKey')}>
-                          <IconButton
+                          <TsIconButton
                             aria-label="generate encryption key"
                             onClick={() =>
                               setEncryptionKey(
@@ -1172,7 +1170,7 @@ function CreateEditLocationDialog(props: Props) {
                             }
                           >
                             <PasswordIcon />
-                          </IconButton>
+                          </TsIconButton>
                         </TooltipTS>
                       </InputAdornment>
                     ),
@@ -1183,20 +1181,17 @@ function CreateEditLocationDialog(props: Props) {
           </Accordion>
         )}
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
         <TsButton
           disabled={disableConfirmButton()}
           onClick={preConfirm}
           data-tid="confirmLocationCreation"
-          color="primary"
           variant="contained"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </StyledDialog>
   );
 }

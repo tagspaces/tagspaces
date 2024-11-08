@@ -23,8 +23,10 @@ import React, {
   ChangeEvent,
   useRef,
 } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -38,11 +40,10 @@ import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { tagsValidation } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -186,7 +187,7 @@ function EditEntryTagDialog(props: Props) {
 
   function renderActions() {
     return (
-      <DialogActions
+      <TsDialogActions
         style={{
           justifyContent: 'space-between',
         }}
@@ -209,16 +210,15 @@ function EditEntryTagDialog(props: Props) {
           </TsButton>
           <TsButton
             disabled={haveError()}
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
-            color="primary"
             variant="contained"
           >
             {t('core:ok')}
           </TsButton>
         </div>
-      </DialogActions>
+      </TsDialogActions>
     );
   }
 

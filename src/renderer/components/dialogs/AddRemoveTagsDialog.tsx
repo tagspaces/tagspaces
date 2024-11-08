@@ -19,7 +19,7 @@
 import React, { useReducer, useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import Paper from '@mui/material/Paper';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
@@ -195,9 +195,7 @@ function AddRemoveTagsDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
-      >
+      <TsDialogActions>
         <TsButton
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
@@ -207,7 +205,6 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="cleanTagsMultipleEntries"
           disabled={selected.length < 1}
-          color="primary"
           onClick={removeAllTagsAction}
         >
           {t('core:tagOperationCleanTags')}
@@ -215,7 +212,6 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="removeTagsMultipleEntries"
           disabled={disabledButtons}
-          color="primary"
           onClick={removeTagsAction}
         >
           {t('core:tagOperationRemoveTag')}
@@ -223,13 +219,12 @@ function AddRemoveTagsDialog(props: Props) {
         <TsButton
           data-tid="addTagsMultipleEntries"
           disabled={disabledButtons}
-          color="primary"
           variant="contained"
           onClick={addTagsAction}
         >
           {t('core:tagOperationAddTag')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

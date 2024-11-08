@@ -20,7 +20,7 @@ import React, { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import TsButton from '-/components/TsButton';
-import DialogActions from '@mui/material/DialogActions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
@@ -91,7 +91,7 @@ function OpenLinkDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      //fullScreen={fullScreen}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -120,17 +120,19 @@ function OpenLinkDialog(props: Props) {
             retrieveValue={() => linkURL}
             value={linkURL}
             data-tid="openLinkTID"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="closeOpenLinkDialog" onClick={onCancel}>
           {t('core:cancel')}
         </TsButton>
@@ -138,12 +140,11 @@ function OpenLinkDialog(props: Props) {
           disabled={disableConfirmButton}
           onClick={onConfirm}
           data-tid="confirmOpenLink"
-          color="primary"
           variant="contained"
         >
           {t('core:open')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/HighlightOffOutlined';
-import PrevDocumentIcon from '@mui/icons-material/ExpandCircleDownOutlined';
-import NextDocumentIcon from '@mui/icons-material/ExpandCircleDownOutlined';
+import TsIconButton from '-/components/TsIconButton';
+import {
+  CloseIcon,
+  PrevDocumentIcon,
+  NextDocumentIcon,
+} from '-/components/CommonIcons';
 import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
@@ -41,7 +43,7 @@ function EntryContainerNav(props: Props) {
             title={t('core:openPrevFileTooltip')}
             keyBinding={keyBindings['prevDocument']}
           >
-            <IconButton
+            <TsIconButton
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
               onClick={() => {
@@ -51,16 +53,15 @@ function EntryContainerNav(props: Props) {
                 setActions(action);
                 //window.dispatchEvent(new Event('previous-file'));
               }}
-              // size="large"
             >
-              <PrevDocumentIcon style={{ transform: 'rotate(180deg)' }} />
-            </IconButton>
+              <PrevDocumentIcon />
+            </TsIconButton>
           </Tooltip>
           <Tooltip
             title={t('core:openNextFileTooltip')}
             keyBinding={keyBindings['nextDocument']}
           >
-            <IconButton
+            <TsIconButton
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
               onClick={() => {
@@ -68,10 +69,9 @@ function EntryContainerNav(props: Props) {
                 setActions(action);
                 //window.dispatchEvent(new Event('next-file'));
               }}
-              // size="large"
             >
               <NextDocumentIcon />
-            </IconButton>
+            </TsIconButton>
           </Tooltip>
         </>
       )}
@@ -79,14 +79,13 @@ function EntryContainerNav(props: Props) {
         title={t('core:closeEntry')}
         keyBinding={keyBindings['closeViewer']}
       >
-        <IconButton
+        <TsIconButton
           onClick={startClosingEntry}
           aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
-          // size="large"
         >
           <CloseIcon />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
     </div>
   );

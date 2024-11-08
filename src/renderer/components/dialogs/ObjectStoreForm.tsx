@@ -21,7 +21,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
@@ -223,15 +223,14 @@ function ObjectStoreForm(props: Props) {
               endAdornment: (
                 <InputAdornment position="end">
                   <TooltipTS title={t('toggleKeyVisibility')}>
-                    <IconButton
+                    <TsIconButton
                       aria-label="toggle password visibility"
                       onClick={() =>
                         setShowSecretAccessKey(!showSecretAccessKey)
                       }
-                      size="large"
                     >
                       {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
+                    </TsIconButton>
                   </TooltipTS>
                 </InputAdornment>
               ),

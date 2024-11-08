@@ -20,19 +20,19 @@ import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Dialog,
-  DialogActions,
   FormControl,
   DialogContent,
   DialogTitle,
   FormHelperText,
-  IconButton,
   InputAdornment,
   inputBaseClasses,
 } from '@mui/material';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
+import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -226,7 +226,7 @@ function CreateDirectoryDialog(props: Props) {
                 <InputAdornment position="end">
                   {defaultBackgrounds.map((background, cnt) => (
                     <>
-                      <IconButton
+                      <TsIconButton
                         key={cnt}
                         data-tid={'bgTID' + cnt}
                         aria-label="changeFolderBackground"
@@ -244,7 +244,7 @@ function CreateDirectoryDialog(props: Props) {
                         }}
                       >
                         <SetBackgroundIcon />
-                      </IconButton>
+                      </TsIconButton>
                     </>
                   ))}
                 </InputAdornment>
@@ -253,21 +253,20 @@ function CreateDirectoryDialog(props: Props) {
           />
         </FormControl>
       </DialogContent>
-      <DialogActions>
+      <TsDialogActions>
         <TsButton data-tid="closeCreateNewDirectory" onClick={onCancel}>
           {t('core:cancel')}
         </TsButton>
         <TsButton
           disabled={disableConfirmButton}
           onClick={onConfirm}
-          variant="contained"
           data-tid="confirmCreateNewDirectory"
           id="confirmCreateNewDirectory"
-          color="primary"
+          variant="contained"
         >
           {t('core:ok')}
         </TsButton>
-      </DialogActions>
+      </TsDialogActions>
     </Dialog>
   );
 }

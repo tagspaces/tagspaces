@@ -35,6 +35,7 @@ import {
   readMacOSTags,
 } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
+import TsMenuList from '-/components/TsMenuList';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -438,19 +439,17 @@ Do you want to continue?`)
   );
 
   return (
-    <>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={onClose}
-        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
-        anchorPosition={
-          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
-        }
-      >
-        <MenuList>{menuItems}</MenuList>
-      </Menu>
-    </>
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
+      anchorPosition={
+        mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
+      }
+    >
+      <TsMenuList>{menuItems}</TsMenuList>
+    </Menu>
   );
 }
 

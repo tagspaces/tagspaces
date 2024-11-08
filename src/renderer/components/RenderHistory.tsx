@@ -28,7 +28,7 @@ import {
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import IconButton from '@mui/material/IconButton';
+import TsIconButton from '-/components/TsIconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
@@ -94,9 +94,9 @@ function RenderHistory(props: Props) {
                     }
                   >
                     {historyKey === Pro.keys.bookmarksKey ? (
-                      <BookmarkTwoToneIcon fontSize="small" />
+                      <BookmarkTwoToneIcon />
                     ) : (
-                      <HistoryIcon fontSize="small" />
+                      <HistoryIcon />
                     )}
                   </Tooltip>
                   &nbsp;
@@ -115,7 +115,7 @@ function RenderHistory(props: Props) {
               {showDelete && (
                 <Grid item xs={2}>
                   <TooltipTS title={t('delete')}>
-                    <IconButton
+                    <TsIconButton
                       aria-label={t('core:clearHistory')}
                       onClick={() => {
                         if (historyKey === Pro.keys.bookmarksKey) {
@@ -130,10 +130,9 @@ function RenderHistory(props: Props) {
                         update();
                       }}
                       data-tid="deleteHistoryItemTID"
-                      size="small"
                     >
                       <RemoveIcon />
-                    </IconButton>
+                    </TsIconButton>
                   </TooltipTS>
                 </Grid>
               )}
