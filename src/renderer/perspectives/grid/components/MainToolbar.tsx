@@ -231,18 +231,16 @@ function MainToolbar(props: Props) {
             </span>
           </Tooltip>
         )}
-        {openShareFilesDialog && (
+        {openShareFilesDialog && currentLocation?.haveObjectStoreSupport() && (
           <ProTooltip tooltip={t('core:shareFiles')}>
-            <span>
-              <TsIconButton
-                aria-label={t('core:shareFiles')}
-                data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-                onClick={openShareFilesDialog}
-                disabled={selectedEntries.length < 1}
-              >
-                <ShareIcon />
-              </TsIconButton>
-            </span>
+            <TsIconButton
+              aria-label={t('core:shareFiles')}
+              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+              onClick={openShareFilesDialog}
+              disabled={selectedEntries.length < 1}
+            >
+              <ShareIcon />
+            </TsIconButton>
           </ProTooltip>
         )}
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
