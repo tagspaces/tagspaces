@@ -23,11 +23,9 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
-import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useSelector } from 'react-redux';
 import { clearAllURLParams } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { styled, useTheme } from '@mui/material/styles';
@@ -150,18 +148,17 @@ function UserDetailsPopover(props: Props) {
               />
             )}
             {'SOFTWARE_TOKEN_MFA'.indexOf(currentUser.preferredMFA) === -1 ? (
-              <Tooltip title={t('core:setupTOTPHelp')}>
-                <TsButton
-                  data-tid="setupTOTP"
-                  className={classes.mainActionButton}
-                  onClick={() => {
-                    setSetupTOTPOpened(true);
-                  }}
-                  style={{ width: '95%' }}
-                >
-                  {t('core:setupTOTP')}
-                </TsButton>
-              </Tooltip>
+              <TsButton
+                tooltip={t('core:setupTOTPHelp')}
+                data-tid="setupTOTP"
+                className={classes.mainActionButton}
+                onClick={() => {
+                  setSetupTOTPOpened(true);
+                }}
+                style={{ width: '95%' }}
+              >
+                {t('core:setupTOTP')}
+              </TsButton>
             ) : (
               <>
                 <Typography style={{ color: theme.palette.text.primary }}>

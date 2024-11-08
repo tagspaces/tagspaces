@@ -39,54 +39,44 @@ function EntryContainerNav(props: Props) {
     >
       {isFile && (
         <>
-          <Tooltip
-            title={t('core:openPrevFileTooltip')}
+          <TsIconButton
+            tooltip={t('core:openPrevFileTooltip')}
             keyBinding={keyBindings['prevDocument']}
+            aria-label={t('core:openPrevFileTooltip')}
+            data-tid="fileContainerPrevFile"
+            onClick={() => {
+              const action: TS.PerspectiveActions = {
+                action: 'openPrevious',
+              };
+              setActions(action);
+            }}
           >
-            <TsIconButton
-              aria-label={t('core:openPrevFileTooltip')}
-              data-tid="fileContainerPrevFile"
-              onClick={() => {
-                const action: TS.PerspectiveActions = {
-                  action: 'openPrevious',
-                };
-                setActions(action);
-                //window.dispatchEvent(new Event('previous-file'));
-              }}
-            >
-              <PrevDocumentIcon />
-            </TsIconButton>
-          </Tooltip>
-          <Tooltip
-            title={t('core:openNextFileTooltip')}
+            <PrevDocumentIcon />
+          </TsIconButton>
+
+          <TsIconButton
+            tooltip={t('core:openNextFileTooltip')}
             keyBinding={keyBindings['nextDocument']}
+            aria-label={t('core:openNextFileTooltip')}
+            data-tid="fileContainerNextFile"
+            onClick={() => {
+              const action: TS.PerspectiveActions = { action: 'openNext' };
+              setActions(action);
+            }}
           >
-            <TsIconButton
-              aria-label={t('core:openNextFileTooltip')}
-              data-tid="fileContainerNextFile"
-              onClick={() => {
-                const action: TS.PerspectiveActions = { action: 'openNext' };
-                setActions(action);
-                //window.dispatchEvent(new Event('next-file'));
-              }}
-            >
-              <NextDocumentIcon />
-            </TsIconButton>
-          </Tooltip>
+            <NextDocumentIcon />
+          </TsIconButton>
         </>
       )}
-      <Tooltip
-        title={t('core:closeEntry')}
+      <TsIconButton
+        tooltip={t('core:closeEntry')}
         keyBinding={keyBindings['closeViewer']}
+        onClick={startClosingEntry}
+        aria-label={t('core:closeEntry')}
+        data-tid="fileContainerCloseOpenedFile"
       >
-        <TsIconButton
-          onClick={startClosingEntry}
-          aria-label={t('core:closeEntry')}
-          data-tid="fileContainerCloseOpenedFile"
-        >
-          <CloseIcon />
-        </TsIconButton>
-      </Tooltip>
+        <CloseIcon />
+      </TsIconButton>
     </div>
   );
 }

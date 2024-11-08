@@ -165,7 +165,7 @@ function FilePreviewDialog(props: Props) {
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
       PaperProps={{ sx: { width: '100%', height: '100%' } }}
-      BackdropProps={{ style: { backgroundColor: 'transparent' } }}
+      slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
       <DialogTitle
         data-tid="importDialogTitle"
