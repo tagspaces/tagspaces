@@ -961,6 +961,7 @@ function EntryProperties(props: Props) {
                           width: 160,
                           height: 25,
                           background: openedEntry.meta?.color,
+                          border: '1px solid lightgray',
                         }}
                         onClick={toggleBackgroundColorPicker}
                       >

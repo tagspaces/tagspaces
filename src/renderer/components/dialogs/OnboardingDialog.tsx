@@ -21,7 +21,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Slider from 'react-slick';
 import TsButton from '-/components/TsButton';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -46,10 +45,10 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
-
 import { useTranslation } from 'react-i18next';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 
 interface Props {
   classes: any;
@@ -59,33 +58,16 @@ interface Props {
 
 function OnboardingDialog(props: Props) {
   const { t } = useTranslation();
-  //const [activeStep, setActiveStep] = useState(0);
   const { open, onClose } = props;
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
-  //const swiperElRef = useRef(null); //<SwiperRef>
-
-  /*useEffect(() => {
-  if(swiperElRef.current){
-    // listen for Swiper events using addEventListener
-    swiperElRef.current.addEventListener('progress', (e) => {
-      const [swiper, progress] = e.detail;
-      console.log(progress);
-    });
-
-    swiperElRef.current.addEventListener('slidechange', (e) => {
-      console.log('slide changed');
-    });
-    }
-  }, []);*/
 
   const setPersistTagsInSidecarFile = (isPersistTagsInSidecar) => {
     dispatch(
       SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar),
     );
   };
-  //const maxSteps = 4;
 
   const setCurrentTheme = (theme) => {
     dispatch(SettingsActions.setCurrentTheme(theme));
@@ -139,9 +121,11 @@ function OnboardingDialog(props: Props) {
       fullScreen={fullScreen}
       scroll="paper"
     >
-      <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <DialogCloseButton testId="closeOnboardingDialog" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        title={''}
+        onClose={onClose}
+        closeButtonTestId="closeOnboardingDialog"
+      />
       <DialogContent
         style={{
           overflowY: 'auto',

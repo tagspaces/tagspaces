@@ -22,7 +22,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Tooltip from '-/components/Tooltip';
 import semver from 'semver';
 import DraggablePaper from '-/components/DraggablePaper';
@@ -30,7 +30,6 @@ import LogoIcon from '-/assets/images/icon100x100.svg';
 import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from 'assets/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -126,10 +125,11 @@ function AboutDialog(props: Props) {
       PaperComponent={fullScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {productName}
-        <DialogCloseButton testId="closeAboutDialogTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        title={productName}
+        onClose={onClose}
+        closeButtonTestId="closeAboutDialogTID"
+      />
       <DialogContent style={{ overflowY: 'auto' }}>
         <img
           alt="TagSpaces logo"

@@ -20,7 +20,6 @@ import React, { useEffect, useReducer } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -40,7 +39,6 @@ import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsSelect from '-/components/TsSelect';
 import TsButton from '-/components/TsButton';
 import { Pro } from '-/pro';
@@ -50,6 +48,7 @@ import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirConte
 import ZoomComponent from '-/components/ZoomComponent';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import useFirstRender from '-/utils/useFirstRender';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -116,16 +115,15 @@ function GridSettingsDialog(props: Props) {
       open={open}
       onClose={onClose}
       PaperComponent={fullScreen ? Paper : DraggablePaper}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:perspectiveSettingsTitle')}
-        <DialogCloseButton
-          testId="closePerspectiveSettingsTID"
-          onClose={onClose}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        title={t('core:perspectiveSettingsTitle')}
+        onClose={onClose}
+        closeButtonTestId="closePerspectiveSettingsTID"
+      />
       <DialogContent>
         {haveLocalSetting() && (
           <>
@@ -149,17 +147,17 @@ function GridSettingsDialog(props: Props) {
             </TsButton>
           </>
         )}
-        <Divider />
+        {/* <Divider /> */}
         <Box style={{ display: 'flex' }}>
-          <ZoomComponent preview={true} />
           <Typography
             style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
           >
             {t('Size of the entries')}
           </Typography>
+          <ZoomComponent preview={true} />
         </Box>
-        <Divider />
+        {/* <Divider /> */}
         <FormGroup>
           <FormControlLabel
             // labelPlacement="start"
