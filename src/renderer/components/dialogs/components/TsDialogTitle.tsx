@@ -35,7 +35,7 @@ export type TSDialogActions = DialogTitleProps & {
 };
 
 function TsDialogTitle(props: TSDialogActions) {
-  const { style, title, onClose, closeButtonTestId } = props;
+  const { style, title, onClose, closeButtonTestId, children } = props;
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
@@ -73,10 +73,12 @@ function TsDialogTitle(props: TSDialogActions) {
         <div style={{ textAlign: 'center' }}>
           {backButton}
           {title}
+          {children}
         </div>
       ) : (
         <>
           {title}
+          {children}
           {closeButton}
         </>
       )}

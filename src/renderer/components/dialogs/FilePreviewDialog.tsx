@@ -17,11 +17,12 @@
  */
 
 import React, { MutableRefObject, useRef } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import { TS } from '-/tagspaces.namespace';
@@ -45,6 +46,8 @@ function FilePreviewDialog(props: Props) {
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -162,19 +165,18 @@ function FilePreviewDialog(props: Props) {
       scroll="paper"
       fullWidth
       maxWidth="md"
+      fullScreen={fullScreen}
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
       PaperProps={{ sx: { width: '100%', height: '100%' } }}
       slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
-      <DialogTitle
-        data-tid="importDialogTitle"
-        style={{ cursor: 'move' }}
-        id="draggable-dialog-title"
-      >
-        {/*{t('core:importDialogTitle')}*/}
-        <DialogCloseButton testId="closeFilePreviewTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        //data-tid="importDialogTitle"
+        title=""
+        closeButtonTestId="closeFilePreviewTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           marginLeft: 'auto',
