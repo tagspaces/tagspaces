@@ -47,7 +47,7 @@ function FilePreviewDialog(props: Props) {
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
@@ -165,14 +165,13 @@ function FilePreviewDialog(props: Props) {
       scroll="paper"
       fullWidth
       maxWidth="md"
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
       PaperProps={{ sx: { width: '100%', height: '100%' } }}
       slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
       <TsDialogTitle
-        //data-tid="importDialogTitle"
         dialogTitle=""
         closeButtonTestId="closeFilePreviewTID"
         onClose={onClose}

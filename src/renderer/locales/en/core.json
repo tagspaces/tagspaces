@@ -874,5 +874,6 @@
   "exportAsPNG": "Export as PNG",
   "tagPreview": "Tag Preview",
   "generateNewLocationId": "Generates new unique identifier for this location",
+  "abort": "Abort",
   "-": "-"
 }

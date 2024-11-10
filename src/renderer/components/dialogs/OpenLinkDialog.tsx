@@ -21,12 +21,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import TsTextField from '-/components/TsTextField';
 import { useTranslation } from 'react-i18next';
@@ -40,7 +39,7 @@ interface Props {
 function OpenLinkDialog(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { openLink } = useOpenedEntryContext();
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -87,11 +86,22 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton}
+      onClick={onConfirm}
+      data-tid="confirmOpenLink"
+      variant="contained"
+    >
+      {t('core:open')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      //fullScreen={fullScreen}
+      fullScreen={smallScreen}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -100,11 +110,13 @@ function OpenLinkDialog(props: Props) {
         }
       }}
     >
-      <DialogTitle>
-        {t('core:openLink')}
-        <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
-      </DialogTitle>
-      <DialogContent style={{ minWidth: fullScreen ? 100 : 400 }}>
+      <TsDialogTitle
+        dialogTitle={t('core:openLink')}
+        closeButtonTestId="closeOpenLinkTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
+      <DialogContent style={{ minWidth: smallScreen ? 100 : 400 }}>
         <FormControl fullWidth={true}>
           <TsTextField
             autoFocus
@@ -132,19 +144,14 @@ function OpenLinkDialog(props: Props) {
           />
         </FormControl>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton data-tid="closeOpenLinkDialog" onClick={onCancel}>
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          disabled={disableConfirmButton}
-          onClick={onConfirm}
-          data-tid="confirmOpenLink"
-          variant="contained"
-        >
-          {t('core:open')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton data-tid="closeOpenLinkDialog" onClick={onCancel}>
+            {t('core:cancel')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

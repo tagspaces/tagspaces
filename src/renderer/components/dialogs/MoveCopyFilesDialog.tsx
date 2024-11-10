@@ -9,12 +9,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -105,10 +104,6 @@ function MoveCopyFilesDialog(props: Props) {
       }
       return { path, count };
     });
-    /*let total = 0;
-    const arr = Object.values(dirProp.current);
-    arr.forEach((n: TS.DirProp) => (total += n.filesCount + n.dirsCount));
-    return total;*/
   }
 
   function handleCopy() {
@@ -193,10 +188,11 @@ function MoveCopyFilesDialog(props: Props) {
       PaperComponent={fullScreen ? Paper : DraggablePaper}
       fullScreen={fullScreen}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton testId="closeMCFilesTID" onClose={() => onClose()} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:copyMoveEntriesTitle')}
+        closeButtonTestId="closeMCFilesTID"
+        onClose={onClose}
+      />
       <DialogContent style={{ overflow: 'hidden' }}>
         <Typography variant="subtitle2">
           {t('selectedFilesAndFolders')}

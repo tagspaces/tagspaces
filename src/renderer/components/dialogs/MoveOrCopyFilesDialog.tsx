@@ -30,14 +30,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -127,13 +126,11 @@ function MoveOrCopyFilesDialog(props: Props) {
       PaperComponent={fullScreen ? Paper : DraggablePaper}
       fullScreen={fullScreen}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton
-          testId="closeMoveOrCopyTID"
-          onClose={() => onClose()}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:copyMoveEntriesTitle')}
+        closeButtonTestId="closeMoveOrCopyTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           overflowX: 'hidden',

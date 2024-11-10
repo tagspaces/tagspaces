@@ -19,10 +19,9 @@
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { QRCode } from 'react-qrcode-logo';
@@ -56,7 +55,7 @@ function LinkGeneratorDialog(props: Props) {
   const signedLink = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   let location = findLocation(openedEntry?.locationID);
   if (!location) {
@@ -81,15 +80,16 @@ function LinkGeneratorDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
       style={{ marginTop: 12 }}
     >
-      <DialogTitle>
-        {t('core:downloadLink')}{' '}
-        <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:downloadLink')}
+        closeButtonTestId="closeLinkGeneratorTID"
+        onClose={onClose}
+      />
       <DialogContent style={{ overflow: 'auto', height: 450 }}>
         <TsSelect
           label={
@@ -118,6 +118,7 @@ function LinkGeneratorDialog(props: Props) {
               <InputAdornment position="start">
                 <TsButton
                   data-tid="copySharingLinkTID"
+                  variant="contained"
                   onClick={() => {
                     const entryTitle = extractTitle(
                       gPath,
@@ -177,7 +178,7 @@ function LinkGeneratorDialog(props: Props) {
         >
           {t('help')}
         </TsButton>
-        <TsButton data-tid="closeLinkTID" onClick={onClose} variant="contained">
+        <TsButton data-tid="closeLinkTID" onClick={onClose}>
           {t('core:close')}
         </TsButton>
       </TsDialogActions>

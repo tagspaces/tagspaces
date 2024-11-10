@@ -27,8 +27,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
@@ -39,7 +39,6 @@ import { Pro } from '-/pro';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { tagsValidation } from '-/services/utils-io';
@@ -192,10 +191,11 @@ function EditEntryTagDialog(props: Props) {
         }*/
       }}
     >
-      <DialogTitle>
-        {t('core:tagProperties')}{' '}
-        <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:tagProperties')}
+        closeButtonTestId="closeEditEntryTagTID"
+        onClose={onClose}
+      />
       {renderContent()}
       <TsDialogActions
         style={{
