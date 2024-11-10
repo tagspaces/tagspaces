@@ -15,11 +15,12 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 
 interface Props {
   isFile: boolean;
+  smallScreen: boolean;
   startClosingEntry: (event) => void;
 }
 
 function EntryContainerNav(props: Props) {
-  const { isFile, startClosingEntry } = props;
+  const { isFile, startClosingEntry, smallScreen } = props;
   const { setActions } = usePerspectiveActionsContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
@@ -53,7 +54,6 @@ function EntryContainerNav(props: Props) {
           >
             <PrevDocumentIcon />
           </TsIconButton>
-
           <TsIconButton
             tooltip={t('core:openNextFileTooltip')}
             keyBinding={keyBindings['nextDocument']}
@@ -68,15 +68,17 @@ function EntryContainerNav(props: Props) {
           </TsIconButton>
         </>
       )}
-      <TsIconButton
-        tooltip={t('core:closeEntry')}
-        keyBinding={keyBindings['closeViewer']}
-        onClick={startClosingEntry}
-        aria-label={t('core:closeEntry')}
-        data-tid="fileContainerCloseOpenedFile"
-      >
-        <CloseIcon />
-      </TsIconButton>
+      {!smallScreen && (
+        <TsIconButton
+          tooltip={t('core:closeEntry')}
+          keyBinding={keyBindings['closeViewer']}
+          onClick={startClosingEntry}
+          aria-label={t('core:closeEntry')}
+          data-tid="fileContainerCloseOpenedFile"
+        >
+          <CloseIcon />
+        </TsIconButton>
+      )}
     </div>
   );
 }

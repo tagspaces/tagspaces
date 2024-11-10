@@ -30,13 +30,13 @@ function TSDialogActions(props: TSDialogActions) {
   const { children, style } = props;
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <DialogActions
       {...props}
       style={{
-        padding: fullScreen ? '10px 30px 30px 30px' : 'inherited',
+        padding: smallScreen ? '10px 30px 30px 30px' : 'inherited',
         ...style,
       }}
     >

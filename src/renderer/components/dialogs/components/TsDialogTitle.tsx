@@ -47,7 +47,7 @@ function TsDialogTitle(props: TSDialogTitle) {
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const closeButton = (
     <DialogCloseButton testId={closeButtonTestId} onClose={onClose} />
   );
@@ -68,20 +68,24 @@ function TsDialogTitle(props: TSDialogTitle) {
 
   return (
     <DialogTitle
-      id="draggable-dialog-title"
+      id={smallScreen ? '' : 'draggable-dialog-title'}
       {...props}
       style={{
-        cursor: 'move',
+        cursor: smallScreen ? 'unset' : 'move',
         ...style,
       }}
     >
-      {fullScreen ? (
-        <div style={{ textAlign: 'center' }}>
-          {backButton}
-          {title}
-          {actionSlot && <span style={{ float: 'right' }}>{actionSlot}</span>}
-          {children}
-        </div>
+      {smallScreen ? (
+        <>
+          <div style={{ display: 'flex' }}>
+            {backButton}
+            <span style={{ alignSelf: 'center', margin: '0 auto' }}>
+              {title}
+            </span>
+            {actionSlot && <span style={{ float: 'right' }}>{actionSlot}</span>}
+          </div>
+          <div style={{ textAlign: 'center' }}>{children}</div>
+        </>
       ) : (
         <>
           {title}

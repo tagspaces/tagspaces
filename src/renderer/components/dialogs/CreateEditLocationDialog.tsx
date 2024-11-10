@@ -558,7 +558,7 @@ function CreateEditLocationDialog(props: Props) {
   const disableLocationTypeSwitch: boolean = selectedLocation !== undefined;
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   let locationTypeName = t('core:localLocation');
   if (defaultType === locationType.TYPE_CLOUD) {
@@ -570,7 +570,7 @@ function CreateEditLocationDialog(props: Props) {
       disabled={disableConfirmButton()}
       onClick={preConfirm}
       data-tid="confirmLocationCreation"
-      variant={fullScreen ? 'outlined' : 'contained'}
+      variant={smallScreen ? 'outlined' : 'contained'}
     >
       {t('core:ok')}
     </TsButton>
@@ -580,10 +580,10 @@ function CreateEditLocationDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
@@ -597,24 +597,15 @@ function CreateEditLocationDialog(props: Props) {
       }}
     >
       <TsDialogTitle
-        dialogTitle={t('core:editLocationTitle')}
+        dialogTitle={
+          selectedLocation
+            ? t('core:editLocationTitle')
+            : t('core:createLocationTitle')
+        }
         closeButtonTestId="closeCreateEditLocationTID"
         onClose={onClose}
         actionSlot={okButton}
-      >
-        {selectedLocation ? (
-          <>
-            <Typography
-              style={{ display: 'block', marginTop: -5 }}
-              variant="overline"
-            >
-              {t('core:locationType') + ': ' + locationTypeName}
-            </Typography>
-          </>
-        ) : (
-          t('core:createLocationTitle')
-        )}
-      </TsDialogTitle>
+      ></TsDialogTitle>
       <DialogContent
         style={{
           overflow: 'auto',
@@ -640,6 +631,16 @@ function CreateEditLocationDialog(props: Props) {
           confirmDialogTID="confirmConfirmEncryptionChanged"
           confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
         />
+        {selectedLocation && (
+          <>
+            <Typography
+              style={{ display: 'block', marginTop: -5, marginLeft: 15 }}
+              variant="overline"
+            >
+              {t('core:locationType') + ': ' + locationTypeName}
+            </Typography>
+          </>
+        )}
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
@@ -1163,7 +1164,7 @@ function CreateEditLocationDialog(props: Props) {
           </Accordion>
         )}
       </DialogContent>
-      {!fullScreen && (
+      {!smallScreen && (
         <TsDialogActions>
           <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
           {okButton}

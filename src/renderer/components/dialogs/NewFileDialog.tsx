@@ -22,7 +22,7 @@ import {
   formatDateTime4Tag,
 } from '@tagspaces/tagspaces-common/misc';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import DraggablePaper from '-/components/DraggablePaper';
@@ -57,12 +57,12 @@ function NewFileDialog(props: Props) {
     useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
-
+  const haveError = useRef<boolean>(false);
   const firstRWLocation = getFirstRWLocation();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileName = useRef<string>(
     (fileType === 'url' ? 'link' : 'note') +
       AppConfig.beginTagContainer +
@@ -70,7 +70,6 @@ function NewFileDialog(props: Props) {
       AppConfig.endTagContainer,
   );
 
-  const haveError = useRef<boolean>(false);
   const fileContent = useRef<string>(
     fileType === 'txt' || fileType === 'md'
       ? 'Created in ' +
@@ -119,20 +118,35 @@ function NewFileDialog(props: Props) {
     }
   }
 
+  const okButton = (
+    <TsButton
+      data-tid="createTID"
+      variant={smallScreen ? 'outlined' : 'contained'}
+      onClick={() => {
+        createFile(fileType, targetDirectoryPath);
+      }}
+      disabled={haveError.current}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       aria-labelledby="draggable-dialog-title"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       scroll="paper"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {getFileType()}
-        <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={getFileType()}
+        onClose={onClose}
+        closeButtonTestId="closeCreateDialogTID"
+        actionSlot={okButton}
+      ></TsDialogTitle>
       <DialogContent
         style={{
           paddingTop: 10,
@@ -172,7 +186,7 @@ function NewFileDialog(props: Props) {
         )}
         <TargetPath />
       </DialogContent>
-      {fileType && (
+      {!smallScreen && fileType && (
         <TsDialogActions>
           <TsButton
             data-tid="backTID"
@@ -182,16 +196,7 @@ function NewFileDialog(props: Props) {
           >
             {t('core:cancel')}
           </TsButton>
-          <TsButton
-            data-tid="createTID"
-            variant="contained"
-            onClick={() => {
-              createFile(fileType, targetDirectoryPath);
-            }}
-            disabled={haveError.current}
-          >
-            {t('core:ok')}
-          </TsButton>
+          {okButton}
         </TsDialogActions>
       )}
     </Dialog>

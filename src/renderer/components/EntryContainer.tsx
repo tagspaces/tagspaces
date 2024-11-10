@@ -51,7 +51,7 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import { Switch } from '@mui/material';
+import { Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
@@ -104,6 +104,8 @@ function EntryContainer() {
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
     tabIndex !== undefined,
   );
+
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
@@ -773,10 +775,12 @@ function EntryContainer() {
               startClosingEntry={startClosingEntry}
               isEntryInFullWidth={isEntryInFullWidth}
               desktopMode={desktopMode}
+              smallScreen={smallScreen}
             />
             <EntryContainerNav
               isFile={openedEntry.isFile}
               startClosingEntry={startClosingEntry}
+              smallScreen={smallScreen}
             />
           </Box>
           {tabs()}
