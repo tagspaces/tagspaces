@@ -20,6 +20,7 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
+import { useMediaQuery } from '@mui/material';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
@@ -43,7 +44,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
-import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -85,16 +85,14 @@ const Root = styled('div')(({ theme }) => ({
 interface Props {
   toggleShowUnixHiddenEntries: () => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
-  /*isLocationManagerPanelOpened: boolean;
-  isTagLibraryPanelOpened: boolean;
-  isSearchPanelOpened: boolean;
-  isHelpFeedbackPanelOpened: boolean;*/
-  //user: CognitoUserInterface;
 }
 
 function MainPage(props: Props) {
   const { openLink, openedEntry, isEntryInFullWidth, setEntryInFullWidth } =
     useOpenedEntryContext();
+
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const {
     loadParentDirectoryContent,
@@ -104,7 +102,6 @@ function MainPage(props: Props) {
   } = useDirectoryContentContext();
   const { showPanel } = usePanelsContext();
   const { isLoggedIn } = useUserContext();
-  const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -134,19 +131,9 @@ function MainPage(props: Props) {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    /*listen({
-      ...props,
-      goBack,
-      goForward,
-      openFsEntry,
-      openNextFile,
-      openPrevFile,
-      setSearchQuery,
-    });*/
   }, []);
 
   useEffect(() => {
-    // setPercent(undefined);
     if (isEntryInFullWidth) {
       setDrawerOpened(false); // !props.isEntryInFullWidth);
     }
@@ -252,6 +239,13 @@ function MainPage(props: Props) {
       renderSplitter = function () {
         return null;
       };
+    }
+    if (smallScreen && openedEntry) {
+      return (
+        <FilePropertiesContextProvider>
+          <EntryContainer key="EntryContainerID" />
+        </FilePropertiesContextProvider>
+      );
     }
     return (
       <Split
@@ -362,16 +356,6 @@ function MainPage(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    /*isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
-    isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
-    isSearchPanelOpened: isSearchPanelOpened(state),
-    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),*/
-    //user: currentUser(state),
-  };
-}
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
@@ -382,7 +366,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(React.memo(MainPage));
+export default connect(undefined, mapDispatchToProps)(React.memo(MainPage));

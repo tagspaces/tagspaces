@@ -82,7 +82,11 @@ function TsDialogTitle(props: TSDialogTitle) {
             <span style={{ alignSelf: 'center', margin: '0 auto' }}>
               {title}
             </span>
-            {actionSlot && <span style={{ float: 'right' }}>{actionSlot}</span>}
+            {actionSlot && (
+              <span style={{ float: 'right', alignSelf: 'center' }}>
+                {actionSlot}
+              </span>
+            )}
           </div>
           <div style={{ textAlign: 'center' }}>{children}</div>
         </>

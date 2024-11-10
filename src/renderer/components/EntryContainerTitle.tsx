@@ -166,9 +166,6 @@ function EntryContainerTitle(props: Props) {
           style={{
             // @ts-ignore
             WebkitAppRegion: 'no-drag',
-            // marginTop: 5,
-            // marginLeft: 5,
-            //float: 'left',
           }}
           data-tid="fileContainerCloseOpenedFile"
           onClick={startClosingEntry}
