@@ -21,7 +21,7 @@ import TsButton from '-/components/TsButton';
 import Paper from '@mui/material/Paper';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -36,7 +36,7 @@ import {
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsTextField from '-/components/TsTextField';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
@@ -148,10 +148,11 @@ function AddRemoveTagsDialog(props: Props) {
       PaperComponent={fullScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:tagOperationTitle')}
-        <DialogCloseButton testId="closeAddRemoveTagsTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:tagOperationTitle')}
+        closeButtonTestId="closeAddRemoveTagsTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           minHeight: 330,

@@ -56,14 +56,10 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
-
   const { onClose, open, tag } = props;
-
   const { addTagsToEntry, editTagForEntry } = useTaggingActionsContext();
-  // const selectedTag: TS.Tag = useSelector(getSelectedTag);
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(tag && tag.title);
-
   const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
@@ -91,14 +87,12 @@ function EditEntryTagDialog(props: Props) {
     if (titleRef && titleRef.current) {
       titleRef.current.value = title;
     }
-    // handleValidation();
   }, [title]);
 
   function handleValidation(tagTitle: string) {
     // Tags should be at least 1 character long and should not contain: spaces, \, / #
     //const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (tagsValidation(tagTitle)) {
-      // && tagCheck.test(title)) {
       setError('tag', false);
       return true;
     }
@@ -118,15 +112,6 @@ function EditEntryTagDialog(props: Props) {
       }
       props.onClose();
     }
-  }
-
-  function renderTitle() {
-    return (
-      <DialogTitle>
-        {t('core:tagProperties')}{' '}
-        <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
-      </DialogTitle>
-    );
   }
 
   function renderContent() {
@@ -185,8 +170,33 @@ function EditEntryTagDialog(props: Props) {
     );
   }
 
-  function renderActions() {
-    return (
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  return (
+    <Dialog
+      open={open}
+      fullScreen={fullScreen}
+      onClose={onClose}
+      style={{
+        minWidth: 400,
+        height: '100%',
+        marginBottom: 30,
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } /*else if (event.key === 'Escape') {
+          onClose();
+        }*/
+      }}
+    >
+      <DialogTitle>
+        {t('core:tagProperties')}{' '}
+        <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
+      </DialogTitle>
+      {renderContent()}
       <TsDialogActions
         style={{
           justifyContent: 'space-between',
@@ -219,34 +229,6 @@ function EditEntryTagDialog(props: Props) {
           </TsButton>
         </div>
       </TsDialogActions>
-    );
-  }
-
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  return (
-    <Dialog
-      open={open}
-      fullScreen={fullScreen}
-      onClose={onClose}
-      style={{
-        minWidth: 400,
-        height: '100%',
-        marginBottom: 30,
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.keyCode === 13) {
-          event.preventDefault();
-          event.stopPropagation();
-          onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
-      }}
-    >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
     </Dialog>
   );
 }

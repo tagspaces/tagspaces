@@ -18,13 +18,12 @@
 
 import React from 'react';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
@@ -62,15 +61,13 @@ function NewAudioDialog(props: Props) {
         PaperComponent={fullScreen ? Paper : DraggablePaper}
         scroll="paper"
       >
-        <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-          {t('core:audioRecorder')}
-          <DialogCloseButton
-            testId="closeCreateDialogTID"
-            onClose={() => {
-              intOnClose(undefined, 'escapeKeyDown');
-            }}
-          />
-        </DialogTitle>
+        <TsDialogTitle
+          dialogTitle={t('core:audioRecorder')}
+          closeButtonTestId="closeCreateDialogTID"
+          onClose={() => {
+            intOnClose(undefined, 'escapeKeyDown');
+          }}
+        />
         <DialogContent
           style={{
             minWidth: 200,

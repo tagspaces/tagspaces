@@ -16,21 +16,22 @@
  *
  */
 
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useRef, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Dialog,
   FormControl,
   DialogContent,
-  DialogTitle,
   FormHelperText,
   InputAdornment,
   inputBaseClasses,
+  useMediaQuery,
+  Box,
 } from '@mui/material';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsTextField from '-/components/TsTextField';
 import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
@@ -44,7 +45,7 @@ import { dirNameValidation } from '-/services/utils-io';
 
 const FolderColorTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
-    height: 100,
+    height: 200,
   },
 }));
 
@@ -72,14 +73,6 @@ function CreateDirectoryDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath } = props;
 
-  /*useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      return;
-    }
-    handleValidation();
-  });*/
-
   const defaultBackgrounds = [
     'transparent',
     // '#00000044',
@@ -94,11 +87,11 @@ function CreateDirectoryDialog(props: Props) {
     '#92e1c044',
     '#9fe1e744',
     '#9fc6e744',
-    // '#4986e744',
-    // '#9a9cff44',
-    // '#c2c2c244',
-    // '#cca6ac44',
-    // '#f691b244',
+    '#4986e744',
+    '#9a9cff44',
+    '#c2c2c244',
+    '#cca6ac44',
+    '#f691b244',
     // '#cd74e644',
     // '#a47ae244',
     // '#845EC260',
@@ -165,13 +158,26 @@ function CreateDirectoryDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton}
+      onClick={onConfirm}
+      data-tid="confirmCreateNewDirectory"
+      id="confirmCreateNewDirectory"
+      variant="contained"
+      //variant={smallScreen ? 'outlined' : 'contained'}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -184,15 +190,18 @@ function CreateDirectoryDialog(props: Props) {
         }
       }}
     >
-      <DialogTitle>
-        {t('core:createNewDirectoryTitle')}
-        <DialogCloseButton testId="closeCreateDirectoryTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:createNewDirectoryTitle')}
+        closeButtonTestId="closeCreateDirectoryTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}
             autoFocus
+            fullWidth
             name="name"
             label={t('core:folderName')}
             onChange={(event) => {
@@ -215,58 +224,58 @@ function CreateDirectoryDialog(props: Props) {
         <FormControl>
           <FolderColorTextField
             data-tid="folderColorTID"
-            size="medium"
+            fullWidth
             label={t('backgroundColor')}
             retrieveValue={() => backgroundColor.current}
             value={' '}
-            style={{ height: 100, marginTop: 0 }}
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  {defaultBackgrounds.map((background, cnt) => (
-                    <>
-                      <TsIconButton
-                        key={cnt}
-                        data-tid={'bgTID' + cnt}
-                        aria-label="changeFolderBackground"
-                        onClick={() => {
-                          backgroundColor.current = background;
-                          forceUpdate();
-                        }}
-                        style={{
-                          backgroundColor: background,
-                          backgroundImage: background,
-                          margin: 5,
-                          ...(backgroundColor.current === background && {
-                            border: '0.5rem outset ' + background,
-                          }),
-                        }}
-                      >
-                        <SetBackgroundIcon />
-                      </TsIconButton>
-                    </>
-                  ))}
-                </InputAdornment>
-              ),
+            style={{ marginTop: 0 }}
+            slotProps={{
+              input: {
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end" style={{ height: 300 }}>
+                    <Box style={{ padding: 10, width: 300 }}>
+                      {defaultBackgrounds.map((background, cnt) => (
+                        <>
+                          <TsIconButton
+                            key={cnt}
+                            tooltip={background}
+                            data-tid={'bgTID' + cnt}
+                            aria-label="changeFolderBackground"
+                            onClick={() => {
+                              backgroundColor.current = background;
+                              forceUpdate();
+                            }}
+                            style={{
+                              backgroundColor: background,
+                              backgroundImage: background,
+                              margin: 5,
+                              ...(backgroundColor.current === background && {
+                                border: '0.5rem outset ' + background,
+                              }),
+                            }}
+                          >
+                            <SetBackgroundIcon />
+                          </TsIconButton>
+                          {(cnt + 1) % 5 === 0 && <br />}
+                        </>
+                      ))}
+                    </Box>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </FormControl>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton data-tid="closeCreateNewDirectory" onClick={onCancel}>
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          disabled={disableConfirmButton}
-          onClick={onConfirm}
-          data-tid="confirmCreateNewDirectory"
-          id="confirmCreateNewDirectory"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton data-tid="closeCreateNewDirectory" onClick={onCancel}>
+            {t('core:cancel')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

@@ -19,18 +19,17 @@
 import React, { useRef, useState } from 'react';
 import { saveAs } from 'file-saver';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import TsTextField from '-/components/TsTextField';
@@ -43,19 +42,6 @@ import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathCo
 import { TS } from '-/tagspaces.namespace';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
-const PREFIX = 'CreateDirectory';
-
-const classes = {
-  createButton: `${PREFIX}-createButton`,
-};
-
-const Root = styled('div')(() => ({
-  [`& .${classes.createButton}`]: {
-    width: '100%',
-    textAlign: 'center',
-  },
-}));
-
 interface Props {
   open: boolean;
   onClose: (event?: Object, reason?: string) => void;
@@ -65,7 +51,7 @@ function DownloadUrlDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { setReflectActions } = useEditedEntryContext();
   const { downloadUrl } = useIOActionsContext();
@@ -157,63 +143,64 @@ function DownloadUrlDialog(props: Props) {
     }
   }
 
+  const okButton = (
+    <TsButton
+      variant="contained"
+      data-tid={'downloadFileUrlTID'}
+      onClick={() => downloadURL()}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
-    <Root>
-      <TargetPathContextProvider>
-        <Dialog
-          open={open}
+    <TargetPathContextProvider>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullScreen={smallScreen}
+        keepMounted
+        aria-labelledby="draggable-dialog-title"
+        PaperComponent={smallScreen ? Paper : DraggablePaper}
+        scroll="paper"
+      >
+        <TsDialogTitle
+          dialogTitle={t('core:downloadLink')}
+          closeButtonTestId="closeCreateDialogTID"
           onClose={onClose}
-          fullScreen={fullScreen}
-          keepMounted
-          aria-labelledby="draggable-dialog-title"
-          PaperComponent={fullScreen ? Paper : DraggablePaper}
-          scroll="paper"
+          actionSlot={okButton}
+        />
+        <DialogContent
+          style={{
+            minWidth: 200,
+            marginBottom: 20,
+            overflow: 'overlay',
+          }}
+          data-tid="downloadUrlDialogTID"
         >
-          <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-            {t('core:downloadLink')}
-            <DialogCloseButton
-              testId="closeCreateDialogTID"
-              onClose={() => onClose()}
-            />
-          </DialogTitle>
-          <DialogContent
-            style={{
-              minWidth: 200,
-              //minHeight: 300,
-              marginBottom: 20,
-              overflow: 'overlay',
+          <TsTextField
+            error={invalidURL}
+            label={t('core:url')}
+            autoFocus
+            name="name"
+            data-tid="newUrlTID"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                downloadURL();
+              }
             }}
-            data-tid="downloadUrlDialogTID"
-          >
-            <TsTextField
-              error={invalidURL}
-              label={t('core:url')}
-              autoFocus
-              name="name"
-              data-tid="newUrlTID"
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  downloadURL();
-                }
-              }}
-              onChange={handleUrlChange}
-            />
-            <TargetPath />
-          </DialogContent>
+            onChange={handleUrlChange}
+          />
+          <TargetPath />
+        </DialogContent>
+        {!smallScreen && (
           <TsDialogActions>
             <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
-            <TsButton
-              variant="contained"
-              data-tid={'downloadFileUrlTID'}
-              className={classes.createButton}
-              onClick={() => downloadURL()}
-            >
-              {t('core:ok')}
-            </TsButton>
+            {okButton}
           </TsDialogActions>
-        </Dialog>
-      </TargetPathContextProvider>
-    </Root>
+        )}
+      </Dialog>
+    </TargetPathContextProvider>
   );
 }
 
