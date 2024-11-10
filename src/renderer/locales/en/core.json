@@ -872,6 +872,7 @@
   "uploadDirsNotSupported": "Uploading folders not supported!",
   "targetLocation": "Target location",
   "exportAsPNG": "Export as PNG",
+  "tagPreview": "Tag Preview",
   "generateNewLocationId": "Generates new unique identifier for this location",
   "-": "-"
 }

@@ -18,7 +18,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TsIconButton from '-/components/TsIconButton';
 import TsButton from '-/components/TsButton';
@@ -41,7 +41,6 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-// import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -49,18 +48,16 @@ import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
-import CustomDragLayer from '-/components/CustomDragLayer';
-import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
+  style?: any;
 }
 
 function FolderContainer(props: Props) {
-  const { toggleDrawer, drawerOpened } = props;
+  const { toggleDrawer, drawerOpened, style } = props;
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -175,7 +172,7 @@ function FolderContainer(props: Props) {
   };
 
   const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
-  const isTinyMode = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <div
@@ -186,6 +183,7 @@ function FolderContainer(props: Props) {
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        ...style,
       }}
       data-tid="folderContainerTID"
     >
@@ -232,7 +230,7 @@ function FolderContainer(props: Props) {
         >
           <GoBackIcon />
         </TsIconButton>
-        {isTinyMode && (
+        {smallScreen && (
           <TsIconButton
             tooltip={t('core:goforward') + ' - BETA'}
             id="goForwardButton"
@@ -258,7 +256,7 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column',
               }}
             />
-            {isTinyMode ? (
+            {smallScreen ? (
               <TsIconButton
                 tooltip={
                   t('core:openSearch') + ' (' + openSearchKeyBinding + ')'

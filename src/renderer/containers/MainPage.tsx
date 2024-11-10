@@ -242,9 +242,16 @@ function MainPage(props: Props) {
     }
     if (smallScreen && openedEntry) {
       return (
-        <FilePropertiesContextProvider>
-          <EntryContainer key="EntryContainerID" />
-        </FilePropertiesContextProvider>
+        <>
+          <FolderContainer
+            style={{ display: 'none' }}
+            toggleDrawer={toggleDrawer}
+            drawerOpened={drawerOpened}
+          />
+          <FilePropertiesContextProvider>
+            <EntryContainer key="EntryContainerID" />
+          </FilePropertiesContextProvider>
+        </>
       );
     }
     return (
@@ -259,9 +266,6 @@ function MainPage(props: Props) {
         <FolderContainer
           toggleDrawer={toggleDrawer}
           drawerOpened={drawerOpened}
-          /*openMoveCopyFilesDialog={() =>
-            setMoveCopyDialogOpened(props.selectedEntries)
-          }*/
         />
         {openedEntry && (
           <FilePropertiesContextProvider>
