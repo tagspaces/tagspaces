@@ -122,7 +122,7 @@ function OnboardingDialog(props: Props) {
       scroll="paper"
     >
       <TsDialogTitle
-        title={''}
+        dialogTitle={''}
         onClose={onClose}
         closeButtonTestId="closeOnboardingDialog"
       />

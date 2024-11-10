@@ -21,21 +21,29 @@ import { useSelector } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import { GoBackIcon } from '-/components/CommonIcons';
+import { ArrowBackIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import { isDesktopMode } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 
-export type TSDialogActions = DialogTitleProps & {
-  title: string;
+export type TSDialogTitle = DialogTitleProps & {
+  dialogTitle: string;
   closeButtonTestId: string;
   onClose: () => void;
+  actionSlot?: any;
 };
 
-function TsDialogTitle(props: TSDialogActions) {
-  const { style, title, onClose, closeButtonTestId, children } = props;
+function TsDialogTitle(props: TSDialogTitle) {
+  const {
+    style,
+    dialogTitle: title,
+    onClose,
+    closeButtonTestId,
+    children,
+    actionSlot,
+  } = props;
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
@@ -49,14 +57,12 @@ function TsDialogTitle(props: TSDialogActions) {
       aria-label="close"
       tabIndex={-1}
       style={{
-        position: 'absolute',
-        left: 15,
-        top: 15,
+        float: 'left',
       }}
       data-tid={closeButtonTestId && closeButtonTestId}
       onClick={onClose}
     >
-      <GoBackIcon />
+      <ArrowBackIcon />
     </TsIconButton>
   );
 
@@ -73,6 +79,7 @@ function TsDialogTitle(props: TSDialogActions) {
         <div style={{ textAlign: 'center' }}>
           {backButton}
           {title}
+          {actionSlot && <span style={{ float: 'right' }}>{actionSlot}</span>}
           {children}
         </div>
       ) : (

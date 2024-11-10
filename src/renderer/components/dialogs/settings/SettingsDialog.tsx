@@ -16,10 +16,10 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
@@ -27,7 +27,6 @@ import Tab from '@mui/material/Tab';
 import Dialog from '@mui/material/Dialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { isDesktopMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import SettingsGeneral from '-/components/dialogs/settings/SettingsGeneral';
@@ -35,7 +34,6 @@ import SettingsKeyBindings from '-/components/dialogs/settings/SettingsKeyBindin
 import SettingsFileTypes from '-/components/dialogs/settings/SettingsFileTypes';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from 'assets/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
@@ -63,14 +61,17 @@ function SettingsDialog(props: Props) {
     setCurrentTab(tab);
   };
 
-  const renderTitle = () => (
-    <DialogTitle>
-      {t('core:settings')}
-      <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
-    </DialogTitle>
+  const helpButton = (
+    <TsButton
+      onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
+      color="secondary"
+      //style={{ float: 'left' }}
+    >
+      {t('core:help')}
+    </TsButton>
   );
 
-  const renderContent = () => (
+  const renderContent = (
     <DialogContent
       style={{
         overflowY: 'hidden',
@@ -87,9 +88,10 @@ function SettingsDialog(props: Props) {
         scrollButtons="auto"
         variant={fullScreen ? 'scrollable' : 'standard'}
         orientation={fullScreen ? 'horizontal' : 'vertical'}
-        style={{
-          width: fullScreen ? '100%' : '170px',
-        }}
+        // allowScrollButtonsMobile
+        // style={{
+        //   width: fullScreen ? '100%' : '170px',
+        // }}
       >
         <Tab
           style={{
@@ -190,27 +192,6 @@ function SettingsDialog(props: Props) {
     </DialogContent>
   );
 
-  const renderActions = () => (
-    <TsDialogActions
-      style={{
-        justifyContent: 'space-between',
-      }}
-    >
-      <TsButton
-        onClick={() =>
-          openURLExternally(Links.documentationLinks.settings, true)
-        }
-        color="secondary"
-        style={{ float: 'left' }}
-      >
-        {t('core:help')}
-      </TsButton>
-      <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
-        {t('core:closeButton')}
-      </TsButton>
-    </TsDialogActions>
-  );
-
   return (
     <Dialog
       sx={{
@@ -230,9 +211,25 @@ function SettingsDialog(props: Props) {
       onClose={onClose}
       style={{ maxWidth: 'auto' }}
     >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
+      <TsDialogTitle
+        dialogTitle={t('core:settings')}
+        closeButtonTestId="closeSettingsTID"
+        onClose={onClose}
+        actionSlot={helpButton}
+      />
+      {renderContent}
+      {!fullScreen && (
+        <TsDialogActions
+          style={{
+            justifyContent: 'space-between',
+          }}
+        >
+          {helpButton}
+          <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
+            {t('core:closeButton')}
+          </TsButton>
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

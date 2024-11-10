@@ -120,7 +120,7 @@ function GridSettingsDialog(props: Props) {
       scroll="paper"
     >
       <TsDialogTitle
-        title={t('core:perspectiveSettingsTitle')}
+        dialogTitle={t('core:perspectiveSettingsTitle')}
         onClose={onClose}
         closeButtonTestId="closePerspectiveSettingsTID"
       />

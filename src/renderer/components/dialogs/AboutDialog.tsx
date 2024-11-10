@@ -126,7 +126,7 @@ function AboutDialog(props: Props) {
       aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle
-        title={productName}
+        dialogTitle={productName}
         onClose={onClose}
         closeButtonTestId="closeAboutDialogTID"
       />

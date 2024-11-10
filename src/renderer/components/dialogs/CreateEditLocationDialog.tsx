@@ -43,7 +43,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import InputAdornment from '@mui/material/InputAdornment';
 import TsIconButton from '-/components/TsIconButton';
-import { useSelector, useDispatch } from 'react-redux';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -80,19 +81,6 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PasswordIcon from '@mui/icons-material/Password';
-import TooltipTS from '-/components/Tooltip';
-
-const PREFIX = 'CreateEditLocationDialog';
-
-const classes = {
-  formControl: `${PREFIX}-formControl`,
-};
-
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  [`& .${classes.formControl}`]: {
-    marginLeft: 0,
-  },
-}));
 
 interface Props {
   open: boolean;
@@ -577,8 +565,19 @@ function CreateEditLocationDialog(props: Props) {
     locationTypeName = t('core:objectStorage');
   }
 
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton()}
+      onClick={preConfirm}
+      data-tid="confirmLocationCreation"
+      variant={fullScreen ? 'outlined' : 'contained'}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
-    <StyledDialog
+    <Dialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -597,13 +596,14 @@ function CreateEditLocationDialog(props: Props) {
         // }
       }}
     >
-      <DialogTitle
-        style={{ cursor: 'move', paddingBottom: 0 }}
-        id="draggable-dialog-title"
+      <TsDialogTitle
+        dialogTitle={t('core:editLocationTitle')}
+        closeButtonTestId="closeCreateEditLocationTID"
+        onClose={onClose}
+        actionSlot={okButton}
       >
         {selectedLocation ? (
           <>
-            {t('core:editLocationTitle')}
             <Typography
               style={{ display: 'block', marginTop: -5 }}
               variant="overline"
@@ -614,11 +614,7 @@ function CreateEditLocationDialog(props: Props) {
         ) : (
           t('core:createLocationTitle')
         )}
-        <DialogCloseButton
-          testId="closeCreateEditLocationTID"
-          onClose={onClose}
-        />
-      </DialogTitle>
+      </TsDialogTitle>
       <DialogContent
         style={{
           overflow: 'auto',
@@ -687,7 +683,6 @@ function CreateEditLocationDialog(props: Props) {
               )}
               {content}
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -703,7 +698,6 @@ function CreateEditLocationDialog(props: Props) {
                 label={t('core:startupLocation')}
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -753,7 +747,6 @@ function CreateEditLocationDialog(props: Props) {
                   type === locationType.TYPE_CLOUD ||
                   AppConfig.isCordova
                 }
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -788,7 +781,6 @@ function CreateEditLocationDialog(props: Props) {
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -810,7 +802,6 @@ function CreateEditLocationDialog(props: Props) {
                 }
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -826,7 +817,6 @@ function CreateEditLocationDialog(props: Props) {
                 label={<>{t('core:disableThumbnailGeneration')}</>}
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -848,7 +838,6 @@ function CreateEditLocationDialog(props: Props) {
                 }
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -873,7 +862,6 @@ function CreateEditLocationDialog(props: Props) {
               />
               {type === locationType.TYPE_CLOUD && (
                 <FormControlLabel
-                  className={classes.formControl}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
@@ -892,7 +880,6 @@ function CreateEditLocationDialog(props: Props) {
               )}
               {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
                 <FormControlLabel
-                  className={classes.formControl}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
@@ -911,7 +898,6 @@ function CreateEditLocationDialog(props: Props) {
               ) : (
                 <FormControlLabel
                   labelPlacement="top"
-                  className={classes.formControl}
                   style={{ alignItems: 'start', marginBottom: 10 }}
                   control={
                     <ToggleButtonGroup
@@ -1009,7 +995,6 @@ function CreateEditLocationDialog(props: Props) {
               </FormControl>
               <>
                 <FormControlLabel
-                  className={classes.formControl}
                   disabled={!Pro}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between', marginTop: 15 }}
@@ -1178,18 +1163,13 @@ function CreateEditLocationDialog(props: Props) {
           </Accordion>
         )}
       </DialogContent>
-      <TsDialogActions>
-        <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
-        <TsButton
-          disabled={disableConfirmButton()}
-          onClick={preConfirm}
-          data-tid="confirmLocationCreation"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
-    </StyledDialog>
+      {!fullScreen && (
+        <TsDialogActions>
+          <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
+    </Dialog>
   );
 }
 

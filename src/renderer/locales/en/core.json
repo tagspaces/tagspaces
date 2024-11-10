@@ -152,6 +152,7 @@
   "addRemoveTags": "Add / Remove Tags",
   "openFile": "Open File",
   "downloadFile": "Download File",
+  "downloadFiles": "Download Files",
   "openFileNatively": "Open File Natively",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "Open Containing Folder",

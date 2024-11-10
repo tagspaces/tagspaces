@@ -173,7 +173,7 @@ function FilePreviewDialog(props: Props) {
     >
       <TsDialogTitle
         //data-tid="importDialogTitle"
-        title=""
+        dialogTitle=""
         closeButtonTestId="closeFilePreviewTID"
         onClose={onClose}
       />
