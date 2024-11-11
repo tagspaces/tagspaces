@@ -66,7 +66,10 @@ function SettingsDialog(props: Props) {
     <TsButton
       onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
       color="secondary"
-      //style={{ float: 'left' }}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:help')}
     </TsButton>

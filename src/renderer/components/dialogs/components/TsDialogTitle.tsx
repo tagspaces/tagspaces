@@ -17,9 +17,8 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { ArrowBackIcon } from '-/components/CommonIcons';
+import { ArrowBackIcon, CloseIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { isDesktopMode } from '-/reducers/settings';
 import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
@@ -48,9 +47,26 @@ function TsDialogTitle(props: TSDialogTitle) {
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
   const closeButton = (
-    <DialogCloseButton testId={closeButtonTestId} onClose={onClose} />
+    <TsIconButton
+      title={t('closeButtonDialog')}
+      aria-label="close"
+      tabIndex={-1}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+        position: 'absolute',
+        right: 15,
+        top: 15,
+      }}
+      data-tid={closeButtonTestId}
+      onClick={onClose}
+    >
+      <CloseIcon />
+    </TsIconButton>
   );
+
   const backButton = (
     <TsIconButton
       title={t('closeButtonDialog')}
