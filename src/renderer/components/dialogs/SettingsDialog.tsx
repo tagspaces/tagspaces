@@ -16,32 +16,31 @@
  *
  */
 
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import TsButton from '-/components/TsButton';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Dialog from '@mui/material/Dialog';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogContent from '@mui/material/DialogContent';
-import { isDesktopMode } from '-/reducers/settings';
+import TsButton from '-/components/TsButton';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
+import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
+import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
 import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
-import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
-import { clearAllURLParams } from '-/utils/dom';
-import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
-import Links from 'assets/links';
-import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
-import AppConfig from '-/AppConfig';
-import TranslucentDialog from '-/components/dialogs/TranslucentDialog';
+import { clearAllURLParams } from '-/utils/dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Links from 'assets/links';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;

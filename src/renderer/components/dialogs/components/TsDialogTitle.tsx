@@ -16,17 +16,16 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
 import { ArrowBackIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import { isDesktopMode } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
+import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 export type TSDialogTitle = DialogTitleProps & {
   dialogTitle: string;
@@ -60,6 +59,8 @@ function TsDialogTitle(props: TSDialogTitle) {
       style={{
         float: 'left',
         marginLeft: AppConfig.isMacLike && desktopMode ? 40 : 0,
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
       }}
       data-tid={closeButtonTestId && closeButtonTestId}
       onClick={onClose}

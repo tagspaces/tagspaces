@@ -21,6 +21,7 @@ import LogoIcon from '-/assets/images/icon100x100.svg';
 import DraggablePaper from '-/components/DraggablePaper';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
+import TranslucentDialog from '-/components/dialogs/components/TranslucentDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
@@ -38,7 +39,6 @@ import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import semver from 'semver';
-import TranslucentDialog from './TranslucentDialog';
 
 interface Props {
   open: boolean;
