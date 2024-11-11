@@ -16,28 +16,28 @@
  *
  */
 
-import React, { useState } from 'react';
-import TsButton from '-/components/TsButton';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import Tooltip from '-/components/Tooltip';
-import semver from 'semver';
-import DraggablePaper from '-/components/DraggablePaper';
-import LogoIcon from '-/assets/images/icon100x100.svg';
-import versionMeta from '-/version.json';
-import { Pro } from '-/pro';
-import { getLastVersionPromise } from '-/reducers/settings';
-import Links from 'assets/links';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
-import { openURLExternally } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
+import LogoIcon from '-/assets/images/icon100x100.svg';
+import DraggablePaper from '-/components/DraggablePaper';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
 import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
+import { Pro } from '-/pro';
+import { getLastVersionPromise } from '-/reducers/settings';
+import { openURLExternally } from '-/services/utils-io';
+import versionMeta from '-/version.json';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Links from 'assets/links';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import semver from 'semver';
 import TranslucentDialog from './TranslucentDialog';
 
 interface Props {
@@ -222,42 +222,28 @@ function AboutDialog(props: Props) {
           </div>
         </Typography>
       </DialogContent>
-      <TsDialogActions>
-        {!Pro && (
+      <TsDialogActions style={{ justifyContent: 'space-between' }}>
+        <span>
+          {!Pro && (
+            <TsButton
+              data-tid="checkForUpdates"
+              title={t('core:checkForNewVersion')}
+              onClick={() => {
+                openURLExternally(Links.links.productsOverview, true);
+              }}
+            >
+              Upgrade to PRO
+            </TsButton>
+          )}
           <TsButton
             data-tid="checkForUpdates"
             title={t('core:checkForNewVersion')}
-            onClick={() => {
-              openURLExternally(Links.links.productsOverview, true);
-            }}
+            onClick={checkForUpdates}
           >
-            Upgrade to PRO
+            {versionInfo}
           </TsButton>
-        )}
-        <TsButton
-          data-tid="checkForUpdates"
-          title={t('core:checkForNewVersion')}
-          onClick={checkForUpdates}
-        >
-          {versionInfo}
-        </TsButton>
-        {/* <TsButton
-        data-tid="openLicenseDialog"
-        onClick={this.props.toggleLicenseDialog}
-      >
-        {t('core:license')}
-      </TsButton>
-      <TsButton
-        data-tid="openThirdPartyLibsDialog"
-        onClick={this.props.toggleThirdPartyLibsDialog}
-      >
-        {t('core:thirdPartyLibs')}
-      </TsButton> */}
-        <TsButton
-          data-tid="closeAboutDialog"
-          onClick={onClose}
-          variant="contained"
-        >
+        </span>
+        <TsButton data-tid="closeAboutDialog" onClick={onClose}>
           {t('core:ok')}
         </TsButton>
       </TsDialogActions>

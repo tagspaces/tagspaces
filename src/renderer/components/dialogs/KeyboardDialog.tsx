@@ -16,24 +16,23 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import DraggablePaper from '-/components/DraggablePaper';
+import { getKeyBindingObject } from '-/reducers/settings';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
-import Dialog from '@mui/material/Dialog';
-import { getKeyBindingObject } from '-/reducers/settings';
+import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
-import AppConfig from '-/AppConfig';
-import Paper from '@mui/material/Paper';
+import { useSelector } from 'react-redux';
 
 export function adjustKeyBinding(keyBinding: string) {
   if (!keyBinding || !keyBinding.length) return '';

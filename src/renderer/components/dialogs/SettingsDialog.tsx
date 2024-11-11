@@ -26,6 +26,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Dialog from '@mui/material/Dialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogContent from '@mui/material/DialogContent';
 import { isDesktopMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -40,6 +41,7 @@ import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import TranslucentDialog from '-/components/dialogs/TranslucentDialog';
+import Paper from '@mui/material/Paper';
 
 interface Props {
   open: boolean;
@@ -55,7 +57,7 @@ function SettingsDialog(props: Props) {
     useState<boolean>(false);
   const { open, onClose } = props;
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleTabClick = (event, tab) => {
     setCurrentTab(tab);
@@ -76,7 +78,7 @@ function SettingsDialog(props: Props) {
       style={{
         overflowY: 'hidden',
         overflowX: 'hidden',
-        display: fullScreen ? 'block' : 'flex',
+        display: smallScreen ? 'block' : 'flex',
         flexGrow: 1,
       }}
     >
@@ -86,8 +88,8 @@ function SettingsDialog(props: Props) {
         onChange={handleTabClick}
         indicatorColor="primary"
         scrollButtons="auto"
-        variant={fullScreen ? 'scrollable' : 'standard'}
-        orientation={fullScreen ? 'horizontal' : 'vertical'}
+        variant={smallScreen ? 'scrollable' : 'standard'}
+        orientation={smallScreen ? 'horizontal' : 'vertical'}
         // allowScrollButtonsMobile
         // style={{
         //   width: fullScreen ? '100%' : '170px',
@@ -149,7 +151,7 @@ function SettingsDialog(props: Props) {
         style={{
           height: 'calc(100% - 50px)',
           minHeight: 400,
-          width: fullScreen ? '100%' : 600,
+          width: smallScreen ? '100%' : 600,
           //minWidth: 600,
           //maxWidth: 600,
         }}
@@ -204,7 +206,8 @@ function SettingsDialog(props: Props) {
           // backdropFilter: props.fullScreen ? 'unset' : 'blur(5px)',
         },
       }}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       open={open}
       keepMounted
       scroll="paper"
@@ -218,7 +221,7 @@ function SettingsDialog(props: Props) {
         actionSlot={helpButton}
       />
       {renderContent}
-      {!fullScreen && (
+      {!smallScreen && (
         <TsDialogActions
           style={{
             justifyContent: 'space-between',

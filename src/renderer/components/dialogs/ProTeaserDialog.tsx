@@ -16,23 +16,22 @@
  *
  */
 
-import React from 'react';
 import TsButton from '-/components/TsButton';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import DialogContent from '@mui/material/DialogContent';
+import Typography from '@mui/material/Typography';
+
+import AppConfig from '-/AppConfig';
+import { getProTeaserSlides } from '-/content/ProTeaserSlides';
+import { openURLExternally } from '-/services/utils-io';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from 'assets/links';
-import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -218,9 +217,12 @@ function ProTeaserDialog(props: Props) {
       keepMounted
       scroll="paper"
     >
-      <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <DialogCloseButton testId="closeProTeaserTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        closeButtonTestId="closeProTeaserTID"
+        style={{ height: 25 }}
+        onClose={onClose}
+        dialogTitle={''}
+      />
       <DialogContent
         style={{
           overflowY: 'auto',
