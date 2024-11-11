@@ -93,6 +93,10 @@ function CreateTagsDialog(props: Props) {
       onClick={onConfirm}
       data-tid="createTagsConfirmButton"
       variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

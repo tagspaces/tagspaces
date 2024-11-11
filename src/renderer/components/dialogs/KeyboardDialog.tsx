@@ -76,6 +76,10 @@ function KeyboardDialog(props: Props) {
       data-tid="closeKeyboardDialog"
       onClick={onClose}
       variant="outlined"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

@@ -120,6 +120,10 @@ function EditTagDialog(props: Props) {
       onClick={onConfirm}
       data-tid="editTagConfirm"
       variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

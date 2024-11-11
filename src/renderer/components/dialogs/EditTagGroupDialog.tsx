@@ -139,6 +139,10 @@ function EditTagGroupDialog(props: Props) {
       onClick={onConfirm}
       data-tid="editTagGroupConfirmButton"
       variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

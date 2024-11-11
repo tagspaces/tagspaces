@@ -16,31 +16,31 @@
  *
  */
 
-import React, { useReducer, useRef } from 'react';
-import {
-  locationType,
-  formatDateTime4Tag,
-} from '@tagspaces/tagspaces-common/misc';
-import DialogContent from '@mui/material/DialogContent';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
+import CreateLink from '-/components/dialogs/components/CreateLink';
 import TargetPath from '-/components/dialogs/components/TargetPath';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import AppConfig from '-/AppConfig';
-import versionMeta from '-/version.json';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { TS } from '-/tagspaces.namespace';
-import CreateLink from '-/components/dialogs/components/CreateLink';
+import versionMeta from '-/version.json';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  formatDateTime4Tag,
+  locationType,
+} from '@tagspaces/tagspaces-common/misc';
+import { useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -120,11 +120,15 @@ function NewFileDialog(props: Props) {
   const okButton = (
     <TsButton
       data-tid="createTID"
-      variant={smallScreen ? 'outlined' : 'contained'}
+      variant="contained"
       onClick={() => {
         createFile(fileType, targetDirectoryPath);
       }}
       disabled={haveError.current}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

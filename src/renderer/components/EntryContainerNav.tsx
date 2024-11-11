@@ -1,17 +1,15 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material/styles';
-import TsIconButton from '-/components/TsIconButton';
 import {
   CloseIcon,
-  PrevDocumentIcon,
   NextDocumentIcon,
+  PrevDocumentIcon,
 } from '-/components/CommonIcons';
-import Tooltip from '-/components/Tooltip';
-import { useTranslation } from 'react-i18next';
+import TsIconButton from '-/components/TsIconButton';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   isFile: boolean;

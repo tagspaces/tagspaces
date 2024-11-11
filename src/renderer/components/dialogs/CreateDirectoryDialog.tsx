@@ -16,34 +16,34 @@
  *
  */
 
-import React, { useState, useRef, useReducer } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import {
-  Dialog,
-  FormControl,
-  DialogContent,
-  FormHelperText,
-  InputAdornment,
-  inputBaseClasses,
-  useMediaQuery,
-  Box,
-  Paper,
-} from '@mui/material';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import DraggablePaper from '-/components/DraggablePaper';
-import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
-import { joinPaths } from '@tagspaces/tagspaces-common/paths';
-import TsTextField from '-/components/TsTextField';
-import TsIconButton from '-/components/TsIconButton';
-import TsButton from '-/components/TsButton';
-import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { TS } from '-/tagspaces.namespace';
 import { dirNameValidation } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+  Paper,
+  inputBaseClasses,
+  useMediaQuery,
+} from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { joinPaths } from '@tagspaces/tagspaces-common/paths';
+import { useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const FolderColorTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -169,7 +169,10 @@ function CreateDirectoryDialog(props: Props) {
       data-tid="confirmCreateNewDirectory"
       id="confirmCreateNewDirectory"
       variant="contained"
-      //variant={smallScreen ? 'outlined' : 'contained'}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

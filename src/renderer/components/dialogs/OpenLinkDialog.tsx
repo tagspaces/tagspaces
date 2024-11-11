@@ -16,20 +16,20 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
+import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
-import Dialog from '@mui/material/Dialog';
-import InfoIcon from '-/components/InfoIcon';
-import TsTextField from '-/components/TsTextField';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   open: boolean;
@@ -92,6 +92,10 @@ function OpenLinkDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmOpenLink"
       variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:open')}
     </TsButton>

@@ -156,6 +156,10 @@ function RenameEntryDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmRenameEntry"
       variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

@@ -16,31 +16,31 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import { saveAs } from 'file-saver';
-import DialogContent from '@mui/material/DialogContent';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import TargetPath from '-/components/dialogs/components/TargetPath';
-import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
-import { useTranslation } from 'react-i18next';
 import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
+import TargetPath from '-/components/dialogs/components/TargetPath';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import AppConfig from '-/AppConfig';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import TsTextField from '-/components/TsTextField';
+import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useDispatch } from 'react-redux';
-import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { saveAs } from 'file-saver';
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -148,6 +148,10 @@ function DownloadUrlDialog(props: Props) {
       variant="contained"
       data-tid={'downloadFileUrlTID'}
       onClick={() => downloadURL()}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

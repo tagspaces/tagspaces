@@ -151,6 +151,10 @@ function CreateTagGroupDialog(props: Props) {
       onClick={onConfirm}
       variant="contained"
       data-tid="createTagGroupConfirmButton"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
     >
       {t('core:ok')}
     </TsButton>

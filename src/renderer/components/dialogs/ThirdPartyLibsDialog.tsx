@@ -39,7 +39,14 @@ function ThirdPartyLibsDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const okButton = (
-    <TsButton data-tid="confirmThirdPartyLibsDialog" onClick={onClose}>
+    <TsButton
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+      data-tid="confirmThirdPartyLibsDialog"
+      onClick={onClose}
+    >
       {t('core:ok')}
     </TsButton>
   );

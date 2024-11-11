@@ -366,6 +366,9 @@ function GridSettingsDialog(props: Props) {
               saveSettings(true);
               onClose();
             }}
+            style={{
+              marginTop: AppConfig.defaultSpaceBetweenButtons,
+            }}
           >
             {t('core:defaultSettings')}
           </TsButton>
@@ -376,7 +379,10 @@ function GridSettingsDialog(props: Props) {
                 saveSettings(false);
                 onClose();
               }}
-              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              style={{
+                marginTop: AppConfig.defaultSpaceBetweenButtons,
+                marginLeft: AppConfig.defaultSpaceBetweenButtons,
+              }}
             >
               {t('core:directorySettings')}
             </TsButton>
