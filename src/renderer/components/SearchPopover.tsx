@@ -16,65 +16,65 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import AppConfig from '-/AppConfig';
+import {
+  ArchiveIcon,
+  AudioIcon,
+  BookIcon,
+  BookmarkIcon,
+  CloseIcon,
+  CreateFileIcon,
+  DocumentIcon,
+  EditIcon,
+  EmailIcon,
+  FileIcon,
+  FolderIcon,
+  InfoTooltipIcon,
+  NoteIcon,
+  PictureIcon,
+  UntaggedIcon,
+  VideoIcon,
+} from '-/components/CommonIcons';
+import { ProLabel, ProTooltip } from '-/components/HelperComponents';
+import { SidePanel, classes } from '-/components/SidePanels.css';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
-import Grid from '@mui/material/Grid';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import TsTextField from '-/components/TsTextField';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
-import { InfoTooltipIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
-import Select from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
-import TagsSelect from './TagsSelect';
+import TsTextField from '-/components/TsTextField';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import {
   getMaxSearchResults,
   getShowUnixHiddenEntries,
   isDesktopMode,
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
-import { Pro } from '../pro';
-import { parseGeoLocation, parseLatLon } from '-/utils/geo';
-import { TS } from '-/tagspaces.namespace';
-import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import Links from 'assets/links';
-import {
-  CreateFileIcon,
-  FolderIcon,
-  UntaggedIcon,
-  FileIcon,
-  BookmarkIcon,
-  BookIcon,
-  EmailIcon,
-  EditIcon,
-  PictureIcon,
-  DocumentIcon,
-  NoteIcon,
-  AudioIcon,
-  VideoIcon,
-  ArchiveIcon,
-  CloseIcon,
-} from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { parseGeoLocation, parseLatLon } from '-/utils/geo';
+import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select from '@mui/material/Select';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import { classes, SidePanel } from '-/components/SidePanels.css';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
+import Links from 'assets/links';
+import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
-import AppConfig from '-/AppConfig';
+import { useSelector } from 'react-redux';
+import { Pro } from '../pro';
+import TagsSelect from './TagsSelect';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -102,8 +102,6 @@ function SearchPopover(props: Props) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  // const textQuery = useRef<string>(searchQuery.textQuery);
-  // const tagsAND = useRef<Array<TS.Tag>>(searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
     searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
@@ -111,15 +109,12 @@ function SearchPopover(props: Props) {
   const searchBoxing = searchQuery.searchBoxing
     ? searchQuery.searchBoxing
     : 'location';
-  // useRef<'fuzzy' | 'semistrict' | 'strict'>(
   const searchType = searchQuery.searchType ? searchQuery.searchType : 'fuzzy';
   const lastModified = useRef<string>(
     searchQuery.lastModified ? searchQuery.lastModified : '',
   );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<TS.SearchQuery>(undefined);
-  // const tagTimePeriod = useRef<string>('');
-  // const tagTimePeriodHelper = useRef<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
   const tagTimePeriodFrom = searchQuery.tagTimePeriodFrom // useRef<number | null>(
@@ -158,10 +153,8 @@ function SearchPopover(props: Props) {
   const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
-
     if (name === 'fileSize') {
       fileSize.current = value;
-
       setSearchQuery({
         ...searchQuery,
         searchBoxing: searchBoxing,
@@ -195,7 +188,6 @@ function SearchPopover(props: Props) {
   ) => {
     const { target } = event;
     const { value } = target;
-
     const savedSearch = searches.find((search) => search.uuid === value);
     if (!savedSearch) {
       return true;
@@ -204,10 +196,7 @@ function SearchPopover(props: Props) {
     fileTypes.current = savedSearch.fileTypes;
     lastModified.current = savedSearch.lastModified;
     fileSize.current = savedSearch.fileSize;
-    //searchType.current = savedSearch.searchType;
-    //searchBoxing.current = savedSearch.searchBoxing;
     forceIndexing.current = savedSearch.forceIndexing;
-
     setSearchQuery({
       ...savedSearch,
       tagTimePeriodFrom: savedSearch.tagTimePeriodFrom,
@@ -310,19 +299,12 @@ function SearchPopover(props: Props) {
 
   const clearSearch = () => {
     props.setTextQuery('');
-    //searchBoxing.current = 'location';
-    //searchType.current = 'fuzzy';
     fileTypes.current = FileTypeGroups.any;
     lastModified.current = '';
-    // tagTimePeriod.current = '';
-    //tagTimePeriodHelper.current = ' ';
     setTagPlace(' ');
     setTagPlaceHelper(' ');
-    //tagTimePeriodFrom.current = null;
-    //tagTimePeriodTo.current = null;
     setTagPlaceLat(null);
     setTagPlaceLong(null);
-    // setTagPlaceRadius(0);
     forceIndexing.current = false;
     fileSize.current = '';
     setSearchQuery({});
@@ -749,24 +731,23 @@ function SearchPopover(props: Props) {
               size={desktopMode ? 'small' : 'medium'}
               input={<OutlinedInput name="fileTypes" id="file-type" />}
             >
-              {/* <TsMenuList> */}
               <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                 {t('core:anyType')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                <TsIconButton>
+                <TsIconButton size="small">
                   <FolderIcon />
                 </TsIconButton>
                 {t('core:searchFolders')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                <TsIconButton>
+                <TsIconButton size="small">
                   <FileIcon />
                 </TsIconButton>
                 {t('core:searchFiles')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                <TsIconButton>
+                <TsIconButton size="small">
                   <UntaggedIcon />
                 </TsIconButton>
                 {t('core:searchUntaggedEntries')}
@@ -775,7 +756,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.images)}
                 title={FileTypeGroups.images.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <PictureIcon />
                 </TsIconButton>
                 {t('core:searchPictures')}
@@ -784,7 +765,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.documents)}
                 title={FileTypeGroups.documents.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <DocumentIcon />
                 </TsIconButton>
                 {t('core:searchDocuments')}
@@ -793,7 +774,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.notes)}
                 title={FileTypeGroups.notes.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <NoteIcon />
                 </TsIconButton>
                 {t('core:searchNotes')}
@@ -802,7 +783,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.audio)}
                 title={FileTypeGroups.audio.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <AudioIcon />
                 </TsIconButton>
                 {t('core:searchAudio')}
@@ -811,7 +792,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.video)}
                 title={FileTypeGroups.video.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <VideoIcon />
                 </TsIconButton>
                 {t('core:searchVideoFiles')}
@@ -820,7 +801,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.archives)}
                 title={FileTypeGroups.archives.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <ArchiveIcon />
                 </TsIconButton>
                 {t('core:searchArchives')}
@@ -829,7 +810,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.bookmarks)}
                 title={FileTypeGroups.bookmarks.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <BookmarkIcon />
                 </TsIconButton>
                 {t('core:searchBookmarks')}
@@ -838,7 +819,7 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.ebooks)}
                 title={FileTypeGroups.ebooks.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <BookIcon />
                 </TsIconButton>
                 {t('core:searchEbooks')}
@@ -847,12 +828,11 @@ function SearchPopover(props: Props) {
                 value={JSON.stringify(FileTypeGroups.emails)}
                 title={FileTypeGroups.emails.toString()}
               >
-                <TsIconButton>
+                <TsIconButton size="small">
                   <EmailIcon />
                 </TsIconButton>
                 {t('core:searchEmails')}
               </MenuItem>
-              {/* </TsMenuList> */}
             </Select>
           </ProTooltip>
         </FormControl>
@@ -869,13 +849,7 @@ function SearchPopover(props: Props) {
               value={fileSize.current}
               onChange={handleFileSizeChange}
               size={desktopMode ? 'small' : 'medium'}
-              input={
-                <OutlinedInput
-                  name="fileSize"
-                  id="file-size"
-                  // label={t('core:sizeSearchTitle')}
-                />
-              }
+              input={<OutlinedInput name="fileSize" id="file-size" />}
               displayEmpty
             >
               <MenuItem value="">{t('core:sizeAny')}</MenuItem>
@@ -921,11 +895,7 @@ function SearchPopover(props: Props) {
               onChange={handleLastModifiedChange}
               size={desktopMode ? 'small' : 'medium'}
               input={
-                <OutlinedInput
-                  name="lastModified"
-                  id="modification-date"
-                  // label={t('core:lastModifiedSearchTitle')}
-                />
+                <OutlinedInput name="lastModified" id="modification-date" />
               }
               displayEmpty
             >
@@ -961,7 +931,6 @@ function SearchPopover(props: Props) {
                         });
                       }
                     }}
-                    // renderInput={(params) => <TsTextField {...params} />}
                   />
                 </div>
                 <div style={{ marginLeft: 5 }}>
@@ -969,7 +938,6 @@ function SearchPopover(props: Props) {
                     {t('core:enterTagTimePeriodTo')}
                   </FormHelperText>
                   <DatePicker
-                    // label={t('enterTagTimePeriodTo')}
                     disabled={isIndexing !== undefined || !Pro}
                     format="yyyy-MM-dd"
                     value={tagTimePeriodTo && new Date(tagTimePeriodTo)}
@@ -982,7 +950,6 @@ function SearchPopover(props: Props) {
                         });
                       }
                     }}
-                    // renderInput={(params) => <TsTextField {...params} />}
                   />
                 </div>
               </Box>

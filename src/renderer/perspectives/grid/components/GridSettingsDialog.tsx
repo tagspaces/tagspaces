@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
@@ -110,6 +111,12 @@ function GridSettingsDialog(props: Props) {
     return parsed;
   }
 
+  const helpButton = (
+    <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
+      {t('core:help')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
@@ -123,6 +130,7 @@ function GridSettingsDialog(props: Props) {
         dialogTitle={t('core:perspectiveSettingsTitle')}
         onClose={onClose}
         closeButtonTestId="closePerspectiveSettingsTID"
+        actionSlot={helpButton}
       />
       <DialogContent>
         {haveLocalSetting() && (
@@ -343,29 +351,30 @@ function GridSettingsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <TsDialogActions style={{ justifyContent: 'space-between' }}>
-        <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
-          {t('core:help')}
-        </TsButton>
-        <TsButton
-          data-tid="defaultSettings"
-          onClick={() => {
-            saveSettings(true);
-            onClose();
-          }}
-        >
-          {t('core:defaultSettings')}
-        </TsButton>
-        {Pro && (
+        {smallScreen ? <div style={{ width: 1 }} /> : helpButton}
+        <span>
           <TsButton
-            data-tid="directorySettings"
+            data-tid="defaultSettings"
             onClick={() => {
-              saveSettings(false);
+              saveSettings(true);
               onClose();
             }}
           >
-            {t('core:directorySettings')}
+            {t('core:defaultSettings')}
           </TsButton>
-        )}
+          {Pro && (
+            <TsButton
+              data-tid="directorySettings"
+              onClick={() => {
+                saveSettings(false);
+                onClose();
+              }}
+              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            >
+              {t('core:directorySettings')}
+            </TsButton>
+          )}
+        </span>
       </TsDialogActions>
     </Dialog>
   );
