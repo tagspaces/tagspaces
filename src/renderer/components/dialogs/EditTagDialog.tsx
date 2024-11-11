@@ -16,25 +16,26 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
-import format from 'date-fns/format';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { TS } from '-/tagspaces.namespace';
+import { useTheme } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText/ListItemText';
-import Dialog from '@mui/material/Dialog';
-import ColorPickerDialog from './ColorPickerDialog';
-import Tag from '-/components/Tag';
-import TransparentBackground from '../TransparentBackground';
-import TsTextField from '-/components/TsTextField';
-import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import format from 'date-fns/format';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import TransparentBackground from '../TransparentBackground';
+import ColorPickerDialog from './ColorPickerDialog';
 
 interface Props {
   open: boolean;
@@ -110,13 +111,24 @@ function EditTagDialog(props: Props) {
   };
 
   const { open, onClose } = props;
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const okButton = (
+    <TsButton
+      disabled={inputError}
+      onClick={onConfirm}
+      data-tid="editTagConfirm"
+      variant="contained"
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
       onClose={onClose}
       keepMounted
       scroll="paper"
@@ -130,21 +142,13 @@ function EditTagDialog(props: Props) {
         }*/
       }}
     >
-      <DialogTitle style={{ overflow: 'visible' }}>
-        {t('core:editTagTitle')}
-        {`  `}
-        <Tag
-          backgroundColor={color}
-          textColor={textcolor}
-          isDragging={false}
-          tagTitle={description}
-        >
-          {title}
-          <span style={{ margin: 3 }} />
-        </Tag>
-        <DialogCloseButton testId="closeEditTagTID" onClose={onClose} />
-      </DialogTitle>
-      <DialogContent style={{ overflow: 'visible' }}>
+      <TsDialogTitle
+        dialogTitle={t('core:editTagTitle')}
+        closeButtonTestId="closeEditTagTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
+      <DialogContent>
         <FormControl
           fullWidth={true}
           error={inputError}
@@ -251,20 +255,24 @@ function EditTagDialog(props: Props) {
             />
           )}
         </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagPreview')} />
+          <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
+            <span style={{ textTransform: 'lowercase' }}>
+              {t('core:tagPreview')}
+            </span>
+            <span style={{ margin: 3 }} />
+          </Tag>
+        </ListItem>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton onClick={props.onClose} data-tid="closeEditTagDialog">
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          disabled={inputError}
-          onClick={onConfirm}
-          data-tid="editTagConfirm"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton onClick={props.onClose} data-tid="closeEditTagDialog">
+            {t('core:cancel')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

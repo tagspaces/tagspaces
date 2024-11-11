@@ -16,33 +16,33 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { useMediaQuery, useTheme } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText/ListItemText';
-import Switch from '@mui/material/Switch';
-import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
-import { useSelector } from 'react-redux';
-import ColorPickerDialog from './ColorPickerDialog';
-import TransparentBackground from '../TransparentBackground';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import Tag from '-/components/Tag';
-import { getSaveTagInLocation } from '-/reducers/settings';
+import Switch from '@mui/material/Switch';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { useSelector } from 'react-redux';
+import TransparentBackground from '../TransparentBackground';
+import ColorPickerDialog from './ColorPickerDialog';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -250,7 +250,9 @@ function EditTagGroupDialog(props: Props) {
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:tagPreview')} />
         <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
-          tag-preview
+          <span style={{ textTransform: 'lowercase' }}>
+            {t('core:tagPreview')}
+          </span>
           <span style={{ margin: 3 }} />
         </Tag>
       </ListItem>

@@ -16,21 +16,23 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import Dialog from '@mui/material/Dialog';
 import TsTextField from '-/components/TsTextField';
-import useFirstRender from '-/utils/useFirstRender';
-import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTranslation } from 'react-i18next';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { parseNewTags } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
+import { Paper, useTheme } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -82,13 +84,26 @@ function CreateTagsDialog(props: Props) {
     }
   };
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const okButton = (
+    <TsButton
+      disabled={inputError}
+      onClick={onConfirm}
+      data-tid="createTagsConfirmButton"
+      variant="contained"
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -99,10 +114,12 @@ function CreateTagsDialog(props: Props) {
         }
       }}
     >
-      <DialogTitle>
-        {t('core:addTagsToGroupTitle')}
-        <DialogCloseButton testId="closeCreateTagTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:addTagsToGroupTitle')}
+        closeButtonTestId="closeCreateTagTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent style={{ minWidth: 300, paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
@@ -119,17 +136,12 @@ function CreateTagsDialog(props: Props) {
           )}
         </FormControl>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
-        <TsButton
-          disabled={inputError}
-          onClick={onConfirm}
-          data-tid="createTagsConfirmButton"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

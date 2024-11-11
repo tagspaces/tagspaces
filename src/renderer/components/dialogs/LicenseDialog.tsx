@@ -16,18 +16,17 @@
  *
  */
 
-import React from 'react';
+import LicenseContent from '-/LICENSE.txt';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { Pro } from '-/pro';
+import { quitApp } from '-/services/utils-io';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import { Pro } from '-/pro';
-import LicenseContent from '-/LICENSE.txt';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
-import { quitApp } from '-/services/utils-io';
 
 // import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
@@ -59,14 +58,14 @@ function LicenseDialog(props: Props) {
   // }
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
       keepMounted
       disableEscapeKeyDown
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       scroll="paper"
     >
       <DialogTitle>{t('core:license')}</DialogTitle>

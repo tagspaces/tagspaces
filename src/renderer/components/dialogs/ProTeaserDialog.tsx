@@ -167,7 +167,7 @@ function ProTeaserDialog(props: Props) {
   const { open, onClose, slideIndex } = props;
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const slides = [];
   for (let index in slidesEN) {
@@ -213,7 +213,7 @@ function ProTeaserDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
     >

@@ -16,39 +16,39 @@
  *
  */
 
-import React, { useEffect, useReducer } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Divider,
-  MenuItem,
-  Typography,
-  Paper,
-  Box,
-} from '@mui/material';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import ZoomComponent from '-/components/ZoomComponent';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { Pro } from '-/pro';
+import useFirstRender from '-/utils/useFirstRender';
 import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import DraggablePaper from '-/components/DraggablePaper';
-import TsSelect from '-/components/TsSelect';
-import TsButton from '-/components/TsButton';
-import { Pro } from '-/pro';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Paper,
+  Switch,
+  Typography,
+} from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import ZoomComponent from '-/components/ZoomComponent';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import useFirstRender from '-/utils/useFirstRender';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -78,7 +78,7 @@ function GridSettingsDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { open, onClose, openHelpWebPage } = props;
 
   useEffect(() => {
@@ -114,8 +114,8 @@ function GridSettingsDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
-      fullScreen={fullScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
     >
@@ -140,14 +140,12 @@ function GridSettingsDialog(props: Props) {
               onClick={() => {
                 resetLocalSetting();
                 onClose();
-                // forceUpdate();
               }}
             >
               {t('core:resetLocalSettings')}
             </TsButton>
           </>
         )}
-        {/* <Divider /> */}
         <Box style={{ display: 'flex' }}>
           <Typography
             style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
@@ -157,7 +155,6 @@ function GridSettingsDialog(props: Props) {
           </Typography>
           <ZoomComponent preview={true} />
         </Box>
-        {/* <Divider /> */}
         <FormGroup>
           <FormControlLabel
             // labelPlacement="start"

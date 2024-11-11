@@ -16,23 +16,23 @@
  *
  */
 
-import React from 'react';
 import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { TS } from '-/tagspaces.namespace';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import TsTextField from '-/components/TsTextField';
-import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   extractContainingDirectoryPath,
   extractFileExtension,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
@@ -49,7 +49,7 @@ function ResolveConflictDialog(props: Props) {
   const [isSaveAs, setSaveAs] = React.useState<boolean>(false);
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function getFileName() {
     if (openedEntry) {

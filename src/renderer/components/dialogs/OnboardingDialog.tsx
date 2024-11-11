@@ -16,38 +16,37 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import Slider from 'react-slick';
-import TsButton from '-/components/TsButton';
-import DialogContent from '@mui/material/DialogContent';
-import Typography from '@mui/material/Typography';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Dialog from '@mui/material/Dialog';
+import ChooseTagging from '-/assets/images/abacus.svg';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
-import ChooseTagging from '-/assets/images/abacus.svg';
-import Organize from '-/assets/images/organize.svg';
 import NewLook from '-/assets/images/desktop.svg';
+import Organize from '-/assets/images/organize.svg';
+import TsButton from '-/components/TsButton';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { AppDispatch } from '-/reducers/app';
 import {
+  actions as SettingsActions,
   getCurrentTheme,
   getPersistTagsInSidecarFile,
-  actions as SettingsActions,
 } from '-/reducers/settings';
-import Links from 'assets/links';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
-import { AppDispatch } from '-/reducers/app';
-import { useTranslation } from 'react-i18next';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Links from 'assets/links';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import Slider from 'react-slick';
 
 interface Props {
   classes: any;
@@ -77,7 +76,7 @@ function OnboardingDialog(props: Props) {
   };
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function NextArrow(props) {
     const { className, style, onClick } = props;
@@ -117,7 +116,7 @@ function OnboardingDialog(props: Props) {
       open={open}
       onClose={onClose}
       keepMounted
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       scroll="paper"
     >
       <TsDialogTitle
