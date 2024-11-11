@@ -36,7 +36,7 @@ import {
   isDevMode,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
+import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
 import TsTextField from '-/components/TsTextField';
 import TsSelect from '-/components/TsSelect';
 import { Pro } from '-/pro';

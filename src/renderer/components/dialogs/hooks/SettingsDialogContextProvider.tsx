@@ -41,10 +41,7 @@ export type SettingsDialogContextProviderProps = {
 };
 
 const SettingsDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "SettingsDialog" */ '../settings/SettingsDialog'
-    ),
+  () => import(/* webpackChunkName: "SettingsDialog" */ '../SettingsDialog'),
 );
 
 export const SettingsDialogContextProvider = ({

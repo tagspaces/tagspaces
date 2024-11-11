@@ -24,7 +24,6 @@ import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Switch from '@mui/material/Switch';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -53,20 +52,18 @@ import {
   AccordionSummary,
   MenuItem,
   FormLabel,
-  Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
 import DraggablePaper from '-/components/DraggablePaper';
-import ObjectStoreForm from './ObjectStoreForm';
-import LocalForm from './LocalForm';
+import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
+import LocalForm from './components/LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import WebdavForm from '-/components/dialogs/WebdavForm';
+import WebdavForm from '-/components/dialogs/components/WebdavForm';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
