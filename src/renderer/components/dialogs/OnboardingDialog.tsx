@@ -39,7 +39,6 @@ import {
   getPersistTagsInSidecarFile,
   actions as SettingsActions,
 } from '-/reducers/settings';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from 'assets/links';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -123,8 +122,9 @@ function OnboardingDialog(props: Props) {
     >
       <TsDialogTitle
         dialogTitle={''}
+        style={{ height: 25 }}
         onClose={onClose}
-        closeButtonTestId="closeOnboardingDialog"
+        closeButtonTestId={'closeOnboardingDialog'}
       />
       <DialogContent
         style={{

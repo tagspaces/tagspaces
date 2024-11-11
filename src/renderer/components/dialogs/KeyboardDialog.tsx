@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogContent from '@mui/material/DialogContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -32,6 +33,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
+import Paper from '@mui/material/Paper';
 
 export function adjustKeyBinding(keyBinding: string) {
   if (!keyBinding || !keyBinding.length) return '';
@@ -85,6 +87,7 @@ function KeyboardDialog(props: Props) {
       open={open}
       onClose={onClose}
       fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
     >

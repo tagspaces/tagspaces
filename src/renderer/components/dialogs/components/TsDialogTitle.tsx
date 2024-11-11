@@ -43,6 +43,7 @@ function TsDialogTitle(props: TSDialogTitle) {
     closeButtonTestId,
     children,
     actionSlot,
+    ...rest
   } = props;
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
@@ -58,6 +59,7 @@ function TsDialogTitle(props: TSDialogTitle) {
       tabIndex={-1}
       style={{
         float: 'left',
+        marginLeft: AppConfig.isMacLike && desktopMode ? 40 : 0,
       }}
       data-tid={closeButtonTestId && closeButtonTestId}
       onClick={onClose}
@@ -69,13 +71,13 @@ function TsDialogTitle(props: TSDialogTitle) {
   return (
     <DialogTitle
       id={smallScreen ? '' : 'draggable-dialog-title'}
-      {...props}
+      {...rest}
       style={{
         cursor: smallScreen ? 'unset' : 'move',
         ...style,
       }}
     >
-      {smallScreen ? (
+      {smallScreen ? ( // && !desktopMode
         <>
           <div style={{ display: 'flex' }}>
             {backButton}

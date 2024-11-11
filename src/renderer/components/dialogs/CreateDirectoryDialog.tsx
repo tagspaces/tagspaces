@@ -27,9 +27,11 @@ import {
   inputBaseClasses,
   useMediaQuery,
   Box,
+  Paper,
 } from '@mui/material';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import DraggablePaper from '-/components/DraggablePaper';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import TsTextField from '-/components/TsTextField';
@@ -178,6 +180,7 @@ function CreateDirectoryDialog(props: Props) {
       open={open}
       onClose={onClose}
       fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {

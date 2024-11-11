@@ -20,6 +20,7 @@ import React, { useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
@@ -35,6 +36,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { exportTagGroups } from '-/services/taglibrary-utils';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import Paper from '@mui/material/Paper';
 
 interface Props {
   open: boolean;
@@ -140,6 +142,7 @@ function ImportExportTagGroupsDialog(props: Props) {
       open={open}
       fullScreen={smallScreen}
       onClose={onClose}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
     >
       <TsDialogTitle

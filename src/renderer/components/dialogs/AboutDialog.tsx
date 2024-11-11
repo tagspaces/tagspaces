@@ -114,15 +114,15 @@ function AboutDialog(props: Props) {
   }
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <TranslucentDialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle

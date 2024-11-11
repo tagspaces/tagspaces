@@ -166,7 +166,7 @@ function DownloadUrlDialog(props: Props) {
       >
         <TsDialogTitle
           dialogTitle={t('core:downloadLink')}
-          closeButtonTestId="closeCreateDialogTID"
+          closeButtonTestId="closeDownloadURLDialogTID"
           onClose={onClose}
           actionSlot={okButton}
         />

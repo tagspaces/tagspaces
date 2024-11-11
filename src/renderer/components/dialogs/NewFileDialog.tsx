@@ -26,7 +26,6 @@ import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CreateFile from '-/components/dialogs/components/CreateFile';
@@ -144,7 +143,7 @@ function NewFileDialog(props: Props) {
       <TsDialogTitle
         dialogTitle={getFileType()}
         onClose={onClose}
-        closeButtonTestId="closeCreateDialogTID"
+        closeButtonTestId="closeNewFileDialogTID"
         actionSlot={okButton}
       ></TsDialogTitle>
       <DialogContent

@@ -63,7 +63,7 @@ function NewAudioDialog(props: Props) {
       >
         <TsDialogTitle
           dialogTitle={t('core:audioRecorder')}
-          closeButtonTestId="closeCreateDialogTID"
+          closeButtonTestId="closeNewAudioDialogTID"
           onClose={() => {
             intOnClose(undefined, 'escapeKeyDown');
           }}
