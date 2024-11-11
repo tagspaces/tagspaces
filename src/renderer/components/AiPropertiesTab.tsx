@@ -71,9 +71,9 @@ function AiPropertiesTab(props: Props) {
           onClick={() => {
             getModel(ollamaSettings.imageModel).then((modelExist) => {
               if (modelExist) {
-                toBase64Image(currentLocation, openedEntry.path).then(
-                  (base64Img) => {
-                    //setImage(base64Img);
+                currentLocation
+                  .getFileContentPromise(openedEntry.path, 'arraybuffer')
+                  .then((uint8Array) =>
                     newChatMessage(
                       undefined,
                       false,
@@ -81,28 +81,25 @@ function AiPropertiesTab(props: Props) {
                       'description',
                       modelExist.name,
                       false,
-                      [base64Img],
-                    )
-                      .then((response) => {
-                        console.log('newOllamaMessage response:' + response);
-                        if (response) {
-                          if (openedEntry.meta.description) {
-                            setConfirmDescriptionOpened(response);
-                          } else {
-                            setDescription(response);
-                            showNotification(
-                              'Description for ' +
-                                openedEntry.path +
-                                ' generated',
-                            );
-                          }
-                        }
-                        //setImage(undefined);
-                        //forceUpdate();
-                      })
-                      .catch((e) => console.log('newOllamaMessage error:', e));
-                  },
-                );
+                      [toBase64Image(uint8Array)],
+                    ),
+                  )
+                  .then((response) => {
+                    console.log('newOllamaMessage response:' + response);
+                    if (response) {
+                      if (openedEntry.meta.description) {
+                        setConfirmDescriptionOpened(response);
+                      } else {
+                        setDescription(response);
+                        showNotification(
+                          'Description for ' + openedEntry.path + ' generated',
+                        );
+                      }
+                    }
+                    //setImage(undefined);
+                    //forceUpdate();
+                  })
+                  .catch((e) => console.log('newOllamaMessage error:', e));
               } else {
                 showNotification(
                   'Model ' +

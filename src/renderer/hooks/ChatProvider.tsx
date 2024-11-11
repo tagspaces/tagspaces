@@ -23,6 +23,11 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
+import {
+  getMetaDirectoryPath,
+  extractFileName,
+} from '@tagspaces/tagspaces-common/paths';
+import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelector } from 'react-redux';
 import { getOllamaSettings } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
@@ -32,22 +37,26 @@ import { useTranslation } from 'react-i18next';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { toBase64Image } from '-/services/utils-io';
 
 type ChatData = {
   models: TS.Model[];
-  images: string[];
+  images: ChatImage[];
   currentModel: TS.Model;
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
   setModel: (model: TS.Model) => Promise<boolean>;
-  setImage: (base64: string) => void;
+  setImages: (imagesPaths: string[]) => void;
   unloadCurrentModel: () => void;
   removeModel: (model: TS.Model) => void;
   findModel: (modelName: string) => TS.Model;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
   getModel: (modelName: string) => Promise<TS.Model>;
-  addTimeLineRequest: (txt: string) => void;
+  addTimeLineRequest: (txt: string, role: ChatRole) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
     msg?: string,
@@ -68,7 +77,7 @@ export const ChatContext = createContext<ChatData>({
   //isTyping: false,
   refreshOllamaModels: undefined,
   setModel: undefined,
-  setImage: undefined,
+  setImages: undefined,
   unloadCurrentModel: undefined,
   removeModel: undefined,
   findModel: undefined,
@@ -87,7 +96,13 @@ export type ChatItem = {
   request: string;
   response?: string;
   timestamp: number;
-  role?: ChatRole;
+  role: ChatRole;
+  imagePaths?: string[];
+};
+
+export type ChatImage = {
+  path: string;
+  base64?: string;
 };
 
 export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
@@ -97,10 +112,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { currentLocation } = useCurrentLocationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { saveFilePromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<TS.Model>(undefined);
   const models = useRef<TS.Model[]>([]);
-  const images = useRef<string[]>([]);
+  const images = useRef<ChatImage[]>([]);
   const ollamaSettings = useSelector(getOllamaSettings);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
@@ -116,6 +134,27 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   useEffect(() => {
     refreshOllamaModels();
   }, []);
+
+  useEffect(() => {
+    loadHistory().then((historyItems) => {
+      chatHistoryItems.current = historyItems;
+      forceUpdate();
+    });
+  }, [currentDirectoryPath]);
+
+  function loadHistory(): Promise<ChatItem[]> {
+    const historyFilePath = getHistoryFilePath();
+    if (currentLocation) {
+      return currentLocation
+        .loadTextFilePromise(historyFilePath)
+        .then((jsonContent) => loadJSONString(jsonContent) as ChatItem[])
+        .catch((e) => {
+          console.log('cannot load json:' + historyFilePath, e);
+          return [];
+        });
+    }
+    return Promise.resolve([]);
+  }
 
   function refreshOllamaModels(modelName = undefined) {
     if (AppConfig.isElectron) {
@@ -150,7 +189,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           timestamp: new Date().getTime(),
           role: 'system',
         };
-        chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
+        saveHistoryItems([newItem, ...chatHistoryItems.current]);
         forceUpdate();
         return true;
       });
@@ -158,9 +197,27 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(false);
   }
 
-  function setImage(base64: string) {
-    if (base64) {
-      images.current = [...images.current, base64];
+  function setImages(imagesPaths: string[]) {
+    if (imagesPaths.length > 0) {
+      imagesPaths.forEach((path) => {
+        currentLocation
+          .getFileContentPromise(path, 'arraybuffer')
+          .then((uint8Array) => {
+            const base64Img = toBase64Image(uint8Array);
+            const imageHistoryPath = getHistoryFilePath(path);
+            const image: ChatImage = {
+              path: imageHistoryPath,
+              base64: base64Img,
+            };
+            images.current = [...images.current, image];
+            saveFilePromise(
+              { path: imageHistoryPath },
+              uint8Array,
+              true,
+              false,
+            );
+          });
+      });
       forceUpdate();
     }
   }
@@ -178,7 +235,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (model) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
-        addTimeLineRequest('deleting ' + model.name);
+        addTimeLineRequest('deleting ' + model.name, 'system');
         window.electronIO.ipcRenderer
           .invoke('deleteOllamaModel', ollamaSettings.url, {
             name: model.name,
@@ -231,7 +288,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         'Do you want to download and install ' + newModelName + ' model?',
       );
       if (result) {
-        addTimeLineRequest('downloading ' + newModelName);
+        addTimeLineRequest('downloading ' + newModelName, 'system');
         return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', ollamaSettings.url, {
             name: newModelName,
@@ -247,26 +304,61 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(false);
   }
 
-  function addTimeLineRequest(txt) {
+  function addTimeLineRequest(txt: string, role: ChatRole) {
     if (txt) {
       const newItem: ChatItem = {
-        request: txt + getImages(),
+        role: role,
+        request: txt,
         timestamp: new Date().getTime(),
+        imagePaths: images.current.map((i) => i.path),
       };
-      chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
+      saveHistoryItems([newItem, ...chatHistoryItems.current]);
       images.current = [];
       forceUpdate();
     }
   }
 
-  function getImages() {
+  /*function getImages() {
     if (images.current.length > 0) {
       const img = images.current.map(
-        (i) => '![chat image](data:image/*;base64,' + i + ')',
+        (i) => '![chat image](data:image/!*;base64,' + i.base64 + ')',
       );
       return img.join(' ');
     }
     return '';
+  }*/
+
+  function getHistoryFilePath(filePath?: string) {
+    const dirSeparator = currentLocation
+      ? currentLocation.getDirSeparator()
+      : AppConfig.dirSeparator;
+    const metaFolder = getMetaDirectoryPath(
+      currentDirectoryPath,
+      currentLocation?.getDirSeparator(),
+    );
+    const fileName = filePath
+      ? extractFileName(filePath, dirSeparator)
+      : 'tsc.json';
+    return metaFolder + dirSeparator + 'chat' + dirSeparator + fileName;
+  }
+
+  function saveHistoryItems(items?: ChatItem[]) {
+    if (items) {
+      chatHistoryItems.current = items;
+    }
+    if (chatHistoryItems.current.length > 0) {
+      saveFilePromise(
+        { path: getHistoryFilePath() },
+        JSON.stringify(chatHistoryItems.current),
+        true,
+      )
+        .then((fsEntry: TS.FileSystemEntry) => {
+          console.log(t('core:fileCreateSuccessfully') + ' ' + fsEntry.path);
+        })
+        .catch((err) => {
+          console.log('File creation failed', err);
+        });
+    }
   }
 
   function addTimeLineResponse(txt, replace = false): ChatItem[] {
@@ -364,7 +456,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       return Promise.resolve(false);
     }
     const msgContent = getMessage(msg, mode);
-    const imagesArray = imgArray.length > 0 ? imgArray : images.current;
+    const imagesArray =
+      imgArray.length > 0 ? imgArray : images.current.map((i) => i.base64);
     const messages =
       msgContent && !unload
         ? [
@@ -376,7 +469,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             },
           ]
         : [];
-    addTimeLineRequest(msg);
+    addTimeLineRequest(msg, role);
     return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', ollamaSettings.url, {
         model, // Adjust model name as needed
@@ -385,6 +478,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ...(unload && { keep_alive: 0 }),
       })
       .then((apiResponse) => {
+        saveHistoryItems();
         return stream ? true : apiResponse;
       });
   }
@@ -398,7 +492,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       //isTyping: isTyping.current,
       refreshOllamaModels,
       setModel,
-      setImage,
+      setImages,
       unloadCurrentModel,
       removeModel,
       changeCurrentModel,

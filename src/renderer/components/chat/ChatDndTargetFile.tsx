@@ -41,7 +41,7 @@ function ChatDndTargetFile(props: Props) {
   const theme = useTheme();
   const { children, accepts, style } = props;
   const { findLocalLocation } = useCurrentLocationContext();
-  const { setImage } = useChatContext();
+  const { setImages } = useChatContext();
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
@@ -54,21 +54,14 @@ function ChatDndTargetFile(props: Props) {
 
         if (files && files.length) {
           if (AppConfig.isElectron) {
-            files = files.map((file) => {
+            const filePaths = files.map((file) => {
               if (!file.path) {
                 file.path = window.electronIO.ipcRenderer.getPathForFile(file);
               }
-              return file;
+              return file.path;
             });
+            setImages(filePaths);
           }
-          files.forEach((file) => {
-            const loc = findLocalLocation();
-            if (loc && file.path) {
-              toBase64Image(loc, file.path).then((base64Img) =>
-                setImage(base64Img),
-              );
-            }
-          });
         }
       },
       collect: (m: DropTargetMonitor) => ({

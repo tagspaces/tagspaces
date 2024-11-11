@@ -98,11 +98,17 @@ function ChatView() {
         : '';
       const request = item.request ? item.request : '';
       const response = item.response ? item.response : '';
+      const images = item.imagePaths
+        ? item.imagePaths.map((i) => {
+            return '![chat image](' + i + ')';
+          })
+        : '';
       return (
         '\n | `' +
         date +
         ':` ' +
         request +
+        images +
         ' |\n|-------------| \n\n ' +
         response +
         ' \n '
@@ -201,7 +207,7 @@ function ChatView() {
                       {images.length > 0 &&
                         images.map((image) => (
                           <img
-                            src={'data:image/*;base64,' + image}
+                            src={'data:image/*;base64,' + image.base64}
                             style={{ maxHeight: 50 }}
                           />
                         ))}
