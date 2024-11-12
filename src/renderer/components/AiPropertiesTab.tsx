@@ -16,22 +16,31 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { supportedImgs, supportedText } from '-/services/thumbsgenerator';
 import Button from '@mui/material/Button';
 import { useChatContext } from '-/hooks/useChatContext';
-import { IMAGE_DESCRIPTION } from '../../../tagspacespro/modules/components';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { Pro } from '-/pro';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { toBase64Image } from '-/services/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelector } from 'react-redux';
-import { getOllamaSettings } from '-/reducers/settings';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actions as SettingsActions,
+  getOllamaSettings,
+} from '-/reducers/settings';
 import LoadingLazy from '-/components/LoadingLazy';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { AppDispatch } from '-/reducers/app';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from '@mui/material';
+import { TS } from '-/tagspaces.namespace';
+import { GENERATE_TAGS } from '../../../tagspacespro/modules/components/ChatTemplates';
+import { ChatMode } from '-/hooks/ChatProvider';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {}
 
@@ -48,91 +57,157 @@ function ChatViewAsync(props) {
 
 function AiPropertiesTab(props: Props) {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const { currentLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { newChatMessage, getModel } = useChatContext();
-  const { setDescription } = useFilePropertiesContext();
+  const { setDescription, saveDescription } = useFilePropertiesContext();
   const { showNotification } = useNotificationContext();
+  const { addTagsToFsEntry } = useTaggingActionsContext();
 
   const ollamaSettings = useSelector(getOllamaSettings);
-  const [confirmDescriptionOpened, setConfirmDescriptionOpened] =
-    useState<string>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const aiModel = useRef<TS.Model>(undefined);
+  const ext = extractFileExtension(openedEntry.name).toLowerCase();
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+  const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
+
+  useEffect(() => {
+    let model;
+    if (supportedText.includes(ext)) {
+      model = ollamaSettings.textModel;
+    } else if (supportedImgs.includes(ext)) {
+      model = ollamaSettings.imageModel;
+    }
+    if (model) {
+      getModel(model).then((m) => {
+        aiModel.current = m;
+        forceUpdate();
+      });
+    }
+  }, [ollamaSettings]);
 
   if (!openedEntry.isFile) {
     return <ChatViewAsync />;
   }
 
-  const ext = extractFileExtension(openedEntry.name).toLowerCase();
-  if (IMAGE_DESCRIPTION && supportedImgs.includes(ext)) {
-    return (
-      <>
-        <Button
-          data-tid="generateDescriptionTID"
-          onClick={() => {
-            getModel(ollamaSettings.imageModel).then((modelExist) => {
-              if (modelExist) {
-                currentLocation
-                  .getFileContentPromise(openedEntry.path, 'arraybuffer')
-                  .then((uint8Array) =>
-                    newChatMessage(
-                      undefined,
-                      false,
-                      'user',
-                      'description',
-                      modelExist.name,
-                      false,
-                      [toBase64Image(uint8Array)],
-                    ),
-                  )
-                  .then((response) => {
-                    console.log('newOllamaMessage response:' + response);
-                    if (response) {
-                      if (openedEntry.meta.description) {
-                        setConfirmDescriptionOpened(response);
-                      } else {
-                        setDescription(response);
-                        showNotification(
-                          'Description for ' + openedEntry.path + ' generated',
-                        );
-                      }
-                    }
-                    //setImage(undefined);
-                    //forceUpdate();
-                  })
-                  .catch((e) => console.log('newOllamaMessage error:', e));
-              } else {
-                showNotification(
-                  'Model ' +
-                    ollamaSettings.imageModel +
-                    ' not found, try pulling it first',
+  function generate(fileContent: 'text' | 'image', mode: ChatMode) {
+    if (aiModel.current) {
+      setIsLoading(true);
+      currentLocation
+        .getFileContentPromise(
+          openedEntry.path,
+          fileContent === 'text' ? 'text' : 'arraybuffer',
+        )
+        .then((content) => {
+          return newChatMessage(
+            fileContent === 'text' ? content : undefined,
+            false,
+            'user',
+            mode,
+            aiModel.current.name,
+            false,
+            fileContent === 'text' ? [] : [toBase64Image(content)],
+          );
+        })
+        .then((response) => {
+          console.log('newOllamaMessage response:' + response);
+          setIsLoading(false);
+          if (response) {
+            if (mode === 'tags') {
+              try {
+                const regex = /\{([^}]+)\}/g;
+                const tags: TS.Tag[] = [...response.matchAll(regex)].map(
+                  (match) => ({ title: match[1] + '', type: 'sidecar' }),
                 );
+                addTagsToFsEntry(openedEntry, tags).then(() => {
+                  dispatch(SettingsActions.setEntryContainerTab(0));
+                });
+              } catch (e) {
+                console.error('parse response ' + response, e);
               }
-            });
+            } else if (mode === 'description') {
+              dispatch(SettingsActions.setEntryContainerTab(1));
+
+              if (openedEntry.meta.description) {
+                setDescription(
+                  openedEntry.meta.description + '\n---\n' + response,
+                );
+              } else {
+                setDescription(response);
+              }
+              saveDescription();
+              //openEntry(openedEntry.path).then(() => {
+              showNotification(
+                'Description for ' + openedEntry.path + ' generated',
+              );
+            }
+          }
+          //setImage(undefined);
+          //forceUpdate();
+        })
+        .catch((e) => console.log('newOllamaMessage error:', e));
+    } else {
+      showNotification('Model not found, try pulling it first');
+    }
+  }
+
+  let descriptionButton;
+  let generateTagsButton;
+  if (IMAGE_DESCRIPTION && supportedImgs.includes(ext)) {
+    descriptionButton = (
+      <Button
+        disabled={isLoading || !aiModel.current}
+        data-tid="generateDescriptionTID"
+        onClick={() => {
+          generate('image', 'description');
+        }}
+        color="secondary"
+      >
+        {t('core:generateDescription')}
+      </Button>
+    );
+  } else if (supportedText.includes(ext)) {
+    descriptionButton = (
+      <Button
+        disabled={isLoading || !aiModel.current}
+        data-tid="generateDescriptionTID"
+        onClick={() => {
+          generate('text', 'description');
+        }}
+        color="secondary"
+      >
+        {t('core:generateDescription')}
+      </Button>
+    );
+    if (GENERATE_TAGS) {
+      generateTagsButton = (
+        <Button
+          disabled={isLoading || !aiModel.current}
+          data-tid="generateTagsTID"
+          onClick={() => {
+            generate('text', 'tags');
           }}
           color="secondary"
         >
-          {t('core:generateDescription')}
+          {t('core:generateTags')}
         </Button>
-        <ConfirmDialog
-          open={confirmDescriptionOpened !== undefined}
-          onClose={() => setConfirmDescriptionOpened(undefined)}
-          title={t('core:confirmDescriptionReplaceTitle')}
-          content={t('core:confirmDescriptionReplace', {
-            description: confirmDescriptionOpened,
-          })}
-          confirmCallback={(result) => {
-            if (result) {
-              setDescription(confirmDescriptionOpened);
-            }
-          }}
-          cancelDialogTID="cancelDescriptionReplaceTID"
-          confirmDialogTID="confirmDescriptionTID"
-        />
-      </>
-    );
-  } else if (supportedText.includes(ext)) {
+      );
+    }
   }
-  return <div>No AI actions</div>;
+
+  if (descriptionButton || generateTagsButton) {
+    return (
+      <Box position="relative" display="inline-flex">
+        {descriptionButton && descriptionButton}
+        {generateTagsButton && generateTagsButton}
+        {isLoading && <CircularProgress size={24} color="inherit" />}
+      </Box>
+    );
+  } else {
+    return <div>No AI actions</div>;
+  }
 }
 
 export default AiPropertiesTab;

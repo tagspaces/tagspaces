@@ -106,7 +106,12 @@ export type ChatImage = {
 };
 
 export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
-export type ChatMode = 'summary' | 'helpful' | 'rephrase' | 'description';
+export type ChatMode =
+  | 'summary'
+  | 'helpful'
+  | 'rephrase'
+  | 'description'
+  | 'tags';
 
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
@@ -128,6 +133,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const SUMMARIZE_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+  const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   // const isTyping = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -416,6 +422,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     } else if (mode === 'description') {
       if (IMAGE_DESCRIPTION && openedEntry) {
         return IMAGE_DESCRIPTION.replace('{file_name}', openedEntry.name);
+      }
+    } else if (mode === 'tags') {
+      if (GENERATE_TAGS && openedEntry) {
+        return GENERATE_TAGS.replace('{input_text}', msg);
       }
     } else if (mode === 'rephrase') {
       if (DEFAULT_QUESTION_PROMPT) {

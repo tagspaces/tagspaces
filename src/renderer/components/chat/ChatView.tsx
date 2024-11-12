@@ -28,6 +28,7 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTheme } from '@mui/material/styles';
 import TsSelect from '-/components/TsSelect';
 import SelectChatModel from '-/components/chat/SelectChatModel';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ function ChatView() {
     currentModel,
   } = useChatContext();
   const isTyping = useRef<boolean>(false);
+  const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
   const chatMsg = useRef<string>(undefined);
@@ -64,6 +66,10 @@ function ChatView() {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
         console.log('ChatMessage:' + message);
+        if (isLoading.current) {
+          isLoading.current = false;
+          forceUpdate();
+        }
         if (message instanceof Uint8Array) {
           chatMessageHandler(new TextDecoder('utf-8').decode(message), replace);
         } else if (typeof message === 'string') {
@@ -126,6 +132,7 @@ function ChatView() {
 
   const handleChatMessage = () => {
     isTyping.current = true;
+    isLoading.current = true;
     forceUpdate();
     newChatMessage(chatMsg.current, false, 'user', currentMode.current).then(
       (response) => {
@@ -211,6 +218,9 @@ function ChatView() {
                             style={{ maxHeight: 50 }}
                           />
                         ))}
+                      {isLoading.current && (
+                        <CircularProgress size={24} color="inherit" />
+                      )}
                       <Tooltip title="Send Message">
                         <IconButton onClick={handleChatMessage} size="large">
                           <SendIcon />
