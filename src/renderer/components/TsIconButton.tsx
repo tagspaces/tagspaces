@@ -20,15 +20,18 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { isDesktopMode } from '-/reducers/settings';
+import TooltipTS from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
 
-export type TSIconButtonProps = IconButtonProps & {};
+export type TSIconButtonProps = IconButtonProps & {
+  tooltip?: string;
+  keyBinding?: string;
+};
 
 function TsIconButton(props: TSIconButtonProps) {
-  const { children, style } = props;
+  const { children, style, title, keyBinding, tooltip } = props;
   const desktopMode = useSelector(isDesktopMode);
-
-  return (
+  const iconButton = (
     <IconButton
       size={desktopMode ? 'medium' : 'large'}
       {...props}
@@ -38,6 +41,13 @@ function TsIconButton(props: TSIconButtonProps) {
     >
       {children}
     </IconButton>
+  );
+  return tooltip ? (
+    <TooltipTS keyBinding={keyBinding} title={tooltip}>
+      {iconButton}
+    </TooltipTS>
+  ) : (
+    iconButton
   );
 }
 

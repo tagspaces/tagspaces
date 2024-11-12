@@ -16,33 +16,33 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { useMediaQuery, useTheme } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText/ListItemText';
-import Switch from '@mui/material/Switch';
-import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
-import { useSelector } from 'react-redux';
-import ColorPickerDialog from './ColorPickerDialog';
-import TransparentBackground from '../TransparentBackground';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import Tag from '-/components/Tag';
-import { getSaveTagInLocation } from '-/reducers/settings';
+import Switch from '@mui/material/Switch';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelector } from 'react-redux';
+import TransparentBackground from '../TransparentBackground';
+import ColorPickerDialog from './ColorPickerDialog';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -59,7 +59,6 @@ function EditTagGroupDialog(props: Props) {
   const { updateTagGroup } = useTaggingActionsContext();
   const { removeLocationTagGroup } = useTagGroupsLocationContext();
   const { t } = useTranslation();
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
@@ -74,6 +73,8 @@ function EditTagGroupDialog(props: Props) {
   const [textcolor, setTextcolor] = useState<string>(
     selectedTagGroupEntry.textcolor,
   );
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     handleValidation();
@@ -132,153 +133,148 @@ function EditTagGroupDialog(props: Props) {
     }
   };
 
-  const renderTitle = () => (
-    <DialogTitle style={{ overflow: 'visible' }}>
-      {t('core:editTagGroupTitle')}{' '}
-      <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
-        tag-preview
-        <span style={{ margin: 3 }} />
-      </Tag>
-      <DialogCloseButton testId="closeEditTagGroupTID" onClose={onClose} />
-    </DialogTitle>
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton()}
+      onClick={onConfirm}
+      data-tid="editTagGroupConfirmButton"
+      variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
   );
 
-  const renderContent = () => {
-    return (
-      <DialogContent style={{ overflow: 'visible' }}>
-        <FormControl
-          fullWidth={true}
-          error={inputError}
-          style={{ overflow: 'visible' }}
-        >
-          <TsTextField
-            error={inputError}
-            name="title"
-            autoFocus
-            label={t('core:editTagGroupNewName')}
-            onChange={handleTagGroupTitleChange}
-            value={title}
-            data-tid="editTagGroupInput"
-          />
-          {inputError && (
-            <FormHelperText>{t('core:taggroupTitleHelper')}</FormHelperText>
-          )}
-        </FormControl>
-        {saveTagInLocation && (
-          <FormControl fullWidth={true} error={inputError}>
-            <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-              {t('core:tagGroupLocation')}
-            </FormHelperText>
-            <TsSelect
-              fullWidth={false}
-              defaultValue={locationId}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setLocationId(event.target.value);
-              }}
-            >
-              <MenuItem
-                key={defaultTagGroupLocation}
-                value={defaultTagGroupLocation}
-              >
-                {t('core:tagLibrary')}
-              </MenuItem>
-              {locations.map((location) => (
-                <MenuItem key={location.uuid} value={location.uuid}>
-                  {t('core:location') + ': ' + location.name}
-                </MenuItem>
-              ))}
-            </TsSelect>
-          </FormControl>
-        )}
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('tagBackgroundColor')} />
-          <TransparentBackground>
-            <TsButton
-              onClick={() => setDisplayColorPicker(!displayColorPicker)}
-              data-tid="editTagGroupBackgroundColor"
-              style={{
-                height: 30,
-                borderRadius: 2,
-                borderWidth: 1,
-                borderStyle: 'solid',
-                borderColor: 'gray',
-                padding: '5px',
-                background: color,
-              }}
-            >
-              &nbsp;
-            </TsButton>
-          </TransparentBackground>
-          {displayColorPicker && (
-            <ColorPickerDialog
-              open={displayColorPicker}
-              setColor={(value) => setColor(value)}
-              onClose={() => setDisplayColorPicker(false)}
-              color={color}
-            />
-          )}
-        </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('core:tagForegroundColor')} />
-          <TransparentBackground>
-            <TsButton
-              onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
-              data-tid="editTagGroupForegroundColor"
-              style={{
-                height: 30,
-                borderRadius: 2,
-                borderWidth: 1,
-                borderStyle: 'solid',
-                borderColor: 'gray',
-                padding: '5px',
-                background: textcolor,
-              }}
-              role="presentation"
-            >
-              &nbsp;
-            </TsButton>
-          </TransparentBackground>
-          {displayTextColorPicker && (
-            <ColorPickerDialog
-              open={displayTextColorPicker}
-              setColor={(txtcolor) => setTextcolor(txtcolor)}
-              onClose={() => setDisplayTextColorPicker(!displayTextColorPicker)}
-              color={textcolor}
-            />
-          )}
-        </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('core:colorChangesToAllTags')} />
-          <Switch
-            data-tid="editTagGroupSwitch"
-            onClick={() => setApplyChanges(!applyChanges)}
-            checked={applyChanges}
-          />
-        </ListItem>
-      </DialogContent>
-    );
-  };
-
-  const renderActions = () => (
-    <TsDialogActions>
-      <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
-      <TsButton
-        disabled={disableConfirmButton()}
-        onClick={onConfirm}
-        data-tid="editTagGroupConfirmButton"
-        variant="contained"
+  const renderContent = (
+    <DialogContent style={{ overflow: 'visible' }}>
+      <FormControl
+        fullWidth={true}
+        error={inputError}
+        style={{ overflow: 'visible' }}
       >
-        {t('core:ok')}
-      </TsButton>
-    </TsDialogActions>
+        <TsTextField
+          error={inputError}
+          name="title"
+          autoFocus
+          label={t('core:editTagGroupNewName')}
+          onChange={handleTagGroupTitleChange}
+          value={title}
+          data-tid="editTagGroupInput"
+        />
+        {inputError && (
+          <FormHelperText>{t('core:taggroupTitleHelper')}</FormHelperText>
+        )}
+      </FormControl>
+      {saveTagInLocation && (
+        <FormControl fullWidth={true} error={inputError}>
+          <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+            {t('core:tagGroupLocation')}
+          </FormHelperText>
+          <TsSelect
+            fullWidth={false}
+            defaultValue={locationId}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              setLocationId(event.target.value);
+            }}
+          >
+            <MenuItem
+              key={defaultTagGroupLocation}
+              value={defaultTagGroupLocation}
+            >
+              {t('core:tagLibrary')}
+            </MenuItem>
+            {locations.map((location) => (
+              <MenuItem key={location.uuid} value={location.uuid}>
+                {t('core:location') + ': ' + location.name}
+              </MenuItem>
+            ))}
+          </TsSelect>
+        </FormControl>
+      )}
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('tagBackgroundColor')} />
+        <TransparentBackground>
+          <TsButton
+            onClick={() => setDisplayColorPicker(!displayColorPicker)}
+            data-tid="editTagGroupBackgroundColor"
+            style={{
+              height: 30,
+              borderRadius: 2,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderColor: 'gray',
+              padding: '5px',
+              background: color,
+            }}
+          >
+            &nbsp;
+          </TsButton>
+        </TransparentBackground>
+        {displayColorPicker && (
+          <ColorPickerDialog
+            open={displayColorPicker}
+            setColor={(value) => setColor(value)}
+            onClose={() => setDisplayColorPicker(false)}
+            color={color}
+          />
+        )}
+      </ListItem>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('core:tagForegroundColor')} />
+        <TransparentBackground>
+          <TsButton
+            onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
+            data-tid="editTagGroupForegroundColor"
+            style={{
+              height: 30,
+              borderRadius: 2,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderColor: 'gray',
+              padding: '5px',
+              background: textcolor,
+            }}
+            role="presentation"
+          >
+            &nbsp;
+          </TsButton>
+        </TransparentBackground>
+        {displayTextColorPicker && (
+          <ColorPickerDialog
+            open={displayTextColorPicker}
+            setColor={(txtcolor) => setTextcolor(txtcolor)}
+            onClose={() => setDisplayTextColorPicker(!displayTextColorPicker)}
+            color={textcolor}
+          />
+        )}
+      </ListItem>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('core:tagPreview')} />
+        <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
+          <span style={{ textTransform: 'lowercase' }}>
+            {t('core:tagPreview')}
+          </span>
+          <span style={{ margin: 3 }} />
+        </Tag>
+      </ListItem>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('core:colorChangesToAllTags')} />
+        <Switch
+          data-tid="editTagGroupSwitch"
+          onClick={() => setApplyChanges(!applyChanges)}
+          checked={applyChanges}
+        />
+      </ListItem>
+    </DialogContent>
   );
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
       onClose={onClose}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
@@ -290,9 +286,19 @@ function EditTagGroupDialog(props: Props) {
         }*/
       }}
     >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
+      <TsDialogTitle
+        dialogTitle={t('core:editTagGroupTitle')}
+        closeButtonTestId="closeEditTagGroupTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      ></TsDialogTitle>
+      {renderContent}
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

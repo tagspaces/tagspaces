@@ -16,18 +16,16 @@
  *
  */
 
-import React from 'react';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { Pro } from '-/pro';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
-import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -41,7 +39,7 @@ function NewAudioDialog(props: Props) {
   const { t } = useTranslation();
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function intOnClose(event?: any, reason?: any) {
     if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
@@ -56,21 +54,19 @@ function NewAudioDialog(props: Props) {
       <Dialog
         open={open}
         onClose={intOnClose}
-        fullScreen={fullScreen}
+        fullScreen={smallScreen}
         keepMounted
         aria-labelledby="draggable-dialog-title"
-        PaperComponent={fullScreen ? Paper : DraggablePaper}
+        PaperComponent={smallScreen ? Paper : DraggablePaper}
         scroll="paper"
       >
-        <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-          {t('core:audioRecorder')}
-          <DialogCloseButton
-            testId="closeCreateDialogTID"
-            onClose={() => {
-              intOnClose(undefined, 'escapeKeyDown');
-            }}
-          />
-        </DialogTitle>
+        <TsDialogTitle
+          dialogTitle={t('core:audioRecorder')}
+          closeButtonTestId="closeNewAudioDialogTID"
+          onClose={() => {
+            intOnClose(undefined, 'escapeKeyDown');
+          }}
+        />
         <DialogContent
           style={{
             minWidth: 200,

@@ -176,59 +176,57 @@ function MobileNavigation(props: Props) {
                 textAlign: 'center',
               }}
             >
-              <Tooltip title={t('core:createNew')}>
-                <TsButton
-                  aria-controls={
-                    openedCreateMenu ? 'split-button-menu' : undefined
-                  }
-                  aria-expanded={openedCreateMenu ? 'true' : undefined}
-                  aria-haspopup="menu"
-                  data-tid="createNewDropdownButtonTID"
-                  onClick={handleToggle}
-                  startIcon={<CreateFileIcon />}
+              <TsButton
+                //tooltip={t('core:createNew')}
+                aria-controls={
+                  openedCreateMenu ? 'split-button-menu' : undefined
+                }
+                aria-expanded={openedCreateMenu ? 'true' : undefined}
+                aria-haspopup="menu"
+                data-tid="createNewDropdownButtonTID"
+                onClick={handleToggle}
+                startIcon={<CreateFileIcon />}
+                style={{
+                  borderRadius: 'unset',
+                  borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                  borderBottomLeftRadius: AppConfig.defaultCSSRadius,
+                }}
+              >
+                <Box
                   style={{
-                    borderRadius: 'unset',
-                    borderTopLeftRadius: AppConfig.defaultCSSRadius,
-                    borderBottomLeftRadius: AppConfig.defaultCSSRadius,
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    maxWidth: 100,
                   }}
                 >
-                  <Box
-                    style={{
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      maxWidth: 100,
-                    }}
-                  >
-                    {t('core:createNew')}
-                  </Box>
-                </TsButton>
-              </Tooltip>
-              <Tooltip title={t('core:openSharingLink')}>
-                <TsButton
-                  data-tid="openLinkNavigationTID"
-                  onClick={() => {
-                    openLinkDialog();
-                  }}
+                  {t('core:createNew')}
+                </Box>
+              </TsButton>
+              <TsButton
+                tooltip={t('core:openSharingLink')}
+                data-tid="openLinkNavigationTID"
+                onClick={() => {
+                  openLinkDialog();
+                }}
+                style={{
+                  borderRadius: 'unset',
+                  borderTopRightRadius: AppConfig.defaultCSSRadius,
+                  borderBottomRightRadius: AppConfig.defaultCSSRadius,
+                }}
+                startIcon={<OpenLinkIcon />}
+              >
+                <Box
                   style={{
-                    borderRadius: 'unset',
-                    borderTopRightRadius: AppConfig.defaultCSSRadius,
-                    borderBottomRightRadius: AppConfig.defaultCSSRadius,
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    maxWidth: 100,
                   }}
-                  startIcon={<OpenLinkIcon />}
                 >
-                  <Box
-                    style={{
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      maxWidth: 100,
-                    }}
-                  >
-                    {t('core:openLink')}
-                  </Box>
-                </TsButton>
-              </Tooltip>
+                  {t('core:openLink')}
+                </Box>
+              </TsButton>
             </ButtonGroup>
           </Box>
         </Box>
@@ -463,19 +461,18 @@ function MobileNavigation(props: Props) {
         {showProTeaser && (
           <ProTeaser setShowTeaserBanner={setShowTeaserBanner} />
         )}
-        <Tooltip title={t('core:settings')}>
-          <TsIconButton
-            id="verticalNavButton"
-            data-tid="settings"
-            onClick={() => {
-              openSettingsDialog();
-            }}
-            style={{ marginTop: -15, marginRight: 2 }}
-            size="large"
-          >
-            <SettingsIcon />
-          </TsIconButton>
-        </Tooltip>
+        <TsIconButton
+          tooltip={t('core:settings')}
+          id="verticalNavButton"
+          data-tid="settings"
+          onClick={() => {
+            openSettingsDialog();
+          }}
+          style={{ marginTop: -15, marginRight: 2 }}
+          size="large"
+        >
+          <SettingsIcon />
+        </TsIconButton>
         <ToggleButtonGroup exclusive>
           <ToggleButton
             onClick={() => showPanel('locationManagerPanel')}
@@ -542,18 +539,17 @@ function MobileNavigation(props: Props) {
         </ToggleButtonGroup>
         {currentUser ? (
           <>
-            <Tooltip title={t('core:userAccount')}>
-              <TsIconButton
-                data-tid="accountCircleIconTID"
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                  setAnchorUser(event.currentTarget)
-                }
-                style={{ marginTop: -15, marginRight: 2 }}
-                size="large"
-              >
-                <AccountIcon />
-              </TsIconButton>
-            </Tooltip>
+            <TsIconButton
+              tooltip={t('core:userAccount')}
+              data-tid="accountCircleIconTID"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                setAnchorUser(event.currentTarget)
+              }
+              style={{ marginTop: -15, marginRight: 2 }}
+              size="large"
+            >
+              <AccountIcon />
+            </TsIconButton>
             <Popover
               open={Boolean(anchorUser)}
               anchorEl={anchorUser}
@@ -571,16 +567,15 @@ function MobileNavigation(props: Props) {
             </Popover>
           </>
         ) : (
-          <Tooltip title={t('core:switchTheme')}>
-            <TsIconButton
-              data-tid="switchTheme"
-              onClick={switchTheme}
-              style={{ marginTop: -15, marginRight: 2 }}
-              size="large"
-            >
-              <ThemingIcon />
-            </TsIconButton>
-          </Tooltip>
+          <TsIconButton
+            tooltip={t('core:switchTheme')}
+            data-tid="switchTheme"
+            onClick={switchTheme}
+            style={{ marginTop: -15, marginRight: 2 }}
+            size="large"
+          >
+            <ThemingIcon />
+          </TsIconButton>
         )}
       </Box>
     </Root>

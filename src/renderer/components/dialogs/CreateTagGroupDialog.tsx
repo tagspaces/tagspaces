@@ -16,26 +16,33 @@
  *
  */
 
-import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
+import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Dialog from '@mui/material/Dialog';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import ColorPickerDialog from './ColorPickerDialog';
-import TransparentBackground from '../TransparentBackground';
-import { TS } from '-/tagspaces.namespace';
-import { getSaveTagInLocation } from '-/reducers/settings';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import TsTextField from '-/components/TsTextField';
+import Paper from '@mui/material/Paper';
+import useTheme from '@mui/material/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelector } from 'react-redux';
+import TransparentBackground from '../TransparentBackground';
+import ColorPickerDialog from './ColorPickerDialog';
+import TsDialogTitle from './components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -135,46 +142,30 @@ function CreateTagGroupDialog(props: Props) {
     textcolor.current = value;
   };
 
-  const styles = {
-    color: {
-      width: '100%',
-      height: 30,
-      borderRadius: 2,
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'gray',
-      background: color.current,
-    },
-    textcolor: {
-      width: '100%',
-      height: 30,
-      borderRadius: 2,
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: 'gray',
-      background: textcolor.current,
-    },
-    swatch: {
-      padding: '5px',
-      borderRadius: '1px',
-      boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-      display: 'inline-block',
-      cursor: 'pointer',
-    },
-    helpText: {
-      marginTop: '15px',
-      marginBottom: '5px',
-      fontSize: '1rem',
-    },
-  };
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton.current}
+      onClick={onConfirm}
+      variant="contained"
+      data-tid="createTagGroupConfirmButton"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -187,10 +178,12 @@ function CreateTagGroupDialog(props: Props) {
         }*/
       }}
     >
-      <DialogTitle>
-        {t('core:createTagGroupTitle')}
-        <DialogCloseButton testId="closeCreateTagGroupTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:createTagGroupTitle')}
+        closeButtonTestId="closeCreateTagGroupTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent style={{ paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
@@ -208,11 +201,9 @@ function CreateTagGroupDialog(props: Props) {
         </FormControl>
         {saveTagsInLocation && (
           <FormControl fullWidth={true} error={inputError}>
-            <FormHelperText style={styles.helpText}>
-              {t('core:tagGroupLocation')}
-            </FormHelperText>
-            <Select
+            <TsSelect
               data-tid="tagGroupLocationTID"
+              label={t('core:tagGroupLocation')}
               defaultValue={defaultTagGroupLocation}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 locationId.current = event.target.value;
@@ -236,18 +227,24 @@ function CreateTagGroupDialog(props: Props) {
                   {t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}
-            </Select>
+            </TsSelect>
           </FormControl>
         )}
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagBackgroundColor')}
-          </FormHelperText>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={toggleDefaultTagBackgroundColorPicker}
               data-tid="createTagGroupBackgroundColor"
-              style={styles.color}
+              style={{
+                height: 30,
+                borderRadius: AppConfig.defaultCSSRadius,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: color.current,
+              }}
               role="presentation"
             >
               &nbsp;
@@ -261,16 +258,22 @@ function CreateTagGroupDialog(props: Props) {
               color={color.current}
             />
           )}
-        </FormControl>
-        <FormControl fullWidth={true}>
-          <FormHelperText style={styles.helpText}>
-            {t('core:tagForegroundColor')}
-          </FormHelperText>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={toggleDefaultTagTextColorPicker}
               data-tid="createTagGroupForegroundColor"
-              style={styles.textcolor}
+              style={{
+                height: 30,
+                borderRadius: AppConfig.defaultCSSRadius,
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderColor: 'gray',
+                padding: '5px',
+                background: textcolor.current,
+              }}
               role="presentation"
             >
               &nbsp;
@@ -284,21 +287,29 @@ function CreateTagGroupDialog(props: Props) {
               color={textcolor.current}
             />
           )}
-        </FormControl>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:tagPreview')} />
+          <Tag
+            backgroundColor={color.current}
+            textColor={textcolor.current}
+            isDragging={false}
+          >
+            <span style={{ textTransform: 'lowercase' }}>
+              {t('core:tagPreview')}
+            </span>
+            <span style={{ margin: 3 }} />
+          </Tag>
+        </ListItem>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton data-tid="createTagGroupCancelButton" onClick={onClose}>
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          disabled={disableConfirmButton.current}
-          onClick={onConfirm}
-          variant="contained"
-          data-tid="createTagGroupConfirmButton"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton data-tid="createTagGroupCancelButton" onClick={onClose}>
+            {t('core:cancel')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

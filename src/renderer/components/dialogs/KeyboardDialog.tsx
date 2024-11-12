@@ -16,23 +16,23 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { getKeyBindingObject } from '-/reducers/settings';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
-import Dialog from '@mui/material/Dialog';
-import { getKeyBindingObject } from '-/reducers/settings';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
-import AppConfig from '-/AppConfig';
+import { useSelector } from 'react-redux';
 
 export function adjustKeyBinding(keyBinding: string) {
   if (!keyBinding || !keyBinding.length) return '';
@@ -70,19 +70,36 @@ function KeyboardDialog(props: Props) {
   const { t } = useTranslation();
   const keyBindings = useSelector(getKeyBindingObject);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const okButton = (
+    <TsButton
+      data-tid="closeKeyboardDialog"
+      onClick={onClose}
+      variant="outlined"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
     >
-      <DialogTitle>
-        {t('core:shortcutKeys')}
-        <DialogCloseButton testId="closeKeyboardTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:shortcutKeys')}
+        closeButtonTestId="closeKeyboardTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent
         data-tid="keyboardShortCutsDialog"
         style={{
@@ -111,15 +128,7 @@ function KeyboardDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton
-          data-tid="closeKeyboardDialog"
-          onClick={onClose}
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && <TsDialogActions>{okButton}</TsDialogActions>}
     </Dialog>
   );
 }

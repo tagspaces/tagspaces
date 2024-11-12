@@ -16,13 +16,11 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions';
 import { isDesktopMode } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
+import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useSelector } from 'react-redux';
 
 export type TSDialogActions = DialogActionsProps & {};
 
@@ -30,13 +28,13 @@ function TSDialogActions(props: TSDialogActions) {
   const { children, style } = props;
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <DialogActions
       {...props}
       style={{
-        padding: fullScreen ? '10px 30px 30px 30px' : 'inherited',
+        padding: smallScreen ? '10px 20px 20px 30px' : 'inherited',
         ...style,
       }}
     >

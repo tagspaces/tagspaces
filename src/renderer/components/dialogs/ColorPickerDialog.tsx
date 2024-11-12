@@ -16,16 +16,17 @@
  *
  */
 
-import React, { useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useState } from 'react';
 import ColorPicker from 'react-best-gradient-color-picker';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 
 const presetColors = [
@@ -69,7 +70,7 @@ function ColorPickerDialog(props: Props) {
   const [color, setColor] = useState(undefined);
   const { open = false, onClose } = props;
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   function onConfirm() {
     // if (color && colorHex) {
@@ -79,11 +80,26 @@ function ColorPickerDialog(props: Props) {
     props.onClose();
   }
 
+  const okButton = (
+    <TsButton
+      variant="contained"
+      onClick={onConfirm}
+      data-tid="colorPickerConfirm"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -94,10 +110,12 @@ function ColorPickerDialog(props: Props) {
         }
       }}
     >
-      <DialogTitle data-tid="colorPickerDialogTitle">
-        {t('core:colorPickerDialogTitle')}
-        <DialogCloseButton testId="closeColorPickerTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:colorPickerDialogTitle')}
+        closeButtonTestId="closeColorPickerTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent
         data-tid="colorPickerDialogContent"
         style={{
@@ -117,18 +135,14 @@ function ColorPickerDialog(props: Props) {
           style={{ backgroundColor: 'transparent' }}
         />
       </DialogContent>
-      <TsDialogActions>
-        <TsButton data-tid="colorPickerCloseDialog" onClick={props.onClose}>
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          variant="contained"
-          onClick={onConfirm}
-          data-tid="colorPickerConfirm"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton data-tid="colorPickerCloseDialog" onClick={props.onClose}>
+            {t('core:cancel')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

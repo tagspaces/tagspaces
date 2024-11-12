@@ -872,35 +872,29 @@ function EntryProperties(props: Props) {
               inputRef={sharingLinkRef}
               InputProps={{
                 readOnly: true,
-                // startAdornment: (
-                //   <InputAdornment position="start">
-                //     <LinkIcon style={{ color: theme.palette.text.secondary }} />
-                //   </InputAdornment>
-                // ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title={t('core:copyLinkToClipboard')}>
-                      <TsButton
-                        data-tid="copyLinkToClipboardTID"
-                        variant="text"
-                        onClick={() => {
-                          const entryTitle = extractTitle(
-                            openedEntry.name,
-                            !openedEntry.isFile,
-                            location?.getDirSeparator(),
-                          );
-                          const clibboardItem = generateClipboardLink(
-                            sharingLink,
-                            entryTitle,
-                          );
-                          const promise =
-                            navigator.clipboard.write(clibboardItem);
-                          showNotification(t('core:linkCopied'));
-                        }}
-                      >
-                        {t('core:copy')}
-                      </TsButton>
-                    </Tooltip>
+                    <TsButton
+                      tooltip={t('core:copyLinkToClipboard')}
+                      data-tid="copyLinkToClipboardTID"
+                      variant="text"
+                      onClick={() => {
+                        const entryTitle = extractTitle(
+                          openedEntry.name,
+                          !openedEntry.isFile,
+                          location?.getDirSeparator(),
+                        );
+                        const clibboardItem = generateClipboardLink(
+                          sharingLink,
+                          entryTitle,
+                        );
+                        const promise =
+                          navigator.clipboard.write(clibboardItem);
+                        showNotification(t('core:linkCopied'));
+                      }}
+                    >
+                      {t('core:copy')}
+                    </TsButton>
                     <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
                   </InputAdornment>
                 ),
@@ -918,19 +912,18 @@ function EntryProperties(props: Props) {
                   readOnly: true,
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Tooltip title={t('core:generateDownloadLink')}>
-                        <TsButton
-                          onClick={() => setShowSharingLinkDialog(true)}
-                          variant="text"
-                          startIcon={
-                            <QRCodeIcon
-                              style={{ color: theme.palette.text.secondary }}
-                            />
-                          }
-                        >
-                          {t('core:generateDownloadLink')}
-                        </TsButton>
-                      </Tooltip>
+                      <TsButton
+                        tooltip={t('core:generateDownloadLink')}
+                        onClick={() => setShowSharingLinkDialog(true)}
+                        variant="text"
+                        startIcon={
+                          <QRCodeIcon
+                            style={{ color: theme.palette.text.secondary }}
+                          />
+                        }
+                      >
+                        {t('core:generateDownloadLink')}
+                      </TsButton>
                       <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
                     </InputAdornment>
                   ),
@@ -961,19 +954,19 @@ function EntryProperties(props: Props) {
                 startAdornment: (
                   <InputAdornment position="start">
                     <TransparentBackground>
-                      <Tooltip title={t('editBackgroundColor')}>
-                        <TsButton
-                          fullWidth
-                          style={{
-                            width: 160,
-                            height: 25,
-                            background: openedEntry.meta?.color,
-                          }}
-                          onClick={toggleBackgroundColorPicker}
-                        >
-                          &nbsp;
-                        </TsButton>
-                      </Tooltip>
+                      <TsButton
+                        tooltip={t('editBackgroundColor')}
+                        fullWidth
+                        style={{
+                          width: 160,
+                          height: 25,
+                          background: openedEntry.meta?.color,
+                          border: '1px solid lightgray',
+                        }}
+                        onClick={toggleBackgroundColorPicker}
+                      >
+                        &nbsp;
+                      </TsButton>
                     </TransparentBackground>
                   </InputAdornment>
                 ),
@@ -1190,27 +1183,26 @@ function EntryProperties(props: Props) {
               // ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <Tooltip title={t('core:copyIdToClipboard')}>
-                    <TsButton
-                      data-tid="copyIdToClipboardTID"
-                      variant="text"
-                      disabled={!openedEntry?.meta?.id}
-                      onClick={() => {
-                        const entryId = openedEntry?.meta?.id;
-                        if (entryId) {
-                          const clibboardItem = generateClipboardLink(
-                            entryId,
-                            entryId,
-                          );
-                          const promise =
-                            navigator.clipboard.write(clibboardItem);
-                          showNotification(t('core:entryIdCopied'));
-                        }
-                      }}
-                    >
-                      {t('core:copy')}
-                    </TsButton>
-                  </Tooltip>
+                  <TsButton
+                    tooltip={t('core:copyIdToClipboard')}
+                    data-tid="copyIdToClipboardTID"
+                    variant="text"
+                    disabled={!openedEntry?.meta?.id}
+                    onClick={() => {
+                      const entryId = openedEntry?.meta?.id;
+                      if (entryId) {
+                        const clibboardItem = generateClipboardLink(
+                          entryId,
+                          entryId,
+                        );
+                        const promise =
+                          navigator.clipboard.write(clibboardItem);
+                        showNotification(t('core:entryIdCopied'));
+                      }
+                    }}
+                  >
+                    {t('core:copy')}
+                  </TsButton>
                   <InfoIcon tooltip={t('core:entryIdTooltip')} />
                 </InputAdornment>
               ),

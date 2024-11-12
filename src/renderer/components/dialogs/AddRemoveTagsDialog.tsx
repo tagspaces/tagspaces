@@ -16,33 +16,32 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
-import Paper from '@mui/material/Paper';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { TS } from '-/tagspaces.namespace';
+import FolderIcon from '@mui/icons-material/FolderOpen';
+import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import FolderIcon from '@mui/icons-material/FolderOpen';
-import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
-import DraggablePaper from '-/components/DraggablePaper';
-import TagsSelect from '../TagsSelect';
-import {
-  extractFileName,
-  extractDirectoryName,
-} from '@tagspaces/tagspaces-common/paths';
-import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  extractDirectoryName,
+  extractFileName,
+} from '@tagspaces/tagspaces-common/paths';
+import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import TagsSelect from '../TagsSelect';
 
 interface Props {
   open: boolean;
@@ -137,21 +136,22 @@ function AddRemoveTagsDialog(props: Props) {
     selected.length < 1;
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       onClose={onClose}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:tagOperationTitle')}
-        <DialogCloseButton testId="closeAddRemoveTagsTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:tagOperationTitle')}
+        closeButtonTestId="closeAddRemoveTagsTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           minHeight: 330,

@@ -35,7 +35,7 @@ import {
   getDesktopMode,
   getKeyBindingObject,
 } from '-/reducers/settings';
-import { AppDispatch, getProgress } from '../reducers/app';
+import { AppDispatch, getProgress } from '-/reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -46,7 +46,6 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-// import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -54,19 +53,17 @@ import RenderPerspective from '-/components/RenderPerspective';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
-import CustomDragLayer from '-/components/CustomDragLayer';
-import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
+  style?: any;
 }
 
 function FolderContainer(props: Props) {
-  const { toggleDrawer, drawerOpened } = props;
+  const { toggleDrawer, drawerOpened, style } = props;
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -182,7 +179,7 @@ function FolderContainer(props: Props) {
   };
 
   const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
-  const isTinyMode = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <div
@@ -193,6 +190,7 @@ function FolderContainer(props: Props) {
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        ...style,
       }}
       data-tid="folderContainerTID"
     >
@@ -225,37 +223,33 @@ function FolderContainer(props: Props) {
         >
           <MainMenuIcon />
         </TsIconButton>
-        <Tooltip
-          title={
+        <TsIconButton
+          tooltip={
             t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
           }
+          id="goBackButton"
+          disabled={historyIndex === 0}
+          onClick={goBack}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
         >
+          <GoBackIcon />
+        </TsIconButton>
+        {smallScreen && (
           <TsIconButton
-            id="goBackButton"
+            tooltip={t('core:goforward') + ' - BETA'}
+            id="goForwardButton"
             disabled={historyIndex === 0}
-            onClick={goBack}
+            onClick={goForward}
             style={{
               // @ts-ignore
               WebkitAppRegion: 'no-drag',
             }}
           >
-            <GoBackIcon />
+            <GoForwardIcon />
           </TsIconButton>
-        </Tooltip>
-        {isTinyMode && (
-          <Tooltip title={t('core:goforward') + ' - BETA'}>
-            <TsIconButton
-              id="goForwardButton"
-              disabled={historyIndex === 0}
-              onClick={goForward}
-              style={{
-                // @ts-ignore
-                WebkitAppRegion: 'no-drag',
-              }}
-            >
-              <GoForwardIcon />
-            </TsIconButton>
-          </Tooltip>
         )}
         {isSearchMode ? (
           /* todo rethink if open props is needed */
@@ -269,21 +263,20 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column',
               }}
             />
-            {isTinyMode ? (
-              <Tooltip
-                title={t('core:openSearch') + ' (' + openSearchKeyBinding + ')'}
+            {smallScreen ? (
+              <TsIconButton
+                tooltip={
+                  t('core:openSearch') + ' (' + openSearchKeyBinding + ')'
+                }
+                data-tid="toggleSearch"
+                onClick={openSearchMode}
+                style={{
+                  // @ts-ignore
+                  WebkitAppRegion: 'no-drag',
+                }}
               >
-                <TsIconButton
-                  data-tid="toggleSearch"
-                  onClick={openSearchMode}
-                  style={{
-                    // @ts-ignore
-                    WebkitAppRegion: 'no-drag',
-                  }}
-                >
-                  <SearchIcon />
-                </TsIconButton>
-              </Tooltip>
+                <SearchIcon />
+              </TsIconButton>
             ) : (
               <TsButton
                 data-tid="toggleSearch"

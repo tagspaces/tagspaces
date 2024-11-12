@@ -1,34 +1,33 @@
-import React, { useState, useRef, useReducer, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import Paper from '@mui/material/Paper';
-import TsButton from '-/components/TsButton';
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
-import { FolderIcon, FileIcon } from '-/components/CommonIcons';
-import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
+import { FileIcon, FolderIcon } from '-/components/CommonIcons';
+import DirectoryListView from '-/components/DirectoryListView';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDirProperties } from '-/services/utils-io';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { TS } from '-/tagspaces.namespace';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { formatBytes } from '@tagspaces/tagspaces-common/misc';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -105,10 +104,6 @@ function MoveCopyFilesDialog(props: Props) {
       }
       return { path, count };
     });
-    /*let total = 0;
-    const arr = Object.values(dirProp.current);
-    arr.forEach((n: TS.DirProp) => (total += n.filesCount + n.dirsCount));
-    return total;*/
   }
 
   function handleCopy() {
@@ -182,7 +177,7 @@ function MoveCopyFilesDialog(props: Props) {
   }
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -190,13 +185,14 @@ function MoveCopyFilesDialog(props: Props) {
       keepMounted
       scroll="paper"
       aria-labelledby="draggable-dialog-title"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
-      fullScreen={fullScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      fullScreen={smallScreen}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton testId="closeMCFilesTID" onClose={() => onClose()} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:copyMoveEntriesTitle')}
+        closeButtonTestId="closeMCFilesTID"
+        onClose={onClose}
+      />
       <DialogContent style={{ overflow: 'hidden' }}>
         <Typography variant="subtitle2">
           {t('selectedFilesAndFolders')}

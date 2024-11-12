@@ -19,16 +19,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Button, { ButtonProps } from '@mui/material/Button';
+import TooltipTS from '-/components/Tooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 
-export type TSButtonProps = ButtonProps & {};
+export type TSButtonProps = ButtonProps & {
+  tooltip?: string;
+};
 
 function TsButton(props: TSButtonProps) {
-  const { children, style } = props;
+  const { children, style, tooltip } = props;
   const desktopMode = useSelector(isDesktopMode);
-
-  return (
+  const button = (
     <Button
       size={desktopMode ? 'small' : 'medium'}
       variant="outlined" // text outlined contained
@@ -43,6 +45,7 @@ function TsButton(props: TSButtonProps) {
       {children}
     </Button>
   );
+  return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
 }
 
 export default TsButton;

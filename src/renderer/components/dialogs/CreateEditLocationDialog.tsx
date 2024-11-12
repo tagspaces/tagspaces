@@ -16,83 +16,67 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import CryptoJS from 'crypto-js';
-import Paper from '@mui/material/Paper';
-import TsButton from '-/components/TsButton';
-import TsSelect from '-/components/TsSelect';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Switch from '@mui/material/Switch';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Typography from '@mui/material/Typography';
-import Tooltip from '-/components/Tooltip';
-import Dialog from '@mui/material/Dialog';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import TsTextField from '-/components/TsTextField';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import ToggleButton from '@mui/material/ToggleButton';
-import CheckIcon from '@mui/icons-material/Check';
-import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
-import InputAdornment from '@mui/material/InputAdornment';
-import TsIconButton from '-/components/TsIconButton';
-import { useSelector } from 'react-redux';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
+import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
+import DraggablePaper from '-/components/DraggablePaper';
+import { BetaLabel, ProLabel, ProTooltip } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
+import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import WebdavForm from '-/components/dialogs/components/WebdavForm';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { Pro } from '-/pro';
+import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import useFirstRender from '-/utils/useFirstRender';
+import CheckIcon from '@mui/icons-material/Check';
+import PasswordIcon from '@mui/icons-material/Password';
+import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  MenuItem,
   FormLabel,
-  Select,
+  MenuItem,
 } from '@mui/material';
-import { Pro } from '-/pro';
-import DraggablePaper from '-/components/DraggablePaper';
-import ObjectStoreForm from './ObjectStoreForm';
-import LocalForm from './LocalForm';
-import useFirstRender from '-/utils/useFirstRender';
-import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import InfoIcon from '-/components/InfoIcon';
-import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import WebdavForm from '-/components/dialogs/WebdavForm';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import InputAdornment from '@mui/material/InputAdornment';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
-import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
+import CryptoJS from 'crypto-js';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PasswordIcon from '@mui/icons-material/Password';
-import TooltipTS from '-/components/Tooltip';
-
-const PREFIX = 'CreateEditLocationDialog';
-
-const classes = {
-  formControl: `${PREFIX}-formControl`,
-};
-
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  [`& .${classes.formControl}`]: {
-    marginLeft: 0,
-  },
-}));
+import { useSelector } from 'react-redux';
+import LocalForm from './components/LocalForm';
 
 interface Props {
   open: boolean;
@@ -570,21 +554,36 @@ function CreateEditLocationDialog(props: Props) {
   const disableLocationTypeSwitch: boolean = selectedLocation !== undefined;
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   let locationTypeName = t('core:localLocation');
   if (defaultType === locationType.TYPE_CLOUD) {
     locationTypeName = t('core:objectStorage');
   }
 
+  const okButton = (
+    <TsButton
+      disabled={disableConfirmButton()}
+      onClick={preConfirm}
+      data-tid="confirmLocationCreation"
+      variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
-    <StyledDialog
+    <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
@@ -597,28 +596,16 @@ function CreateEditLocationDialog(props: Props) {
         // }
       }}
     >
-      <DialogTitle
-        style={{ cursor: 'move', paddingBottom: 0 }}
-        id="draggable-dialog-title"
-      >
-        {selectedLocation ? (
-          <>
-            {t('core:editLocationTitle')}
-            <Typography
-              style={{ display: 'block', marginTop: -5 }}
-              variant="overline"
-            >
-              {t('core:locationType') + ': ' + locationTypeName}
-            </Typography>
-          </>
-        ) : (
-          t('core:createLocationTitle')
-        )}
-        <DialogCloseButton
-          testId="closeCreateEditLocationTID"
-          onClose={onClose}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={
+          selectedLocation
+            ? t('core:editLocationTitle')
+            : t('core:createLocationTitle')
+        }
+        closeButtonTestId="closeCreateEditLocationTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      ></TsDialogTitle>
       <DialogContent
         style={{
           overflow: 'auto',
@@ -644,6 +631,16 @@ function CreateEditLocationDialog(props: Props) {
           confirmDialogTID="confirmConfirmEncryptionChanged"
           confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
         />
+        {selectedLocation && (
+          <>
+            <Typography
+              style={{ display: 'block', marginTop: -5, marginLeft: 15 }}
+              variant="overline"
+            >
+              {t('core:locationType') + ': ' + locationTypeName}
+            </Typography>
+          </>
+        )}
         <Accordion defaultExpanded>
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
@@ -687,7 +684,6 @@ function CreateEditLocationDialog(props: Props) {
               )}
               {content}
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -703,7 +699,6 @@ function CreateEditLocationDialog(props: Props) {
                 label={t('core:startupLocation')}
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -753,7 +748,6 @@ function CreateEditLocationDialog(props: Props) {
                   type === locationType.TYPE_CLOUD ||
                   AppConfig.isCordova
                 }
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -788,7 +782,6 @@ function CreateEditLocationDialog(props: Props) {
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -810,7 +803,6 @@ function CreateEditLocationDialog(props: Props) {
                 }
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -826,7 +818,6 @@ function CreateEditLocationDialog(props: Props) {
                 label={<>{t('core:disableThumbnailGeneration')}</>}
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -848,7 +839,6 @@ function CreateEditLocationDialog(props: Props) {
                 }
               />
               <FormControlLabel
-                className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
@@ -873,7 +863,6 @@ function CreateEditLocationDialog(props: Props) {
               />
               {type === locationType.TYPE_CLOUD && (
                 <FormControlLabel
-                  className={classes.formControl}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
@@ -892,7 +881,6 @@ function CreateEditLocationDialog(props: Props) {
               )}
               {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
                 <FormControlLabel
-                  className={classes.formControl}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
@@ -911,7 +899,6 @@ function CreateEditLocationDialog(props: Props) {
               ) : (
                 <FormControlLabel
                   labelPlacement="top"
-                  className={classes.formControl}
                   style={{ alignItems: 'start', marginBottom: 10 }}
                   control={
                     <ToggleButtonGroup
@@ -1009,7 +996,6 @@ function CreateEditLocationDialog(props: Props) {
               </FormControl>
               <>
                 <FormControlLabel
-                  className={classes.formControl}
                   disabled={!Pro}
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between', marginTop: 15 }}
@@ -1088,20 +1074,19 @@ function CreateEditLocationDialog(props: Props) {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" style={{ height: 32 }}>
-                        <Tooltip title="Generates new unique identifier for this location">
-                          <TsIconButton
-                            onClick={() => {
-                              const result = confirm(
-                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
-                              );
-                              if (result) {
-                                setNewLocationID(getUuid());
-                              }
-                            }}
-                          >
-                            <IDIcon />
-                          </TsIconButton>
-                        </Tooltip>
+                        <TsIconButton
+                          tooltip={t('core:generateNewLocationId')}
+                          onClick={() => {
+                            const result = confirm(
+                              'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
+                            );
+                            if (result) {
+                              setNewLocationID(getUuid());
+                            }
+                          }}
+                        >
+                          <IDIcon />
+                        </TsIconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -1144,34 +1129,32 @@ function CreateEditLocationDialog(props: Props) {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <TooltipTS title={t('toggleKeyVisibility')}>
-                          <TsIconButton
-                            aria-label="toggle key visibility"
-                            onClick={() =>
-                              setShowEncryptionKey(!showEncryptionKey)
-                            }
-                          >
-                            {showEncryptionKey ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
-                          </TsIconButton>
-                        </TooltipTS>
-                        <TooltipTS title={t('generateEncryptionKey')}>
-                          <TsIconButton
-                            aria-label="generate encryption key"
-                            onClick={() =>
-                              setEncryptionKey(
-                                CryptoJS.lib.WordArray.random(32)
-                                  .toString(CryptoJS.enc.Hex)
-                                  .slice(0, 32),
-                              )
-                            }
-                          >
-                            <PasswordIcon />
-                          </TsIconButton>
-                        </TooltipTS>
+                        <TsIconButton
+                          tooltip={t('toggleKeyVisibility')}
+                          aria-label="toggle key visibility"
+                          onClick={() =>
+                            setShowEncryptionKey(!showEncryptionKey)
+                          }
+                        >
+                          {showEncryptionKey ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </TsIconButton>
+                        <TsIconButton
+                          tooltip={t('generateEncryptionKey')}
+                          aria-label="generate encryption key"
+                          onClick={() =>
+                            setEncryptionKey(
+                              CryptoJS.lib.WordArray.random(32)
+                                .toString(CryptoJS.enc.Hex)
+                                .slice(0, 32),
+                            )
+                          }
+                        >
+                          <PasswordIcon />
+                        </TsIconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -1181,18 +1164,13 @@ function CreateEditLocationDialog(props: Props) {
           </Accordion>
         )}
       </DialogContent>
-      <TsDialogActions>
-        <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
-        <TsButton
-          disabled={disableConfirmButton()}
-          onClick={preConfirm}
-          data-tid="confirmLocationCreation"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
-      </TsDialogActions>
-    </StyledDialog>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton onClick={() => onClose()}>{t('core:cancel')}</TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
+    </Dialog>
   );
 }
 

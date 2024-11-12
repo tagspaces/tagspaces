@@ -1188,33 +1188,31 @@ function SearchAutocomplete(props: Props) {
 
   const endAdornment = (
     <>
-      <Tooltip title={t('core:advancedSearch')}>
-        <TsIconButton
-          id="advancedButton"
-          data-tid="advancedSearch"
-          style={{ maxHeight: 34 }}
-          size={desktopMode ? 'small' : 'medium'}
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            setAnchorSearch(event.currentTarget);
-          }}
-        >
-          <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
-          {/* <DropDownIcon /> */}
-        </TsIconButton>
-      </Tooltip>
-      <Tooltip title={t('clearSearch') + ' (ESC)'}>
-        <TsIconButton
-          id="clearSearchID"
-          onClick={() => {
-            clearSearch();
-          }}
-          style={{ maxHeight: 34 }}
-          size={desktopMode ? 'small' : 'medium'}
-          edge="end"
-        >
-          <CloseIcon fontSize={desktopMode ? 'small' : 'medium'} />
-        </TsIconButton>
-      </Tooltip>
+      <TsIconButton
+        tooltip={t('core:advancedSearch')}
+        id="advancedButton"
+        data-tid="advancedSearch"
+        style={{ maxHeight: 34 }}
+        size={desktopMode ? 'small' : 'medium'}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+          setAnchorSearch(event.currentTarget);
+        }}
+      >
+        <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
+        {/* <DropDownIcon /> */}
+      </TsIconButton>
+      <TsIconButton
+        tooltip={t('clearSearch') + ' (ESC)'}
+        id="clearSearchID"
+        onClick={() => {
+          clearSearch();
+        }}
+        style={{ maxHeight: 34 }}
+        size={desktopMode ? 'small' : 'medium'}
+        edge="end"
+      >
+        <CloseIcon fontSize={desktopMode ? 'small' : 'medium'} />
+      </TsIconButton>
     </>
   );
 
@@ -1343,29 +1341,28 @@ function SearchAutocomplete(props: Props) {
                       {option}
                     </Box>
                   ) : (
-                    <Tooltip title={option}>
-                      <TsButton
-                        onClick={() => {
-                          changeOptions(action.action, false);
-                        }}
-                        data-tid={dataTidFormat('menu' + option)}
-                        variant="text"
-                        style={{
-                          backgroundColor: 'transparent',
-                          textTransform: 'lowercase',
-                          padding: 0,
-                          margin: 0,
-                        }}
-                        endIcon={
-                          <ArrowDropDownIcon
-                            style={{ marginLeft: -10 }}
-                            fontSize="small"
-                          />
-                        }
-                      >
-                        {removePrefix(option, action.action)}
-                      </TsButton>
-                    </Tooltip>
+                    <TsButton
+                      tooltip={option}
+                      onClick={() => {
+                        changeOptions(action.action, false);
+                      }}
+                      data-tid={dataTidFormat('menu' + option)}
+                      variant="text"
+                      style={{
+                        backgroundColor: 'transparent',
+                        textTransform: 'lowercase',
+                        padding: 0,
+                        margin: 0,
+                      }}
+                      endIcon={
+                        <ArrowDropDownIcon
+                          style={{ marginLeft: -10 }}
+                          fontSize="small"
+                        />
+                      }
+                    >
+                      {removePrefix(option, action.action)}
+                    </TsButton>
                   )}
 
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
@@ -1470,20 +1467,19 @@ function SearchAutocomplete(props: Props) {
             );
           }}
         />
-        <Tooltip title={isIndexing ? t('searchDisabledWhileIndexing') : ''}>
-          <TsButton
-            id="searchButton"
-            disabled={isIndexing !== undefined}
-            style={{
-              marginRight: 10,
-              marginLeft: 10,
-              marginTop: 3,
-            }}
-            onClick={clickSearchButton}
-          >
-            {t('searchTitle')}
-          </TsButton>
-        </Tooltip>
+        <TsButton
+          tooltip={isIndexing ? t('searchDisabledWhileIndexing') : ''}
+          id="searchButton"
+          disabled={isIndexing !== undefined}
+          style={{
+            marginRight: 10,
+            marginLeft: 10,
+            marginTop: 3,
+          }}
+          onClick={clickSearchButton}
+        >
+          {t('searchTitle')}
+        </TsButton>
       </div>
     </>
   );

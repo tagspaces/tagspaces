@@ -26,7 +26,11 @@ import {
   extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
+import {
+  FolderIcon,
+  MoreMenuIcon,
+  ArrowBackIcon,
+} from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
 import Box from '@mui/material/Box';
@@ -62,6 +66,7 @@ interface Props {
   startClosingEntry: (event) => void;
   isEntryInFullWidth: boolean;
   desktopMode: boolean;
+  smallScreen: boolean;
 }
 
 function EntryContainerTitle(props: Props) {
@@ -71,6 +76,7 @@ function EntryContainerTitle(props: Props) {
     startClosingEntry,
     isEntryInFullWidth,
     desktopMode,
+    smallScreen,
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
@@ -152,6 +158,21 @@ function EntryContainerTitle(props: Props) {
         WebkitAppRegion: 'drag',
       }}
     >
+      {smallScreen && (
+        <TsIconButton
+          title={t('closeButtonDialog')}
+          aria-label="close"
+          tabIndex={-1}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
+          data-tid="fileContainerCloseOpenedFile"
+          onClick={startClosingEntry}
+        >
+          <ArrowBackIcon />
+        </TsIconButton>
+      )}
       {openedEntry.isFile ? (
         <>
           {fileChanged ? (

@@ -16,32 +16,31 @@
  *
  */
 
-import React, { useReducer, useRef } from 'react';
-import {
-  locationType,
-  formatDateTime4Tag,
-} from '@tagspaces/tagspaces-common/misc';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
+import CreateLink from '-/components/dialogs/components/CreateLink';
 import TargetPath from '-/components/dialogs/components/TargetPath';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import AppConfig from '-/AppConfig';
-import versionMeta from '-/version.json';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { TS } from '-/tagspaces.namespace';
-import CreateLink from '-/components/dialogs/components/CreateLink';
+import versionMeta from '-/version.json';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  formatDateTime4Tag,
+  locationType,
+} from '@tagspaces/tagspaces-common/misc';
+import { useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -57,12 +56,12 @@ function NewFileDialog(props: Props) {
     useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
-
+  const haveError = useRef<boolean>(false);
   const firstRWLocation = getFirstRWLocation();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileName = useRef<string>(
     (fileType === 'url' ? 'link' : 'note') +
       AppConfig.beginTagContainer +
@@ -70,7 +69,6 @@ function NewFileDialog(props: Props) {
       AppConfig.endTagContainer,
   );
 
-  const haveError = useRef<boolean>(false);
   const fileContent = useRef<string>(
     fileType === 'txt' || fileType === 'md'
       ? 'Created in ' +
@@ -119,20 +117,39 @@ function NewFileDialog(props: Props) {
     }
   }
 
+  const okButton = (
+    <TsButton
+      data-tid="createTID"
+      variant="contained"
+      onClick={() => {
+        createFile(fileType, targetDirectoryPath);
+      }}
+      disabled={haveError.current}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       aria-labelledby="draggable-dialog-title"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       scroll="paper"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {getFileType()}
-        <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={getFileType()}
+        onClose={onClose}
+        closeButtonTestId="closeNewFileDialogTID"
+        actionSlot={okButton}
+      ></TsDialogTitle>
       <DialogContent
         style={{
           paddingTop: 10,
@@ -172,7 +189,7 @@ function NewFileDialog(props: Props) {
         )}
         <TargetPath />
       </DialogContent>
-      {fileType && (
+      {!smallScreen && fileType && (
         <TsDialogActions>
           <TsButton
             data-tid="backTID"
@@ -182,16 +199,7 @@ function NewFileDialog(props: Props) {
           >
             {t('core:cancel')}
           </TsButton>
-          <TsButton
-            data-tid="createTID"
-            variant="contained"
-            onClick={() => {
-              createFile(fileType, targetDirectoryPath);
-            }}
-            disabled={haveError.current}
-          >
-            {t('core:ok')}
-          </TsButton>
+          {okButton}
         </TsDialogActions>
       )}
     </Dialog>

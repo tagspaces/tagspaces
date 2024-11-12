@@ -198,19 +198,18 @@ function Revisions() {
             <TableRow>
               <TableCell>
                 {t('revisions')}
-                <Tooltip title={t('core:deleteAllRevisions')}>
-                  <TsIconButton
-                    aria-label="delete all revisions"
-                    onClick={() =>
-                      confirm(
-                        'The all revisions will be deleted. Do you want to continue?',
-                      ) && deleteRevisions()
-                    }
-                    data-tid="deleteRevisionsTID"
-                  >
-                    <DeleteIcon />
-                  </TsIconButton>
-                </Tooltip>
+                <TsIconButton
+                  tooltip={t('core:deleteAllRevisions')}
+                  aria-label="delete all revisions"
+                  onClick={() =>
+                    confirm(
+                      'The all revisions will be deleted. Do you want to continue?',
+                    ) && deleteRevisions()
+                  }
+                  data-tid="deleteRevisionsTID"
+                >
+                  <DeleteIcon />
+                </TsIconButton>
               </TableCell>
               <TableCell align="right">{t('created')}</TableCell>
               <TableCell align="right">{t('actions')}</TableCell>
@@ -234,33 +233,30 @@ function Revisions() {
                   {cellFormat(getLmdt(row.name))}
                 </TableCell>
                 <TableCell align="right">
-                  <Tooltip title={t('core:view')}>
-                    <TsIconButton
-                      aria-label="view revision"
-                      onClick={() => setPreviewDialogEntry(row)}
-                      data-tid="viewRevisionTID"
-                    >
-                      <PreviewIcon />
-                    </TsIconButton>
-                  </Tooltip>
-                  <Tooltip title={t('core:restore')}>
-                    <TsIconButton
-                      aria-label="restore revision"
-                      onClick={() => restoreRevision(row.path)}
-                      data-tid="restoreRevisionTID"
-                    >
-                      <RestoreIcon />
-                    </TsIconButton>
-                  </Tooltip>
-                  <Tooltip title={t('core:delete')}>
-                    <TsIconButton
-                      aria-label="delete revision"
-                      onClick={() => deleteRevision(row.path)}
-                      data-tid="deleteRevisionTID"
-                    >
-                      <DeleteIcon />
-                    </TsIconButton>
-                  </Tooltip>
+                  <TsIconButton
+                    tooltip={t('core:view')}
+                    aria-label="view revision"
+                    onClick={() => setPreviewDialogEntry(row)}
+                    data-tid="viewRevisionTID"
+                  >
+                    <PreviewIcon />
+                  </TsIconButton>
+                  <TsIconButton
+                    tooltip={t('core:restore')}
+                    aria-label="restore revision"
+                    onClick={() => restoreRevision(row.path)}
+                    data-tid="restoreRevisionTID"
+                  >
+                    <RestoreIcon />
+                  </TsIconButton>
+                  <TsIconButton
+                    tooltip={t('core:delete')}
+                    aria-label="delete revision"
+                    onClick={() => deleteRevision(row.path)}
+                    data-tid="deleteRevisionTID"
+                  >
+                    <DeleteIcon />
+                  </TsIconButton>
                 </TableCell>
               </TableRow>
             ))}

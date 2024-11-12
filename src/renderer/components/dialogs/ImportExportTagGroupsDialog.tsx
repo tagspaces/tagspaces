@@ -19,8 +19,9 @@
 import React, { useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -30,12 +31,12 @@ import { isFunc } from '@tagspaces/tagspaces-common/misc';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { exportTagGroups } from '-/services/taglibrary-utils';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import Paper from '@mui/material/Paper';
 
 interface Props {
   open: boolean;
@@ -106,7 +107,6 @@ function ImportExportTagGroupsDialog(props: Props) {
                 id={tagGroup.uuid || tagGroup.key}
                 checked={tagGroup.selected}
                 onClick={(e) => handleTagGroup(e, tagGroup.selected, index)}
-                // onChange={e => handleChange(e)}
                 value={tagGroup.title}
                 name={tagGroup.title}
               />
@@ -126,20 +126,35 @@ function ImportExportTagGroupsDialog(props: Props) {
 
   const { onClose, open } = props;
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const confirmButton = (
+    <TsButton
+      disabled={!isSelected()}
+      onClick={onConfirm}
+      data-tid="confirmImportExport"
+      variant="contained"
+    >
+      {props.dialogModeImport ? 'Import' : 'Export'}
+    </TsButton>
+  );
   return (
     <Dialog
       open={open}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       onClose={onClose}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
     >
-      <DialogTitle>
-        {props.dialogModeImport
-          ? t('core:importGroupTagsTitle')
-          : t('core:exportGroupTagsTitle')}
-        <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={
+          props.dialogModeImport
+            ? t('core:importGroupTagsTitle')
+            : t('core:exportGroupTagsTitle')
+        }
+        closeButtonTestId="closeIETagGroupsTID"
+        onClose={onClose}
+        actionSlot={confirmButton}
+      />
       <DialogContent>
         <TsButton onClick={handleToggleSelectAll}>
           {t('core:selectAllTagGroups')}
@@ -148,17 +163,12 @@ function ImportExportTagGroupsDialog(props: Props) {
           {tagGroupList.map(renderTagGroups)}
         </FormControl>
       </DialogContent>
-      <TsDialogActions>
-        <TsButton onClick={props.onClose}>{t('core:cancel')}</TsButton>
-        <TsButton
-          disabled={!isSelected()}
-          onClick={onConfirm}
-          data-tid="confirmImportExport"
-          variant="contained"
-        >
-          {props.dialogModeImport ? 'Import' : 'Export'}
-        </TsButton>
-      </TsDialogActions>
+      {!smallScreen && (
+        <TsDialogActions>
+          <TsButton onClick={props.onClose}>{t('core:cancel')}</TsButton>
+          {confirmButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

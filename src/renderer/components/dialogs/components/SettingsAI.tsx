@@ -50,7 +50,7 @@ import TsTextField from '-/components/TsTextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import { OllamaIcon } from '-/components/dialogs/settings/Ollama';
+import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import TsSelect from '-/components/TsSelect';
 import { TS } from '-/tagspaces.namespace';

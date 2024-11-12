@@ -21,31 +21,29 @@
  * file manager or desktop of the operating system
  */
 
-import React from 'react';
-import { joinPaths, extractFileName } from '@tagspaces/tagspaces-common/paths';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
-import Paper from '@mui/material/Paper';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { executePromisesInBatches } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { extractFileName, joinPaths } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { TS } from '-/tagspaces.namespace';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { executePromisesInBatches } from '-/services/utils-io';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 
 interface Props {
   open: boolean;
@@ -67,7 +65,7 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { findLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const targetDir = props.targetDir ? props.targetDir : currentDirectoryPath;
   const targetLocation = findLocation(targetLocationId);
 
@@ -124,16 +122,14 @@ function MoveOrCopyFilesDialog(props: Props) {
       keepMounted
       scroll="paper"
       aria-labelledby="draggable-dialog-title"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
-      fullScreen={fullScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      fullScreen={smallScreen}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton
-          testId="closeMoveOrCopyTID"
-          onClose={() => onClose()}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:copyMoveEntriesTitle')}
+        closeButtonTestId="closeMoveOrCopyTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           overflowX: 'hidden',

@@ -16,34 +16,33 @@
  *
  */
 
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  ChangeEvent,
-  useRef,
-} from 'react';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
+import { tagsValidation } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { isDateTimeTag } from '-/utils/dates';
+import { isGeoTag } from '-/utils/geo';
+import useValidation from '-/utils/useValidation';
+import EditIcon from '@mui/icons-material/Edit';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Dialog from '@mui/material/Dialog';
-import EditIcon from '@mui/icons-material/Edit';
-import TsTextField from '-/components/TsTextField';
-import { isGeoTag } from '-/utils/geo';
-import { Pro } from '-/pro';
-import { isDateTimeTag } from '-/utils/dates';
-import { TS } from '-/tagspaces.namespace';
-import useValidation from '-/utils/useValidation';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { tagsValidation } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -56,14 +55,10 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
-
   const { onClose, open, tag } = props;
-
   const { addTagsToEntry, editTagForEntry } = useTaggingActionsContext();
-  // const selectedTag: TS.Tag = useSelector(getSelectedTag);
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(tag && tag.title);
-
   const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
@@ -91,14 +86,12 @@ function EditEntryTagDialog(props: Props) {
     if (titleRef && titleRef.current) {
       titleRef.current.value = title;
     }
-    // handleValidation();
   }, [title]);
 
   function handleValidation(tagTitle: string) {
     // Tags should be at least 1 character long and should not contain: spaces, \, / #
     //const tagCheck = RegExp(/^[^#/\\ [\]]{1,}$/);
     if (tagsValidation(tagTitle)) {
-      // && tagCheck.test(title)) {
       setError('tag', false);
       return true;
     }
@@ -118,15 +111,6 @@ function EditEntryTagDialog(props: Props) {
       }
       props.onClose();
     }
-  }
-
-  function renderTitle() {
-    return (
-      <DialogTitle>
-        {t('core:tagProperties')}{' '}
-        <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
-      </DialogTitle>
-    );
   }
 
   function renderContent() {
@@ -185,8 +169,34 @@ function EditEntryTagDialog(props: Props) {
     );
   }
 
-  function renderActions() {
-    return (
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  return (
+    <Dialog
+      open={open}
+      fullScreen={smallScreen}
+      onClose={onClose}
+      style={{
+        minWidth: 400,
+        height: '100%',
+        marginBottom: 30,
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          event.preventDefault();
+          event.stopPropagation();
+          onConfirm();
+        } /*else if (event.key === 'Escape') {
+          onClose();
+        }*/
+      }}
+    >
+      <TsDialogTitle
+        dialogTitle={t('core:tagProperties')}
+        closeButtonTestId="closeEditEntryTagTID"
+        onClose={onClose}
+      />
+      {renderContent()}
       <TsDialogActions
         style={{
           justifyContent: 'space-between',
@@ -219,34 +229,6 @@ function EditEntryTagDialog(props: Props) {
           </TsButton>
         </div>
       </TsDialogActions>
-    );
-  }
-
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  return (
-    <Dialog
-      open={open}
-      fullScreen={fullScreen}
-      onClose={onClose}
-      style={{
-        minWidth: 400,
-        height: '100%',
-        marginBottom: 30,
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.keyCode === 13) {
-          event.preventDefault();
-          event.stopPropagation();
-          onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
-      }}
-    >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
     </Dialog>
   );
 }

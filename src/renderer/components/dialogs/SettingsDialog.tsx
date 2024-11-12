@@ -16,33 +16,32 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
-import TsButton from '-/components/TsButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Dialog from '@mui/material/Dialog';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { isDesktopMode } from '-/reducers/settings';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import SettingsGeneral from '-/components/dialogs/settings/SettingsGeneral';
-import SettingsKeyBindings from '-/components/dialogs/settings/SettingsKeyBindings';
-import SettingsFileTypes from '-/components/dialogs/settings/SettingsFileTypes';
-import { clearAllURLParams } from '-/utils/dom';
-import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
-import SettingsAI from '-/components/dialogs/settings/SettingsAI';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from 'assets/links';
-import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
-import { openURLExternally } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
-import TranslucentDialog from '-/components/dialogs/TranslucentDialog';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
+import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
+import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
+import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
+import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { isDesktopMode } from '-/reducers/settings';
+import { openURLExternally } from '-/services/utils-io';
+import { clearAllURLParams } from '-/utils/dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import SettingsAI from '-/components/dialogs/components/SettingsAI';
+import Links from 'assets/links';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -58,25 +57,31 @@ function SettingsDialog(props: Props) {
     useState<boolean>(false);
   const { open, onClose } = props;
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleTabClick = (event, tab) => {
     setCurrentTab(tab);
   };
 
-  const renderTitle = () => (
-    <DialogTitle>
-      {t('core:settings')}
-      <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
-    </DialogTitle>
+  const helpButton = (
+    <TsButton
+      onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
+      color="secondary"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:help')}
+    </TsButton>
   );
 
-  const renderContent = () => (
+  const renderContent = (
     <DialogContent
       style={{
         overflowY: 'hidden',
         overflowX: 'hidden',
-        display: fullScreen ? 'block' : 'flex',
+        display: smallScreen ? 'block' : 'flex',
         flexGrow: 1,
       }}
     >
@@ -86,11 +91,12 @@ function SettingsDialog(props: Props) {
         onChange={handleTabClick}
         indicatorColor="primary"
         scrollButtons="auto"
-        variant={fullScreen ? 'scrollable' : 'standard'}
-        orientation={fullScreen ? 'horizontal' : 'vertical'}
-        style={{
-          width: fullScreen ? '100%' : '170px',
-        }}
+        variant={smallScreen ? 'scrollable' : 'standard'}
+        orientation={smallScreen ? 'horizontal' : 'vertical'}
+        // allowScrollButtonsMobile
+        // style={{
+        //   width: fullScreen ? '100%' : '170px',
+        // }}
       >
         <Tab
           style={{
@@ -157,7 +163,7 @@ function SettingsDialog(props: Props) {
         style={{
           height: 'calc(100% - 50px)',
           minHeight: 400,
-          width: fullScreen ? '100%' : 600,
+          width: smallScreen ? '100%' : 600,
           //minWidth: 600,
           //maxWidth: 600,
         }}
@@ -201,27 +207,6 @@ function SettingsDialog(props: Props) {
     </DialogContent>
   );
 
-  const renderActions = () => (
-    <TsDialogActions
-      style={{
-        justifyContent: 'space-between',
-      }}
-    >
-      <TsButton
-        onClick={() =>
-          openURLExternally(Links.documentationLinks.settings, true)
-        }
-        color="secondary"
-        style={{ float: 'left' }}
-      >
-        {t('core:help')}
-      </TsButton>
-      <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
-        {t('core:closeButton')}
-      </TsButton>
-    </TsDialogActions>
-  );
-
   return (
     <Dialog
       sx={{
@@ -234,16 +219,33 @@ function SettingsDialog(props: Props) {
           // backdropFilter: props.fullScreen ? 'unset' : 'blur(5px)',
         },
       }}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       open={open}
       keepMounted
       scroll="paper"
       onClose={onClose}
       style={{ maxWidth: 'auto' }}
     >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
+      <TsDialogTitle
+        dialogTitle={t('core:settings')}
+        closeButtonTestId="closeSettingsTID"
+        onClose={onClose}
+        actionSlot={helpButton}
+      />
+      {renderContent}
+      {!smallScreen && (
+        <TsDialogActions
+          style={{
+            justifyContent: 'space-between',
+          }}
+        >
+          {helpButton}
+          <TsButton data-tid="closeSettingsDialog" onClick={props.onClose}>
+            {t('core:closeButton')}
+          </TsButton>
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

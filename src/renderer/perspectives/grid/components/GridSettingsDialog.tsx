@@ -16,40 +16,40 @@
  *
  */
 
-import React, { useEffect, useReducer } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Switch,
-  Divider,
-  MenuItem,
-  Typography,
-  Paper,
-  Box,
-} from '@mui/material';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import ZoomComponent from '-/components/ZoomComponent';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { Pro } from '-/pro';
+import useFirstRender from '-/utils/useFirstRender';
 import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import TsSelect from '-/components/TsSelect';
-import TsButton from '-/components/TsButton';
-import { Pro } from '-/pro';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Paper,
+  Switch,
+  Typography,
+} from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import ZoomComponent from '-/components/ZoomComponent';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -79,7 +79,7 @@ function GridSettingsDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { open, onClose, openHelpWebPage } = props;
 
   useEffect(() => {
@@ -111,21 +111,34 @@ function GridSettingsDialog(props: Props) {
     return parsed;
   }
 
+  const helpButton = (
+    <TsButton
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+      data-tid="gridPerspectiveHelp"
+      onClick={openHelpWebPage}
+    >
+      {t('core:help')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {t('core:perspectiveSettingsTitle')}
-        <DialogCloseButton
-          testId="closePerspectiveSettingsTID"
-          onClose={onClose}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t('core:perspectiveSettingsTitle')}
+        onClose={onClose}
+        closeButtonTestId="closePerspectiveSettingsTID"
+        actionSlot={helpButton}
+      />
       <DialogContent>
         {haveLocalSetting() && (
           <>
@@ -142,24 +155,21 @@ function GridSettingsDialog(props: Props) {
               onClick={() => {
                 resetLocalSetting();
                 onClose();
-                // forceUpdate();
               }}
             >
               {t('core:resetLocalSettings')}
             </TsButton>
           </>
         )}
-        <Divider />
         <Box style={{ display: 'flex' }}>
-          <ZoomComponent preview={true} />
           <Typography
             style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
           >
             {t('Size of the entries')}
           </Typography>
+          <ZoomComponent preview={true} />
         </Box>
-        <Divider />
         <FormGroup>
           <FormControlLabel
             // labelPlacement="start"
@@ -348,29 +358,36 @@ function GridSettingsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <TsDialogActions style={{ justifyContent: 'space-between' }}>
-        <TsButton data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
-          {t('core:help')}
-        </TsButton>
-        <TsButton
-          data-tid="defaultSettings"
-          onClick={() => {
-            saveSettings(true);
-            onClose();
-          }}
-        >
-          {t('core:defaultSettings')}
-        </TsButton>
-        {Pro && (
+        {smallScreen ? <div style={{ width: 1 }} /> : helpButton}
+        <span>
           <TsButton
-            data-tid="directorySettings"
+            data-tid="defaultSettings"
             onClick={() => {
-              saveSettings(false);
+              saveSettings(true);
               onClose();
             }}
+            style={{
+              marginTop: AppConfig.defaultSpaceBetweenButtons,
+            }}
           >
-            {t('core:directorySettings')}
+            {t('core:defaultSettings')}
           </TsButton>
-        )}
+          {Pro && (
+            <TsButton
+              data-tid="directorySettings"
+              onClick={() => {
+                saveSettings(false);
+                onClose();
+              }}
+              style={{
+                marginTop: AppConfig.defaultSpaceBetweenButtons,
+                marginLeft: AppConfig.defaultSpaceBetweenButtons,
+              }}
+            >
+              {t('core:directorySettings')}
+            </TsButton>
+          )}
+        </span>
       </TsDialogActions>
     </Dialog>
   );

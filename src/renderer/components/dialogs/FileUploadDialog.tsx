@@ -21,8 +21,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,7 +38,6 @@ import {
   getProgress,
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -57,7 +56,7 @@ function FileUploadDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
@@ -67,10 +66,6 @@ function FileUploadDialog(props: Props) {
   useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('progress', (fileName, newProgress) => {
-        /*const { path, filePath, loaded, total, key } = newProgress;
-        const progressPercentage = Math.round(
-          (loaded / total) * 100,
-        );*/
         dispatch(AppActions.onUploadProgress(newProgress, undefined));
       });
 
@@ -169,20 +164,19 @@ function FileUploadDialog(props: Props) {
       keepMounted
       scroll="paper"
       fullWidth={true}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       maxWidth="sm"
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
-      BackdropProps={{ style: { backgroundColor: 'transparent' } }}
+      slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
-      <DialogTitle
-        data-tid="importDialogTitle"
-        style={{ cursor: 'move' }}
-        id="draggable-dialog-title"
-      >
-        {t('core:' + (title && title.length > 0 ? title : 'importDialogTitle'))}
-        <DialogCloseButton testId="closeFileUploadTID" onClose={onClose} />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={t(
+          'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
+        )}
+        closeButtonTestId="closeFileUploadTID"
+        onClose={onClose}
+      />
       <DialogContent
         style={{
           marginLeft: 'auto',
@@ -246,7 +240,10 @@ function FileUploadDialog(props: Props) {
                   </Grid>
                   <Grid item xs={2}>
                     {abort && typeof abort === 'function' && (
-                      <TsButton onClick={() => abort()}>
+                      <TsButton
+                        tooltip={t('core:abort')}
+                        onClick={() => abort()}
+                      >
                         <CloseIcon />
                       </TsButton>
                     )}

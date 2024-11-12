@@ -1,25 +1,24 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material/styles';
-import TsIconButton from '-/components/TsIconButton';
 import {
   CloseIcon,
-  PrevDocumentIcon,
   NextDocumentIcon,
+  PrevDocumentIcon,
 } from '-/components/CommonIcons';
-import Tooltip from '-/components/Tooltip';
-import { useTranslation } from 'react-i18next';
+import TsIconButton from '-/components/TsIconButton';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   isFile: boolean;
+  smallScreen: boolean;
   startClosingEntry: (event) => void;
 }
 
 function EntryContainerNav(props: Props) {
-  const { isFile, startClosingEntry } = props;
+  const { isFile, startClosingEntry, smallScreen } = props;
   const { setActions } = usePerspectiveActionsContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
@@ -39,54 +38,45 @@ function EntryContainerNav(props: Props) {
     >
       {isFile && (
         <>
-          <Tooltip
-            title={t('core:openPrevFileTooltip')}
+          <TsIconButton
+            tooltip={t('core:openPrevFileTooltip')}
             keyBinding={keyBindings['prevDocument']}
+            aria-label={t('core:openPrevFileTooltip')}
+            data-tid="fileContainerPrevFile"
+            onClick={() => {
+              const action: TS.PerspectiveActions = {
+                action: 'openPrevious',
+              };
+              setActions(action);
+            }}
           >
-            <TsIconButton
-              aria-label={t('core:openPrevFileTooltip')}
-              data-tid="fileContainerPrevFile"
-              onClick={() => {
-                const action: TS.PerspectiveActions = {
-                  action: 'openPrevious',
-                };
-                setActions(action);
-                //window.dispatchEvent(new Event('previous-file'));
-              }}
-            >
-              <PrevDocumentIcon />
-            </TsIconButton>
-          </Tooltip>
-          <Tooltip
-            title={t('core:openNextFileTooltip')}
+            <PrevDocumentIcon />
+          </TsIconButton>
+          <TsIconButton
+            tooltip={t('core:openNextFileTooltip')}
             keyBinding={keyBindings['nextDocument']}
+            aria-label={t('core:openNextFileTooltip')}
+            data-tid="fileContainerNextFile"
+            onClick={() => {
+              const action: TS.PerspectiveActions = { action: 'openNext' };
+              setActions(action);
+            }}
           >
-            <TsIconButton
-              aria-label={t('core:openNextFileTooltip')}
-              data-tid="fileContainerNextFile"
-              onClick={() => {
-                const action: TS.PerspectiveActions = { action: 'openNext' };
-                setActions(action);
-                //window.dispatchEvent(new Event('next-file'));
-              }}
-            >
-              <NextDocumentIcon />
-            </TsIconButton>
-          </Tooltip>
+            <NextDocumentIcon />
+          </TsIconButton>
         </>
       )}
-      <Tooltip
-        title={t('core:closeEntry')}
-        keyBinding={keyBindings['closeViewer']}
-      >
+      {!smallScreen && (
         <TsIconButton
+          tooltip={t('core:closeEntry')}
+          keyBinding={keyBindings['closeViewer']}
           onClick={startClosingEntry}
           aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
         >
           <CloseIcon />
         </TsIconButton>
-      </Tooltip>
+      )}
     </div>
   );
 }

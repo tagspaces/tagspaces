@@ -16,24 +16,24 @@
  *
  */
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import Dialog from '@mui/material/Dialog';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import Input from '@mui/material/Input';
-import MenuItem from '@mui/material/MenuItem';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import { getTagLibrary } from '-/services/taglibrary-utils';
-import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import { getTagLibrary } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { Paper, useTheme } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import TsDialogTitle from './components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -46,7 +46,6 @@ interface Props {
 function AddTagToTagGroupDialog(props: Props) {
   const { t } = useTranslation();
   const { addTag } = useTaggingActionsContext();
-  //const dispatch: AppDispatch = useDispatch();
   const [tagGroup, setTagGroup] = useState<string>(undefined);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -64,19 +63,35 @@ function AddTagToTagGroupDialog(props: Props) {
       selectedTag.color = defaultBackgroundColor;
     }
     addTag([selectedTag], tagGroup);
-    //dispatch(AppActions.addTag(selectedTag, tagGroup));
     props.onClose();
   };
 
   const { open, onClose } = props;
 
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const okButton = (
+    <TsButton
+      disabled={tagGroup === undefined}
+      onClick={onConfirm}
+      data-tid="createTagsConfirmButton"
+      variant="contained"
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       keepMounted
       scroll="paper"
       onKeyDown={(event) => {
@@ -87,39 +102,30 @@ function AddTagToTagGroupDialog(props: Props) {
         }
       }}
     >
-      <DialogTitle>
-        {t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
-        <DialogCloseButton
-          testId="closeAddTagToGroupDialogTID"
-          onClose={onClose}
-        />
-      </DialogTitle>
+      <TsDialogTitle
+        dialogTitle={
+          t('core:addTagToTagGroup') + ': ' + props.selectedTag.title
+        }
+        closeButtonTestId="closeAddTagToGroupDialogTID"
+        onClose={onClose}
+        actionSlot={okButton}
+      />
       <DialogContent style={{ paddingTop: 10, minWidth: 350 }}>
         <FormControl fullWidth={true}>
-          <InputLabel htmlFor="addTagToTagGroupInput">
-            {t('core:chooseTagGroup')}
-          </InputLabel>
-          <Select
+          <TsSelect
+            label={t('core:chooseTagGroup')}
             value={tagGroup}
             onChange={handleTagGroupChange}
-            input={<Input id="addTagToTagGroupInput" />}
           >
             {getTagLibrary().map((tg) => (
               <MenuItem value={tg.uuid}>{tg.title}</MenuItem>
             ))}
-          </Select>
+          </TsSelect>
         </FormControl>
       </DialogContent>
       <TsDialogActions>
         <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
-        <TsButton
-          disabled={tagGroup === undefined}
-          onClick={onConfirm}
-          data-tid="createTagsConfirmButton"
-          variant="contained"
-        >
-          {t('core:ok')}
-        </TsButton>
+        {okButton}
       </TsDialogActions>
     </Dialog>
   );

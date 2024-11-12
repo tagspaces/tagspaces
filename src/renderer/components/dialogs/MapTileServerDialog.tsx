@@ -16,28 +16,29 @@
  *
  */
 
-import React, { useRef } from 'react';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import useValidation from '-/utils/useValidation';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import ListItem from '@mui/material/ListItem/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import TsButton from '-/components/TsButton';
-import Dialog from '@mui/material/Dialog';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TsTextField from '-/components/TsTextField';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import Switch from '@mui/material/Switch';
-import { useDispatch } from 'react-redux';
-import useValidation from '-/utils/useValidation';
-import { TS } from '-/tagspaces.namespace';
-import { actions as SettingsActions } from '-/reducers/settings';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { AppDispatch } from '-/reducers/app';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem/ListItem';
-import AppConfig from '-/AppConfig';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -54,19 +55,9 @@ function MapTileServerDialog(props: Props) {
   const serverInfo = useRef<string>(props.tileServer.serverInfo);
   const isDefault = useRef<boolean>(props.isDefault);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { open, onClose } = props;
   const { setError, haveError } = useValidation();
-  const renderTitle = () => (
-    <DialogTitle>
-      {t(
-        props.tileServer.uuid
-          ? 'core:tileServerDialogEdit'
-          : 'core:tileServerDialogAdd',
-      )}
-      <DialogCloseButton testId="closeMapTileServerTID" onClose={onClose} />
-    </DialogTitle>
-  );
 
   const validateForm = () => {
     if (!name.current) {
@@ -121,9 +112,6 @@ function MapTileServerDialog(props: Props) {
             name.current = target.value;
             validateForm();
           }}
-          // updateValue={(value) => {
-          //   name.current = value;
-          // }}
           retrieveValue={() => name.current}
           defaultValue={name.current}
           data-tid="tileServerNameTID"
@@ -137,9 +125,6 @@ function MapTileServerDialog(props: Props) {
             const { target } = event;
             serverURL.current = target.value;
           }}
-          // updateValue={(value) => {
-          //   serverURL.current = value;
-          // }}
           retrieveValue={() => serverURL.current}
           defaultValue={serverURL.current}
           data-tid="tileServerUrlTID"
@@ -176,54 +161,58 @@ function MapTileServerDialog(props: Props) {
     </DialogContent>
   );
 
-  const renderActions = () => (
-    <TsDialogActions
-      style={{
-        justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
-      }}
-    >
-      {props.tileServer.uuid && (
-        <TsButton
-          style={{
-            marginLeft: 10,
-          }}
-          data-tid="deleteTileServerTID"
-          onClick={() => {
-            dispatch(SettingsActions.deleteTileServer(props.tileServer.uuid));
-            props.onClose();
-          }}
-        >
-          {t('core:delete')}
-        </TsButton>
-      )}
-      <div>
-        <TsButton data-tid="closeTileServerDialogTID" onClick={props.onClose}>
-          {t('core:closeButton')}
-        </TsButton>
-        <TsButton
-          data-tid="saveTileServerDialogTID"
-          onClick={saveTileServer}
-          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-          variant="contained"
-        >
-          {t('core:confirmSaveButton')}
-        </TsButton>
-      </div>
-    </TsDialogActions>
-  );
-
-  const { open, onClose } = props;
   return (
     <Dialog
       open={open}
-      fullScreen={fullScreen}
+      fullScreen={smallScreen}
       keepMounted
       scroll="paper"
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       onClose={onClose}
     >
-      {renderTitle()}
+      <TsDialogTitle
+        dialogTitle={t(
+          props.tileServer.uuid
+            ? 'core:tileServerDialogEdit'
+            : 'core:tileServerDialogAdd',
+        )}
+        closeButtonTestId="closeMapTileServerTID"
+        onClose={onClose}
+      />
       {renderContent()}
-      {renderActions()}
+      <TsDialogActions
+        style={{
+          justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
+        }}
+      >
+        {props.tileServer.uuid && (
+          <TsButton
+            style={{
+              marginLeft: 10,
+            }}
+            data-tid="deleteTileServerTID"
+            onClick={() => {
+              dispatch(SettingsActions.deleteTileServer(props.tileServer.uuid));
+              props.onClose();
+            }}
+          >
+            {t('core:delete')}
+          </TsButton>
+        )}
+        <div>
+          <TsButton data-tid="closeTileServerDialogTID" onClick={props.onClose}>
+            {t('core:closeButton')}
+          </TsButton>
+          <TsButton
+            data-tid="saveTileServerDialogTID"
+            onClick={saveTileServer}
+            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            variant="contained"
+          >
+            {t('core:confirmSaveButton')}
+          </TsButton>
+        </div>
+      </TsDialogActions>
     </Dialog>
   );
 }

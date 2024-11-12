@@ -51,7 +51,7 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import { Switch } from '@mui/material';
+import { Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
@@ -104,6 +104,8 @@ function EntryContainer() {
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
     tabIndex !== undefined,
   );
+
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
@@ -601,23 +603,23 @@ function EntryContainer() {
       if (isEditMode) {
         editFile = (
           <ButtonGroup>
-            <Tooltip title={t('core:cancelEditing')}>
-              <TsButton
-                onClick={() => {
-                  setEditMode(false);
-                  setFileChanged(false);
-                }}
-                style={{
-                  borderRadius: 'unset',
-                  borderTopLeftRadius: 10,
-                  borderBottomLeftRadius: 10,
-                }}
-                aria-label={t('core:cancelEditing')}
-                startIcon={closeCancelIcon}
-              >
-                {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
-              </TsButton>
-            </Tooltip>
+            <TsButton
+              tooltip={t('core:cancelEditing')}
+              onClick={() => {
+                setEditMode(false);
+                setFileChanged(false);
+              }}
+              style={{
+                borderRadius: 'unset',
+                borderTopLeftRadius: 10,
+                borderBottomLeftRadius: 10,
+              }}
+              aria-label={t('core:cancelEditing')}
+              startIcon={closeCancelIcon}
+            >
+              {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
+            </TsButton>
+
             {fileChanged && (
               <Tooltip
                 title={
@@ -650,17 +652,16 @@ function EntryContainer() {
         );
       } else {
         editFile = (
-          <Tooltip title={t('core:editFile')}>
-            <TsButton
-              disabled={isEditDescriptionMode}
-              onClick={editOpenedFile}
-              aria-label={t('core:editFile')}
-              data-tid="fileContainerEditFile"
-              startIcon={<EditIcon />}
-            >
-              {t('core:edit')}
-            </TsButton>
-          </Tooltip>
+          <TsButton
+            tooltip={t('core:editFile')}
+            disabled={isEditDescriptionMode}
+            onClick={editOpenedFile}
+            aria-label={t('core:editFile')}
+            data-tid="fileContainerEditFile"
+            startIcon={<EditIcon />}
+          >
+            {t('core:edit')}
+          </TsButton>
         );
       }
     }
@@ -774,10 +775,12 @@ function EntryContainer() {
               startClosingEntry={startClosingEntry}
               isEntryInFullWidth={isEntryInFullWidth}
               desktopMode={desktopMode}
+              smallScreen={smallScreen}
             />
             <EntryContainerNav
               isFile={openedEntry.isFile}
               startClosingEntry={startClosingEntry}
+              smallScreen={smallScreen}
             />
           </Box>
           {tabs()}

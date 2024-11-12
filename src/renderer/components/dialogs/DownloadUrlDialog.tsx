@@ -16,45 +16,31 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import { saveAs } from 'file-saver';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
-import DraggablePaper from '-/components/DraggablePaper';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { styled, useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import TargetPath from '-/components/dialogs/components/TargetPath';
-import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
-import { useTranslation } from 'react-i18next';
-import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import AppConfig from '-/AppConfig';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
+import TargetPath from '-/components/dialogs/components/TargetPath';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useDispatch } from 'react-redux';
-import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-
-const PREFIX = 'CreateDirectory';
-
-const classes = {
-  createButton: `${PREFIX}-createButton`,
-};
-
-const Root = styled('div')(() => ({
-  [`& .${classes.createButton}`]: {
-    width: '100%',
-    textAlign: 'center',
-  },
-}));
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { saveAs } from 'file-saver';
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -65,7 +51,7 @@ function DownloadUrlDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { setReflectActions } = useEditedEntryContext();
   const { downloadUrl } = useIOActionsContext();
@@ -157,63 +143,68 @@ function DownloadUrlDialog(props: Props) {
     }
   }
 
+  const okButton = (
+    <TsButton
+      variant="contained"
+      data-tid={'downloadFileUrlTID'}
+      onClick={() => downloadURL()}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+      }}
+    >
+      {t('core:ok')}
+    </TsButton>
+  );
+
   return (
-    <Root>
-      <TargetPathContextProvider>
-        <Dialog
-          open={open}
+    <TargetPathContextProvider>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullScreen={smallScreen}
+        keepMounted
+        aria-labelledby="draggable-dialog-title"
+        PaperComponent={smallScreen ? Paper : DraggablePaper}
+        scroll="paper"
+      >
+        <TsDialogTitle
+          dialogTitle={t('core:downloadLink')}
+          closeButtonTestId="closeDownloadURLDialogTID"
           onClose={onClose}
-          fullScreen={fullScreen}
-          keepMounted
-          aria-labelledby="draggable-dialog-title"
-          PaperComponent={fullScreen ? Paper : DraggablePaper}
-          scroll="paper"
+          actionSlot={okButton}
+        />
+        <DialogContent
+          style={{
+            minWidth: 200,
+            marginBottom: 20,
+            overflow: 'overlay',
+          }}
+          data-tid="downloadUrlDialogTID"
         >
-          <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-            {t('core:downloadLink')}
-            <DialogCloseButton
-              testId="closeCreateDialogTID"
-              onClose={() => onClose()}
-            />
-          </DialogTitle>
-          <DialogContent
-            style={{
-              minWidth: 200,
-              //minHeight: 300,
-              marginBottom: 20,
-              overflow: 'overlay',
+          <TsTextField
+            error={invalidURL}
+            label={t('core:url')}
+            autoFocus
+            name="name"
+            data-tid="newUrlTID"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                downloadURL();
+              }
             }}
-            data-tid="downloadUrlDialogTID"
-          >
-            <TsTextField
-              error={invalidURL}
-              label={t('core:url')}
-              autoFocus
-              name="name"
-              data-tid="newUrlTID"
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  downloadURL();
-                }
-              }}
-              onChange={handleUrlChange}
-            />
-            <TargetPath />
-          </DialogContent>
+            onChange={handleUrlChange}
+          />
+          <TargetPath />
+        </DialogContent>
+        {!smallScreen && (
           <TsDialogActions>
             <TsButton onClick={onClose}>{t('core:cancel')}</TsButton>
-            <TsButton
-              variant="contained"
-              data-tid={'downloadFileUrlTID'}
-              className={classes.createButton}
-              onClick={() => downloadURL()}
-            >
-              {t('core:ok')}
-            </TsButton>
+            {okButton}
           </TsDialogActions>
-        </Dialog>
-      </TargetPathContextProvider>
-    </Root>
+        )}
+      </Dialog>
+    </TargetPathContextProvider>
   );
 }
 

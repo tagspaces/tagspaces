@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import React from 'react';
 
 interface Props {
@@ -26,7 +27,7 @@ function TransparentBackground(props: Props) {
     <span
       style={{
         minHeight: 25,
-        borderRadius: 5,
+        borderRadius: AppConfig.defaultCSSRadius,
         background:
           'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==")',
       }}

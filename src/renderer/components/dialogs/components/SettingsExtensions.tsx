@@ -20,7 +20,6 @@ import React, { ChangeEvent, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import Tooltip from '-/components/Tooltip';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -167,17 +166,16 @@ function SettingsExtensions() {
                         }
                       }}
                     />
-                    <Tooltip title={t('core:removeExtension')}>
-                      <TsIconButton
-                        aria-label={t('core:delete')}
-                        onClick={() => {
-                          setRemoveExtDialogOpened(ext);
-                        }}
-                        data-tid="removeExtensionTID"
-                      >
-                        <DeleteIcon color={'action'} />
-                      </TsIconButton>
-                    </Tooltip>
+                    <TsIconButton
+                      tooltip={t('core:removeExtension')}
+                      aria-label={t('core:delete')}
+                      onClick={() => {
+                        setRemoveExtDialogOpened(ext);
+                      }}
+                      data-tid="removeExtensionTID"
+                    >
+                      <DeleteIcon color={'action'} />
+                    </TsIconButton>
                   </ListItem>
                 ))}
           </List>

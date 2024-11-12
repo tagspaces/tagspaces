@@ -110,6 +110,8 @@ export { default as SearchIcon } from '@mui/icons-material/Search';
 
 export { default as CloseIcon } from '@mui/icons-material/Close';
 
+export { default as ArrowBackIcon } from '@mui/icons-material/ArrowBackIos';
+
 export { default as SelectedIcon } from '@mui/icons-material/CheckCircle';
 
 export { default as UnSelectedIcon } from '@mui/icons-material/RadioButtonUnchecked';
