@@ -16,39 +16,39 @@
  *
  */
 
-import React, { useContext, useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import { styled, useTheme } from '@mui/material/styles';
+import AppConfig from '-/AppConfig';
 import {
-  extractTitle,
-  extractFileExtension,
-  extractFileName,
-  extractDirectoryName,
-} from '@tagspaces/tagspaces-common/paths';
-import Tooltip from '-/components/Tooltip';
-import {
+  ArrowBackIcon,
   FolderIcon,
   MoreMenuIcon,
-  ArrowBackIcon,
 } from '-/components/CommonIcons';
-import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
-import Box from '@mui/material/Box';
-import { dataTidFormat } from '-/services/test';
 import { ProTooltip } from '-/components/HelperComponents';
-import TsIconButton from '-/components/TsIconButton';
-import HttpsIcon from '@mui/icons-material/Https';
-import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import TagsPreview from '-/components/TagsPreview';
-import { getSupportedFileTypes } from '-/reducers/settings';
-import { Pro } from '-/pro';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { getAllTags, findColorForEntry } from '-/services/utils-io';
+import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
+import { getSupportedFileTypes } from '-/reducers/settings';
+import { dataTidFormat } from '-/services/test';
+import { findColorForEntry, getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
+import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
+import HttpsIcon from '@mui/icons-material/Https';
+import Box from '@mui/material/Box';
+import { styled, useTheme } from '@mui/material/styles';
+import {
+  extractDirectoryName,
+  extractFileExtension,
+  extractFileName,
+  extractTitle,
+} from '@tagspaces/tagspaces-common/paths';
+import React, { useContext, useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -141,6 +141,9 @@ function EntryContainerTitle(props: Props) {
     }
   }
 
+  const addMacMargin =
+    AppConfig.isMacLike && desktopMode && (smallScreen || isEntryInFullWidth);
+
   return (
     <div
       style={{
@@ -152,8 +155,7 @@ function EntryContainerTitle(props: Props) {
         flex: '1 1',
         overflowX: 'auto',
         overflowY: 'hidden',
-        marginLeft:
-          AppConfig.isMacLike && desktopMode && isEntryInFullWidth ? 60 : 0,
+        marginLeft: addMacMargin ? 60 : 0,
         // @ts-ignore
         WebkitAppRegion: 'drag',
       }}
