@@ -104,7 +104,9 @@ function ChatView() {
           ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
           : '';
         const request = item.request ? item.request : '';
-        const response = item.response ? item.response : '';
+        const response = item.response
+          ? item.modelName + ': ' + item.response
+          : '';
         const images = item.imagePaths
           ? item.imagePaths.map((i) => {
               return '![chat image](' + i + ')';
@@ -115,6 +117,7 @@ function ChatView() {
           date +
           ':` ' +
           request +
+          ' ' +
           images +
           ' |\n|-------------| \n\n ' +
           response +

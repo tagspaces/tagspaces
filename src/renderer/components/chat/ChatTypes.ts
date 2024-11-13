@@ -21,7 +21,13 @@ export type ChatItem = {
   timestamp: number;
   role: ChatRole;
   imagePaths?: string[];
-  model: Model;
+  modelName: string;
+  engine: AIProviders;
+};
+
+export type HistoryModel = {
+  history: ChatItem[];
+  lastModelName: string;
   engine: AIProviders;
 };
 

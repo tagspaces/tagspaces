@@ -29,7 +29,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelector } from 'react-redux';
-import { getOllamaSettings } from '-/reducers/settings';
+import { getDefaultAIProvider, getOllamaSettings } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import AppConfig from '-/AppConfig';
@@ -43,10 +43,12 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { toBase64Image } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import {
+  AIProviders,
   ChatImage,
   ChatItem,
   ChatMode,
   ChatRole,
+  HistoryModel,
   Model,
 } from '-/components/chat/ChatTypes';
 
@@ -106,12 +108,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { showNotification } = useNotificationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
   const { saveFilePromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<Model>(undefined);
   const models = useRef<Model[]>([]);
   const images = useRef<ChatImage[]>([]);
+  const aiProvider: AIProviders = useSelector(getDefaultAIProvider);
   const ollamaSettings = useSelector(getOllamaSettings);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
@@ -129,11 +131,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, []);
 
   useEffect(() => {
-    loadHistory().then((historyItems) => {
-      chatHistoryItems.current = historyItems;
-      forceUpdate();
-    });
-  }, [currentDirectoryPath]);
+    if (
+      openedEntry &&
+      !openedEntry.isFile &&
+      !openedEntry.path.endsWith(AppConfig.metaFolder)
+    ) {
+      images.current = [];
+      loadHistory().then((historyItems) => {
+        chatHistoryItems.current = historyItems;
+        forceUpdate();
+      });
+    }
+  }, [openedEntry]);
 
   function loadHistory(): Promise<ChatItem[]> {
     const historyFilePath = getHistoryFilePath();
@@ -142,11 +151,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         .loadTextFilePromise(historyFilePath)
         .then((jsonContent) => {
           if (jsonContent) {
-            const items = loadJSONString(jsonContent) as ChatItem[];
-            return items ? items : [];
-          } else {
-            return [];
+            const historyModel = loadJSONString(jsonContent) as HistoryModel;
+            if (historyModel) {
+              refreshOllamaModels(historyModel.lastModelName);
+              return historyModel.history ? historyModel.history : [];
+            }
           }
+          return [];
         })
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
@@ -188,7 +199,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           request: 'Model ' + model.name + ' loaded',
           timestamp: new Date().getTime(),
           role: 'system',
-          model: currentModel.current,
+          modelName: currentModel.current?.name,
           engine: 'ollama',
         };
         saveHistoryItems([newItem, ...chatHistoryItems.current]);
@@ -222,9 +233,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
               true,
               false,
             );
+            forceUpdate();
           });
       });
-      forceUpdate();
     }
   }
 
@@ -249,7 +260,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           .then((response) => {
             console.log('deleteOllamaModel response:' + response);
             if (response) {
-              if (model.name === currentModel.current.name) {
+              if (model.name === currentModel.current?.name) {
                 currentModel.current = undefined;
               }
               refreshOllamaModels();
@@ -314,7 +325,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (txt) {
       const newItem: ChatItem = {
         engine: 'ollama',
-        model: currentModel.current,
+        modelName: currentModel.current?.name,
         role: role,
         request: txt,
         timestamp: new Date().getTime(),
@@ -341,7 +352,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
     const metaFolder = getMetaDirectoryPath(
-      currentDirectoryPath,
+      openedEntry.path,
       currentLocation?.getDirSeparator(),
     );
     const fileName = name ? name : 'tsc.json';
@@ -352,10 +363,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (items) {
       chatHistoryItems.current = items;
     }
-    if (chatHistoryItems.current?.length > 0) {
+    if (chatHistoryItems.current.length > 0) {
+      const model: HistoryModel = {
+        history: chatHistoryItems.current,
+        lastModelName: currentModel.current?.name,
+        engine: aiProvider,
+      };
       saveFilePromise(
         { path: getHistoryFilePath() },
-        JSON.stringify(chatHistoryItems.current),
+        JSON.stringify(model),
         true,
       )
         .then((fsEntry: TS.FileSystemEntry) => {
@@ -383,7 +399,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const messages = [];
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i];
-      if (item.role !== 'system') {
+      if (item.role === 'user') {
         if (item.request) {
           messages.push({
             role: 'user',
@@ -494,7 +510,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ...(unload && { keep_alive: 0 }),
       })
       .then((apiResponse) => {
-        if (includeHistory) {
+        if (msg && includeHistory) {
           saveHistoryItems();
         }
         return stream ? true : apiResponse;

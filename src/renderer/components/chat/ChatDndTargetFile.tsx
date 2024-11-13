@@ -22,8 +22,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { Identifier } from 'dnd-core';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { toBase64Image } from '-/services/utils-io';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = {
@@ -40,7 +38,7 @@ interface Props {
 function ChatDndTargetFile(props: Props) {
   const theme = useTheme();
   const { children, accepts, style } = props;
-  const { findLocalLocation } = useCurrentLocationContext();
+  //const { findLocalLocation } = useCurrentLocationContext();
   const { setImages } = useChatContext();
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
