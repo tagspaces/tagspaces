@@ -205,7 +205,7 @@ function AiPropertiesTab(props: Props) {
           disabled={isLoading || !aiModel.current}
           data-tid="generateTagsTID"
           onClick={() => {
-            generate('text', 'tags');
+            generate(ext === 'pdf' ? 'pdf' : 'text', 'tags');
           }}
           color="secondary"
         >
