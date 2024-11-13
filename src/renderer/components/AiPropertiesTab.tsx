@@ -20,7 +20,11 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import { supportedImgs, supportedText } from '-/services/thumbsgenerator';
+import {
+  extractPDFcontent,
+  supportedImgs,
+  supportedText,
+} from '-/services/thumbsgenerator';
 import Button from '@mui/material/Button';
 import { useChatContext } from '-/hooks/useChatContext';
 import { Pro } from '-/pro';
@@ -38,9 +42,8 @@ import { AppDispatch } from '-/reducers/app';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
 import { TS } from '-/tagspaces.namespace';
-import { GENERATE_TAGS } from '../../../tagspacespro/modules/components/ChatTemplates';
-import { ChatMode } from '-/hooks/ChatProvider';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { ChatMode, Model } from '-/components/chat/ChatTypes';
 
 interface Props {}
 
@@ -67,7 +70,7 @@ function AiPropertiesTab(props: Props) {
 
   const ollamaSettings = useSelector(getOllamaSettings);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const aiModel = useRef<TS.Model>(undefined);
+  const aiModel = useRef<Model>(undefined);
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
@@ -75,7 +78,7 @@ function AiPropertiesTab(props: Props) {
 
   useEffect(() => {
     let model;
-    if (supportedText.includes(ext)) {
+    if (supportedText.includes(ext) || ext === 'pdf') {
       model = ollamaSettings.textModel;
     } else if (supportedImgs.includes(ext)) {
       model = ollamaSettings.imageModel;
@@ -92,7 +95,20 @@ function AiPropertiesTab(props: Props) {
     return <ChatViewAsync />;
   }
 
-  function generate(fileContent: 'text' | 'image', mode: ChatMode) {
+  function getFileContent(
+    content: any,
+    fileContent: 'text' | 'pdf' | 'image',
+  ): Promise<string> {
+    if (fileContent === 'text') {
+      //&& typeof content === 'string') {
+      return Promise.resolve(content);
+    } else if (fileContent === 'pdf') {
+      return extractPDFcontent(content);
+    }
+    return Promise.resolve(content);
+  }
+
+  function generate(fileContent: 'text' | 'pdf' | 'image', mode: ChatMode) {
     if (aiModel.current) {
       setIsLoading(true);
       currentLocation
@@ -100,15 +116,17 @@ function AiPropertiesTab(props: Props) {
           openedEntry.path,
           fileContent === 'text' ? 'text' : 'arraybuffer',
         )
+        .then((content) => getFileContent(content, fileContent))
         .then((content) => {
           return newChatMessage(
-            fileContent === 'text' ? content : undefined,
+            fileContent === 'image' ? undefined : content,
             false,
             'user',
             mode,
             aiModel.current.name,
             false,
-            fileContent === 'text' ? [] : [toBase64Image(content)],
+            fileContent === 'image' ? [toBase64Image(content)] : [],
+            false,
           );
         })
         .then((response) => {
@@ -127,7 +145,7 @@ function AiPropertiesTab(props: Props) {
               } catch (e) {
                 console.error('parse response ' + response, e);
               }
-            } else if (mode === 'description') {
+            } else if (mode === 'description' || mode === 'summary') {
               dispatch(SettingsActions.setEntryContainerTab(1));
 
               if (openedEntry.meta.description) {
@@ -168,13 +186,13 @@ function AiPropertiesTab(props: Props) {
         {t('core:generateDescription')}
       </Button>
     );
-  } else if (supportedText.includes(ext)) {
+  } else if (supportedText.includes(ext) || ext === 'pdf') {
     descriptionButton = (
       <Button
         disabled={isLoading || !aiModel.current}
         data-tid="generateDescriptionTID"
         onClick={() => {
-          generate('text', 'description');
+          generate(ext === 'pdf' ? 'pdf' : 'text', 'summary');
         }}
         color="secondary"
       >

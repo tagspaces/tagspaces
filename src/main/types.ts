@@ -1,4 +1,5 @@
 import { TS } from '-/tagspaces.namespace';
+import { Model } from '-/components/chat/ChatTypes';
 
 export interface Extensions {
   extensions: TS.Extension[];
@@ -6,5 +7,5 @@ export interface Extensions {
 }
 
 export interface ApiResponse {
-  models: TS.Model[];
+  models: Model[];
 }

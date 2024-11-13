@@ -5,16 +5,16 @@ Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
 import React, { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MenuItem } from '@mui/material';
-import { TS } from '-/tagspaces.namespace';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { RemoveIcon } from '-/components/CommonIcons';
 import { useChatContext } from '-/hooks/useChatContext';
 import TsSelect from '-/components/TsSelect';
+import { Model } from '-/components/chat/ChatTypes';
 
 interface Props {
   label?: string;
-  chosenModel: TS.Model;
+  chosenModel: Model;
   handleChangeModel: (newModelName: string) => void;
 }
 
@@ -23,7 +23,7 @@ function SelectChatModel(props: Props) {
   const { label, chosenModel, handleChangeModel } = props;
   const { models, removeModel } = useChatContext();
 
-  const ollamaAvailableModels: TS.Model[] = [
+  const ollamaAvailableModels: Model[] = [
     {
       name: 'llama3.1',
       details: {

@@ -32,6 +32,7 @@ import {
   setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
+import { AIProviders } from '-/components/chat/ChatTypes';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -677,7 +678,7 @@ export const actions = {
     type: types.SET_OLLAMA_SETTINGS,
     settings,
   }),
-  setAiProvider: (aiProvider: TS.AIProviders) => ({
+  setAiProvider: (aiProvider: AIProviders) => ({
     type: types.SET_AI_PROVIDER,
     aiProvider,
   }),

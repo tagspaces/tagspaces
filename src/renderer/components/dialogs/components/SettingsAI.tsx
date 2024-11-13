@@ -53,14 +53,14 @@ import IconButton from '@mui/material/IconButton';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import TsSelect from '-/components/TsSelect';
-import { TS } from '-/tagspaces.namespace';
 import { useChatContext } from '-/hooks/useChatContext';
+import { AIProviders } from '-/components/chat/ChatTypes';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
   const { findModel } = useChatContext();
   const ollamaSettings = useSelector(getOllamaSettings);
-  const aiProvider: TS.AIProviders = useSelector(getDefaultAIProvider);
+  const aiProvider: AIProviders = useSelector(getDefaultAIProvider);
   const ollamaAlive = useRef<boolean | null>(null);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
@@ -115,7 +115,7 @@ function SettingsAI() {
   };
 
   const changeAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
-    const provider: TS.AIProviders = event.target.value as TS.AIProviders;
+    const provider: AIProviders = event.target.value as AIProviders;
     dispatch(SettingsActions.setAiProvider(provider));
   };
 

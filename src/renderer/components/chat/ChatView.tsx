@@ -21,7 +21,6 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import { ChatItem, ChatMode } from '-/hooks/ChatProvider';
 import { useChatContext } from '-/hooks/useChatContext';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -29,6 +28,7 @@ import { useTheme } from '@mui/material/styles';
 import TsSelect from '-/components/TsSelect';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import CircularProgress from '@mui/material/CircularProgress';
+import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -98,29 +98,32 @@ function ChatView() {
   };
 
   function formatChatItems(chatItems: ChatItem[]): string {
-    const formattedItems = chatItems.map((item) => {
-      const date = item.timestamp
-        ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
-        : '';
-      const request = item.request ? item.request : '';
-      const response = item.response ? item.response : '';
-      const images = item.imagePaths
-        ? item.imagePaths.map((i) => {
-            return '![chat image](' + i + ')';
-          })
-        : '';
-      return (
-        '\n | `' +
-        date +
-        ':` ' +
-        request +
-        images +
-        ' |\n|-------------| \n\n ' +
-        response +
-        ' \n '
-      );
-    });
-    return formattedItems.join(' ');
+    if (chatItems) {
+      const formattedItems = chatItems.map((item) => {
+        const date = item.timestamp
+          ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
+          : '';
+        const request = item.request ? item.request : '';
+        const response = item.response ? item.response : '';
+        const images = item.imagePaths
+          ? item.imagePaths.map((i) => {
+              return '![chat image](' + i + ')';
+            })
+          : '';
+        return (
+          '\n | `' +
+          date +
+          ':` ' +
+          request +
+          images +
+          ' |\n|-------------| \n\n ' +
+          response +
+          ' \n '
+        );
+      });
+      return formattedItems.join(' ');
+    }
+    return '';
   }
 
   const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {

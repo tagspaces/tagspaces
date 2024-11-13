@@ -25,7 +25,7 @@ import React, {
 } from 'react';
 import {
   getMetaDirectoryPath,
-  extractFileName,
+  extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelector } from 'react-redux';
@@ -41,21 +41,29 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { toBase64Image } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import {
+  ChatImage,
+  ChatItem,
+  ChatMode,
+  ChatRole,
+  Model,
+} from '-/components/chat/ChatTypes';
 
 type ChatData = {
-  models: TS.Model[];
+  models: Model[];
   images: ChatImage[];
-  currentModel: TS.Model;
+  currentModel: Model;
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
-  setModel: (model: TS.Model) => Promise<boolean>;
+  setModel: (model: Model) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   unloadCurrentModel: () => void;
-  removeModel: (model: TS.Model) => void;
-  findModel: (modelName: string) => TS.Model;
+  removeModel: (model: Model) => void;
+  findModel: (modelName: string) => Model;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
-  getModel: (modelName: string) => Promise<TS.Model>;
+  getModel: (modelName: string) => Promise<Model>;
   addTimeLineRequest: (txt: string, role: ChatRole) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
@@ -66,6 +74,7 @@ type ChatData = {
     model?: string,
     stream?: boolean,
     images?: string[],
+    includeHistory?: boolean,
   ) => Promise<any>;
 };
 
@@ -92,27 +101,6 @@ export type ChatContextProviderProps = {
   children: React.ReactNode;
 };
 
-export type ChatItem = {
-  request: string;
-  response?: string;
-  timestamp: number;
-  role: ChatRole;
-  imagePaths?: string[];
-};
-
-export type ChatImage = {
-  path: string;
-  base64?: string;
-};
-
-export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
-export type ChatMode =
-  | 'summary'
-  | 'helpful'
-  | 'rephrase'
-  | 'description'
-  | 'tags';
-
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
@@ -121,17 +109,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { saveFilePromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
-  const currentModel = useRef<TS.Model>(undefined);
-  const models = useRef<TS.Model[]>([]);
+  const currentModel = useRef<Model>(undefined);
+  const models = useRef<Model[]>([]);
   const images = useRef<ChatImage[]>([]);
   const ollamaSettings = useSelector(getOllamaSettings);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
   const DEFAULT_SYSTEM_PROMPT =
-    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
-  const SUMMARIZE_PROMPT =
-    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
+    Pro && Pro.UI ? Pro.UI.DEFAULT_SYSTEM_PROMPT : false;
+  const SUMMARIZE_PROMPT = Pro && Pro.UI ? Pro.UI.SUMMARIZE_PROMPT : false;
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   // const isTyping = useRef<boolean>(false);
@@ -153,7 +140,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (currentLocation) {
       return currentLocation
         .loadTextFilePromise(historyFilePath)
-        .then((jsonContent) => loadJSONString(jsonContent) as ChatItem[])
+        .then((jsonContent) => {
+          if (jsonContent) {
+            const items = loadJSONString(jsonContent) as ChatItem[];
+            return items ? items : [];
+          } else {
+            return [];
+          }
+        })
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
           return [];
@@ -184,7 +178,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function setModel(model: TS.Model): Promise<boolean> {
+  function setModel(model: Model): Promise<boolean> {
     if (currentModel.current !== model) {
       currentModel.current = model;
       forceUpdate();
@@ -194,6 +188,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           request: 'Model ' + model.name + ' loaded',
           timestamp: new Date().getTime(),
           role: 'system',
+          model: currentModel.current,
+          engine: 'ollama',
         };
         saveHistoryItems([newItem, ...chatHistoryItems.current]);
         forceUpdate();
@@ -210,8 +206,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           .getFileContentPromise(path, 'arraybuffer')
           .then((uint8Array) => {
             const base64Img = toBase64Image(uint8Array);
-            const imageHistoryPath = getHistoryFilePath(path);
+            const imageUuid = getUuid();
+            const imageHistoryPath = getHistoryFilePath(
+              imageUuid + '.' + extractFileExtension(path),
+            );
             const image: ChatImage = {
+              uuid: imageUuid,
               path: imageHistoryPath,
               base64: base64Img,
             };
@@ -237,7 +237,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function removeModel(model: TS.Model) {
+  function removeModel(model: Model) {
     if (model) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
@@ -269,7 +269,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * check if model is installed and return details
    * @param modelName
    */
-  function getModel(modelName: string): Promise<TS.Model> {
+  function getModel(modelName: string): Promise<Model> {
     if (!AppConfig.isElectron || !modelName) {
       return Promise.resolve(undefined);
     }
@@ -313,6 +313,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function addTimeLineRequest(txt: string, role: ChatRole) {
     if (txt) {
       const newItem: ChatItem = {
+        engine: 'ollama',
+        model: currentModel.current,
         role: role,
         request: txt,
         timestamp: new Date().getTime(),
@@ -334,7 +336,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return '';
   }*/
 
-  function getHistoryFilePath(filePath?: string) {
+  function getHistoryFilePath(name?: string) {
     const dirSeparator = currentLocation
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
@@ -342,17 +344,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       currentDirectoryPath,
       currentLocation?.getDirSeparator(),
     );
-    const fileName = filePath
-      ? extractFileName(filePath, dirSeparator)
-      : 'tsc.json';
-    return metaFolder + dirSeparator + 'chat' + dirSeparator + fileName;
+    const fileName = name ? name : 'tsc.json';
+    return metaFolder + dirSeparator + 'ai' + dirSeparator + fileName;
   }
 
   function saveHistoryItems(items?: ChatItem[]) {
     if (items) {
       chatHistoryItems.current = items;
     }
-    if (chatHistoryItems.current.length > 0) {
+    if (chatHistoryItems.current?.length > 0) {
       saveFilePromise(
         { path: getHistoryFilePath() },
         JSON.stringify(chatHistoryItems.current),
@@ -451,6 +451,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * @param model
    * @param stream
    * @param imgArray
+   * @param includeHistory
    */
   function newChatMessage(
     msg: string = undefined,
@@ -460,6 +461,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     model: string = currentModel.current?.name,
     stream: boolean = true,
     imgArray: string[] = [],
+    includeHistory = true,
   ): Promise<any> {
     if (!model) {
       showNotification(t('core:chooseModel'));
@@ -471,7 +473,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const messages =
       msgContent && !unload
         ? [
-            ...getOllamaMessages(chatHistoryItems.current),
+            ...getOllamaMessages(
+              includeHistory ? chatHistoryItems.current : [],
+            ),
             {
               role: role,
               content: msgContent,
@@ -479,7 +483,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             },
           ]
         : [];
-    addTimeLineRequest(msg, role);
+    if (includeHistory) {
+      addTimeLineRequest(msg, role);
+    }
     return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', ollamaSettings.url, {
         model, // Adjust model name as needed
@@ -488,7 +494,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ...(unload && { keep_alive: 0 }),
       })
       .then((apiResponse) => {
-        saveHistoryItems();
+        if (includeHistory) {
+          saveHistoryItems();
+        }
         return stream ? true : apiResponse;
       });
   }
