@@ -38,7 +38,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { toBase64Image } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -61,6 +60,7 @@ type ChatData = {
   refreshOllamaModels: (modelName?: string) => void;
   setModel: (model: Model) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
+  removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (model: Model) => void;
   findModel: (modelName: string) => Model;
@@ -89,6 +89,7 @@ export const ChatContext = createContext<ChatData>({
   refreshOllamaModels: undefined,
   setModel: undefined,
   setImages: undefined,
+  removeImage: undefined,
   unloadCurrentModel: undefined,
   removeModel: undefined,
   findModel: undefined,
@@ -108,7 +109,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { showNotification } = useNotificationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
-  const { saveFilePromise } = usePlatformFacadeContext();
+  const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<Model>(undefined);
   const models = useRef<Model[]>([]);
@@ -172,19 +173,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       window.electronIO.ipcRenderer
         .invoke('getOllamaModels', ollamaSettings.url)
         .then((m) => {
-          if (m && m.length > 0) {
-            models.current = m;
-            if (modelName) {
-              const model = findModel(modelName);
-              if (model) {
-                setModel(model);
-              } else {
-                forceUpdate();
-              }
-            } else {
-              forceUpdate();
+          models.current = m;
+          if (modelName) {
+            const model = findModel(modelName);
+            if (model) {
+              return setModel(model);
             }
           }
+          forceUpdate();
         });
     }
   }
@@ -208,6 +204,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       });
     }
     return Promise.resolve(false);
+  }
+
+  function removeImage(uuid: string) {
+    const img = images.current.find((i) => i.uuid === uuid);
+    if (img) {
+      images.current = images.current.filter((i) => i.uuid !== uuid);
+      deleteEntriesPromise(currentLocation.toFsEntry(img.path, true));
+      forceUpdate();
+    }
   }
 
   function setImages(imagesPaths: string[]) {
@@ -331,7 +336,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         timestamp: new Date().getTime(),
         imagePaths: images.current.map((i) => i.path),
       };
-      saveHistoryItems([newItem, ...chatHistoryItems.current]);
+      if (role === 'user') {
+        saveHistoryItems([newItem, ...chatHistoryItems.current]);
+      } else {
+        chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
+      }
       images.current = [];
       forceUpdate();
     }
@@ -504,7 +513,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
     return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', ollamaSettings.url, {
-        model, // Adjust model name as needed
+        model,
         messages,
         stream: stream,
         ...(unload && { keep_alive: 0 }),
@@ -527,6 +536,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       refreshOllamaModels,
       setModel,
       setImages,
+      removeImage,
       unloadCurrentModel,
       removeModel,
       changeCurrentModel,

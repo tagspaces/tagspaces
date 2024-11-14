@@ -79,10 +79,10 @@ function SelectChatModel(props: Props) {
     <TsSelect
       value={chosenModel ? chosenModel.name : 'init'}
       onChange={changeModel}
-      label={label ? label : 'Select a Model'}
+      label={label ? label : t('selectModel')}
       InputProps={{
         endAdornment: chosenModel && (
-          <InputAdornment position="start">
+          <InputAdornment position="end" sx={{ ml: -12 }}>
             <IconButton
               aria-label={t('core:deleteModel')}
               onClick={handleRemoveModel}

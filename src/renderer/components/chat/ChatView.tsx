@@ -9,6 +9,7 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import { useTranslation } from 'react-i18next';
@@ -30,12 +31,14 @@ import SelectChatModel from '-/components/chat/SelectChatModel';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import DragItemTypes from '-/components/DragItemTypes';
+import { CloseIcon } from '-/components/CommonIcons';
 
 function ChatView() {
   const { t } = useTranslation();
   const theme = useTheme();
   const {
     images,
+    removeImage,
     chatHistoryItems,
     addTimeLineResponse,
     unloadCurrentModel,
@@ -51,11 +54,23 @@ function ChatView() {
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
+  const getAddedText = (oldText, newText) => {
+    if (newText.startsWith(oldText)) {
+      return newText.slice(oldText.length);
+    }
+    return ''; // Return an empty string if newText does not start with oldText
+  };
+
   const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
       //console.log(`Chat ${msg}`);
       const items = addTimeLineResponse(msg, replace);
-      editorRef.current?.update(formatChatItems(items));
+      if (editorRef.current) {
+        const newMarkdown = formatChatItems(items);
+        /*const oldMarkdown = editorRef.current.getMarkdown();
+        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*/ // insert and preserve selection
+        editorRef.current.update(newMarkdown);
+      }
     };
   }, []);
 
@@ -105,9 +120,8 @@ function ChatView() {
           ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
           : '';
         const request = item.request ? item.request : '';
-        const response = item.response
-          ? item.modelName + ': ' + item.response
-          : '';
+        const model = item.modelName ? item.modelName : 'system';
+        const response = item.response ? model + ': ' + item.response : '';
         const images = item.imagePaths
           ? item.imagePaths.map((i) => {
               return '![chat image](' + i + ')';
@@ -157,41 +171,49 @@ function ChatView() {
 
   return (
     <Box sx={{ flexGrow: 1, margin: 2, height: 'calc(100% - 40px)' }}>
-      <Grid2 container spacing={2} style={{ height: '100%' }}>
-        <Grid2 size={8} style={{ height: 60 }}>
-          <FormControl fullWidth>
-            <SelectChatModel
-              handleChangeModel={handleChangeModel}
-              chosenModel={currentModel}
-            />
-          </FormControl>
-        </Grid2>
-        <Grid2 size={4} style={{ height: 60 }}>
-          <FormControl fullWidth>
-            <TsSelect
-              placeholder="Chat mode"
-              id="select-mode"
-              value={currentMode.current}
-              onChange={handleChangeMode}
-              label="Select Mode"
-            >
-              <MenuItem value="">None</MenuItem>
-              <MenuItem
-                value="helpful"
-                title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
+      <Grid2
+        container
+        spacing={2}
+        direction="column"
+        wrap="nowrap"
+        sx={{
+          height: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <Grid2 container spacing={2} direction="row">
+          <Grid2 size={8} style={{ height: 60 }}>
+            <FormControl fullWidth>
+              <SelectChatModel
+                handleChangeModel={handleChangeModel}
+                chosenModel={currentModel}
+              />
+            </FormControl>
+          </Grid2>
+          <Grid2 size={4} style={{ height: 60 }}>
+            <FormControl fullWidth>
+              <TsSelect
+                placeholder="Chat mode"
+                id="select-mode"
+                value={currentMode.current}
+                onChange={handleChangeMode}
+                label={t('selectMode')}
               >
-                Helpful assistant
-              </MenuItem>
-              <MenuItem value="summary" title="Generate a concise summary">
-                Generate Summary
-              </MenuItem>
-            </TsSelect>
-          </FormControl>
+                <MenuItem value="">None</MenuItem>
+                <MenuItem
+                  value="helpful"
+                  title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
+                >
+                  Helpful assistant
+                </MenuItem>
+                <MenuItem value="summary" title="Generate a concise summary">
+                  Generate Summary
+                </MenuItem>
+              </TsSelect>
+            </FormControl>
+          </Grid2>
         </Grid2>
-        <Grid2
-          size="grow"
-          sx={{ padding: 2, height: 'calc(100% - 180px)', overflowY: 'auto' }}
-        >
+        <Grid2 size="grow" sx={{ padding: 2, overflowY: 'auto' }}>
           <MilkdownEditor
             ref={editorRef}
             content={formatChatItems(chatHistoryItems)}
@@ -199,48 +221,77 @@ function ChatView() {
             lightMode={true}
           />
         </Grid2>
-        <Grid2 size={12} style={{ height: 100 }}>
-          <ChatDndTargetFile accepts={[FILE, DragItemTypes.FILE]}>
-            <FormControl fullWidth>
-              <TsTextField
-                autoFocus
-                disabled={isTyping.current}
-                name="entryName"
-                label={t('core:newChatMessage')}
-                onChange={handleInputChange}
-                value={chatMsg.current}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.code === 'Enter') {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    handleChatMessage();
-                  }
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end" style={{ height: 32 }}>
-                      {images.length > 0 &&
-                        images.map((image) => (
-                          <img
-                            src={'data:image/*;base64,' + image.base64}
-                            style={{ maxHeight: 50 }}
-                          />
-                        ))}
-                      {isLoading.current && (
-                        <CircularProgress size={24} color="inherit" />
-                      )}
-                      <Tooltip title="Send Message">
-                        <IconButton onClick={handleChatMessage} size="large">
-                          <SendIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <FormHelperText>{t('core:aiHelp')}</FormHelperText>
-            </FormControl>
-          </ChatDndTargetFile>
+        <Grid2 container spacing={2} direction="column">
+          <Grid2>
+            {images.length > 0 &&
+              images.map((image, index) => (
+                <Box position="relative" style={{ float: 'right' }}>
+                  <img
+                    src={
+                      'data:image/' +
+                      extractFileExtension(image.path) +
+                      ';base64,' +
+                      image.base64
+                    }
+                    alt={`Image ${index + 1}`}
+                    style={{ maxHeight: 150, width: 'auto' }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => removeImage(image.uuid)}
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
+                    }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+          </Grid2>
+          <Grid2>
+            <ChatDndTargetFile accepts={[FILE, DragItemTypes.FILE]}>
+              <FormControl fullWidth>
+                <TsTextField
+                  autoFocus
+                  disabled={isTyping.current}
+                  name="entryName"
+                  label={t('core:newChatMessage')}
+                  onChange={handleInputChange}
+                  value={chatMsg.current}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.code === 'Enter') {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      handleChatMessage();
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        {isLoading.current && (
+                          <CircularProgress size={24} color="inherit" />
+                        )}
+                        <Tooltip title="Send Message">
+                          <IconButton onClick={handleChatMessage} size="large">
+                            <SendIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormHelperText>
+                  {t('core:aiHelp', {
+                    chatModel: currentModel ? currentModel.name : 'Assistant',
+                  })}
+                </FormHelperText>
+              </FormControl>
+            </ChatDndTargetFile>
+          </Grid2>
         </Grid2>
       </Grid2>
     </Box>
