@@ -20,7 +20,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
-import { getDesktopMode } from '-/reducers/settings';
+import { getDesktopMode, getEntryContainerTab } from '-/reducers/settings';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
@@ -77,7 +77,7 @@ function CellView(props: Props) {
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const theme = useTheme();
-  const { openEntryInternal } = useOpenedEntryContext();
+  const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
@@ -89,6 +89,7 @@ function CellView(props: Props) {
   const { showNotification } = useNotificationContext();
 
   const desktopMode = useSelector(getDesktopMode);
+  const tabIndex = useSelector(getEntryContainerTab);
   // const fileSourceRef = useRef<HTMLDivElement | null>(null);
 
   /*useEffect(() => {
@@ -245,7 +246,10 @@ function CellView(props: Props) {
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          openEntryInternal(fsEntry);
+          if (tabIndex !== 3 || !openedEntry) {
+            // dont open file if chat mode is enabled
+            openEntryInternal(fsEntry);
+          }
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }

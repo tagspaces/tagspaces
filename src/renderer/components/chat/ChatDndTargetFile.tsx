@@ -22,8 +22,14 @@ import { alpha, useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { Identifier } from 'dnd-core';
 import { useChatContext } from '-/hooks/useChatContext';
+import { TS } from '-/tagspaces.namespace';
 
-type DragItem = { files: File[]; items: DataTransferItemList };
+type DragItem = {
+  files?: File[];
+  path?: string;
+  selectedEntries?: TS.FileSystemEntry[];
+  items: DataTransferItemList;
+};
 type DragProps = {
   isActive: boolean;
   handlerId: Identifier | null;
@@ -44,22 +50,37 @@ function ChatDndTargetFile(props: Props) {
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
       accept: accepts,
-      drop: ({ files }, m) => {
+      drop: (item, m) => {
+        const { files, path, selectedEntries } = item;
         const didDrop = m.didDrop();
-        if (didDrop) {
+        if (didDrop || !AppConfig.isElectron) {
           return;
         }
 
         if (files && files.length) {
-          if (AppConfig.isElectron) {
-            const filePaths = files.map((file) => {
-              if (!file.path) {
-                file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+          const filePaths = files.map((file) => {
+            if (!file.path) {
+              file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+            }
+            return file.path;
+          });
+          setImages(filePaths);
+        } else {
+          const arrPath = [];
+          if (selectedEntries && selectedEntries.length > 0) {
+            selectedEntries.map((entry) => {
+              if (entry.path.endsWith('.jpg') || entry.path.endsWith('.jpeg')) {
+                arrPath.push(entry.path);
               }
-              return file.path;
+              return true;
             });
-            setImages(filePaths);
+          } else if (
+            (path && path.endsWith('.jpg')) ||
+            path.endsWith('.jpeg')
+          ) {
+            arrPath.push(path);
           }
+          setImages(arrPath);
         }
       },
       collect: (m: DropTargetMonitor) => ({

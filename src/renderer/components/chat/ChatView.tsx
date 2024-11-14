@@ -29,6 +29,7 @@ import TsSelect from '-/components/TsSelect';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
+import DragItemTypes from '-/components/DragItemTypes';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -151,6 +152,7 @@ function ChatView() {
       },
     );
   };
+
   const { FILE } = NativeTypes;
 
   return (
@@ -198,7 +200,7 @@ function ChatView() {
           />
         </Grid2>
         <Grid2 size={12} style={{ height: 100 }}>
-          <ChatDndTargetFile accepts={[FILE]}>
+          <ChatDndTargetFile accepts={[FILE, DragItemTypes.FILE]}>
             <FormControl fullWidth>
               <TsTextField
                 autoFocus
