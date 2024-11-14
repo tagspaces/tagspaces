@@ -50,6 +50,7 @@ import {
   HistoryModel,
   Model,
 } from '-/components/chat/ChatTypes';
+import { TEXT_DESCRIPTION } from '../../../tagspacespro/modules/components';
 
 type ChatData = {
   models: Model[];
@@ -123,7 +124,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     Pro && Pro.UI ? Pro.UI.DEFAULT_SYSTEM_PROMPT : false;
   const SUMMARIZE_PROMPT = Pro && Pro.UI ? Pro.UI.SUMMARIZE_PROMPT : false;
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+  const TEXT_DESCRIPTION = Pro && Pro.UI ? Pro.UI.TEXT_DESCRIPTION : false;
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
+  const GENERATE_IMAGE_TAGS =
+    Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
   // const isTyping = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -445,12 +449,24 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         return prompt;
       }
     } else if (mode === 'description') {
-      if (IMAGE_DESCRIPTION && openedEntry) {
-        return IMAGE_DESCRIPTION.replace('{file_name}', openedEntry.name);
+      if (msg) {
+        return TEXT_DESCRIPTION.replace('{input_text}', msg);
+      } else if (IMAGE_DESCRIPTION) {
+        return IMAGE_DESCRIPTION.replace(
+          '{file_name}',
+          openedEntry ? openedEntry.name : '',
+        );
       }
     } else if (mode === 'tags') {
-      if (GENERATE_TAGS && openedEntry) {
-        return GENERATE_TAGS.replace('{input_text}', msg);
+      if (msg) {
+        if (GENERATE_TAGS && openedEntry) {
+          return GENERATE_TAGS.replace('{input_text}', msg);
+        }
+      } else {
+        // image
+        if (GENERATE_IMAGE_TAGS && openedEntry) {
+          return GENERATE_IMAGE_TAGS;
+        }
       }
     } else if (mode === 'rephrase') {
       if (DEFAULT_QUESTION_PROMPT) {

@@ -888,5 +888,7 @@
   "selectModel": "Select a Model",
   "newChatMessage": "Message",
   "aiHelp": "{{chatModel}} can make mistakes. Check the important information.",
+  "generateTags": "Generate Tags",
+  "generateDescription": "Generate Description",
   "-": "-"
 }

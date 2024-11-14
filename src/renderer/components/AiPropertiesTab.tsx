@@ -73,8 +73,6 @@ function AiPropertiesTab(props: Props) {
   const aiModel = useRef<Model>(undefined);
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
-  const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
 
   useEffect(() => {
     let model;
@@ -173,7 +171,7 @@ function AiPropertiesTab(props: Props) {
 
   let descriptionButton;
   let generateTagsButton;
-  if (IMAGE_DESCRIPTION && supportedImgs.includes(ext)) {
+  if (supportedImgs.includes(ext)) {
     descriptionButton = (
       <Button
         disabled={isLoading || !aiModel.current}
@@ -184,6 +182,18 @@ function AiPropertiesTab(props: Props) {
         color="secondary"
       >
         {t('core:generateDescription')}
+      </Button>
+    );
+    generateTagsButton = (
+      <Button
+        disabled={isLoading || !aiModel.current}
+        data-tid="generateTagsTID"
+        onClick={() => {
+          generate('image', 'tags');
+        }}
+        color="secondary"
+      >
+        {t('core:generateTags')}
       </Button>
     );
   } else if (supportedText.includes(ext) || ext === 'pdf') {
@@ -199,20 +209,18 @@ function AiPropertiesTab(props: Props) {
         {t('core:generateDescription')}
       </Button>
     );
-    if (GENERATE_TAGS) {
-      generateTagsButton = (
-        <Button
-          disabled={isLoading || !aiModel.current}
-          data-tid="generateTagsTID"
-          onClick={() => {
-            generate(ext === 'pdf' ? 'pdf' : 'text', 'tags');
-          }}
-          color="secondary"
-        >
-          {t('core:generateTags')}
-        </Button>
-      );
-    }
+    generateTagsButton = (
+      <Button
+        disabled={isLoading || !aiModel.current}
+        data-tid="generateTagsTID"
+        onClick={() => {
+          generate(ext === 'pdf' ? 'pdf' : 'text', 'tags');
+        }}
+        color="secondary"
+      >
+        {t('core:generateTags')}
+      </Button>
+    );
   }
 
   if (descriptionButton || generateTagsButton) {
