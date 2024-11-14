@@ -16,45 +16,40 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  InputLabel,
-  MenuItem,
-  FormLabel,
-  Select,
-  Switch,
-  FormControl,
-  CircularProgress,
-  Box,
-} from '@mui/material';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { ExpandIcon } from '-/components/CommonIcons';
+import InfoIcon from '-/components/InfoIcon';
+import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import { AIProviders } from '-/components/chat/ChatTypes';
+import SelectChatModel from '-/components/chat/SelectChatModel';
+import { OllamaIcon } from '-/components/dialogs/components/Ollama';
+import { useChatContext } from '-/hooks/useChatContext';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getDefaultAIProvider,
   getOllamaSettings,
 } from '-/reducers/settings';
-import { BetaLabel } from '-/components/HelperComponents';
-import { AppDispatch } from '-/reducers/app';
-import { useTranslation } from 'react-i18next';
-import FormGroup from '@mui/material/FormGroup';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  CircularProgress,
+  FormControl,
+  MenuItem,
+  Switch,
+} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { ExpandIcon, RemoveIcon } from '-/components/CommonIcons';
-import Typography from '@mui/material/Typography';
-import InfoIcon from '-/components/InfoIcon';
-import TsTextField from '-/components/TsTextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import Tooltip from '-/components/Tooltip';
+import FormGroup from '@mui/material/FormGroup';
 import IconButton from '@mui/material/IconButton';
-import { OllamaIcon } from '-/components/dialogs/components/Ollama';
-import SelectChatModel from '-/components/chat/SelectChatModel';
-import TsSelect from '-/components/TsSelect';
-import { useChatContext } from '-/hooks/useChatContext';
-import { AIProviders } from '-/components/chat/ChatTypes';
+import InputAdornment from '@mui/material/InputAdornment';
+import Typography from '@mui/material/Typography';
+import React, { ChangeEvent, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
@@ -120,7 +115,14 @@ function SettingsAI() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        height: '100%',
+        padding: 10,
+      }}
+    >
       <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandIcon />}
@@ -128,14 +130,7 @@ function SettingsAI() {
           id="ai-general-header"
           data-tid="aiGeneralTID"
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            p={2}
-          >
-            <Typography>AI General Settings</Typography>
-          </Box>
+          <Typography>AI General Settings</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 2 }}>
           <TsSelect
@@ -151,12 +146,12 @@ function SettingsAI() {
           {aiProvider && aiProvider === 'ollama' && (
             <>
               <SelectChatModel
-                label="default text model"
+                label={t('core:defaultAImodelText')}
                 handleChangeModel={handleChangeTextModel}
                 chosenModel={findModel(ollamaSettings.textModel)}
               />
               <SelectChatModel
-                label="default image model"
+                label={t('core:defaultAImodelImages')}
                 handleChangeModel={handleChangeImageModel}
                 chosenModel={findModel(ollamaSettings.imageModel)}
               />
@@ -171,16 +166,18 @@ function SettingsAI() {
           id="ollama-header"
           data-tid="ollamaTID"
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            p={2}
+          <Typography>
+            <OllamaIcon width={20} /> ollama
+          </Typography>
+          <TooltipTS
+            title={
+              t('core:serviceStatus') +
+              ': ' +
+              (ollamaAlive.current
+                ? t('core:available')
+                : t('core:notAvailable'))
+            }
           >
-            <Typography>
-              <OllamaIcon width={20} /> {t('core:ollama')}
-              <BetaLabel /> Service Status
-            </Typography>
             {ollamaAlive.current === null ? (
               <CircularProgress size={12} />
             ) : (
@@ -192,7 +189,7 @@ function SettingsAI() {
                 }}
               />
             )}
-          </Box>
+          </TooltipTS>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 2 }}>
           <FormGroup style={{ width: '100%' }}>
@@ -241,7 +238,7 @@ function SettingsAI() {
           </FormGroup>
         </AccordionDetails>
       </Accordion>
-    </>
+    </div>
   );
 }
 
