@@ -220,7 +220,7 @@ function SettingsAI() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" style={{ height: 32 }}>
-                      <Tooltip title="Check Ollama Service Status">
+                      <Tooltip title={t('core:refreshServiceStatus')}>
                         <IconButton
                           onClick={() => {
                             checkOllamaAlive();
