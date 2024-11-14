@@ -882,5 +882,6 @@
   "available": "Available",
   "defaultAImodelText": "Default model for text-based tasks",
   "defaultAImodelImages": "Default model for image-based tasks",
+  "refreshServiceStatus": "Refresh service status",
   "-": "-"
 }
