@@ -16,30 +16,30 @@
  *
  */
 
-import React, { ChangeEvent, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import Typography from '@mui/material/Typography';
+import AppConfig from '-/AppConfig';
+import InfoIcon from '-/components/InfoIcon';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useExtensionsContext } from '-/hooks/useExtensionsContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
+import { getUserDataDir, loadExtensions, unZip } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import TsIconButton from '-/components/TsIconButton';
 import Switch from '@mui/material/Switch';
-import TsButton from '-/components/TsButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import InfoIcon from '-/components/InfoIcon';
+import Typography from '@mui/material/Typography';
+import { ChangeEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { getUserDataDir, loadExtensions, unZip } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useExtensionsContext } from '-/hooks/useExtensionsContext';
+import { useDispatch, useSelector } from 'react-redux';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
@@ -51,8 +51,6 @@ function SettingsExtensions() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] =
     useState<TS.Extension>(undefined);
-
-  //const extension = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -103,15 +101,22 @@ function SettingsExtensions() {
   };
 
   return (
-    <div style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
+    <div
+      style={{
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        height: '100%',
+        padding: 10,
+      }}
+    >
       <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="internal-content"
           id="internal-header"
         >
-          <Typography variant="h6" style={{ marginRight: 10 }}>
-            Core Extensions
+          <Typography style={{ fontWeight: 'bold' }}>
+            {t('core:coreExtensions')}
           </Typography>
           <InfoIcon tooltip="These are extensions which are packaged with the current version of the app" />
         </AccordionSummary>
@@ -135,8 +140,8 @@ function SettingsExtensions() {
           aria-controls="installed-content"
           id="installed-header"
         >
-          <Typography variant="h6" style={{ marginRight: 10 }}>
-            Installed Extensions
+          <Typography style={{ fontWeight: 'bold' }}>
+            {t('core:thirdPartyExtensions')}
           </Typography>
           <InfoIcon tooltip="Extensions manually installed on top of the current app installation" />
         </AccordionSummary>

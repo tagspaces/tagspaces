@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownload';
 
@@ -45,7 +44,6 @@ export { default as GoBackIcon } from '@mui/icons-material/ArrowBack';
 export { default as GoForwardIcon } from '@mui/icons-material/ArrowForward';
 
 export { default as HelpIcon } from '@mui/icons-material/Help';
-
 export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
@@ -176,3 +174,13 @@ export { default as ThemingIcon } from '@mui/icons-material/InvertColors';
 export { default as TagLibraryIcon } from '@mui/icons-material/LocalOfferOutlined';
 
 export { default as RecentThingsIcon } from '@mui/icons-material/BookmarksOutlined';
+
+export { default as AIIcon } from '@mui/icons-material/Memory';
+
+export { default as ExtensionIcon } from '@mui/icons-material/Extension';
+
+export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
+
+export { default as OptionsIcon } from '@mui/icons-material/FactCheck';
+
+export { default as AdvancedSettingsIcon } from '@mui/icons-material/DisplaySettings';
