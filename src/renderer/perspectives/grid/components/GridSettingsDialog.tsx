@@ -358,7 +358,17 @@ function GridSettingsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <TsDialogActions style={{ justifyContent: 'space-between' }}>
-        {smallScreen ? <div style={{ width: 1 }} /> : helpButton}
+        {smallScreen ? (
+          <div style={{ width: 1 }} />
+        ) : (
+          <span
+            style={{
+              marginTop: AppConfig.defaultSpaceBetweenButtons,
+            }}
+          >
+            {helpButton}
+          </span>
+        )}
         <span>
           <TsButton
             data-tid="defaultSettings"

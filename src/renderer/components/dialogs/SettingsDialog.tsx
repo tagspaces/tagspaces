@@ -17,9 +17,19 @@
  */
 
 import AppConfig from '-/AppConfig';
+import {
+  AIIcon,
+  AdvancedSettingsIcon,
+  ExtensionIcon,
+  FileIcon,
+  KeyboardIcon,
+  OptionsIcon,
+} from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
+import { BetaLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
 import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
 import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
@@ -27,7 +37,7 @@ import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import { isDesktopMode } from '-/reducers/settings';
+import { isDesktopMode, isDevMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { clearAllURLParams } from '-/utils/dom';
 import Dialog from '@mui/material/Dialog';
@@ -37,7 +47,6 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +62,7 @@ function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
   const desktopMode = useSelector(isDesktopMode);
+  const devMode = useSelector(isDevMode);
   const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
     useState<boolean>(false);
   const { open, onClose } = props;
@@ -101,62 +111,70 @@ function SettingsDialog(props: Props) {
         <Tab
           style={{
             textTransform: 'unset',
-            fontSize: 16,
-            alignItems: 'baseline',
-            paddingLeft: 0,
+            justifyContent: 'flex-start',
           }}
+          iconPosition="start"
+          icon={!smallScreen && <OptionsIcon />}
           data-tid="generalSettingsDialog"
           label={t('core:generalTab')}
         />
         <Tab
           style={{
             textTransform: 'unset',
-            fontSize: 16,
-            alignItems: 'baseline',
-            paddingLeft: 0,
+            justifyContent: 'flex-start',
           }}
+          iconPosition="start"
+          icon={!smallScreen && <FileIcon />}
           data-tid="fileTypeSettingsDialog"
           label={t('core:fileTypeTab')}
         />
         <Tab
           style={{
             textTransform: 'unset',
-            fontSize: 16,
-            alignItems: 'baseline',
-            paddingLeft: 0,
+            justifyContent: 'flex-start',
           }}
+          iconPosition="start"
+          icon={!smallScreen && <KeyboardIcon />}
           data-tid="keyBindingsSettingsDialog"
           label={t('core:keyBindingsTab')}
         />
         <Tab
           style={{
             textTransform: 'unset',
-            fontSize: 16,
-            alignItems: 'baseline',
-            paddingLeft: 0,
+            justifyContent: 'flex-start',
           }}
+          iconPosition="start"
+          icon={!smallScreen && <ExtensionIcon />}
           data-tid="extensionsSettingsDialog"
           label={t('core:extensionsTab')}
         />
         <Tab
           style={{
             textTransform: 'unset',
-            fontSize: 16,
-            alignItems: 'baseline',
-            paddingLeft: 0,
+            justifyContent: 'flex-start',
           }}
+          iconPosition="start"
+          icon={!smallScreen && <AdvancedSettingsIcon />}
           data-tid="advancedSettingsDialogTID"
           label={t('core:advancedSettingsTab')}
         />
-        <Tab
-          style={{
-            // textTransform: 'unset',
-            alignItems: 'baseline',
-            paddingLeft: 0,
-          }}
-          data-tid="aiSettingsDialogTID"
-          label={t('core:aiSettingsTab')}
-        />
+        {devMode && (
+          <Tab
+            style={{
+              textTransform: 'unset',
+              justifyContent: 'flex-start',
+            }}
+            data-tid="aiSettingsDialogTID"
+            iconPosition="start"
+            icon={!smallScreen && <AIIcon />}
+            label={
+              <span style={{ whiteSpace: 'nowrap' }}>
+                {t('core:aiSettingsTab')}
+                <BetaLabel />
+              </span>
+            }
+          />
+        )}
       </Tabs>
       <div
         data-tid="settingsDialog"

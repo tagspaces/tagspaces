@@ -876,5 +876,13 @@
   "tagPreview": "Tag Preview",
   "generateNewLocationId": "Generates new unique identifier for this location",
   "abort": "Abort",
+  "coreExtensions": "Core Extensions",
+  "thirdPartyExtensions": "Third-party Extensions",
+  "aiSettingsTab": "AI",
+  "serviceStatus": "Service Status",
+  "available": "Available",
+  "defaultAImodelText": "Default model for text-based tasks",
+  "defaultAImodelImages": "Default model for image-based tasks",
+  "refreshServiceStatus": "Refresh service status",
   "-": "-"
 }

@@ -16,24 +16,25 @@
  *
  */
 
-import React, { MutableRefObject, useRef } from 'react';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import DialogContent from '@mui/material/DialogContent';
-import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import Dialog from '@mui/material/Dialog';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import DraggablePaper from '-/components/DraggablePaper';
-import { TS } from '-/tagspaces.namespace';
-import { getCurrentTheme } from '-/reducers/settings';
-import { useSelector } from 'react-redux';
-import FileView from '-/components/FileView';
-import useEventListener from '-/utils/useEventListener';
 import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
+import FileView from '-/components/FileView';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { getCurrentTheme } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import useEventListener from '-/utils/useEventListener';
+import { Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { MutableRefObject, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -172,7 +173,7 @@ function FilePreviewDialog(props: Props) {
       slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
       <TsDialogTitle
-        dialogTitle=""
+        dialogTitle="Preview"
         closeButtonTestId="closeFilePreviewTID"
         onClose={onClose}
       />
@@ -181,11 +182,17 @@ function FilePreviewDialog(props: Props) {
           marginLeft: 'auto',
           marginRight: 'auto',
           overflowY: 'hidden',
-          width: '90%',
+          padding: smallScreen ? '0' : 'inherited',
           flexGrow: 1,
         }}
       >
-        <p>{fsEntry.path}</p>
+        <Typography
+          variant="body2"
+          gutterBottom
+          style={{ wordBreak: 'break-all', margin: 10 }}
+        >
+          {fsEntry.path}
+        </Typography>
         <FileView
           key="FileViewPreviewID"
           fileViewer={fileViewer}

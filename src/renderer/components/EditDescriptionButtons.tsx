@@ -1,18 +1,10 @@
-import React from 'react';
-import TsButton from '-/components/TsButton';
-import { ProTooltip } from '-/components/HelperComponents';
-import { Pro } from '-/pro';
-import { useTranslation } from 'react-i18next';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import AppConfig from '-/AppConfig';
-
-/*export interface DescriptionChangedRef {
-  setDescriptionChanged: (changed: boolean) => void;
-}
-
-type Props = {
-  buttonsRef: ForwardedRef<DescriptionChangedRef>;
-};*/
+import { ProTooltip } from '-/components/HelperComponents';
+import TsButton from '-/components/TsButton';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { Pro } from '-/pro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();
