@@ -27,13 +27,13 @@ h1, h2, h3, h4, h5, h6, th, td, caption { font-weight:normal; }
 
 img { border: 0; pointer-events: none; }
 
-/* :not(input):not(textarea),
+:not(input):not(textarea),
 :not(input):not(textarea)::after,
 :not(input):not(textarea)::before {
     -webkit-user-select: none;
     user-select: none;
     cursor: default;
-} */
+} 
 input, button, textarea, :focus {
     outline: none; 
 }

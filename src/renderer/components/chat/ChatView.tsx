@@ -2,36 +2,30 @@
 Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
 */
 
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
-import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
-import TsTextField from '-/components/TsTextField';
-import { Box, Grid2, MenuItem } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
+import { CloseIcon } from '-/components/CommonIcons';
+import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
-import IconButton from '@mui/material/IconButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
+import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
+import SelectChatModel from '-/components/chat/SelectChatModel';
+import { useChatContext } from '-/hooks/useChatContext';
 import SendIcon from '@mui/icons-material/Send';
+import { Box, Grid2, MenuItem } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import { useTheme } from '@mui/material/styles';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import { useChatContext } from '-/hooks/useChatContext';
-import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
+import { ChangeEvent, useEffect, useMemo, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
-import { useTheme } from '@mui/material/styles';
-import TsSelect from '-/components/TsSelect';
-import SelectChatModel from '-/components/chat/SelectChatModel';
-import CircularProgress from '@mui/material/CircularProgress';
-import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
-import DragItemTypes from '-/components/DragItemTypes';
-import { CloseIcon } from '-/components/CommonIcons';
+import { useTranslation } from 'react-i18next';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -170,10 +164,10 @@ function ChatView() {
   const { FILE } = NativeTypes;
 
   return (
-    <Box sx={{ flexGrow: 1, margin: 2, height: 'calc(100% - 40px)' }}>
+    <Box sx={{ flexGrow: 1, margin: 1, height: 'calc(100% - 20px)' }}>
       <Grid2
         container
-        spacing={2}
+        spacing={1}
         direction="column"
         wrap="nowrap"
         sx={{
@@ -181,7 +175,7 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
-        <Grid2 container spacing={2} direction="row">
+        <Grid2 container spacing={1} direction="row">
           <Grid2 size={8} style={{ height: 60 }}>
             <FormControl fullWidth>
               <SelectChatModel
@@ -213,7 +207,7 @@ function ChatView() {
             </FormControl>
           </Grid2>
         </Grid2>
-        <Grid2 size="grow" sx={{ padding: 2, overflowY: 'auto' }}>
+        <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <MilkdownEditor
             ref={editorRef}
             content={formatChatItems(chatHistoryItems)}
@@ -269,19 +263,24 @@ function ChatView() {
                       handleChatMessage();
                     }
                   }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        {isLoading.current && (
-                          <CircularProgress size={24} color="inherit" />
-                        )}
-                        <Tooltip title="Send Message">
-                          <IconButton onClick={handleChatMessage} size="large">
-                            <SendIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end" style={{ height: 32 }}>
+                          {isLoading.current && (
+                            <CircularProgress size={24} color="inherit" />
+                          )}
+                          <Tooltip title="Send Message">
+                            <IconButton
+                              onClick={handleChatMessage}
+                              size="large"
+                            >
+                              <SendIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
                 <FormHelperText>

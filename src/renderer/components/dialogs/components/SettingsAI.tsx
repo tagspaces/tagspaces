@@ -16,8 +16,7 @@
  *
  */
 
-import { ExpandIcon } from '-/components/CommonIcons';
-import InfoIcon from '-/components/InfoIcon';
+import { ExpandIcon, ReloadIcon } from '-/components/CommonIcons';
 import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
@@ -31,7 +30,6 @@ import {
   getDefaultAIProvider,
   getOllamaSettings,
 } from '-/reducers/settings';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
@@ -130,17 +128,17 @@ function SettingsAI() {
           id="ai-general-header"
           data-tid="aiGeneralTID"
         >
-          <Typography>AI General Settings</Typography>
+          <Typography>{t('core:aiSettings')}</Typography>
         </AccordionSummary>
-        <AccordionDetails sx={{ pt: 2 }}>
+        <AccordionDetails>
           <TsSelect
             value={aiProvider}
             onChange={changeAiProvider}
-            label={'Default AI'}
+            label={t('core:defaultAIEngine')}
           >
             <MenuItem value="ollama">
               <OllamaIcon width={10} style={{ marginRight: 5 }} />
-              ollama
+              Ollama
             </MenuItem>
           </TsSelect>
           {aiProvider && aiProvider === 'ollama' && (
@@ -159,7 +157,7 @@ function SettingsAI() {
           )}
         </AccordionDetails>
       </Accordion>
-      <Accordion>
+      <Accordion expanded>
         <AccordionSummary
           expandIcon={<ExpandIcon />}
           aria-controls="ollama-content"
@@ -167,7 +165,7 @@ function SettingsAI() {
           data-tid="ollamaTID"
         >
           <Typography>
-            <OllamaIcon width={20} /> ollama
+            <OllamaIcon width={20} /> Ollama
           </Typography>
           <TooltipTS
             title={
@@ -191,11 +189,44 @@ function SettingsAI() {
             )}
           </TooltipTS>
         </AccordionSummary>
-        <AccordionDetails sx={{ pt: 2 }}>
-          <FormGroup style={{ width: '100%' }}>
+        <AccordionDetails>
+          <FormGroup>
+            <FormControl>
+              {/* <Typography>
+                {t('core:engineUrl')}
+                <InfoIcon tooltip={t('core:engineUrl')} />
+              </Typography> */}
+              <TsTextField
+                fullWidth
+                name="ollamaSocket"
+                label={t('core:engineUrl')}
+                data-tid="ollamaEngineTID"
+                value={ollamaSettings.url}
+                onChange={handleInputChange}
+                placeholder="http://localhost:11434"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        <Tooltip title={t('core:refreshServiceStatus')}>
+                          <IconButton
+                            onClick={() => {
+                              checkOllamaAlive();
+                            }}
+                            size="large"
+                          >
+                            <ReloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </FormControl>
             <FormControlLabel
               labelPlacement="start"
-              style={{ justifyContent: 'space-between' }}
+              style={{ justifyContent: 'space-between', marginLeft: 0 }}
               control={
                 <Switch
                   data-tid="locationIsDefault"
@@ -204,37 +235,8 @@ function SettingsAI() {
                   onChange={handleSwitchChange}
                 />
               }
-              label={t('core:ollamaEnabled')}
+              label={t('core:engineEnabled')}
             />
-            <FormControl>
-              <Typography>
-                {t('core:ollamaSocket')}
-                <InfoIcon tooltip={t('core:ollamaSocketHelp')} />
-              </Typography>
-              <TsTextField
-                fullWidth
-                name="ollamaSocket"
-                data-tid="ollamaSocketTID"
-                value={ollamaSettings.url}
-                onChange={handleInputChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end" style={{ height: 32 }}>
-                      <Tooltip title={t('core:refreshServiceStatus')}>
-                        <IconButton
-                          onClick={() => {
-                            checkOllamaAlive();
-                          }}
-                          size="large"
-                        >
-                          <AutorenewIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
           </FormGroup>
         </AccordionDetails>
       </Accordion>

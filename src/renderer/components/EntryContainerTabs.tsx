@@ -16,48 +16,37 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
-
+import AppConfig from '-/AppConfig';
+import AiPropertiesTab from '-/components/AiPropertiesTab';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Tabs,
-  Tab,
-  Box,
-  Typography,
-  useMediaQuery,
-} from '@mui/material';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import { AppDispatch } from '-/reducers/app';
+  AIIcon,
+  DescriptionIcon,
+  EditDescriptionIcon,
+  FolderPropertiesIcon,
+  RevisionIcon,
+} from '-/components/CommonIcons';
+import EditDescription from '-/components/EditDescription';
+import EntryProperties from '-/components/EntryProperties';
 import Revisions from '-/components/Revisions';
 import Tooltip from '-/components/Tooltip';
-import EntryProperties from '-/components/EntryProperties';
+import TsTabPanel from '-/components/TsTabPanel';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
   getOllamaSettings,
 } from '-/reducers/settings';
-import {
-  FolderPropertiesIcon,
-  DescriptionIcon,
-  EditDescriptionIcon,
-  RevisionIcon,
-  ExpandIcon,
-} from '-/components/CommonIcons';
-import EditDescription from '-/components/EditDescription';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
-import TsTabPanel from '-/components/TsTabPanel';
-import AppConfig from '-/AppConfig';
-import AiPropertiesTab from '-/components/AiPropertiesTab';
+import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -253,8 +242,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   ) {
     const tab4: TabItem = {
       dataTid: 'aiTabTID',
-      icon: <PsychologyIcon />,
-      title: t('core:aiTab'),
+      icon: <AIIcon />,
+      title: t('core:aiSettingsTab'),
       name: 'aiTab',
       component: <AiPropertiesTab />,
     };

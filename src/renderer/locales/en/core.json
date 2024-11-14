@@ -890,5 +890,9 @@
   "aiHelp": "{{chatModel}} can make mistakes. Check the important information.",
   "generateTags": "Generate Tags",
   "generateDescription": "Generate Description",
+  "defaultAIEngine": "Default AI engine",
+  "aiSettings": "AI Settings",
+  "engineEnabled": "Engine enabled",
+  "engineUrl": "Engine URL",
   "-": "-"
 }

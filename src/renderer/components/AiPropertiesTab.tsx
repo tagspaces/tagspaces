@@ -16,34 +16,34 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
+import LoadingLazy from '-/components/LoadingLazy';
+import TsButton from '-/components/TsButton';
+import { ChatMode, Model } from '-/components/chat/ChatTypes';
+import { useChatContext } from '-/hooks/useChatContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { AppDispatch } from '-/reducers/app';
+import {
+  actions as SettingsActions,
+  getOllamaSettings,
+} from '-/reducers/settings';
 import {
   extractPDFcontent,
   supportedImgs,
   supportedText,
 } from '-/services/thumbsgenerator';
-import Button from '@mui/material/Button';
-import { useChatContext } from '-/hooks/useChatContext';
-import { Pro } from '-/pro';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { toBase64Image } from '-/services/utils-io';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as SettingsActions,
-  getOllamaSettings,
-} from '-/reducers/settings';
-import LoadingLazy from '-/components/LoadingLazy';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { AppDispatch } from '-/reducers/app';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Box } from '@mui/material';
 import { TS } from '-/tagspaces.namespace';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { ChatMode, Model } from '-/components/chat/ChatTypes';
+import { Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {}
 
@@ -173,53 +173,49 @@ function AiPropertiesTab(props: Props) {
   let generateTagsButton;
   if (supportedImgs.includes(ext)) {
     descriptionButton = (
-      <Button
+      <TsButton
         disabled={isLoading || !aiModel.current}
         data-tid="generateDescriptionTID"
         onClick={() => {
           generate('image', 'description');
         }}
-        color="secondary"
       >
         {t('core:generateDescription')}
-      </Button>
+      </TsButton>
     );
     generateTagsButton = (
-      <Button
+      <TsButton
         disabled={isLoading || !aiModel.current}
         data-tid="generateTagsTID"
         onClick={() => {
           generate('image', 'tags');
         }}
-        color="secondary"
       >
         {t('core:generateTags')}
-      </Button>
+      </TsButton>
     );
   } else if (supportedText.includes(ext) || ext === 'pdf') {
     descriptionButton = (
-      <Button
+      <TsButton
         disabled={isLoading || !aiModel.current}
         data-tid="generateDescriptionTID"
         onClick={() => {
           generate(ext === 'pdf' ? 'pdf' : 'text', 'summary');
         }}
-        color="secondary"
       >
         {t('core:generateDescription')}
-      </Button>
+      </TsButton>
     );
     generateTagsButton = (
-      <Button
+      <TsButton
         disabled={isLoading || !aiModel.current}
         data-tid="generateTagsTID"
         onClick={() => {
           generate(ext === 'pdf' ? 'pdf' : 'text', 'tags');
         }}
-        color="secondary"
       >
         {t('core:generateTags')}
-      </Button>
+      </TsButton>
     );
   }
 
@@ -227,7 +223,11 @@ function AiPropertiesTab(props: Props) {
     return (
       <Box position="relative" display="inline-flex">
         {descriptionButton && descriptionButton}
-        {generateTagsButton && generateTagsButton}
+        {generateTagsButton && (
+          <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+            {generateTagsButton}
+          </span>
+        )}
         {isLoading && <CircularProgress size={24} color="inherit" />}
       </Box>
     );

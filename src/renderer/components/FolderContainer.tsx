@@ -16,45 +16,46 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
-import ChatIcon from '@mui/icons-material/Chat';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import TsIconButton from '-/components/TsIconButton';
-import TsButton from '-/components/TsButton';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Tooltip from '-/components/Tooltip';
-import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
+import RenderPerspective from '-/components/RenderPerspective';
+import SearchBox from '-/components/SearchBox';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { AppDispatch, getProgress } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getDesktopMode,
   getKeyBindingObject,
+  isDevMode,
 } from '-/reducers/settings';
-import { AppDispatch, getProgress } from '-/reducers/app';
+import ChatIcon from '@mui/icons-material/Chat';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { Pro } from '../pro';
 import {
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,
   SearchIcon,
 } from './CommonIcons';
-import { Pro } from '../pro';
-import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-import SearchBox from '-/components/SearchBox';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import RenderPerspective from '-/components/RenderPerspective';
-import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
-import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -67,6 +68,7 @@ function FolderContainer(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
+  const devMode = useSelector(isDevMode);
   const keyBindings = useSelector(getKeyBindingObject);
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
@@ -343,7 +345,7 @@ function FolderContainer(props: Props) {
           exclusive
           style={{
             bottom: -40,
-            right: 55,
+            right: 20,
             zIndex: 1000,
             opacity: 0.9,
             position: 'absolute',
@@ -351,19 +353,22 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          <ToggleButton
-            value=""
-            aria-label="chat-label"
-            data-tid="chatTID"
-            onClick={() => {
-              dispatch(SettingsActions.setEntryContainerTab(3));
-              openEntry(currentDirectoryPath);
-            }}
-          >
-            <Tooltip title="Chat">
-              <ChatIcon />
-            </Tooltip>
-          </ToggleButton>
+          {devMode && (
+            <ToggleButton
+              value=""
+              aria-label="chat-label"
+              data-tid="chatTID"
+              style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
+              onClick={() => {
+                dispatch(SettingsActions.setEntryContainerTab(3));
+                openEntry(currentDirectoryPath);
+              }}
+            >
+              <Tooltip title="AI Chat for this folder">
+                <ChatIcon />
+              </Tooltip>
+            </ToggleButton>
+          )}
         </ToggleButtonGroup>
       )}
     </div>
