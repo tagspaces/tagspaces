@@ -16,17 +16,16 @@
  *
  */
 
+import React, { useState } from 'react';
 import TsButton from '-/components/TsButton';
-import { Model } from '-/components/chat/ChatTypes';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
-import { supportedImgs, supportedText } from '-/services/thumbsgenerator';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import React, { useRef, useState } from 'react';
+import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
@@ -41,6 +40,11 @@ function AiGenDescButton(props: Props) {
   const { showNotification } = useNotificationContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  if (!openedEntry) {
+    return null;
+  }
+
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
 
   function handleGenerationResults(response) {
@@ -60,7 +64,7 @@ function AiGenDescButton(props: Props) {
     }
   }
 
-  if (supportedImgs.includes(ext)) {
+  if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
     return (
       <TsButton
         loading={isLoading}
@@ -76,7 +80,7 @@ function AiGenDescButton(props: Props) {
         {t('core:generateDescription')}
       </TsButton>
     );
-  } else if (supportedText.includes(ext) || ext === 'pdf') {
+  } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
     return (
       <TsButton
         loading={isLoading}
@@ -84,8 +88,8 @@ function AiGenDescButton(props: Props) {
         data-tid="generateDescriptionTID"
         onClick={() => {
           setIsLoading(true);
-          generate(ext === 'pdf' ? 'pdf' : 'text', 'summary').then((results) =>
-            handleGenerationResults(results),
+          generate(ext === 'pdf' ? 'image' : 'text', 'summary').then(
+            (results) => handleGenerationResults(results),
           );
         }}
       >

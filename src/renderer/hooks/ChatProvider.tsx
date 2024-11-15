@@ -84,10 +84,7 @@ type ChatData = {
     images?: string[],
     includeHistory?: boolean,
   ) => Promise<any>;
-  generate: (
-    fileContent: 'text' | 'pdf' | 'image',
-    mode: ChatMode,
-  ) => Promise<string>;
+  generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -589,20 +586,17 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       });
   }
 
-  function getFileContent(
-    content: any,
-    fileContent: 'text' | 'pdf' | 'image',
-  ): Promise<string> {
-    if (fileContent === 'text') {
-      return Promise.resolve(content);
-    } else if (fileContent === 'pdf') {
+  function getFileContent(content: any): Promise<string> {
+    if (openedEntry.path.endsWith('.pdf')) {
       return extractPDFcontent(content);
+    } else if (openedEntry.path.endsWith('.html')) {
+      // todo return extractTextContent(content);
     }
     return Promise.resolve(content);
   }
 
   function generate(
-    fileContent: 'text' | 'pdf' | 'image',
+    fileContent: 'text' | 'image',
     mode: ChatMode,
   ): Promise<string> {
     if (openedEntryModel.current) {
@@ -611,7 +605,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           openedEntry.path,
           fileContent === 'text' ? 'text' : 'arraybuffer',
         )
-        .then((content) => getFileContent(content, fileContent))
+        .then((content) => getFileContent(content))
         .then((content) =>
           newChatMessage(
             fileContent === 'image' ? undefined : content,
@@ -659,6 +653,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     models.current,
     images.current,
     currentModel.current,
+    openedEntryModel.current,
     chatHistoryItems.current,
     openedEntry,
     selectedEntries,

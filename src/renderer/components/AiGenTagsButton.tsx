@@ -16,14 +16,14 @@
  *
  */
 
+import React, { useState } from 'react';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
-import { supportedImgs, supportedText } from '-/services/thumbsgenerator';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import React, { useRef, useState } from 'react';
+import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -46,6 +46,11 @@ function AiGenTagsButton(props: Props) {
   const { addTagsToFsEntry } = useTaggingActionsContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  if (!openedEntry) {
+    return null;
+  }
+
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
 
   function handleGenerationResults(response) {
@@ -67,7 +72,7 @@ function AiGenTagsButton(props: Props) {
     }
   }
 
-  if (supportedImgs.includes(ext)) {
+  if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
     return (
       <TsButton
         loading={isLoading}
@@ -84,7 +89,7 @@ function AiGenTagsButton(props: Props) {
         {t('core:generateTags')}
       </TsButton>
     );
-  } else if (supportedText.includes(ext) || ext === 'pdf') {
+  } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
     return (
       <TsButton
         loading={isLoading}
@@ -92,7 +97,7 @@ function AiGenTagsButton(props: Props) {
         data-tid="generateTagsTID"
         onClick={() => {
           setIsLoading(true);
-          generate(ext === 'pdf' ? 'pdf' : 'text', 'tags').then((results) =>
+          generate(ext === 'pdf' ? 'image' : 'text', 'tags').then((results) =>
             handleGenerationResults(results),
           );
         }}
