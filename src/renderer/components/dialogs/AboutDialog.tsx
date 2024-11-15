@@ -182,7 +182,7 @@ function AboutDialog(props: Props) {
           <div>
             {imprintURL && (
               <TsButton
-                style={{ marginRight: 5 }}
+                style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
                 variant="text"
                 onClick={() => {
                   openURLExternally(imprintURL, true);
@@ -193,7 +193,7 @@ function AboutDialog(props: Props) {
             )}
             {privacyURL && (
               <TsButton
-                style={{ marginRight: 5 }}
+                style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
                 variant="text"
                 onClick={() => {
                   openURLExternally(privacyURL, true);
@@ -203,7 +203,7 @@ function AboutDialog(props: Props) {
               </TsButton>
             )}
             <TsButton
-              style={{ marginRight: 5 }}
+              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
               onClick={() => {
                 openURLExternally(Links.links.changelogURL, true);
@@ -212,7 +212,7 @@ function AboutDialog(props: Props) {
               Changelog
             </TsButton>
             <TsButton
-              style={{ marginRight: 5 }}
+              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
               data-tid="openLicenseDialog"
               onClick={() => openLicenseDialog()}
@@ -231,6 +231,7 @@ function AboutDialog(props: Props) {
               onClick={() => {
                 openURLExternally(Links.links.productsOverview, true);
               }}
+              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
             >
               Upgrade to PRO
             </TsButton>

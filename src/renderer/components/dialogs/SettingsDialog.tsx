@@ -179,11 +179,9 @@ function SettingsDialog(props: Props) {
       <div
         data-tid="settingsDialog"
         style={{
-          height: 'calc(100% - 50px)',
+          height: smallScreen ? 'calc(100% - 50px)' : '100%',
           minHeight: 400,
           width: smallScreen ? '100%' : 600,
-          //minWidth: 600,
-          //maxWidth: 600,
         }}
       >
         {currentTab === 0 && <SettingsGeneral />}
