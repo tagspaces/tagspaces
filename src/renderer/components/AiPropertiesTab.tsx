@@ -39,11 +39,12 @@ import {
 import { toBase64Image } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import AiGenDescButton from '-/components/AiGenDescButton';
+import AiGenTagsButton from '-/components/AiGenTagsButton';
 
 interface Props {}
 
@@ -59,22 +60,22 @@ function ChatViewAsync(props) {
 }
 
 function AiPropertiesTab(props: Props) {
-  const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
-  const { currentLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
-  const { newChatMessage, getModel } = useChatContext();
-  const { setDescription, saveDescription } = useFilePropertiesContext();
-  const { showNotification } = useNotificationContext();
-  const { addTagsToFsEntry } = useTaggingActionsContext();
 
-  const ollamaSettings = useSelector(getOllamaSettings);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const aiModel = useRef<Model>(undefined);
-  const ext = extractFileExtension(openedEntry.name).toLowerCase();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  if (!openedEntry.isFile) {
+    return <ChatViewAsync />;
+  }
 
-  useEffect(() => {
+  return (
+    <Box position="relative" display="inline-flex">
+      <AiGenDescButton />
+      <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+        <AiGenTagsButton />
+      </span>
+    </Box>
+  );
+
+  /* useEffect(() => {
     let model;
     if (supportedText.includes(ext) || ext === 'pdf') {
       model = ollamaSettings.textModel;
@@ -87,13 +88,9 @@ function AiPropertiesTab(props: Props) {
         forceUpdate();
       });
     }
-  }, [ollamaSettings]);
+  }, [ext, ollamaSettings]);*/
 
-  if (!openedEntry.isFile) {
-    return <ChatViewAsync />;
-  }
-
-  function getFileContent(
+  /*function getFileContent(
     content: any,
     fileContent: 'text' | 'pdf' | 'image',
   ): Promise<string> {
@@ -174,6 +171,7 @@ function AiPropertiesTab(props: Props) {
   if (supportedImgs.includes(ext)) {
     descriptionButton = (
       <TsButton
+        loading={isLoading}
         disabled={isLoading || !aiModel.current}
         data-tid="generateDescriptionTID"
         onClick={() => {
@@ -185,6 +183,7 @@ function AiPropertiesTab(props: Props) {
     );
     generateTagsButton = (
       <TsButton
+        loading={isLoading}
         disabled={isLoading || !aiModel.current}
         data-tid="generateTagsTID"
         onClick={() => {
@@ -197,6 +196,7 @@ function AiPropertiesTab(props: Props) {
   } else if (supportedText.includes(ext) || ext === 'pdf') {
     descriptionButton = (
       <TsButton
+        loading={isLoading}
         disabled={isLoading || !aiModel.current}
         data-tid="generateDescriptionTID"
         onClick={() => {
@@ -208,6 +208,7 @@ function AiPropertiesTab(props: Props) {
     );
     generateTagsButton = (
       <TsButton
+        loading={isLoading}
         disabled={isLoading || !aiModel.current}
         data-tid="generateTagsTID"
         onClick={() => {
@@ -228,12 +229,11 @@ function AiPropertiesTab(props: Props) {
             {generateTagsButton}
           </span>
         )}
-        {isLoading && <CircularProgress size={24} color="inherit" />}
       </Box>
     );
   } else {
     return <div>No AI actions</div>;
-  }
+  }*/
 }
 
 export default AiPropertiesTab;

@@ -50,7 +50,12 @@ import {
   HistoryModel,
   Model,
 } from '-/components/chat/ChatTypes';
-import { TEXT_DESCRIPTION } from '../../../tagspacespro/modules/components';
+import {
+  extractPDFcontent,
+  supportedImgs,
+  supportedText,
+} from '-/services/thumbsgenerator';
+import { format } from 'date-fns';
 
 type ChatData = {
   models: Model[];
@@ -79,6 +84,10 @@ type ChatData = {
     images?: string[],
     includeHistory?: boolean,
   ) => Promise<any>;
+  generate: (
+    fileContent: 'text' | 'pdf' | 'image',
+    mode: ChatMode,
+  ) => Promise<string>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -99,6 +108,7 @@ export const ChatContext = createContext<ChatData>({
   addTimeLineRequest: undefined,
   addTimeLineResponse: undefined,
   newChatMessage: undefined,
+  generate: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -113,6 +123,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<Model>(undefined);
+  const openedEntryModel = useRef<Model>(undefined);
   const models = useRef<Model[]>([]);
   const images = useRef<ChatImage[]>([]);
   const aiProvider: AIProviders = useSelector(getDefaultAIProvider);
@@ -136,18 +147,47 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, []);
 
   useEffect(() => {
-    if (
-      openedEntry &&
-      !openedEntry.isFile &&
-      !openedEntry.path.endsWith(AppConfig.metaFolder)
-    ) {
-      images.current = [];
-      loadHistory().then((historyItems) => {
-        chatHistoryItems.current = historyItems;
-        forceUpdate();
-      });
+    if (openedEntry) {
+      if (
+        !openedEntry.isFile &&
+        !openedEntry.path.endsWith(AppConfig.metaFolder)
+      ) {
+        images.current = [];
+        loadHistory().then((historyItems) => {
+          chatHistoryItems.current = historyItems;
+          forceUpdate();
+        });
+      }
+      setOpenedEntryModel();
     }
   }, [openedEntry]);
+
+  useEffect(() => {
+    setOpenedEntryModel();
+  }, [ollamaSettings]);
+
+  function setOpenedEntryModel() {
+    if (openedEntry) {
+      const ext = extractFileExtension(openedEntry.name).toLowerCase();
+      let model;
+      if (supportedText.includes(ext) || ext === 'pdf') {
+        model = ollamaSettings.textModel;
+      } else if (supportedImgs.includes(ext)) {
+        model = ollamaSettings.imageModel;
+      }
+      if (model) {
+        const newModel = findModel(model);
+        if (
+          !newModel ||
+          !openedEntryModel.current ||
+          newModel.name !== openedEntryModel.current.name
+        ) {
+          openedEntryModel.current = newModel;
+          forceUpdate();
+        }
+      }
+    }
+  }
 
   function loadHistory(): Promise<ChatItem[]> {
     const historyFilePath = getHistoryFilePath();
@@ -195,15 +235,21 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       forceUpdate();
       //load model
       return newChatMessage().then(() => {
-        const newItem: ChatItem = {
+        /*const newItem: ChatItem = {
           request: 'Model ' + model.name + ' loaded',
           timestamp: new Date().getTime(),
           role: 'system',
           modelName: currentModel.current?.name,
           engine: 'ollama',
-        };
-        saveHistoryItems([newItem, ...chatHistoryItems.current]);
-        forceUpdate();
+        };*/
+        //saveHistoryItems([newItem, ...chatHistoryItems.current]);
+        showNotification(
+          format(new Date().getTime(), 'dd.MM.yyyy HH:mm:ss') +
+            ' Model ' +
+            model.name +
+            ' loaded',
+        );
+        //forceUpdate();
         return true;
       });
     }
@@ -261,7 +307,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (model) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
-        addTimeLineRequest('deleting ' + model.name, 'system');
+        //addTimeLineRequest('deleting ' + model.name, 'system');
+        showNotification('deleting ' + model.name + ' succeeded');
         window.electronIO.ipcRenderer
           .invoke('deleteOllamaModel', ollamaSettings.url, {
             name: model.name,
@@ -542,6 +589,51 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       });
   }
 
+  function getFileContent(
+    content: any,
+    fileContent: 'text' | 'pdf' | 'image',
+  ): Promise<string> {
+    if (fileContent === 'text') {
+      return Promise.resolve(content);
+    } else if (fileContent === 'pdf') {
+      return extractPDFcontent(content);
+    }
+    return Promise.resolve(content);
+  }
+
+  function generate(
+    fileContent: 'text' | 'pdf' | 'image',
+    mode: ChatMode,
+  ): Promise<string> {
+    if (openedEntryModel.current) {
+      return currentLocation
+        .getFileContentPromise(
+          openedEntry.path,
+          fileContent === 'text' ? 'text' : 'arraybuffer',
+        )
+        .then((content) => getFileContent(content, fileContent))
+        .then((content) =>
+          newChatMessage(
+            fileContent === 'image' ? undefined : content,
+            false,
+            'user',
+            mode,
+            openedEntryModel.current.name,
+            false,
+            fileContent === 'image' ? [toBase64Image(content)] : [],
+            false,
+          ),
+        )
+        .catch((e) => {
+          console.log('newOllamaMessage error:', e);
+          return undefined;
+        });
+    } else {
+      showNotification('Model not found, try pulling it first');
+    }
+    return Promise.resolve(undefined);
+  }
+
   const context = useMemo(() => {
     return {
       models: models.current,
@@ -561,6 +653,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       addTimeLineResponse,
       newChatMessage,
       findModel,
+      generate,
     };
   }, [
     models.current,

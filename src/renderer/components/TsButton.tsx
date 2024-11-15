@@ -18,33 +18,63 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Button, { ButtonProps } from '@mui/material/Button';
+import Button, {
+  ButtonProps,
+  ButtonPropsVariantOverrides,
+} from '@mui/material/Button';
+import { OverridableStringUnion } from '@mui/types';
 import TooltipTS from '-/components/Tooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export type TSButtonProps = ButtonProps & {
   tooltip?: string;
+  variant?: OverridableStringUnion<
+    'text' | 'outlined' | 'contained',
+    ButtonPropsVariantOverrides
+  >;
+  loading?: boolean;
+  startIcon?: React.ReactNode;
 };
 
 function TsButton(props: TSButtonProps) {
-  const { children, style, tooltip } = props;
+  const { children, style, tooltip, loading, ...rest } = props;
   const desktopMode = useSelector(isDesktopMode);
-  const button = (
-    <Button
-      size={desktopMode ? 'small' : 'medium'}
-      variant="outlined" // text outlined contained
-      {...props}
-      style={{
-        borderRadius: AppConfig.defaultCSSRadius,
-        // fontSize: 14,
-        // textTransform: 'capitalize',
-        ...style,
-      }}
-    >
-      {children}
-    </Button>
-  );
+  let button;
+  if (loading !== undefined) {
+    button = (
+      <LoadingButton
+        loading={loading}
+        loadingPosition="start"
+        size={desktopMode ? 'small' : 'medium'}
+        variant="outlined"
+        {...rest}
+        style={{
+          borderRadius: AppConfig.defaultCSSRadius,
+          ...style,
+        }}
+      >
+        {children}
+      </LoadingButton>
+    );
+  } else {
+    button = (
+      <Button
+        size={desktopMode ? 'small' : 'medium'}
+        variant="outlined" // text outlined contained
+        {...rest}
+        style={{
+          borderRadius: AppConfig.defaultCSSRadius,
+          // fontSize: 14,
+          // textTransform: 'capitalize',
+          ...style,
+        }}
+      >
+        {children}
+      </Button>
+    );
+  }
   return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
 }
 

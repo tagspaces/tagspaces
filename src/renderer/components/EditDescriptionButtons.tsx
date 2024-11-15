@@ -5,6 +5,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AiGenDescButton from '-/components/AiGenDescButton';
 
 const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();
@@ -86,6 +87,9 @@ const EditDescriptionButtons: React.FC = () => {
             : t('core:editDescription')}
         </TsButton>
       </ProTooltip>
+      <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+        <AiGenDescButton />
+      </span>
     </div>
   );
 };
