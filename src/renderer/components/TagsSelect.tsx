@@ -45,6 +45,7 @@ interface Props {
   placeholderText?: string;
   selectedEntryPath?: string;
   autoFocus?: boolean;
+  generateButton?: boolean;
 }
 
 function TagsSelect(props: Props) {
@@ -70,6 +71,7 @@ function TagsSelect(props: Props) {
     tags = [],
     tagMode,
     handleNewTags,
+    generateButton,
   } = props;
 
   function handleTagChange(
@@ -212,7 +214,7 @@ function TagsSelect(props: Props) {
               fullWidth
               InputProps={{
                 ...params.InputProps,
-                endAdornment: (
+                endAdornment: generateButton && (
                   <InputAdornment position="end">
                     <AiGenTagsButton variant="text" />
                   </InputAdornment>
