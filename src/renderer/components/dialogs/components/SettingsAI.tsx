@@ -157,7 +157,7 @@ function SettingsAI() {
           )}
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded>
+      <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandIcon />}
           aria-controls="ollama-content"
