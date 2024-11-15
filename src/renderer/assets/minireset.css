@@ -30,10 +30,14 @@ img { border: 0; pointer-events: none; }
 :not(input):not(textarea),
 :not(input):not(textarea)::after,
 :not(input):not(textarea)::before {
-    -webkit-user-select: none;
     user-select: none;
     cursor: default;
 } 
+
+.milkdown * {
+  user-select: text;
+}
+
 input, button, textarea, :focus {
     outline: none; 
 }
