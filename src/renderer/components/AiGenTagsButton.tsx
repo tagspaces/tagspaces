@@ -16,20 +16,21 @@
  *
  */
 
-import React, { useState } from 'react';
+import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
-import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
 import { OverridableStringUnion } from '@mui/types';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { AIIcon } from './CommonIcons';
 
 interface Props {
   variant?: OverridableStringUnion<
@@ -72,42 +73,30 @@ function AiGenTagsButton(props: Props) {
     }
   }
 
-  if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-    return (
-      <TsButton
-        loading={isLoading}
-        disabled={isLoading}
-        data-tid="generateTagsTID"
-        onClick={() => {
-          setIsLoading(true);
+  return (
+    <TsButton
+      loading={isLoading}
+      disabled={isLoading}
+      tooltip="Uses currently configured AI model to generate tags for this file"
+      startIcon={<AIIcon />}
+      data-tid="generateTagsAITID"
+      onClick={() => {
+        setIsLoading(true);
+        if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
           generate('image', 'tags').then((results) =>
             handleGenerationResults(results),
           );
-        }}
-        {...props}
-      >
-        {t('core:generateTags')}
-      </TsButton>
-    );
-  } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-    return (
-      <TsButton
-        loading={isLoading}
-        disabled={isLoading}
-        data-tid="generateTagsTID"
-        onClick={() => {
-          setIsLoading(true);
+        } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
           generate(ext === 'pdf' ? 'image' : 'text', 'tags').then((results) =>
             handleGenerationResults(results),
           );
-        }}
-        {...props}
-      >
-        {t('core:generateTags')}
-      </TsButton>
-    );
-  }
-  return null;
+        }
+      }}
+      {...props}
+    >
+      {t('core:generateTags')}
+    </TsButton>
+  );
 }
 
 export default AiGenTagsButton;

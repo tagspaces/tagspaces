@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -25,9 +25,10 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { AIIcon } from './CommonIcons';
 
 interface Props {}
 
@@ -64,40 +65,29 @@ function AiGenDescButton(props: Props) {
     }
   }
 
-  if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-    return (
-      <TsButton
-        loading={isLoading}
-        disabled={isLoading}
-        data-tid="generateDescriptionTID"
-        onClick={() => {
-          setIsLoading(true);
+  return (
+    <TsButton
+      loading={isLoading}
+      disabled={isLoading}
+      tooltip="Uses currently configured AI model to generate description for this file"
+      startIcon={<AIIcon />}
+      data-tid="generateDescriptionAITID"
+      onClick={() => {
+        setIsLoading(true);
+        if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
           generate('image', 'description').then((results) =>
             handleGenerationResults(results),
           );
-        }}
-      >
-        {t('core:generateDescription')}
-      </TsButton>
-    );
-  } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-    return (
-      <TsButton
-        loading={isLoading}
-        disabled={isLoading}
-        data-tid="generateDescriptionTID"
-        onClick={() => {
-          setIsLoading(true);
+        } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
           generate(ext === 'pdf' ? 'image' : 'text', 'summary').then(
             (results) => handleGenerationResults(results),
           );
-        }}
-      >
-        {t('core:generateDescription')}
-      </TsButton>
-    );
-  }
-  return null;
+        }
+      }}
+    >
+      {t('core:generateDescription')}
+    </TsButton>
+  );
 }
 
 export default AiGenDescButton;
