@@ -180,7 +180,7 @@ function ChatView() {
             <FormControl fullWidth>
               <SelectChatModel
                 handleChangeModel={handleChangeModel}
-                chosenModel={currentModel}
+                chosenModel={currentModel?.name}
               />
             </FormControl>
           </Grid2>

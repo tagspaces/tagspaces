@@ -37,7 +37,7 @@ import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import { isDesktopMode, isDevMode } from '-/reducers/settings';
+import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { clearAllURLParams } from '-/utils/dom';
 import Dialog from '@mui/material/Dialog';
@@ -62,7 +62,6 @@ function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
   const desktopMode = useSelector(isDesktopMode);
-  const devMode = useSelector(isDevMode);
   const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
     useState<boolean>(false);
   const { open, onClose } = props;
@@ -158,23 +157,21 @@ function SettingsDialog(props: Props) {
           data-tid="advancedSettingsDialogTID"
           label={t('core:advancedSettingsTab')}
         />
-        {devMode && (
-          <Tab
-            style={{
-              textTransform: 'unset',
-              justifyContent: 'flex-start',
-            }}
-            data-tid="aiSettingsDialogTID"
-            iconPosition="start"
-            icon={!smallScreen && <AIIcon />}
-            label={
-              <span style={{ whiteSpace: 'nowrap' }}>
-                {t('core:aiSettingsTab')}
-                <BetaLabel />
-              </span>
-            }
-          />
-        )}
+        <Tab
+          style={{
+            textTransform: 'unset',
+            justifyContent: 'flex-start',
+          }}
+          data-tid="aiSettingsDialogTID"
+          iconPosition="start"
+          icon={!smallScreen && <AIIcon />}
+          label={
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {t('core:aiSettingsTab')}
+              <BetaLabel />
+            </span>
+          }
+        />
       </Tabs>
       <div
         data-tid="settingsDialog"

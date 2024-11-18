@@ -32,7 +32,7 @@ import {
   setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
-import { AIProviders } from '-/components/chat/ChatTypes';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -67,9 +67,10 @@ export const types = {
   SET_FILENAMETAGPLACEDATEND: 'SETTINGS/SET_FILENAMETAGPLACEDATEND',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
-  SET_LLAMA_NODE_SETTINGS: 'SETTINGS/SET_LLAMA_NODE_SETTINGS',
-  SET_OLLAMA_SETTINGS: 'SETTINGS/SET_OLLAMA_SETTINGS',
   SET_AI_PROVIDER: 'SETTINGS/SET_AI_PROVIDER',
+  ADD_AI_PROVIDER: 'SETTINGS/ADD_AI_PROVIDER',
+  REMOVE_AI_PROVIDER: 'SETTINGS/REMOVE_AI_PROVIDER',
+  SET_AI_PROVIDERS: 'SETTINGS/SET_AI_PROVIDERS',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -251,14 +252,28 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_REVISIONS_ENABLED: {
       return { ...state, isRevisionsEnabled: action.enabled };
     }
-    case types.SET_LLAMA_NODE_SETTINGS: {
-      return { ...state, llamaNodeSettings: action.llamaNodeSettings };
-    }
-    case types.SET_OLLAMA_SETTINGS: {
-      return { ...state, ollamaSettings: action.settings };
-    }
     case types.SET_AI_PROVIDER: {
-      return { ...state, aiProvider: action.aiProvider };
+      return { ...state, aiProviderId: action.aiProviderId };
+    }
+    case types.ADD_AI_PROVIDER: {
+      return {
+        ...state,
+        aiProviders: [...state.aiProviders, action.aiProvider],
+      };
+    }
+    case types.REMOVE_AI_PROVIDER: {
+      return {
+        ...state,
+        aiProviders: state.aiProviders.filter(
+          (provider) => provider.id !== action.id,
+        ),
+      };
+    }
+    case types.SET_AI_PROVIDERS: {
+      return {
+        ...state,
+        aiProviders: action.aiProviders,
+      };
     }
     case types.SET_PREFIX_TAG_CONTAINER: {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
@@ -670,17 +685,21 @@ export const actions = {
     type: types.SET_REVISIONS_ENABLED,
     enabled,
   }),
-  setLlamaNodeSettings: (llamaNodeSettings: any) => ({
-    type: types.SET_LLAMA_NODE_SETTINGS,
-    llamaNodeSettings,
-  }),
-  setOllamaSettings: (settings: any) => ({
-    type: types.SET_OLLAMA_SETTINGS,
-    settings,
-  }),
-  setAiProvider: (aiProvider: AIProviders) => ({
+  setAiProvider: (aiProviderId: string) => ({
     type: types.SET_AI_PROVIDER,
+    aiProviderId,
+  }),
+  setAiProviders: (aiProviders: AIProvider[]) => ({
+    type: types.SET_AI_PROVIDERS,
+    aiProviders,
+  }),
+  addAiProvider: (aiProvider: AIProvider) => ({
+    type: types.ADD_AI_PROVIDER,
     aiProvider,
+  }),
+  removeAiProvider: (id: string) => ({
+    type: types.REMOVE_AI_PROVIDER,
+    id,
   }),
   setPrefixTagContainer: (prefixTagContainer: boolean) => ({
     type: types.SET_PREFIX_TAG_CONTAINER,
@@ -900,10 +919,15 @@ export const isDevMode = (state: any) =>
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
-export const getLlamaNodeSettings = (state: any) =>
-  state.settings.llamaNodeSettings;
-export const getOllamaSettings = (state: any) => state.settings.ollamaSettings;
-export const getDefaultAIProvider = (state: any) => state.settings.aiProvider;
+export const getDefaultAIProvider = (state: any) => {
+  if (state.settings.aiProviders.length === 1) {
+    return state.settings.aiProviders[0];
+  }
+  return state.settings.aiProviders.find(
+    (p) => p.id === state.settings.aiProviderId,
+  );
+};
+export const getAIProviders = (state: any) => state.settings.aiProviders;
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getGeoTaggingFormat = (state: any) =>

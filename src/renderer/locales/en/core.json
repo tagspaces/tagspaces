@@ -891,8 +891,10 @@
   "generateTags": "Generate Tags",
   "generateDescription": "Generate Description",
   "defaultAIEngine": "Default AI engine",
+  "addAIEngine": "Add new AI engine",
   "aiSettings": "AI Settings",
   "engineEnabled": "Engine enabled",
   "engineUrl": "Engine URL",
+  "chooseModel": "Choose Model",
   "-": "-"
 }

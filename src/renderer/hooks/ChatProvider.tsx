@@ -29,7 +29,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelector } from 'react-redux';
-import { getDefaultAIProvider, getOllamaSettings } from '-/reducers/settings';
+import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import AppConfig from '-/AppConfig';
@@ -42,7 +42,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { toBase64Image } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import {
-  AIProviders,
+  AIProvider,
   ChatImage,
   ChatItem,
   ChatMode,
@@ -68,7 +68,7 @@ type ChatData = {
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
-  removeModel: (model: Model) => void;
+  removeModel: (modelName: string) => void;
   findModel: (modelName: string) => Model;
   changeCurrentModel: (newModelName: string) => Promise<boolean>;
   getModel: (modelName: string) => Promise<Model>;
@@ -123,8 +123,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const openedEntryModel = useRef<Model>(undefined);
   const models = useRef<Model[]>([]);
   const images = useRef<ChatImage[]>([]);
-  const aiProvider: AIProviders = useSelector(getDefaultAIProvider);
-  const ollamaSettings = useSelector(getOllamaSettings);
+  const aiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
@@ -161,16 +160,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   useEffect(() => {
     setOpenedEntryModel();
-  }, [ollamaSettings]);
+  }, [aiProvider]);
 
   function setOpenedEntryModel() {
-    if (openedEntry) {
+    if (openedEntry && aiProvider) {
       const ext = extractFileExtension(openedEntry.name).toLowerCase();
       let model;
       if (supportedText.includes(ext) || ext === 'pdf') {
-        model = ollamaSettings.textModel;
+        model = aiProvider.defaultTextModel;
       } else if (supportedImgs.includes(ext)) {
-        model = ollamaSettings.imageModel;
+        model = aiProvider.defaultImageModel;
       }
       if (model) {
         const newModel = findModel(model);
@@ -210,9 +209,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function refreshOllamaModels(modelName = undefined) {
-    if (AppConfig.isElectron) {
+    if (AppConfig.isElectron && aiProvider) {
       window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', ollamaSettings.url)
+        .invoke('getOllamaModels', aiProvider.url)
         .then((m) => {
           models.current = m;
           if (modelName) {
@@ -300,14 +299,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function removeModel(model: Model) {
+  function removeModel(modelName: string) {
+    const model = findModel(modelName);
     if (model) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
         showNotification('deleting ' + model.name + ' succeeded');
         window.electronIO.ipcRenderer
-          .invoke('deleteOllamaModel', ollamaSettings.url, {
+          .invoke('deleteOllamaModel', aiProvider.url, {
             name: model.name,
           })
           .then((response) => {
@@ -338,7 +338,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       return Promise.resolve(undefined);
     }
     return window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', ollamaSettings.url)
+      .invoke('getOllamaModels', aiProvider.url)
       .then((m) => {
         if (m && m.length > 0) {
           return m.find(
@@ -360,7 +360,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (result) {
         addTimeLineRequest('downloading ' + newModelName, 'system');
         return window.electronIO.ipcRenderer
-          .invoke('pullOllamaModel', ollamaSettings.url, {
+          .invoke('pullOllamaModel', aiProvider.url, {
             name: newModelName,
             stream: true,
           })
@@ -424,7 +424,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       const model: HistoryModel = {
         history: chatHistoryItems.current,
         lastModelName: currentModel.current?.name,
-        engine: aiProvider,
+        engine: aiProvider.engine,
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
@@ -452,11 +452,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return chatHistoryItems.current;
   }
 
-  function getOllamaMessages(items: ChatItem[]) {
+  function getOllamaMessages(items: ChatItem[], modelName: string) {
     const messages = [];
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i];
-      if (item.role === 'user') {
+      if (item.role === 'user' && item.modelName === modelName) {
         if (item.request) {
           messages.push({
             role: 'user',
@@ -560,6 +560,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ? [
             ...getOllamaMessages(
               includeHistory ? chatHistoryItems.current : [],
+              model,
             ),
             {
               role: role,
@@ -572,7 +573,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       addTimeLineRequest(msg, role);
     }
     return window.electronIO.ipcRenderer
-      .invoke('newOllamaMessage', ollamaSettings.url, {
+      .invoke('newOllamaMessage', aiProvider.url, {
         model,
         messages,
         stream: stream,
@@ -595,6 +596,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(content);
   }
 
+  function getImageArray(fileContent, content) {
+    if (fileContent === 'image') {
+      const base64 = toBase64Image(content);
+      if (base64) {
+        return [base64];
+      }
+    }
+    return [];
+  }
+
   function generate(
     fileContent: 'text' | 'image',
     mode: ChatMode,
@@ -614,7 +625,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             mode,
             openedEntryModel.current.name,
             false,
-            fileContent === 'image' ? [toBase64Image(content)] : [],
+            getImageArray(fileContent, content),
             false,
           ),
         )
@@ -650,6 +661,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       generate,
     };
   }, [
+    aiProvider,
     models.current,
     images.current,
     currentModel.current,

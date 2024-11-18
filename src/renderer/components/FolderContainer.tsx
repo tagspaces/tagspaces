@@ -35,7 +35,6 @@ import {
   actions as SettingsActions,
   getDesktopMode,
   getKeyBindingObject,
-  isDevMode,
 } from '-/reducers/settings';
 import ChatIcon from '@mui/icons-material/Chat';
 import Box from '@mui/material/Box';
@@ -68,7 +67,6 @@ function FolderContainer(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
-  const devMode = useSelector(isDevMode);
   const keyBindings = useSelector(getKeyBindingObject);
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
@@ -353,22 +351,20 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          {devMode && (
-            <ToggleButton
-              value=""
-              aria-label="chat-label"
-              data-tid="chatTID"
-              style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
-              onClick={() => {
-                dispatch(SettingsActions.setEntryContainerTab(3));
-                openEntry(currentDirectoryPath);
-              }}
-            >
-              <Tooltip title="AI Chat for this folder">
-                <ChatIcon />
-              </Tooltip>
-            </ToggleButton>
-          )}
+          <ToggleButton
+            value=""
+            aria-label="chat-label"
+            data-tid="chatTID"
+            style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
+            onClick={() => {
+              dispatch(SettingsActions.setEntryContainerTab(3));
+              openEntry(currentDirectoryPath);
+            }}
+          >
+            <Tooltip title="AI Chat for this folder">
+              <ChatIcon />
+            </Tooltip>
+          </ToggleButton>
         </ToggleButtonGroup>
       )}
     </div>

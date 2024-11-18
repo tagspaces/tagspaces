@@ -14,7 +14,7 @@ import { Model } from '-/components/chat/ChatTypes';
 
 interface Props {
   label?: string;
-  chosenModel: Model;
+  chosenModel: string;
   handleChangeModel: (newModelName: string) => void;
 }
 
@@ -26,6 +26,7 @@ function SelectChatModel(props: Props) {
   const ollamaAvailableModels: Model[] = [
     {
       name: 'llama3.1',
+      engine: 'ollama',
       details: {
         format:
           '4,6 GB. The largest language model from Meta, featuring 405 billion parameters. It is one of the leading open-source AI models, capable of understanding and processing information deeply and diversely',
@@ -33,6 +34,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llama3.2',
+      engine: 'ollama',
       details: {
         format:
           'new 1B and 3B lightweight models are designed for seamless integration on mobile and edge devices. With these models, you can build private, personalized AI experiences with minimal latency and resource overhead.',
@@ -40,12 +42,14 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llama3.2-vision:11b',
+      engine: 'ollama',
       details: {
         format: 'requires least 8GB of VRAM.',
       },
     },
     {
       name: 'gemma2',
+      engine: 'ollama',
       details: {
         format:
           "5,4 GB. One of GEMMA2's standout features is its ability to handle and integrate multiple data modalities. Traditional AI models often specialise in a single type of data — text, images, or audio. GEMMA2, however, can process and synthesise information from all these sources simultaneously.",
@@ -53,6 +57,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'codegemma',
+      engine: 'ollama',
       details: {
         format:
           'CodeGemma models are text-to-text and text-to-code decoder-only models and are available as a 7 billion pretrained variant that specializes in code completion and code generation tasks, a 7 billion parameter instruction-tuned variant for code chat and instruction following and a 2 billion parameter pretrained variant.',
@@ -60,6 +65,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llava',
+      engine: 'ollama',
       details: {
         format:
           'large multimodal model that is designed to understand and generate content based on both visual inputs (images) and textual instructions.',
@@ -77,7 +83,7 @@ function SelectChatModel(props: Props) {
 
   return (
     <TsSelect
-      value={chosenModel ? chosenModel.name : 'init'}
+      value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
       label={label ? label : t('selectModel')}
       InputProps={{
@@ -98,7 +104,7 @@ function SelectChatModel(props: Props) {
       <MenuItem value="init" disabled>
         Choose an model
       </MenuItem>
-      {models.length > 0 ? (
+      {models && models.length > 0 ? (
         models.map((model) => (
           <MenuItem
             key={model.name}

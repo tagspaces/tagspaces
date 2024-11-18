@@ -7,8 +7,20 @@ export type ChatMode =
   | 'description'
   | 'tags';
 
+export type AIProvider = {
+  id: string;
+  engine: AIProviders;
+  name: string;
+  enable: boolean;
+  url: string;
+  alive?: boolean;
+  defaultImageModel?: string;
+  defaultTextModel?: string;
+};
+
 export type Model = {
   name: string;
+  engine: AIProviders;
   modified_at?: string;
   size?: number;
   digest?: string;

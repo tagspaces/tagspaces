@@ -16,19 +16,19 @@
  *
  */
 
-import { ExpandIcon, ReloadIcon } from '-/components/CommonIcons';
+import { ExpandIcon, ReloadIcon, RemoveIcon } from '-/components/CommonIcons';
 import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
-import { AIProviders } from '-/components/chat/ChatTypes';
+import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
-import { useChatContext } from '-/hooks/useChatContext';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
+  getAIProviders,
   getDefaultAIProvider,
-  getOllamaSettings,
 } from '-/reducers/settings';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
@@ -48,13 +48,14 @@ import Typography from '@mui/material/Typography';
 import React, { ChangeEvent, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useChatContext } from '-/hooks/useChatContext';
 
 function SettingsAI() {
   const { i18n, t } = useTranslation();
-  const { findModel } = useChatContext();
-  const ollamaSettings = useSelector(getOllamaSettings);
-  const aiProvider: AIProviders = useSelector(getDefaultAIProvider);
-  const ollamaAlive = useRef<boolean | null>(null);
+  const { changeCurrentModel } = useChatContext();
+  const aiDefailtProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const aiProviders: AIProvider[] = useSelector(getAIProviders);
+  //const ollamaAlive = useRef<boolean | null>(null);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
 
@@ -62,54 +63,46 @@ function SettingsAI() {
     checkOllamaAlive();
   }, []);
 
-  const handleSwitchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(
-      SettingsActions.setOllamaSettings({
-        ...ollamaSettings,
-        enabled: event.target.checked,
-      }),
-    );
-  };
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(
-      SettingsActions.setOllamaSettings({
-        ...ollamaSettings,
-        url: event.target.value,
-      }),
-    );
-  };
-
   function checkOllamaAlive() {
-    window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', ollamaSettings.url)
-      .then((m) => {
-        ollamaAlive.current = !!m;
-        forceUpdate();
-      });
+    aiProviders.map((provider) =>
+      window.electronIO.ipcRenderer
+        .invoke('getOllamaModels', provider.url)
+        .then((m) => {
+          handleChangeProvider(provider.id, 'alive', !!m);
+        }),
+    );
+    forceUpdate();
   }
 
-  const handleChangeTextModel = (modelName: string) => {
-    dispatch(
-      SettingsActions.setOllamaSettings({
-        ...ollamaSettings,
-        textModel: modelName,
-      }),
-    );
+  function handleChangeProvider(id: string, props: keyof AIProvider, value) {
+    const providers = aiProviders.map((provider) => {
+      if (provider.id === id) {
+        return {
+          ...provider,
+          [props]: value,
+        };
+      }
+      return provider;
+    });
+    dispatch(SettingsActions.setAiProviders(providers));
+  }
+
+  const changeDefaultAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
+    const providerId = event.target.value as string;
+    dispatch(SettingsActions.setAiProvider(providerId));
   };
 
-  const handleChangeImageModel = (modelName: string) => {
-    dispatch(
-      SettingsActions.setOllamaSettings({
-        ...ollamaSettings,
-        imageModel: modelName,
-      }),
-    );
-  };
-
-  const changeAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
+  const addAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
     const provider: AIProviders = event.target.value as AIProviders;
-    dispatch(SettingsActions.setAiProvider(provider));
+
+    const aiProvider: AIProvider = {
+      id: getUuid(),
+      engine: provider,
+      name: provider,
+      url: 'http://localhost:11434',
+      enable: false,
+    };
+    dispatch(SettingsActions.addAiProvider(aiProvider));
   };
 
   return (
@@ -132,114 +125,169 @@ function SettingsAI() {
         </AccordionSummary>
         <AccordionDetails>
           <TsSelect
-            value={aiProvider}
-            onChange={changeAiProvider}
-            label={t('core:defaultAIEngine')}
+            value={-1}
+            onChange={addAiProvider}
+            label={t('core:addAIEngine')}
           >
             <MenuItem value="ollama">
               <OllamaIcon width={10} style={{ marginRight: 5 }} />
               Ollama
             </MenuItem>
           </TsSelect>
-          {aiProvider && aiProvider === 'ollama' && (
-            <>
-              <SelectChatModel
-                label={t('core:defaultAImodelText')}
-                handleChangeModel={handleChangeTextModel}
-                chosenModel={findModel(ollamaSettings.textModel)}
-              />
-              <SelectChatModel
-                label={t('core:defaultAImodelImages')}
-                handleChangeModel={handleChangeImageModel}
-                chosenModel={findModel(ollamaSettings.imageModel)}
-              />
-            </>
+          {aiProviders && aiProviders.length > 1 && (
+            <TsSelect
+              value={aiDefailtProvider?.id}
+              onChange={changeDefaultAiProvider}
+              label={t('core:defaultAIEngine')}
+            >
+              {aiProviders.map((provider) => (
+                <MenuItem value={provider.id}>
+                  <OllamaIcon width={10} style={{ marginRight: 5 }} />
+                  {provider.name}
+                </MenuItem>
+              ))}
+            </TsSelect>
           )}
         </AccordionDetails>
       </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandIcon />}
-          aria-controls="ollama-content"
-          id="ollama-header"
-          data-tid="ollamaTID"
-        >
-          <Typography>
-            <OllamaIcon width={20} /> Ollama
-          </Typography>
-          <TooltipTS
-            title={
-              t('core:serviceStatus') +
-              ': ' +
-              (ollamaAlive.current
-                ? t('core:available')
-                : t('core:notAvailable'))
-            }
+      {aiProviders.map((provider) => (
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandIcon />}
+            aria-controls={provider.id + 'content'}
+            data-tid={provider.id + 'ollamaTID'}
           >
-            {ollamaAlive.current === null ? (
-              <CircularProgress size={12} />
-            ) : (
-              <FiberManualRecordIcon
-                sx={{
-                  color: ollamaAlive.current ? 'green' : 'red',
-                  fontSize: 19,
-                  ml: 1,
-                }}
-              />
-            )}
-          </TooltipTS>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FormGroup>
-            <FormControl>
-              {/* <Typography>
-                {t('core:engineUrl')}
-                <InfoIcon tooltip={t('core:engineUrl')} />
-              </Typography> */}
-              <TsTextField
-                fullWidth
-                name="ollamaSocket"
-                label={t('core:engineUrl')}
-                data-tid="ollamaEngineTID"
-                value={ollamaSettings.url}
-                onChange={handleInputChange}
-                placeholder="http://localhost:11434"
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        <Tooltip title={t('core:refreshServiceStatus')}>
-                          <IconButton
-                            onClick={() => {
-                              checkOllamaAlive();
-                            }}
-                            size="large"
-                          >
-                            <ReloadIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </FormControl>
-            <FormControlLabel
-              labelPlacement="start"
-              style={{ justifyContent: 'space-between', marginLeft: 0 }}
-              control={
-                <Switch
-                  data-tid="locationIsDefault"
-                  name="isDefault"
-                  checked={ollamaSettings.enabled}
-                  onChange={handleSwitchChange}
-                />
+            <Typography>{provider.name}</Typography>
+            <TooltipTS
+              title={
+                t('core:serviceStatus') +
+                ': ' +
+                (provider.alive ? t('core:available') : t('core:notAvailable'))
               }
-              label={t('core:engineEnabled')}
-            />
-          </FormGroup>
-        </AccordionDetails>
-      </Accordion>
+            >
+              {provider.alive === null ? (
+                <CircularProgress size={12} />
+              ) : (
+                <FiberManualRecordIcon
+                  sx={{
+                    color: provider.alive ? 'green' : 'red',
+                    fontSize: 19,
+                    ml: 1,
+                  }}
+                />
+              )}
+            </TooltipTS>
+            <IconButton
+              aria-label={t('core:deleteModel')}
+              onClick={() =>
+                dispatch(SettingsActions.removeAiProvider(provider.id))
+              }
+              data-tid="deleteModelTID"
+              size="small"
+            >
+              <RemoveIcon />
+            </IconButton>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControl>
+                <TsTextField
+                  fullWidth
+                  name="engineName"
+                  label={t('core:engineName')}
+                  data-tid="engineTID"
+                  value={provider.name}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    handleChangeProvider(
+                      provider.id,
+                      'name',
+                      event.target.value,
+                    );
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <TsTextField
+                  fullWidth
+                  name="ollamaSocket"
+                  label={t('core:engineUrl')}
+                  data-tid="ollamaEngineTID"
+                  value={provider.url}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    handleChangeProvider(
+                      provider.id,
+                      'url',
+                      event.target.value,
+                    );
+                  }}
+                  placeholder="http://localhost:11434"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end" style={{ height: 32 }}>
+                          <Tooltip title={t('core:refreshServiceStatus')}>
+                            <IconButton
+                              onClick={() => {
+                                checkOllamaAlive();
+                              }}
+                              size="large"
+                            >
+                              <ReloadIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              </FormControl>
+              <SelectChatModel
+                label={t('core:defaultAImodelText')}
+                handleChangeModel={(modelName: string) => {
+                  handleChangeProvider(
+                    provider.id,
+                    'defaultTextModel',
+                    modelName,
+                  );
+                  changeCurrentModel(modelName);
+                }}
+                chosenModel={provider.defaultTextModel}
+              />
+              <SelectChatModel
+                label={t('core:defaultAImodelImages')}
+                handleChangeModel={(modelName: string) => {
+                  handleChangeProvider(
+                    provider.id,
+                    'defaultImageModel',
+                    modelName,
+                  );
+                  changeCurrentModel(modelName);
+                }}
+                chosenModel={provider.defaultImageModel}
+              />
+              <FormControlLabel
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                control={
+                  <Switch
+                    data-tid="locationIsDefault"
+                    name="isDefault"
+                    checked={provider.enable}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      handleChangeProvider(
+                        provider.id,
+                        'enable',
+                        event.target.value,
+                      );
+                    }}
+                  />
+                }
+                label={t('core:engineEnabled')}
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+      ))}
     </div>
   );
 }
