@@ -229,8 +229,8 @@ export function ollamaPostRequest(
         'Content-Length': Buffer.byteLength(payload, 'utf8'),
       },
     };
-    console.log('Ollama option: ', option);
-    console.log('Ollama payload: ', payload);
+    //console.log('Ollama option: ', option);
+    //console.log('Ollama payload: ', payload);
     const reqPost = http
       .request(option, (resp) => {
         const dataChunks: string[] = [];
@@ -239,7 +239,7 @@ export function ollamaPostRequest(
         resp.on('data', (chunk) => {
           try {
             const msgChunk = chunk.toString('utf-8');
-            console.log('Ollama data: ', msgChunk);
+            //console.log('Ollama data: ', msgChunk);
             const message = JSON.parse(msgChunk);
 
             if (message.error) {
@@ -249,13 +249,15 @@ export function ollamaPostRequest(
                 dataChunks.push(message.message.content);
                 responseCallback(message.message.content, false); // Stream message to renderer process
               } else if (message.status) {
-                const progress =
+                // download model
+                /*const progress =
                   message.completed && message.total
                     ? ' ' +
                       Math.floor((message.completed / message.total) * 100) +
                       '%'
                     : '';
-                responseCallback(message.status + progress, true);
+                responseCallback(message.status + progress, true);*/
+                responseCallback(message);
               }
             }
           } catch (e) {

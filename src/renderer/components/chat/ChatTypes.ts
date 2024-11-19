@@ -56,3 +56,10 @@ export type ModelDetails = {
   parameter_size?: string;
   quantization_level?: string;
 };
+
+export type PullModelResponse = {
+  name: string;
+  total: string;
+  completed: string;
+  status: string;
+};

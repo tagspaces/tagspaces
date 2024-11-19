@@ -50,8 +50,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useChatContext } from '-/hooks/useChatContext';
 
-function SettingsAI() {
+interface Props {
+  closeSettings: () => void;
+}
+
+function SettingsAI(props: Props) {
   const { i18n, t } = useTranslation();
+  const { closeSettings } = props;
   const { changeCurrentModel } = useChatContext();
   const aiDefailtProvider: AIProvider = useSelector(getDefaultAIProvider);
   const aiProviders: AIProvider[] = useSelector(getAIProviders);
@@ -249,7 +254,7 @@ function SettingsAI() {
                     'defaultTextModel',
                     modelName,
                   );
-                  changeCurrentModel(modelName);
+                  changeCurrentModel(modelName, closeSettings);
                 }}
                 chosenModel={provider.defaultTextModel}
               />
@@ -261,7 +266,7 @@ function SettingsAI() {
                     'defaultImageModel',
                     modelName,
                   );
-                  changeCurrentModel(modelName);
+                  changeCurrentModel(modelName, closeSettings);
                 }}
                 chosenModel={provider.defaultImageModel}
               />

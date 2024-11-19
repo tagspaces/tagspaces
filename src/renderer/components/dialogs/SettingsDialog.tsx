@@ -190,7 +190,7 @@ function SettingsDialog(props: Props) {
             showResetSettings={setIsResetSettingsDialogOpened}
           />
         )}
-        {currentTab === 5 && <SettingsAI />}
+        {currentTab === 5 && <SettingsAI closeSettings={onClose} />}
       </div>
       {isResetSettingsDialogOpened && (
         <ConfirmDialog

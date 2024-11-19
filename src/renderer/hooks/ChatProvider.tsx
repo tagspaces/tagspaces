@@ -28,7 +28,7 @@ import {
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -49,6 +49,7 @@ import {
   ChatRole,
   HistoryModel,
   Model,
+  PullModelResponse,
 } from '-/components/chat/ChatTypes';
 import {
   extractPDFcontent,
@@ -56,6 +57,8 @@ import {
   supportedText,
 } from '-/services/thumbsgenerator';
 import { format } from 'date-fns';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 
 type ChatData = {
   models: Model[];
@@ -70,7 +73,10 @@ type ChatData = {
   unloadCurrentModel: () => void;
   removeModel: (modelName: string) => void;
   findModel: (modelName: string) => Model;
-  changeCurrentModel: (newModelName: string) => Promise<boolean>;
+  changeCurrentModel: (
+    newModelName: string,
+    confirmCallback?: () => void,
+  ) => Promise<boolean>;
   getModel: (modelName: string) => Promise<Model>;
   addTimeLineRequest: (txt: string, role: ChatRole) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
@@ -115,6 +121,7 @@ export type ChatContextProviderProps = {
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
+  const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
@@ -136,10 +143,37 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const GENERATE_IMAGE_TAGS =
     Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
   // const isTyping = useRef<boolean>(false);
+  const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    refreshOllamaModels();
+    if (AppConfig.isElectron) {
+      refreshOllamaModels();
+      window.electronIO.ipcRenderer.on(
+        'PullModel',
+        (message: PullModelResponse) => {
+          //console.log('ChatMessage:' + message);
+          if (message.status) {
+            dispatch(
+              AppActions.onUploadProgress(
+                {
+                  key: message.status,
+                  loaded: message.completed,
+                  total: message.total,
+                },
+                undefined,
+                message.name,
+              ),
+            );
+          }
+        },
+      );
+
+      return () => {
+        window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
+        unloadCurrentModel();
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -349,7 +383,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       });
   }
 
-  function changeCurrentModel(newModelName: string): Promise<boolean> {
+  function changeCurrentModel(
+    newModelName: string,
+    confirmCallback?,
+  ): Promise<boolean> {
     const model = findModel(newModelName);
     if (model) {
       return setModel(model);
@@ -358,7 +395,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         'Do you want to download and install ' + newModelName + ' model?',
       );
       if (result) {
-        addTimeLineRequest('downloading ' + newModelName, 'system');
+        if (confirmCallback) {
+          confirmCallback();
+        }
+        // addTimeLineRequest('downloading ' + newModelName, 'system');
+        openFileUploadDialog();
         return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', aiProvider.url, {
             name: newModelName,

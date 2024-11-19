@@ -28,6 +28,7 @@ export type Channels =
   | 'newChatSession'
   | 'newChatMessage'
   | 'ChatMessage'
+  | 'PullModel'
   | 'postRequest'
   | 'listDirectoryPromise'
   | 'listMetaDirectoryPromise'

@@ -48,12 +48,12 @@ function ChatView() {
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const getAddedText = (oldText, newText) => {
+  /*const getAddedText = (oldText, newText) => {
     if (newText.startsWith(oldText)) {
       return newText.slice(oldText.length);
     }
     return ''; // Return an empty string if newText does not start with oldText
-  };
+  };*/
 
   const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
@@ -76,14 +76,20 @@ function ChatView() {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
         console.log('ChatMessage:' + message);
-        if (isLoading.current) {
-          isLoading.current = false;
-          forceUpdate();
-        }
-        if (message instanceof Uint8Array) {
-          chatMessageHandler(new TextDecoder('utf-8').decode(message), replace);
-        } else if (typeof message === 'string') {
-          chatMessageHandler(message, replace);
+        if (!replace) {
+          // ignore download progress
+          if (isLoading.current) {
+            isLoading.current = false;
+            forceUpdate();
+          }
+          if (message instanceof Uint8Array) {
+            chatMessageHandler(
+              new TextDecoder('utf-8').decode(message),
+              replace,
+            );
+          } else if (typeof message === 'string') {
+            chatMessageHandler(message, replace);
+          }
         }
       });
 

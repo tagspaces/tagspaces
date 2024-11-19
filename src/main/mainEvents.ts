@@ -276,17 +276,29 @@ export default function loadMainEvents() {
     return apiResponse;
   });
   ipcMain.handle('pullOllamaModel', async (event, ollamaApiUrl, msg) => {
+    let lastPercents = 0;
     const apiResponse = await ollamaPostRequest(
       JSON.stringify(msg),
       '/api/pull',
       ollamaApiUrl,
-      (response, replace) => {
-        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
-        if (mainWindow.length > 0) {
-          mainWindow.map(
-            (window) =>
-              window.webContents.send('ChatMessage', response, replace), // Stream message to renderer process
+      (response) => {
+        if (response.completed && response.total) {
+          const percents = Math.floor(
+            (response.completed / response.total) * 100,
           );
+          if (percents !== lastPercents) {
+            lastPercents = percents;
+            const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+            if (mainWindow.length > 0) {
+              mainWindow.map(
+                (window) =>
+                  window.webContents.send('PullModel', {
+                    ...response,
+                    model: msg.name,
+                  }), // Stream message to renderer process
+              );
+            }
+          }
         }
       },
     );
