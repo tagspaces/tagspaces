@@ -166,7 +166,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showProperties() {
-    return openEntry(directoryPath);
+    return openEntry(directoryPath, true);
   }
 
   function perspectiveSwitch(perspectiveId) {
