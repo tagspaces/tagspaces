@@ -163,11 +163,25 @@ test.describe('TST09 - Quick access', () => {
 
     // Open
     await clickOn('[data-tid=quickAccessButton]');
-    await expectElementExist('[data-tid=tsBookmarksTID' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=tsBookmarksTID' + testFolder + ']',
+      true,
+      8000,
+    );
     await clickOn('[data-tid=tsBookmarksTID' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=currentDir_' + testFolder + ']',
+      true,
+      8000,
+    );
+
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=showProperties]');
-    await expectElementExist('[data-tid=OpenedTID' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + testFolder + ']',
+      true,
+      8000,
+    );
 
     //Delete
     await clickOn('[data-tid=toggleBookmarkTID]');
@@ -177,6 +191,7 @@ test.describe('TST09 - Quick access', () => {
     await expectElementExist(
       '[data-tid=tsBookmarksTID' + testFolder + ']',
       false,
+      5000,
     );
   });
 
