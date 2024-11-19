@@ -920,12 +920,15 @@ export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
 export const getDefaultAIProvider = (state: any) => {
-  if (state.settings.aiProviders.length === 1) {
+  if (state.settings.aiProviderId) {
+    return state.settings.aiProviders.find(
+      (p) => p.id === state.settings.aiProviderId,
+    );
+  }
+  if (state.settings.aiProviders.length > 0) {
     return state.settings.aiProviders[0];
   }
-  return state.settings.aiProviders.find(
-    (p) => p.id === state.settings.aiProviderId,
-  );
+  return undefined;
 };
 export const getAIProviders = (state: any) => state.settings.aiProviders;
 export const getPrefixTagContainer = (state: any) =>

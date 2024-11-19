@@ -67,7 +67,7 @@ type ChatData = {
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
-  setModel: (model: Model) => Promise<boolean>;
+  setModel: (model: Model | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
@@ -259,8 +259,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function setModel(model: Model): Promise<boolean> {
-    if (currentModel.current !== model) {
+  function setModel(m: Model | string): Promise<boolean> {
+    const model = typeof m === 'string' ? findModel(m) : m;
+    if (currentModel.current.name !== model.name) {
       currentModel.current = model;
       forceUpdate();
       //load model
@@ -388,9 +389,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     confirmCallback?,
   ): Promise<boolean> {
     const model = findModel(newModelName);
-    if (model) {
-      return setModel(model);
-    } else {
+    if (!model) {
+      // return setModel(model);
+      // } else {
       const result = confirm(
         'Do you want to download and install ' + newModelName + ' model?',
       );
@@ -412,7 +413,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           });
       }
     }
-    return Promise.resolve(false);
+    return Promise.resolve(true);
   }
 
   function addTimeLineRequest(txt: string, role: ChatRole) {

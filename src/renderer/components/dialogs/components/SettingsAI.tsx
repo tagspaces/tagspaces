@@ -16,7 +16,13 @@
  *
  */
 
-import { ExpandIcon, ReloadIcon, RemoveIcon } from '-/components/CommonIcons';
+import {
+  CreateFileIcon,
+  ExpandIcon,
+  NewFileIcon,
+  ReloadIcon,
+  RemoveIcon,
+} from '-/components/CommonIcons';
 import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
@@ -37,9 +43,13 @@ import {
   AccordionSummary,
   CircularProgress,
   FormControl,
+  Grow,
   MenuItem,
+  Paper,
+  Popper,
   Switch,
 } from '@mui/material';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import IconButton from '@mui/material/IconButton';
@@ -49,6 +59,12 @@ import React, { ChangeEvent, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useChatContext } from '-/hooks/useChatContext';
+import AppConfig from '-/AppConfig';
+import Box from '@mui/material/Box';
+import TsButton from '-/components/TsButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import TsMenuList from '-/components/TsMenuList';
 
 interface Props {
   closeSettings: () => void;
@@ -63,10 +79,27 @@ function SettingsAI(props: Props) {
   //const ollamaAlive = useRef<boolean | null>(null);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
 
   useEffect(() => {
     checkOllamaAlive();
   }, []);
+
+  const handleToggle = () => {
+    setOpenedNewAIMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpenedNewAIMenu(false);
+  };
 
   function checkOllamaAlive() {
     aiProviders.map((provider) =>
@@ -97,17 +130,23 @@ function SettingsAI(props: Props) {
     dispatch(SettingsActions.setAiProvider(providerId));
   };
 
-  const addAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
-    const provider: AIProviders = event.target.value as AIProviders;
-
-    const aiProvider: AIProvider = {
-      id: getUuid(),
-      engine: provider,
-      name: provider,
-      url: 'http://localhost:11434',
-      enable: false,
-    };
-    dispatch(SettingsActions.addAiProvider(aiProvider));
+  const addAiProvider = (provider: AIProviders) => {
+    //event: ChangeEvent<HTMLInputElement>) => {
+    //const provider: AIProviders = event.target.value as AIProviders;
+    const providerUrl = provider === 'ollama' ? 'http://localhost:11434' : '';
+    window.electronIO.ipcRenderer
+      .invoke('getOllamaModels', providerUrl)
+      .then((m) => {
+        const aiProvider: AIProvider = {
+          id: getUuid(),
+          engine: provider,
+          name: provider,
+          url: providerUrl,
+          alive: !!m,
+          enable: false,
+        };
+        dispatch(SettingsActions.addAiProvider(aiProvider));
+      });
   };
 
   return (
@@ -129,7 +168,7 @@ function SettingsAI(props: Props) {
           <Typography>{t('core:aiSettings')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <TsSelect
+          {/*<TsSelect
             value={-1}
             onChange={addAiProvider}
             label={t('core:addAIEngine')}
@@ -138,7 +177,77 @@ function SettingsAI(props: Props) {
               <OllamaIcon width={10} style={{ marginRight: 5 }} />
               Ollama
             </MenuItem>
-          </TsSelect>
+          </TsSelect>*/}
+          <ClickAwayListener onClickAway={handleClose}>
+            <Box
+              ref={anchorRef}
+              sx={{
+                width: '100%',
+                textAlign: 'center',
+                position: 'relative',
+              }}
+            >
+              <TsButton
+                //tooltip={t('core:createNew')}
+                aria-controls={
+                  openedNewAIMenu ? 'split-button-menu' : undefined
+                }
+                aria-expanded={openedNewAIMenu ? 'true' : undefined}
+                aria-haspopup="menu"
+                data-tid="createNewAIButtonTID"
+                onClick={handleToggle}
+                startIcon={<CreateFileIcon />}
+                style={{
+                  borderRadius: AppConfig.defaultCSSRadius,
+                }}
+              >
+                <Box
+                  style={{
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {t('core:addAIEngine')}
+                </Box>
+              </TsButton>
+              <Popper
+                sx={{
+                  zIndex: 1,
+                }}
+                open={openedNewAIMenu}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin:
+                        placement === 'bottom' ? 'center top' : 'center bottom',
+                    }}
+                  >
+                    <Paper>
+                      <TsMenuList id="split-button-menu" autoFocusItem>
+                        <MenuItem
+                          key="createNewTextFileTID"
+                          ata-tid="createNewTextFileTID"
+                          onClick={() => addAiProvider('ollama')}
+                        >
+                          <ListItemIcon>
+                            <OllamaIcon height={30} />
+                          </ListItemIcon>
+                          <ListItemText primary="Ollama" />
+                        </MenuItem>
+                      </TsMenuList>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </Box>
+          </ClickAwayListener>
           {aiProviders && aiProviders.length > 1 && (
             <TsSelect
               value={aiDefailtProvider?.id}
@@ -162,7 +271,10 @@ function SettingsAI(props: Props) {
             aria-controls={provider.id + 'content'}
             data-tid={provider.id + 'ollamaTID'}
           >
-            <Typography>{provider.name}</Typography>
+            <Typography>
+              <OllamaIcon width={15} style={{ marginRight: 5 }} />
+              {provider.name}
+            </Typography>
             <TooltipTS
               title={
                 t('core:serviceStatus') +
@@ -184,9 +296,14 @@ function SettingsAI(props: Props) {
             </TooltipTS>
             <IconButton
               aria-label={t('core:deleteModel')}
-              onClick={() =>
-                dispatch(SettingsActions.removeAiProvider(provider.id))
-              }
+              onClick={() => {
+                const result = confirm(
+                  'Do you want to remove ' + provider.name + ' AI config?',
+                );
+                if (result) {
+                  dispatch(SettingsActions.removeAiProvider(provider.id));
+                }
+              }}
               data-tid="deleteModelTID"
               size="small"
             >

@@ -38,6 +38,7 @@ function ChatView() {
     unloadCurrentModel,
     newChatMessage,
     changeCurrentModel,
+    setModel,
     currentModel,
   } = useChatContext();
   const isTyping = useRef<boolean>(false);
@@ -108,6 +109,7 @@ function ChatView() {
   const handleChangeModel = (newModelName: string) => {
     changeCurrentModel(newModelName).then((success) => {
       if (success) {
+        setModel(newModelName);
         //forceUpdate();
       }
     });
