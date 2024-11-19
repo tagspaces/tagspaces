@@ -261,7 +261,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function setModel(m: Model | string): Promise<boolean> {
     const model = typeof m === 'string' ? findModel(m) : m;
-    if (!currentModel.current || currentModel.current.name !== model.name) {
+    if (
+      model &&
+      (!currentModel.current || currentModel.current.name !== model.name)
+    ) {
       currentModel.current = model;
       forceUpdate();
       //load model
