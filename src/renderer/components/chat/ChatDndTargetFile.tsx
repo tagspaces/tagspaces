@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces GmbH
+ * Copyright (C) 2024-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,13 +16,13 @@
  *
  */
 
-import React, { ReactNode } from 'react';
-import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { alpha, useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
-import { Identifier } from 'dnd-core';
 import { useChatContext } from '-/hooks/useChatContext';
 import { TS } from '-/tagspaces.namespace';
+import { alpha, useTheme } from '@mui/material/styles';
+import { Identifier } from 'dnd-core';
+import React, { ReactNode } from 'react';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 
 type DragItem = {
   files?: File[];

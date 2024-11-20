@@ -1,16 +1,30 @@
-/*
-Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
-*/
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2024-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 
-import React, { ChangeEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { MenuItem } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
 import { RemoveIcon } from '-/components/CommonIcons';
-import { useChatContext } from '-/hooks/useChatContext';
 import TsSelect from '-/components/TsSelect';
 import { Model } from '-/components/chat/ChatTypes';
+import { useChatContext } from '-/hooks/useChatContext';
+import { MenuItem } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   id?: string;

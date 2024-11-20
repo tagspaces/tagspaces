@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces GmbH
+ * Copyright (C) 2024-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,26 +16,29 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import {
   CreateFileIcon,
   ExpandIcon,
-  NewFileIcon,
   ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
 import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsMenuList from '-/components/TsMenuList';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { useChatContext } from '-/hooks/useChatContext';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getAIProviders,
   getDefaultAIProvider,
 } from '-/reducers/settings';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
@@ -49,22 +52,18 @@ import {
   Popper,
   Switch,
 } from '@mui/material';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import Typography from '@mui/material/Typography';
-import React, { ChangeEvent, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { useChatContext } from '-/hooks/useChatContext';
-import AppConfig from '-/AppConfig';
-import Box from '@mui/material/Box';
-import TsButton from '-/components/TsButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import TsMenuList from '-/components/TsMenuList';
+import Typography from '@mui/material/Typography';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import React, { ChangeEvent, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   closeSettings: () => void;

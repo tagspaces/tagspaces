@@ -1,6 +1,20 @@
-/*
-Copyright (c) 2023-present The TagSpaces GmbH. All rights reserved.
-*/
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2024-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 
 import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
@@ -11,9 +25,11 @@ import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
+import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
+import { getDefaultAIProvider } from '-/reducers/settings';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, Grid2, InputLabel, MenuItem } from '@mui/material';
+import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -23,18 +39,10 @@ import { useTheme } from '@mui/material/styles';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
-import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useSelector } from 'react-redux';
-import { getDefaultAIProvider } from '-/reducers/settings';
 
 function ChatView() {
   const { t } = useTranslation();
