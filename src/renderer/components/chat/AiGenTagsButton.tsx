@@ -68,7 +68,7 @@ function AiGenTagsButton(props: Props) {
       try {
         const regex = /\{([^}]+)\}/g;
         const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => ({
-          title: match[1].replace(/^,|,$/g, '') + '',
+          title: match[1].trim().replace(/^,|,$/g, ''),
           type: 'sidecar',
         }));
         addTagsToFsEntry(openedEntry, tags).then(() => {
