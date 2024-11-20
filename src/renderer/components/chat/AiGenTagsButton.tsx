@@ -51,7 +51,10 @@ function AiGenTagsButton(props: Props) {
   if (
     !openedEntry ||
     !openedEntryModel ||
-    !AppConfig.aiSupportedFiletypes.image.includes(openedEntry.extension)
+    ![
+      ...AppConfig.aiSupportedFiletypes.text,
+      ...AppConfig.aiSupportedFiletypes.image,
+    ].includes(openedEntry.extension)
   ) {
     return null;
   }
