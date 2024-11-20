@@ -46,6 +46,7 @@ import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -142,6 +143,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
@@ -173,7 +175,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       haveRevisions.current = false;
       forceUpdate();
     }
-  }, [isEditable]);
+  }, [isEditable, isEditMode]);
 
   // Create functions that dispatch actions
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

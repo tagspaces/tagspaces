@@ -384,6 +384,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=fileContainerEditFile]');
     await writeTextInIframeInput('txt');
     await clickOn('[data-tid=fileContainerSaveFile]');
+    await clickOn('[data-tid=cancelEditingTID]');
 
     //Toggle Revisions
     await clickOn('[data-tid=revisionsTabTID]');
