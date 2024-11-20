@@ -919,17 +919,19 @@ export const isDevMode = (state: any) =>
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
+/*export const getDefaultAIProviderId = (state: any) =>
+  state.settings.aiProviderId;*/
 export const getDefaultAIProvider = (state: any) => {
   if (state.settings.aiProviderId) {
     const provider = state.settings.aiProviders.find(
-      (p) => p.id === state.settings.aiProviderId,
+      (p) => p.enable && p.id === state.settings.aiProviderId,
     );
     if (provider) {
       return provider;
     }
   }
   if (state.settings.aiProviders.length > 0) {
-    return state.settings.aiProviders[0];
+    return state.settings.aiProviders.find((p) => p.enable);
   }
   return undefined;
 };

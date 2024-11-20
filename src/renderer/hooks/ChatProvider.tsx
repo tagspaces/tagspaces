@@ -51,11 +51,7 @@ import {
   Model,
   PullModelResponse,
 } from '-/components/chat/ChatTypes';
-import {
-  extractPDFcontent,
-  supportedImgs,
-  supportedText,
-} from '-/services/thumbsgenerator';
+import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { format } from 'date-fns';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
@@ -64,6 +60,7 @@ type ChatData = {
   models: Model[];
   images: ChatImage[];
   currentModel: Model;
+  openedEntryModel: Model;
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
@@ -97,6 +94,7 @@ export const ChatContext = createContext<ChatData>({
   models: [],
   images: [],
   currentModel: undefined,
+  openedEntryModel: undefined,
   chatHistoryItems: [],
   //isTyping: false,
   refreshOllamaModels: undefined,
@@ -130,7 +128,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const openedEntryModel = useRef<Model>(undefined);
   const models = useRef<Model[]>([]);
   const images = useRef<ChatImage[]>([]);
-  const aiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
+  //const aiProviders: AIProvider[] = useSelector(getAIProviders);
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider); //getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
@@ -193,17 +193,33 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, [openedEntry]);
 
   useEffect(() => {
+    refreshOllamaModels();
     setOpenedEntryModel();
-  }, [aiProvider]);
+  }, [defaultAiProvider]);
+
+  /*function getDefaultAIProvider (aiProviderId: string, aiProviders: AIProvider[]) {
+    if (aiProviderId) {
+      const provider = aiProviders.find(
+        (p) => p.enable && p.id === aiProviderId,
+      );
+      if (provider) {
+        return provider;
+      }
+    }
+    if (aiProviders.length > 0) {
+      return aiProviders.find((p) => p.enable);
+    }
+    return undefined;
+  }*/
 
   function setOpenedEntryModel() {
-    if (openedEntry && aiProvider) {
+    if (openedEntry && defaultAiProvider) {
       const ext = extractFileExtension(openedEntry.name).toLowerCase();
       let model;
-      if (supportedText.includes(ext) || ext === 'pdf') {
-        model = aiProvider.defaultTextModel;
-      } else if (supportedImgs.includes(ext)) {
-        model = aiProvider.defaultImageModel;
+      if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+        model = defaultAiProvider.defaultTextModel;
+      } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        model = defaultAiProvider.defaultImageModel;
       }
       if (model) {
         const newModel = findModel(model);
@@ -243,9 +259,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function refreshOllamaModels(modelName = undefined) {
-    if (AppConfig.isElectron && aiProvider) {
+    if (AppConfig.isElectron && defaultAiProvider) {
       window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', aiProvider.url)
+        .invoke('getOllamaModels', defaultAiProvider.url)
         .then((m) => {
           models.current = m;
           if (modelName) {
@@ -345,7 +361,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         //addTimeLineRequest('deleting ' + model.name, 'system');
         showNotification('deleting ' + model.name + ' succeeded');
         window.electronIO.ipcRenderer
-          .invoke('deleteOllamaModel', aiProvider.url, {
+          .invoke('deleteOllamaModel', defaultAiProvider.url, {
             name: model.name,
           })
           .then((response) => {
@@ -376,7 +392,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       return Promise.resolve(undefined);
     }
     return window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', aiProvider.url)
+      .invoke('getOllamaModels', defaultAiProvider.url)
       .then((m) => {
         if (m && m.length > 0) {
           return m.find(
@@ -405,7 +421,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         // addTimeLineRequest('downloading ' + newModelName, 'system');
         openFileUploadDialog();
         return window.electronIO.ipcRenderer
-          .invoke('pullOllamaModel', aiProvider.url, {
+          .invoke('pullOllamaModel', defaultAiProvider.url, {
             name: newModelName,
             stream: true,
           })
@@ -469,7 +485,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       const model: HistoryModel = {
         history: chatHistoryItems.current,
         lastModelName: currentModel.current?.name,
-        engine: aiProvider.engine,
+        engine: defaultAiProvider.engine,
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
@@ -618,7 +634,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       addTimeLineRequest(msg, role);
     }
     return window.electronIO.ipcRenderer
-      .invoke('newOllamaMessage', aiProvider.url, {
+      .invoke('newOllamaMessage', defaultAiProvider.url, {
         model,
         messages,
         stream: stream,
@@ -689,8 +705,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
+      openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
-      //isTyping: isTyping.current,
       refreshOllamaModels,
       setModel,
       setImages,
@@ -706,7 +722,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       generate,
     };
   }, [
-    aiProvider,
+    defaultAiProvider,
     models.current,
     images.current,
     currentModel.current,

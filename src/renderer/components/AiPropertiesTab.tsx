@@ -21,8 +21,8 @@ import AppConfig from '-/AppConfig';
 import LoadingLazy from '-/components/LoadingLazy';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Box } from '@mui/material';
-import AiGenDescButton from '-/components/AiGenDescButton';
-import AiGenTagsButton from '-/components/AiGenTagsButton';
+import AiGenDescButton from '-/components/chat/AiGenDescButton';
+import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 
 interface Props {}
 

@@ -19,36 +19,34 @@
 import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import { ButtonPropsVariantOverrides } from '@mui/material/Button';
-import { OverridableStringUnion } from '@mui/types';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { AIIcon } from './CommonIcons';
+import { AIIcon } from '../CommonIcons';
 
-interface Props {
-  variant?: OverridableStringUnion<
-    'text' | 'outlined' | 'contained',
-    ButtonPropsVariantOverrides
-  >;
-}
+interface Props {}
 
-function AiGenTagsButton(props: Props) {
+function AiGenDescButton(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openedEntry } = useOpenedEntryContext();
-  const { generate } = useChatContext();
-  const { addTagsToFsEntry } = useTaggingActionsContext();
+  const { generate, openedEntryModel } = useChatContext();
+  const { setDescription, saveDescription } = useFilePropertiesContext();
+  const { showNotification } = useNotificationContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  if (!openedEntry) {
+  if (
+    !openedEntry ||
+    !openedEntryModel ||
+    !AppConfig.aiSupportedFiletypes.text.includes(openedEntry.extension)
+  ) {
     return null;
   }
 
@@ -58,18 +56,16 @@ function AiGenTagsButton(props: Props) {
     //console.log('newOllamaMessage response:' + response);
     setIsLoading(false);
     if (response) {
-      try {
-        const regex = /\{([^}]+)\}/g;
-        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => ({
-          title: match[1] + '',
-          type: 'sidecar',
-        }));
-        addTagsToFsEntry(openedEntry, tags).then(() => {
-          dispatch(SettingsActions.setEntryContainerTab(0));
-        });
-      } catch (e) {
-        console.error('parse response ' + response, e);
+      dispatch(SettingsActions.setEntryContainerTab(1));
+
+      if (openedEntry.meta.description) {
+        setDescription(openedEntry.meta.description + '\n---\n' + response);
+      } else {
+        setDescription(response);
       }
+      saveDescription();
+      //openEntry(openedEntry.path).then(() => {
+      showNotification('Description for ' + openedEntry.path + ' generated');
     }
   }
 
@@ -77,26 +73,25 @@ function AiGenTagsButton(props: Props) {
     <TsButton
       loading={isLoading}
       disabled={isLoading}
-      tooltip="Uses currently configured AI model to generate tags for this file"
+      tooltip="Uses currently configured AI model to generate description for this file"
       startIcon={<AIIcon />}
-      data-tid="generateTagsAITID"
+      data-tid="generateDescriptionAITID"
       onClick={() => {
         setIsLoading(true);
         if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-          generate('image', 'tags').then((results) =>
+          generate('image', 'description').then((results) =>
             handleGenerationResults(results),
           );
         } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          generate(ext === 'pdf' ? 'image' : 'text', 'tags').then((results) =>
-            handleGenerationResults(results),
+          generate(ext === 'pdf' ? 'image' : 'text', 'summary').then(
+            (results) => handleGenerationResults(results),
           );
         }
       }}
-      {...props}
     >
-      {t('core:generateTags')}
+      {t('core:generateDescription')}
     </TsButton>
   );
 }
 
-export default AiGenTagsButton;
+export default AiGenDescButton;

@@ -9,11 +9,11 @@ import Tooltip from '-/components/Tooltip';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
-import { ChatItem, ChatMode } from '-/components/chat/ChatTypes';
+import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { useChatContext } from '-/hooks/useChatContext';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, Grid2, MenuItem } from '@mui/material';
+import { Box, Grid2, InputLabel, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -23,9 +23,18 @@ import { useTheme } from '@mui/material/styles';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import { ChangeEvent, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
+import { OllamaIcon } from '-/components/dialogs/components/Ollama';
+import { useSelector } from 'react-redux';
+import { getDefaultAIProvider } from '-/reducers/settings';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -41,6 +50,7 @@ function ChatView() {
     setModel,
     currentModel,
   } = useChatContext();
+  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isTyping = useRef<boolean>(false);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
@@ -184,35 +194,12 @@ function ChatView() {
         }}
       >
         <Grid2 container spacing={1} direction="row">
-          <Grid2 size={8} style={{ height: 60 }}>
-            <FormControl fullWidth>
-              <SelectChatModel
-                handleChangeModel={handleChangeModel}
-                chosenModel={currentModel?.name}
-              />
-            </FormControl>
-          </Grid2>
-          <Grid2 size={4} style={{ height: 60 }}>
-            <FormControl fullWidth>
-              <TsSelect
-                placeholder="Chat mode"
-                id="select-mode"
-                value={currentMode.current}
-                onChange={handleChangeMode}
-                label={t('selectMode')}
-              >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem
-                  value="helpful"
-                  title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
-                >
-                  Helpful assistant
-                </MenuItem>
-                <MenuItem value="summary" title="Generate a concise summary">
-                  Generate Summary
-                </MenuItem>
-              </TsSelect>
-            </FormControl>
+          <Grid2 size={12} style={{ height: 60 }}>
+            <SelectChatModel
+              id="chatModelId"
+              handleChangeModel={handleChangeModel}
+              chosenModel={currentModel?.name}
+            />
           </Grid2>
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
@@ -273,6 +260,13 @@ function ChatView() {
                   }}
                   slotProps={{
                     input: {
+                      startAdornment: (
+                        <InputAdornment position="start" style={{ height: 32 }}>
+                          <Tooltip title={aiDefaultProvider?.engine}>
+                            <OllamaIcon height={30} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
                       endAdornment: (
                         <InputAdornment position="end" style={{ height: 32 }}>
                           {isLoading.current && (
@@ -286,6 +280,27 @@ function ChatView() {
                               <SendIcon />
                             </IconButton>
                           </Tooltip>
+                          <TsSelect
+                            id="select-mode"
+                            value={currentMode.current}
+                            onChange={handleChangeMode}
+                            variant="standard"
+                            sx={{ width: currentMode.current ? 170 : 25 }}
+                          >
+                            <MenuItem value="">None</MenuItem>
+                            <MenuItem
+                              value="helpful"
+                              title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
+                            >
+                              Helpful assistant
+                            </MenuItem>
+                            <MenuItem
+                              value="summary"
+                              title="Generate a concise summary"
+                            >
+                              Generate Summary
+                            </MenuItem>
+                          </TsSelect>
                         </InputAdornment>
                       ),
                     },

@@ -74,7 +74,7 @@ function SettingsAI(props: Props) {
   const { i18n, t } = useTranslation();
   const { closeSettings } = props;
   const { changeCurrentModel } = useChatContext();
-  const aiDefailtProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const aiProviders: AIProvider[] = useSelector(getAIProviders);
   //const ollamaAlive = useRef<boolean | null>(null);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
@@ -106,7 +106,10 @@ function SettingsAI(props: Props) {
       window.electronIO.ipcRenderer
         .invoke('getOllamaModels', provider.url)
         .then((m) => {
-          handleChangeProvider(provider.id, 'alive', !!m);
+          const alive = !!m;
+          if (provider.alive !== alive) {
+            handleChangeProvider(provider.id, 'alive', alive);
+          }
         }),
     );
     forceUpdate();
@@ -168,16 +171,6 @@ function SettingsAI(props: Props) {
           <Typography>{t('core:aiSettings')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {/*<TsSelect
-            value={-1}
-            onChange={addAiProvider}
-            label={t('core:addAIEngine')}
-          >
-            <MenuItem value="ollama">
-              <OllamaIcon width={10} style={{ marginRight: 5 }} />
-              Ollama
-            </MenuItem>
-          </TsSelect>*/}
           <ClickAwayListener onClickAway={handleClose}>
             <Box
               ref={anchorRef}
@@ -250,16 +243,18 @@ function SettingsAI(props: Props) {
           </ClickAwayListener>
           {aiProviders && aiProviders.length > 1 && (
             <TsSelect
-              value={aiDefailtProvider?.id}
+              value={aiDefaultProvider?.id}
               onChange={changeDefaultAiProvider}
               label={t('core:defaultAIEngine')}
             >
-              {aiProviders.map((provider) => (
-                <MenuItem value={provider.id}>
-                  <OllamaIcon width={10} style={{ marginRight: 5 }} />
-                  {provider.name}
-                </MenuItem>
-              ))}
+              {aiProviders
+                .filter((p) => p.enable)
+                .map((provider) => (
+                  <MenuItem value={provider.id}>
+                    <OllamaIcon width={10} style={{ marginRight: 5 }} />
+                    {provider.name}
+                  </MenuItem>
+                ))}
             </TsSelect>
           )}
         </AccordionDetails>
@@ -395,12 +390,15 @@ function SettingsAI(props: Props) {
                     data-tid="locationIsDefault"
                     name="isDefault"
                     checked={provider.enable}
+                    disabled={!provider.alive}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      handleChangeProvider(
-                        provider.id,
-                        'enable',
-                        event.target.value,
-                      );
+                      if (provider.alive) {
+                        handleChangeProvider(
+                          provider.id,
+                          'enable',
+                          !provider.enable,
+                        );
+                      }
                     }}
                   />
                 }

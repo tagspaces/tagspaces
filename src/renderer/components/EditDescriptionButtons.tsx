@@ -5,7 +5,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AiGenDescButton from '-/components/AiGenDescButton';
+import AiGenDescButton from '-/components/chat/AiGenDescButton';
 
 const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();

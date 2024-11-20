@@ -32,7 +32,7 @@ import { isDesktopMode } from '-/reducers/settings';
 import { tagsValidation } from '-/services/utils-io';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useTranslation } from 'react-i18next';
-import AiGenTagsButton from '-/components/AiGenTagsButton';
+import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 
 interface Props {
   dataTid?: string;

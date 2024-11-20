@@ -896,5 +896,6 @@
   "engineEnabled": "Engine enabled",
   "engineUrl": "Engine URL",
   "chooseModel": "Choose Model",
+  "engineName": "Engine Name",
   "-": "-"
 }

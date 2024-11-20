@@ -13,6 +13,7 @@ import TsSelect from '-/components/TsSelect';
 import { Model } from '-/components/chat/ChatTypes';
 
 interface Props {
+  id?: string;
   label?: string;
   chosenModel: string;
   handleChangeModel: (newModelName: string) => void;
@@ -20,7 +21,7 @@ interface Props {
 
 function SelectChatModel(props: Props) {
   const { t } = useTranslation();
-  const { label, chosenModel, handleChangeModel } = props;
+  const { id, label, chosenModel, handleChangeModel } = props;
   const { models, removeModel } = useChatContext();
 
   const ollamaAvailableModels: Model[] = [
@@ -86,6 +87,7 @@ function SelectChatModel(props: Props) {
       value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
       label={label ? label : t('selectModel')}
+      id={id ? id : 'selectChatModelId'}
       InputProps={{
         endAdornment: chosenModel && (
           <InputAdornment position="end" sx={{ ml: -12 }}>

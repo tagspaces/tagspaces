@@ -19,30 +19,40 @@
 import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { ButtonPropsVariantOverrides } from '@mui/material/Button';
+import { OverridableStringUnion } from '@mui/types';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { AIIcon } from './CommonIcons';
+import { AIIcon } from '../CommonIcons';
 
-interface Props {}
+interface Props {
+  variant?: OverridableStringUnion<
+    'text' | 'outlined' | 'contained',
+    ButtonPropsVariantOverrides
+  >;
+}
 
-function AiGenDescButton(props: Props) {
+function AiGenTagsButton(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openedEntry } = useOpenedEntryContext();
-  const { generate } = useChatContext();
-  const { setDescription, saveDescription } = useFilePropertiesContext();
-  const { showNotification } = useNotificationContext();
+  const { generate, openedEntryModel } = useChatContext();
+  const { addTagsToFsEntry } = useTaggingActionsContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  if (!openedEntry) {
+  if (
+    !openedEntry ||
+    !openedEntryModel ||
+    !AppConfig.aiSupportedFiletypes.image.includes(openedEntry.extension)
+  ) {
     return null;
   }
 
@@ -52,16 +62,18 @@ function AiGenDescButton(props: Props) {
     //console.log('newOllamaMessage response:' + response);
     setIsLoading(false);
     if (response) {
-      dispatch(SettingsActions.setEntryContainerTab(1));
-
-      if (openedEntry.meta.description) {
-        setDescription(openedEntry.meta.description + '\n---\n' + response);
-      } else {
-        setDescription(response);
+      try {
+        const regex = /\{([^}]+)\}/g;
+        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => ({
+          title: match[1].replace(/^,|,$/g, '') + '',
+          type: 'sidecar',
+        }));
+        addTagsToFsEntry(openedEntry, tags).then(() => {
+          dispatch(SettingsActions.setEntryContainerTab(0));
+        });
+      } catch (e) {
+        console.error('parse response ' + response, e);
       }
-      saveDescription();
-      //openEntry(openedEntry.path).then(() => {
-      showNotification('Description for ' + openedEntry.path + ' generated');
     }
   }
 
@@ -69,25 +81,26 @@ function AiGenDescButton(props: Props) {
     <TsButton
       loading={isLoading}
       disabled={isLoading}
-      tooltip="Uses currently configured AI model to generate description for this file"
+      tooltip="Uses currently configured AI model to generate tags for this file"
       startIcon={<AIIcon />}
-      data-tid="generateDescriptionAITID"
+      data-tid="generateTagsAITID"
       onClick={() => {
         setIsLoading(true);
         if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-          generate('image', 'description').then((results) =>
+          generate('image', 'tags').then((results) =>
             handleGenerationResults(results),
           );
         } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          generate(ext === 'pdf' ? 'image' : 'text', 'summary').then(
-            (results) => handleGenerationResults(results),
+          generate(ext === 'pdf' ? 'image' : 'text', 'tags').then((results) =>
+            handleGenerationResults(results),
           );
         }
       }}
+      {...props}
     >
-      {t('core:generateDescription')}
+      {t('core:generateTags')}
     </TsButton>
   );
 }
 
-export default AiGenDescButton;
+export default AiGenTagsButton;
