@@ -898,6 +898,19 @@ export function getLastVersionPromise(): Promise<string> {
   });
 }
 
+function getDefaultAI(aiProviderId: string, aiProviders: AIProvider[]) {
+  if (aiProviderId) {
+    const provider = aiProviders.find((p) => p.enable && p.id === aiProviderId);
+    if (provider) {
+      return provider;
+    }
+  }
+  if (aiProviders.length > 0) {
+    return aiProviders.find((p) => p.enable);
+  }
+  return undefined;
+}
+
 // Selectors
 export const getEntrySplitSize = (state: any) => state.settings.entrySplitSize;
 export const getMapTileServer = (state: any): TS.MapTileServer =>
@@ -922,20 +935,20 @@ export const isReorderTags = (state: any) => state.settings.reorderTags;
 /*export const getDefaultAIProviderId = (state: any) =>
   state.settings.aiProviderId;*/
 export const getDefaultAIProvider = (state: any) => {
-  if (state.settings.aiProviderId) {
-    const provider = state.settings.aiProviders.find(
-      (p) => p.enable && p.id === state.settings.aiProviderId,
+  if (typeof window.ExtAI === 'undefined') {
+    return getDefaultAI(
+      state.settings.aiProviderId,
+      state.settings.aiProviders,
     );
-    if (provider) {
-      return provider;
-    }
   }
-  if (state.settings.aiProviders.length > 0) {
-    return state.settings.aiProviders.find((p) => p.enable);
-  }
-  return undefined;
+  return getDefaultAI(window.ExtAI.defaultEngine, window.ExtAI.engines);
 };
-export const getAIProviders = (state: any) => state.settings.aiProviders;
+export const getAIProviders = (state: any) => {
+  if (typeof window.ExtAI === 'undefined') {
+    return state.settings.aiProviders;
+  }
+  return window.ExtAI.engines;
+};
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getGeoTaggingFormat = (state: any) =>

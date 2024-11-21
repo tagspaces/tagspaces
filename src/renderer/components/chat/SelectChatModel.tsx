@@ -29,13 +29,14 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   id?: string;
   label?: string;
+  disabled?: boolean;
   chosenModel: string;
   handleChangeModel: (newModelName: string) => void;
 }
 
 function SelectChatModel(props: Props) {
   const { t } = useTranslation();
-  const { id, label, chosenModel, handleChangeModel } = props;
+  const { id, label, chosenModel, handleChangeModel, disabled } = props;
   const { models, removeModel } = useChatContext();
 
   const ollamaAvailableModels: Model[] = [
@@ -98,6 +99,7 @@ function SelectChatModel(props: Props) {
 
   return (
     <TsSelect
+      disabled={disabled}
       value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
       label={label ? label : t('selectModel')}

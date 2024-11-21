@@ -79,6 +79,7 @@ function SettingsAI(props: Props) {
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
   const dispatch: AppDispatch = useDispatch();
   const anchorRef = React.useRef<HTMLDivElement>(null);
+  const providersAlive = React.useRef({});
   const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
 
   useEffect(() => {
@@ -105,10 +106,10 @@ function SettingsAI(props: Props) {
       window.electronIO.ipcRenderer
         .invoke('getOllamaModels', provider.url)
         .then((m) => {
-          const alive = !!m;
-          if (provider.alive !== alive) {
+          providersAlive.current[provider.id] = !!m;
+          /*if (provider.alive !== alive) {
             handleChangeProvider(provider.id, 'alive', alive);
-          }
+          }*/
         }),
     );
     forceUpdate();
@@ -139,17 +140,20 @@ function SettingsAI(props: Props) {
     window.electronIO.ipcRenderer
       .invoke('getOllamaModels', providerUrl)
       .then((m) => {
+        const providerId = getUuid();
+        providersAlive.current[providerId] = !!m;
         const aiProvider: AIProvider = {
-          id: getUuid(),
+          id: providerId,
           engine: provider,
           name: provider,
           url: providerUrl,
-          alive: !!m,
-          enable: false,
+          enable: true,
         };
         dispatch(SettingsActions.addAiProvider(aiProvider));
       });
   };
+
+  const externalConfig = typeof window.ExtAI !== 'undefined';
 
   return (
     <div
@@ -181,6 +185,7 @@ function SettingsAI(props: Props) {
             >
               <TsButton
                 //tooltip={t('core:createNew')}
+                disabled={externalConfig}
                 aria-controls={
                   openedNewAIMenu ? 'split-button-menu' : undefined
                 }
@@ -242,6 +247,7 @@ function SettingsAI(props: Props) {
           </ClickAwayListener>
           {aiProviders && aiProviders.length > 1 && (
             <TsSelect
+              disabled={externalConfig}
               value={aiDefaultProvider?.id}
               onChange={changeDefaultAiProvider}
               label={t('core:defaultAIEngine')}
@@ -273,15 +279,19 @@ function SettingsAI(props: Props) {
               title={
                 t('core:serviceStatus') +
                 ': ' +
-                (provider.alive ? t('core:available') : t('core:notAvailable'))
+                (providersAlive.current[provider.id]
+                  ? t('core:available')
+                  : t('core:notAvailable'))
               }
             >
-              {provider.alive === null ? (
+              {providersAlive.current[provider.id] === null ? (
                 <CircularProgress size={12} />
               ) : (
                 <FiberManualRecordIcon
                   sx={{
-                    color: provider.alive ? 'green' : 'red',
+                    color: providersAlive.current[provider.id]
+                      ? 'green'
+                      : 'red',
                     fontSize: 19,
                     ml: 1,
                   }}
@@ -308,6 +318,7 @@ function SettingsAI(props: Props) {
             <FormGroup>
               <FormControl>
                 <TsTextField
+                  disabled={externalConfig}
                   fullWidth
                   name="engineName"
                   label={t('core:engineName')}
@@ -324,6 +335,7 @@ function SettingsAI(props: Props) {
               </FormControl>
               <FormControl>
                 <TsTextField
+                  disabled={externalConfig}
                   fullWidth
                   name="ollamaSocket"
                   label={t('core:engineUrl')}
@@ -358,6 +370,7 @@ function SettingsAI(props: Props) {
                 />
               </FormControl>
               <SelectChatModel
+                disabled={externalConfig}
                 label={t('core:defaultAImodelText')}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
@@ -370,6 +383,7 @@ function SettingsAI(props: Props) {
                 chosenModel={provider.defaultTextModel}
               />
               <SelectChatModel
+                disabled={externalConfig}
                 label={t('core:defaultAImodelImages')}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
@@ -389,9 +403,11 @@ function SettingsAI(props: Props) {
                     data-tid="locationIsDefault"
                     name="isDefault"
                     checked={provider.enable}
-                    disabled={!provider.alive}
+                    disabled={
+                      !providersAlive.current[provider.id] || externalConfig
+                    }
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      if (provider.alive) {
+                      if (providersAlive.current[provider.id]) {
                         handleChangeProvider(
                           provider.id,
                           'enable',

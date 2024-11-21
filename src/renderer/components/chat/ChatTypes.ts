@@ -31,7 +31,7 @@ export type AIProvider = {
   name: string;
   enable: boolean;
   url: string;
-  alive?: boolean;
+  //alive?: boolean;
   defaultImageModel?: string;
   defaultTextModel?: string;
 };
