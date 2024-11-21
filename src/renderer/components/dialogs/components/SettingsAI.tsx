@@ -179,7 +179,7 @@ function SettingsAI(props: Props) {
               ref={anchorRef}
               sx={{
                 width: '100%',
-                textAlign: 'center',
+                textAlign: 'left',
                 position: 'relative',
               }}
             >
@@ -194,9 +194,7 @@ function SettingsAI(props: Props) {
                 data-tid="createNewAIButtonTID"
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
-                style={{
-                  borderRadius: AppConfig.defaultCSSRadius,
-                }}
+                style={{ marginBottom: AppConfig.defaultSpaceBetweenButtons }}
               >
                 <Box
                   style={{
@@ -216,6 +214,7 @@ function SettingsAI(props: Props) {
                 anchorEl={anchorRef.current}
                 role={undefined}
                 transition
+                placement="bottom-start"
                 disablePortal
               >
                 {({ TransitionProps, placement }) => (
@@ -231,7 +230,10 @@ function SettingsAI(props: Props) {
                         <MenuItem
                           key="createNewTextFileTID"
                           ata-tid="createNewTextFileTID"
-                          onClick={() => addAiProvider('ollama')}
+                          onClick={() => {
+                            addAiProvider('ollama');
+                            setOpenedNewAIMenu(false);
+                          }}
                         >
                           <ListItemIcon>
                             <OllamaIcon height={30} />
