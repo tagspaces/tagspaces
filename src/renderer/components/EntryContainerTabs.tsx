@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import LoadingLazy from '-/components/LoadingLazy';
+import { useChatContext } from '-/hooks/useChatContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -153,6 +154,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
+  const { initHistory } = useChatContext();
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
@@ -188,24 +190,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       forceUpdate();
     }
   }, [isEditable, isEditMode]);
-
-  // Create functions that dispatch actions
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    dispatch(SettingsActions.setEntryContainerTab(newValue));
-    openPanel();
-    console.log('tab changed to:' + newValue);
-  };
-  function handleTabClick(selectedTabIndex, index: number) {
-    if (
-      openedEntry.isFile &&
-      selectedTabIndex === index //parseInt(event.currentTarget.id.split('-')[1], 10)
-    ) {
-      // when selected tab is clicked...
-      dispatch(SettingsActions.setEntryContainerTab(undefined));
-      toggleProperties();
-      console.log('tab click:' + index);
-    }
-  }
 
   /*function initSelectedTabIndex(index) {
     if (!haveRevisions.current) {
@@ -251,6 +235,27 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       name: 'aiTab',
     };
     tabsArray.push(tab4);
+  }
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    const tab = tabsArray[newValue];
+    if (tab && tab.name === 'aiTab') {
+      initHistory();
+    }
+    dispatch(SettingsActions.setEntryContainerTab(newValue));
+    openPanel();
+    console.log('tab changed to:' + newValue);
+  };
+  function handleTabClick(selectedTabIndex, index: number) {
+    if (
+      openedEntry.isFile &&
+      selectedTabIndex === index //parseInt(event.currentTarget.id.split('-')[1], 10)
+    ) {
+      // when selected tab is clicked...
+      dispatch(SettingsActions.setEntryContainerTab(undefined));
+      toggleProperties();
+      console.log('tab click:' + index);
+    }
   }
 
   function getSelectedTabIndex(maxTabsIndex) {

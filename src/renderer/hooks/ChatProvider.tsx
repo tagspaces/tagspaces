@@ -89,6 +89,7 @@ type ChatData = {
     includeHistory?: boolean,
   ) => Promise<any>;
   generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
+  initHistory: () => void;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -112,6 +113,7 @@ export const ChatContext = createContext<ChatData>({
   addTimeLineResponse: undefined,
   newChatMessage: undefined,
   generate: undefined,
+  initHistory: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -179,6 +181,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, []);
 
   useEffect(() => {
+    refreshOllamaModels();
+    setOpenedEntryModel();
+  }, [defaultAiProvider]);
+
+  function initHistory() {
     if (openedEntry) {
       if (
         !openedEntry.isFile &&
@@ -192,27 +199,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
       setOpenedEntryModel();
     }
-  }, [openedEntry]);
-
-  useEffect(() => {
-    refreshOllamaModels();
-    setOpenedEntryModel();
-  }, [defaultAiProvider]);
-
-  /*function getDefaultAIProvider (aiProviderId: string, aiProviders: AIProvider[]) {
-    if (aiProviderId) {
-      const provider = aiProviders.find(
-        (p) => p.enable && p.id === aiProviderId,
-      );
-      if (provider) {
-        return provider;
-      }
-    }
-    if (aiProviders.length > 0) {
-      return aiProviders.find((p) => p.enable);
-    }
-    return undefined;
-  }*/
+  }
 
   function setOpenedEntryModel() {
     if (openedEntry && defaultAiProvider) {
@@ -721,6 +708,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       newChatMessage,
       findModel,
       generate,
+      initHistory,
     };
   }, [
     defaultAiProvider,
