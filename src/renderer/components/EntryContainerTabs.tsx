@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import AiPropertiesTab from '-/components/AiPropertiesTab';
 import {
   AIIcon,
   DescriptionIcon,
@@ -25,9 +24,6 @@ import {
   FolderPropertiesIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
-import EditDescription from '-/components/EditDescription';
-import EntryProperties from '-/components/EntryProperties';
-import Revisions from '-/components/Revisions';
 import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -48,6 +44,7 @@ import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import LoadingLazy from '-/components/LoadingLazy';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -60,7 +57,6 @@ type TabItem = {
   icon: React.ReactNode;
   title: string;
   name: string;
-  component: React.ReactNode;
 };
 
 const StyledTabs = styled((props: StyledTabsProps) => (
@@ -122,9 +118,19 @@ function a11yProps(index: number) {
   };
 }
 
-/*const tab1 = React.lazy(
-  () => import(/!* webpackChunkName: "tab" *!/ './WelcomePanel'),
-);*/
+const TabContent1 = React.lazy(
+  () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
+);
+
+const TabContent2 = React.lazy(
+  () => import(/* webpackChunkName: "EditDescription" */ './EditDescription'),
+);
+const TabContent3 = React.lazy(
+  () => import(/* webpackChunkName: "Revisions" */ './Revisions'),
+);
+const TabContent4 = React.lazy(
+  () => import(/* webpackChunkName: "AiPropertiesTab" */ './AiPropertiesTab'),
+);
 
 interface EntryContainerTabsProps {
   openPanel: () => void;
@@ -218,16 +224,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     icon: <FolderPropertiesIcon />,
     title: t('core:details'),
     name: 'propertiesTab',
-    component: (
-      <EntryProperties key={openedEntry.path} tileServer={tileServer} />
-    ),
   };
   const tab2: TabItem = {
     dataTid: 'descriptionTabTID',
     icon: haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />,
     title: t('core:filePropertiesDescription'),
-    name: 'propertiesTab',
-    component: <EditDescription />,
+    name: 'descriptionTab',
   };
 
   const tabsArray: TabItem[] = [tab1, tab2];
@@ -237,7 +239,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       icon: <RevisionIcon />,
       title: t('core:revisions'),
       name: 'revisionsTab',
-      component: <Revisions />,
     };
     tabsArray.push(tab3);
   }
@@ -248,7 +249,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       icon: <AIIcon />,
       title: t('core:aiSettingsTab'),
       name: 'aiTab',
-      component: <AiPropertiesTab />,
     };
     tabsArray.push(tab4);
   }
@@ -267,6 +267,18 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   }
 
   const selectedTabIndex = getSelectedTabIndex(tabsArray.length - 1);
+
+  function getTabContainer(tabName: string) {
+    if (tabName === 'propertiesTab') {
+      return <TabContent1 key={openedEntry.path} tileServer={tileServer} />;
+    } else if (tabName === 'descriptionTab') {
+      return <TabContent2 />;
+    } else if (tabName === 'revisionsTab') {
+      return <TabContent3 />;
+    } else if (tabName === 'aiTab') {
+      return <TabContent4 />;
+    }
+  }
 
   return (
     <div
@@ -300,11 +312,13 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           ))}
         </StyledTabs>
       </Box>
-      {tabsArray.map((tab, index) => (
-        <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
-          {tab.component}
-        </TsTabPanel>
-      ))}
+      <React.Suspense fallback={<LoadingLazy />}>
+        {tabsArray.map((tab, index) => (
+          <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
+            {getTabContainer(tab.name)}
+          </TsTabPanel>
+        ))}
+      </React.Suspense>
     </div>
   );
 }
