@@ -70,6 +70,7 @@ type ChatData = {
   unloadCurrentModel: () => void;
   removeModel: (modelName: string) => void;
   findModel: (modelName: string) => Model;
+  getHistoryFilePath: (name?: string) => string;
   changeCurrentModel: (
     newModelName: string,
     confirmCallback?: () => void,
@@ -104,6 +105,7 @@ export const ChatContext = createContext<ChatData>({
   unloadCurrentModel: undefined,
   removeModel: undefined,
   findModel: undefined,
+  getHistoryFilePath: undefined,
   changeCurrentModel: undefined,
   getModel: undefined,
   addTimeLineRequest: undefined,
@@ -325,9 +327,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           .then((uint8Array) => {
             const base64Img = toBase64Image(uint8Array);
             const imageUuid = getUuid();
-            const imageHistoryPath = getHistoryFilePath(
-              imageUuid + '.' + extractFileExtension(path),
-            );
+            const imageHistoryPath =
+              imageUuid + '.' + extractFileExtension(path);
             const image: ChatImage = {
               uuid: imageUuid,
               path: imageHistoryPath,
@@ -335,7 +336,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             };
             images.current = [...images.current, image];
             saveFilePromise(
-              { path: imageHistoryPath },
+              { path: getHistoryFilePath(imageHistoryPath) },
               uint8Array,
               true,
               false,
@@ -471,10 +472,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const dirSeparator = currentLocation
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
-    const metaFolder = getMetaDirectoryPath(
-      openedEntry.path,
-      currentLocation?.getDirSeparator(),
-    );
+    const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
     const fileName = name ? name : 'tsc.json';
     return metaFolder + dirSeparator + 'ai' + dirSeparator + fileName;
   }
@@ -710,6 +708,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
       refreshOllamaModels,
+      getHistoryFilePath,
       setModel,
       setImages,
       removeImage,

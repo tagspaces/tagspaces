@@ -57,6 +57,7 @@ function ChatView() {
     changeCurrentModel,
     setModel,
     currentModel,
+    getHistoryFilePath,
   } = useChatContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isTyping = useRef<boolean>(false);
@@ -144,7 +145,7 @@ function ChatView() {
         const response = item.response ? model + ': ' + item.response : '';
         const images = item.imagePaths
           ? item.imagePaths.map((i) => {
-              return '![chat image](' + i + ')';
+              return '![chat image]("' + getHistoryFilePath(i) + '")';
             })
           : '';
         return (
