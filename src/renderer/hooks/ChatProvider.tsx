@@ -157,12 +157,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             dispatch(
               AppActions.onUploadProgress(
                 {
-                  key: message.status,
+                  key: message.model || message.status,
                   loaded: message.completed,
                   total: message.total,
                 },
                 undefined,
-                message.name,
+                message.model,
               ),
             );
           }
@@ -263,14 +263,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       window.electronIO.ipcRenderer
         .invoke('getOllamaModels', defaultAiProvider.url)
         .then((m) => {
-          models.current = m;
-          if (modelName) {
-            const model = findModel(modelName);
-            if (model) {
-              return setModel(model);
+          if (m) {
+            models.current = m;
+            if (modelName) {
+              const model = findModel(modelName);
+              if (model) {
+                return setModel(model);
+              }
             }
+            forceUpdate();
           }
-          forceUpdate();
         });
     }
   }
@@ -378,7 +380,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function findModel(modelName: string) {
-    return models.current.find(
+    return models.current?.find(
       (m) => m.name === modelName || m.name === modelName + ':latest',
     );
   }

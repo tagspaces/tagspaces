@@ -87,6 +87,13 @@ function SelectChatModel(props: Props) {
           'large multimodal model that is designed to understand and generate content based on both visual inputs (images) and textual instructions.',
       },
     },
+    {
+      name: 'tinyllama',
+      engine: 'ollama',
+      details: {
+        format: 'TinyLlama is a compact model with only 1.1B parameters.',
+      },
+    },
   ];
 
   const changeModel = (event: ChangeEvent<HTMLInputElement>) => {

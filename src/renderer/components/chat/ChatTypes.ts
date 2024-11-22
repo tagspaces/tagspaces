@@ -76,7 +76,7 @@ export type ModelDetails = {
 };
 
 export type PullModelResponse = {
-  name: string;
+  model: string;
   total: string;
   completed: string;
   status: string;

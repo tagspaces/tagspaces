@@ -106,13 +106,19 @@ function SettingsAI(props: Props) {
       window.electronIO.ipcRenderer
         .invoke('getOllamaModels', provider.url)
         .then((m) => {
-          providersAlive.current[provider.id] = !!m;
+          const alive = !!m;
+          providersAlive.current = {
+            ...providersAlive.current,
+            [provider.id]: alive,
+          };
+          forceUpdate();
+          return alive;
           /*if (provider.alive !== alive) {
             handleChangeProvider(provider.id, 'alive', alive);
           }*/
         }),
     );
-    forceUpdate();
+    //Promise.all(promises).then(() => forceUpdate());
   }
 
   function handleChangeProvider(id: string, props: keyof AIProvider, value) {
@@ -141,7 +147,10 @@ function SettingsAI(props: Props) {
       .invoke('getOllamaModels', providerUrl)
       .then((m) => {
         const providerId = getUuid();
-        providersAlive.current[providerId] = !!m;
+        providersAlive.current = {
+          ...providersAlive.current,
+          [providerId]: !!m,
+        };
         const aiProvider: AIProvider = {
           id: providerId,
           engine: provider,
@@ -372,7 +381,6 @@ function SettingsAI(props: Props) {
                 />
               </FormControl>
               <SelectChatModel
-                disabled={externalConfig}
                 label={t('core:defaultAImodelText')}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
@@ -385,7 +393,6 @@ function SettingsAI(props: Props) {
                 chosenModel={provider.defaultTextModel}
               />
               <SelectChatModel
-                disabled={externalConfig}
                 label={t('core:defaultAImodelImages')}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
