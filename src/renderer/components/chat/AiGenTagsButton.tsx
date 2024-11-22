@@ -22,28 +22,35 @@ import { useChatContext } from '-/hooks/useChatContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { AppDispatch } from '-/reducers/app';
-import { actions as SettingsActions } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getDefaultAIProvider,
+} from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
 import { OverridableStringUnion } from '@mui/types';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 interface Props {
   variant?: OverridableStringUnion<
     'text' | 'outlined' | 'contained',
     ButtonPropsVariantOverrides
   >;
+  fromDescription?: boolean;
 }
 
 function AiGenTagsButton(props: Props) {
+  const { fromDescription, variant } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openedEntry } = useOpenedEntryContext();
-  const { generate, openedEntryModel } = useChatContext();
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const { generate, openedEntryModel, newChatMessage } = useChatContext();
   const { addTagsToFsEntry } = useTaggingActionsContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,7 +96,18 @@ function AiGenTagsButton(props: Props) {
       data-tid="generateTagsAITID"
       onClick={() => {
         setIsLoading(true);
-        if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        if (fromDescription && openedEntry.meta.description) {
+          newChatMessage(
+            openedEntry.meta.description,
+            false,
+            'user',
+            'tags',
+            defaultAiProvider.defaultTextModel,
+            false,
+            [],
+            false,
+          ).then((results) => handleGenerationResults(results));
+        } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
           generate('image', 'tags').then((results) =>
             handleGenerationResults(results),
           );
@@ -99,9 +117,12 @@ function AiGenTagsButton(props: Props) {
           );
         }
       }}
-      {...props}
+      variant={variant}
     >
-      {t('core:generateTags')}
+      {t(
+        'core:' +
+          (fromDescription ? 'generateTagsFromDescription' : 'generateTags'),
+      )}
     </TsButton>
   );
 }
