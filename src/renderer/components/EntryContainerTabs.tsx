@@ -38,6 +38,7 @@ import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
+  isDevMode,
 } from '-/reducers/settings';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
@@ -121,6 +122,10 @@ function a11yProps(index: number) {
   };
 }
 
+/*const tab1 = React.lazy(
+  () => import(/!* webpackChunkName: "tab" *!/ './WelcomePanel'),
+);*/
+
 interface EntryContainerTabsProps {
   openPanel: () => void;
   toggleProperties: () => void;
@@ -145,6 +150,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
+  const devMode: boolean = useSelector(isDevMode);
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const haveRevisions = useRef<boolean>(isEditable);
@@ -236,7 +242,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     tabsArray.push(tab3);
   }
 
-  if (!openedEntry.isFile || (Pro && AppConfig.isElectron)) {
+  if (!openedEntry.isFile || (devMode && Pro && AppConfig.isElectron)) {
     const tab4: TabItem = {
       dataTid: 'aiTabTID',
       icon: <AIIcon />,
