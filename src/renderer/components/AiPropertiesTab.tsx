@@ -23,6 +23,8 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Box } from '@mui/material';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import { useSelector } from 'react-redux';
+import { isDevMode } from '-/reducers/settings';
 
 interface Props {}
 
@@ -39,8 +41,9 @@ function ChatViewAsync(props) {
 
 function AiPropertiesTab(props: Props) {
   const { openedEntry } = useOpenedEntryContext();
+  const devMode: boolean = useSelector(isDevMode);
 
-  if (!openedEntry.isFile) {
+  if (!devMode || !openedEntry.isFile) {
     return <ChatViewAsync />;
   }
 

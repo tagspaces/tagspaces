@@ -38,7 +38,6 @@ import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDevMode,
 } from '-/reducers/settings';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
@@ -148,7 +147,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
-  const devMode: boolean = useSelector(isDevMode);
   const haveRevisions = useRef<boolean>(isEditable);
   //const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
@@ -238,17 +236,15 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     tabsArray.push(tab3);
   }
 
-  if (devMode) {
-    if (!openedEntry.isFile || (Pro && AppConfig.isElectron)) {
-      const tab4: TabItem = {
-        dataTid: 'aiTabTID',
-        icon: <AIIcon />,
-        title: t('core:aiSettingsTab'),
-        name: 'aiTab',
-        component: <AiPropertiesTab />,
-      };
-      tabsArray.push(tab4);
-    }
+  if (!openedEntry.isFile || (Pro && AppConfig.isElectron)) {
+    const tab4: TabItem = {
+      dataTid: 'aiTabTID',
+      icon: <AIIcon />,
+      title: t('core:aiSettingsTab'),
+      name: 'aiTab',
+      component: <AiPropertiesTab />,
+    };
+    tabsArray.push(tab4);
   }
 
   function getSelectedTabIndex(maxTabsIndex) {
