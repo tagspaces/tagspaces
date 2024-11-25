@@ -106,6 +106,18 @@ export const types = {
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
 };
 
+function generateUniqueName(array: Array<any>, baseName: string): string {
+  let uniqueName = baseName;
+  let count = 1;
+
+  while (array.some((item) => item.name === uniqueName)) {
+    uniqueName = `${baseName}${count}`;
+    count++;
+  }
+
+  return uniqueName;
+}
+
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
@@ -256,6 +268,14 @@ export default (state: any = defaultSettings, action: any) => {
       return { ...state, aiProviderId: action.aiProviderId };
     }
     case types.ADD_AI_PROVIDER: {
+      if (
+        state.aiProviders.some((item) => item.name === action.aiProvider.name)
+      ) {
+        action.aiProvider.name = generateUniqueName(
+          state.aiProviders,
+          action.aiProvider.name,
+        );
+      }
       return {
         ...state,
         aiProviders: [...state.aiProviders, action.aiProvider],

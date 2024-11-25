@@ -129,12 +129,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const currentModel = useRef<Model>(undefined);
-  const openedEntryModel = useRef<Model>(undefined);
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const models = useRef<Model[]>([]);
+  const openedEntryModel = useRef<Model>(
+    getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
+  );
   const images = useRef<ChatImage[]>([]);
   //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
-  //const aiProviders: AIProvider[] = useSelector(getAIProviders);
-  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider); //getDefaultAIProvider(defaultAiProviderId,aiProviders);
+  //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
@@ -185,6 +187,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     setOpenedEntryModel();
   }, [defaultAiProvider]);
 
+  useEffect(() => {
+    setOpenedEntryModel();
+  }, [openedEntry]);
+
   function initHistory() {
     if (openedEntry) {
       if (
@@ -197,31 +203,40 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           forceUpdate();
         });
       }
-      setOpenedEntryModel();
     }
   }
 
   function setOpenedEntryModel() {
-    if (openedEntry && defaultAiProvider) {
-      const ext = extractFileExtension(openedEntry.name).toLowerCase();
-      let model;
-      if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-        model = defaultAiProvider.defaultTextModel;
-      } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-        model = defaultAiProvider.defaultImageModel;
-      }
-      if (model) {
-        const newModel = findModel(model);
-        if (
-          !newModel ||
-          !openedEntryModel.current ||
-          newModel.name !== openedEntryModel.current.name
-        ) {
-          openedEntryModel.current = newModel;
-          forceUpdate();
-        }
+    if (openedEntry) {
+      const newModel = getOpenedEntryModel(openedEntry.name, defaultAiProvider);
+      if (
+        !newModel ||
+        !openedEntryModel.current ||
+        newModel.name !== openedEntryModel.current.name
+      ) {
+        openedEntryModel.current = newModel;
+        forceUpdate();
       }
     }
+  }
+
+  function getOpenedEntryModel(
+    fileName: string,
+    aiProvider: AIProvider,
+  ): Model {
+    if (fileName && aiProvider) {
+      const ext = extractFileExtension(fileName).toLowerCase();
+      let model;
+      if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+        model = aiProvider.defaultTextModel;
+      } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        model = aiProvider.defaultImageModel;
+      }
+      if (model) {
+        return findModel(model);
+      }
+    }
+    return undefined;
   }
 
   function loadHistory(): Promise<ChatItem[]> {

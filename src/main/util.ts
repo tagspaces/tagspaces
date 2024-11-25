@@ -230,7 +230,7 @@ export function ollamaPostRequest(
       },
     };
     //console.log('Ollama option: ', option);
-    //console.log('Ollama payload: ', payload);
+    console.log('Ollama payload: ', payload);
     const reqPost = http
       .request(option, (resp) => {
         const dataChunks: string[] = [];
@@ -239,7 +239,7 @@ export function ollamaPostRequest(
         resp.on('data', (chunk) => {
           try {
             const msgChunk = chunk.toString('utf-8');
-            //console.log('Ollama data: ', msgChunk);
+            console.log('Ollama data: ', msgChunk);
             const message = JSON.parse(msgChunk);
 
             if (message.error) {

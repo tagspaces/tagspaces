@@ -69,7 +69,7 @@ function AiGenTagsButton(props: Props) {
   const ext = extractFileExtension(openedEntry.name).toLowerCase();
 
   function handleGenerationResults(response) {
-    //console.log('newOllamaMessage response:' + response);
+    console.log('newOllamaMessage response:' + response);
     setIsLoading(false);
     if (response) {
       try {
