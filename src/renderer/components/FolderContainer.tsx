@@ -351,20 +351,22 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          <ToggleButton
-            value=""
-            aria-label="chat-label"
-            data-tid="chatTID"
-            style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
-            onClick={() => {
-              dispatch(SettingsActions.setEntryContainerTab(3));
-              openEntry(currentDirectoryPath);
-            }}
-          >
-            <Tooltip title="AI Chat for this folder">
-              <ChatIcon />
-            </Tooltip>
-          </ToggleButton>
+          {AppConfig.isElectron && (
+            <ToggleButton
+              value=""
+              aria-label="chat-label"
+              data-tid="chatTID"
+              style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
+              onClick={() => {
+                dispatch(SettingsActions.setEntryContainerTab(3));
+                openEntry(currentDirectoryPath);
+              }}
+            >
+              <Tooltip title="AI Chat for this folder">
+                <ChatIcon />
+              </Tooltip>
+            </ToggleButton>
+          )}
         </ToggleButtonGroup>
       )}
     </div>

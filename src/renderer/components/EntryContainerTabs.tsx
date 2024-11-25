@@ -228,13 +228,16 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   }
 
   if (!openedEntry.isFile || (devMode && Pro && AppConfig.isElectron)) {
-    const tab4: TabItem = {
-      dataTid: 'aiTabTID',
-      icon: <AIIcon />,
-      title: t('core:aiSettingsTab'),
-      name: 'aiTab',
-    };
-    tabsArray.push(tab4);
+    if (AppConfig.isElectron) {
+      // todo enable for web
+      const tab4: TabItem = {
+        dataTid: 'aiTabTID',
+        icon: <AIIcon />,
+        title: t('core:aiSettingsTab'),
+        name: 'aiTab',
+      };
+      tabsArray.push(tab4);
+    }
   }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
