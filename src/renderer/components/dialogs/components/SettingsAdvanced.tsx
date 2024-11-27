@@ -34,6 +34,7 @@ import {
   getSettings,
   getMapTileServers,
   isDevMode,
+  getMaxCollectedTag,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
@@ -62,6 +63,7 @@ function SettingsAdvanced(props: Props) {
     : undefined;
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
+  const maxCollectedTag = useSelector(getMaxCollectedTag);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
@@ -177,6 +179,25 @@ function SettingsAdvanced(props: Props) {
           data-tid="prefixTagContainerTID"
           value={settings.prefixTagContainer}
           onChange={(event) => setPrefixTagContainer(event.target.value)}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:maxCollectedTag')} />
+        <TsTextField
+          type="number"
+          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          style={{ maxWidth: '92px' }}
+          data-tid="prefixTagContainerTID"
+          value={maxCollectedTag}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            dispatch(
+              SettingsActions.setMaxCollectedTag(
+                event.target.value === ''
+                  ? undefined
+                  : Number(event.target.value),
+              ),
+            )
+          }
         />
       </ListItem>
       {Pro && (
