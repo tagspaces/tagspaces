@@ -53,6 +53,7 @@ import DialogsRoot from '-/containers/DialogsRoot';
 import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
 import { ChatContextProvider } from '-/hooks/ChatProvider';
 import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
+import { EntryPropsTabsContextProvider } from '-/hooks/EntryPropsTabsContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -87,43 +88,45 @@ export default function Root({ store, persistor }: RootType) {
                           <PlatformFacadeContextProvider>
                             <LocationIndexContextProvider>
                               <IOActionsContextProvider>
-                                <OpenedEntryContextProvider>
-                                  <TagGroupsLocationContextProvider>
-                                    <TaggingActionsContextProvider>
-                                      <DndProvider backend={HTML5Backend}>
-                                        <ExtensionsContextProvider>
-                                          <PanelsContextProvider>
-                                            <UserContextProvider>
-                                              <SavedSearchesContextProvider>
-                                                <BrowserHistoryContextProvider>
-                                                  <FileUploadDialogContextProvider>
-                                                    <ChatContextProvider>
-                                                      {Pro ? (
-                                                        <Pro.contextProviders.BookmarksContextProvider>
-                                                          <Pro.contextProviders.HistoryContextProvider>
-                                                            <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                              <DialogsRoot>
-                                                                <MainPage />
-                                                              </DialogsRoot>
-                                                            </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                          </Pro.contextProviders.HistoryContextProvider>
-                                                        </Pro.contextProviders.BookmarksContextProvider>
-                                                      ) : (
-                                                        <DialogsRoot>
-                                                          <MainPage />
-                                                        </DialogsRoot>
-                                                      )}
-                                                    </ChatContextProvider>
-                                                  </FileUploadDialogContextProvider>
-                                                </BrowserHistoryContextProvider>
-                                              </SavedSearchesContextProvider>
-                                            </UserContextProvider>
-                                          </PanelsContextProvider>
-                                        </ExtensionsContextProvider>
-                                      </DndProvider>
-                                    </TaggingActionsContextProvider>
-                                  </TagGroupsLocationContextProvider>
-                                </OpenedEntryContextProvider>
+                                <EntryPropsTabsContextProvider>
+                                  <OpenedEntryContextProvider>
+                                    <TagGroupsLocationContextProvider>
+                                      <TaggingActionsContextProvider>
+                                        <DndProvider backend={HTML5Backend}>
+                                          <ExtensionsContextProvider>
+                                            <PanelsContextProvider>
+                                              <UserContextProvider>
+                                                <SavedSearchesContextProvider>
+                                                  <BrowserHistoryContextProvider>
+                                                    <FileUploadDialogContextProvider>
+                                                      <ChatContextProvider>
+                                                        {Pro ? (
+                                                          <Pro.contextProviders.BookmarksContextProvider>
+                                                            <Pro.contextProviders.HistoryContextProvider>
+                                                              <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                <DialogsRoot>
+                                                                  <MainPage />
+                                                                </DialogsRoot>
+                                                              </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                            </Pro.contextProviders.HistoryContextProvider>
+                                                          </Pro.contextProviders.BookmarksContextProvider>
+                                                        ) : (
+                                                          <DialogsRoot>
+                                                            <MainPage />
+                                                          </DialogsRoot>
+                                                        )}
+                                                      </ChatContextProvider>
+                                                    </FileUploadDialogContextProvider>
+                                                  </BrowserHistoryContextProvider>
+                                                </SavedSearchesContextProvider>
+                                              </UserContextProvider>
+                                            </PanelsContextProvider>
+                                          </ExtensionsContextProvider>
+                                        </DndProvider>
+                                      </TaggingActionsContextProvider>
+                                    </TagGroupsLocationContextProvider>
+                                  </OpenedEntryContextProvider>
+                                </EntryPropsTabsContextProvider>
                               </IOActionsContextProvider>
                             </LocationIndexContextProvider>
                           </PlatformFacadeContextProvider>

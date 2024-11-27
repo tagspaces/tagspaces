@@ -57,6 +57,7 @@ import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudio
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   open: boolean;
@@ -166,7 +167,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showProperties() {
-    return openEntry(directoryPath, true);
+    return openEntry(directoryPath, TabNames.propertiesTab);
   }
 
   function perspectiveSwitch(perspectiveId) {

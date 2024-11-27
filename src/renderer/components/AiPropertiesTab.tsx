@@ -25,26 +25,16 @@ import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import { useSelector } from 'react-redux';
 import { isDevMode } from '-/reducers/settings';
+import ChatView from '-/components/chat/ChatView';
 
 interface Props {}
-
-const ChatView = React.lazy(
-  () => import(/* webpackChunkName: "ChatView" */ './chat/ChatView'),
-);
-function ChatViewAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ChatView {...props} />
-    </React.Suspense>
-  );
-}
 
 function AiPropertiesTab(props: Props) {
   const { openedEntry } = useOpenedEntryContext();
   const devMode: boolean = useSelector(isDevMode);
 
   if (!devMode || !openedEntry.isFile) {
-    return <ChatViewAsync />;
+    return <ChatView />;
   }
 
   return (

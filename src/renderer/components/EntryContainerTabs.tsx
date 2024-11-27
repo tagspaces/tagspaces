@@ -16,49 +16,29 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
-import {
-  AIIcon,
-  DescriptionIcon,
-  EditDescriptionIcon,
-  FolderPropertiesIcon,
-  RevisionIcon,
-} from '-/components/CommonIcons';
 import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDevMode,
 } from '-/reducers/settings';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import React, { useEffect, useReducer, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import LoadingLazy from '-/components/LoadingLazy';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
   value: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 }
-
-type TabItem = {
-  dataTid: string;
-  icon: React.ReactNode;
-  title: string;
-  name: string;
-};
 
 const StyledTabs = styled((props: StyledTabsProps) => (
   <Tabs
@@ -136,119 +116,46 @@ const TabContent4 = React.lazy(
 interface EntryContainerTabsProps {
   openPanel: () => void;
   toggleProperties: () => void;
-  isEditable: boolean;
   isPanelOpened: boolean;
-  haveDescription: boolean;
   marginRight: string;
 }
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
-  const {
-    openPanel,
-    toggleProperties,
-    marginRight,
-    isEditable,
-    isPanelOpened,
-    haveDescription,
-  } = props;
+  const { openPanel, toggleProperties, marginRight, isPanelOpened } = props;
 
-  const { t } = useTranslation();
-  const { findLocation } = useCurrentLocationContext();
+  //const { findLocation } = useCurrentLocationContext();
+  const { getTabsArray } = useEntryPropsTabsContext();
   const { initHistory } = useChatContext();
   const { openedEntry } = useOpenedEntryContext();
-  const { isEditMode } = useFilePropertiesContext();
+  //const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
-  const devMode: boolean = useSelector(isDevMode);
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
-  const haveRevisions = useRef<boolean>(isEditable);
+  const tabsArray = useRef<TabItem[]>([]);
   //const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
 
-  /* useEffect(() => {
-    selectedTabIndex.current = tabIndex;
-    forceUpdate();
-  }, [tabIndex]);*/
-
   useEffect(() => {
-    //selectedTabIndex.current = initSelectedTabIndex(tabIndex);
-    if (isEditable) {
-      const location: CommonLocation = findLocation(openedEntry.locationID);
-      const backupFilePath = getBackupFileDir(
-        openedEntry.path,
-        openedEntry.uuid,
-        location?.getDirSeparator(),
-      );
-      location?.checkDirExist(backupFilePath).then((exist) => {
-        haveRevisions.current = exist;
-        forceUpdate();
-      });
-    } else if (haveRevisions.current) {
-      haveRevisions.current = false;
+    getTabsArray(openedEntry).then((tabs) => {
+      tabsArray.current = tabs;
       forceUpdate();
-    }
-  }, [isEditable, isEditMode]);
-
-  /*function initSelectedTabIndex(index) {
-    if (!haveRevisions.current) {
-      if (index === 2) {
-        return 0;
-      } else if (index === 3) {
-        return 2;
-      }
-    }
-    // directories must be always opened
-    return !openedEntry.isFile && index === undefined ? 0 : index;
-  }*/
-
-  const tab1: TabItem = {
-    dataTid: 'detailsTabTID',
-    icon: <FolderPropertiesIcon />,
-    title: t('core:details'),
-    name: 'propertiesTab',
-  };
-  const tab2: TabItem = {
-    dataTid: 'descriptionTabTID',
-    icon: haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />,
-    title: t('core:filePropertiesDescription'),
-    name: 'descriptionTab',
-  };
-
-  const tabsArray: TabItem[] = [tab1, tab2];
-  if (haveRevisions.current) {
-    const tab3: TabItem = {
-      dataTid: 'revisionsTabTID',
-      icon: <RevisionIcon />,
-      title: t('core:revisions'),
-      name: 'revisionsTab',
-    };
-    tabsArray.push(tab3);
-  }
-
-  if (!openedEntry.isFile || (devMode && Pro && AppConfig.isElectron)) {
-    if (AppConfig.isElectron) {
-      // todo enable for web
-      const tab4: TabItem = {
-        dataTid: 'aiTabTID',
-        icon: <AIIcon />,
-        title: t('core:aiSettingsTab'),
-        name: 'aiTab',
-      };
-      tabsArray.push(tab4);
-    }
-  }
+    });
+  }, [openedEntry]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    const tab = tabsArray[newValue];
-    if (tab && tab.name === 'aiTab') {
-      initHistory();
+    if (tabsArray.current.length > 0) {
+      const tab = tabsArray.current[newValue];
+      if (tab && tab.name === 'aiTab') {
+        initHistory();
+      }
+      dispatch(SettingsActions.setEntryContainerTab(newValue));
+      openPanel();
+      console.log('tab changed to:' + newValue);
     }
-    dispatch(SettingsActions.setEntryContainerTab(newValue));
-    openPanel();
-    console.log('tab changed to:' + newValue);
   };
+
   function handleTabClick(selectedTabIndex, index: number) {
     if (
       openedEntry.isFile &&
@@ -261,31 +168,35 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
   }
 
-  function getSelectedTabIndex(maxTabsIndex) {
+  function getSelectedTabIndex() {
     if (!isPanelOpened) {
       return undefined;
     }
-    if (!tabIndex) {
+    if (!tabIndex || tabIndex === -1) {
       return 0;
     }
-    if (tabIndex > maxTabsIndex) {
-      return maxTabsIndex;
+    const maxTabIndex = tabsArray.current.length - 1;
+    if (tabIndex > maxTabIndex) {
+      return maxTabIndex;
     }
     return tabIndex;
   }
 
-  const selectedTabIndex = getSelectedTabIndex(tabsArray.length - 1);
+  const selectedTabIndex = getSelectedTabIndex();
 
   function getTabContainer(tabName: string) {
-    if (tabName === 'propertiesTab') {
+    if (tabName === TabNames.propertiesTab) {
       return <TabContent1 key={openedEntry.path} tileServer={tileServer} />;
-    } else if (tabName === 'descriptionTab') {
+    } else if (tabName === TabNames.descriptionTab) {
       return <TabContent2 />;
-    } else if (tabName === 'revisionsTab') {
+    } else if (tabName === TabNames.revisionsTab) {
       return <TabContent3 />;
-    } else if (tabName === 'aiTab') {
+    } else if (tabName === TabNames.aiTab) {
       return <TabContent4 />;
     }
+  }
+  if (tabsArray.current.length === 0) {
+    return null;
   }
 
   return (
@@ -308,9 +219,9 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           onChange={handleChange}
           aria-label="Switching among description, revisions entry properties"
         >
-          {tabsArray.map((tab, index) => (
+          {tabsArray.current.map((tab, index) => (
             <StyledTab
-              data-tid={tab.dataTid}
+              data-tid={tab.name + 'TID'}
               icon={tab.icon}
               title={tab.title}
               tinyMode={isTinyMode}
@@ -321,7 +232,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         </StyledTabs>
       </Box>
       <React.Suspense fallback={<LoadingLazy />}>
-        {tabsArray.map((tab, index) => (
+        {tabsArray.current.map((tab, index) => (
           <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
             {getTabContainer(tab.name)}
           </TsTabPanel>

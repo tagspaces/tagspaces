@@ -55,6 +55,8 @@ import {
   SearchIcon,
 } from './CommonIcons';
 import PathBreadcrumbs from './PathBreadcrumbs';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -72,6 +74,7 @@ function FolderContainer(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
+  const { setOpenedTab } = useEntryPropsTabsContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -358,8 +361,7 @@ function FolderContainer(props: Props) {
               data-tid="chatTID"
               style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
               onClick={() => {
-                dispatch(SettingsActions.setEntryContainerTab(3));
-                openEntry(currentDirectoryPath);
+                openEntry(currentDirectoryPath, TabNames.aiTab);
               }}
             >
               <Tooltip title="AI Chat for this folder">

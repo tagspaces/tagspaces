@@ -22,19 +22,19 @@ import { useChatContext } from '-/hooks/useChatContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { AppDispatch } from '-/reducers/app';
-import { actions as SettingsActions } from '-/reducers/settings';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 
 interface Props {}
 
 function AiGenDescButton(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+
+  const { setOpenedTab } = useEntryPropsTabsContext();
   const { openedEntry } = useOpenedEntryContext();
   const { generate, openedEntryModel } = useChatContext();
   const { setDescription, saveDescription } = useFilePropertiesContext();
@@ -59,7 +59,7 @@ function AiGenDescButton(props: Props) {
     //console.log('newOllamaMessage response:' + response);
     setIsLoading(false);
     if (response) {
-      dispatch(SettingsActions.setEntryContainerTab(1));
+      setOpenedTab(TabNames.descriptionTab, openedEntry);
 
       if (openedEntry.meta.description) {
         setDescription(openedEntry.meta.description + '\n---\n' + response);
