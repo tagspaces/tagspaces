@@ -33,6 +33,7 @@ import {
   getAddTagsToLibrary,
   getFileNameTagPlace,
   getGeoTaggingFormat,
+  getMaxCollectedTag,
   getPrefixTagContainer,
   getSaveTagInLocation,
   getTagColor,
@@ -184,6 +185,7 @@ export const TaggingActionsContextProvider = ({
   const selectedTag = useRef<TS.Tag>(undefined);
 
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
+  const maxCollectedTag = useSelector(getMaxCollectedTag);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
   const tagBackgroundColor: string = useSelector(getTagColor);
   const tagTextColor: string = useSelector(getTagTextColor);
@@ -1172,7 +1174,7 @@ export const TaggingActionsContextProvider = ({
     );
     if (indexForEditing > -1) {
       const tags = [...tagGroups[indexForEditing].children, ...entry.children];
-      tags.splice(0, tags.length - AppConfig.maxCollectedTag);
+      tags.splice(0, tags.length - maxCollectedTag);
       saveTagLibrary([
         ...tagGroups.slice(0, indexForEditing),
         {
