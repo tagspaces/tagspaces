@@ -276,7 +276,7 @@ export const CurrentLocationContextProvider = ({
                 isReadOnly: false,
                 disableIndexing: false,
               });
-              addLocation(location);
+              addLocation(location, false);
             });
           }
           return true;
@@ -294,8 +294,12 @@ export const CurrentLocationContextProvider = ({
     }
   }
 
-  function addLocation(location: CommonLocation) {
-    addLocationInt(location); //, openAfterCreate, locationPosition);
+  function addLocation(
+    location: CommonLocation,
+    openAfterCreate = true,
+    locationPosition: number = undefined,
+  ) {
+    addLocationInt(location, openAfterCreate, locationPosition);
     sendMessage('addLocation', toTsLocation(location));
   }
 

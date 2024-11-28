@@ -898,5 +898,6 @@
   "engineUrl": "Engine URL",
   "chooseModel": "Choose Model",
   "engineName": "Engine Name",
+  "maxCollectedTag": "Max Collected Tag",
   "-": "-"
 }

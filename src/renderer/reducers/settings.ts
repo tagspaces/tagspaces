@@ -64,6 +64,7 @@ export const types = {
   SET_CALCULATETAGS: 'SETTINGS/SET_CALCULATETAGS',
   SET_USETRASHCAN: 'SETTINGS/SET_USETRASHCAN',
   SET_PERSISTTAGSINSIDECARFILE: 'SETTINGS/SET_PERSISTTAGSINSIDECARFILE',
+  SET_MAXCOLLECTEDTAG: 'SETTINGS/SET_MAXCOLLECTEDTAG',
   SET_FILENAMETAGPLACEDATEND: 'SETTINGS/SET_FILENAMETAGPLACEDATEND',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
@@ -250,6 +251,12 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         persistTagsInSidecarFile: action.persistTagsInSidecarFile,
+      };
+    }
+    case types.SET_MAXCOLLECTEDTAG: {
+      return {
+        ...state,
+        maxCollectedTag: action.maxCollectedTag,
       };
     }
     case types.SET_FILENAMETAGPLACEDATEND: {
@@ -693,6 +700,10 @@ export const actions = {
     type: types.SET_PERSISTTAGSINSIDECARFILE,
     persistTagsInSidecarFile,
   }),
+  setMaxCollectedTag: (maxCollectedTag: number) => ({
+    type: types.SET_MAXCOLLECTEDTAG,
+    maxCollectedTag,
+  }),
   setFileNameTagPlace: (filenameTagPlacedAtEnd: boolean) => ({
     type: types.SET_FILENAMETAGPLACEDATEND,
     filenameTagPlacedAtEnd,
@@ -1005,6 +1016,10 @@ export const getAppDataPath = (state: any) => state.settings.appDataPath;
 export const getSupportedLanguages = (state: any) => state.settings.languages;
 export const getCalculateTags = (state: any) => state.settings.calculateTags;
 export const getUseTrashCan = (state: any) => state.settings.useTrashCan;
+export const getMaxCollectedTag = (state: any) =>
+  state.settings.maxCollectedTag
+    ? state.settings.maxCollectedTag
+    : AppConfig.maxCollectedTag;
 export const getPersistTagsInSidecarFile = (state: any): boolean =>
   AppConfig.useSidecarsForFileTaggingDisableSetting
     ? AppConfig.useSidecarsForFileTagging
