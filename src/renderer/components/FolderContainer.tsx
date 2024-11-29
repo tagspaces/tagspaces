@@ -27,6 +27,7 @@ import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useChatContext } from '-/hooks/useChatContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
@@ -72,6 +73,7 @@ function FolderContainer(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
+  const { openedEntryModel } = useChatContext();
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -351,7 +353,7 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          {AppConfig.isElectron && (
+          {AppConfig.isElectron && openedEntryModel && (
             <ToggleButton
               value=""
               aria-label="chat-label"
