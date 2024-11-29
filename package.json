@@ -123,7 +123,7 @@
     "skip:husky:pre-commit": "node -e \"require('fs').rename('./.git/hooks/pre-commit', './.git/hooks/pre-commit.disabled', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "sort-package-json": "npx sort-package-json",
     "source-map": "npm run source-map-app && npm run source-map-web && npm run source-map-cordova",
-    "source-map-app": "npx source-map-explorer src/renderer/dist/*.* --html reports/source-map-app.html",
+    "source-map-app": "npx source-map-explorer release/app/dist/renderer/*.* --html reports/source-map-app.html",
     "source-map-cordova": "npx source-map-explorer cordova/www/dist/*.* --html reports/source-map-cordova.html",
     "source-map-web": "npx source-map-explorer web/dist/*.* --html reports/source-map-web.html",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.dev.ts",
@@ -235,7 +235,7 @@
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.90"
+    "@tagspacespro/tagspacespro": "5.0.91"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
@@ -273,7 +273,7 @@
     "current-git-branch": "^1.1.0",
     "detect-port": "^1.5.1",
     "dotenv-webpack": "^8.0.1",
-    "electron": "^32.2.1",
+    "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.3",

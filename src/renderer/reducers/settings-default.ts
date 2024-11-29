@@ -110,6 +110,7 @@ export default {
       ? true
       : window.ExtRevisionsEnabled,
   prefixTagContainer: AppConfig.prefixTagContainer,
+  aiProviders: [],
   isAutoSaveEnabled:
     typeof window.ExtAutoSaveEnabled === 'undefined'
       ? false

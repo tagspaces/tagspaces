@@ -5,6 +5,9 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AiGenDescButton from '-/components/chat/AiGenDescButton';
+import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +17,7 @@ const EditDescriptionButtons: React.FC = () => {
     isEditDescriptionMode,
     setEditDescriptionMode,
   } = useFilePropertiesContext();
+  const { openedEntry } = useOpenedEntryContext();
   //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   /*React.useImperativeHandle(buttonsRef, () => ({
@@ -86,6 +90,14 @@ const EditDescriptionButtons: React.FC = () => {
             : t('core:editDescription')}
         </TsButton>
       </ProTooltip>
+      <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+        <AiGenDescButton />
+      </span>
+      {openedEntry.meta.description && (
+        <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+          <AiGenTagsButton fromDescription={true} variant="outlined" />
+        </span>
+      )}
     </div>
   );
 };

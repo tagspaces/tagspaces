@@ -26,12 +26,13 @@ import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
-import { Box } from '@mui/material';
+import { Box, InputAdornment } from '@mui/material';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { isDesktopMode } from '-/reducers/settings';
 import { tagsValidation } from '-/services/utils-io';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useTranslation } from 'react-i18next';
+import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 
 interface Props {
   dataTid?: string;
@@ -44,6 +45,7 @@ interface Props {
   placeholderText?: string;
   selectedEntryPath?: string;
   autoFocus?: boolean;
+  generateButton?: boolean;
 }
 
 function TagsSelect(props: Props) {
@@ -69,6 +71,7 @@ function TagsSelect(props: Props) {
     tags = [],
     tagMode,
     handleNewTags,
+    generateButton,
   } = props;
 
   function handleTagChange(
@@ -209,6 +212,14 @@ function TagsSelect(props: Props) {
               error={tagsError.current}
               style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
               fullWidth
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: generateButton && (
+                  <InputAdornment position="end">
+                    <AiGenTagsButton variant="text" />
+                  </InputAdornment>
+                ),
+              }}
             />
             {tagsError.current && (
               <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>

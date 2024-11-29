@@ -28,6 +28,7 @@ export type Channels =
   | 'newChatSession'
   | 'newChatMessage'
   | 'ChatMessage'
+  | 'PullModel'
   | 'postRequest'
   | 'listDirectoryPromise'
   | 'listMetaDirectoryPromise'
@@ -73,7 +74,11 @@ export type Channels =
   | 'panels'
   | 'history'
   | 'progress'
-  | 'uploadAbort';
+  | 'uploadAbort'
+  | 'getOllamaModels'
+  | 'newOllamaMessage'
+  | 'pullOllamaModel'
+  | 'deleteOllamaModel';
 
 const electronHandler = {
   ipcRenderer: {

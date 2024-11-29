@@ -657,6 +657,7 @@ function EntryProperties(props: Props) {
               handleChange={handleChange}
               selectedEntryPath={openedEntry.path}
               autoFocus={true}
+              generateButton={true}
             />
           </TagDropContainer>
         </Grid>
@@ -664,7 +665,6 @@ function EntryProperties(props: Props) {
         {geoLocation && (
           <Grid item xs={12}>
             <MapContainer
-              tap={true}
               style={{
                 height: '200px',
                 width: '99%',

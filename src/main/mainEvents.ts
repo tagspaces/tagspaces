@@ -37,9 +37,13 @@ import {
   getOnProgress,
   isWorkerAvailable,
   newProgress,
+  ollamaDeleteRequest,
+  ollamaGetRequest,
+  ollamaPostRequest,
   postRequest,
   readMacOSTags,
 } from './util';
+import { ApiResponse } from './types';
 
 //let watcher: FSWatcher;
 const progress = {};
@@ -243,6 +247,78 @@ export default function loadMainEvents() {
       console.log('Hide folder: ' + dirPath + ' - ' + wssPost.success);
     }
     return result;
+  });
+
+  ipcMain.handle('getOllamaModels', async (event, ollamaApiUrl) => {
+    try {
+      const apiResponse = await ollamaGetRequest('/api/tags', ollamaApiUrl);
+      return (apiResponse as ApiResponse).models;
+    } catch (e) {
+      return undefined;
+    }
+  });
+  ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl, msg) => {
+    const apiResponse = await ollamaPostRequest(
+      JSON.stringify(msg),
+      '/api/chat',
+      ollamaApiUrl,
+      (response) => {
+        if (msg.stream) {
+          const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+          if (mainWindow.length > 0) {
+            mainWindow.map(
+              (window) => window.webContents.send('ChatMessage', response), // Stream message to renderer process
+            );
+          }
+        }
+      },
+    );
+    return apiResponse;
+  });
+  ipcMain.handle('pullOllamaModel', async (event, ollamaApiUrl, msg) => {
+    let lastPercents = 0;
+    const apiResponse = await ollamaPostRequest(
+      JSON.stringify(msg),
+      '/api/pull',
+      ollamaApiUrl,
+      (response) => {
+        if (response.completed && response.total) {
+          const percents = Math.floor(
+            (response.completed / response.total) * 100,
+          );
+          if (percents !== lastPercents) {
+            lastPercents = percents;
+            const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+            if (mainWindow.length > 0) {
+              mainWindow.map(
+                (window) =>
+                  window.webContents.send('PullModel', {
+                    ...response,
+                    model: msg.name,
+                  }), // Stream message to renderer process
+              );
+            }
+          }
+        }
+      },
+    );
+    return apiResponse;
+  });
+  ipcMain.handle('deleteOllamaModel', async (event, ollamaApiUrl, msg) => {
+    const apiResponse = await ollamaDeleteRequest(
+      JSON.stringify(msg),
+      '/api/delete',
+      ollamaApiUrl,
+      (response) => {
+        const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+        if (mainWindow.length > 0) {
+          mainWindow.map(
+            (window) => window.webContents.send('ChatMessage', response, false), // Stream message to renderer process
+          );
+        }
+      },
+    );
+    return apiResponse;
   });
   ipcMain.handle(
     'copyFilePromiseOverwrite',

@@ -26,6 +26,11 @@ declare module '*.woff';
 declare module '*.woff2';
 declare module '*.xml';
 
+type ExternalAI = {
+  defaultEngine: string;
+  engines: Array<any>;
+};
+
 declare interface Window {
   // interface TSCustomWindow extends Window {
   ExtMapTileServers?: Array<any>; //TS.MapTileServer>;
@@ -60,6 +65,7 @@ declare interface Window {
   ExtFilenameTagPlacedAtEnd?: boolean;
   ExtRevisionsEnabled?: boolean;
   ExtAutoSaveEnabled?: boolean;
+  ExtAI?: ExternalAI;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

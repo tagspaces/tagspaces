@@ -29,6 +29,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
 import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
 import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
@@ -36,7 +37,7 @@ import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import { isDesktopMode, isDevMode } from '-/reducers/settings';
+import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { clearAllURLParams } from '-/utils/dom';
 import Dialog from '@mui/material/Dialog';
@@ -61,7 +62,6 @@ function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
   const desktopMode = useSelector(isDesktopMode);
-  const devMode = useSelector(isDevMode);
   const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
     useState<boolean>(false);
   const { open, onClose } = props;
@@ -157,7 +157,7 @@ function SettingsDialog(props: Props) {
           data-tid="advancedSettingsDialogTID"
           label={t('core:advancedSettingsTab')}
         />
-        {devMode && (
+        {AppConfig.isElectron && (
           <Tab
             style={{
               textTransform: 'unset',
@@ -178,11 +178,9 @@ function SettingsDialog(props: Props) {
       <div
         data-tid="settingsDialog"
         style={{
-          height: 'calc(100% - 50px)',
+          height: smallScreen ? 'calc(100% - 50px)' : '100%',
           minHeight: 400,
           width: smallScreen ? '100%' : 600,
-          //minWidth: 600,
-          //maxWidth: 600,
         }}
       >
         {currentTab === 0 && <SettingsGeneral />}
@@ -194,7 +192,7 @@ function SettingsDialog(props: Props) {
             showResetSettings={setIsResetSettingsDialogOpened}
           />
         )}
-        {/* {currentTab === 5 && <SettingsAI />} */}
+        {currentTab === 5 && <SettingsAI closeSettings={onClose} />}
       </div>
       {isResetSettingsDialogOpened && (
         <ConfirmDialog

@@ -16,41 +16,49 @@
  *
  */
 
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useSelector, useDispatch } from 'react-redux';
-import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import { AppDispatch } from '-/reducers/app';
-import Revisions from '-/components/Revisions';
+import AppConfig from '-/AppConfig';
+import {
+  AIIcon,
+  DescriptionIcon,
+  EditDescriptionIcon,
+  FolderPropertiesIcon,
+  RevisionIcon,
+} from '-/components/CommonIcons';
 import Tooltip from '-/components/Tooltip';
-import EntryProperties from '-/components/EntryProperties';
+import TsTabPanel from '-/components/TsTabPanel';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
+  isDevMode,
 } from '-/reducers/settings';
-import {
-  FolderPropertiesIcon,
-  DescriptionIcon,
-  EditDescriptionIcon,
-  RevisionIcon,
-} from '-/components/CommonIcons';
-import EditDescription from '-/components/EditDescription';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { CommonLocation } from '-/utils/CommonLocation';
-import TsTabPanel from '-/components/TsTabPanel';
+import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useChatContext } from '-/hooks/useChatContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
   value: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 }
+
+type TabItem = {
+  dataTid: string;
+  icon: React.ReactNode;
+  title: string;
+  name: string;
+};
 
 const StyledTabs = styled((props: StyledTabsProps) => (
   <Tabs
@@ -111,6 +119,20 @@ function a11yProps(index: number) {
   };
 }
 
+const TabContent1 = React.lazy(
+  () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
+);
+
+const TabContent2 = React.lazy(
+  () => import(/* webpackChunkName: "EditDescription" */ './EditDescription'),
+);
+const TabContent3 = React.lazy(
+  () => import(/* webpackChunkName: "Revisions" */ './Revisions'),
+);
+const TabContent4 = React.lazy(
+  () => import(/* webpackChunkName: "AiPropertiesTab" */ './AiPropertiesTab'),
+);
+
 interface EntryContainerTabsProps {
   openPanel: () => void;
   toggleProperties: () => void;
@@ -132,17 +154,27 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
+  const { initHistory } = useChatContext();
   const { openedEntry } = useOpenedEntryContext();
+  const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
+  const devMode: boolean = useSelector(isDevMode);
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const haveRevisions = useRef<boolean>(isEditable);
+  //const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
 
+  /* useEffect(() => {
+    selectedTabIndex.current = tabIndex;
+    forceUpdate();
+  }, [tabIndex]);*/
+
   useEffect(() => {
-    if (!isEditable) {
+    //selectedTabIndex.current = initSelectedTabIndex(tabIndex);
+    if (isEditable) {
       const location: CommonLocation = findLocation(openedEntry.locationID);
       const backupFilePath = getBackupFileDir(
         openedEntry.path,
@@ -153,32 +185,107 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         haveRevisions.current = exist;
         forceUpdate();
       });
+    } else if (haveRevisions.current) {
+      haveRevisions.current = false;
+      forceUpdate();
     }
-  }, [isEditable]);
+  }, [isEditable, isEditMode]);
 
-  // Create functions that dispatch actions
+  /*function initSelectedTabIndex(index) {
+    if (!haveRevisions.current) {
+      if (index === 2) {
+        return 0;
+      } else if (index === 3) {
+        return 2;
+      }
+    }
+    // directories must be always opened
+    return !openedEntry.isFile && index === undefined ? 0 : index;
+  }*/
+
+  const tab1: TabItem = {
+    dataTid: 'detailsTabTID',
+    icon: <FolderPropertiesIcon />,
+    title: t('core:details'),
+    name: 'propertiesTab',
+  };
+  const tab2: TabItem = {
+    dataTid: 'descriptionTabTID',
+    icon: haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />,
+    title: t('core:filePropertiesDescription'),
+    name: 'descriptionTab',
+  };
+
+  const tabsArray: TabItem[] = [tab1, tab2];
+  if (haveRevisions.current) {
+    const tab3: TabItem = {
+      dataTid: 'revisionsTabTID',
+      icon: <RevisionIcon />,
+      title: t('core:revisions'),
+      name: 'revisionsTab',
+    };
+    tabsArray.push(tab3);
+  }
+
+  if (!openedEntry.isFile || (devMode && Pro && AppConfig.isElectron)) {
+    if (AppConfig.isElectron) {
+      // todo enable for web
+      const tab4: TabItem = {
+        dataTid: 'aiTabTID',
+        icon: <AIIcon />,
+        title: t('core:aiSettingsTab'),
+        name: 'aiTab',
+      };
+      tabsArray.push(tab4);
+    }
+  }
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    const tab = tabsArray[newValue];
+    if (tab && tab.name === 'aiTab') {
+      initHistory();
+    }
     dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
     console.log('tab changed to:' + newValue);
   };
-  const handleTabClick = (event: React.SyntheticEvent) => {
+  function handleTabClick(selectedTabIndex, index: number) {
     if (
       openedEntry.isFile &&
-      tabIndex === parseInt(event.currentTarget.id.split('-')[1], 10)
+      selectedTabIndex === index //parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
       dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
-      console.log('tab click:' + tabIndex);
+      console.log('tab click:' + index);
     }
-  };
+  }
 
-  // directories must be always opened
-  let selectedTabIndex =
-    !openedEntry.isFile && tabIndex === undefined ? 0 : tabIndex;
-  if (!haveRevisions.current && selectedTabIndex === 2) {
-    selectedTabIndex = 0;
+  function getSelectedTabIndex(maxTabsIndex) {
+    if (!isPanelOpened) {
+      return undefined;
+    }
+    if (!tabIndex) {
+      return 0;
+    }
+    if (tabIndex > maxTabsIndex) {
+      return maxTabsIndex;
+    }
+    return tabIndex;
+  }
+
+  const selectedTabIndex = getSelectedTabIndex(tabsArray.length - 1);
+
+  function getTabContainer(tabName: string) {
+    if (tabName === 'propertiesTab') {
+      return <TabContent1 key={openedEntry.path} tileServer={tileServer} />;
+    } else if (tabName === 'descriptionTab') {
+      return <TabContent2 />;
+    } else if (tabName === 'revisionsTab') {
+      return <TabContent3 />;
+    } else if (tabName === 'aiTab') {
+      return <TabContent4 />;
+    }
   }
 
   return (
@@ -201,47 +308,25 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           onChange={handleChange}
           aria-label="Switching among description, revisions entry properties"
         >
-          <StyledTab
-            data-tid="detailsTabTID"
-            icon={<FolderPropertiesIcon />}
-            title={t('core:details')}
-            tinyMode={isTinyMode}
-            {...a11yProps(0)}
-            onClick={handleTabClick}
-          />
-          <StyledTab
-            data-tid="descriptionTabTID"
-            icon={
-              haveDescription ? <EditDescriptionIcon /> : <DescriptionIcon />
-            }
-            title={t('core:filePropertiesDescription')}
-            tinyMode={isTinyMode}
-            {...a11yProps(1)}
-            onClick={handleTabClick}
-          />
-          {haveRevisions.current && (
+          {tabsArray.map((tab, index) => (
             <StyledTab
-              data-tid="revisionsTabTID"
-              icon={<RevisionIcon />}
-              title={t('core:revisions')}
+              data-tid={tab.dataTid}
+              icon={tab.icon}
+              title={tab.title}
               tinyMode={isTinyMode}
-              {...a11yProps(2)}
-              onClick={handleTabClick}
+              {...a11yProps(index)}
+              onClick={() => handleTabClick(selectedTabIndex, index)}
             />
-          )}
+          ))}
         </StyledTabs>
       </Box>
-      <TsTabPanel key="propertiesTab" value={selectedTabIndex} index={0}>
-        <EntryProperties key={openedEntry.path} tileServer={tileServer} />
-      </TsTabPanel>
-      <TsTabPanel key="descriptionTab" value={selectedTabIndex} index={1}>
-        <EditDescription />
-      </TsTabPanel>
-      {haveRevisions.current && (
-        <TsTabPanel key="revisionsTab" value={selectedTabIndex} index={2}>
-          <Revisions />
-        </TsTabPanel>
-      )}
+      <React.Suspense fallback={<LoadingLazy />}>
+        {tabsArray.map((tab, index) => (
+          <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
+            {getTabContainer(tab.name)}
+          </TsTabPanel>
+        ))}
+      </React.Suspense>
     </div>
   );
 }

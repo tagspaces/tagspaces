@@ -1199,3 +1199,18 @@ export function toTsLocation(location: CommonLocation): TS.S3Location {
     ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
   };
 }
+
+export function toBase64Image(uint8Array): string {
+  if (uint8Array) {
+    try {
+      let binaryString = '';
+      uint8Array.forEach((byte) => {
+        binaryString += String.fromCharCode(byte);
+      });
+      return btoa(binaryString);
+    } catch (e) {
+      console.log('toBase64Image', e);
+    }
+  }
+  return undefined;
+}

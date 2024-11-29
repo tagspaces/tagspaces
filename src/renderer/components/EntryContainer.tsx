@@ -605,6 +605,7 @@ function EntryContainer() {
           <ButtonGroup>
             <TsButton
               tooltip={t('core:cancelEditing')}
+              data-tid="cancelEditingTID"
               onClick={() => {
                 setEditMode(false);
                 setFileChanged(false);

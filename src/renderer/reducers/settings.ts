@@ -32,6 +32,7 @@ import {
   setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -67,6 +68,10 @@ export const types = {
   SET_FILENAMETAGPLACEDATEND: 'SETTINGS/SET_FILENAMETAGPLACEDATEND',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
+  SET_AI_PROVIDER: 'SETTINGS/SET_AI_PROVIDER',
+  ADD_AI_PROVIDER: 'SETTINGS/ADD_AI_PROVIDER',
+  REMOVE_AI_PROVIDER: 'SETTINGS/REMOVE_AI_PROVIDER',
+  SET_AI_PROVIDERS: 'SETTINGS/SET_AI_PROVIDERS',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -101,6 +106,18 @@ export const types = {
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
 };
+
+function generateUniqueName(array: Array<any>, baseName: string): string {
+  let uniqueName = baseName;
+  let count = 1;
+
+  while (array.some((item) => item.name === uniqueName)) {
+    uniqueName = `${baseName}${count}`;
+    count++;
+  }
+
+  return uniqueName;
+}
 
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
@@ -253,6 +270,37 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_REVISIONS_ENABLED: {
       return { ...state, isRevisionsEnabled: action.enabled };
+    }
+    case types.SET_AI_PROVIDER: {
+      return { ...state, aiProviderId: action.aiProviderId };
+    }
+    case types.ADD_AI_PROVIDER: {
+      if (
+        state.aiProviders.some((item) => item.name === action.aiProvider.name)
+      ) {
+        action.aiProvider.name = generateUniqueName(
+          state.aiProviders,
+          action.aiProvider.name,
+        );
+      }
+      return {
+        ...state,
+        aiProviders: [...state.aiProviders, action.aiProvider],
+      };
+    }
+    case types.REMOVE_AI_PROVIDER: {
+      return {
+        ...state,
+        aiProviders: state.aiProviders.filter(
+          (provider) => provider.id !== action.id,
+        ),
+      };
+    }
+    case types.SET_AI_PROVIDERS: {
+      return {
+        ...state,
+        aiProviders: action.aiProviders,
+      };
     }
     case types.SET_PREFIX_TAG_CONTAINER: {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
@@ -668,6 +716,22 @@ export const actions = {
     type: types.SET_REVISIONS_ENABLED,
     enabled,
   }),
+  setAiProvider: (aiProviderId: string) => ({
+    type: types.SET_AI_PROVIDER,
+    aiProviderId,
+  }),
+  setAiProviders: (aiProviders: AIProvider[]) => ({
+    type: types.SET_AI_PROVIDERS,
+    aiProviders,
+  }),
+  addAiProvider: (aiProvider: AIProvider) => ({
+    type: types.ADD_AI_PROVIDER,
+    aiProvider,
+  }),
+  removeAiProvider: (id: string) => ({
+    type: types.REMOVE_AI_PROVIDER,
+    id,
+  }),
   setPrefixTagContainer: (prefixTagContainer: boolean) => ({
     type: types.SET_PREFIX_TAG_CONTAINER,
     prefixTagContainer,
@@ -865,6 +929,19 @@ export function getLastVersionPromise(): Promise<string> {
   });
 }
 
+function getDefaultAI(aiProviderId: string, aiProviders: AIProvider[]) {
+  if (aiProviderId) {
+    const provider = aiProviders.find((p) => p.enable && p.id === aiProviderId);
+    if (provider) {
+      return provider;
+    }
+  }
+  if (aiProviders.length > 0) {
+    return aiProviders.find((p) => p.enable);
+  }
+  return undefined;
+}
+
 // Selectors
 export const getEntrySplitSize = (state: any) => state.settings.entrySplitSize;
 export const getMapTileServer = (state: any): TS.MapTileServer =>
@@ -886,6 +963,23 @@ export const isDevMode = (state: any) =>
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
+/*export const getDefaultAIProviderId = (state: any) =>
+  state.settings.aiProviderId;*/
+export const getDefaultAIProvider = (state: any) => {
+  if (typeof window.ExtAI === 'undefined') {
+    return getDefaultAI(
+      state.settings.aiProviderId,
+      state.settings.aiProviders,
+    );
+  }
+  return getDefaultAI(window.ExtAI.defaultEngine, window.ExtAI.engines);
+};
+export const getAIProviders = (state: any) => {
+  if (typeof window.ExtAI === 'undefined') {
+    return state.settings.aiProviders;
+  }
+  return window.ExtAI.engines;
+};
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getGeoTaggingFormat = (state: any) =>

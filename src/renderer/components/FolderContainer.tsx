@@ -16,39 +16,47 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import TsIconButton from '-/components/TsIconButton';
-import TsButton from '-/components/TsButton';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Tooltip from '-/components/Tooltip';
-import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import { getProgress } from '../reducers/app';
+import { AIProvider } from '-/components//chat/ChatTypes';
 import {
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,
   SearchIcon,
-} from './CommonIcons';
-import { Pro } from '../pro';
-import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
-import PathBreadcrumbs from './PathBreadcrumbs';
-import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-import SearchBox from '-/components/SearchBox';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+} from '-/components/CommonIcons';
+import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
+import SearchBox from '-/components/SearchBox';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { Pro } from '-/pro';
+import { AppDispatch, getProgress } from '-/reducers/app';
+import {
+  actions as SettingsActions,
+  getDefaultAIProvider,
+  getDesktopMode,
+  getKeyBindingObject,
+} from '-/reducers/settings';
+import ChatIcon from '@mui/icons-material/Chat';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -58,13 +66,15 @@ interface Props {
 
 function FolderContainer(props: Props) {
   const { toggleDrawer, drawerOpened, style } = props;
-
+  const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openEntry } = useOpenedEntryContext();
+  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -314,7 +324,7 @@ function FolderContainer(props: Props) {
           </>
         )}
       </div>
-      <div style={{ minHeight: '100%', width: '100%' }}>
+      <div style={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
         {/*<LoadingAnimation />*/}
         {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
         <a href="#" id="downloadFile" />
@@ -336,7 +346,7 @@ function FolderContainer(props: Props) {
           exclusive
           style={{
             bottom: -40,
-            right: 15,
+            right: 20,
             zIndex: 1000,
             opacity: 0.9,
             position: 'absolute',
@@ -344,6 +354,22 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
+          {AppConfig.isElectron && aiDefaultProvider && (
+            <ToggleButton
+              value=""
+              aria-label="chat-label"
+              data-tid="chatTID"
+              style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
+              onClick={() => {
+                dispatch(SettingsActions.setEntryContainerTab(3));
+                openEntry(currentDirectoryPath);
+              }}
+            >
+              <Tooltip title="AI Chat for this folder">
+                <ChatIcon />
+              </Tooltip>
+            </ToggleButton>
+          )}
         </ToggleButtonGroup>
       )}
     </div>
