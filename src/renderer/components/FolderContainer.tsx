@@ -17,6 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { AIProvider } from '-/components//chat/ChatTypes';
+import {
+  GoBackIcon,
+  GoForwardIcon,
+  MainMenuIcon,
+  SearchIcon,
+} from '-/components/CommonIcons';
+import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
 import Tooltip from '-/components/Tooltip';
@@ -27,13 +35,14 @@ import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
-import { useChatContext } from '-/hooks/useChatContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { Pro } from '-/pro';
 import { AppDispatch, getProgress } from '-/reducers/app';
 import {
   actions as SettingsActions,
+  getDefaultAIProvider,
   getDesktopMode,
   getKeyBindingObject,
 } from '-/reducers/settings';
@@ -48,14 +57,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Pro } from '../pro';
-import {
-  GoBackIcon,
-  GoForwardIcon,
-  MainMenuIcon,
-  SearchIcon,
-} from './CommonIcons';
-import PathBreadcrumbs from './PathBreadcrumbs';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -73,7 +74,7 @@ function FolderContainer(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
-  const { openedEntryModel } = useChatContext();
+  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -353,7 +354,7 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          {AppConfig.isElectron && openedEntryModel && (
+          {AppConfig.isElectron && aiDefaultProvider && (
             <ToggleButton
               value=""
               aria-label="chat-label"
