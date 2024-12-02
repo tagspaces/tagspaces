@@ -16,23 +16,26 @@
  *
  */
 
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '-/reducers/app';
 import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
+  isDevMode,
 } from '-/reducers/settings';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import React, { useEffect, useReducer, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import LoadingLazy from '-/components/LoadingLazy';
-import { useChatContext } from '-/hooks/useChatContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { styled, useTheme } from '@mui/material/styles';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useChatContext } from '-/hooks/useChatContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -123,12 +126,15 @@ interface EntryContainerTabsProps {
 function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { openPanel, toggleProperties, marginRight, isPanelOpened } = props;
 
+  const { t } = useTranslation();
+  const { findLocation } = useCurrentLocationContext();
+  const { initHistory } = useChatContext();
   //const { findLocation } = useCurrentLocationContext();
   const { getTabsArray } = useEntryPropsTabsContext();
-  const { initHistory } = useChatContext();
   const { openedEntry } = useOpenedEntryContext();
   //const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
+  const devMode: boolean = useSelector(isDevMode);
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const tabsArray = useRef<TabItem[]>([]);
@@ -136,6 +142,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
+
+  /* useEffect(() => {
+    selectedTabIndex.current = tabIndex;
+    forceUpdate();
+  }, [tabIndex]);*/
 
   useEffect(() => {
     getTabsArray(openedEntry).then((tabs) => {

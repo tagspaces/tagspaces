@@ -16,6 +16,7 @@
  *
  */
 
+import { useState } from 'react';
 import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
@@ -23,7 +24,6 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AIIcon } from '../CommonIcons';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';

@@ -16,6 +16,7 @@
  *
  */
 
+import { AIProvider } from '-/components/chat/ChatTypes';
 import AppConfig from '-/AppConfig';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
@@ -30,9 +31,9 @@ import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
-import { AppDispatch, getProgress } from '-/reducers/app';
+import { getProgress } from '-/reducers/app';
 import {
-  actions as SettingsActions,
+  getDefaultAIProvider,
   getDesktopMode,
   getKeyBindingObject,
 } from '-/reducers/settings';
@@ -46,8 +47,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { Pro } from '../pro';
+import { useSelector } from 'react-redux';
+import { Pro } from '-/pro';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -55,7 +56,6 @@ import {
   SearchIcon,
 } from './CommonIcons';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
@@ -66,7 +66,6 @@ interface Props {
 
 function FolderContainer(props: Props) {
   const { toggleDrawer, drawerOpened, style } = props;
-  const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
@@ -74,7 +73,7 @@ function FolderContainer(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
-  const { setOpenedTab } = useEntryPropsTabsContext();
+  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
     setSearchQuery,
     currentDirectoryEntries,
@@ -354,7 +353,7 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          {AppConfig.isElectron && (
+          {AppConfig.isElectron && aiDefaultProvider && (
             <ToggleButton
               value=""
               aria-label="chat-label"

@@ -100,21 +100,25 @@ export default function Root({ store, persistor }: RootType) {
                                                   <BrowserHistoryContextProvider>
                                                     <FileUploadDialogContextProvider>
                                                       <ChatContextProvider>
-                                                        {Pro ? (
-                                                          <Pro.contextProviders.BookmarksContextProvider>
-                                                            <Pro.contextProviders.HistoryContextProvider>
-                                                              <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                <DialogsRoot>
-                                                                  <MainPage />
-                                                                </DialogsRoot>
-                                                              </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                            </Pro.contextProviders.HistoryContextProvider>
-                                                          </Pro.contextProviders.BookmarksContextProvider>
-                                                        ) : (
-                                                          <DialogsRoot>
-                                                            <MainPage />
-                                                          </DialogsRoot>
-                                                        )}
+                                                        <FileUploadDialogContextProvider>
+                                                          <ChatContextProvider>
+                                                            {Pro ? (
+                                                              <Pro.contextProviders.BookmarksContextProvider>
+                                                                <Pro.contextProviders.HistoryContextProvider>
+                                                                  <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                    <DialogsRoot>
+                                                                      <MainPage />
+                                                                    </DialogsRoot>
+                                                                  </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                </Pro.contextProviders.HistoryContextProvider>
+                                                              </Pro.contextProviders.BookmarksContextProvider>
+                                                            ) : (
+                                                              <DialogsRoot>
+                                                                <MainPage />
+                                                              </DialogsRoot>
+                                                            )}
+                                                          </ChatContextProvider>
+                                                        </FileUploadDialogContextProvider>
                                                       </ChatContextProvider>
                                                     </FileUploadDialogContextProvider>
                                                   </BrowserHistoryContextProvider>

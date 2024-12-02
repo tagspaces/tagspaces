@@ -25,10 +25,10 @@ window.ExtAI = {
       type: 'chatgpt',
       name: 'ChatGpt',
       id: 'internalTSEngineId3',
+      url: 'https://api.openai.com',
+      apiKey: 'blablabla',
       defaultImageModel: 'chatGptInternalModelID',
       defaultTextModel: 'chatGptInternalModelID',
-      url: 'http://api.openia.com',
-      apiKey: 'safasdfsafsdf',
       enabled: false,
     },*/
   ],
