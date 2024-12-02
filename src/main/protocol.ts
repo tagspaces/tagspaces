@@ -43,11 +43,13 @@ const initialize = () => {
   // By default, we serve files from the assets folder
   protocol.handle(mediaProtocol, (request: any) => {
     // list all files in the directory
-    const filepath = request.url
-      .slice(`${mediaProtocol}://`.length)
-      .replace(/\/$/, ''); // remove trailing slash  //decodeURIComponent
+    const filepath = decodeURIComponent(
+      request.url.slice(`${mediaProtocol}://`.length).replace(/\/$/, ''),
+    ); // remove trailing slash
     const asFileUrl = `file://${filepath}`; //pathToFileURL(filepath).toString();
-    console.log('protocol handler: Fetch file URL' + request.url, asFileUrl);
+    console.log(
+      'protocol handler: Fetch file ' + filepath + ' as:' + asFileUrl,
+    );
 
     const rangeHeader = request.headers.get('Range');
     if (!rangeHeader) {
