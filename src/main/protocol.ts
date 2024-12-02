@@ -5,21 +5,14 @@
 import { protocol, net } from 'electron';
 import * as fs from 'fs-extra';
 import { createReadStream } from 'fs';
-import { fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
-import { Readable } from 'stream';
-import { ReadStream } from 'node:fs';
-import { Writable } from 'node:stream';
-//import { PROTOCOL } from '../config/config';
-//import { __assets } from './paths';
-
-const PROTOCOL = 'video';
+import { mediaProtocol } from '@tagspaces/tagspaces-common/AppConfig';
 
 const register = () => {
-  //Logger.status(`Registering file protocol: ${PROTOCOL}`);
+  //Logger.status(`Registering file protocol: ${mediaProtocol}`);
   protocol.registerSchemesAsPrivileged([
     {
-      scheme: PROTOCOL,
+      scheme: mediaProtocol,
       privileges: {
         supportFetchAPI: true,
 
@@ -32,10 +25,10 @@ const register = () => {
         // Allows loading <video>/<audio> streaming elements
         stream: true,
 
-        corsEnabled: true,
+        // corsEnabled: true,
         // codeCache: true, Code cache can only be enabled when the custom scheme is registered as standard scheme.
         // allowServiceWorkers: true,
-        //bypassCSP: true,
+        // bypassCSP: true,
       },
     },
   ]);
@@ -48,10 +41,10 @@ const initialize = () => {
   }
 
   // By default, we serve files from the assets folder
-  protocol.handle(PROTOCOL, (request: any) => {
+  protocol.handle(mediaProtocol, (request: any) => {
     // list all files in the directory
     const filepath = request.url
-      .slice(`${PROTOCOL}://`.length)
+      .slice(`${mediaProtocol}://`.length)
       .replace(/\/$/, ''); // remove trailing slash  //decodeURIComponent
     const asFileUrl = `file://${filepath}`; //pathToFileURL(filepath).toString();
     console.log('protocol handler: Fetch file URL' + request.url, asFileUrl);
@@ -62,45 +55,6 @@ const initialize = () => {
     } else {
       return handleRangeRequest(request, filepath);
     }
-
-    /*const mimeType = getMimeType(path.extname(filepath));
-		const file =nodeUrl.pathToFileURL(filepath).toString(); //`file://${filepath}`;
-		console.log(`Protocol request: ${request.url}; File: ${file}`);
-		return net.fetch(file);*/
-
-    /*return fetchReadableStream(file).then(stream => {
-			return new Response(
-				stream, // Could also be a string or ReadableStream.
-				{ status: 200, headers: { 'content-type': mimeType } }
-			)
-		}).catch(error => {
-			console.error('Error fetching local video file:', error);
-			return new Response(
-				null,
-				{ status: 400, headers: { 'content-type': 'text/html' } }
-			);
-		});*/
-    // fileStream returns an "old style" NodeJS.ReadableStream. We then write it
-    // to the writable end of the web stream pipe, the readable end of which is
-    // relayed back to the renderer as the response.
-    //const { writable, readable } = new TransformStream();
-    //const nodeWritable = Writable.fromWeb(writable);
-    //fileStream.pipe(nodeWritable);
-
-    //return net.fetch(nodeUrl.pathToFileURL(filepath).toString())
-    // Create a readable stream for the file
-    /*const mimeType = getMimeType(path.extname(filepath));
-		const fileStream = fs.createReadStream(filepath) as Readable;
-
-		return {
-			status: 200,
-			statusText: 'OK',
-			headers: { 'Content-Type': mimeType },
-			data: fileStream, // Directly pass the file stream
-		};*/
-    /*	const file = `file://${filepath}`;
-		console.log(`Protocol request: ${request.url}; File: ${file}`);
-		return net.fetch(file);*/
   });
 };
 
@@ -207,44 +161,6 @@ const handleRangeRequest = async (request: Request, targetPath: string) => {
 
   return new Response(nodeStreamToWeb(resultStream), { headers, status: 206 });
 };
-
-/*function fetchReadableStream(url): Promise<ReadableStream> {
-	return new Promise((resolve, reject) => {
-		const request = net.request(url);
-
-		request.on('response', (response) => {
-			if (response.statusCode === 200) {
-				const readableStream = response;
-				resolve(readableStream);
-			} else {
-				reject(new Error(`Request failed with status code: ${response.statusCode}`));
-			}
-		});
-
-		request.on('error', (error) => {
-			reject(error);
-		});
-
-		request.end();
-	});
-}*/
-
-/*function fetchLocalVideoFile(filePath) {
-	return fetchReadableStream(`file://${filePath}`)
-		.then(readable => {
-			return new Response(
-				readable,
-				{ status: 200, headers: { 'content-type': 'video/mp4' } }
-			);
-		})
-		.catch(error => {
-			console.error('Error fetching local video file:', error);
-			return new Response(
-				null,
-				{ status: 400, headers: { 'content-type': 'text/html' } }
-			);
-		});
-}*/
 
 /**
  * Returns the MIME type for a given file extension.
