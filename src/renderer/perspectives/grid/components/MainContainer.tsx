@@ -294,8 +294,8 @@ function GridPerspective(props: Props) {
     },
   };
 
-  const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
-  const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
+  //const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
+  //const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
@@ -370,10 +370,10 @@ function GridPerspective(props: Props) {
       >
         <GridCellsStyleContextProvider>
           <GridPagination
-            directories={sortedDirectories}
+            //directories={sortedDirectories}
             desktopMode={desktopMode}
             openRenameEntryDialog={openRenameEntryDialog}
-            files={sortedFiles}
+            //files={sortedFiles}
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}

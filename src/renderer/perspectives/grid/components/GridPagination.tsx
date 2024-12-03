@@ -33,24 +33,17 @@ import { TS } from '-/tagspaces.namespace';
 import { getDescriptionPreview } from '-/services/utils-io';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import GridCellsContainer from './GridCellsContainer';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import { dataTidFormat } from '-/services/test';
 import CellView from '-/perspectives/common/CellView';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 
 interface Props {
-  directories: Array<TS.FileSystemEntry>;
   desktopMode: boolean;
-  files: Array<TS.FileSystemEntry>;
   getCellContent: (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -73,19 +66,15 @@ interface Props {
 }
 
 function GridPagination(props: Props) {
-  let { directories } = props;
   const { t } = useTranslation();
   const {
     getCellContent,
-    desktopMode,
     currentDirectoryPath,
     openRenameEntryDialog,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
     selectedEntries,
     setSelectedEntries,
-    clearSelection,
-    files,
   } = props;
   const {
     showDetails,
@@ -93,28 +82,17 @@ function GridPagination(props: Props) {
     showDirectories,
     showTags,
     gridPageLimit,
-    singleClickAction,
   } = usePerspectiveSettingsContext();
-  const { handleEntryExist, openEntryExistDialog } =
-    useEntryExistDialogContext();
-  const { lastSelectedEntryPath } = useSelectedEntriesContext();
-  const { openEntryInternal } = useOpenedEntryContext();
-  const { moveFiles, openFileNatively } = useIOActionsContext();
-  const { showNotification } = useNotificationContext();
-  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
-  const { openDirectory, directoryMeta } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
+  const { directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  if (!showDirectories) {
-    directories = [];
-  }
   const theme = useTheme();
-  const allFilesCount = files.length;
-  const showPagination = gridPageLimit && files.length > gridPageLimit;
+  const showPagination = sortedDirContent.length !== pageFiles.length;
   const paginationCount = showPagination
-    ? Math.ceil(allFilesCount / gridPageLimit)
+    ? Math.ceil(sortedDirContent.length / gridPageLimit)
     : 10;
 
   const backgroundImage = useRef<string>('none');
@@ -162,9 +140,20 @@ function GridPagination(props: Props) {
   const dirColor =
     directoryMeta && directoryMeta.color ? directoryMeta.color : 'transparent';
 
+  const files: TS.FileSystemEntry[] = [];
+  const dirs: TS.FileSystemEntry[] = [];
+
+  for (const entry of sortedDirContent) {
+    if (entry.isFile) {
+      files.push(entry);
+    } else {
+      dirs.push(entry);
+    }
+  }
+
   let folderSummary =
-    (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
-    allFilesCount +
+    (dirs.length > 0 ? dirs.length + ' folder(s) and ' : '') +
+    files.length +
     ' file(s) found';
   if (selectedEntries && selectedEntries.length > 0) {
     folderSummary = selectedEntries.length + ' entries selected';
@@ -257,7 +246,7 @@ function GridPagination(props: Props) {
                   </Box>
                 )}
                 <Box
-                  data-tid={'allFilesCount' + allFilesCount}
+                  data-tid={'allFilesCount' + files.length}
                   style={{
                     paddingBottom: 5,
                     marginTop: 10,
@@ -334,16 +323,6 @@ function GridPagination(props: Props) {
           )}
         </Grid>
         <GridCellsContainer>
-          {page === 1 &&
-            directories.map((entry, index) => (
-              <CellView
-                fsEntry={entry}
-                index={index}
-                cellContent={getCellContent}
-                setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-                setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-              />
-            ))}
           {pageFiles.map((entry, index, dArray) => (
             <CellView
               fsEntry={entry}
@@ -354,7 +333,7 @@ function GridPagination(props: Props) {
               isLast={index === dArray.length - 1}
             />
           ))}
-          {pageFiles.length < 1 && directories.length < 1 && (
+          {pageFiles.length < 1 && (
             <div style={{ textAlign: 'center' }}>
               {!showDescription &&
                 directoryMeta &&
@@ -381,35 +360,33 @@ function GridPagination(props: Props) {
               )}
             </div>
           )}
-          {pageFiles.length < 1 &&
-            directories.length >= 1 &&
-            !showDirectories && (
-              <div style={{ textAlign: 'center' }}>
-                {!showDescription &&
-                  directoryMeta &&
-                  directoryMeta.description && (
-                    <div
-                      style={{
-                        position: 'relative',
-                        margin: 'auto',
-                        maxWidth: 150,
-                      }}
-                    >
-                      <EntryIcon isFile={false} />
-                    </div>
-                  )}
-                <Typography
-                  style={{ padding: 15, color: theme.palette.text.secondary }}
-                >
-                  {t('core:noFileButFoldersFound')}
-                </Typography>
-                {!AppConfig.isCordova && (
-                  <Typography style={{ color: theme.palette.text.secondary }}>
-                    {t('core:dragAndDropToImport')}
-                  </Typography>
+          {files.length < 1 && dirs.length >= 1 && !showDirectories && (
+            <div style={{ textAlign: 'center' }}>
+              {!showDescription &&
+                directoryMeta &&
+                directoryMeta.description && (
+                  <div
+                    style={{
+                      position: 'relative',
+                      margin: 'auto',
+                      maxWidth: 150,
+                    }}
+                  >
+                    <EntryIcon isFile={false} />
+                  </div>
                 )}
-              </div>
-            )}
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.secondary }}
+              >
+                {t('core:noFileButFoldersFound')}
+              </Typography>
+              {!AppConfig.isCordova && (
+                <Typography style={{ color: theme.palette.text.secondary }}>
+                  {t('core:dragAndDropToImport')}
+                </Typography>
+              )}
+            </div>
+          )}
         </GridCellsContainer>
         {showPagination && (
           <Tooltip title={folderSummary}>
@@ -431,20 +408,18 @@ function GridPagination(props: Props) {
             />
           </Tooltip>
         )}
-        {!showDetails &&
-          !showPagination &&
-          (directories.length > 0 || pageFiles.length > 0) && (
-            <div style={{ padding: 15, bottom: 10 }}>
-              <Typography
-                style={{
-                  fontSize: '0.9rem',
-                  color: theme.palette.text.primary,
-                }}
-              >
-                {folderSummary}
-              </Typography>
-            </div>
-          )}
+        {!showDetails && !showPagination && pageFiles.length > 0 && (
+          <div style={{ padding: 15, bottom: 10 }}>
+            <Typography
+              style={{
+                fontSize: '0.9rem',
+                color: theme.palette.text.primary,
+              }}
+            >
+              {folderSummary}
+            </Typography>
+          </div>
+        )}
       </div>
     </div>
   );
