@@ -16,21 +16,23 @@
  *
  */
 
-import { AIProvider } from '-/components/chat/ChatTypes';
 import AppConfig from '-/AppConfig';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import { AIProvider } from '-/components/chat/ChatTypes';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { Pro } from '-/pro';
 import { getProgress } from '-/reducers/app';
 import {
   getDefaultAIProvider,
@@ -48,7 +50,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Pro } from '-/pro';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -56,7 +57,6 @@ import {
   SearchIcon,
 } from './CommonIcons';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -162,6 +162,11 @@ function FolderContainer(props: Props) {
         key={perspective.id}
         data-tid={perspective.key}
         onClick={() => switchPerspective(perspective.id)}
+        style={{
+          opacity: 0.9,
+          backgroundColor: theme.palette.background.default,
+          borderColor: theme.palette.divider,
+        }}
       >
         <Tooltip
           title={
@@ -347,9 +352,8 @@ function FolderContainer(props: Props) {
             bottom: -40,
             right: 20,
             zIndex: 1000,
-            opacity: 0.9,
+            // opacity: 0.9,
             position: 'absolute',
-            backgroundColor: theme.palette.background.default,
           }}
         >
           {perspectiveToggleButtons}
@@ -358,7 +362,12 @@ function FolderContainer(props: Props) {
               value=""
               aria-label="chat-label"
               data-tid="chatTID"
-              style={{ backgroundColor: '#f3585845', marginLeft: 5 }}
+              style={{
+                marginLeft: 5,
+                borderColor: theme.palette.divider,
+                color: theme.palette.primary.main,
+                backgroundColor: theme.palette.background.default,
+              }}
               onClick={() => {
                 openEntry(currentDirectoryPath, TabNames.aiTab);
               }}
