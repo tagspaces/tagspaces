@@ -55,6 +55,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   prefixDataTID?: string;
@@ -97,7 +98,7 @@ function MainToolbar(props: Props) {
     useDeleteMultipleEntriesDialogContext();
 
   function showProperties() {
-    return openEntry(currentDirectoryPath, true);
+    return openEntry(currentDirectoryPath, TabNames.propertiesTab);
   }
 
   function multipleDownload() {

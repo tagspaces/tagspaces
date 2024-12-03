@@ -71,6 +71,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -88,11 +89,14 @@ type OpenedEntryContextData = {
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
   ) => Promise<boolean>;*/
-  openEntry: (path?: string, showDetails?) => Promise<boolean>;
-  openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => Promise<boolean>;
+  openEntry: (path?: string, tabSelected?: string) => Promise<boolean>;
+  openFsEntry: (
+    fsEntry?: TS.FileSystemEntry,
+    tabSelected?: string,
+  ) => Promise<boolean>;
   openEntryInternal: (
     fsEntry: TS.FileSystemEntry,
-    showDetails?,
+    tabSelected?: string,
   ) => Promise<boolean>;
   openNextFile: (entries: TS.FileSystemEntry[]) => void;
   openPrevFile: (entries: TS.FileSystemEntry[]) => void;
@@ -166,6 +170,7 @@ export const OpenedEntryContextProvider = ({
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
+  const { setOpenedTab } = useEntryPropsTabsContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
   const { setEditMode } = useFilePropertiesContext();
@@ -516,12 +521,15 @@ export const OpenedEntryContextProvider = ({
     return Promise.resolve(false);
   }
 
-  function openEntry(path?: string, showDetails = undefined): Promise<boolean> {
+  function openEntry(
+    path?: string,
+    tabSelected: string = undefined,
+  ): Promise<boolean> {
     if (path === undefined) {
-      return openFsEntry(undefined, showDetails);
+      return openFsEntry(undefined, tabSelected);
     }
     return getAllPropertiesPromise(path)
-      .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
+      .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, tabSelected))
       .catch((error) => {
         console.log(
           'Error getting properties for entry: ' + path + ' - ' + error,
@@ -532,12 +540,12 @@ export const OpenedEntryContextProvider = ({
 
   function openEntryInternal(
     fsEntry: TS.FileSystemEntry,
-    showDetails = undefined,
+    tabSelected = undefined,
   ): Promise<boolean> {
     return getAllPropertiesPromise(fsEntry.path, fsEntry.locationID)
       .then((entry: TS.FileSystemEntry) => {
         if (entry) {
-          return openFsEntry(entry, showDetails);
+          return openFsEntry(entry, tabSelected);
         } else {
           if (typeof entry === 'boolean') {
             if (!entry) {
@@ -548,7 +556,7 @@ export const OpenedEntryContextProvider = ({
               );
             }
           }
-          return openFsEntry(fsEntry, showDetails);
+          return openFsEntry(fsEntry, tabSelected);
         }
       })
       .catch((error) => {
@@ -561,7 +569,7 @@ export const OpenedEntryContextProvider = ({
 
   async function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
-    showDetails = undefined,
+    tabSelected: string = undefined,
   ): Promise<boolean> {
     if (!fsEntry) {
       if (selectedEntries && selectedEntries.length > 0) {
@@ -594,9 +602,7 @@ export const OpenedEntryContextProvider = ({
         return Promise.resolve(false);
       }
     }
-    if (showDetails !== undefined) {
-      dispatch(SettingsActions.setShowDetails(showDetails));
-    }
+
     entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
     const loc = findLocation(fsEntry.locationID);
     if (loc?.haveObjectStoreSupport() || loc?.haveWebDavSupport()) {
@@ -637,6 +643,11 @@ export const OpenedEntryContextProvider = ({
     );
 
     addToEntryContainer(entryForOpening);
+
+    if (tabSelected !== undefined) {
+      setOpenedTab(tabSelected, entryForOpening);
+      //dispatch(SettingsActions.setShowDetails(tabSelected));
+    }
     if (
       selectedEntries.length !== 1 ||
       selectedEntries.some((e) => e.path !== fsEntry.path)

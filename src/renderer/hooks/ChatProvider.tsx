@@ -360,7 +360,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function removeModel(modelName: string) {
     const model = findModel(modelName);
-    if (model) {
+    if (model && defaultAiProvider) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
@@ -393,7 +393,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * @param modelName
    */
   function getModel(modelName: string): Promise<Model> {
-    if (!AppConfig.isElectron || !modelName) {
+    if (!AppConfig.isElectron || !modelName || !defaultAiProvider) {
       return Promise.resolve(undefined);
     }
     return window.electronIO.ipcRenderer
@@ -413,7 +413,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     confirmCallback?,
   ): Promise<boolean> {
     const model = findModel(newModelName);
-    if (!model) {
+    if (!model && defaultAiProvider) {
       // return setModel(model);
       // } else {
       const result = confirm(
@@ -487,7 +487,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       const model: HistoryModel = {
         history: chatHistoryItems.current,
         lastModelName: currentModel.current?.name,
-        engine: defaultAiProvider.engine,
+        engine: defaultAiProvider?.engine,
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
@@ -613,6 +613,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   ): Promise<any> {
     if (!model) {
       showNotification(t('core:chooseModel'));
+      return Promise.resolve(false);
+    } else if (!defaultAiProvider) {
       return Promise.resolve(false);
     }
     const msgContent = getMessage(msg, mode);

@@ -68,6 +68,7 @@ import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import TsMenuList from '-/components/TsMenuList';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   anchorEl: Element;
@@ -153,7 +154,7 @@ function FileMenu(props: Props) {
   function showProperties() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
-      openEntry(selectedEntries[0].path, true);
+      openEntry(selectedEntries[0].path, TabNames.propertiesTab);
     }
   }
 
