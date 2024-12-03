@@ -44,7 +44,7 @@ export const PaginationContextProvider = ({
 }: PaginationContextProviderProps) => {
   const initPage = 1;
   const { currentDirectoryPath, isSearchMode } = useDirectoryContentContext();
-  const { settings } = usePerspectiveSettingsContext();
+  const { settings, showDirectories } = usePerspectiveSettingsContext();
   const { sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
@@ -72,7 +72,15 @@ export const PaginationContextProvider = ({
       settings && settings.gridPageLimit
         ? settings.gridPageLimit
         : defaultSettings.gridPageLimit;
-    const files = dirContent.filter((entry) => entry && entry.isFile);
+    const files = dirContent.filter((entry) => {
+      if (entry) {
+        if (!showDirectories) {
+          return entry.isFile;
+        }
+        return true;
+      }
+      return false;
+    });
     const showPagination = gridPageLimit && files.length > gridPageLimit;
     if (showPagination) {
       const start = (currentPage - 1) * gridPageLimit;

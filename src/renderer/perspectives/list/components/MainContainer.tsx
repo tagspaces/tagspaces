@@ -294,9 +294,6 @@ function ListPerspective(props: Props) {
     },
   };
 
-  const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
-  const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
-
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
@@ -370,10 +367,10 @@ function ListPerspective(props: Props) {
       >
         <ListCellsStyleContextProvider>
           <GridPagination
-            directories={sortedDirectories}
+            //directories={sortedDirectories}
             desktopMode={desktopMode}
             openRenameEntryDialog={openRenameEntryDialog}
-            files={sortedFiles}
+            //files={sortedFiles}
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}
