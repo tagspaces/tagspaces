@@ -138,29 +138,37 @@ function ChatView() {
     if (chatItems) {
       const formattedItems = chatItems.map((item) => {
         const date = item.timestamp
-          ? ' [' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + ']'
-          : '';
+          ? '**User on ' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + '**'
+          : '**User**';
         const request = item.request ? item.request : '';
-        const model = item.modelName ? item.modelName : 'system';
-        const response = item.response ? model + ': ' + item.response : '';
+        const model = item.modelName ? item.modelName : 'AI model';
+        const response = item.response
+          ? '**' + model + '**:\n\n' + item.response
+          : '';
         const images = item.imagePaths
           ? item.imagePaths.map((i) => {
-              return '![chat image]("' + getHistoryFilePath(i) + '")';
+              return (
+                '![chat image](' +
+                (AppConfig.isWeb ? '' : 'file://') +
+                getHistoryFilePath(i) +
+                ')'
+              );
             })
           : '';
         return (
-          '\n | `' +
+          '' +
           date +
-          ':` ' +
+          ': \n\n' +
           request +
-          ' ' +
+          '\n' +
           images +
-          ' |\n|-------------| \n\n ' +
+          '\n' +
           response +
-          ' \n '
+          '\n***\n '
         );
       });
-      return formattedItems.join(' ');
+      const markdown = formattedItems.join(' ');
+      return markdown;
     }
     return '';
   }

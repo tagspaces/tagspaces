@@ -50,6 +50,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -264,7 +265,7 @@ function ListPerspective(props: Props) {
       if (selectedEntries && selectedEntries.length === 1) {
         const entry = selectedEntries[0];
         if (entry.isFile) {
-          openEntry(entry.path, false);
+          openEntry(entry.path);
         } else {
           openDirectory(entry.path);
         }
@@ -279,7 +280,7 @@ function ListPerspective(props: Props) {
     openEntryDetails: () => {
       if (selectedEntries && selectedEntries.length === 1) {
         const entry = selectedEntries[0];
-        openEntry(entry.path, true);
+        openEntry(entry.path, TabNames.propertiesTab);
       }
     },
     duplicateFile: () => {
@@ -292,9 +293,6 @@ function ListPerspective(props: Props) {
       openDirectory(currentDirectoryPath);
     },
   };
-
-  const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
-  const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
@@ -369,10 +367,10 @@ function ListPerspective(props: Props) {
       >
         <ListCellsStyleContextProvider>
           <GridPagination
-            directories={sortedDirectories}
+            //directories={sortedDirectories}
             desktopMode={desktopMode}
             openRenameEntryDialog={openRenameEntryDialog}
-            files={sortedFiles}
+            //files={sortedFiles}
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}

@@ -65,6 +65,7 @@ import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -78,15 +79,11 @@ function EntryContainer() {
     setFileChanged,
   } = useOpenedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
-  const {
-    saveDescription,
-    description,
-    isEditMode,
-    setEditMode,
-    isEditDescriptionMode,
-  } = useFilePropertiesContext();
+  const { saveDescription, isEditMode, setEditMode, isEditDescriptionMode } =
+    useFilePropertiesContext();
   const { setAutoSave } = useIOActionsContext();
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
+  const { isEditable } = useEntryPropsTabsContext();
   const { saveFileOpen } = useResolveConflictContext();
 
   const { showNotification } = useNotificationContext();
@@ -102,7 +99,7 @@ function EntryContainer() {
     flexDirection: 'column',
   };
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
-    tabIndex !== undefined,
+    tabIndex !== undefined && tabIndex !== -1,
   );
 
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -533,14 +530,14 @@ function EntryContainer() {
     //window.dispatchEvent(new Event('previous-file'));
   };
 
-  const fileExtension =
+  /*const fileExtension =
     openedEntry &&
     extractFileExtension(openedEntry.path, cLocation?.getDirSeparator());
   const isEditable =
     !readOnlyMode &&
     openedEntry &&
     openedEntry.isFile &&
-    AppConfig.editableFiles.includes(fileExtension);
+    AppConfig.editableFiles.includes(fileExtension);*/
 
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
@@ -577,7 +574,7 @@ function EntryContainer() {
   };
 
   const tabs = () => {
-    const autoSave = isEditable && revisionsEnabled && (
+    const autoSave = isEditable(openedEntry) && revisionsEnabled && (
       <Tooltip
         title={
           t('core:autosave') +
@@ -666,20 +663,17 @@ function EntryContainer() {
         );
       }
     }
-    const haveDescription = description?.length > 0;
 
     const tabsComponent = useCallback(
       (marginRight: string | undefined = undefined) => (
         <EntryContainerTabs
-          isEditable={isEditable}
           isPanelOpened={isPanelOpened}
           openPanel={openPanel}
           toggleProperties={toggleProperties}
-          haveDescription={haveDescription}
           marginRight={marginRight}
         />
       ),
-      [isEditable, isPanelOpened, haveDescription],
+      [isPanelOpened],
     );
 
     if (!autoSave && !editFile) {

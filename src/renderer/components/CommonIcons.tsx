@@ -175,7 +175,7 @@ export { default as TagLibraryIcon } from '@mui/icons-material/LocalOfferOutline
 
 export { default as RecentThingsIcon } from '@mui/icons-material/BookmarksOutlined';
 
-export { default as AIIcon } from '@mui/icons-material/Memory';
+export { default as AIIcon } from '@mui/icons-material/AutoFixHigh'; // AutoAwesome AutoFixHigh
 
 export { default as ExtensionIcon } from '@mui/icons-material/Extension';
 

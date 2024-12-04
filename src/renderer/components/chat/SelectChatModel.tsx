@@ -109,7 +109,7 @@ function SelectChatModel(props: Props) {
       disabled={disabled}
       value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
-      label={label ? label : t('selectModel')}
+      label={label ? label : t('chooseModel')}
       id={id ? id : 'selectChatModelId'}
       InputProps={{
         endAdornment: chosenModel && (
@@ -127,7 +127,10 @@ function SelectChatModel(props: Props) {
       }}
     >
       <MenuItem value="init" disabled>
-        Choose an model
+        {t('core:chooseModel')}
+      </MenuItem>
+      <MenuItem value="" disabled>
+        {t('core:installedAIModel')}
       </MenuItem>
       {models && models.length > 0 ? (
         models.map((model) => (
@@ -141,11 +144,11 @@ function SelectChatModel(props: Props) {
         ))
       ) : (
         <MenuItem value="" disabled>
-          No models installed
+          {t('core:noAIModelsInstaller')}
         </MenuItem>
       )}
       <MenuItem value="" disabled>
-        Available models
+        {t('core:exampleInstallableModels')}
       </MenuItem>
       {ollamaAvailableModels.map((model) => (
         <MenuItem

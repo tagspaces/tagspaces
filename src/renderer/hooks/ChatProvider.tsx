@@ -16,31 +16,7 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
-import {
-  getMetaDirectoryPath,
-  extractFileExtension,
-} from '@tagspaces/tagspaces-common/paths';
-import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
-import { useDispatch, useSelector } from 'react-redux';
-import { getDefaultAIProvider } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { Pro } from '-/pro';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { toBase64Image } from '-/services/utils-io';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import {
   AIProvider,
   ChatImage,
@@ -51,10 +27,33 @@ import {
   Model,
   PullModelResponse,
 } from '-/components/chat/ChatTypes';
-import { extractPDFcontent } from '-/services/thumbsgenerator';
-import { format } from 'date-fns';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { Pro } from '-/pro';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { getDefaultAIProvider } from '-/reducers/settings';
+import { extractPDFcontent } from '-/services/thumbsgenerator';
+import { toBase64Image } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import {
+  extractFileExtension,
+  getMetaDirectoryPath,
+} from '@tagspaces/tagspaces-common/paths';
+import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
+import { format } from 'date-fns';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 type ChatData = {
   models: Model[];
@@ -360,7 +359,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function removeModel(modelName: string) {
     const model = findModel(modelName);
-    if (model) {
+    if (model && defaultAiProvider) {
       const result = confirm('Do you want to remove ' + model.name + ' model?');
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
@@ -393,7 +392,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * @param modelName
    */
   function getModel(modelName: string): Promise<Model> {
-    if (!AppConfig.isElectron || !modelName) {
+    if (!AppConfig.isElectron || !modelName || !defaultAiProvider) {
       return Promise.resolve(undefined);
     }
     return window.electronIO.ipcRenderer
@@ -413,7 +412,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     confirmCallback?,
   ): Promise<boolean> {
     const model = findModel(newModelName);
-    if (!model) {
+    if (!model && defaultAiProvider) {
       // return setModel(model);
       // } else {
       const result = confirm(
@@ -487,7 +486,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       const model: HistoryModel = {
         history: chatHistoryItems.current,
         lastModelName: currentModel.current?.name,
-        engine: defaultAiProvider.engine,
+        engine: defaultAiProvider?.engine,
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
@@ -613,6 +612,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   ): Promise<any> {
     if (!model) {
       showNotification(t('core:chooseModel'));
+      return Promise.resolve(false);
+    } else if (!defaultAiProvider) {
       return Promise.resolve(false);
     }
     const msgContent = getMessage(msg, mode);

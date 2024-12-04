@@ -10,6 +10,7 @@
 @import "~@milkdown/theme-nord/style.css";
 @import "~slick-carousel/slick/slick.css"; /* used from react-slick */
 @import "~slick-carousel/slick/slick-theme.css";
+@import "~react-leaflet-markercluster/dist/styles.min.css";
 /* @import '~@tagspaces/tagspaces-md/lib/milkdown.css'; */
 
 /* Needed to disable border on focused HotKey element */

@@ -21,20 +21,18 @@ import TsButton from '-/components/TsButton';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { AppDispatch } from '-/reducers/app';
-import {
-  actions as SettingsActions,
-  getDefaultAIProvider,
-} from '-/reducers/settings';
+import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
 import { OverridableStringUnion } from '@mui/types';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
 import { AIProvider } from '-/components/chat/ChatTypes';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 
 interface Props {
   variant?: OverridableStringUnion<
@@ -47,7 +45,7 @@ interface Props {
 function AiGenTagsButton(props: Props) {
   const { fromDescription, variant } = props;
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { setOpenedTab } = useEntryPropsTabsContext();
   const { openedEntry } = useOpenedEntryContext();
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const { generate, openedEntryModel, newChatMessage } = useChatContext();
@@ -78,9 +76,9 @@ function AiGenTagsButton(props: Props) {
           title: match[1].trim().replace(/^,|,$/g, '').toLowerCase(),
           type: 'sidecar',
         }));
-        addTagsToFsEntry(openedEntry, tags).then(() => {
-          dispatch(SettingsActions.setEntryContainerTab(0));
-        });
+        addTagsToFsEntry(openedEntry, tags).then(() =>
+          setOpenedTab(TabNames.propertiesTab, openedEntry),
+        );
       } catch (e) {
         console.error('parse response ' + response, e);
       }
