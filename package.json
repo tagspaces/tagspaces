@@ -217,6 +217,7 @@
     "react-infinite-scroller": "^1.2.6",
     "react-leaflet": "^4.2.1",
     "react-leaflet-fullscreen": "^4.1.1",
+    "react-leaflet-markercluster": "^4.1.1",
     "react-qrcode-logo": "^2.8.0",
     "react-redux": "^8.0.2",
     "react-slick": "^0.30.2",
