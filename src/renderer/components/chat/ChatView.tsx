@@ -143,7 +143,7 @@ function ChatView() {
         const request = item.request ? item.request : '';
         const model = item.modelName ? item.modelName : 'AI model';
         const response = item.response
-          ? '**' + model + '**:\n\n' + item.response
+          ? '**' + model + '**:\\\n' + item.response
           : '';
         const images = item.imagePaths
           ? item.imagePaths.map((i) => {
@@ -158,13 +158,13 @@ function ChatView() {
         return (
           '' +
           date +
-          ': \n\n' +
+          ': \\\n' +
           request +
           '\n' +
           images +
           '\n' +
           response +
-          '\n***\n '
+          '\n *** \n '
         );
       });
       const markdown = formattedItems.join(' ');
