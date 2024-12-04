@@ -199,7 +199,7 @@ function ChatView() {
   const { FILE } = NativeTypes;
 
   return (
-    <Box sx={{ flexGrow: 1, margin: 1, height: 'calc(100% - 20px)' }}>
+    <Box sx={{ flexGrow: 1, margin: 0, height: '100%' }}>
       <Grid2
         container
         spacing={1}
@@ -211,7 +211,7 @@ function ChatView() {
         }}
       >
         <Grid2 container spacing={1} direction="row">
-          <Grid2 size={12} style={{ height: 60 }}>
+          <Grid2 size={12}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
@@ -227,7 +227,7 @@ function ChatView() {
             lightMode={true}
           />
         </Grid2>
-        <Grid2 container spacing={2} direction="column">
+        <Grid2 container spacing={1} direction="column">
           <Grid2>
             {images.length > 0 &&
               images.map((image, index) => (
@@ -265,7 +265,7 @@ function ChatView() {
                   autoFocus
                   disabled={isTyping.current}
                   name="entryName"
-                  label={t('core:newChatMessage')}
+                  //label={t('core:newChatMessage')}
                   onChange={handleInputChange}
                   value={chatMsg.current}
                   onKeyDown={(event) => {
