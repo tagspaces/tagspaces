@@ -188,6 +188,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   useEffect(() => {
     setOpenedEntryModel();
+    initHistory();
   }, [openedEntry]);
 
   function initHistory() {
