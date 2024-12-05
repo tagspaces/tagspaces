@@ -175,12 +175,25 @@ function SettingsAI(props: Props) {
     >
       <Accordion defaultExpanded>
         <AccordionSummary
-          expandIcon={<ExpandIcon />}
+          //expandIcon={<ExpandIcon />}
           aria-controls="ai-general"
           id="ai-general-header"
           data-tid="aiGeneralTID"
         >
-          <Typography>{t('core:aiSettings')}</Typography>
+          <Box style={{ display: 'block' }}>
+            <Typography>{t('core:aiSettings')}</Typography>
+            <br />
+            <Typography variant="caption">
+              TagSpaces do <b>not</b> have its own AI engine or models, but
+              relays entirely on external services like Ollama. If you haven't
+              already installed Ollama, you can download it from the{' '}
+              <a href="https://ollama.com/download" target="_blank">
+                official website
+              </a>
+              and follow the installation instructions to get it set up on your
+              computer."
+            </Typography>
+          </Box>
         </AccordionSummary>
         <AccordionDetails>
           <ClickAwayListener onClickAway={handleClose}>
@@ -275,6 +288,16 @@ function SettingsAI(props: Props) {
           )}
         </AccordionDetails>
       </Accordion>
+      {!aiDefaultProvider && (
+        <Accordion defaultExpanded>
+          <AccordionSummary>
+            <Typography variant="caption">
+              All AI-functionality is currently disabled. Please add and
+              configure an AI-engine in order to use external AIs in TagSpaces.
+            </Typography>
+          </AccordionSummary>
+        </Accordion>
+      )}
       {aiProviders.map((provider) => (
         <Accordion defaultExpanded>
           <AccordionSummary
