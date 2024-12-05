@@ -189,9 +189,9 @@ function SettingsAI(props: Props) {
               already installed Ollama, you can download it from the{' '}
               <a href="https://ollama.com/download" target="_blank">
                 official website
-              </a>
+              </a>{' '}
               and follow the installation instructions to get it set up on your
-              computer."
+              computer.
             </Typography>
           </Box>
         </AccordionSummary>
