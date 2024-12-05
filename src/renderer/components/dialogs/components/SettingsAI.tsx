@@ -256,7 +256,7 @@ function SettingsAI(props: Props) {
               </Popper>
             </Box>
           </ClickAwayListener>
-          {aiProviders && ( //&& aiProviders.length > 1 && (
+          {aiDefaultProvider && (
             <TsSelect
               disabled={externalConfig}
               value={aiDefaultProvider?.id}
@@ -266,7 +266,7 @@ function SettingsAI(props: Props) {
               {aiProviders
                 .filter((p) => p.enable)
                 .map((provider) => (
-                  <MenuItem value={provider.id}>
+                  <MenuItem key={provider.id} value={provider.id}>
                     <OllamaIcon width={10} style={{ marginRight: 5 }} />
                     {provider.name}
                   </MenuItem>
