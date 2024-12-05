@@ -256,7 +256,7 @@ function SettingsAI(props: Props) {
               </Popper>
             </Box>
           </ClickAwayListener>
-          {aiProviders && ( //&& aiProviders.length > 1 && (
+          {aiDefaultProvider && (
             <TsSelect
               disabled={externalConfig}
               value={aiDefaultProvider?.id}
