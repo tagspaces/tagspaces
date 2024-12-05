@@ -33,6 +33,7 @@ import buildDockMenu from './electron-dock-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
 import { Extensions } from './types';
+import protocol from './protocol';
 
 // class AppUpdater {
 //   constructor() {
@@ -705,6 +706,8 @@ startWS();
 
 let appI18N;
 
+protocol.register();
+
 app
   .whenReady()
   .then(() => {
@@ -727,6 +730,8 @@ app
         );
       }
       createWindow(i18n);
+
+      protocol.initialize();
 
       i18n.on('languageChanged', (lng) => {
         try {

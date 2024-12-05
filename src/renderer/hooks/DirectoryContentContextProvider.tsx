@@ -355,8 +355,9 @@ export const DirectoryContentContextProvider = ({
             };
           }
           if (
+            action.entry &&
             cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-            cleanTrailingDirSeparator(action.entry.path)
+              cleanTrailingDirSeparator(action.entry.path)
           ) {
             directoryMeta.current = {
               ...directoryMeta.current,
