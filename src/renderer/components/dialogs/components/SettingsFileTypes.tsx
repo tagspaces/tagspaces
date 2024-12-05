@@ -55,6 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { getUserDataDir } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { useExtensionsContext } from '-/hooks/useExtensionsContext';
+import { dataTidFormat } from '-/services/test';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -346,6 +347,7 @@ function SettingsFileTypes() {
             }
           >
             <Input
+              data-tid={'typeTID' + item.type}
               defaultValue={item.type}
               error={
                 (isValidationInProgress.current && item.type === '') ||
@@ -366,6 +368,7 @@ function SettingsFileTypes() {
             error={isValidationInProgress.current && item.viewer === ''}
           >
             <Select
+              data-tid={'viewerTID' + item.type}
               error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
               sx={{ width: 180 }}
@@ -394,6 +397,9 @@ function SettingsFileTypes() {
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
                     <MenuItem
+                      data-tid={dataTidFormat(
+                        extension.extensionName + 'viewerTID' + item.type,
+                      )}
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >

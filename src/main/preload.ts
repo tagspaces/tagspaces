@@ -78,7 +78,8 @@ export type Channels =
   | 'getOllamaModels'
   | 'newOllamaMessage'
   | 'pullOllamaModel'
-  | 'deleteOllamaModel';
+  | 'deleteOllamaModel'
+  | 'startup-finished';
 
 const electronHandler = {
   ipcRenderer: {

@@ -12,8 +12,8 @@ import {
 } from './location.helpers';
 import {
   clickOn,
-  expectAudioPlay,
   expectElementExist,
+  expectMediaPlay,
   getGridFileSelector,
   isDisplayed,
   takeScreenshot,
@@ -67,7 +67,7 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.ogg'),
       'fileMenuOpenFile',
     );
-    await expectAudioPlay();
+    await expectMediaPlay();
   });
 
   test('TST5902 - Play ogv file [web,minio,electron]', async () => {
@@ -75,7 +75,7 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.ogv'),
       'fileMenuOpenFile',
     );
-    await expectAudioPlay();
+    await expectMediaPlay();
   });
 
   test('TST5903 - Open and close about dialog [web,minio,electron]', async () => {
@@ -115,7 +115,7 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.mp3'),
       'fileMenuOpenFile',
     );
-    await expectAudioPlay();
+    await expectMediaPlay();
   });
 
   /**
@@ -127,7 +127,7 @@ test.describe('TST59 - Media player', () => {
       'fileMenuOpenFile',
     );
 
-    await expectAudioPlay();
+    await expectMediaPlay();
 
     // Access the iframe
     const iframeElement = await global.client.waitForSelector('iframe');
@@ -144,6 +144,23 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.flac'),
       'fileMenuOpenFile',
     );
-    await expectAudioPlay();
+    await expectMediaPlay();
+  });
+
+  test('TST5911 - Play 3gp [web,minio,electron]', async () => {
+    /*await clickOn('[data-tid=settings]');
+    await clickOn('[data-tid=fileTypeSettingsDialog]');
+    const selectEl = global.client.locator('[data-tid=viewerTIDgif]');
+    await selectEl.evaluate(node => node.scrollIntoView());
+   // await selectEl.scrollIntoViewIfNeeded();
+    await clickOn('[data-tid=viewerTIDgif]');
+    await clickOn('[data-tid=Media_PlayerviewerTIDgif]');
+    await clickOn('[data-tid=closeSettingsDialog]');*/
+
+    await openContextEntryMenu(
+      getGridFileSelector('sample.3gp'),
+      'fileMenuOpenFile',
+    );
+    await expectMediaPlay(false);
   });
 });

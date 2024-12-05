@@ -486,6 +486,9 @@ export const actions = {
         ? console.log('Worker is available in renderer thread')
         : console.log('Worker is not available in renderer thread'),
     );
+
+    // Used by tests todo sendMessage only in test environment
+    window.electronIO.ipcRenderer.sendMessage('startup-finished');
   },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
