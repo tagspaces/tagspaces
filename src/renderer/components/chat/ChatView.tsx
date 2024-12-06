@@ -164,7 +164,7 @@ function ChatView() {
           images +
           '\n' +
           response +
-          '\n *** \n '
+          '\n *** \n'
         );
       });
       const markdown = formattedItems.join(' ');

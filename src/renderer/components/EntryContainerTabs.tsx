@@ -16,14 +16,15 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '-/reducers/app';
+import LoadingLazy from '-/components/LoadingLazy';
 import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
+import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useChatContext } from '-/hooks/useChatContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
@@ -31,11 +32,10 @@ import {
   isDevMode,
 } from '-/reducers/settings';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
-import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { styled, useTheme } from '@mui/material/styles';
-import LoadingLazy from '-/components/LoadingLazy';
-import { useChatContext } from '-/hooks/useChatContext';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -75,7 +75,7 @@ const StyledTab = styled((props: StyledTabProps) => {
   const { title, tinyMode, ...tabProps } = props; // Extract title and tinyMode
 
   return (
-    <Tooltip title={!tinyMode && title}>
+    <Tooltip title={tinyMode && title}>
       <Tab
         label={!tinyMode && title}
         disableRipple

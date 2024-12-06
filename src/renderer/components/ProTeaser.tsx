@@ -16,22 +16,20 @@
  *
  */
 
-import React from 'react';
-import IconButton from '@mui/material/IconButton';
 import TsButton from '-/components/TsButton';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { openURLExternally } from '-/services/utils-io';
+import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
+import CloseIcon from '@mui/icons-material/Close';
+import MapTwoToneIcon from '@mui/icons-material/MapTwoTone';
+import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
+import { ButtonGroup } from '@mui/material';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
-import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
-import MapTwoToneIcon from '@mui/icons-material/MapTwoTone';
 import Links from 'assets/links';
-import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
-import AppConfig from '-/AppConfig';
 
 interface Props {
   setShowTeaserBanner: (teaserVisibility: boolean) => void;
@@ -54,7 +52,9 @@ function ProTeaser(props: Props) {
         }}
       >
         <Typography color="textSecondary" variant="caption">
-          achieve more with
+          <span style={{ textTransform: 'lowercase' }}>
+            {t('core:achieveMore')}
+          </span>
           <IconButton
             style={{ right: 5, marginTop: -10, position: 'absolute' }}
             size="small"
@@ -97,25 +97,28 @@ function ProTeaser(props: Props) {
           marginTop: -10,
         }}
       >
-        <TsButton
-          onClick={(event: any) => {
-            event.preventDefault();
-            event.stopPropagation();
-            openProTeaserDialog();
-          }}
-        >
-          {t('showMeMore')}
-        </TsButton>
-        <TsButton
-          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-          onClick={(event: any) => {
-            event.preventDefault();
-            event.stopPropagation();
-            openURLExternally(Links.links.productsOverview, true);
-          }}
-        >
-          {t('upgrade')}
-        </TsButton>
+        <ButtonGroup>
+          <TsButton
+            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            onClick={(event: any) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openProTeaserDialog();
+            }}
+          >
+            {t('showMeMore')}
+          </TsButton>
+          <TsButton
+            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            onClick={(event: any) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openURLExternally(Links.links.productsOverview, true);
+            }}
+          >
+            {t('upgrade')}
+          </TsButton>
+        </ButtonGroup>
       </CardActions>
     </>
   );

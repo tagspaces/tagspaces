@@ -1,13 +1,14 @@
 import AppConfig from '-/AppConfig';
 import { ProTooltip } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { Pro } from '-/pro';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
+import { ButtonGroup } from '@mui/material';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const EditDescriptionButtons: React.FC = () => {
   const { t } = useTranslation();
@@ -55,49 +56,79 @@ const EditDescriptionButtons: React.FC = () => {
     <div
       style={{
         float: 'left',
+        display: 'flex',
         marginBottom: AppConfig.defaultSpaceBetweenButtons,
       }}
     >
-      {isEditDescriptionMode && (
-        <TsButton
-          style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
-          onClick={() => {
-            setEditDescriptionMode(false);
-          }}
+      <ButtonGroup>
+        {isEditDescriptionMode && (
+          <TsButton
+            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            onClick={() => {
+              setEditDescriptionMode(false);
+            }}
+          >
+            {t('core:cancel')}
+            {/* {t(isDescriptionChanged ? 'core:cancel' : 'core:close')} */}
+          </TsButton>
+        )}
+        <ProTooltip tooltip={t('editDescription')}>
+          <TsButton
+            data-tid="editDescriptionTID"
+            disabled={!Pro || isEditMode}
+            style={{
+              borderTopLeftRadius: isEditDescriptionMode
+                ? 0
+                : AppConfig.defaultCSSRadius,
+              borderBottomLeftRadius: isEditDescriptionMode
+                ? 0
+                : AppConfig.defaultCSSRadius,
+            }}
+            onClick={() => {
+              if (isEditDescriptionMode) {
+                saveDescription();
+              }
+              setEditDescriptionMode(!isEditDescriptionMode);
+            }}
+          >
+            {isEditDescriptionMode
+              ? t('core:confirmSaveButton')
+              : t('core:editDescription')}
+          </TsButton>
+        </ProTooltip>
+      </ButtonGroup>
+      <ButtonGroup style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+        <ProTooltip
+          tooltip={'Add AI generated description based on the file content'}
         >
-          {t('core:cancel')}
-          {/* {t(isDescriptionChanged ? 'core:cancel' : 'core:close')} */}
-        </TsButton>
-      )}
-      {/* {!editMode && (
-        <TsButton className={classes.button} onClick={printHTML}>
-          {t('core:print')}
-        </TsButton>
-      )} */}
-      <ProTooltip tooltip={t('editDescription')}>
-        <TsButton
-          data-tid="editDescriptionTID"
-          disabled={!Pro || isEditMode}
-          onClick={() => {
-            if (isEditDescriptionMode) {
-              saveDescription();
-            }
-            setEditDescriptionMode(!isEditDescriptionMode);
-          }}
-        >
-          {isEditDescriptionMode
-            ? t('core:confirmSaveButton')
-            : t('core:editDescription')}
-        </TsButton>
-      </ProTooltip>
-      <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
-        <AiGenDescButton />
-      </span>
-      {openedEntry.meta.description && (
-        <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
-          <AiGenTagsButton fromDescription={true} variant="outlined" />
-        </span>
-      )}
+          <AiGenDescButton
+            disabled={!Pro}
+            style={{
+              borderTopRightRadius: openedEntry.meta.description
+                ? 0
+                : AppConfig.defaultCSSRadius,
+              borderBottomRightRadius: openedEntry.meta.description
+                ? 0
+                : AppConfig.defaultCSSRadius,
+            }}
+          />
+        </ProTooltip>
+        {openedEntry.meta.description && (
+          <ProTooltip
+            tooltip={'Add AI generated tags based on the description'}
+          >
+            <AiGenTagsButton
+              disabled={!Pro}
+              style={{
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+              }}
+              fromDescription={true}
+              variant="outlined"
+            />
+          </ProTooltip>
+        )}
+      </ButtonGroup>
     </div>
   );
 };
