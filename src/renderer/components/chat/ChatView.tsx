@@ -216,6 +216,7 @@ function ChatView() {
               id="chatModelId"
               handleChangeModel={handleChangeModel}
               chosenModel={currentModel?.name}
+              label={t('core:selectedAIModel')}
             />
           </Grid2>
         </Grid2>

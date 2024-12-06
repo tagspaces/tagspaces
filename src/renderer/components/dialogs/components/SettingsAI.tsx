@@ -355,7 +355,7 @@ function SettingsAI(props: Props) {
                   disabled={externalConfig}
                   fullWidth
                   name="engineName"
-                  label={t('core:engineName')}
+                  label={t('core:engineName') + ' *'}
                   data-tid="engineTID"
                   value={provider.name}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -372,7 +372,7 @@ function SettingsAI(props: Props) {
                   disabled={externalConfig}
                   fullWidth
                   name="ollamaSocket"
-                  label={t('core:engineUrl')}
+                  label={t('core:engineUrl') + ' *'}
                   data-tid="ollamaEngineTID"
                   value={provider.url}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -404,7 +404,7 @@ function SettingsAI(props: Props) {
                 />
               </FormControl>
               <SelectChatModel
-                label={t('core:defaultAImodelText')}
+                label={t('core:defaultAImodelText') + ' *'}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
                     provider.id,

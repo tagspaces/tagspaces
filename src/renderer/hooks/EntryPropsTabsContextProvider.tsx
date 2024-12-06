@@ -16,8 +16,6 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import {
   AIIcon,
@@ -26,19 +24,16 @@ import {
   FolderPropertiesIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
-import { Pro } from '-/pro';
-import {
-  extractFileExtension,
-  getBackupFileDir,
-} from '@tagspaces/tagspaces-common/paths';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
+import React, { createContext, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 export type TabItem = {
   //dataTid: string;
@@ -154,7 +149,7 @@ export const EntryPropsTabsContextProvider = ({
         // todo enable for web
         const tab4: TabItem = {
           icon: <AIIcon />,
-          title: t('core:aiSettingsTab'),
+          title: t('core:aiChatTab'),
           name: TabNames.aiTab,
         };
         tabsArray.push(tab4);

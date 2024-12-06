@@ -109,7 +109,7 @@ function SelectChatModel(props: Props) {
       disabled={disabled}
       value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
-      // label={label ? label : t('chooseModel')}
+      label={label ? label : ''}
       id={id ? id : 'selectChatModelId'}
       slotProps={{
         input: {

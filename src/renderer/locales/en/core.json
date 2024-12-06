@@ -895,10 +895,12 @@
   "engineEnabled": "AI Engine Enabled",
   "engineUrl": "AI Engine URL",
   "chooseModel": "Choose AI Model",
+  "selectedAIModel": "Selected AI Model",
   "installedAIModel": "Installed AI Model",
   "exampleInstallableModels": "Example Installable AI Models",
   "noAIModelsInstaller": "No AI Models Installed",
   "engineName": "AI Engine Name",
   "maxCollectedTag": "Max Collected Tag",
+  "aiChatTab": "AI Chat",
   "-": "-"
 }
