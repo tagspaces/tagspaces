@@ -16,16 +16,15 @@
  *
  */
 
-import React from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Autocomplete from '@mui/material/Autocomplete';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -218,18 +217,22 @@ function ObjectStoreForm(props: Props) {
             onChange={(event) => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
             label={t('core:secretAccessKey') + ' *'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <TsIconButton
-                    tooltip={t('toggleKeyVisibility')}
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
-                  >
-                    {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
-                  </TsIconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <TsIconButton
+                      tooltip={t('toggleKeyVisibility')}
+                      aria-label="toggle password visibility"
+                      onClick={() =>
+                        setShowSecretAccessKey(!showSecretAccessKey)
+                      }
+                    >
+                      {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
+                    </TsIconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </FormControl>

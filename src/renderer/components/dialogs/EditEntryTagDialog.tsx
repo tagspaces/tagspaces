@@ -142,10 +142,12 @@ function EditEntryTagDialog(props: Props) {
             }}
             defaultValue={title}
             data-tid="editTagEntryDialog_input"
-            InputProps={{
-              endAdornment: (
-                <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
+                ),
+              },
             }}
           />
           {haveError('tag') && (

@@ -16,20 +16,18 @@
  *
  */
 
-import React from 'react';
-
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import TsIconButton from '-/components/TsIconButton';
-import FolderIcon from '@mui/icons-material/Folder';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
-import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
-import TsTextField from '-/components/TsTextField';
 import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
+import TsIconButton from '-/components/TsIconButton';
+import TsTextField from '-/components/TsTextField';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { selectDirectoryDialog } from '-/services/utils-io';
+import FolderIcon from '@mui/icons-material/Folder';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   errorTextPath: boolean;
@@ -91,14 +89,16 @@ function LocalForm(props: Props) {
             onChange={(event) => setPath(event.target.value)}
             value={path}
             // placeholder="Enter a folder path or select it with the button on the right"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" style={{ height: 32 }}>
-                  <TsIconButton onClick={openDirectory}>
-                    <FolderIcon />
-                  </TsIconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end" style={{ height: 32 }}>
+                    <TsIconButton onClick={openDirectory}>
+                      <FolderIcon />
+                    </TsIconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
             label={t('core:createLocationPath') + ' *'}
           />

@@ -16,14 +16,14 @@
  *
  */
 
-import React, { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import TsIconButton from '-/components/TsIconButton';
-import { Grid, InputAdornment, MenuItem, Select } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Grid, InputAdornment, MenuItem, Select } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -138,17 +138,19 @@ function WebdavForm(props: Props) {
                 onChange={(event) => setPassword(event.target.value)}
                 value={password}
                 label={t('core:password')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <TsIconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </TsIconButton>
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <TsIconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </TsIconButton>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </FormControl>
@@ -168,17 +170,19 @@ function WebdavForm(props: Props) {
               onChange={(event) => setSecretAccessKey(event.target.value)}
               value={secretAccessKey}
               label={t('core:webDavToken')}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <TsIconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </TsIconButton>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <TsIconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </TsIconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </FormControl>

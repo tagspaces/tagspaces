@@ -111,19 +111,21 @@ function SelectChatModel(props: Props) {
       onChange={changeModel}
       // label={label ? label : t('chooseModel')}
       id={id ? id : 'selectChatModelId'}
-      InputProps={{
-        endAdornment: chosenModel && (
-          <InputAdornment position="end" sx={{ ml: -12 }}>
-            <IconButton
-              aria-label={t('core:deleteModel')}
-              onClick={handleRemoveModel}
-              data-tid="deleteModelTID"
-              size="small"
-            >
-              <RemoveIcon />
-            </IconButton>
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          endAdornment: chosenModel && (
+            <InputAdornment position="end" sx={{ ml: -12 }}>
+              <IconButton
+                aria-label={t('core:deleteModel')}
+                onClick={handleRemoveModel}
+                data-tid="deleteModelTID"
+                size="small"
+              >
+                <RemoveIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        },
       }}
     >
       <MenuItem value="init" disabled>

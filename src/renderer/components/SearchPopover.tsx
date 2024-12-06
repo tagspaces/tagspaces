@@ -542,51 +542,53 @@ function SearchPopover(props: Props) {
               onChange={handleSearchTermChange}
               size={desktopMode ? 'small' : 'medium'}
               onKeyDown={startSearch}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip
-                      title={
-                        <>
-                          <Typography variant="subtitle1" color="inherit">
-                            Tips for the extended search
-                          </Typography>
-                          <Typography variant="subtitle2" color="inherit">
-                            💡 <b>{'sun'}</b> - will match entries having the
-                            word sun but also san or sum in the name
-                            <br />
-                            💡 <b>{'=sun'}</b> - will match entries having
-                            exactly the word sun in the name
-                            <br />
-                            💡 <b>{'"sun and beach"'}</b> - will match entries
-                            having `sun and beach´ in the name
-                            <br />
-                            💡 <b>{"'sun 'beach"}</b> - will match entries
-                            having sun or beach in the name
-                            <br />
-                            💡 <b>{'!sun'}</b> - will match entries which do not
-                            contain sun
-                            <br />
-                            💡 <b>{'^sun'}</b> - will match entries beginning
-                            with sun
-                            <br />
-                            💡 <b>{'!^sun'}</b> - will match entries witch do
-                            not begin with sun
-                            <br />
-                            💡 <b>{'.pdf$'}</b> - will match entries ending with
-                            .pdf
-                            <br />
-                            💡 <b>{'!.pdf$'}</b> - will match entries not ending
-                            with .pdf
-                            <br />
-                          </Typography>
-                        </>
-                      }
-                    >
-                      <InfoTooltipIcon />
-                    </Tooltip>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Tooltip
+                        title={
+                          <>
+                            <Typography variant="subtitle1" color="inherit">
+                              Tips for the extended search
+                            </Typography>
+                            <Typography variant="subtitle2" color="inherit">
+                              💡 <b>{'sun'}</b> - will match entries having the
+                              word sun but also san or sum in the name
+                              <br />
+                              💡 <b>{'=sun'}</b> - will match entries having
+                              exactly the word sun in the name
+                              <br />
+                              💡 <b>{'"sun and beach"'}</b> - will match entries
+                              having `sun and beach´ in the name
+                              <br />
+                              💡 <b>{"'sun 'beach"}</b> - will match entries
+                              having sun or beach in the name
+                              <br />
+                              💡 <b>{'!sun'}</b> - will match entries which do
+                              not contain sun
+                              <br />
+                              💡 <b>{'^sun'}</b> - will match entries beginning
+                              with sun
+                              <br />
+                              💡 <b>{'!^sun'}</b> - will match entries witch do
+                              not begin with sun
+                              <br />
+                              💡 <b>{'.pdf$'}</b> - will match entries ending
+                              with .pdf
+                              <br />
+                              💡 <b>{'!.pdf$'}</b> - will match entries not
+                              ending with .pdf
+                              <br />
+                            </Typography>
+                          </>
+                        }
+                      >
+                        <InfoTooltipIcon />
+                      </Tooltip>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>

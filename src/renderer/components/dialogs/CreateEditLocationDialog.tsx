@@ -1071,24 +1071,26 @@ function CreateEditLocationDialog(props: Props) {
                   updateValue={(value) => {
                     setNewLocationID(value);
                   }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" style={{ height: 32 }}>
-                        <TsIconButton
-                          tooltip={t('core:generateNewLocationId')}
-                          onClick={() => {
-                            const result = confirm(
-                              'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
-                            );
-                            if (result) {
-                              setNewLocationID(getUuid());
-                            }
-                          }}
-                        >
-                          <IDIcon />
-                        </TsIconButton>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end" style={{ height: 32 }}>
+                          <TsIconButton
+                            tooltip={t('core:generateNewLocationId')}
+                            onClick={() => {
+                              const result = confirm(
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
+                              );
+                              if (result) {
+                                setNewLocationID(getUuid());
+                              }
+                            }}
+                          >
+                            <IDIcon />
+                          </TsIconButton>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
               </FormControl>
@@ -1126,37 +1128,39 @@ function CreateEditLocationDialog(props: Props) {
                   }}
                   retrieveValue={() => encryptionKey}
                   label={t('core:encryptionKey')}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <TsIconButton
-                          tooltip={t('toggleKeyVisibility')}
-                          aria-label="toggle key visibility"
-                          onClick={() =>
-                            setShowEncryptionKey(!showEncryptionKey)
-                          }
-                        >
-                          {showEncryptionKey ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </TsIconButton>
-                        <TsIconButton
-                          tooltip={t('generateEncryptionKey')}
-                          aria-label="generate encryption key"
-                          onClick={() =>
-                            setEncryptionKey(
-                              CryptoJS.lib.WordArray.random(32)
-                                .toString(CryptoJS.enc.Hex)
-                                .slice(0, 32),
-                            )
-                          }
-                        >
-                          <PasswordIcon />
-                        </TsIconButton>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <TsIconButton
+                            tooltip={t('toggleKeyVisibility')}
+                            aria-label="toggle key visibility"
+                            onClick={() =>
+                              setShowEncryptionKey(!showEncryptionKey)
+                            }
+                          >
+                            {showEncryptionKey ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </TsIconButton>
+                          <TsIconButton
+                            tooltip={t('generateEncryptionKey')}
+                            aria-label="generate encryption key"
+                            onClick={() =>
+                              setEncryptionKey(
+                                CryptoJS.lib.WordArray.random(32)
+                                  .toString(CryptoJS.enc.Hex)
+                                  .slice(0, 32),
+                              )
+                            }
+                          >
+                            <PasswordIcon />
+                          </TsIconButton>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
               </FormControl>

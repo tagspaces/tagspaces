@@ -16,28 +16,28 @@
  *
  */
 
-import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
+import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import Dialog from '@mui/material/Dialog';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { QRCode } from 'react-qrcode-logo';
-import InfoIcon from '-/components/InfoIcon';
-import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
-import Links from 'assets/links';
-import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import { extractTitle } from '@tagspaces/tagspaces-common/paths';
-import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { generateClipboardLink } from '-/utils/dom';
-import { openUrl } from '-/services/utils-io';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { openUrl } from '-/services/utils-io';
+import { generateClipboardLink } from '-/utils/dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
+import Links from 'assets/links';
+import { ChangeEvent, useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { QRCode } from 'react-qrcode-logo';
 
 interface Props {
   open: boolean;
@@ -112,32 +112,34 @@ function LinkGeneratorDialog(props: Props) {
         </TsSelect>
         <TsTextField
           name="path"
-          InputProps={{
-            readOnly: true,
-            endAdornment: (
-              <InputAdornment position="start">
-                <TsButton
-                  data-tid="copySharingLinkTID"
-                  variant="contained"
-                  onClick={() => {
-                    const entryTitle = extractTitle(
-                      gPath,
-                      true,
-                      location.getDirSeparator(),
-                    );
-                    const clipboardItem = generateClipboardLink(
-                      signedLink.current,
-                      entryTitle,
-                    );
-                    navigator.clipboard.write(clipboardItem).then(() => {
-                      showNotification(t('core:linkCopied'));
-                    });
-                  }}
-                >
-                  {t('core:copy')}
-                </TsButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              readOnly: true,
+              endAdornment: (
+                <InputAdornment position="start">
+                  <TsButton
+                    data-tid="copySharingLinkTID"
+                    variant="contained"
+                    onClick={() => {
+                      const entryTitle = extractTitle(
+                        gPath,
+                        true,
+                        location.getDirSeparator(),
+                      );
+                      const clipboardItem = generateClipboardLink(
+                        signedLink.current,
+                        entryTitle,
+                      );
+                      navigator.clipboard.write(clipboardItem).then(() => {
+                        showNotification(t('core:linkCopied'));
+                      });
+                    }}
+                  >
+                    {t('core:copy')}
+                  </TsButton>
+                </InputAdornment>
+              ),
+            },
           }}
           label={t('core:downloadLink')}
           value={signedLink.current}

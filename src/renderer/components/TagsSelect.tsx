@@ -16,23 +16,26 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import EntryTagMenu from '-/components/menus/EntryTagMenu';
-import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { getAllTags } from '-/services/taglibrary-utils';
-import { Box, InputAdornment } from '@mui/material';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { isDesktopMode } from '-/reducers/settings';
-import { tagsValidation } from '-/services/utils-io';
-import FormHelperText from '@mui/material/FormHelperText';
-import { useTranslation } from 'react-i18next';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import {
+  getTagColor,
+  getTagTextColor,
+  isDesktopMode,
+} from '-/reducers/settings';
+import { getAllTags } from '-/services/taglibrary-utils';
+import { tagsValidation } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { Box, InputAdornment } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import FormHelperText from '@mui/material/FormHelperText';
+import TextField from '@mui/material/TextField';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import React, { useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   dataTid?: string;
@@ -212,13 +215,15 @@ function TagsSelect(props: Props) {
               error={tagsError.current}
               style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
               fullWidth
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: generateButton && (
-                  <InputAdornment position="end">
-                    <AiGenTagsButton variant="text" />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  endAdornment: generateButton && (
+                    <InputAdornment position="end">
+                      <AiGenTagsButton variant="text" />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             {tagsError.current && (
