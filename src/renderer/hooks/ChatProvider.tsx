@@ -424,7 +424,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           confirmCallback();
         }
         // addTimeLineRequest('downloading ' + newModelName, 'system');
-        openFileUploadDialog();
+        openFileUploadDialog(newModelName, 'downloadChatModel');
         return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', defaultAiProvider.url, {
             name: newModelName,
