@@ -1,10 +1,9 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
-import path from 'path';
 import { expect } from '@playwright/test';
-import { delay } from './hook';
-import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { delay } from './hook';
+import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';
@@ -664,7 +663,7 @@ export async function extractTags(selectorElement) {
 export async function removeTagFromTagMenu(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await clickOn('[data-tid=deleteTagMenu]');
-  await clickOn('[data-tid=confirmRemoveTagFromFile]');
+  // await clickOn('[data-tid=confirmRemoveTagFromFile]');
   await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false);
 }
 

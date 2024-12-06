@@ -16,12 +16,10 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import RemoveTagIcon from '@mui/icons-material/Close';
-import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { TS } from '-/tagspaces.namespace';
+import RemoveTagIcon from '@mui/icons-material/Close';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface Props {
   tag: TS.Tag;

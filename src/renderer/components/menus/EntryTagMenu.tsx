@@ -16,24 +16,23 @@
  *
  */
 
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
+import TsMenuList from '-/components/TsMenuList';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getMaxSearchResults } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import TsMenuList from '-/components/TsMenuList';
-import { getMaxSearchResults } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -103,6 +102,7 @@ function EntryTagMenu(props: Props) {
         handleCloseDialogs(),
       );
     }
+    onClose();
   }
 
   const menuItems = [
@@ -148,7 +148,7 @@ function EntryTagMenu(props: Props) {
       <MenuItem
         key="deleteTagMenu"
         data-tid="deleteTagMenu"
-        onClick={showDeleteTagDialog}
+        onClick={confirmRemoveTag}
       >
         <ListItemIcon>
           <DeleteIcon />
@@ -163,7 +163,7 @@ function EntryTagMenu(props: Props) {
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={isDeleteTagDialogOpened}
         onClose={handleCloseDialogs}
         title={t('core:removeTag')}
@@ -176,7 +176,7 @@ function EntryTagMenu(props: Props) {
         cancelDialogTID="cancelDeleteTagDialogTagMenu"
         confirmDialogTID="confirmRemoveTagFromFile"
         confirmDialogContentTID="confirmDialogContent"
-      />
+      /> */}
     </div>
   );
 }

@@ -16,21 +16,20 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
-import {
-  createTheme,
-  ThemeProvider,
-  StyledEngineProvider,
-} from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import AppConfig from '-/AppConfig';
 import {
   getCurrentTheme,
-  getDefaultRegularTheme,
   getDefaultDarkTheme,
+  getDefaultRegularTheme,
 } from '-/reducers/settings';
+import {
+  StyledEngineProvider,
+  ThemeProvider,
+  createTheme,
+} from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
+import { useSelector } from 'react-redux';
 
 declare module '@mui/material/styles' {
   interface Theme extends Record<string, any> {
