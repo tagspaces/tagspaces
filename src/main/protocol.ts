@@ -39,7 +39,7 @@ const register = () => {
 const initialize = () => {
   if (!protocol?.handle) {
     // Old versions of Electron don't have protocol.handle
-    console.error('Don`t have protocol handler');
+    console.error('Protocol handler not available.');
     return null;
   }
 
