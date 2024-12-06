@@ -5,7 +5,8 @@
 import { protocol, net } from 'electron';
 import * as fs from 'fs-extra';
 import { createReadStream } from 'fs';
-import path from 'path';
+import { extname, normalize } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { mediaProtocol } from '@tagspaces/tagspaces-common/AppConfig';
 
 const register = () => {
@@ -32,30 +33,37 @@ const register = () => {
       },
     },
   ]);
+  // console.log('protocol register');
 };
 
 const initialize = () => {
   if (!protocol?.handle) {
     // Old versions of Electron don't have protocol.handle
+    console.error('Don`t have protocol handler');
     return null;
   }
 
-  // By default, we serve files from the assets folder
   protocol.handle(mediaProtocol, (request: any) => {
     // list all files in the directory
     const filepath = decodeURIComponent(
       request.url.slice(`${mediaProtocol}://`.length).replace(/\/$/, ''),
     ); // remove trailing slash
-    const asFileUrl = `file://${filepath}`; //pathToFileURL(filepath).toString();
+    const pathname = normalize(fileURLToPath(`file://${filepath}`)); //pathToFileURL(filepath).toString();
+    const asFileUrl = pathToFileURL(pathname).toString();
     console.log(
-      'protocol handler: Fetch file ' + filepath + ' as:' + asFileUrl,
+      'protocol handler: Fetch file param ' +
+        filepath +
+        ' as local path: ' +
+        pathname +
+        ' as file:' +
+        asFileUrl,
     );
 
     const rangeHeader = request.headers.get('Range');
     if (!rangeHeader) {
       return net.fetch(asFileUrl);
     } else {
-      return handleRangeRequest(request, filepath);
+      return handleRangeRequest(request, pathname);
     }
   });
 };
@@ -131,6 +139,7 @@ const handleRangeRequest = async (request: Request, targetPath: string) => {
   if (!rangeHeader.startsWith('bytes=')) {
     return makeUnsupportedRangeResponse();
   }
+  console.log('handleRangeRequest:' + targetPath);
 
   const stat = await fs.stat(targetPath);
   // Ranges are requested using one of the following formats
@@ -156,7 +165,7 @@ const handleRangeRequest = async (request: Request, targetPath: string) => {
   // See the HTTP range requests guide: https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
   const headers = new Headers([
     ['Accept-Ranges', 'bytes'],
-    ['Content-Type', getMimeType(path.extname(targetPath))], //fromFilename(targetPath)],
+    ['Content-Type', getMimeType(extname(targetPath))], //fromFilename(targetPath)],
     ['Content-Length', `${endByte + 1 - startByte}`],
     ['Content-Range', `bytes ${startByte}-${endByte}/${stat.size}`],
   ]);
