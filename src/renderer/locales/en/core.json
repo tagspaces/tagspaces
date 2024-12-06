@@ -885,6 +885,7 @@
   "defaultAImodelImages": "Default model for image-based tasks",
   "refreshServiceStatus": "Refresh service status",
   "newChatMessage": "Message",
+  "downloadChatModel": "Downloading AI Model",
   "aiHelp": "{{chatModel}} can make mistakes. Check the important information before use!",
   "generateTags": "Generate Tags",
   "generateTagsFromDescription": "Tags From Description",
