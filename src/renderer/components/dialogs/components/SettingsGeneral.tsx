@@ -16,39 +16,39 @@
  *
  */
 
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
-import Tooltip from '-/components/Tooltip';
-import TsButton from '-/components/TsButton';
-import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
-import InfoIcon from '-/components/InfoIcon';
-import CheckIcon from '@mui/icons-material/Check';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
+import { BetaLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
+import PerspectiveSelector from '-/components/PerspectiveSelector';
+import Tooltip from '-/components/Tooltip';
+import TransparentBackground from '-/components/TransparentBackground';
+import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { PerspectiveIDs } from '-/perspectives';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getFileNameTagPlace,
   getPersistTagsInSidecarFile,
   getSettings,
 } from '-/reducers/settings';
-import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
-import PerspectiveSelector from '-/components/PerspectiveSelector';
-import TransparentBackground from '-/components/TransparentBackground';
-import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import { BetaLabel } from '-/components/HelperComponents';
-import { PerspectiveIDs } from '-/perspectives';
-import { AppDispatch } from '-/reducers/app';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { setLanguage } from '-/services/utils-io';
+import CheckIcon from '@mui/icons-material/Check';
+import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Switch from '@mui/material/Switch';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 function SettingsGeneral() {
   const { i18n, t } = useTranslation();
@@ -434,10 +434,11 @@ function SettingsGeneral() {
             data-tid="settingsTagDelimiterChoose"
             value={this.settings.tagDelimiter}
             onChange={this.handleTagDelimiterChange}
-            inputProps={{
+             slotProps={{
+              input: {
               name: 'tagDelimiter',
               id: 'tag-delimiter',
-            }}
+            }}}
           >
             <MenuItem value=" ">{t('core:tagDelimiterSpace')}</MenuItem>
             <MenuItem value="_">{t('core:tagDelimiterUnderscore')}</MenuItem>

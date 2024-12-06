@@ -16,6 +16,64 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
+import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
+import MarkerIcon from '-/assets/icons/marker-icon.png';
+import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
+import { ProTooltip } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
+import NoTileServer from '-/components/NoTileServer';
+import PerspectiveSelector from '-/components/PerspectiveSelector';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsTextField from '-/components/TsTextField';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { isDesktopMode } from '-/reducers/settings';
+import {
+  dirNameValidation,
+  fileNameValidation,
+  getAllTags,
+  openUrl,
+} from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { generateClipboardLink } from '-/utils/dom';
+import { parseGeoLocation } from '-/utils/geo';
+import useFirstRender from '-/utils/useFirstRender';
+import ColorPaletteIcon from '@mui/icons-material/ColorLens';
+import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
+import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
+import QRCodeIcon from '@mui/icons-material/QrCode';
+import {
+  Box,
+  FormControl,
+  InputAdornment,
+  Popover,
+  TextField,
+  Typography,
+  inputBaseClasses,
+} from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import { styled, useTheme } from '@mui/material/styles';
+import { formatBytes } from '@tagspaces/tagspaces-common/misc';
+import {
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  extractFileName,
+  extractTitle,
+} from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import L from 'leaflet';
 import React, {
   ChangeEvent,
   useEffect,
@@ -23,79 +81,21 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
-import { styled, useTheme } from '@mui/material/styles';
-import { extractTitle } from '@tagspaces/tagspaces-common/paths';
-import L from 'leaflet';
-import {
-  FormControl,
-  Typography,
-  TextField,
-  inputBaseClasses,
-  InputAdornment,
-  Popover,
-  Box,
-} from '@mui/material';
-import Tooltip from '-/components/Tooltip';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
-import InfoIcon from '-/components/InfoIcon';
-import QRCodeIcon from '@mui/icons-material/QrCode';
-import ColorPaletteIcon from '@mui/icons-material/ColorLens';
-import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
-import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
+import { useTranslation } from 'react-i18next';
 import {
   AttributionControl,
-  MapContainer,
   LayerGroup,
+  MapContainer,
   Marker,
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import TsIconButton from '-/components/TsIconButton';
-import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import {
-  extractContainingDirectoryPath,
-  extractFileName,
-  extractDirectoryName,
-} from '@tagspaces/tagspaces-common/paths';
-import TagDropContainer from './TagDropContainer';
-import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import {
-  fileNameValidation,
-  dirNameValidation,
-  getAllTags,
-  openUrl,
-} from '-/services/utils-io';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { isDesktopMode } from '-/reducers/settings';
-import { parseGeoLocation } from '-/utils/geo';
+import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
+import TagDropContainer from './TagDropContainer';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import MarkerIcon from '-/assets/icons/marker-icon.png';
-import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
-import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { TS } from '-/tagspaces.namespace';
-import NoTileServer from '-/components/NoTileServer';
-import { ProTooltip } from '-/components/HelperComponents';
-import PerspectiveSelector from '-/components/PerspectiveSelector';
-import TsTextField from '-/components/TsTextField';
-import TsButton from '-/components/TsButton';
-import FormHelperText from '@mui/material/FormHelperText';
-import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { generateClipboardLink } from '-/utils/dom';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import useFirstRender from '-/utils/useFirstRender';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import AppConfig from '-/AppConfig';
+import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 
 const PREFIX = 'EntryProperties';
 
@@ -576,46 +576,47 @@ function EntryProperties(props: Props) {
             label={
               openedEntry.isFile ? t('core:fileName') : t('core:folderName')
             }
-            InputProps={{
-              readOnly: editName === undefined,
-              endAdornment: (
-                <InputAdornment position="end">
-                  {!readOnlyMode && !isEditMode && (
-                    <div style={{ textAlign: 'right' }}>
-                      {editName !== undefined ? (
-                        <div>
+            slotProps={{
+              input: {
+                readOnly: editName === undefined,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {!readOnlyMode && !isEditMode && (
+                      <div style={{ textAlign: 'right' }}>
+                        {editName !== undefined ? (
+                          <div>
+                            <TsButton
+                              data-tid="cancelRenameEntryTID"
+                              onClick={deactivateEditNameField}
+                              variant="text"
+                            >
+                              {t('core:cancel')}
+                            </TsButton>
+                            <TsButton
+                              data-tid="confirmRenameEntryTID"
+                              onClick={renameEntry}
+                              variant="text"
+                              disabled={disableConfirmButton.current}
+                            >
+                              {t('core:confirmSaveButton')}
+                            </TsButton>
+                          </div>
+                        ) : (
                           <TsButton
-                            data-tid="cancelRenameEntryTID"
-                            onClick={deactivateEditNameField}
+                            data-tid="startRenameEntryTID"
                             variant="text"
+                            onClick={activateEditNameField}
                           >
-                            {t('core:cancel')}
+                            {t('core:rename')}
                           </TsButton>
-                          <TsButton
-                            data-tid="confirmRenameEntryTID"
-                            onClick={renameEntry}
-                            variant="text"
-                            disabled={disableConfirmButton.current}
-                          >
-                            {t('core:confirmSaveButton')}
-                          </TsButton>
-                        </div>
-                      ) : (
-                        <TsButton
-                          data-tid="startRenameEntryTID"
-                          variant="text"
-                          onClick={activateEditNameField}
-                        >
-                          {t('core:rename')}
-                        </TsButton>
-                      )}
-                    </div>
-                  )}
-                </InputAdornment>
-              ),
+                        )}
+                      </div>
+                    )}
+                  </InputAdornment>
+                ),
+              },
             }}
             name="name"
-            size={desktopMode ? 'small' : 'medium'}
             data-tid="fileNameProperties"
             defaultValue={entryName} // openedEntry.current.name}
             inputRef={fileNameRef}
@@ -758,12 +759,13 @@ function EntryProperties(props: Props) {
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={12}>
             <TsTextField
-              size={desktopMode ? 'small' : 'medium'}
               value={ldtm}
               label={t('core:fileLDTM')}
               retrieveValue={() => ldtm}
-              InputProps={{
-                readOnly: true,
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
               }}
             />
           </Grid>
@@ -787,25 +789,26 @@ function EntryProperties(props: Props) {
               <TsTextField
                 value={fileSize()}
                 retrieveValue={() => fileSize()}
-                size={desktopMode ? 'small' : 'medium'}
                 label={t('core:fileSize')}
-                InputProps={{
-                  readOnly: true,
-                  ...(!openedEntry.isFile && {
-                    endAdornment: (
-                      <TsButton
-                        variant="text"
-                        onClick={() =>
-                          getOpenedDirProps().then((props) => {
-                            dirProps.current = props;
-                            forceUpdate();
-                          })
-                        }
-                      >
-                        {t('core:calculate')}
-                      </TsButton>
-                    ),
-                  }),
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    ...(!openedEntry.isFile && {
+                      endAdornment: (
+                        <TsButton
+                          variant="text"
+                          onClick={() =>
+                            getOpenedDirProps().then((props) => {
+                              dirProps.current = props;
+                              forceUpdate();
+                            })
+                          }
+                        >
+                          {t('core:calculate')}
+                        </TsButton>
+                      ),
+                    }),
+                  },
                 }}
               />
             </Tooltip>
@@ -818,38 +821,41 @@ function EntryProperties(props: Props) {
               name="path"
               title={openedEntry.url || openedEntry.path}
               label={isCloudLocation ? t('cloudPath') : t('core:filePath')}
-              size={desktopMode ? 'small' : 'medium'}
               data-tid="filePathProperties"
               value={openedEntry.path || ''}
               retrieveValue={() => openedEntry.path}
-              InputProps={{
-                readOnly: true,
-                // startAdornment: (
-                //   <InputAdornment position="start">
-                //     {isCloudLocation ? (
-                //       <CloudLocationIcon
-                //         style={{ color: theme.palette.text.secondary }}
-                //       />
-                //     ) : (
-                //       <LocalLocationIcon
-                //         style={{ color: theme.palette.text.secondary }}
-                //       />
-                //     )}
-                //   </InputAdornment>
-                // ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {!readOnlyMode && !isEditMode && editName === undefined && (
-                      <TsButton
-                        data-tid="moveCopyEntryTID"
-                        onClick={toggleMoveCopyFilesDialog}
-                        variant="text"
-                      >
-                        {t('core:move')}
-                      </TsButton>
-                    )}
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  // startAdornment: (
+                  //   <InputAdornment position="start">
+                  //     {isCloudLocation ? (
+                  //       <CloudLocationIcon
+                  //         style={{ color: theme.palette.text.secondary }}
+                  //       />
+                  //     ) : (
+                  //       <LocalLocationIcon
+                  //         style={{ color: theme.palette.text.secondary }}
+                  //       />
+                  //     )}
+                  //   </InputAdornment>
+                  // ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {!readOnlyMode &&
+                        !isEditMode &&
+                        editName === undefined && (
+                          <TsButton
+                            data-tid="moveCopyEntryTID"
+                            onClick={toggleMoveCopyFilesDialog}
+                            variant="text"
+                          >
+                            {t('core:move')}
+                          </TsButton>
+                        )}
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </FormControl>
@@ -866,38 +872,39 @@ function EntryProperties(props: Props) {
             <TsTextField
               data-tid="sharingLinkTID"
               name="sharinglink"
-              size={desktopMode ? 'small' : 'medium'}
               label={<>{t('core:sharingLink')}</>}
               value={sharingLink}
               inputRef={sharingLinkRef}
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <TsButton
-                      tooltip={t('core:copyLinkToClipboard')}
-                      data-tid="copyLinkToClipboardTID"
-                      variant="text"
-                      onClick={() => {
-                        const entryTitle = extractTitle(
-                          openedEntry.name,
-                          !openedEntry.isFile,
-                          location?.getDirSeparator(),
-                        );
-                        const clibboardItem = generateClipboardLink(
-                          sharingLink,
-                          entryTitle,
-                        );
-                        const promise =
-                          navigator.clipboard.write(clibboardItem);
-                        showNotification(t('core:linkCopied'));
-                      }}
-                    >
-                      {t('core:copy')}
-                    </TsButton>
-                    <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <TsButton
+                        tooltip={t('core:copyLinkToClipboard')}
+                        data-tid="copyLinkToClipboardTID"
+                        variant="text"
+                        onClick={() => {
+                          const entryTitle = extractTitle(
+                            openedEntry.name,
+                            !openedEntry.isFile,
+                            location?.getDirSeparator(),
+                          );
+                          const clibboardItem = generateClipboardLink(
+                            sharingLink,
+                            entryTitle,
+                          );
+                          const promise =
+                            navigator.clipboard.write(clibboardItem);
+                          showNotification(t('core:linkCopied'));
+                        }}
+                      >
+                        {t('core:copy')}
+                      </TsButton>
+                      <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
@@ -905,28 +912,29 @@ function EntryProperties(props: Props) {
             <Grid item xs={12}>
               <TsTextField
                 name="downloadLink"
-                size={desktopMode ? 'small' : 'medium'}
                 label={<>{t('core:downloadLink')}</>}
                 value={' '}
-                InputProps={{
-                  readOnly: true,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <TsButton
-                        tooltip={t('core:generateDownloadLink')}
-                        onClick={() => setShowSharingLinkDialog(true)}
-                        variant="text"
-                        startIcon={
-                          <QRCodeIcon
-                            style={{ color: theme.palette.text.secondary }}
-                          />
-                        }
-                      >
-                        {t('core:generateDownloadLink')}
-                      </TsButton>
-                      <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <TsButton
+                          tooltip={t('core:generateDownloadLink')}
+                          onClick={() => setShowSharingLinkDialog(true)}
+                          variant="text"
+                          startIcon={
+                            <QRCodeIcon
+                              style={{ color: theme.palette.text.secondary }}
+                            />
+                          }
+                        >
+                          {t('core:generateDownloadLink')}
+                        </TsButton>
+                        <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Grid>
@@ -949,102 +957,104 @@ function EntryProperties(props: Props) {
             <TsTextField
               name="path"
               label={<>{t('core:backgroundColor')}</>}
-              InputProps={{
-                readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <TransparentBackground>
-                      <TsButton
-                        tooltip={t('editBackgroundColor')}
-                        fullWidth
-                        style={{
-                          width: 160,
-                          height: 25,
-                          background: openedEntry.meta?.color,
-                          border: '1px solid lightgray',
-                        }}
-                        onClick={toggleBackgroundColorPicker}
-                      >
-                        &nbsp;
-                      </TsButton>
-                    </TransparentBackground>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Box>
-                      <ProTooltip tooltip={t('changeBackgroundColor')}>
-                        <TsIconButton
-                          data-tid="changeBackgroundColorTID"
-                          aria-describedby={popoverId}
-                          onClick={handlePopeverClick}
-                          disabled={!Pro}
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <TransparentBackground>
+                        <TsButton
+                          tooltip={t('editBackgroundColor')}
+                          fullWidth
+                          style={{
+                            width: 160,
+                            height: 25,
+                            background: openedEntry.meta?.color,
+                            border: '1px solid lightgray',
+                          }}
+                          onClick={toggleBackgroundColorPicker}
                         >
-                          <ColorPaletteIcon />
-                        </TsIconButton>
-                      </ProTooltip>
-                      <Popover
-                        open={popoverOpen}
-                        onClose={handlePopoverClose}
-                        anchorEl={popoverAnchorEl}
-                        id={popoverId}
-                        anchorOrigin={{
-                          vertical: 'top',
-                          horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'center',
-                        }}
-                      >
-                        <Box style={{ padding: 10 }}>
-                          {defaultBackgrounds.map((background, cnt) => (
-                            <>
-                              <TsIconButton
-                                key={cnt}
-                                data-tid={'backgroundTID' + cnt}
-                                aria-label="changeFolderBackround"
-                                onClick={() => {
-                                  handleChangeColor(background);
-                                  handlePopoverClose();
-                                }}
-                                style={{
-                                  backgroundColor: background,
-                                  backgroundImage: background,
-                                  margin: 5,
-                                }}
-                              >
-                                <SetBackgroundIcon />
-                              </TsIconButton>
-                              {cnt % 4 === 3 && <br />}
-                            </>
-                          ))}
-                        </Box>
-                      </Popover>
-                    </Box>
-                    {openedEntry.meta && openedEntry.meta.color && (
-                      <>
-                        <ProTooltip tooltip={t('clearFolderColor')}>
+                          &nbsp;
+                        </TsButton>
+                      </TransparentBackground>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Box>
+                        <ProTooltip tooltip={t('changeBackgroundColor')}>
                           <TsIconButton
-                            data-tid={'backgroundClearTID'}
+                            data-tid="changeBackgroundColorTID"
+                            aria-describedby={popoverId}
+                            onClick={handlePopeverClick}
                             disabled={!Pro}
-                            aria-label="clear"
-                            onClick={() =>
-                              setConfirmResetColorDialogOpened(true)
-                            }
                           >
-                            <ClearBackgroundIcon />
+                            <ColorPaletteIcon />
                           </TsIconButton>
                         </ProTooltip>
-                      </>
-                    )}
-                    <InfoIcon
-                      tooltip={t(
-                        'The background color will not be visible if you have set a background image',
+                        <Popover
+                          open={popoverOpen}
+                          onClose={handlePopoverClose}
+                          anchorEl={popoverAnchorEl}
+                          id={popoverId}
+                          anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                          }}
+                          transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                          }}
+                        >
+                          <Box style={{ padding: 10 }}>
+                            {defaultBackgrounds.map((background, cnt) => (
+                              <>
+                                <TsIconButton
+                                  key={cnt}
+                                  data-tid={'backgroundTID' + cnt}
+                                  aria-label="changeFolderBackround"
+                                  onClick={() => {
+                                    handleChangeColor(background);
+                                    handlePopoverClose();
+                                  }}
+                                  style={{
+                                    backgroundColor: background,
+                                    backgroundImage: background,
+                                    margin: 5,
+                                  }}
+                                >
+                                  <SetBackgroundIcon />
+                                </TsIconButton>
+                                {cnt % 4 === 3 && <br />}
+                              </>
+                            ))}
+                          </Box>
+                        </Popover>
+                      </Box>
+                      {openedEntry.meta && openedEntry.meta.color && (
+                        <>
+                          <ProTooltip tooltip={t('clearFolderColor')}>
+                            <TsIconButton
+                              data-tid={'backgroundClearTID'}
+                              disabled={!Pro}
+                              aria-label="clear"
+                              onClick={() =>
+                                setConfirmResetColorDialogOpened(true)
+                              }
+                            >
+                              <ClearBackgroundIcon />
+                            </TsIconButton>
+                          </ProTooltip>
+                        </>
                       )}
-                    />
-                  </InputAdornment>
-                ),
+                      <InfoIcon
+                        tooltip={t(
+                          'The background color will not be visible if you have set a background image',
+                        )}
+                      />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
@@ -1057,59 +1067,8 @@ function EntryProperties(props: Props) {
               variant="outlined"
               style={{ marginTop: 0 }}
               fullWidth
-              InputProps={{
-                readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <Stack
-                      direction="column"
-                      spacing={0}
-                      style={{ alignItems: 'center' }}
-                    >
-                      {!readOnlyMode &&
-                        !isEditMode &&
-                        editName === undefined && (
-                          <ProTooltip tooltip={t('changeThumbnail')}>
-                            <TsButton
-                              data-tid="changeThumbnailTID"
-                              fullWidth
-                              variant="text"
-                              onClick={toggleThumbFilesDialog}
-                            >
-                              {t('core:change')}
-                            </TsButton>
-                          </ProTooltip>
-                        )}
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        style={{
-                          backgroundSize: 'cover',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundImage: thumbImage.current,
-                          backgroundPosition: 'center',
-                          borderRadius: 8,
-                          minHeight: 150,
-                          minWidth: 150,
-                          marginBottom: 5,
-                        }}
-                        onClick={toggleThumbFilesDialog}
-                      />
-                    </Stack>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          {!openedEntry.isFile && (
-            <Grid item xs={6}>
-              <FormHelperText>{t('core:backgroundImage')}</FormHelperText>
-              <ThumbnailTextField
-                margin="dense"
-                fullWidth
-                style={{ marginTop: 0 }}
-                variant="outlined"
-                InputProps={{
+              slotProps={{
+                input: {
                   readOnly: true,
                   startAdornment: (
                     <InputAdornment position="end">
@@ -1121,36 +1080,91 @@ function EntryProperties(props: Props) {
                         {!readOnlyMode &&
                           !isEditMode &&
                           editName === undefined && (
-                            <ProTooltip tooltip={t('changeBackgroundImage')}>
+                            <ProTooltip tooltip={t('changeThumbnail')}>
                               <TsButton
-                                data-tid="changeBackgroundImageTID"
+                                data-tid="changeThumbnailTID"
                                 fullWidth
                                 variant="text"
-                                onClick={toggleBgndImgDialog}
+                                onClick={toggleThumbFilesDialog}
                               >
                                 {t('core:change')}
                               </TsButton>
                             </ProTooltip>
                           )}
                         <div
-                          data-tid="propsBgnImageTID"
                           role="button"
                           tabIndex={0}
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: backgroundImage.current,
+                            backgroundImage: thumbImage.current,
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,
                             minWidth: 150,
                             marginBottom: 5,
                           }}
-                          onClick={toggleBgndImgDialog}
+                          onClick={toggleThumbFilesDialog}
                         />
                       </Stack>
                     </InputAdornment>
                   ),
+                },
+              }}
+            />
+          </Grid>
+          {!openedEntry.isFile && (
+            <Grid item xs={6}>
+              <FormHelperText>{t('core:backgroundImage')}</FormHelperText>
+              <ThumbnailTextField
+                margin="dense"
+                fullWidth
+                style={{ marginTop: 0 }}
+                variant="outlined"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    startAdornment: (
+                      <InputAdornment position="end">
+                        <Stack
+                          direction="column"
+                          spacing={0}
+                          style={{ alignItems: 'center' }}
+                        >
+                          {!readOnlyMode &&
+                            !isEditMode &&
+                            editName === undefined && (
+                              <ProTooltip tooltip={t('changeBackgroundImage')}>
+                                <TsButton
+                                  data-tid="changeBackgroundImageTID"
+                                  fullWidth
+                                  variant="text"
+                                  onClick={toggleBgndImgDialog}
+                                >
+                                  {t('core:change')}
+                                </TsButton>
+                              </ProTooltip>
+                            )}
+                          <div
+                            data-tid="propsBgnImageTID"
+                            role="button"
+                            tabIndex={0}
+                            style={{
+                              backgroundSize: 'cover',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundImage: backgroundImage.current,
+                              backgroundPosition: 'center',
+                              borderRadius: 8,
+                              minHeight: 150,
+                              minWidth: 150,
+                              marginBottom: 5,
+                            }}
+                            onClick={toggleBgndImgDialog}
+                          />
+                        </Stack>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Grid>
@@ -1169,43 +1183,44 @@ function EntryProperties(props: Props) {
           <TsTextField
             data-tid="entryIDTID"
             name="entryid"
-            size={desktopMode ? 'small' : 'medium'}
             label={t('core:entryId')}
             value={openedEntry?.meta?.id}
             retrieveValue={() => openedEntry?.meta?.id}
-            InputProps={{
-              readOnly: true,
-              // startAdornment: (
-              //   <InputAdornment position="start">
-              //     <InfoIcon tooltip={t('core:entryIdTooltip')} />
-              //     {/* <IDIcon style={{ color: theme.palette.text.secondary }} /> */}
-              //   </InputAdornment>
-              // ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <TsButton
-                    tooltip={t('core:copyIdToClipboard')}
-                    data-tid="copyIdToClipboardTID"
-                    variant="text"
-                    disabled={!openedEntry?.meta?.id}
-                    onClick={() => {
-                      const entryId = openedEntry?.meta?.id;
-                      if (entryId) {
-                        const clibboardItem = generateClipboardLink(
-                          entryId,
-                          entryId,
-                        );
-                        const promise =
-                          navigator.clipboard.write(clibboardItem);
-                        showNotification(t('core:entryIdCopied'));
-                      }
-                    }}
-                  >
-                    {t('core:copy')}
-                  </TsButton>
-                  <InfoIcon tooltip={t('core:entryIdTooltip')} />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                readOnly: true,
+                // startAdornment: (
+                //   <InputAdornment position="start">
+                //     <InfoIcon tooltip={t('core:entryIdTooltip')} />
+                //     {/* <IDIcon style={{ color: theme.palette.text.secondary }} /> */}
+                //   </InputAdornment>
+                // ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <TsButton
+                      tooltip={t('core:copyIdToClipboard')}
+                      data-tid="copyIdToClipboardTID"
+                      variant="text"
+                      disabled={!openedEntry?.meta?.id}
+                      onClick={() => {
+                        const entryId = openedEntry?.meta?.id;
+                        if (entryId) {
+                          const clibboardItem = generateClipboardLink(
+                            entryId,
+                            entryId,
+                          );
+                          const promise =
+                            navigator.clipboard.write(clibboardItem);
+                          showNotification(t('core:entryIdCopied'));
+                        }
+                      }}
+                    >
+                      {t('core:copy')}
+                    </TsButton>
+                    <InfoIcon tooltip={t('core:entryIdTooltip')} />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </Grid>

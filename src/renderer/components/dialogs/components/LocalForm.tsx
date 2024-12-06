@@ -70,7 +70,9 @@ function LocalForm(props: Props) {
             required
             autoFocus
             name="name"
-            inputProps={{ autoCorrect: 'off' }}
+            slotProps={{
+              input: { autoCorrect: 'off' },
+            }}
             onChange={(event) => setName(event.target.value)}
             value={name}
             data-tid="locationName"
@@ -84,13 +86,14 @@ function LocalForm(props: Props) {
           <TsTextField
             required
             name="path"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
             onChange={(event) => setPath(event.target.value)}
             value={path}
             // placeholder="Enter a folder path or select it with the button on the right"
             slotProps={{
               input: {
+                autoCorrect: 'off',
+                autoCapitalize: 'none',
                 endAdornment: (
                   <InputAdornment position="end" style={{ height: 32 }}>
                     <TsIconButton onClick={openDirectory}>

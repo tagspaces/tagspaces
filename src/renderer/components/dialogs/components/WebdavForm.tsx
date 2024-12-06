@@ -81,7 +81,9 @@ function WebdavForm(props: Props) {
             required
             margin="dense"
             name="name"
-            inputProps={{ autoCorrect: 'off' }}
+            slotProps={{
+              input: { autoCorrect: 'off' },
+            }}
             onChange={(event) => setName(event.target.value)}
             value={name}
             label={t('core:createLocationName')}
@@ -119,7 +121,9 @@ function WebdavForm(props: Props) {
                 name="userNameId"
                 fullWidth={true}
                 data-tid="userNameIdTID"
-                inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+                slotProps={{
+                  input: { autoCorrect: 'off', autoCapitalize: 'none' },
+                }}
                 onChange={(event) => setUserName(event.target.value)}
                 label={t('core:userName')}
                 value={userName}
@@ -134,12 +138,13 @@ function WebdavForm(props: Props) {
                 type={showPassword ? 'text' : 'password'}
                 fullWidth={true}
                 data-tid="passwordTID"
-                inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                 onChange={(event) => setPassword(event.target.value)}
                 value={password}
                 label={t('core:password')}
                 slotProps={{
                   input: {
+                    autoCorrect: 'off',
+                    autoCapitalize: 'none',
                     endAdornment: (
                       <InputAdornment position="end">
                         <TsIconButton
@@ -166,12 +171,13 @@ function WebdavForm(props: Props) {
               type={showPassword ? 'text' : 'password'}
               fullWidth={true}
               data-tid="webDavToken"
-              inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
               onChange={(event) => setSecretAccessKey(event.target.value)}
               value={secretAccessKey}
               label={t('core:webDavToken')}
               slotProps={{
                 input: {
+                  autoCorrect: 'off',
+                  autoCapitalize: 'none',
                   endAdornment: (
                     <InputAdornment position="end">
                       <TsIconButton

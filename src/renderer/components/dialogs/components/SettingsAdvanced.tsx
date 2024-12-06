@@ -16,38 +16,38 @@
  *
  */
 
-import React, { useContext, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import { DeleteIcon } from '-/components/CommonIcons';
+import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
+import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
+import {
+  actions as SettingsActions,
+  getMapTileServers,
+  getMaxCollectedTag,
+  getSettings,
+  isDevMode,
+} from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
+import { ListItemIcon } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '-/components/Tooltip';
-import TsButton from '-/components/TsButton';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
-import TsIconButton from '-/components/TsIconButton';
-import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
-import AppConfig from '-/AppConfig';
-import {
-  actions as SettingsActions,
-  getSettings,
-  getMapTileServers,
-  isDevMode,
-  getMaxCollectedTag,
-} from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
-import TsTextField from '-/components/TsTextField';
-import TsSelect from '-/components/TsSelect';
-import { Pro } from '-/pro';
-import { ProLabel } from '-/components/HelperComponents';
-import InfoIcon from '-/components/InfoIcon';
-import { DeleteIcon } from '-/components/CommonIcons';
-import { ListItemIcon } from '@mui/material';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { AppDispatch } from '-/reducers/app';
+import Switch from '@mui/material/Switch';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   showResetSettings: (showDialog: boolean) => void;
@@ -185,7 +185,9 @@ function SettingsAdvanced(props: Props) {
         <ListItemText primary={t('core:maxCollectedTag')} />
         <TsTextField
           type="number"
-          inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          slotProps={{
+            input: { inputMode: 'numeric', min: 0 },
+          }}
           style={{ maxWidth: '92px' }}
           data-tid="prefixTagContainerTID"
           value={maxCollectedTag}

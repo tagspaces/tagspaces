@@ -151,7 +151,9 @@ function ObjectStoreForm(props: Props) {
             required
             autoFocus
             name="storeName"
-            inputProps={{ autoCorrect: 'off' }}
+            slotProps={{
+              input: { autoCorrect: 'off' },
+            }}
             data-tid="locationName"
             onChange={(event) => setStoreName(event.target.value)}
             value={storeName}
@@ -170,7 +172,9 @@ function ObjectStoreForm(props: Props) {
         <FormControl fullWidth={true}>
           <TsTextField
             name="storePath"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            slotProps={{
+              input: { autoCorrect: 'off', autoCapitalize: 'none' },
+            }}
             data-tid="locationPath"
             onChange={(event) => setStorePath(event.target.value)}
             value={storePath}
@@ -191,7 +195,9 @@ function ObjectStoreForm(props: Props) {
             required
             name="accessKeyId"
             data-tid="accessKeyId"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            slotProps={{
+              input: { autoCorrect: 'off', autoCapitalize: 'none' },
+            }}
             onChange={(event) => setAccessKeyId(event.target.value)}
             value={accessKeyId}
             label={t('core:accessKeyId') + ' *'}
@@ -213,12 +219,13 @@ function ObjectStoreForm(props: Props) {
             name="secretAccessKey"
             type={showSecretAccessKey ? 'text' : 'password'}
             data-tid="secretAccessKey"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={(event) => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
             label={t('core:secretAccessKey') + ' *'}
             slotProps={{
               input: {
+                autoCorrect: 'off',
+                autoCapitalize: 'none',
                 endAdornment: (
                   <InputAdornment position="end">
                     <TsIconButton
@@ -242,7 +249,9 @@ function ObjectStoreForm(props: Props) {
           <TsTextField
             name="sessionToken"
             data-tid="sessionTokenTID"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            slotProps={{
+              input: { autoCorrect: 'off', autoCapitalize: 'none' },
+            }}
             onChange={(event) => setSessionToken(event.target.value)}
             value={sessionToken}
             label={t('core:sessionToken')}
@@ -254,7 +263,9 @@ function ObjectStoreForm(props: Props) {
           <TsTextField
             name="bucketName"
             data-tid="bucketName"
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            slotProps={{
+              input: { autoCorrect: 'off', autoCapitalize: 'none' },
+            }}
             onChange={(event) => setBucketName(event.target.value)}
             value={bucketName}
             label={t('core:bucketName')}

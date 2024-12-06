@@ -849,7 +849,9 @@ function CreateEditLocationDialog(props: Props) {
                     }}
                     type="number"
                     data-tid="maxIndexAgeTID"
-                    inputProps={{ min: 0 }}
+                    slotProps={{
+                      input: { inputMode: 'numeric', min: 0 },
+                    }}
                     value={maxIndexAge / (1000 * 60)}
                     onChange={(event) => changeMaxIndexAge(event.target.value)}
                   />
@@ -1118,7 +1120,6 @@ function CreateEditLocationDialog(props: Props) {
                 <TsTextField
                   name="encryptionKey"
                   type={showEncryptionKey ? 'text' : 'password'}
-                  inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                   data-tid="encryptionKeyTID"
                   placeholder={t('encryptionKeyExplanation')}
                   onChange={(event) => setEncryptionKey(event.target.value)}
@@ -1130,6 +1131,8 @@ function CreateEditLocationDialog(props: Props) {
                   label={t('core:encryptionKey')}
                   slotProps={{
                     input: {
+                      autoCorrect: 'off',
+                      autoCapitalize: 'none',
                       endAdornment: (
                         <InputAdornment position="end">
                           <TsIconButton
