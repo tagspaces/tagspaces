@@ -80,6 +80,7 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     await expectElementExist(getGridFileSelector(newTitle + '.pdf'));
     //rename back
     const name = extractFileNameWithoutExt(oldName, '/');
+    await clickOn(getGridFileSelector(newTitle + '.pdf'));
     await global.client.keyboard.press('F2');
     await setInputKeys('renameEntryDialogInput', name);
     await clickOn('[data-tid=confirmRenameEntry]');

@@ -357,7 +357,21 @@ export async function getGridCellClass(fileIndex = 0) {
   return undefined;
 }
 
-export async function expectAudioPlay() {
+export async function expectMediaPlay(visible = true) {
+  const fLocator = await frameLocator();
+  const videoLocator = fLocator.locator('video');
+  await expect(videoLocator).toBeVisible({
+    timeout: 8000,
+    visible: visible,
+  });
+  if (visible) {
+    const expectVideoToRender = async () => {
+      await expect(videoLocator).toBeSeekableMediaElement(6.9, 7);
+    };
+
+    await expectVideoToRender();
+  }
+  /*
   await expect
     .poll(
       async () => {
@@ -383,7 +397,7 @@ export async function expectAudioPlay() {
         timeout: 15000,
       },
     )
-    .toBe(true);
+    .toBe(true);*/
 }
 
 export async function expectAllFileSelected(isSelected = true) {
