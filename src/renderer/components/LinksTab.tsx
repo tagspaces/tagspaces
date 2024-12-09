@@ -16,16 +16,15 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import AppConfig from '-/AppConfig';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Box } from '@mui/material';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import { useSelector } from 'react-redux';
-import { getEntryContainerTab } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
+import { useEffect, useReducer, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 interface Props {}
 
@@ -72,17 +71,17 @@ function LinksTab(props: Props) {
     );
   }
   return (
-    <Box position="relative" display="inline-flex">
+    <Box display="block">
       {links.current.length > 0 && (
         <>
           Document links:
           {links.current.map((link) => (
-            <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
+            <div>
               {link.type}{' '}
               <a href={link.href} target="_blank">
                 {link.value ? link.value : link.href}
               </a>
-            </span>
+            </div>
           ))}
         </>
       )}
