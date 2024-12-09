@@ -302,6 +302,7 @@ export const LocationIndexContextProvider = ({
       const mode = ['extractThumbPath'];
       if (extractText) {
         mode.push('extractTextContent');
+        mode.push('extractLinks');
       }
       return createIndex(
         {

@@ -115,6 +115,9 @@ const TabContent3 = React.lazy(
 const TabContent4 = React.lazy(
   () => import(/* webpackChunkName: "AiPropertiesTab" */ './AiPropertiesTab'),
 );
+const TabContent5 = React.lazy(
+  () => import(/* webpackChunkName: "AiPropertiesTab" */ './LinksTab'),
+);
 
 interface EntryContainerTabsProps {
   openPanel: () => void;
@@ -132,21 +135,14 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   //const { findLocation } = useCurrentLocationContext();
   const { getTabsArray } = useEntryPropsTabsContext();
   const { openedEntry } = useOpenedEntryContext();
-  //const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
   const devMode: boolean = useSelector(isDevMode);
   const tabIndex = useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const tabsArray = useRef<TabItem[]>([]);
-  //const selectedTabIndex = useRef<number>(initSelectedTabIndex(tabIndex));
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
-
-  /* useEffect(() => {
-    selectedTabIndex.current = tabIndex;
-    forceUpdate();
-  }, [tabIndex]);*/
 
   useEffect(() => {
     getTabsArray(openedEntry).then((tabs) => {
@@ -204,6 +200,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       return <TabContent3 />;
     } else if (tabName === TabNames.aiTab) {
       return <TabContent4 />;
+    } else if (tabName === TabNames.linksTab) {
+      return <TabContent5 />;
     }
   }
   if (tabsArray.current.length === 0) {

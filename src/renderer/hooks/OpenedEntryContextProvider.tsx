@@ -542,6 +542,9 @@ export const OpenedEntryContextProvider = ({
     fsEntry: TS.FileSystemEntry,
     tabSelected = undefined,
   ): Promise<boolean> {
+    /**
+     * used for encryption check
+     */
     return getAllPropertiesPromise(fsEntry.path, fsEntry.locationID)
       .then((entry: TS.FileSystemEntry) => {
         if (entry) {

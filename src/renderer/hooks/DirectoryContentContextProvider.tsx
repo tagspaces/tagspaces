@@ -844,7 +844,7 @@ export const DirectoryContentContextProvider = ({
     const promise = location
       .listDirectoryPromise(
         directoryPath,
-        [],
+        location.fullTextIndex ? ['extractTextContent'] : [],
         currentLocation ? currentLocation.ignorePatternPaths : [],
         resultsLimit,
       )

@@ -198,6 +198,24 @@ export namespace TS {
     path: string;
     url?: string;
     meta?: FileSystemEntryMeta;
+    links?: Link[];
+  }
+
+  type LinkType = 'url' | 'email' | 'hashtag' | 'mention';
+
+  interface Link {
+    /**
+     * The type of entity found.
+     */
+    type: LinkType;
+    /**
+     * Should be the value of this links `href` attribute.
+     */
+    href: string;
+    /**
+     * The original entity substring.
+     */
+    value?: string;
   }
 
   interface FileSystemEntryMeta {
