@@ -491,7 +491,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
-        JSON.stringify(model),
+        JSON.stringify(model, null, 2),
         true,
       )
         .then((fsEntry: TS.FileSystemEntry) => {
