@@ -70,6 +70,7 @@ type LocationIndexContextData = {
     link: string,
     locationId: string,
   ) => Promise<TS.FileSystemEntry[]>;
+  checkIndexExist: (locationId: string) => Promise<boolean>;
 };
 
 export const LocationIndexContext = createContext<LocationIndexContextData>({
@@ -85,6 +86,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   searchAllLocations: () => {},
   setIndex: () => {},
   findLinks: undefined,
+  checkIndexExist: undefined,
   reflectUpdateSidecarMeta: () => {},
 });
 
@@ -177,6 +179,23 @@ export const LocationIndexContextProvider = ({
       : 0;
 
     return indexAge > maxIndexAge.current;
+  }
+
+  async function checkIndexExist(locationId: string): Promise<boolean> {
+    if (index.current === undefined || indexExpired()) {
+      const location = findLocation(locationId);
+      const locationPath = await getLocationPath(location);
+      const directoryIndex = await loadIndexFromDisk(
+        locationPath,
+        location.uuid,
+      );
+      if (directoryIndex) {
+        // index is up to date
+        setIndex(directoryIndex, location);
+        return true;
+      }
+    }
+    return Promise.resolve(index.current !== undefined);
   }
 
   async function getLastIndex(
@@ -469,7 +488,7 @@ export const LocationIndexContextProvider = ({
 
   function clearDirectoryIndex(persist = false) {
     isIndexing.current = undefined;
-    setIndex([], persist ? currentLocation : undefined);
+    setIndex(undefined, persist ? currentLocation : undefined);
     forceUpdate();
   }
 
@@ -861,6 +880,7 @@ export const LocationIndexContextProvider = ({
     getIndex,
     reflectUpdateSidecarMeta,
     findLinks,
+    checkIndexExist,
   };
 
   return (

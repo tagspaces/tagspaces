@@ -904,5 +904,7 @@
   "maxCollectedTag": "Max Collected Tag",
   "aiChatTab": "AI Chat",
   "links": "Links",
+  "generateInbound": "Find Inbound Links",
+  "reGenerateInbound": "Refresh Inbound Links",
   "-": "-"
 }

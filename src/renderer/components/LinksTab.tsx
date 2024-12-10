@@ -24,6 +24,7 @@ import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
+import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
@@ -33,13 +34,16 @@ import { useSelector } from 'react-redux';
 interface Props {}
 
 function LinksTab(props: Props) {
+  const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry, sharingLink, openLink } = useOpenedEntryContext();
   const { isTabOpened } = useEntryPropsTabsContext();
-  const { findLinks } = useLocationIndexContext();
+  const { findLinks, checkIndexExist, isIndexing, createLocationIndex } =
+    useLocationIndexContext();
   const selectedTabIndex = useSelector(getEntryContainerTab);
   const links = useRef<TS.Link[]>([]);
   const inboundLinks = useRef<TS.FileSystemEntry[]>([]);
+  const indexExist = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const location = findLocation(openedEntry.locationID);
@@ -50,6 +54,7 @@ function LinksTab(props: Props) {
         if (linksTabOpened) {
           links.current = [];
           inboundLinks.current = [];
+          indexExist.current = false;
           // links from description
           if (openedEntry.meta?.description) {
             const descriptionLinks = extractLinks(openedEntry.meta.description);
@@ -73,15 +78,29 @@ function LinksTab(props: Props) {
                 });
             });
 
-          // external links
-          findLinks(sharingLink, location.uuid).then((entries) => {
-            inboundLinks.current = entries;
-            forceUpdate();
+          // external (inbound) links
+          checkIndexExist(location.uuid).then((exist) => {
+            indexExist.current = exist;
+            if (exist) {
+              setInboundLinks();
+            }
           });
         }
       },
     );
   }, [openedEntry, selectedTabIndex]);
+
+  function refreshInboundLinks() {
+    createLocationIndex(location).then(() => setInboundLinks());
+  }
+
+  function setInboundLinks() {
+    findLinks(sharingLink, location.uuid).then((entries) => {
+      inboundLinks.current = entries;
+      indexExist.current = true;
+      forceUpdate();
+    });
+  }
 
   const linkButton = (link: TS.Link) => (
     <TsButton
@@ -101,6 +120,27 @@ function LinksTab(props: Props) {
     </TsButton>
   );
 
+  const findInboundButton = (title) => (
+    <TsButton
+      loading={isIndexing !== undefined}
+      data-tid={'generateInboundTID'}
+      onClick={() =>
+        title === 'reGenerateInbound'
+          ? refreshInboundLinks()
+          : setInboundLinks()
+      }
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+        marginRight: 5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      }}
+    >
+      {t('core:' + title)}
+    </TsButton>
+  );
+
   return (
     <Box display="block">
       {links.current && links.current.length > 0 && (
@@ -112,16 +152,21 @@ function LinksTab(props: Props) {
       )}
       {location.fullTextIndex && (
         <Box display="block">
-          {inboundLinks.current && inboundLinks.current.length > 0 && (
+          Inbound links:
+          {indexExist.current ? (
             <>
-              Inbound links:
-              {inboundLinks.current.map((entry) => (
-                <div>
-                  {entry.name}: {entry.links.map((link) => linkButton(link))}
-                  <br />
-                </div>
-              ))}
+              {inboundLinks.current &&
+                inboundLinks.current.length > 0 &&
+                inboundLinks.current.map((entry) => (
+                  <div>
+                    {entry.name}: {entry.links.map((link) => linkButton(link))}
+                    <br />
+                  </div>
+                ))}{' '}
+              {findInboundButton('reGenerateInbound')}
             </>
+          ) : (
+            findInboundButton('generateInbound')
           )}
         </Box>
       )}
