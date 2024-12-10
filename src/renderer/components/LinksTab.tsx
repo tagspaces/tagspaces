@@ -16,19 +16,19 @@
  *
  */
 
-import { useEffect, useReducer, useRef } from 'react';
-import { extractLinks } from '@tagspaces/tagspaces-common/misc';
+import { LinkIcon } from '-/components/CommonIcons';
+import TsButton from '-/components/TsButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
+import { extractLinks } from '@tagspaces/tagspaces-common/misc';
+import { useEffect, useReducer, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import TsButton from '-/components/TsButton';
-import { LinkIcon } from '-/components/CommonIcons';
 
 interface Props {}
 
@@ -106,6 +106,7 @@ function LinksTab(props: Props) {
       {links.current && links.current.length > 0 && (
         <>
           Outbound links:
+          <br />
           {links.current.map((link) => linkButton(link))}
         </>
       )}
@@ -117,6 +118,7 @@ function LinksTab(props: Props) {
               {inboundLinks.current.map((entry) => (
                 <div>
                   {entry.name}: {entry.links.map((link) => linkButton(link))}
+                  <br />
                 </div>
               ))}
             </>
