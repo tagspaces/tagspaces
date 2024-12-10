@@ -16,6 +16,8 @@
  *
  */
 
+import { useEffect, useReducer, useRef } from 'react';
+import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
@@ -23,17 +25,21 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
-import { useEffect, useReducer, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import TsButton from '-/components/TsButton';
+import { LinkIcon } from '-/components/CommonIcons';
 
 interface Props {}
 
 function LinksTab(props: Props) {
   const { findLocation } = useCurrentLocationContext();
-  const { openedEntry } = useOpenedEntryContext();
+  const { openedEntry, sharingLink, openLink } = useOpenedEntryContext();
   const { isTabOpened } = useEntryPropsTabsContext();
+  const { findLinks } = useLocationIndexContext();
   const selectedTabIndex = useSelector(getEntryContainerTab);
   const links = useRef<TS.Link[]>([]);
+  const inboundLinks = useRef<TS.FileSystemEntry[]>([]);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const location = findLocation(openedEntry.locationID);
@@ -42,48 +48,80 @@ function LinksTab(props: Props) {
     isTabOpened(TabNames.linksTab, openedEntry, selectedTabIndex).then(
       (linksTabOpened) => {
         if (linksTabOpened) {
+          links.current = [];
+          inboundLinks.current = [];
+          // links from description
+          if (openedEntry.meta?.description) {
+            const descriptionLinks = extractLinks(openedEntry.meta.description);
+            if (descriptionLinks && descriptionLinks.length > 0) {
+              links.current = descriptionLinks;
+            }
+          }
+          forceUpdate();
+
+          // links from file content
           location
             .checkFileEncryptedPromise(openedEntry.path)
             .then((encrypted) => {
               location
-                .getPropertiesPromise(
-                  openedEntry.path,
-                  encrypted,
-                  location.fullTextIndex,
-                )
+                .getPropertiesPromise(openedEntry.path, encrypted, true)
                 .then((entryProps: TS.FileSystemEntry) => {
                   if (entryProps.links && entryProps.links.length > 0) {
-                    links.current = entryProps.links;
+                    links.current = [...links.current, ...entryProps.links];
                     forceUpdate();
                   }
                 });
             });
+
+          // external links
+          findLinks(sharingLink, location.uuid).then((entries) => {
+            inboundLinks.current = entries;
+            forceUpdate();
+          });
         }
       },
     );
   }, [openedEntry, selectedTabIndex]);
 
-  if (!location.fullTextIndex) {
-    return (
-      <Box position="relative" display="inline-flex">
-        TODO: Enable fullTextIndex to extract Links...
-      </Box>
-    );
-  }
+  const linkButton = (link: TS.Link) => (
+    <TsButton
+      data-tid={'linkTID' + link.href}
+      tooltip={link.type}
+      onClick={() => openLink(link.href)}
+      startIcon={<LinkIcon />}
+      style={{
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
+        marginRight: 5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      }}
+    >
+      {link.value ? link.value : link.href}
+    </TsButton>
+  );
+
   return (
     <Box display="block">
-      {links.current.length > 0 && (
+      {links.current && links.current.length > 0 && (
         <>
-          Document links:
-          {links.current.map((link) => (
-            <div>
-              {link.type}{' '}
-              <a href={link.href} target="_blank">
-                {link.value ? link.value : link.href}
-              </a>
-            </div>
-          ))}
+          Outbound links:
+          {links.current.map((link) => linkButton(link))}
         </>
+      )}
+      {location.fullTextIndex && (
+        <Box display="block">
+          {inboundLinks.current && inboundLinks.current.length > 0 && (
+            <>
+              Inbound links:
+              {inboundLinks.current.map((entry) => (
+                <div>
+                  {entry.name}: {entry.links.map((link) => linkButton(link))}
+                </div>
+              ))}
+            </>
+          )}
+        </Box>
       )}
     </Box>
   );

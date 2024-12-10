@@ -201,7 +201,7 @@ export namespace TS {
     links?: Link[];
   }
 
-  type LinkType = 'url' | 'email' | 'hashtag' | 'mention';
+  type LinkType = 'url' | 'email' | 'tslink' | 'hashtag' | 'mention';
 
   interface Link {
     /**

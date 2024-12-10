@@ -195,7 +195,10 @@ export const EntryPropsTabsContextProvider = ({
   ): Promise<boolean> {
     const allTabs = await getTabsArray(openedEntry);
     const tabIndex = allTabs.findIndex((tab) => tab.name === tabName);
-    return tabIndex !== -1 && tabIndex === selectedTabIndex;
+    const maxTabIndex = allTabs.length - 1;
+    const currentOpenedTab =
+      selectedTabIndex > maxTabIndex ? maxTabIndex : selectedTabIndex;
+    return tabIndex !== -1 && tabIndex === currentOpenedTab;
   }
 
   const context = useMemo(() => {
