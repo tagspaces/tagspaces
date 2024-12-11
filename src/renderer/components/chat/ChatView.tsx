@@ -18,6 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
 import TsSelect from '-/components/TsSelect';
@@ -39,10 +40,21 @@ import { useTheme } from '@mui/material/styles';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
-import { ChangeEvent, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import TsIconButton from '-/components/TsIconButton';
+import ChatMenu from '-/components/chat/ChatMenu';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { saveAsTextFile } from '-/services/utils-io';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -58,16 +70,19 @@ function ChatView() {
     setModel,
     currentModel,
     getHistoryFilePath,
+    deleteHistory,
   } = useChatContext();
+  const { showNotification } = useNotificationContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isTyping = useRef<boolean>(false);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
+  const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>(undefined);
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   /*const getAddedText = (oldText, newText) => {
     if (newText.startsWith(oldText)) {
       return newText.slice(oldText.length);
@@ -95,7 +110,7 @@ function ChatView() {
   useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
-        console.log('ChatMessage:' + message);
+        //console.log('ChatMessage:' + message);
         if (!replace) {
           // ignore download progress
           if (isLoading.current) {
@@ -126,12 +141,21 @@ function ChatView() {
   };
 
   const handleChangeModel = (newModelName: string) => {
-    changeCurrentModel(newModelName).then((success) => {
-      if (success) {
-        setModel(newModelName);
-        //forceUpdate();
-      }
-    });
+    changeCurrentModel(newModelName)
+      .then((success) => {
+        if (success) {
+          setModel(newModelName);
+          //forceUpdate();
+        }
+      })
+      .catch((err) => {
+        showNotification(
+          t('core:installCustomModel') + err.message + ': ' + newModelName,
+          'error',
+          false,
+        );
+        console.log(err);
+      });
   };
 
   function formatChatItems(chatItems: ChatItem[]): string {
@@ -196,6 +220,73 @@ function ChatView() {
     );
   };
 
+  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSelectAll = () => {
+    setAnchorEl(null);
+    const range = document.createRange(); // Create a new range
+    const selection = window.getSelection(); // Get the current selection
+    if (milkdownDivRef.current) {
+      range.selectNodeContents(milkdownDivRef.current); // Select the text inside the div
+      selection.removeAllRanges(); // Clear any existing selections
+      selection.addRange(range); // Add the new range to the selection
+    }
+  };
+
+  const handleCopy = () => {
+    setAnchorEl(null);
+    if (milkdownDivRef.current) {
+      const textToCopy = milkdownDivRef.current.innerText; // Get the text content of the div
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          showNotification(t('core:copyToClipboard'));
+        })
+        .catch((err) => {
+          console.error('Failed to copy text:', err);
+          showNotification(t('core:generatedHTMLFailed'));
+        });
+    }
+  };
+
+  const clearHistory = () => {
+    setAnchorEl(null);
+    deleteHistory();
+  };
+
+  const saveAsHtml = () => {
+    setAnchorEl(null);
+    if (milkdownDivRef.current) {
+      const html = milkdownDivRef.current.innerHTML;
+      const blob = new Blob([html], {
+        type: 'text/html',
+      });
+      const dateTimeTag = formatDateTime4Tag(new Date(), true);
+      const filename = 'tagspaces-chat [export ' + dateTimeTag + '].html';
+
+      saveAsTextFile(blob, filename);
+    }
+  };
+
+  const saveAsMarkdown = () => {
+    setAnchorEl(null);
+    if (editorRef.current) {
+      const md = editorRef.current.getMarkdown();
+      const blob = new Blob([md], {
+        type: 'text/markdown',
+      });
+      const dateTimeTag = formatDateTime4Tag(new Date(), true);
+      const filename = 'tagspaces-chat [export ' + dateTimeTag + '].md';
+
+      saveAsTextFile(blob, filename);
+    }
+  };
+
   const { FILE } = NativeTypes;
 
   return (
@@ -210,8 +301,8 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
-        <Grid2 container spacing={1} direction="row">
-          <Grid2 size={12}>
+        <Grid2 container spacing={0} direction="row">
+          <Grid2 size={11}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
@@ -219,14 +310,39 @@ function ChatView() {
               label={t('core:selectedAIModel')}
             />
           </Grid2>
+          <Grid2 size="grow" display="flex">
+            <TsIconButton
+              style={{ alignSelf: 'end' }}
+              tooltip={t('core:chatMore')}
+              onClick={handleMoreClick}
+              data-tid="chatMoreTID"
+              aria-label={t('core:chatMore')}
+              aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+            >
+              <MoreVertIcon fontSize="large" />
+            </TsIconButton>
+            <ChatMenu
+              anchorEl={anchorEl}
+              handleClose={handleClose}
+              handleSelectAll={handleSelectAll}
+              handleCopy={handleCopy}
+              clearHistory={clearHistory}
+              saveAsHtml={saveAsHtml}
+              saveAsMarkdown={saveAsMarkdown}
+            />
+          </Grid2>
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
-          <MilkdownEditor
-            ref={editorRef}
-            content={formatChatItems(chatHistoryItems)}
-            readOnly={true}
-            lightMode={true}
-          />
+          <div ref={milkdownDivRef}>
+            <MilkdownEditor
+              ref={editorRef}
+              content={formatChatItems(chatHistoryItems)}
+              readOnly={true}
+              lightMode={true}
+            />
+          </div>
         </Grid2>
         <Grid2 container spacing={1} direction="column">
           <Grid2>

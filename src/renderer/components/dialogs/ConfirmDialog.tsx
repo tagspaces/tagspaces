@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -31,6 +31,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTranslation } from 'react-i18next';
+import TsTextField from '-/components/TsTextField';
 
 interface Props {
   open: boolean;
@@ -39,17 +40,19 @@ interface Props {
   cancelDialogTID?: string;
   confirmDialogTID?: string;
   confirmDialogContentTID?: string;
+  prompt?: string;
   list: Array<string>;
-  confirmCallback: (result: boolean) => void;
+  confirmCallback: (result: boolean | string) => void;
   onClose: () => void;
 }
 
 function ConfirmDialog(props: Props) {
-  const { open, onClose, confirmCallback } = props;
+  const { open, onClose, confirmCallback, prompt } = props;
   const { t } = useTranslation();
+  const [promptValue, setPromptValue] = useState<string>('');
 
   function onConfirm(result) {
-    confirmCallback(result);
+    confirmCallback(result && prompt ? promptValue : result);
     onClose();
   }
 
@@ -63,7 +66,10 @@ function ConfirmDialog(props: Props) {
       scroll="paper"
       style={{ zIndex: 1301 }}
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+      <DialogTitle
+        style={{ cursor: 'move', paddingRight: 60 }}
+        id="draggable-dialog-title"
+      >
         {props.title}
         <DialogCloseButton testId="closeConfirmTID" onClose={onClose} />
       </DialogTitle>
@@ -73,6 +79,14 @@ function ConfirmDialog(props: Props) {
           component="span"
         >
           {props.content}
+          {prompt && (
+            <TsTextField
+              fullWidth
+              value={promptValue}
+              onChange={(e) => setPromptValue(e.target.value)}
+              placeholder={prompt}
+            />
+          )}
           {props.list && (
             <List dense>
               {props.list.map((listItem) => (

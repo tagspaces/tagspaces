@@ -89,6 +89,7 @@ type ChatData = {
   ) => Promise<any>;
   generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
   initHistory: () => void;
+  deleteHistory: () => Promise<boolean>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -113,6 +114,7 @@ export const ChatContext = createContext<ChatData>({
   newChatMessage: undefined,
   generate: undefined,
   initHistory: undefined,
+  deleteHistory: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -237,6 +239,20 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
     }
     return undefined;
+  }
+
+  function deleteHistory(): Promise<boolean> {
+    const historyFilePath = getHistoryFilePath();
+    if (currentLocation) {
+      return currentLocation
+        .deleteFilePromise(historyFilePath, false)
+        .then(() => {
+          chatHistoryItems.current = [];
+          forceUpdate();
+          return true;
+        });
+    }
+    return Promise.resolve(false);
   }
 
   function loadHistory(): Promise<ChatItem[]> {
@@ -726,6 +742,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       findModel,
       generate,
       initHistory,
+      deleteHistory,
     };
   }, [
     defaultAiProvider,
