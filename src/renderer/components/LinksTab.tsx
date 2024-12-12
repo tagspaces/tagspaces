@@ -24,11 +24,11 @@ import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
-import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 interface Props {}
@@ -153,6 +153,7 @@ function LinksTab(props: Props) {
       {location.fullTextIndex && (
         <Box display="block">
           Inbound links:
+          <br />
           {indexExist.current ? (
             <>
               {inboundLinks.current &&
