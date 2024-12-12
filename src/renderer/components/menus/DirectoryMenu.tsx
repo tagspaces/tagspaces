@@ -376,6 +376,7 @@ Do you want to continue?`)
         currentLocation?.getDirSeparator(),
       ),
       targetThumbPath,
+      currentLocation.uuid,
       t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )
       .then(() => {
