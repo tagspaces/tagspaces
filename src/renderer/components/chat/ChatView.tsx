@@ -18,17 +18,21 @@
 
 import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
+import ChatMenu from '-/components/chat/ChatMenu';
 import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
+import { saveAsTextFile } from '-/services/utils-io';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -37,6 +41,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
@@ -50,11 +55,6 @@ import React, {
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TsIconButton from '-/components/TsIconButton';
-import ChatMenu from '-/components/chat/ChatMenu';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { saveAsTextFile } from '-/services/utils-io';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -301,8 +301,13 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
-        <Grid2 container spacing={0} direction="row">
-          <Grid2 size={11}>
+        <Grid2
+          container
+          spacing={0}
+          direction="row"
+          style={{ flexFlow: 'nowrap' }}
+        >
+          <Grid2 size={11.5}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
@@ -310,9 +315,9 @@ function ChatView() {
               label={t('core:selectedAIModel')}
             />
           </Grid2>
-          <Grid2 size="grow" display="flex">
+          <Grid2>
             <TsIconButton
-              style={{ alignSelf: 'end' }}
+              style={{ marginTop: 20 }}
               tooltip={t('core:chatMore')}
               onClick={handleMoreClick}
               data-tid="chatMoreTID"
@@ -321,7 +326,7 @@ function ChatView() {
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
             >
-              <MoreVertIcon fontSize="large" />
+              <MoreVertIcon />
             </TsIconButton>
             <ChatMenu
               anchorEl={anchorEl}
