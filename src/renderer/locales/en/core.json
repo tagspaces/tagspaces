@@ -900,10 +900,12 @@
   "chooseModel": "Choose AI Model",
   "selectedAIModel": "Selected AI Model",
   "installedAIModel": "Installed AI Model",
+  "moreActions": "More Actions",
   "exampleInstallableModels": "Example Installable AI Models",
   "noAIModelsInstaller": "No AI Models Installed",
   "engineName": "AI Engine Name",
   "maxCollectedTag": "Max Collected Tag",
   "aiChatTab": "AI Chat",
+  "startDownload": "Start download",
   "-": "-"
 }

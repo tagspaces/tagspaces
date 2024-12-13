@@ -16,17 +16,17 @@
  *
  */
 
-import { RemoveIcon } from '-/components/CommonIcons';
+import { AIIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsSelect from '-/components/TsSelect';
 import { Model } from '-/components/chat/ChatTypes';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useChatContext } from '-/hooks/useChatContext';
+import DownloadIcon from '@mui/icons-material/Download';
 import { ListItemIcon, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DownloadIcon from '@mui/icons-material/Download';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 interface Props {
   id?: string;
@@ -150,6 +150,10 @@ function SelectChatModel(props: Props) {
               value={model.name}
               title={model.modified_at}
             >
+              {' '}
+              <ListItemIcon>
+                <AIIcon fontSize="small" />
+              </ListItemIcon>
               {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
             </MenuItem>
           ))
@@ -167,9 +171,15 @@ function SelectChatModel(props: Props) {
             value={model.name}
             title={model.details.format}
           >
+            <ListItemIcon>
+              <DownloadIcon fontSize="small" />
+            </ListItemIcon>
             {model.name}
           </MenuItem>
         ))}
+        <MenuItem value="" disabled>
+          {t('core:moreActions')}
+        </MenuItem>
         <MenuItem value="customModel">
           <ListItemIcon>
             <DownloadIcon fontSize="small" />
@@ -184,7 +194,10 @@ function SelectChatModel(props: Props) {
           setCustomModelPromptDialogOpened(false);
         }}
         title={t('core:downloadChatModel')}
-        content={t('core:chooseModel')}
+        helpText={
+          'E.g.: llama3.2:1b, further models available on ollama.com/search'
+        }
+        // content={t('core:chooseModel')}
         confirmCallback={(result) => {
           if (result && typeof result === 'string') {
             handleChangeModel(result);
@@ -195,6 +208,8 @@ function SelectChatModel(props: Props) {
         cancelDialogTID="cancelInstallCustomModel"
         confirmDialogTID="confirmInstallCustomModel"
         confirmDialogContentTID="confirmCustomModelContent"
+        customConfirmText={t('core:startDownload')}
+        customCancelText={t('core:cancel')}
       />
     </>
   );

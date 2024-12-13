@@ -16,38 +16,49 @@
  *
  */
 
-import React, { useState } from 'react';
-import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContentText from '@mui/material/DialogContentText';
 import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
+import TsTextField from '-/components/TsTextField';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import BulletIcon from '@mui/icons-material/Remove';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import BulletIcon from '@mui/icons-material/Remove';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Dialog from '@mui/material/Dialog';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TsTextField from '-/components/TsTextField';
 
 interface Props {
   open: boolean;
   title: string;
-  content: string;
+  content?: string;
+  customConfirmText?: string;
+  customCancelText?: string;
   cancelDialogTID?: string;
   confirmDialogTID?: string;
   confirmDialogContentTID?: string;
   prompt?: string;
+  helpText?: string;
   list: Array<string>;
   confirmCallback: (result: boolean | string) => void;
   onClose: () => void;
 }
 
 function ConfirmDialog(props: Props) {
-  const { open, onClose, confirmCallback, prompt } = props;
+  const {
+    open,
+    onClose,
+    confirmCallback,
+    prompt,
+    helpText,
+    customCancelText,
+    customConfirmText,
+  } = props;
   const { t } = useTranslation();
   const [promptValue, setPromptValue] = useState<string>('');
 
@@ -66,10 +77,7 @@ function ConfirmDialog(props: Props) {
       scroll="paper"
       style={{ zIndex: 1301 }}
     >
-      <DialogTitle
-        style={{ cursor: 'move', paddingRight: 60 }}
-        id="draggable-dialog-title"
-      >
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {props.title}
         <DialogCloseButton testId="closeConfirmTID" onClose={onClose} />
       </DialogTitle>
@@ -82,6 +90,7 @@ function ConfirmDialog(props: Props) {
           {prompt && (
             <TsTextField
               fullWidth
+              label={helpText}
               value={promptValue}
               onChange={(e) => setPromptValue(e.target.value)}
               placeholder={prompt}
@@ -106,13 +115,13 @@ function ConfirmDialog(props: Props) {
           onClick={() => onConfirm(false)}
           data-tid={props.cancelDialogTID}
         >
-          {t('core:no')}
+          {customCancelText ? customCancelText : t('core:no')}
         </TsButton>
         <TsButton
           data-tid={props.confirmDialogTID}
           onClick={() => onConfirm(true)}
         >
-          {t('core:yes')}
+          {customConfirmText ? customConfirmText : t('core:yes')}
         </TsButton>
       </TsDialogActions>
     </Dialog>
