@@ -808,6 +808,8 @@
   "confirmtsLastOpenedFilesHistoryDeletion": "Are you sure you want to clear the list of your recently opened files?",
   "searchHasTheWords": "Has the words",
   "saveAsHtml": "Save as HTML",
+  "saveAsMd": "Save as Markdown",
+  "installCustomModel": "Install Custom Model...",
   "linkValidityDuration": "Download links are valid until {{linkValidityDistance}}",
   "shareFiles": "Share Files",
   "shareFile": "Share File",
@@ -898,6 +900,7 @@
   "chooseModel": "Choose AI Model",
   "selectedAIModel": "Selected AI Model",
   "installedAIModel": "Installed AI Model",
+  "moreActions": "More Actions",
   "exampleInstallableModels": "Example Installable AI Models",
   "noAIModelsInstaller": "No AI Models Installed",
   "engineName": "AI Engine Name",
@@ -906,5 +909,6 @@
   "links": "Links",
   "generateInbound": "Find Inbound Links",
   "reGenerateInbound": "Refresh Inbound Links",
+  "startDownload": "Start download",
   "-": "-"
 }

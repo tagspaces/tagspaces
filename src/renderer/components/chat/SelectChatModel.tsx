@@ -16,14 +16,16 @@
  *
  */
 
-import { RemoveIcon } from '-/components/CommonIcons';
+import { AIIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsSelect from '-/components/TsSelect';
 import { Model } from '-/components/chat/ChatTypes';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useChatContext } from '-/hooks/useChatContext';
-import { MenuItem } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
+import { ListItemIcon, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -38,6 +40,8 @@ function SelectChatModel(props: Props) {
   const { t } = useTranslation();
   const { id, label, chosenModel, handleChangeModel, disabled } = props;
   const { models, removeModel } = useChatContext();
+  const [isCustomModelPromptDialogOpened, setCustomModelPromptDialogOpened] =
+    useState(false);
 
   const ollamaAvailableModels: Model[] = [
     {
@@ -97,7 +101,11 @@ function SelectChatModel(props: Props) {
   ];
 
   const changeModel = (event: ChangeEvent<HTMLInputElement>) => {
-    handleChangeModel(event.target.value);
+    if (event.target.value === 'customModel') {
+      setCustomModelPromptDialogOpened(true);
+    } else {
+      handleChangeModel(event.target.value);
+    }
   };
 
   const handleRemoveModel = () => {
@@ -105,63 +113,105 @@ function SelectChatModel(props: Props) {
   };
 
   return (
-    <TsSelect
-      disabled={disabled}
-      value={chosenModel ? chosenModel : 'init'}
-      onChange={changeModel}
-      label={label ? label : ''}
-      id={id ? id : 'selectChatModelId'}
-      slotProps={{
-        input: {
-          endAdornment: chosenModel && (
-            <InputAdornment position="end" sx={{ ml: -12 }}>
-              <IconButton
-                aria-label={t('core:deleteModel')}
-                onClick={handleRemoveModel}
-                data-tid="deleteModelTID"
-                size="small"
-              >
-                <RemoveIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        },
-      }}
-    >
-      <MenuItem value="init" disabled>
-        {t('core:chooseModel')}
-      </MenuItem>
-      <MenuItem value="" disabled>
-        {t('core:installedAIModel')}
-      </MenuItem>
-      {models && models.length > 0 ? (
-        models.map((model) => (
+    <>
+      <TsSelect
+        disabled={disabled}
+        value={chosenModel ? chosenModel : 'init'}
+        onChange={changeModel}
+        label={label ? label : ''}
+        id={id ? id : 'selectChatModelId'}
+        slotProps={{
+          input: {
+            endAdornment: chosenModel && (
+              <InputAdornment position="end" sx={{ ml: -12 }}>
+                <IconButton
+                  aria-label={t('core:deleteModel')}
+                  onClick={handleRemoveModel}
+                  data-tid="deleteModelTID"
+                  size="small"
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
+      >
+        <MenuItem value="init" disabled>
+          {t('core:chooseModel')}
+        </MenuItem>
+        <MenuItem value="" disabled>
+          {t('core:installedAIModel')}
+        </MenuItem>
+        {models && models.length > 0 ? (
+          models.map((model) => (
+            <MenuItem
+              key={model.name}
+              value={model.name}
+              title={model.modified_at}
+            >
+              {' '}
+              <ListItemIcon>
+                <AIIcon fontSize="small" />
+              </ListItemIcon>
+              {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem value="" disabled>
+            {t('core:noAIModelsInstaller')}
+          </MenuItem>
+        )}
+        <MenuItem value="" disabled>
+          {t('core:exampleInstallableModels')}
+        </MenuItem>
+        {ollamaAvailableModels.map((model) => (
           <MenuItem
             key={model.name}
             value={model.name}
-            title={model.modified_at}
+            title={model.details.format}
           >
-            {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
+            <ListItemIcon>
+              <DownloadIcon fontSize="small" />
+            </ListItemIcon>
+            {model.name}
           </MenuItem>
-        ))
-      ) : (
+        ))}
         <MenuItem value="" disabled>
-          {t('core:noAIModelsInstaller')}
+          {t('core:moreActions')}
         </MenuItem>
-      )}
-      <MenuItem value="" disabled>
-        {t('core:exampleInstallableModels')}
-      </MenuItem>
-      {ollamaAvailableModels.map((model) => (
-        <MenuItem
-          key={model.name}
-          value={model.name}
-          title={model.details.format}
-        >
-          {model.name}
+        <MenuItem value="customModel">
+          <ListItemIcon>
+            <DownloadIcon fontSize="small" />
+          </ListItemIcon>
+          {t('core:installCustomModel')}
         </MenuItem>
-      ))}
-    </TsSelect>
+      </TsSelect>
+      <ConfirmDialog
+        prompt={t('core:model')}
+        open={isCustomModelPromptDialogOpened}
+        onClose={() => {
+          setCustomModelPromptDialogOpened(false);
+        }}
+        title={t('core:downloadChatModel')}
+        helpText={
+          'E.g.: llama3.2:1b, further models available on ollama.com/search'
+        }
+        // content={t('core:chooseModel')}
+        confirmCallback={(result) => {
+          if (result && typeof result === 'string') {
+            handleChangeModel(result);
+          } else {
+            setCustomModelPromptDialogOpened(false);
+          }
+        }}
+        cancelDialogTID="cancelInstallCustomModel"
+        confirmDialogTID="confirmInstallCustomModel"
+        confirmDialogContentTID="confirmCustomModelContent"
+        customConfirmText={t('core:startDownload')}
+        customCancelText={t('core:cancel')}
+      />
+    </>
   );
 }
 
