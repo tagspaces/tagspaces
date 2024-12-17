@@ -242,10 +242,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function deleteHistory(): Promise<boolean> {
-    const historyFilePath = getHistoryFilePath();
+    const historyFilePath = getHistoryMetaDir();
     if (currentLocation) {
       return currentLocation
-        .deleteFilePromise(historyFilePath, false)
+        .deleteDirectoryPromise(historyFilePath, false)
         .then(() => {
           chatHistoryItems.current = [];
           forceUpdate();
@@ -493,6 +493,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
     const fileName = name ? name : 'tsc.json';
     return metaFolder + dirSeparator + 'ai' + dirSeparator + fileName;
+  }
+
+  function getHistoryMetaDir() {
+    const dirSeparator = currentLocation
+      ? currentLocation.getDirSeparator()
+      : AppConfig.dirSeparator;
+    const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
+    return metaFolder + dirSeparator + 'ai';
   }
 
   function saveHistoryItems(items?: ChatItem[]) {
