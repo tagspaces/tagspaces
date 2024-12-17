@@ -223,8 +223,8 @@ export default function loadMainEvents() {
     const result = await listMetaDirectoryPromise(path);
     return result;
   });
-  ipcMain.handle('getPropertiesPromise', async (event, path) => {
-    const result = await getPropertiesPromise(path);
+  ipcMain.handle('getPropertiesPromise', async (event, path, extractLinks) => {
+    const result = await getPropertiesPromise({ path, extractLinks });
     return result;
   });
   ipcMain.handle('checkDirExist', async (event, dir) => {

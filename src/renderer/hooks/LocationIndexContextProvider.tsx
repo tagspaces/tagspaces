@@ -66,6 +66,11 @@ type LocationIndexContextData = {
   setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
   //indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  findLinks: (
+    link: string,
+    locationId: string,
+  ) => Promise<TS.FileSystemEntry[]>;
+  checkIndexExist: (locationId: string) => Promise<boolean>;
 };
 
 export const LocationIndexContext = createContext<LocationIndexContextData>({
@@ -80,7 +85,8 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   searchLocationIndex: () => {},
   searchAllLocations: () => {},
   setIndex: () => {},
-  //indexUpdateSidecarTags: () => {},
+  findLinks: undefined,
+  checkIndexExist: undefined,
   reflectUpdateSidecarMeta: () => {},
 });
 
@@ -166,6 +172,53 @@ export const LocationIndexContextProvider = ({
     return index.current;
   }
 
+  function indexExpired() {
+    const currentTime = new Date().getTime();
+    const indexAge = indexLoadedOn.current
+      ? currentTime - indexLoadedOn.current
+      : 0;
+
+    return indexAge > maxIndexAge.current;
+  }
+
+  async function checkIndexExist(locationId: string): Promise<boolean> {
+    if (index.current === undefined || indexExpired()) {
+      const location = findLocation(locationId);
+      const locationPath = await getLocationPath(location);
+      const directoryIndex = await loadIndexFromDisk(
+        locationPath,
+        location.uuid,
+      );
+      if (directoryIndex) {
+        // index is up to date
+        setIndex(directoryIndex, location);
+        return true;
+      }
+    }
+    return Promise.resolve(index.current !== undefined);
+  }
+
+  async function getLastIndex(
+    locationId: string,
+  ): Promise<TS.FileSystemEntry[]> {
+    if (!index.current || index.current.length < 1 || indexExpired()) {
+      const location = findLocation(locationId);
+      const locationPath = await getLocationPath(location);
+      const directoryIndex = await loadIndexFromDisk(
+        locationPath,
+        location.uuid,
+      );
+      if (directoryIndex) {
+        // index is up to date
+        setIndex(directoryIndex, location);
+      } else {
+        await createLocationIndex(location);
+      }
+    }
+
+    return index.current;
+  }
+
   function reflectDeleteEntry(path: string) {
     if (!index.current || index.current.length < 1) {
       return;
@@ -208,6 +261,19 @@ export const LocationIndexContextProvider = ({
         currentLocation,
       );
     }
+  }
+
+  async function findLinks(
+    link: string,
+    locationId: string,
+  ): Promise<TS.FileSystemEntry[]> {
+    const lastIndex = await getLastIndex(locationId);
+    if (!lastIndex || lastIndex.length < 1) {
+      return undefined;
+    }
+    return lastIndex.filter(
+      (i) => i.links && i.links.some((l) => l.href === link),
+    );
   }
 
   /*function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
@@ -302,6 +368,7 @@ export const LocationIndexContextProvider = ({
       const mode = ['extractThumbPath'];
       if (extractText) {
         mode.push('extractTextContent');
+        mode.push('extractLinks');
       }
       return createIndex(
         {
@@ -421,7 +488,7 @@ export const LocationIndexContextProvider = ({
 
   function clearDirectoryIndex(persist = false) {
     isIndexing.current = undefined;
-    setIndex([], persist ? currentLocation : undefined);
+    setIndex(undefined, persist ? currentLocation : undefined);
     forceUpdate();
   }
 
@@ -812,6 +879,8 @@ export const LocationIndexContextProvider = ({
     setIndex,
     getIndex,
     reflectUpdateSidecarMeta,
+    findLinks,
+    checkIndexExist,
   };
 
   return (

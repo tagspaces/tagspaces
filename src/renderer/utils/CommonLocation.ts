@@ -315,6 +315,7 @@ export class CommonLocation implements TS.Location {
   getPropertiesPromise = (
     path: string,
     useEncryption: boolean = true,
+    extractLinks: boolean = false,
   ): Promise<any> => {
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
@@ -328,7 +329,11 @@ export class CommonLocation implements TS.Location {
       }
       return this.ioAPI.getPropertiesPromise(path);
     } else if (AppConfig.isElectron) {
-      return window.electronIO.ipcRenderer.invoke('getPropertiesPromise', path);
+      return window.electronIO.ipcRenderer.invoke(
+        'getPropertiesPromise',
+        path,
+        extractLinks,
+      );
     }
     return Promise.reject(new Error('getPropertiesPromise: not implemented'));
   };

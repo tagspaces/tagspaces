@@ -24,6 +24,7 @@ import {
   FolderPropertiesIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
+import LinkIcon from '@mui/icons-material/Link';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
@@ -47,6 +48,7 @@ export const TabNames = {
   descriptionTab: 'descriptionTab',
   revisionsTab: 'revisionsTab',
   aiTab: 'aiTab',
+  linksTab: 'linksTab',
 };
 
 type EntryPropsTabsContextData = {
@@ -56,12 +58,18 @@ type EntryPropsTabsContextData = {
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
   ) => Promise<number>;
+  isTabOpened: (
+    tabName: (typeof TabNames)[keyof typeof TabNames],
+    openedEntry: TS.OpenedEntry,
+    selectedTabIndex: number,
+  ) => Promise<boolean>;
 };
 
 export const EntryPropsTabsContext = createContext<EntryPropsTabsContextData>({
   getTabsArray: undefined,
   isEditable: undefined,
   setOpenedTab: undefined,
+  isTabOpened: undefined,
 });
 
 export type EntryPropsTabsContextProviderProps = {
@@ -74,10 +82,7 @@ export const EntryPropsTabsContextProvider = ({
   const { t } = useTranslation();
 
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
-
-  // const { isEditMode } = useFilePropertiesContext();
   const dispatch: AppDispatch = useDispatch();
-
   const devMode: boolean = useSelector(isDevMode);
 
   //const haveRevisions = useRef<boolean>(isEditable());
@@ -85,7 +90,6 @@ export const EntryPropsTabsContextProvider = ({
   //const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
 
   function haveRevisions(openedEntry: TS.OpenedEntry): Promise<boolean> {
-    //selectedTabIndex.current = initSelectedTabIndex(tabIndex);
     if (isEditable(openedEntry)) {
       const location: CommonLocation = findLocation(openedEntry.locationID);
       const backupFilePath = getBackupFileDir(
@@ -114,6 +118,7 @@ export const EntryPropsTabsContextProvider = ({
   }
 
   async function getTabsArray(oEntry: TS.OpenedEntry): Promise<TabItem[]> {
+    //const location: CommonLocation = findLocation(oEntry.locationID);
     const tab1: TabItem = {
       icon: <FolderPropertiesIcon />,
       title: t('core:details'),
@@ -155,6 +160,12 @@ export const EntryPropsTabsContextProvider = ({
         tabsArray.push(tab4);
       }
     }
+    const tab5: TabItem = {
+      icon: <LinkIcon />,
+      title: t('core:links'),
+      name: TabNames.linksTab,
+    };
+    tabsArray.push(tab5);
     return tabsArray;
   }
 
@@ -177,11 +188,25 @@ export const EntryPropsTabsContextProvider = ({
     return tabIndex;
   }
 
+  async function isTabOpened(
+    tabName: (typeof TabNames)[keyof typeof TabNames],
+    openedEntry: TS.OpenedEntry,
+    selectedTabIndex: number,
+  ): Promise<boolean> {
+    const allTabs = await getTabsArray(openedEntry);
+    const tabIndex = allTabs.findIndex((tab) => tab.name === tabName);
+    const maxTabIndex = allTabs.length - 1;
+    const currentOpenedTab =
+      selectedTabIndex > maxTabIndex ? maxTabIndex : selectedTabIndex;
+    return tabIndex !== -1 && tabIndex === currentOpenedTab;
+  }
+
   const context = useMemo(() => {
     return {
       getTabsArray,
       isEditable,
       setOpenedTab,
+      isTabOpened,
     };
   }, []);
 
