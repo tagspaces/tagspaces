@@ -492,7 +492,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       : AppConfig.dirSeparator;
     const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
     const fileName = name ? name : 'tsc.json';
-    return metaFolder + dirSeparator + 'ai' + dirSeparator + fileName;
+    return (
+      metaFolder + dirSeparator + AppConfig.aiFolder + dirSeparator + fileName
+    );
   }
 
   function getHistoryMetaDir() {
@@ -500,7 +502,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
     const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
-    return metaFolder + dirSeparator + 'ai';
+    return metaFolder + dirSeparator + AppConfig.aiFolder;
   }
 
   function saveHistoryItems(items?: ChatItem[]) {

@@ -259,7 +259,6 @@ function ChatView() {
 
   const clearHistory = () => {
     setAnchorEl(null);
-    confirm;
     deleteHistory();
   };
 
@@ -346,7 +345,7 @@ function ChatView() {
               onClose={() => {
                 setIsConfirmDialogOpened(false);
               }}
-              title="Confirm"
+              title={t('core:titleConfirm')}
               content={t('core:confirmHistoryDeletion')}
               confirmCallback={(result) => {
                 if (result) {
