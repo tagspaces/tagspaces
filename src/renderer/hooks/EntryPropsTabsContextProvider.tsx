@@ -40,7 +40,7 @@ export type TabItem = {
   //dataTid: string;
   icon: React.ReactNode;
   title: string;
-  name: string;
+  name: (typeof TabNames)[keyof typeof TabNames];
 };
 
 export const TabNames = {
@@ -54,10 +54,10 @@ export const TabNames = {
 type EntryPropsTabsContextData = {
   getTabsArray: (openedEntry: TS.OpenedEntry) => Promise<TabItem[]>;
   isEditable: (openedEntry: TS.OpenedEntry) => boolean;
-  setOpenedTab: (
+  /*setOpenedTab: (
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
-  ) => Promise<number>;
+  ) => Promise<number>;*/
   isTabOpened: (
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
@@ -68,7 +68,7 @@ type EntryPropsTabsContextData = {
 export const EntryPropsTabsContext = createContext<EntryPropsTabsContextData>({
   getTabsArray: undefined,
   isEditable: undefined,
-  setOpenedTab: undefined,
+  //setOpenedTab: undefined,
   isTabOpened: undefined,
 });
 
@@ -174,7 +174,7 @@ export const EntryPropsTabsContextProvider = ({
    * @param openedEntry
    * return tabIndex or -1 if not tab exist with tabName
    */
-  async function setOpenedTab(
+  /*async function setOpenedTab(
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
   ): Promise<number> {
@@ -186,7 +186,7 @@ export const EntryPropsTabsContextProvider = ({
       console.log('no tab with name:' + tabName + ' exist!');
     }
     return tabIndex;
-  }
+  }*/
 
   async function isTabOpened(
     tabName: (typeof TabNames)[keyof typeof TabNames],
@@ -205,7 +205,7 @@ export const EntryPropsTabsContextProvider = ({
     return {
       getTabsArray,
       isEditable,
-      setOpenedTab,
+      //setOpenedTab,
       isTabOpened,
     };
   }, []);

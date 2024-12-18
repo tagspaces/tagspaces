@@ -20,7 +20,6 @@ import AppConfig from '-/AppConfig';
 import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -29,13 +28,16 @@ import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AIIcon } from '../CommonIcons';
+import { actions as SettingsActions } from '-/reducers/settings';
+import { AppDispatch } from '-/reducers/app';
+import { useDispatch } from 'react-redux';
 
 type Props = TSButtonProps & {};
 
 function AiGenDescButton(props: Props) {
   const { t } = useTranslation();
   const { style, disabled } = props;
-  const { setOpenedTab } = useEntryPropsTabsContext();
+  const dispatch: AppDispatch = useDispatch();
   const { openedEntry } = useOpenedEntryContext();
   const { generate, openedEntryModel } = useChatContext();
   const { setDescription, saveDescription } = useFilePropertiesContext();
@@ -60,7 +62,7 @@ function AiGenDescButton(props: Props) {
     //console.log('newOllamaMessage response:' + response);
     setIsLoading(false);
     if (response) {
-      setOpenedTab(TabNames.descriptionTab, openedEntry);
+      dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
       response =
         response +
         '\\\n *Generated with AI on ' +

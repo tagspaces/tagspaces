@@ -130,14 +130,13 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { openPanel, toggleProperties, marginRight, isPanelOpened } = props;
 
   const { t } = useTranslation();
-  const { findLocation } = useCurrentLocationContext();
   const { initHistory } = useChatContext();
-  //const { findLocation } = useCurrentLocationContext();
   const { getTabsArray } = useEntryPropsTabsContext();
   const { openedEntry } = useOpenedEntryContext();
   const theme = useTheme();
-  const devMode: boolean = useSelector(isDevMode);
-  const tabIndex = useSelector(getEntryContainerTab);
+  //const devMode: boolean = useSelector(isDevMode);
+  const selectedTab: (typeof TabNames)[keyof typeof TabNames] =
+    useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const tabsArray = useRef<TabItem[]>([]);
   const dispatch: AppDispatch = useDispatch();
@@ -154,10 +153,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (tabsArray.current.length > 0) {
       const tab = tabsArray.current[newValue];
-      if (tab && tab.name === 'aiTab') {
+      if (tab && tab.name === TabNames.aiTab) {
         initHistory();
       }
-      dispatch(SettingsActions.setEntryContainerTab(newValue));
+      dispatch(SettingsActions.setEntryContainerTab(tab.name));
       openPanel();
       console.log('tab changed to:' + newValue);
     }
@@ -179,14 +178,15 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     if (!isPanelOpened) {
       return undefined;
     }
-    if (!tabIndex || tabIndex === -1) {
+    if (selectedTab === undefined) {
       return 0;
     }
-    const maxTabIndex = tabsArray.current.length - 1;
+    return tabsArray.current.findIndex((tab) => tab.name === selectedTab);
+    /*const maxTabIndex = tabsArray.current.length - 1;
     if (tabIndex > maxTabIndex) {
       return maxTabIndex;
     }
-    return tabIndex;
+    return tabIndex;*/
   }
 
   const selectedTabIndex = getSelectedTabIndex();
