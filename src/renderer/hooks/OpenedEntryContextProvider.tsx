@@ -72,6 +72,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -92,7 +93,7 @@ type OpenedEntryContextData = {
   openEntry: (path?: string, tabSelected?: string) => Promise<boolean>;
   openFsEntry: (
     fsEntry?: TS.FileSystemEntry,
-    tabSelected?: string,
+    tabSelected?: (typeof TabNames)[keyof typeof TabNames],
   ) => Promise<boolean>;
   openEntryInternal: (
     fsEntry: TS.FileSystemEntry,
@@ -170,7 +171,6 @@ export const OpenedEntryContextProvider = ({
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { actions } = useEditedEntryContext();
-  const { setOpenedTab } = useEntryPropsTabsContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
   const { setEditMode } = useFilePropertiesContext();
@@ -572,7 +572,7 @@ export const OpenedEntryContextProvider = ({
 
   async function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
-    tabSelected: string = undefined,
+    tabSelected: (typeof TabNames)[keyof typeof TabNames] = undefined,
   ): Promise<boolean> {
     if (!fsEntry) {
       if (selectedEntries && selectedEntries.length > 0) {
@@ -648,7 +648,8 @@ export const OpenedEntryContextProvider = ({
     addToEntryContainer(entryForOpening);
 
     if (tabSelected !== undefined) {
-      setOpenedTab(tabSelected, entryForOpening);
+      dispatch(SettingsActions.setEntryContainerTab(tabSelected));
+      //setOpenedTab(tabSelected, entryForOpening);
       //dispatch(SettingsActions.setShowDetails(tabSelected));
     }
     if (

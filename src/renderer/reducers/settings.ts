@@ -33,6 +33,7 @@ import {
   updateByProp,
 } from '-/services/utils-io';
 import { AIProvider } from '-/components/chat/ChatTypes';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -623,9 +624,11 @@ export const actions = {
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES,
   }),
-  setEntryContainerTab: (tabIndex: number) => ({
+  setEntryContainerTab: (
+    tabName: (typeof TabNames)[keyof typeof TabNames],
+  ) => ({
     type: types.SET_ENTRY_CONTAINER_TAB,
-    entryContainerTab: tabIndex,
+    entryContainerTab: tabName,
   }),
   /*  setShowDetails: (showDetails: boolean) => ({
     type: types.SET_SHOW_DETAILS,

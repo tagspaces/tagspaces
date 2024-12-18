@@ -205,7 +205,7 @@ export function getNextFile(
     // eslint-disable-next-line prefer-destructuring
     nextFile = currentEntries[0];
   }
-  return nextFile;
+  return { ...nextFile, meta: { ...nextFile.meta, id: undefined } };
 }
 
 export function getPrevFile(
@@ -241,7 +241,7 @@ export function getPrevFile(
     // eslint-disable-next-line prefer-destructuring
     prevFile = currentEntries[0];
   }
-  return prevFile;
+  return { ...prevFile, meta: { ...prevFile.meta, id: undefined } };
 }
 
 export function saveAsTextFile(blob: any, filename: string) {
