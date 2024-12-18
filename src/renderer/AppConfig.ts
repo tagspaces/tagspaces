@@ -36,5 +36,6 @@ AppConfig.maxLoops = 2;
 AppConfig.defaultFolderColor = 'gray';
 AppConfig.defaultCSSRadius = 10;
 AppConfig.defaultSpaceBetweenButtons = 10;
+AppConfig.aiFolder = 'ai';
 
 export default AppConfig;

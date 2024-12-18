@@ -55,6 +55,7 @@ import React, {
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -83,6 +84,8 @@ function ChatView() {
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [isConfirmDialogOpened, setIsConfirmDialogOpened] =
+    React.useState<boolean>(false);
   /*const getAddedText = (oldText, newText) => {
     if (newText.startsWith(oldText)) {
       return newText.slice(oldText.length);
@@ -333,9 +336,25 @@ function ChatView() {
               handleClose={handleClose}
               handleSelectAll={handleSelectAll}
               handleCopy={handleCopy}
-              clearHistory={clearHistory}
+              clearHistory={() => setIsConfirmDialogOpened(true)}
               saveAsHtml={saveAsHtml}
               saveAsMarkdown={saveAsMarkdown}
+            />
+            <ConfirmDialog
+              open={isConfirmDialogOpened}
+              onClose={() => {
+                setIsConfirmDialogOpened(false);
+              }}
+              title={t('core:titleConfirm')}
+              content={t('core:confirmHistoryDeletion')}
+              confirmCallback={(result) => {
+                if (result) {
+                  clearHistory();
+                }
+              }}
+              cancelDialogTID="cancelDeleteHistoryDialog"
+              confirmDialogTID="confirmDeleteHistoryDialog"
+              confirmDialogContentTID="confirmDeleteHistoryDialogContent"
             />
           </Grid2>
         </Grid2>
