@@ -54,6 +54,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 type ChatData = {
   models: Model[];
@@ -124,6 +125,7 @@ export type ChatContextProviderProps = {
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
+  const { deleteDirectory } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -243,16 +245,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function deleteHistory(): Promise<boolean> {
     const historyFilePath = getHistoryMetaDir();
-    if (currentLocation) {
-      return currentLocation
-        .deleteDirectoryPromise(historyFilePath, false)
-        .then(() => {
-          chatHistoryItems.current = [];
-          forceUpdate();
-          return true;
-        });
-    }
-    return Promise.resolve(false);
+    return deleteDirectory(historyFilePath).then((success) => {
+      if (success) {
+        chatHistoryItems.current = [];
+        forceUpdate();
+        return true;
+      }
+      return success;
+    });
   }
 
   function loadHistory(): Promise<ChatItem[]> {
