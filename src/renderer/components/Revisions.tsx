@@ -22,7 +22,6 @@ import {
   extractContainingDirectoryPath,
   extractFileNameWithoutExt,
 } from '@tagspaces/tagspaces-common/paths';
-import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
 import TsIconButton from '-/components/TsIconButton';
@@ -45,9 +44,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { executePromisesInBatches } from '-/services/utils-io';
-import { useSelector } from 'react-redux';
-import { getUseTrashCan } from '-/reducers/settings';
 
 const initialRowsPerPage = 10;
 
@@ -56,10 +52,10 @@ function Revisions() {
   const { findLocation } = useCurrentLocationContext();
   const { getMetadataID } = useIOActionsContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
-  const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
-  const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
+  const { copyFilePromiseOverwrite, deleteEntriesPromise } =
+    usePlatformFacadeContext();
+  const [rows, setRows] = useState<TS.FileSystemEntry[]>([]);
   const [page, setPage] = useState<number>(0);
-  const useTrashCan = useSelector(getUseTrashCan);
   const [rowsPerPage, setRowsPerPage] =
     React.useState<number>(initialRowsPerPage);
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
@@ -116,20 +112,17 @@ function Revisions() {
 
   function deleteRevision(path) {
     const location = findLocation(openedEntry.locationID);
-    location
-      .deleteFilePromise(path, useTrashCan)
-      .then(() => loadHistoryItems(openedEntry));
+    deleteEntriesPromise(location.toFsEntry(path, true)).then(() =>
+      loadHistoryItems(openedEntry),
+    );
   }
 
   function deleteRevisions() {
     if (rows.length > 0) {
       const location = findLocation(openedEntry.locationID);
-      const promises = rows.map((row) =>
-        location.deleteFilePromise(row.path, useTrashCan),
-      );
-      executePromisesInBatches(promises).then(() =>
-        loadHistoryItems(openedEntry),
-      );
+      deleteEntriesPromise(
+        ...rows.map((entry) => location.toFsEntry(entry.path, entry.isFile)),
+      ).then(() => loadHistoryItems(openedEntry));
     }
   }
 
