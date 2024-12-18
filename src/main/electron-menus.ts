@@ -201,7 +201,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           click: props.toggleKeysDialog,
         },
         {
-          label: 'Welcome Wizzard',
+          label: '&' + i18n.t('onboardingWizard'),
           click: props.toggleOnboardingDialog,
         },
         {
