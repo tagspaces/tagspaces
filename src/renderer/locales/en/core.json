@@ -910,6 +910,6 @@
   "generateInbound": "Find Inbound Links",
   "reGenerateInbound": "Refresh Inbound Links",
   "startDownload": "Start download",
-  "confirmHistoryDeletion": "Do you want to delete chat History?",
+  "confirmHistoryDeletion": "Do you want to delete the AI-chat history?",
   "-": "-"
 }
