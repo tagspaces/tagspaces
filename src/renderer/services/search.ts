@@ -17,14 +17,14 @@
  *
  */
 
-import Fuse from 'fuse.js';
+import { getAllTags } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { extractTimePeriod } from '-/utils/dates';
+import { parseGeoLocation } from '-/utils/geo';
 import jmespath from '@gorillastack/jmespath';
 import { isPathStartsWith } from '@tagspaces/tagspaces-common/paths';
-import { parseGeoLocation } from '-/utils/geo';
-import { extractTimePeriod } from '-/utils/dates';
+import Fuse from 'fuse.js';
 import { Pro } from '../pro';
-import { TS } from '-/tagspaces.namespace';
-import { getAllTags } from '-/services/utils-io';
 
 // export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
 
@@ -67,7 +67,7 @@ export const FileTypeGroups = {
     'sldx',
     'dotx',
   ],
-  audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc'],
+  audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc', 'm4a'],
   video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
