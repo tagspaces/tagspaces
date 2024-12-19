@@ -27,6 +27,7 @@ import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
 import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -55,7 +56,6 @@ import React, {
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -407,6 +407,7 @@ function ChatView() {
                   disabled={isTyping.current}
                   name="entryName"
                   //label={t('core:newChatMessage')}
+                  placeholder={t('core:yourMessageForAI')}
                   onChange={handleInputChange}
                   value={chatMsg.current}
                   onKeyDown={(event) => {
@@ -466,7 +467,7 @@ function ChatView() {
                 />
                 <FormHelperText>
                   {t('core:aiHelp', {
-                    chatModel: currentModel ? currentModel.name : 'Assistant',
+                    chatModel: currentModel && '(' + currentModel.name + ')',
                   })}
                 </FormHelperText>
               </FormControl>
