@@ -768,8 +768,10 @@ export async function expectMetaFilesExist(
 
 export async function writeTextInIframeInput(txt) {
   const fLocator = await frameLocator();
-  const editor = await fLocator.locator('#editorText');
-  await editor.type(txt);
+  const monacoEditor = await fLocator.locator('#monaco_editor');
+  await monacoEditor.click();
+  await global.client.keyboard.press('Meta+KeyA');
+  await monacoEditor.type(txt);
 }
 
 export async function expectFileContain(
