@@ -159,9 +159,11 @@ function LinksTab(props: Props) {
           {links.current.map((link) => linkButton(link))}
         </>
       )}
-      {/* {location.fullTextIndex && ( */}
       <Box display="block">
-        <Typography variant="caption">{t('core:incomingLinks')}:</Typography>
+        <Typography variant="caption">
+          {t('core:incomingLinks')} (
+          {t('full text search should be enabled for this location')}):
+        </Typography>
         <br />
         {indexExist.current ? (
           <>
@@ -179,7 +181,6 @@ function LinksTab(props: Props) {
           findInboundButton('generateInbound')
         )}
       </Box>
-      {/* )} */}
     </Box>
   );
 }
