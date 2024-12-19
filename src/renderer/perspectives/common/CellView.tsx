@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
@@ -44,7 +44,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import i18n from '-/services/i18n';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
@@ -80,7 +79,6 @@ function CellView(props: Props) {
     usePerspectiveSettingsContext();
   const theme = useTheme();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
-  const { isTabOpened } = useEntryPropsTabsContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
@@ -92,7 +90,7 @@ function CellView(props: Props) {
   const { showNotification } = useNotificationContext();
 
   const desktopMode = useSelector(getDesktopMode);
-  const selectedTabIndex = useSelector(getEntryContainerTab);
+  const selectedTabName = useSelector(getEntryContainerTab);
   // const fileSourceRef = useRef<HTMLDivElement | null>(null);
 
   /*useEffect(() => {
@@ -249,17 +247,9 @@ function CellView(props: Props) {
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          if (!openedEntry) {
+          if (!openedEntry || selectedTabName !== TabNames.aiTab) {
+            // dont open file if chat mode is enabled
             openEntryInternal(fsEntry);
-          } else {
-            isTabOpened(TabNames.aiTab, openedEntry, selectedTabIndex).then(
-              (aiTabOpened) => {
-                // dont open file if chat mode is enabled
-                if (!aiTabOpened) {
-                  openEntryInternal(fsEntry);
-                }
-              },
-            );
           }
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);

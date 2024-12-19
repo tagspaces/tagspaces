@@ -58,18 +58,18 @@ type EntryPropsTabsContextData = {
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
   ) => Promise<number>;*/
-  isTabOpened: (
+  /*isTabOpened: (
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
     selectedTabIndex: number,
-  ) => Promise<boolean>;
+  ) => Promise<boolean>;*/
 };
 
 export const EntryPropsTabsContext = createContext<EntryPropsTabsContextData>({
   getTabsArray: undefined,
   isEditable: undefined,
   //setOpenedTab: undefined,
-  isTabOpened: undefined,
+  //isTabOpened: undefined,
 });
 
 export type EntryPropsTabsContextProviderProps = {
@@ -188,7 +188,7 @@ export const EntryPropsTabsContextProvider = ({
     return tabIndex;
   }*/
 
-  async function isTabOpened(
+  /*async function isTabOpened(
     tabName: (typeof TabNames)[keyof typeof TabNames],
     openedEntry: TS.OpenedEntry,
     selectedTabIndex: number,
@@ -199,14 +199,14 @@ export const EntryPropsTabsContextProvider = ({
     const currentOpenedTab =
       selectedTabIndex > maxTabIndex ? maxTabIndex : selectedTabIndex;
     return tabIndex !== -1 && tabIndex === currentOpenedTab;
-  }
+  }*/
 
   const context = useMemo(() => {
     return {
       getTabsArray,
       isEditable,
       //setOpenedTab,
-      isTabOpened,
+      //isTabOpened,
     };
   }, []);
 
