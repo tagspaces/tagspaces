@@ -178,10 +178,16 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     if (!isPanelOpened) {
       return undefined;
     }
-    if (selectedTab === undefined) {
+    /*if (selectedTab === 0 || selectedTab === undefined) {
       return 0;
+    }*/
+    const index = tabsArray.current.findIndex(
+      (tab) => tab.name === selectedTab,
+    );
+    if (index > -1) {
+      return index;
     }
-    return tabsArray.current.findIndex((tab) => tab.name === selectedTab);
+    return 0;
     /*const maxTabIndex = tabsArray.current.length - 1;
     if (tabIndex > maxTabIndex) {
       return maxTabIndex;
