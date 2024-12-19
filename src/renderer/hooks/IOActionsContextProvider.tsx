@@ -645,6 +645,7 @@ export const IOActionsContextProvider = ({
               getMetaFileLocationForFile(job[0], location.getDirSeparator()),
               getMetaFileLocationForFile(job[1], location.getDirSeparator()),
             ]);
+            // move thumb
             moveMetaJobs.push([
               getThumbFileLocationForFile(
                 job[0],
@@ -655,6 +656,17 @@ export const IOActionsContextProvider = ({
                 job[1],
                 location.getDirSeparator(),
                 false,
+              ),
+            ]);
+            // move pdf.txt
+            moveMetaJobs.push([
+              getMetaContentFileLocation(
+                job[0],
+                currentLocation?.getDirSeparator(),
+              ),
+              getMetaContentFileLocation(
+                job[1],
+                currentLocation?.getDirSeparator(),
               ),
             ]);
             return true;
