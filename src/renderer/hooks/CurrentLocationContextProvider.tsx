@@ -190,13 +190,14 @@ export const CurrentLocationContextProvider = ({
   }, []);
 
   useEffect(() => {
-    if (allLocations.current.length < 1) {
+    allLocations.current = locations;
+    if (locations.length < 1) {
       // init locations
       setDefaultLocations();
     } else {
       // check if current location exist (or is removed)
       if (currentLocation.current) {
-        const location = allLocations.current.find(
+        const location = locations.find(
           (location) => location.uuid === currentLocation.current,
         );
         if (!location) {
@@ -205,7 +206,8 @@ export const CurrentLocationContextProvider = ({
         }
       }
     }
-  }, [allLocations.current]);
+    forceUpdate();
+  }, [locations]); //allLocations.current]);
 
   function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
@@ -451,13 +453,13 @@ export const CurrentLocationContextProvider = ({
   }
 
   function editLocationInt(location: CommonLocation, openAfterEdit = false) {
-    allLocations.current = allLocations.current.map((l) =>
+    allLocations.current = locations.map((l) =>
       l.uuid === location.uuid ? location : l,
     );
-    currentLocation.current = location.uuid;
     dispatch(LocationActions.changeLocation(location));
     forceUpdate();
     if (openAfterEdit) {
+      currentLocation.current = location.uuid;
       /*
        * check if location uuid is changed
        */
