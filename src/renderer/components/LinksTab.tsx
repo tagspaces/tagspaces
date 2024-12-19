@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { LinkIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
@@ -24,11 +25,12 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import TooltipTS from './Tooltip';
 
 interface Props {}
 
@@ -94,37 +96,52 @@ function LinksTab(props: Props) {
     });
   }
 
-  const linkButton = (link: TS.Link) => (
-    <TsButton
-      data-tid={'linkTID' + link.href}
-      tooltip={link.type}
-      onClick={() => openLink(link.href)}
-      startIcon={<LinkIcon />}
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-        marginRight: 5,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-      }}
-    >
-      {link.value ? link.value : link.href}
-    </TsButton>
-  );
+  const linkButton = (link: TS.Link) => {
+    const url = link.value ? link.value : link.href;
+    let buttonTitle = url;
+    if (link.type === 'url') {
+      buttonTitle = new URL(url).hostname;
+    } else if (link.type === 'tslink') {
+    }
+    return (
+      <>
+        <TsButton
+          data-tid={'linkTID' + link.href}
+          tooltip={url}
+          onClick={() => openLink(link.href)}
+          variant="text"
+          startIcon={
+            <TooltipTS title={link.type}>
+              <LinkIcon />
+            </TooltipTS>
+          }
+          style={{
+            marginRight: AppConfig.defaultSpaceBetweenButtons,
+            textTransform: 'none',
+            fontWeight: 'normal',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+          }}
+        >
+          {buttonTitle}
+        </TsButton>
+        <br />
+      </>
+    );
+  };
 
   const findInboundButton = (title) => (
     <TsButton
       loading={isIndexing !== undefined}
       data-tid={'generateInboundTID'}
+      variant="text"
       onClick={() =>
         title === 'reGenerateInbound'
           ? refreshInboundLinks()
           : setInboundLinks()
       }
       style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-        marginRight: 5,
+        marginRight: AppConfig.defaultSpaceBetweenButtons,
         whiteSpace: 'nowrap',
         overflow: 'hidden',
       }}
@@ -137,32 +154,32 @@ function LinksTab(props: Props) {
     <Box display="block">
       {links.current && links.current.length > 0 && (
         <>
-          Outbound links:
+          <Typography variant="caption">{t('core:outgoingLinks')}:</Typography>
           <br />
           {links.current.map((link) => linkButton(link))}
         </>
       )}
-      {location.fullTextIndex && (
-        <Box display="block">
-          Inbound links:
-          <br />
-          {indexExist.current ? (
-            <>
-              {inboundLinks.current &&
-                inboundLinks.current.length > 0 &&
-                inboundLinks.current.map((entry) => (
-                  <div>
-                    {entry.name}: {entry.links.map((link) => linkButton(link))}
-                    <br />
-                  </div>
-                ))}{' '}
-              {findInboundButton('reGenerateInbound')}
-            </>
-          ) : (
-            findInboundButton('generateInbound')
-          )}
-        </Box>
-      )}
+      {/* {location.fullTextIndex && ( */}
+      <Box display="block">
+        <Typography variant="caption">{t('core:incomingLinks')}:</Typography>
+        <br />
+        {indexExist.current ? (
+          <>
+            {inboundLinks.current &&
+              inboundLinks.current.length > 0 &&
+              inboundLinks.current.map((entry) => (
+                <div>
+                  {entry.name}: {entry.links.map((link) => linkButton(link))}
+                  <br />
+                </div>
+              ))}{' '}
+            {findInboundButton('reGenerateInbound')}
+          </>
+        ) : (
+          findInboundButton('generateInbound')
+        )}
+      </Box>
+      {/* )} */}
     </Box>
   );
 }
