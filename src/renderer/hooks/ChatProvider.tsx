@@ -35,7 +35,10 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { getDefaultAIProvider } from '-/reducers/settings';
+import {
+  getDefaultAIProvider,
+  getEntryContainerTab,
+} from '-/reducers/settings';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -55,6 +58,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 type ChatData = {
   models: Model[];
@@ -133,6 +137,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { openedEntry } = useOpenedEntryContext();
   const models = useRef<Model[]>([]);
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const selectedTabName = useSelector(getEntryContainerTab);
   const currentModel = useRef<Model>(undefined);
   const openedEntryModel = useRef<Model>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
@@ -192,7 +197,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   useEffect(() => {
     setOpenedEntryModel();
-    initHistory();
+    if (selectedTabName === TabNames.aiTab) {
+      initHistory();
+    }
   }, [openedEntry]);
 
   function initHistory() {
