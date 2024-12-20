@@ -16,6 +16,46 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
+import {
+  CancelIcon,
+  CloseEditIcon,
+  EditIcon,
+  SaveIcon,
+} from '-/components/CommonIcons';
+import EntryContainerNav from '-/components/EntryContainerNav';
+import EntryContainerTabs from '-/components/EntryContainerTabs';
+import EntryContainerTitle from '-/components/EntryContainerTitle';
+import FileView from '-/components/FileView';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { Pro } from '-/pro';
+import {
+  getEntryContainerTab,
+  getKeyBindingObject,
+  isDesktopMode,
+  isRevisionsEnabled,
+} from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import useEventListener from '-/utils/useEventListener';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Switch, useMediaQuery } from '@mui/material';
+import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import { useTheme } from '@mui/material/styles';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import fscreen from 'fscreen';
 import React, {
   MutableRefObject,
   useCallback,
@@ -24,48 +64,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
-import fscreen from 'fscreen';
-import TsButton from '-/components/TsButton';
-import LoadingButton from '@mui/lab/LoadingButton';
-import Tooltip from '-/components/Tooltip';
-import Box from '@mui/material/Box';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import AppConfig from '-/AppConfig';
-import {
-  extractContainingDirectoryPath,
-  extractFileExtension,
-} from '@tagspaces/tagspaces-common/paths';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import {
-  isDesktopMode,
-  getKeyBindingObject,
-  isRevisionsEnabled,
-  getEntryContainerTab,
-} from '-/reducers/settings';
-import useEventListener from '-/utils/useEventListener';
-import { TS } from '-/tagspaces.namespace';
-import FileView from '-/components/FileView';
-import { Pro } from '-/pro';
-import { Switch, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import EntryContainerTabs from '-/components/EntryContainerTabs';
-import EntryContainerNav from '-/components/EntryContainerNav';
-import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { SaveIcon, EditIcon } from '-/components/CommonIcons';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
-import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
+import { useSelector } from 'react-redux';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -609,8 +610,14 @@ function EntryContainer() {
               }}
               style={{
                 borderRadius: 'unset',
-                borderTopLeftRadius: 10,
-                borderBottomLeftRadius: 10,
+                borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                borderBottomLeftRadius: AppConfig.defaultCSSRadius,
+                borderTopRightRadius: fileChanged
+                  ? 0
+                  : AppConfig.defaultCSSRadius,
+                borderBottomRightRadius: fileChanged
+                  ? 0
+                  : AppConfig.defaultCSSRadius,
               }}
               aria-label={t('core:cancelEditing')}
               startIcon={closeCancelIcon}
