@@ -131,9 +131,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
-  const currentModel = useRef<Model>(undefined);
-  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const models = useRef<Model[]>([]);
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const currentModel = useRef<Model>(undefined);
   const openedEntryModel = useRef<Model>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
   );
@@ -272,6 +272,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         })
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
+          if (currentModel.current === undefined) {
+            //set defaultTextModel if not currentModel
+            setModel(defaultAiProvider.defaultTextModel);
+          }
           return [];
         });
     }
@@ -285,11 +289,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         .then((m) => {
           if (m) {
             models.current = m;
-            if (modelName) {
-              const model = findModel(modelName);
-              if (model) {
-                return setModel(model);
-              }
+            const model = findModel(modelName);
+            if (model) {
+              return setModel(model);
+            } else if (currentModel.current === undefined) {
+              //set defaultTextModel if not found
+              return setModel(defaultAiProvider.defaultTextModel);
             }
             forceUpdate();
           }
