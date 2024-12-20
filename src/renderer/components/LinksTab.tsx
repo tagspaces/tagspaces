@@ -28,7 +28,10 @@ import { TS } from '-/tagspaces.namespace';
 import { getURLParameter } from '-/utils/dom';
 import { Box, Typography } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
-import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
+import {
+  cleanRootPath,
+  generateSharingLink,
+} from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -151,21 +154,27 @@ function LinksTab(props: Props) {
 
   const incomingLinkButton = (fsEntry: TS.FileSystemEntry) => {
     let buttonTitle = fsEntry.name;
+    const entryLocation = findLocation(fsEntry.locationID);
+    const relativeEntryPath = cleanRootPath(
+      fsEntry.path,
+      entryLocation.path,
+      entryLocation.getDirSeparator(),
+    );
     const sharingLink = generateSharingLink(
       fsEntry.locationID,
+      relativeEntryPath,
       undefined,
-      fsEntry.path,
       fsEntry.uuid,
     );
     return (
       <>
         <TsButton
           data-tid={'linkTID' + fsEntry.uuid}
-          tooltip={fsEntry.path}
+          tooltip={sharingLink}
           onClick={() => openLink(sharingLink)}
           variant="text"
           startIcon={
-            <TooltipTS title={sharingLink}>
+            <TooltipTS title={fsEntry.path}>
               <LinkIcon />
             </TooltipTS>
           }
@@ -183,21 +192,6 @@ function LinksTab(props: Props) {
       </>
     );
   };
-
-  const findInboundButton = (title) => (
-    <TsButton
-      loading={isIndexing !== undefined}
-      data-tid={'generateInboundTID'}
-      onClick={() =>
-        title === 'reGenerateInbound'
-          ? refreshInboundLinks()
-          : setInboundLinks()
-      }
-      startIcon={<ReloadIcon />}
-    >
-      {t('core:' + title)}
-    </TsButton>
-  );
 
   return (
     <>
@@ -219,16 +213,23 @@ function LinksTab(props: Props) {
           {t('full text search should be enabled for this location')}):
         </Typography>
         <br />
-        {indexExist.current ? (
+        {inboundLinks.current?.length ? (
           <>
-            {inboundLinks.current?.map((entry) => {
+            {inboundLinks.current.map((entry) => {
               return incomingLinkButton(entry);
             })}
-            {findInboundButton('reGenerateInbound')}
           </>
         ) : (
-          findInboundButton('generateInbound')
+          <Typography variant="caption">No incoming links found</Typography>
         )}
+        <TsButton
+          loading={isIndexing !== undefined}
+          data-tid={'generateInboundTID'}
+          onClick={refreshInboundLinks}
+          startIcon={<ReloadIcon />}
+        >
+          {t('core:generateInbound')}
+        </TsButton>
       </Box>
     </>
   );
