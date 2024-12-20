@@ -46,6 +46,7 @@ import { TS } from '-/tagspaces.namespace';
 type CurrentLocationContextData = {
   locations: CommonLocation[];
   currentLocation: CommonLocation;
+  currentLocationId: string;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
@@ -87,6 +88,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     locations: undefined,
     currentLocation: undefined,
+    currentLocationId: undefined,
     readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
@@ -126,13 +128,15 @@ export const CurrentLocationContextProvider = ({
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
 
-  const locations: CommonLocation[] = useSelector(getLocations);
+  const locations: TS.Location[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
     getPersistTagsInSidecarFile,
   );
-
-  const allLocations = useRef<CommonLocation[]>(locations);
+  // needs to convert TS.Location from redux into CommonLocation
+  const allLocations = useRef<CommonLocation[]>(
+    locations.map((l) => new CommonLocation(l)),
+  );
   const currentLocation = useRef<string>(undefined); //defaultLocationId);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
@@ -190,7 +194,6 @@ export const CurrentLocationContextProvider = ({
   }, []);
 
   useEffect(() => {
-    allLocations.current = locations;
     if (locations.length < 1) {
       // init locations
       setDefaultLocations();
@@ -205,9 +208,18 @@ export const CurrentLocationContextProvider = ({
           //closeLocation(currentLocation.current.uuid);
         }
       }
+      // if(!areLocationsEqual(allLocations.current,locations)){
+      allLocations.current = locations.map((l) => new CommonLocation(l));
+      forceUpdate();
+      //  }
     }
-    forceUpdate();
   }, [locations]); //allLocations.current]);
+
+  /*function areLocationsEqual(arr1: CommonLocation[], arr2: CommonLocation[]) {
+    if (arr1.length !== arr2.length) return false;
+
+    return arr1.every((obj, index) => obj.equal(arr2[index]));
+  }*/
 
   function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
@@ -453,7 +465,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function editLocationInt(location: CommonLocation, openAfterEdit = false) {
-    allLocations.current = locations.map((l) =>
+    allLocations.current = allLocations.current.map((l) =>
       l.uuid === location.uuid ? location : l,
     );
     dispatch(LocationActions.changeLocation(location));
@@ -585,6 +597,7 @@ export const CurrentLocationContextProvider = ({
     return {
       locations: allLocations.current,
       currentLocation: location,
+      currentLocationId: currentLocation.current,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,

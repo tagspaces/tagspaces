@@ -203,7 +203,7 @@ export const DirectoryContentContextProvider = ({
   const { t } = useTranslation();
   const {
     closeAllLocations,
-    currentLocation,
+    currentLocationId,
     findLocation,
     skipInitialDirList,
     getLocationPath,
@@ -238,6 +238,8 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  const currentLocation = findLocation(currentLocationId);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -297,7 +299,7 @@ export const DirectoryContentContextProvider = ({
       clearDirectoryContent();
       exitSearchMode();
     }
-  }, [currentLocation]);
+  }, [currentLocationId]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {

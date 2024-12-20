@@ -21,7 +21,6 @@ import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AppDispatch } from '-/reducers/app';
@@ -29,7 +28,6 @@ import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDevMode,
 } from '-/reducers/settings';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
