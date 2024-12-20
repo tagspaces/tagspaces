@@ -25,6 +25,7 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { getURLParameter } from '-/utils/dom';
 import { Box, Typography } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import { useEffect, useReducer, useRef } from 'react';
@@ -97,18 +98,34 @@ function LinksTab(props: Props) {
   }
 
   const linkButton = (link: TS.Link) => {
-    const url = link.value ? link.value : link.href;
+    let url = link.value ? link.value : link.href;
+    url = url.split('\\').join(''); // tmp fix for milkdown issue
     let buttonTitle = url;
     if (link.type === 'url') {
       buttonTitle = new URL(url).hostname;
     } else if (link.type === 'tslink') {
+      // file ts://?tslid=dd484720e24d429083d81a5379909798&tsepath=contacts%2Fcontacts-gmail.vcf&tseid=acfa652ede334c9490e6d2672ffdc742
+      // folder ts://?tslid=dd484720e24d429083d81a5379909798&tsdpath=DeutscheTelecom&tseid=0bae06de993c4fd0a034fb4ab9484992
+      const locationId = getURLParameter('tslid', url);
+      const folderPath = getURLParameter('tsdpath', url);
+      const entryPath = getURLParameter('tsepath', url);
+      const locationName = findLocation(locationId)?.name;
+      buttonTitle = '';
+      if (locationName) {
+        buttonTitle = locationName + ' ⇒ ';
+      }
+      if (folderPath) {
+        buttonTitle += folderPath;
+      } else if (entryPath) {
+        buttonTitle += entryPath;
+      }
     }
     return (
       <>
         <TsButton
-          data-tid={'linkTID' + link.href}
+          data-tid={'linkTID' + url}
           tooltip={url}
-          onClick={() => openLink(link.href)}
+          onClick={() => openLink(url)}
           variant="text"
           startIcon={
             <TooltipTS title={link.type}>
