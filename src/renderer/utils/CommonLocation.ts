@@ -99,6 +99,46 @@ export class CommonLocation implements TS.Location {
     }
   }
 
+  equal = (location: CommonLocation): boolean => {
+    let isEqual =
+      this.uuid === location.uuid &&
+      this.name === location.name &&
+      this.type === location.type && // 0 - local  && 1 - S3  && 2 - amplify  && 3 - webdav
+      this.authType === location.authType && // none,password,digest,token
+      this.username === location.username &&
+      this.password === location.password &&
+      this.path === location.path &&
+      this.perspective === location.perspective &&
+      this.creationDate === location.creationDate &&
+      //  this.lastEditedDate === location.lastEditedDate  &&
+      this.isDefault === location.isDefault &&
+      this.isReadOnly === location.isReadOnly &&
+      this.isNotEditable === location.isNotEditable &&
+      this.watchForChanges === location.watchForChanges &&
+      this.disableIndexing === location.disableIndexing &&
+      this.disableThumbnailGeneration === location.disableThumbnailGeneration &&
+      this.fullTextIndex === location.fullTextIndex &&
+      this.maxIndexAge === location.maxIndexAge &&
+      this.maxLoops === location.maxLoops &&
+      this.persistTagsInSidecarFile === location.persistTagsInSidecarFile &&
+      this.ignorePatternPaths === location.ignorePatternPaths &&
+      this.autoOpenedFilename === location.autoOpenedFilename;
+    if (!isEqual) {
+      return false;
+    }
+    if (location.type === locationType.TYPE_CLOUD) {
+      isEqual =
+        this.accessKeyId === (location as TS.S3Location).accessKeyId &&
+        this.secretAccessKey === (location as TS.S3Location).secretAccessKey &&
+        this.sessionToken === (location as TS.S3Location).sessionToken &&
+        this.bucketName === (location as TS.S3Location).bucketName &&
+        this.encryptionKey === (location as TS.S3Location).encryptionKey &&
+        this.region === (location as TS.S3Location).region &&
+        this.endpointURL === (location as TS.S3Location).endpointURL;
+    }
+    return isEqual;
+  };
+
   getPath = (param) => {
     if (typeof param === 'object' && param !== null) {
       return param.path;
