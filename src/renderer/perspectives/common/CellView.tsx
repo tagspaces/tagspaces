@@ -247,7 +247,11 @@ function CellView(props: Props) {
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          if (!openedEntry || selectedTabName !== TabNames.aiTab) {
+          if (
+            !openedEntry ||
+            openedEntry.isFile ||
+            selectedTabName !== TabNames.aiTab
+          ) {
             // dont open file if chat mode is enabled
             openEntryInternal(fsEntry);
           }
