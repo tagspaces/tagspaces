@@ -213,6 +213,10 @@ export namespace TS {
      */
     href: string;
     /**
+     * Entry id if link from type tslink and id is available
+     */
+    tseid: string;
+    /**
      * The original entity substring.
      */
     value?: string;

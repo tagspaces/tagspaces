@@ -16,41 +16,35 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
-import { executePromisesInBatches } from '-/services/utils-io';
-import { getEnableWS } from '-/reducers/settings';
-import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import {
-  getMetaIndexFilePath,
-  createIndex,
-} from '@tagspaces/tagspaces-indexer';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
-import Search from '-/services/search';
-import {
-  getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile,
-  getMetaDirectoryPath,
-  joinPaths,
-  cleanTrailingDirSeparator,
-} from '@tagspaces/tagspaces-common/paths';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
-import { CommonLocation } from '-/utils/CommonLocation';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
+import { getEnableWS } from '-/reducers/settings';
+import Search from '-/services/search';
+import { executePromisesInBatches } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import {
+  cleanTrailingDirSeparator,
+  getMetaDirectoryPath,
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
+  joinPaths,
+} from '@tagspaces/tagspaces-common/paths';
+import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
+import {
+  createIndex,
+  getMetaIndexFilePath,
+} from '@tagspaces/tagspaces-indexer';
+import React, { createContext, useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 type LocationIndexContextData = {
   //index: TS.FileSystemEntry[];
@@ -264,16 +258,24 @@ export const LocationIndexContextProvider = ({
   }
 
   async function findLinks(
-    link: string,
+    entryID: string,
     locationId: string,
   ): Promise<TS.FileSystemEntry[]> {
     const lastIndex = await getLastIndex(locationId);
+    const foundEntriesLinkingToId = [];
     if (!lastIndex || lastIndex.length < 1) {
-      return undefined;
+      return foundEntriesLinkingToId;
     }
-    return lastIndex.filter(
-      (i) => i.links && i.links.some((l) => l.href === link),
+    lastIndex.forEach((entry) =>
+      entry.links?.some((link) => {
+        if (link.type === 'tslink' && link.tseid) {
+          if (entryID === link.tseid) {
+            foundEntriesLinkingToId.push(entry);
+          }
+        }
+      }),
     );
+    return foundEntriesLinkingToId;
   }
 
   /*function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {

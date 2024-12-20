@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { LinkIcon } from '-/components/CommonIcons';
+import { LinkIcon, ReloadIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -28,6 +28,7 @@ import { TS } from '-/tagspaces.namespace';
 import { getURLParameter } from '-/utils/dom';
 import { Box, Typography } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
+import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -38,7 +39,7 @@ interface Props {}
 function LinksTab(props: Props) {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
-  const { openedEntry, sharingLink, openLink } = useOpenedEntryContext();
+  const { openedEntry, openLink } = useOpenedEntryContext();
   const { findLinks, checkIndexExist, isIndexing, createLocationIndex } =
     useLocationIndexContext();
   const selectedTabName = useSelector(getEntryContainerTab);
@@ -90,14 +91,15 @@ function LinksTab(props: Props) {
   }
 
   function setInboundLinks() {
-    findLinks(sharingLink, location.uuid).then((entries) => {
+    const entryID = openedEntry.uuid;
+    findLinks(entryID, location.uuid).then((entries) => {
       inboundLinks.current = entries;
       indexExist.current = true;
       forceUpdate();
     });
   }
 
-  const linkButton = (link: TS.Link) => {
+  const outgoingLinkButton = (link: TS.Link) => {
     let url = link.value ? link.value : link.href;
     url = url.split('\\').join(''); // tmp fix for milkdown issue
     let buttonTitle = url;
@@ -147,35 +149,70 @@ function LinksTab(props: Props) {
     );
   };
 
+  const incomingLinkButton = (fsEntry: TS.FileSystemEntry) => {
+    let buttonTitle = fsEntry.name;
+    const sharingLink = generateSharingLink(
+      fsEntry.locationID,
+      undefined,
+      fsEntry.path,
+      fsEntry.uuid,
+    );
+    return (
+      <>
+        <TsButton
+          data-tid={'linkTID' + fsEntry.uuid}
+          tooltip={fsEntry.path}
+          onClick={() => openLink(sharingLink)}
+          variant="text"
+          startIcon={
+            <TooltipTS title={sharingLink}>
+              <LinkIcon />
+            </TooltipTS>
+          }
+          style={{
+            marginRight: AppConfig.defaultSpaceBetweenButtons,
+            textTransform: 'none',
+            fontWeight: 'normal',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+          }}
+        >
+          {buttonTitle}
+        </TsButton>
+        <br />
+      </>
+    );
+  };
+
   const findInboundButton = (title) => (
     <TsButton
       loading={isIndexing !== undefined}
       data-tid={'generateInboundTID'}
-      variant="text"
       onClick={() =>
         title === 'reGenerateInbound'
           ? refreshInboundLinks()
           : setInboundLinks()
       }
-      style={{
-        marginRight: AppConfig.defaultSpaceBetweenButtons,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-      }}
+      startIcon={<ReloadIcon />}
     >
       {t('core:' + title)}
     </TsButton>
   );
 
   return (
-    <Box display="block">
-      {links.current && links.current.length > 0 && (
-        <>
-          <Typography variant="caption">{t('core:outgoingLinks')}:</Typography>
-          <br />
-          {links.current.map((link) => linkButton(link))}
-        </>
-      )}
+    <>
+      <Box display="block">
+        {links.current && links.current.length > 0 && (
+          <>
+            <Typography variant="caption">
+              {t('core:outgoingLinks')} (
+              {t('found in the file content and/or its description')}):
+            </Typography>
+            <br />
+            {links.current?.map((link) => outgoingLinkButton(link))}
+          </>
+        )}
+      </Box>
       <Box display="block">
         <Typography variant="caption">
           {t('core:incomingLinks')} (
@@ -184,21 +221,16 @@ function LinksTab(props: Props) {
         <br />
         {indexExist.current ? (
           <>
-            {inboundLinks.current &&
-              inboundLinks.current.length > 0 &&
-              inboundLinks.current.map((entry) => (
-                <div>
-                  {entry.name}: {entry.links.map((link) => linkButton(link))}
-                  <br />
-                </div>
-              ))}{' '}
+            {inboundLinks.current?.map((entry) => {
+              return incomingLinkButton(entry);
+            })}
             {findInboundButton('reGenerateInbound')}
           </>
         ) : (
           findInboundButton('generateInbound')
         )}
       </Box>
-    </Box>
+    </>
   );
 }
 
