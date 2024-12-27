@@ -27,6 +27,7 @@ import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { getURLParameter } from '-/utils/dom';
 import { Box, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import {
   cleanRootPath,
@@ -49,6 +50,7 @@ function LinksTab(props: Props) {
   const links = useRef<TS.Link[]>([]);
   const inboundLinks = useRef<TS.FileSystemEntry[]>([]);
   const indexExist = useRef<boolean>(false);
+  const theme = useTheme();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const location = findLocation(openedEntry.locationID);
@@ -220,7 +222,10 @@ function LinksTab(props: Props) {
             })}
           </>
         ) : (
-          <Typography variant="caption">No incoming links found</Typography>
+          <>
+            <Typography variant="caption">No incoming links found</Typography>
+            <br />
+          </>
         )}
         <TsButton
           loading={isIndexing !== undefined}
