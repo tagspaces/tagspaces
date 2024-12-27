@@ -80,6 +80,7 @@ export namespace TS {
     viewer: string;
     editor?: string;
     color?: string;
+    extensionExternalPath?: string;
   }
 
   interface DirProp {

@@ -158,7 +158,13 @@ export function findExtensionPathForId(
   extensionExternalPath = undefined,
 ): string {
   if (extensionExternalPath) {
-    return extensionExternalPath + '/' + extensionId;
+    return (
+      AppConfig.mediaProtocol +
+      ':///' +
+      extensionExternalPath +
+      '/' +
+      extensionId
+    );
   }
   if (AppConfig.isWeb) {
     return 'modules/' + extensionId;

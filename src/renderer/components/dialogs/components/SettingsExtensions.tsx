@@ -59,7 +59,15 @@ function SettingsExtensions() {
   };
 
   const handleFileInputChange = (selection: any) => {
-    const files: File[] = Array.from(selection.currentTarget.files);
+    let files: File[] = Array.from(selection.currentTarget.files);
+    if (AppConfig.isElectron) {
+      files = files.map((file) => {
+        if (!file.path) {
+          file.path = window.electronIO.ipcRenderer.getPathForFile(file);
+        }
+        return file;
+      });
+    }
     getUserDataDir().then((dataDir) => {
       dispatch(AppActions.resetProgress());
       openFileUploadDialog();

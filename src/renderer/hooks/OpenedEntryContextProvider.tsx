@@ -1009,13 +1009,13 @@ export const OpenedEntryContextProvider = ({
       }
       fileForOpening.viewingExtensionPath = findExtensionPathForId(
         fileType.viewer,
-        //fileType.extensionExternalPath,
+        fileType.extensionExternalPath,
       );
       if (fileType.editor && fileType.editor.length > 0) {
         fileForOpening.editingExtensionId = fileType.editor;
         fileForOpening.editingExtensionPath = findExtensionPathForId(
           fileType.editor,
-          //fileType.extensionExternalPath,
+          fileType.extensionExternalPath,
         );
       }
     } else {
