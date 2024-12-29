@@ -109,7 +109,11 @@ function LinksTab(props: Props) {
     url = url.split('\\').join(''); // tmp fix for milkdown issue
     let buttonTitle = url;
     if (link.type === 'url') {
-      buttonTitle = new URL(url).hostname;
+      try {
+        buttonTitle = new URL(url).hostname;
+      } catch (e) {
+        console.log('Error parsing URL: ' + e);
+      }
     } else if (link.type === 'tslink') {
       // file ts://?tslid=dd484720e24d429083d81a5379909798&tsepath=contacts%2Fcontacts-gmail.vcf&tseid=acfa652ede334c9490e6d2672ffdc742
       // folder ts://?tslid=dd484720e24d429083d81a5379909798&tsdpath=DeutscheTelecom&tseid=0bae06de993c4fd0a034fb4ab9484992
