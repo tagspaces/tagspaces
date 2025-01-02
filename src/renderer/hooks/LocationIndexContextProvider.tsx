@@ -268,9 +268,15 @@ export const LocationIndexContextProvider = ({
     }
     lastIndex.forEach((entry) =>
       entry.links?.some((link) => {
-        if (link.type === 'tslink' && link.tseid) {
-          if (entryID === link.tseid) {
-            foundEntriesLinkingToId.push(entry);
+        if (link.type === 'tslink') {
+          try {
+            const validLink = new URL(link.href);
+            const tseid = validLink.searchParams.get('tseid');
+            if (entryID === tseid) {
+              foundEntriesLinkingToId.push(entry);
+            }
+          } catch (e) {
+            console.log('Link not valid: ' + link.href);
           }
         }
       }),
