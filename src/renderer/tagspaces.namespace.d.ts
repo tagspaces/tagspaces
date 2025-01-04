@@ -214,6 +214,7 @@ export namespace TS {
     href: string;
     /**
      * Entry id if link from type tslink and id is available
+     * @deprecated
      */
     tseid: string;
     /**
