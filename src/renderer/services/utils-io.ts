@@ -15,22 +15,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { saveAs } from 'file-saver';
+import AppConfig from '-/AppConfig';
+import { supportedFileTypes } from '-/extension-config';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
 import {
   baseName,
+  cleanFrontDirSeparator,
+  cleanTrailingDirSeparator,
   extractFileName,
   extractTagsAsObjects,
-  cleanTrailingDirSeparator,
-  cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import versionMeta from '../version.json';
-import { TS } from '-/tagspaces.namespace';
-import { supportedFileTypes } from '-/extension-config';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { saveAs } from 'file-saver';
 import removeMd from 'remove-markdown';
-import { CommonLocation } from '-/utils/CommonLocation';
+import versionMeta from '../version.json';
 
 export const instanceId = getUuid();
 
@@ -468,15 +468,27 @@ export function findColorForEntry(
     return AppConfig.defaultFolderColor;
   }
   if (fsEntry.extension !== undefined) {
-    const fileType = supportedFileTypes.find(
-      (type) => type.type.toLowerCase() === fsEntry.extension.toLowerCase(),
-    );
-
-    if (fileType && fileType.color) {
-      return fileType.color;
-    }
+    return findColorForFileExt(fsEntry.extension, supportedFileTypes);
   }
   return AppConfig.defaultFileColor;
+}
+
+export function findColorForFileExt(
+  fileExt: string,
+  supportedFileTypes: Array<any>,
+): string {
+  if (fileExt) {
+    const fileType = supportedFileTypes?.find(
+      (type) => type.type.toLowerCase() === fileExt.toLowerCase(),
+    );
+    if (fileType && fileType.color) {
+      return fileType.color;
+    } else {
+      return AppConfig.defaultFileColor;
+    }
+  } else {
+    return AppConfig.defaultFileColor;
+  }
 }
 
 export function loadFileContentPromise(

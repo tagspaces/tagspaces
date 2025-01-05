@@ -16,21 +16,19 @@
  *
  */
 
+import Tag from '-/components/Tag';
+import TagContainerMenu from '-/components/TagContainerMenu';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import { getTagColors } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { convertToTimestamp, isDateTimeTag } from '-/utils/dates';
+import { isGeoTag } from '-/utils/geo';
+import DateIcon from '@mui/icons-material/DateRange';
+import PlaceIcon from '@mui/icons-material/Place';
+import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import TsButton from '-/components/TsButton';
-import PlaceIcon from '@mui/icons-material/Place';
-import DateIcon from '@mui/icons-material/DateRange';
-import Tooltip from '-/components/Tooltip';
-import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
-import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { isGeoTag } from '-/utils/geo';
-import { isDateTimeTag, convertToTimestamp } from '-/utils/dates';
-import { TS } from '-/tagspaces.namespace';
-import { getTagColors } from '-/services/taglibrary-utils';
-import TagContainerMenu from '-/components/TagContainerMenu';
-import Tag from '-/components/Tag';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   tag: TS.Tag;
