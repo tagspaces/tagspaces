@@ -16,20 +16,32 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { PerspectiveIDs } from '-/perspectives';
+import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
+import { defaultSettings as defaultListSettings } from '-/perspectives/list';
+import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import { useTranslation } from 'react-i18next';
 import {
-  cleanTrailingDirSeparator,
+  actions as SettingsActions,
+  getDefaultPerspective,
+  getShowUnixHiddenEntries,
+} from '-/reducers/settings';
+import { executePromisesInBatches, updateFsEntries } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
+import { useCancelable } from '-/utils/useCancelable';
+import useFirstRender from '-/utils/useFirstRender';
+import {
   cleanFrontDirSeparator,
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
@@ -37,28 +49,16 @@ import {
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import { executePromisesInBatches, updateFsEntries } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
-import { PerspectiveIDs } from '-/perspectives';
-import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
-import {
-  actions as SettingsActions,
-  getDefaultPerspective,
-  getShowUnixHiddenEntries,
-} from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { Pro } from '-/pro';
-import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
-import { defaultSettings as defaultListSettings } from '-/perspectives/list';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useCancelable } from '-/utils/useCancelable';
-import LoadingLazy from '-/components/LoadingLazy';
-import useFirstRender from '-/utils/useFirstRender';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -846,7 +846,7 @@ export const DirectoryContentContextProvider = ({
     const promise = location
       .listDirectoryPromise(
         directoryPath,
-        location.fullTextIndex ? ['extractTextContent'] : [],
+        [], // location.fullTextIndex ? ['extractTextContent'] : [],
         currentLocation ? currentLocation.ignorePatternPaths : [],
         resultsLimit,
       )
