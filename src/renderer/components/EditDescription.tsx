@@ -20,25 +20,10 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import Typography from '@mui/material/Typography';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const PREFIX = 'EditDescription';
-
-const classes = {
-  mdHelpers: `${PREFIX}-mdHelpers`,
-};
-
-const EditDescriptionRoot = styled('div')(({ theme }) => ({
-  height: 'calc(100% - 30px)',
-  [`& .${classes.mdHelpers}`]: {
-    paddingLeft: '0.25rem',
-    paddingRight: '0.25rem',
-    backgroundColor: '#bcc0c561',
-  },
-}));
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -83,7 +68,11 @@ function EditDescription() {
 
   const noDescription = !description || description.length < 1;
   return (
-    <EditDescriptionRoot>
+    <div
+      style={{
+        height: 'calc(100% - 50px)',
+      }}
+    >
       <EditDescriptionButtons />
       <div
         data-tid="descriptionTID"
@@ -158,7 +147,7 @@ function EditDescription() {
           <span className={classes.mdHelpers}>[Link text](http://...)</span>
         </Typography> 
       </span> */}
-    </EditDescriptionRoot>
+    </div>
   );
 }
 
