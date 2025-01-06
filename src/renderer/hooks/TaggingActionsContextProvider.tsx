@@ -76,6 +76,7 @@ type TaggingActionsContextData = {
     fsEntry: TS.FileSystemEntry,
     tags: Array<TS.Tag>,
     reflect?: boolean,
+    collectTags?: boolean,
   ) => Promise<TS.FileSystemEntry>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
   removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
@@ -322,43 +323,7 @@ export const TaggingActionsContextProvider = ({
     });
 
     if (processedTags.length > 0) {
-      if (addTagsToLibrary) {
-        // collecting tags
-        // filter existed in tagLibrary
-        const uniqueTags: TS.Tag[] = [];
-        processedTags.map((tag) => {
-          if (
-            getTagLibrary().findIndex(
-              (tagGroup) =>
-                tagGroup.children.findIndex(
-                  (obj) => obj.title === tag.title,
-                ) !== -1,
-            ) === -1 &&
-            !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
-            !isGeoTag(tag.title) // skip adding of tag containing geo information
-          ) {
-            uniqueTags.push({
-              ...tag,
-              color: tag.color || tagBackgroundColor,
-              textcolor: tag.textcolor || tagTextColor,
-            });
-          }
-          return true;
-        });
-        if (uniqueTags.length > 0) {
-          const tagGroup = {
-            uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-            title: t('core:collectedTags' as any) as string,
-            color: tagBackgroundColor,
-            textcolor: tagTextColor,
-            children: uniqueTags,
-            created_date: new Date().getTime(),
-            modified_date: new Date().getTime(),
-          };
-          mergeTagGroup(tagGroup);
-          //dispatch(AppActions.tagLibraryChanged());
-        }
-      }
+      collectTagsToLibrary(processedTags);
 
       const files = {};
       paths.map((path) => {
@@ -417,11 +382,12 @@ export const TaggingActionsContextProvider = ({
   ): Promise<boolean> {
     if (entries && entries.length > 0) {
       const promises = entries.map((entry) =>
-        addTagsToFsEntry(entry, tags, false).then((newEntry) => ({
+        addTagsToFsEntry(entry, tags, false, false).then((newEntry) => ({
           oldEntryPath: entry.path,
           newEntry,
         })),
       );
+      collectTagsToLibrary(tags);
       return Promise.all(promises).then((editedPaths) => {
         const reflects: TS.EditAction[] = [];
         for (let i = 0; i < editedPaths.length; i++) {
@@ -447,13 +413,18 @@ export const TaggingActionsContextProvider = ({
    * @param tags
    * @param reflect
    * return newFsEntry updated
+   * @param collectTags
    */
   async function addTagsToFsEntry(
     entry: TS.FileSystemEntry,
     tags: Array<TS.Tag>,
     reflect: boolean = true,
+    collectTags: boolean = true,
   ): Promise<TS.FileSystemEntry> {
     if (entry) {
+      if (collectTags) {
+        collectTagsToLibrary(tags);
+      }
       /*let fsEntryMeta;
       try {
         fsEntryMeta = entry.isFile
@@ -803,27 +774,29 @@ export const TaggingActionsContextProvider = ({
             });
         });
     }
+    collectTagsToLibrary([{ ...tag, title: newTagTitle }]);
+  }
 
+  function collectTagsToLibrary(tags: TS.Tag[]) {
     if (addTagsToLibrary) {
       // collecting tags
       // filter existed in tagLibrary
-      const uniqueTags = [];
-      if (
-        getTagLibrary().findIndex(
-          (tagGroup) =>
-            tagGroup.children.findIndex((obj) => obj.title === newTagTitle) !==
-            -1,
-        ) === -1 &&
-        !/^(?:\d+~\d+|\d+)$/.test(newTagTitle) &&
-        !isGeoTag(newTagTitle) // skip adding of tag containing only digits or geo tags
-      ) {
-        uniqueTags.push({
+      const uniqueTags = tags.filter(
+        (tag) =>
+          getTagLibrary().findIndex(
+            (tagGroup) =>
+              tagGroup.children.findIndex((obj) => obj.title === tag.title) !==
+              -1,
+          ) === -1 &&
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) &&
+          !isGeoTag(tag.title),
+      ); // skip adding of tag containing only digits or geo tags
+
+      /*uniqueTags.push({
           ...tag,
-          title: newTagTitle,
           color: tag.color || tagBackgroundColor,
           textcolor: tag.textcolor || tagTextColor,
-        });
-      }
+        });*/
       if (uniqueTags.length > 0) {
         const tagGroup = {
           uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
