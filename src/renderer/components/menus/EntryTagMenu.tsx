@@ -30,7 +30,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -39,7 +38,7 @@ interface Props {
   onClose: () => void;
   anchorEl: Element | null;
   selectedTag: TS.Tag | null;
-  currentEntryPath: string;
+  currentEntry: TS.FileSystemEntry;
   removeTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
 }
@@ -50,7 +49,7 @@ function EntryTagMenu(props: Props) {
     onClose,
     anchorEl,
     selectedTag,
-    currentEntryPath,
+    currentEntry,
     setIsAddTagDialogOpened,
   } = props;
   const removeTagsProps = props.removeTags;
@@ -59,19 +58,11 @@ function EntryTagMenu(props: Props) {
   const { setSearchQuery } = useDirectoryContentContext();
   const { removeTags, openEditEntryTagDialog } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
-  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const maxSearchResults: number = useSelector(getMaxSearchResults);
 
   function showEditTagDialog() {
     onClose();
-    const tag = selectedTag;
-    tag.path = currentEntryPath;
-    openEditEntryTagDialog(tag);
-  }
-
-  function showDeleteTagDialog() {
-    onClose();
-    setIsDeleteTagDialogOpened(true);
+    openEditEntryTagDialog([currentEntry], selectedTag);
   }
 
   function showAddTagDialog() {
@@ -90,17 +81,11 @@ function EntryTagMenu(props: Props) {
     onClose();
   }
 
-  function handleCloseDialogs() {
-    setIsDeleteTagDialogOpened(false);
-  }
-
   function confirmRemoveTag() {
     if (removeTagsProps) {
-      removeTagsProps([currentEntryPath], [selectedTag]);
+      removeTagsProps([currentEntry.path], [selectedTag]);
     } else {
-      removeTags([currentEntryPath], [selectedTag]).then(() =>
-        handleCloseDialogs(),
-      );
+      removeTags([currentEntry.path], [selectedTag]);
     }
     onClose();
   }
