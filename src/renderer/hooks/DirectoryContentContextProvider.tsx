@@ -136,7 +136,8 @@ type DirectoryContentContextData = {
   setThumbnails: (
     fsEntries: TS.FileSystemEntry[],
   ) => Promise<TS.FileSystemEntry[]>;
-  setThumbnail: (fsEntries: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  setThumbnail: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  getMetaForEntry: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext =
@@ -183,6 +184,7 @@ export const DirectoryContentContext =
     closeIsTruncatedConfirmDialog: undefined,
     setThumbnails: undefined,
     setThumbnail: undefined,
+    getMetaForEntry: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -1473,6 +1475,7 @@ export const DirectoryContentContextProvider = ({
       closeIsTruncatedConfirmDialog,
       setThumbnails,
       setThumbnail,
+      getMetaForEntry,
     };
   }, [
     currentLocation,

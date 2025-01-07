@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
+  entries: TS.FileSystemEntry[];
   tag: TS.Tag;
   onClose: () => void;
 }
@@ -55,8 +56,8 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
-  const { onClose, open, tag } = props;
-  const { addTagsToEntry, editTagForEntry } = useTaggingActionsContext();
+  const { onClose, open, tag, entries } = props;
+  const { addTagsToFsEntries, editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(tag && tag.title);
   const titleRef = useRef<HTMLInputElement>(null);
@@ -103,11 +104,11 @@ function EditEntryTagDialog(props: Props) {
     if (!haveError()) {
       const isNew =
         tag.functionality === 'geoTagging' ||
-        tag.functionality === 'dateTagging'; //path.includes(props.selectedTag.title);
+        tag.functionality === 'dateTagging';
       if (isNew) {
-        addTagsToEntry(tag.path, [{ ...tag, title }]);
-      } else {
-        editTagForEntry(tag.path, tag, title);
+        addTagsToFsEntries(entries, [{ ...tag, title }]);
+      } else if (entries.length === 1) {
+        editTagForEntry(entries[0].path, tag, title);
       }
       props.onClose();
     }

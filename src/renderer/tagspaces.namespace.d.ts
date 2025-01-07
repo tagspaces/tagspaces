@@ -156,7 +156,7 @@ export namespace TS {
     icon?: string;
     description?: string;
     style?: string;
-    path?: string; // needed for geo tagging should be removed
+    //path?: string; // needed for geo tagging should be removed
     modified_date?: number;
     functionality?: string;
     keyBinding?: string;

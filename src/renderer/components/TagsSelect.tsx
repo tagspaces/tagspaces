@@ -46,7 +46,7 @@ interface Props {
   handleNewTags?: (newTags: TS.Tag[]) => void;
   tagMode?: 'default' | 'display' | 'remove';
   placeholderText?: string;
-  selectedEntryPath?: string;
+  selectedEntry?: TS.FileSystemEntry;
   autoFocus?: boolean;
   generateButton?: boolean;
 }
@@ -69,7 +69,7 @@ function TagsSelect(props: Props) {
   const {
     placeholderText = '',
     label,
-    selectedEntryPath,
+    selectedEntry,
     autoFocus = false,
     tags = [],
     tagMode,
@@ -189,7 +189,7 @@ function TagsSelect(props: Props) {
         renderTags={(value: readonly TS.Tag[], getTagProps) =>
           value.map((option: TS.Tag, index: number) => (
             <TagContainer
-              key={selectedEntryPath + option + index}
+              key={selectedEntry?.path + option + index}
               tag={option}
               tagMode={tagMode}
               handleTagMenu={handleTagMenu}
@@ -232,13 +232,13 @@ function TagsSelect(props: Props) {
           </>
         )}
       />
-      {selectedEntryPath && (
+      {selectedEntry && (
         <EntryTagMenu
           anchorEl={tagMenuAnchorEl}
           open={Boolean(tagMenuAnchorEl)}
           onClose={handleCloseTagMenu}
           selectedTag={selectedTag}
-          currentEntryPath={selectedEntryPath}
+          currentEntry={selectedEntry}
           removeTags={handleRemoveTag}
         />
       )}

@@ -26,6 +26,7 @@ import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   tag: TS.Tag;
@@ -39,8 +40,7 @@ interface Props {
   ) => void;
   handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
   tagMode?: 'default' | 'display' | 'remove';
-  entryPath?: string;
-  addTags?: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex?) => void;
+  entry?: TS.FileSystemEntry;
   addTag?: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   moveTag?: (
     tagTitle: string,
@@ -63,11 +63,10 @@ const TagContainerDnd = (props: Props) => {
     index,
     tag,
     tagGroup,
-    entryPath,
+    entry,
     handleTagMenu,
     deleteIcon,
     addTag,
-    addTags,
     tagMode,
     reorderTags,
     changeTagOrder,
@@ -76,6 +75,7 @@ const TagContainerDnd = (props: Props) => {
     selectedEntries,
   } = props;
 
+  const { addTags } = useTaggingActionsContext();
   const { currentLocation } = useCurrentLocationContext();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
 
@@ -97,16 +97,19 @@ const TagContainerDnd = (props: Props) => {
         // add from file DnD to tagGroup
         addTag(tag, dropResult.tagGroupId);
       }
-    } else if (dropResult && dropResult.entryPath && addTags) {
+    } else if (dropResult && dropResult.entryPath) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
       if (
         selectedEntries.some((entry) => entry.path === dropResult.entryPath)
       ) {
-        const selectedEntryPaths = [];
-        selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));
-        addTags(selectedEntryPaths, [item.tag]);
+        /*const selectedEntryPaths = [];
+        selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));*/
+        addTags(selectedEntries, [item.tag]);
       } else {
-        addTags([dropResult.entryPath], [item.tag]);
+        addTags(
+          [currentLocation.toFsEntry(dropResult.entryPath, true)],
+          [item.tag],
+        );
       }
     }
   };
@@ -170,7 +173,7 @@ const TagContainerDnd = (props: Props) => {
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
       dragItem.index = hoverIndex;
-    } else if (reorderTags && entryPath) {
+    } else if (reorderTags && entry) {
       // sort fileSystemEntries tags
       const dragIndex = dragItem.index;
       const hoverIndex = index;
@@ -193,7 +196,7 @@ const TagContainerDnd = (props: Props) => {
       // Skip reorder on DnD Tag from an other file
       if (dragItem.tag.type === 'plain') {
         const extractedTags = extractTags(
-          entryPath,
+          entry.path,
           AppConfig.tagDelimiter,
           currentLocation?.getDirSeparator(),
         );
@@ -208,7 +211,7 @@ const TagContainerDnd = (props: Props) => {
       }
 
       dragItem.tag.position = hoverIndex;
-      editTagForEntry(entryPath, dragItem.tag);
+      editTagForEntry(entry.path, dragItem.tag);
 
       dragItem.index = hoverIndex;
     }
@@ -240,9 +243,8 @@ const TagContainerDnd = (props: Props) => {
         tagGroup={tagGroup}
         handleTagMenu={handleTagMenu}
         deleteIcon={deleteIcon}
-        addTags={addTags}
         tagMode={tagMode}
-        entryPath={entryPath}
+        entry={entry}
         isDragging={isDragging}
         reorderTags={reorderTags}
       />

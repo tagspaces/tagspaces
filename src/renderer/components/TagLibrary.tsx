@@ -66,7 +66,6 @@ interface Props {
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
   const {
-    addTags,
     createTagGroup,
     removeTagGroup,
     deleteTag,
@@ -253,7 +252,6 @@ function TagLibrary(props: Props) {
                       tagGroup={tagGroup}
                       tagMode={isSmartTag ? 'display' : 'default'}
                       handleTagMenu={handleTagMenuCallback}
-                      addTags={addTags}
                     />
                   );
                 }
@@ -266,7 +264,6 @@ function TagLibrary(props: Props) {
                     tagGroup={tagGroup}
                     tagMode={isSmartTag ? 'display' : 'default'}
                     handleTagMenu={handleTagMenuCallback}
-                    addTags={addTags}
                     moveTag={(
                       tagTitle: string,
                       fromTagGroupId: TS.Uuid,
