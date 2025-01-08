@@ -78,6 +78,7 @@ type DirectoryContentContextData = {
   //isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  isSearching: () => boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   //removeDirectoryEntries: (entryPaths: string[]) => void;
   //reflectRenameEntries: (paths: Array<string[]>) => Promise<boolean>;
@@ -153,6 +154,7 @@ export const DirectoryContentContext =
     //isMetaFolderExist: false,
     searchQuery: {},
     isSearchMode: false,
+    isSearching: undefined,
     addDirectoryEntries: undefined,
     //removeDirectoryEntries: undefined,
     //reflectRenameEntries: undefined,
@@ -580,6 +582,7 @@ export const DirectoryContentContextProvider = ({
   function exitSearchMode() {
     isSearchMode.current = false;
     dispatch(AppActions.setSearchFilter(undefined));
+    searchQuery.current = {};
     forceUpdate();
   }
 
@@ -1019,6 +1022,10 @@ export const DirectoryContentContextProvider = ({
     [directoryMeta.current?.perspective, manualPerspective.current],
   );*/
 
+  function isSearching(): boolean {
+    return Object.keys(searchQuery.current).length > 0;
+  }
+
   function getPerspective(): TS.PerspectiveType {
     if (manualPerspective.current === 'unspecified') {
       if (
@@ -1084,7 +1091,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setSearchQuery(sQuery: TS.SearchQuery) {
-    if (Object.keys(searchQuery).length === 0) {
+    if (Object.keys(sQuery).length === 0) {
       exitSearchMode();
     } else {
       isSearchMode.current = true;
@@ -1444,6 +1451,7 @@ export const DirectoryContentContextProvider = ({
       //isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      isSearching,
       getPerspective,
       setCurrentDirectoryEntries,
       updateCurrentDirEntry,
