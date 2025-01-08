@@ -46,6 +46,7 @@ interface Props {
   open: boolean;
   onClose: (event?: Object, reason?: string) => void;
   fileType?: TS.FileType;
+  fileName?: string;
 }
 
 function NewFileDialog(props: Props) {
@@ -63,10 +64,11 @@ function NewFileDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileName = useRef<string>(
-    (fileType === 'url' ? 'link' : 'note') +
-      AppConfig.beginTagContainer +
-      formatDateTime4Tag(new Date(), true) +
-      AppConfig.endTagContainer,
+    props.fileName ||
+      (fileType === 'url' ? 'link' : 'note') +
+        AppConfig.beginTagContainer +
+        formatDateTime4Tag(new Date(), true) +
+        AppConfig.endTagContainer,
   );
 
   const fileContent = useRef<string>('');
