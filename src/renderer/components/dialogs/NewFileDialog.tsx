@@ -69,15 +69,7 @@ function NewFileDialog(props: Props) {
       AppConfig.endTagContainer,
   );
 
-  const fileContent = useRef<string>(
-    fileType === 'txt' || fileType === 'md'
-      ? 'Created in ' +
-          versionMeta.name +
-          ' on ' +
-          new Date().toISOString().substring(0, 10) +
-          '.'
-      : '',
-  );
+  const fileContent = useRef<string>('');
 
   function getFileType() {
     if (fileType === 'txt') {
