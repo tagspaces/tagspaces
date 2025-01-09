@@ -393,10 +393,11 @@ function SearchAutocomplete(props: Props) {
     }
   }
   const clearSearch = () => {
-    resetValues([]);
-    setSearchQuery({});
-    exitSearchMode();
-    openCurrentDirectory();
+    openCurrentDirectory().then(() => {
+      resetValues([]);
+      setSearchQuery({});
+      exitSearchMode();
+    });
   };
 
   function removeActionsFromQuery(
