@@ -30,12 +30,13 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   open: boolean;
   onClose: () => void;
+  title?: string;
 }
 
 const CreateAudio = Pro && Pro.UI ? Pro.UI.CreateAudio : false;
 
 function NewAudioDialog(props: Props) {
-  const { open, onClose } = props;
+  const { open, onClose, title } = props;
   const { t } = useTranslation();
 
   const theme = useTheme();
@@ -76,7 +77,7 @@ function NewAudioDialog(props: Props) {
           }}
           data-tid="keyboardShortCutsDialog"
         >
-          {CreateAudio && <CreateAudio onClose={intOnClose} />}
+          {CreateAudio && <CreateAudio onClose={intOnClose} title={title} />}
         </DialogContent>
       </Dialog>
     </TargetPathContextProvider>

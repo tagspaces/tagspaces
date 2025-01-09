@@ -912,6 +912,7 @@
   "incomingLinks": "Incoming Links",
   "generateInbound": "Find Incoming Links",
   "startDownload": "Start download",
+  "createdIn": "Created in",
   "confirmHistoryDeletion": "Do you want to delete the AI-chat history?",
   "-": "-"
 }

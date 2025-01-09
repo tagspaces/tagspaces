@@ -33,7 +33,11 @@ import {
   getDefaultPerspective,
   getShowUnixHiddenEntries,
 } from '-/reducers/settings';
-import { executePromisesInBatches, updateFsEntries } from '-/services/utils-io';
+import {
+  executePromisesInBatches,
+  instanceId,
+  updateFsEntries,
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
@@ -78,6 +82,7 @@ type DirectoryContentContextData = {
   //isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  sendDirMessage: (type: string, payload?: any) => void;
   isSearching: () => boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   //removeDirectoryEntries: (entryPaths: string[]) => void;
@@ -154,6 +159,7 @@ export const DirectoryContentContext =
     //isMetaFolderExist: false,
     searchQuery: {},
     isSearchMode: false,
+    sendDirMessage: undefined,
     isSearching: undefined,
     addDirectoryEntries: undefined,
     //removeDirectoryEntries: undefined,
@@ -242,11 +248,32 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const broadcast = new BroadcastChannel('ts-directory-channel');
 
   const currentLocation = findLocation(currentLocationId);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
+      try {
+        // Listen for messages from other instance
+        broadcast.onmessage = (event: MessageEvent) => {
+          const action = event.data as TS.BroadcastMessage;
+          if (instanceId !== action.uuid) {
+            if (action.type === 'moveFiles') {
+              const filePaths = action.payload as string[];
+              setCurrentDirectoryEntries(
+                currentDirectoryEntries.current.filter(
+                  (entry) => !filePaths.includes(entry.path),
+                ),
+              );
+              //openDirectory(currentDirectoryPath.current);
+            }
+          }
+        };
+      } catch (e) {
+        console.error('broadcast.onmessage error:', e);
+      }
+
       window.electronIO.ipcRenderer.on('cmd', (arg) => {
         if (arg === 'open-search') {
           setSearchQuery({ textQuery: '' });
@@ -341,6 +368,15 @@ export const DirectoryContentContextProvider = ({
       reflectSelection(actions);
     }
   }, [actions]);
+
+  function sendDirMessage(type: string, payload?: any) {
+    try {
+      const message: TS.BroadcastMessage = { uuid: instanceId, type, payload };
+      broadcast.postMessage(message);
+    } catch (e) {
+      console.error('broadcast.postMessage error:', e);
+    }
+  }
 
   const reflectActions = async (actions) => {
     if (actions && actions.length > 0) {
@@ -1452,6 +1488,7 @@ export const DirectoryContentContextProvider = ({
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
       isSearching,
+      sendDirMessage,
       getPerspective,
       setCurrentDirectoryEntries,
       updateCurrentDirEntry,

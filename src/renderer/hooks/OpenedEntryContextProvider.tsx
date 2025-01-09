@@ -16,17 +16,25 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
+import {
+  actions as SettingsActions,
+  getNewHTMLFileContent,
+  getSupportedFileTypes,
+} from '-/reducers/settings';
+import { extractPDFcontent } from '-/services/thumbsgenerator';
 import {
   findExtensionPathForId,
   getDirProperties,
@@ -35,44 +43,35 @@ import {
   getRelativeEntryPath,
   openURLExternally,
 } from '-/services/utils-io';
-import {
-  actions as SettingsActions,
-  getNewHTMLFileContent,
-  getSupportedFileTypes,
-} from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
-import {
-  cleanRootPath,
-  cleanTrailingDirSeparator,
-  extractContainingDirectoryPath,
-  generateSharingLink,
-  joinPaths,
-  normalizePath,
-  extractFileExtension,
-  getMetaContentFileLocation,
-} from '@tagspaces/tagspaces-common/paths';
+import useFirstRender from '-/utils/useFirstRender';
+import versionMeta from '-/version.json';
 import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
+import {
+  cleanRootPath,
+  cleanTrailingDirSeparator,
+  extractContainingDirectoryPath,
+  extractFileExtension,
+  generateSharingLink,
+  getMetaContentFileLocation,
+  joinPaths,
+  normalizePath,
+} from '@tagspaces/tagspaces-common/paths';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import versionMeta from '-/version.json';
-import AppConfig from '-/AppConfig';
-import useFirstRender from '-/utils/useFirstRender';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { extractPDFcontent } from '-/services/thumbsgenerator';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useDispatch, useSelector } from 'react-redux';
 
 type OpenedEntryContextData = {
   openedEntry: TS.OpenedEntry;
@@ -938,12 +937,7 @@ export const OpenedEntryContextProvider = ({
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
-    const creationMeta =
-      'Created in ' +
-      versionMeta.name +
-      ' on ' +
-      creationDate.substring(0, 10) +
-      '.';
+    const creationMeta = `${t('core:createdIn')} ${versionMeta.name} - (${creationDate.substring(0, 10)})`;
     const filePath =
       normalizePath(targetPath) +
       (currentLocation
