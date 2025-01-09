@@ -181,7 +181,7 @@ function FolderContainer(props: Props) {
   });
 
   const openSearchMode = () => {
-    setSearchQuery({ textQuery: '' });
+    // setSearchQuery({ textQuery: '' });
     enterSearchMode();
   };
 
