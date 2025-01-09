@@ -810,6 +810,8 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles.current = meta.customOrder?.files || [];
     } else {
       directoryMeta.current = getDefaultDirMeta();
+      currentDirectoryDirs.current = [];
+      currentDirectoryFiles.current = [];
     }
 
     // Set current directory entries
