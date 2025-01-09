@@ -8,16 +8,8 @@ import {
   openFile,
   selectorFile,
   setSettings,
-  takeScreenshot,
 } from './general.helpers';
-import {
-  checkFileExist,
-  createFile,
-  startTestingApp,
-  stopApp,
-  testDataRefresh,
-  writeFile,
-} from './hook';
+import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import {
   closeFileProperties,
   closeLocation,
@@ -26,7 +18,6 @@ import {
   createS3Location,
   defaultLocationName,
   defaultLocationPath,
-  getPwLocationTid,
 } from './location.helpers';
 import {
   emptyFolderName,
@@ -224,6 +215,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
 
     await searchEngine('q:', {}, false);
     await clickOn('#textQuery-option-0');
@@ -235,6 +227,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0626 - Search actions - execute query from search history [web,electron,_pro]', async () => {
     await searchEngine('txt');
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
 
     await searchEngine('s:', {}, false);
     await clickOn('#textQuery-option-0');
@@ -354,6 +347,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('n1ote.txt'), true, 5000);
     await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
     // semi strict
     await addSearchCommand('a:', false);
     await clickOn('#textQuery-option-1');
@@ -361,6 +355,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('n1ote.txt'), false, 5000);
     await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
     // strict
     await addSearchCommand('a:', false);
     await clickOn('#textQuery-option-1');
