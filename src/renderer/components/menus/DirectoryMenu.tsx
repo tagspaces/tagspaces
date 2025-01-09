@@ -199,8 +199,8 @@ function DirectoryMenu(props: Props) {
     openDeleteMultipleEntriesDialog();
   }
 
-  function createNewFile() {
-    openNewFileDialog();
+  function createNewFile(entryType?: TS.FileType) {
+    openNewFileDialog(entryType);
   }
 
   function createNewAudio() {

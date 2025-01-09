@@ -25,10 +25,15 @@ import {
   NewFolderIcon,
   AddExistingFileIcon,
   TagIcon,
+  MarkdownFileIcon,
+  HTMLFileIcon,
+  LinkFileIcon,
 } from '-/components/CommonIcons';
 import { getKeyBindingObject } from '-/reducers/settings';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { CommonLocation } from '-/utils/CommonLocation';
+import InfoIcon from '-/components/InfoIcon';
+import { TS } from '-/tagspaces.namespace';
 
 export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
@@ -43,7 +48,7 @@ export function getDirectoryMenuItems(
   openMoveCopyDialog?: () => void,
   showDeleteDirectoryDialog?: () => void,
   showInFileManager?: () => void,
-  createNewFile?: () => void,
+  createNewFile?: (fileType?: TS.FileType) => void,
   createNewAudio?: () => void,
   showCreateDirectoryDialog?: () => void,
   addExistingFile?: () => void,
@@ -208,17 +213,65 @@ export function getDirectoryMenuItems(
     if (createNewFile) {
       menuItems.push(
         <MenuItem
-          key="createNewFile"
-          data-tid="createNewFile"
+          key="createNewTextFileTID"
+          ata-tid="createNewTextFileTID"
           onClick={() => {
             onClose();
-            createNewFile();
+            createNewFile('txt');
           }}
         >
           <ListItemIcon>
             <NewFileIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:newFileNote')} />
+          <ListItemText primary={t('core:createTextFile')} />
+        </MenuItem>,
+      );
+
+      menuItems.push(
+        <MenuItem
+          key="createNewMarkdownFileTID"
+          ata-tid="createNewMarkdownFileTID"
+          onClick={() => {
+            onClose();
+            createNewFile('md');
+          }}
+        >
+          <ListItemIcon>
+            <MarkdownFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:createMarkdown')} />
+          <InfoIcon tooltip={t('core:createMarkdownTitle')} />
+        </MenuItem>,
+      );
+      menuItems.push(
+        <MenuItem
+          key="createHTMLTextFileTID"
+          data-tid="createHTMLTextFileTID"
+          onClick={() => {
+            onClose();
+            createNewFile('html');
+          }}
+        >
+          <ListItemIcon>
+            <HTMLFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:createRichTextFile')} />
+          <InfoIcon tooltip={t('core:createNoteTitle')} />
+        </MenuItem>,
+      );
+      menuItems.push(
+        <MenuItem
+          key="createNewLinkFile"
+          data-tid="createNewLinkFileTID"
+          onClick={() => {
+            onClose();
+            createNewFile('url');
+          }}
+        >
+          <ListItemIcon>
+            <LinkFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:createLinkFile')} />
         </MenuItem>,
       );
     }
