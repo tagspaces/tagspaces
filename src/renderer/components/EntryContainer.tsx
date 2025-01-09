@@ -285,6 +285,48 @@ function EntryContainer() {
       case 'saveDocument':
         savingFile(data.force !== undefined ? data.force : false);
         break;
+      case 'parentSaveDocument':
+        try {
+          isSavingInProgress.current = true;
+          forceUpdate();
+          saveFileOpen(openedEntry, JSON.stringify(data.content)).then(
+            (success) => {
+              if (success) {
+                setFileChanged(false);
+                // showNotification(
+                //   t('core:fileSavedSuccessfully'),
+                //   NotificationTypes.default
+                // );
+              }
+              // change state will not render DOT before file name too
+              isSavingInProgress.current = false;
+            },
+          );
+        } catch (e) {
+          isSavingInProgress.current = false;
+          console.debug('parentSaveDocument:', e);
+        }
+        break;
+      case 'parentLoadTextContent':
+        if (
+          fileViewer &&
+          fileViewer.current &&
+          fileViewer.current.contentWindow
+        ) {
+          cLocation
+            .loadTextFilePromise(openedEntry.path, false)
+            .then((content) => {
+              // Check and remove UTF-8 BOM
+              const cleanedContent = content.startsWith('\uFEFF')
+                ? content.slice(1)
+                : content;
+              fileViewer.current.contentWindow.postMessage(
+                { action: 'fileContent', content: cleanedContent },
+                '*',
+              );
+            });
+        }
+        break;
       case 'editDocument':
         if (editingSupported) {
           editOpenedFile();

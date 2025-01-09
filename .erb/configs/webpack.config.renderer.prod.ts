@@ -132,7 +132,7 @@ const configuration: webpack.Configuration = {
       filename: 'index.html',
       template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
       templateParameters: {
-        csp: "connect-src files: *; default-src 'self' ; object-src 'none' ; font-src 'self'; script-src 'self' ; style-src 'self' 'unsafe-inline' data:  blob: ; media-src * blob: ; img-src * blob: data: content:;",
+        csp: "connect-src files: *; frame-src 'self' tsfile: *; default-src 'self' ; object-src 'none' ; font-src 'self'; script-src 'self' ; style-src 'self' 'unsafe-inline' data:  blob: ; media-src * blob: ; img-src * blob: data: content:;",
       },
       minify: {
         collapseWhitespace: true,
