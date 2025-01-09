@@ -937,7 +937,7 @@ export const OpenedEntryContextProvider = ({
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
-    const creationMeta = `${t('core:createdIn')} ${versionMeta.name} - (${creationDate.substring(0, 10)})`;
+    const creationMeta = `${t('core:createdIn')} ${versionMeta.name} (${creationDate.substring(0, 10)})`;
     const filePath =
       normalizePath(targetPath) +
       (currentLocation
