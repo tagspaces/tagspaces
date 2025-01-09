@@ -304,7 +304,7 @@ test.describe('TST51 - Perspective Grid', () => {
       '[data-tid=tagContainer_' + tagName + ']',
       getGridFileSelector('sample.txt'),
     );
-    await clickOn('[data-tid=showTimeTID]');
+    //await clickOn('[data-tid=showTimeTID]');
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
 
     await expectElementExist(

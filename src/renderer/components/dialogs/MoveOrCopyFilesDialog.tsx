@@ -64,7 +64,7 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { findLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { currentDirectoryPath, sendDirMessage } = useDirectoryContentContext();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const targetDir = props.targetDir ? props.targetDir : currentDirectoryPath;
   const targetLocation = findLocation(targetLocationId);
@@ -84,6 +84,7 @@ function MoveOrCopyFilesDialog(props: Props) {
   function handleMove(filePaths: string[]) {
     moveFiles(filePaths, targetDir, targetLocation.uuid).then((success) => {
       if (success) {
+        sendDirMessage('moveFiles', filePaths);
         generateThumbs(
           filePaths.map((targetPath) =>
             joinPaths(

@@ -16,21 +16,20 @@
  *
  */
 
+import Tag from '-/components/Tag';
+import TagContainerMenu from '-/components/TagContainerMenu';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import { getTagColors } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { convertToTimestamp, isDateTimeTag } from '-/utils/dates';
+import { isGeoTag } from '-/utils/geo';
+import DateIcon from '@mui/icons-material/DateRange';
+import PlaceIcon from '@mui/icons-material/Place';
+import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import TsButton from '-/components/TsButton';
-import PlaceIcon from '@mui/icons-material/Place';
-import DateIcon from '@mui/icons-material/DateRange';
-import Tooltip from '-/components/Tooltip';
-import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
-import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { isGeoTag } from '-/utils/geo';
-import { isDateTimeTag, convertToTimestamp } from '-/utils/dates';
-import { TS } from '-/tagspaces.namespace';
-import { getTagColors } from '-/services/taglibrary-utils';
-import TagContainerMenu from '-/components/TagContainerMenu';
-import Tag from '-/components/Tag';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   tag: TS.Tag;
@@ -38,15 +37,14 @@ interface Props {
   handleTagMenu?: (
     event: Object,
     tag: TS.Tag,
-    tagGroup: TS.TagGroup | string,
+    tagGroup: TS.TagGroup | TS.FileSystemEntry,
     haveSelectedEntries: boolean,
   ) => void; // TODO refactor
   handleRemoveTag?: (event: Object, tags: Array<TS.Tag>) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
-  entryPath?: string;
+  entry?: TS.FileSystemEntry;
   deleteIcon?: any;
-  addTags?: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex?) => void;
   moveTag?: (
     tagTitle: string,
     fromTagGroupId: TS.Uuid,
@@ -61,14 +59,14 @@ function TagContainer(props: Props) {
     deleteIcon,
     isDragging,
     tagGroup,
-    entryPath,
+    entry,
     handleRemoveTag,
     handleTagMenu,
-    addTags,
     tagMode,
   } = props;
   let { title } = tag;
 
+  const { addTags } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -156,8 +154,8 @@ function TagContainer(props: Props) {
       onClick={(event) => {
         if (event.ctrlKey && addTags) {
           const selectedEntryPaths = [];
-          selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));
-          addTags(selectedEntryPaths, [tag]);
+          //selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));
+          addTags(selectedEntries, [tag]);
           // Removing tags doesn't seem to work correctly here, yet. Using sidecar tagging, but the removeTagsFromEntry function in tagging.actions.js
           // doesn't recignize it correctly, thinking it's a plain tag and thus tries to rename the files
           // } else if (event.shiftKey) {
@@ -168,7 +166,7 @@ function TagContainer(props: Props) {
           handleTagMenu(
             event,
             tag,
-            entryPath || tagGroup,
+            entry || tagGroup,
             selectedEntries && selectedEntries.length > 0,
           );
         }
@@ -178,7 +176,7 @@ function TagContainer(props: Props) {
           handleTagMenu(
             event,
             tag,
-            entryPath || tagGroup,
+            entry || tagGroup,
             selectedEntries && selectedEntries.length > 0,
           );
         }
@@ -188,7 +186,7 @@ function TagContainer(props: Props) {
           handleTagMenu(
             event,
             tag,
-            entryPath || tagGroup,
+            entry || tagGroup,
             selectedEntries && selectedEntries.length > 0,
           );
         }

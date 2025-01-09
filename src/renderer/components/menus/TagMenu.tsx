@@ -86,8 +86,8 @@ function TagMenu(props: Props) {
   }
 
   function applyTag() {
-    const selectedEntryPaths = selectedEntries.map((entry) => entry.path);
-    addTags(selectedEntryPaths, [selectedTag]);
+    // const selectedEntryPaths = selectedEntries.map((entry) => entry.path);
+    addTags(selectedEntries, [selectedTag]);
     onClose();
   }
 

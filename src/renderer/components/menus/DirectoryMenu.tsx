@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { Menu, MenuList } from '@mui/material';
+import React from 'react';
+import { Menu } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -63,12 +63,13 @@ interface Props {
   open: boolean;
   classes?: any;
   onClose: (param?: any) => void;
-  anchorEl: Element;
+  anchorEl?: Element;
+  items?: React.ReactNode;
   directoryPath: string;
   openAddRemoveTagsDialog?: () => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
-  openRenameDirectoryDialog: () => void;
+  openRenameDirectoryDialog?: () => void;
   openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
   mouseY?: number;
@@ -107,6 +108,7 @@ function DirectoryMenu(props: Props) {
     anchorEl,
     mouseX,
     mouseY,
+    items,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
@@ -197,8 +199,8 @@ function DirectoryMenu(props: Props) {
     openDeleteMultipleEntriesDialog();
   }
 
-  function createNewFile() {
-    openNewFileDialog();
+  function createNewFile(entryType?: TS.FileType) {
+    openNewFileDialog(entryType);
   }
 
   function createNewAudio() {
@@ -412,32 +414,34 @@ Do you want to continue?`)
     }
   }
 
-  const menuItems = getDirectoryMenuItems(
-    currentLocation,
-    selectedEntries.length,
-    perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
-    readOnlyMode,
-    onClose,
-    t,
-    openDir,
-    reloadDirectory,
-    openRenameDirectoryDialog,
-    openMoveCopyFilesDialog,
-    showDeleteDirectoryDialog,
-    showInFileManager,
-    createNewFile,
-    createNewAudio,
-    openCreateDirectoryDialog,
-    addExistingFile,
-    setFolderThumbnail,
-    copySharingLink,
-    importMacTags,
-    perspectiveSwitch,
-    showProperties,
-    cameraTakePicture,
-    openAddRemoveTagsDialog,
-    openInNewWindow,
-  );
+  const menuItems = items
+    ? items
+    : getDirectoryMenuItems(
+        currentLocation,
+        selectedEntries.length,
+        perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
+        readOnlyMode,
+        onClose,
+        t,
+        openDir,
+        reloadDirectory,
+        openRenameDirectoryDialog,
+        openMoveCopyFilesDialog,
+        showDeleteDirectoryDialog,
+        showInFileManager,
+        createNewFile,
+        createNewAudio,
+        openCreateDirectoryDialog,
+        addExistingFile,
+        setFolderThumbnail,
+        copySharingLink,
+        importMacTags,
+        perspectiveSwitch,
+        showProperties,
+        cameraTakePicture,
+        openAddRemoveTagsDialog,
+        openInNewWindow,
+      );
 
   return (
     <Menu

@@ -29,7 +29,7 @@ import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPath
 import { TS } from '-/tagspaces.namespace';
 
 type NewFileDialogContextData = {
-  openNewFileDialog: (entryType?: TS.FileType) => void;
+  openNewFileDialog: (entryType?: TS.FileType, fName?: string) => void;
   closeNewFileDialog: () => void;
 };
 
@@ -51,6 +51,7 @@ export const NewFileDialogContextProvider = ({
 }: NewFileDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
   const fileType = useRef<TS.FileType>(undefined);
+  const fileName = useRef<string>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -68,14 +69,17 @@ export const NewFileDialogContextProvider = ({
     }
   }, []);
 
-  function openDialog(fType = undefined) {
+  function openDialog(fType = undefined, fName = undefined) {
     open.current = true;
     fileType.current = fType;
+    fileName.current = fName;
     forceUpdate();
   }
 
   function closeDialog() {
     open.current = false;
+    fileType.current = undefined;
+    fileName.current = undefined;
     forceUpdate();
   }
 
@@ -105,6 +109,7 @@ export const NewFileDialogContextProvider = ({
             }
           }}
           fileType={fileType.current}
+          fileName={fileName.current}
         />
         {children}
       </NewFileDialogContext.Provider>

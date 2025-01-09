@@ -1,4 +1,5 @@
 // import AWS from "aws-sdk";
+import AppConfig from '-/AppConfig';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
   extractDirectoryName,
@@ -13,11 +14,10 @@ import {
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
-import AppConfig from '-/AppConfig';
 //import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
-import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import { TS } from '-/tagspaces.namespace';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 
 export class CommonLocation implements TS.Location {
   uuid: string;
@@ -185,7 +185,7 @@ export class CommonLocation implements TS.Location {
     entry: TS.FileSystemEntry,
     encoded = false,
   ): string | undefined => {
-    if (!entry) {
+    if (!entry || !entry.path) {
       return undefined;
     }
     return entry.isFile

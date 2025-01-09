@@ -92,7 +92,11 @@ interface Props {
   fsEntry: TS.FileSystemEntry;
   style?: any;
   selectionMode: boolean;
-  handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
+  handleTagMenu: (
+    event: Object,
+    tag: TS.Tag,
+    entry: TS.FileSystemEntry,
+  ) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -133,7 +137,7 @@ function RowCell(props: Props) {
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
-  const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
+  const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
@@ -142,9 +146,6 @@ function RowCell(props: Props) {
   // You can use the dispatch function to dispatch actions
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
     editTagForEntry(path, tag, newTagTitle);
-  };
-  const handleAddTags = (paths: Array<string>, tags: Array<TS.Tag>) => {
-    addTags(paths, tags);
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
@@ -230,8 +231,7 @@ function RowCell(props: Props) {
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
-          entryPath={entryPath}
-          addTags={handleAddTags}
+          entry={fsEntry}
           handleTagMenu={handleTagMenu}
         />
       ) : (
@@ -239,8 +239,7 @@ function RowCell(props: Props) {
           tag={tag}
           index={tag.type === 'sidecar' ? index : index - sideCarLength}
           key={entryPath + tag.title}
-          entryPath={entryPath}
-          addTags={handleAddTags}
+          entry={fsEntry}
           addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}

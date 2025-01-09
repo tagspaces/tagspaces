@@ -16,24 +16,29 @@
  *
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import classNames from 'classnames';
-import Typography from '@mui/material/Typography';
-import TsIconButton from '-/components/TsIconButton';
-import Collapse from '@mui/material/Collapse';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppConfig from '-/AppConfig';
-import TagContainerDnd from './TagContainerDnd';
-import TagContainer from './TagContainer';
-import ConfirmDialog from './dialogs/ConfirmDialog';
-import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
-import CreateTagsDialog from './dialogs/CreateTagsDialog';
-import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
-import TagGroupContainer from './TagGroupContainer';
-import TagMenu from './menus/TagMenu';
-import TagLibraryMenu from './menus/TagLibraryMenu';
-import TagGroupMenu from './menus/TagGroupMenu';
+import { SidePanel, classes } from '-/components/SidePanels.css';
+import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
+import TsIconButton from '-/components/TsIconButton';
+import EditTagDialog from '-/components/dialogs/EditTagDialog';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
+import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import useFirstRender from '-/utils/useFirstRender';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Collapse from '@mui/material/Collapse';
+import Typography from '@mui/material/Typography';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as SettingsActions,
   getSaveTagInLocation,
@@ -41,22 +46,17 @@ import {
   getTagGroupCollapsed,
   getTagTextColor,
 } from '../reducers/settings';
-import { AppDispatch } from '-/reducers/app';
 import SmartTags from '../reducers/smart-tags';
-import EditTagDialog from '-/components/dialogs/EditTagDialog';
-import { TS } from '-/tagspaces.namespace';
-import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
-import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
-import { classes, SidePanel } from '-/components/SidePanels.css';
-import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { Pro } from '-/pro';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
-import useFirstRender from '-/utils/useFirstRender';
+import TagContainer from './TagContainer';
+import TagContainerDnd from './TagContainerDnd';
+import TagGroupContainer from './TagGroupContainer';
+import ConfirmDialog from './dialogs/ConfirmDialog';
+import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
+import CreateTagsDialog from './dialogs/CreateTagsDialog';
+import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
+import TagGroupMenu from './menus/TagGroupMenu';
+import TagLibraryMenu from './menus/TagLibraryMenu';
+import TagMenu from './menus/TagMenu';
 
 interface Props {
   style?: any;
@@ -66,7 +66,6 @@ interface Props {
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
   const {
-    addTags,
     createTagGroup,
     removeTagGroup,
     deleteTag,
@@ -253,7 +252,6 @@ function TagLibrary(props: Props) {
                       tagGroup={tagGroup}
                       tagMode={isSmartTag ? 'display' : 'default'}
                       handleTagMenu={handleTagMenuCallback}
-                      addTags={addTags}
                     />
                   );
                 }
@@ -266,7 +264,6 @@ function TagLibrary(props: Props) {
                     tagGroup={tagGroup}
                     tagMode={isSmartTag ? 'display' : 'default'}
                     handleTagMenu={handleTagMenuCallback}
-                    addTags={addTags}
                     moveTag={(
                       tagTitle: string,
                       fromTagGroupId: TS.Uuid,
@@ -436,6 +433,7 @@ function TagLibrary(props: Props) {
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           width: 310,
           overflowY: 'auto',
+          overflowX: 'hidden',
         }}
         data-tid="tagLibraryTagGroupList"
       >

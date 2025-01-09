@@ -307,10 +307,11 @@ function SearchPopover(props: Props) {
     setTagPlaceLong(null);
     forceIndexing.current = false;
     fileSize.current = '';
-    setSearchQuery({});
-    exitSearchMode();
     props.onClose();
-    openCurrentDirectory();
+    openCurrentDirectory().then(() => {
+      setSearchQuery({});
+      exitSearchMode();
+    });
   };
 
   const saveSearch = (isNew = true) => {

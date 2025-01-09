@@ -87,8 +87,7 @@ function GridPerspective(props: Props) {
 
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
-  // const selectedEntry = useRef<FileSystemEntry>(undefined);
-  const selectedEntryPath = useRef<string>(undefined);
+  const selectedEntry = useRef<TS.FileSystemEntry>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
   const perspectiveMode = useRef<boolean>(true);
   const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
@@ -151,7 +150,7 @@ function GridPerspective(props: Props) {
 
   const clearSelection = () => {
     setSelectedEntries([]);
-    selectedEntryPath.current = undefined;
+    selectedEntry.current = undefined;
   };
 
   const toggleSelectAllFiles = () => {
@@ -175,13 +174,13 @@ function GridPerspective(props: Props) {
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag: TS.Tag,
-    entryPath: string,
+    entry: TS.FileSystemEntry,
   ) => {
     event.preventDefault();
     event.stopPropagation();
 
     selectedTag.current = tag;
-    selectedEntryPath.current = entryPath;
+    selectedEntry.current = entry;
     setTagContextMenuAnchorEl(event.currentTarget);
   };
 
@@ -459,7 +458,7 @@ function GridPerspective(props: Props) {
         onClose={() => setTagContextMenuAnchorEl(null)}
         setIsAddTagDialogOpened={setIsAddTagDialogOpened}
         selectedTag={selectedTag.current}
-        currentEntryPath={selectedEntryPath.current}
+        currentEntry={selectedEntry.current}
       />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu

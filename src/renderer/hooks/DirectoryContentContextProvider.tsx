@@ -16,20 +16,36 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { PerspectiveIDs } from '-/perspectives';
+import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
+import { defaultSettings as defaultListSettings } from '-/perspectives/list';
+import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import { useTranslation } from 'react-i18next';
 import {
-  cleanTrailingDirSeparator,
+  actions as SettingsActions,
+  getDefaultPerspective,
+  getShowUnixHiddenEntries,
+} from '-/reducers/settings';
+import {
+  executePromisesInBatches,
+  instanceId,
+  updateFsEntries,
+} from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
+import { useCancelable } from '-/utils/useCancelable';
+import useFirstRender from '-/utils/useFirstRender';
+import {
   cleanFrontDirSeparator,
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
@@ -37,28 +53,16 @@ import {
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import { executePromisesInBatches, updateFsEntries } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
-import { PerspectiveIDs } from '-/perspectives';
-import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
-import {
-  actions as SettingsActions,
-  getDefaultPerspective,
-  getShowUnixHiddenEntries,
-} from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { Pro } from '-/pro';
-import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
-import { defaultSettings as defaultListSettings } from '-/perspectives/list';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useCancelable } from '-/utils/useCancelable';
-import LoadingLazy from '-/components/LoadingLazy';
-import useFirstRender from '-/utils/useFirstRender';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -78,6 +82,8 @@ type DirectoryContentContextData = {
   //isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  sendDirMessage: (type: string, payload?: any) => void;
+  isSearching: () => boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   //removeDirectoryEntries: (entryPaths: string[]) => void;
   //reflectRenameEntries: (paths: Array<string[]>) => Promise<boolean>;
@@ -136,7 +142,8 @@ type DirectoryContentContextData = {
   setThumbnails: (
     fsEntries: TS.FileSystemEntry[],
   ) => Promise<TS.FileSystemEntry[]>;
-  setThumbnail: (fsEntries: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  setThumbnail: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  getMetaForEntry: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext =
@@ -152,6 +159,8 @@ export const DirectoryContentContext =
     //isMetaFolderExist: false,
     searchQuery: {},
     isSearchMode: false,
+    sendDirMessage: undefined,
+    isSearching: undefined,
     addDirectoryEntries: undefined,
     //removeDirectoryEntries: undefined,
     //reflectRenameEntries: undefined,
@@ -183,6 +192,7 @@ export const DirectoryContentContext =
     closeIsTruncatedConfirmDialog: undefined,
     setThumbnails: undefined,
     setThumbnail: undefined,
+    getMetaForEntry: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -238,11 +248,32 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const broadcast = new BroadcastChannel('ts-directory-channel');
 
   const currentLocation = findLocation(currentLocationId);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
+      try {
+        // Listen for messages from other instance
+        broadcast.onmessage = (event: MessageEvent) => {
+          const action = event.data as TS.BroadcastMessage;
+          if (instanceId !== action.uuid) {
+            if (action.type === 'moveFiles') {
+              const filePaths = action.payload as string[];
+              setCurrentDirectoryEntries(
+                currentDirectoryEntries.current.filter(
+                  (entry) => !filePaths.includes(entry.path),
+                ),
+              );
+              //openDirectory(currentDirectoryPath.current);
+            }
+          }
+        };
+      } catch (e) {
+        console.error('broadcast.onmessage error:', e);
+      }
+
       window.electronIO.ipcRenderer.on('cmd', (arg) => {
         if (arg === 'open-search') {
           setSearchQuery({ textQuery: '' });
@@ -337,6 +368,15 @@ export const DirectoryContentContextProvider = ({
       reflectSelection(actions);
     }
   }, [actions]);
+
+  function sendDirMessage(type: string, payload?: any) {
+    try {
+      const message: TS.BroadcastMessage = { uuid: instanceId, type, payload };
+      broadcast.postMessage(message);
+    } catch (e) {
+      console.error('broadcast.postMessage error:', e);
+    }
+  }
 
   const reflectActions = async (actions) => {
     if (actions && actions.length > 0) {
@@ -578,6 +618,7 @@ export const DirectoryContentContextProvider = ({
   function exitSearchMode() {
     isSearchMode.current = false;
     dispatch(AppActions.setSearchFilter(undefined));
+    searchQuery.current = {};
     forceUpdate();
   }
 
@@ -769,6 +810,8 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles.current = meta.customOrder?.files || [];
     } else {
       directoryMeta.current = getDefaultDirMeta();
+      currentDirectoryDirs.current = [];
+      currentDirectoryFiles.current = [];
     }
 
     // Set current directory entries
@@ -846,7 +889,7 @@ export const DirectoryContentContextProvider = ({
     const promise = location
       .listDirectoryPromise(
         directoryPath,
-        location.fullTextIndex ? ['extractTextContent'] : [],
+        [], // location.fullTextIndex ? ['extractTextContent'] : [],
         currentLocation ? currentLocation.ignorePatternPaths : [],
         resultsLimit,
       )
@@ -1017,6 +1060,10 @@ export const DirectoryContentContextProvider = ({
     [directoryMeta.current?.perspective, manualPerspective.current],
   );*/
 
+  function isSearching(): boolean {
+    return Object.keys(searchQuery.current).length > 0;
+  }
+
   function getPerspective(): TS.PerspectiveType {
     if (manualPerspective.current === 'unspecified') {
       if (
@@ -1082,7 +1129,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setSearchQuery(sQuery: TS.SearchQuery) {
-    if (Object.keys(searchQuery).length === 0) {
+    if (Object.keys(sQuery).length === 0) {
       exitSearchMode();
     } else {
       isSearchMode.current = true;
@@ -1442,6 +1489,8 @@ export const DirectoryContentContextProvider = ({
       //isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      isSearching,
+      sendDirMessage,
       getPerspective,
       setCurrentDirectoryEntries,
       updateCurrentDirEntry,
@@ -1473,6 +1522,7 @@ export const DirectoryContentContextProvider = ({
       closeIsTruncatedConfirmDialog,
       setThumbnails,
       setThumbnail,
+      getMetaForEntry,
     };
   }, [
     currentLocation,

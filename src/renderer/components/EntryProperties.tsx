@@ -656,7 +656,7 @@ function EntryProperties(props: Props) {
               tags={getAllTags(openedEntry)}
               tagMode="default"
               handleChange={handleChange}
-              selectedEntryPath={openedEntry.path}
+              selectedEntry={openedEntry}
               autoFocus={true}
               generateButton={true}
             />

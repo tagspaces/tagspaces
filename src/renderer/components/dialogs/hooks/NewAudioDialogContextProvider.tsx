@@ -20,7 +20,7 @@ import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 
 type NewAudioDialogContextData = {
-  openNewAudioDialog: () => void;
+  openNewAudioDialog: (title?: string) => void;
   closeNewAudioDialog: () => void;
 };
 
@@ -41,11 +41,13 @@ export const NewAudioDialogContextProvider = ({
   children,
 }: NewAudioDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
+  const title = useRef<string>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog() {
+  function openDialog(t = undefined) {
     open.current = true;
+    title.current = t;
     forceUpdate();
   }
 
@@ -71,7 +73,11 @@ export const NewAudioDialogContextProvider = ({
 
   return (
     <NewAudioDialogContext.Provider value={context}>
-      <NewAudioDialogAsync open={open.current} onClose={closeDialog} />
+      <NewAudioDialogAsync
+        open={open.current}
+        onClose={closeDialog}
+        title={title.current}
+      />
       {children}
     </NewAudioDialogContext.Provider>
   );

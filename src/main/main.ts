@@ -8,32 +8,32 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
 import {
-  app,
   BrowserWindow,
-  shell,
-  ipcMain,
-  globalShortcut,
   BrowserWindowConstructorOptions,
+  app,
   dialog,
+  globalShortcut,
+  ipcMain,
+  shell,
 } from 'electron';
+import path from 'path';
 // import { autoUpdater } from 'electron-updater';
 //import log from 'electron-log';
 import pm2 from '@elife/pm2';
-import propertiesReader from 'properties-reader';
-import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
-import settings from './settings';
-import { getExtensions } from './extension-utils';
+import propertiesReader from 'properties-reader';
 import i18nInit from '../renderer/services/i18nInit';
-import buildTrayMenu from './electron-tray-menu';
 import buildDockMenu from './electron-dock-menu';
 import buildDesktopMenu from './electron-menus';
+import buildTrayMenu from './electron-tray-menu';
+import { getExtensions } from './extension-utils';
 import loadMainEvents from './mainEvents';
-import { Extensions } from './types';
 import protocol from './protocol';
+import settings from './settings';
+import { Extensions } from './types';
+import { resolveHtmlPath } from './util';
 
 // class AppUpdater {
 //   constructor() {
