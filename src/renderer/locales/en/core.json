@@ -608,6 +608,7 @@
   "editSavedSearchTitle": "Edit Search Query",
   "savedSearchHelp": "Save the current search parameters for a later use of this search",
   "emptyTitle": "Title cannot be empty!",
+  "emptyLink": "Link cannot be empty!",
   "duplicateTitle": "Search name already exist!",
   "savedSearchesTitle": "Stored Search Queries",
   "exportCsv": "Export current file and folder list as CSV file",

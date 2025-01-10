@@ -58,6 +58,7 @@ function NewFileDialog(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
   const haveError = useRef<boolean>(false);
+  const urlInputError = useRef<string>(undefined);
   const firstRWLocation = getFirstRWLocation();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -100,14 +101,20 @@ function NewFileDialog(props: Props) {
 
   function createFile(fileType, targetPath) {
     if (targetPath) {
-      loadLocation();
-      createFileAdvanced(
-        targetPath,
-        fileName.current,
-        fileContent.current,
-        fileType,
-      );
-      onClose();
+      if (fileType === 'url' && !fileContent.current) {
+        haveError.current = true;
+        urlInputError.current = t('core:emptyLink');
+        forceUpdate();
+      } else {
+        loadLocation();
+        createFileAdvanced(
+          targetPath,
+          fileName.current,
+          fileContent.current,
+          fileType,
+        );
+        onClose();
+      }
     }
   }
 
@@ -162,8 +169,10 @@ function NewFileDialog(props: Props) {
             }
             haveError={(error) => {
               haveError.current = error;
+              urlInputError.current = '';
               forceUpdate();
             }}
+            urlInputError={urlInputError.current}
             fileName={fileName.current}
           />
         ) : (
