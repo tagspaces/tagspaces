@@ -234,15 +234,19 @@ function EntryContainer() {
 
   // editor is not loaded in this time - change theme after loadDefaultTextContent
   useEffect(() => {
-    if (
-      fileViewer &&
-      fileViewer.current &&
-      fileViewer.current.contentWindow &&
-      // @ts-ignore
-      fileViewer.current.contentWindow.setTheme
-    ) {
-      // @ts-ignore call setContent from iframe
-      fileViewer.current.contentWindow.setTheme(theme.palette.mode);
+    try {
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow &&
+        // @ts-ignore
+        fileViewer.current.contentWindow.setTheme
+      ) {
+        // @ts-ignore call setContent from iframe
+        fileViewer.current.contentWindow.setTheme(theme.palette.mode);
+      }
+    } catch (e) {
+      console.log('Error setTheme', e);
     }
   }, [theme.palette.mode]); //settings.currentTheme
 
@@ -345,15 +349,19 @@ function EntryContainer() {
         }
         filePath = openedEntry.path;
 
-        if (
-          fileViewer &&
-          fileViewer.current &&
-          fileViewer.current.contentWindow &&
-          // @ts-ignore
-          fileViewer.current.contentWindow.setTheme
-        ) {
-          // @ts-ignore call setContent from iframe
-          fileViewer.current.contentWindow.setTheme(theme.palette.mode);
+        try {
+          if (
+            fileViewer &&
+            fileViewer.current &&
+            fileViewer.current.contentWindow &&
+            // @ts-ignore
+            fileViewer.current.contentWindow.setTheme
+          ) {
+            // @ts-ignore call setContent from iframe
+            fileViewer.current.contentWindow.setTheme(theme.palette.mode);
+          }
+        } catch (e) {
+          console.log('Error setTheme', e);
         }
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
