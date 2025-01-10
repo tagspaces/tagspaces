@@ -1,6 +1,4 @@
-import { TS } from '-/tagspaces.namespace';
 import { getRelativeEntryPath } from '-/services/utils-io';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();
@@ -17,7 +15,13 @@ export function isVisibleOnScreen(element: any) {
 export function getURLParameter(paramName: string, url?: string): string {
   const intUrl = url || window.location.href;
   const params = new URL(intUrl).searchParams;
-  return params.get(paramName);
+  let param = params.get(paramName);
+  // todo: temporal fix due to issue in the milkdown editor
+  if (param?.endsWith('\\')) {
+    // removing \ at the end of the param
+    param = param.substring(0, param.length - 1);
+  }
+  return param;
 }
 
 export function clearAllURLParams() {
