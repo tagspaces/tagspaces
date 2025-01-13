@@ -56,7 +56,7 @@ import ProTeaser from '-/components/ProTeaser';
 import TagLibrary from '-/components/TagLibrary';
 import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
@@ -230,30 +230,31 @@ function MobileNavigation(props: Props) {
             </ButtonGroup>
           </Box>
         </Box>
-        <Popper
-          sx={{
-            zIndex: 1,
-          }}
-          open={openedCreateMenu}
-          anchorEl={anchorRef.current}
-          role={undefined}
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin:
-                  placement === 'bottom' ? 'center top' : 'center bottom',
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
+
+        <ClickAwayListener onClickAway={handleClose}>
+          <Popper
+            sx={{
+              zIndex: 1,
+            }}
+            open={openedCreateMenu}
+            anchorEl={anchorRef.current}
+            role={undefined}
+            transition
+            disablePortal
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{
+                  transformOrigin:
+                    placement === 'bottom' ? 'center top' : 'center bottom',
+                }}
+              >
+                <Paper>
                   <TsMenuList id="split-button-menu" autoFocusItem>
                     <MenuItem
-                      key="createNewTextFileTID"
-                      data-tid="createNewTextFileTID"
+                      key="navCreateNewTextFile"
+                      data-tid="navCreateNewTextFileTID"
                       onClick={() => {
                         openNewFileDialog('txt');
                         setOpenCreateMenu(false);
@@ -268,8 +269,8 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createTextFile')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewMarkdownFileTID"
-                      data-tid="createNewMarkdownFileTID"
+                      key="navCreateNewMarkdownFile"
+                      data-tid="navCreateNewMarkdownFileTID"
                       onClick={() => {
                         openNewFileDialog('md');
                         setOpenCreateMenu(false);
@@ -285,8 +286,8 @@ function MobileNavigation(props: Props) {
                       <InfoIcon tooltip={t('core:createMarkdownTitle')} />
                     </MenuItem>
                     <MenuItem
-                      key="createHTMLTextFileTID"
-                      data-tid="createHTMLTextFileTID"
+                      key="navCreateHTMLTextFile"
+                      data-tid="navCreateHTMLTextFileTID"
                       onClick={() => {
                         openNewFileDialog('html');
                         setOpenCreateMenu(false);
@@ -302,8 +303,8 @@ function MobileNavigation(props: Props) {
                       <InfoIcon tooltip={t('core:createNoteTitle')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewLinkFile"
-                      data-tid="createNewLinkFileTID"
+                      key="navCreateNewLinkFile"
+                      data-tid="navCreateNewLinkFileTID"
                       onClick={() => {
                         openNewFileDialog('url');
                         setOpenCreateMenu(false);
@@ -318,8 +319,8 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createLinkFile')} />
                     </MenuItem>
                     <MenuItem
-                      key="createNewAudio"
-                      data-tid="createNewAudioTID"
+                      key="navCreateNewAudio"
+                      data-tid="navCreateNewAudioTID"
                       disabled={!Pro}
                       onClick={() => {
                         openNewAudioDialog();
@@ -343,7 +344,7 @@ function MobileNavigation(props: Props) {
                     </MenuItem>
                     <Divider />
                     <MenuItem
-                      key="addUploadFilesTID"
+                      key="addUploadFiles"
                       data-tid="addUploadFilesTID"
                       onClick={() => {
                         openFileUpload(currentDirectoryPath);
@@ -381,7 +382,7 @@ function MobileNavigation(props: Props) {
                       )}
                     <Divider />
                     <MenuItem
-                      key="createNewFolderTID"
+                      key="createNewFolder"
                       data-tid="createNewFolderTID"
                       onClick={() => {
                         openCreateDirectoryDialog();
@@ -398,8 +399,8 @@ function MobileNavigation(props: Props) {
                     </MenuItem>
                     <Divider />
                     <MenuItem
-                      key="createNewLocationTID"
-                      data-tid="createNewFolderTID"
+                      key="createNewLocation"
+                      data-tid="createNewLocationTID"
                       onClick={() => {
                         setSelectedLocation(undefined);
                         openCreateEditLocationDialog();
@@ -417,7 +418,7 @@ function MobileNavigation(props: Props) {
                     {!AppConfig.isCordova && (
                       <>
                         <MenuItem
-                          key="createWindowTID"
+                          key="createWindow"
                           data-tid="createWindowTID"
                           onClick={() => {
                             createNewInstance();
@@ -434,11 +435,11 @@ function MobileNavigation(props: Props) {
                       </>
                     )}
                   </TsMenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
+        </ClickAwayListener>
         <LocationManager
           reduceHeightBy={140}
           show={currentOpenedPanel === 'locationManagerPanel'}

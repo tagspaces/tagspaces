@@ -213,7 +213,7 @@ export function getDirectoryMenuItems(
     if (createNewFile) {
       menuItems.push(
         <MenuItem
-          key="createNewTextFileTID"
+          key="createNewTextFile"
           data-tid="createNewTextFileTID"
           onClick={() => {
             onClose();
@@ -229,7 +229,7 @@ export function getDirectoryMenuItems(
 
       menuItems.push(
         <MenuItem
-          key="createNewMarkdownFileTID"
+          key="createNewMarkdownFile"
           data-tid="createNewMarkdownFileTID"
           onClick={() => {
             onClose();
@@ -245,7 +245,7 @@ export function getDirectoryMenuItems(
       );
       menuItems.push(
         <MenuItem
-          key="createHTMLTextFileTID"
+          key="createHTMLTextFile"
           data-tid="createHTMLTextFileTID"
           onClick={() => {
             onClose();

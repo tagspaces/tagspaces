@@ -456,7 +456,7 @@ export async function createLocation(
     '[data-tid=locationManagerPanel]',
   );
   await locationManagerMenu.click();
-  const elem = await global.client.$('[data-tid=createNewLocation]');
+  const elem = await global.client.$('[data-tid=createNewLocationTID]');
   await elem.click();
   const lPath = await global.client.$('[data-tid=locationPath]');
   await lPath.click();
@@ -954,22 +954,22 @@ export async function createNewDirectory(dirName = testFolder) {
 
 export async function newHTMLFile() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await clickOn('[data-tid=createNewFile]');
-  await clickOn('[data-tid=createRichTextFileButton]');
+  await clickOn('[data-tid=createHTMLTextFileTID]');
+  await clickOn('[data-tid=createTID]');
   await waitForNotification();
 }
 
 export async function newMDFile() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await clickOn('[data-tid=createNewFile]');
-  await clickOn('[data-tid=createMarkdownButton]');
+  await clickOn('[data-tid=createNewMarkdownFileTID]');
+  await clickOn('[data-tid=createTID]');
   await waitForNotification();
 }
 
 export async function createTxtFile() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await clickOn('[data-tid=createNewFile]');
-  await clickOn('[data-tid=createTextFileButton]');
+  await clickOn('[data-tid=createNewTextFileTID]');
+  await clickOn('[data-tid=createTID]');
   await waitForNotification();
 }
 

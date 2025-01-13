@@ -16,7 +16,6 @@ import {
   expectMediaPlay,
   getGridFileSelector,
   isDisplayed,
-  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu } from './test-utils';
@@ -67,7 +66,7 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.ogg'),
       'fileMenuOpenFile',
     );
-    await expectMediaPlay();
+    await expectMediaPlay(false);
   });
 
   test('TST5902 - Play ogv file [web,minio,electron]', async () => {

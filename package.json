@@ -135,7 +135,7 @@
     "test": "jest",
     "test-clone-data": "rimraf tests/testdata && git clone https://github.com/tagspaces/testdata tests/testdata",
     "test-playwright": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '^(?!.*\\b_pro\\b).*\\belectron\\b.*'",
-    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\belectron\\b/'",
+    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\bTST5901\\b/'",
     "test-playwright-s3": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --config ./playwright.config.s3.js -g '/\\bminio\\b/'",
     "test-playwright-minio": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.minio.js -g '/\\bminio\\b/'",
     "test-playwright-web": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",

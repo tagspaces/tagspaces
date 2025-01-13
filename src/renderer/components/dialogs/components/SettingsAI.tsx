@@ -251,7 +251,7 @@ function SettingsAI(props: Props) {
                       <TsMenuList id="split-button-menu" autoFocusItem>
                         <MenuItem
                           key="createNewTextFileTID"
-                          data-tid="createNewTextFileTID"
+                          data-tid="aiCreateNewTextFileTID"
                           onClick={() => {
                             addAiProvider('ollama');
                             setOpenedNewAIMenu(false);
