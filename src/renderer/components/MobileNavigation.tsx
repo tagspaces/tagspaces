@@ -253,7 +253,7 @@ function MobileNavigation(props: Props) {
                   <TsMenuList id="split-button-menu" autoFocusItem>
                     <MenuItem
                       key="createNewTextFileTID"
-                      ata-tid="createNewTextFileTID"
+                      data-tid="createNewTextFileTID"
                       onClick={() => {
                         openNewFileDialog('txt');
                         setOpenCreateMenu(false);
@@ -269,7 +269,7 @@ function MobileNavigation(props: Props) {
                     </MenuItem>
                     <MenuItem
                       key="createNewMarkdownFileTID"
-                      ata-tid="createNewMarkdownFileTID"
+                      data-tid="createNewMarkdownFileTID"
                       onClick={() => {
                         openNewFileDialog('md');
                         setOpenCreateMenu(false);
@@ -382,7 +382,7 @@ function MobileNavigation(props: Props) {
                     <Divider />
                     <MenuItem
                       key="createNewFolderTID"
-                      ata-tid="createNewFolderTID"
+                      data-tid="createNewFolderTID"
                       onClick={() => {
                         openCreateDirectoryDialog();
                         setOpenCreateMenu(false);
@@ -399,7 +399,7 @@ function MobileNavigation(props: Props) {
                     <Divider />
                     <MenuItem
                       key="createNewLocationTID"
-                      ata-tid="createNewFolderTID"
+                      data-tid="createNewFolderTID"
                       onClick={() => {
                         setSelectedLocation(undefined);
                         openCreateEditLocationDialog();
@@ -418,7 +418,7 @@ function MobileNavigation(props: Props) {
                       <>
                         <MenuItem
                           key="createWindowTID"
-                          ata-tid="createWindowTID"
+                          data-tid="createWindowTID"
                           onClick={() => {
                             createNewInstance();
                             setOpenCreateMenu(false);

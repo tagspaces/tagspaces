@@ -214,7 +214,7 @@ export function getDirectoryMenuItems(
       menuItems.push(
         <MenuItem
           key="createNewTextFileTID"
-          ata-tid="createNewTextFileTID"
+          data-tid="createNewTextFileTID"
           onClick={() => {
             onClose();
             createNewFile('txt');
@@ -230,7 +230,7 @@ export function getDirectoryMenuItems(
       menuItems.push(
         <MenuItem
           key="createNewMarkdownFileTID"
-          ata-tid="createNewMarkdownFileTID"
+          data-tid="createNewMarkdownFileTID"
           onClick={() => {
             onClose();
             createNewFile('md');
