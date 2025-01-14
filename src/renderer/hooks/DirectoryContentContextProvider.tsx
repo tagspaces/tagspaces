@@ -34,8 +34,10 @@ import {
   getShowUnixHiddenEntries,
 } from '-/reducers/settings';
 import {
+  cleanMetaData,
   executePromisesInBatches,
   instanceId,
+  mergeFsEntryMeta,
   updateFsEntries,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -245,11 +247,12 @@ export const DirectoryContentContextProvider = ({
   //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
-  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
+  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
+  const defaultColumnsToShow = 3;
   const currentLocation = findLocation(currentLocationId);
 
   useEffect(() => {
@@ -809,9 +812,34 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryDirs.current = meta.customOrder?.folders || [];
       currentDirectoryFiles.current = meta.customOrder?.files || [];
     } else {
-      directoryMeta.current = getDefaultDirMeta();
-      currentDirectoryDirs.current = [];
       currentDirectoryFiles.current = [];
+      // add defaultColumnsToShow
+      const columnsToShow = entries
+        .filter((entry) => !entry.isFile)
+        .slice(0, defaultColumnsToShow);
+      currentDirectoryDirs.current = columnsToShow.map((dir) => ({
+        uuid: dir.uuid,
+        name: dir.name,
+      }));
+      const meta = cleanMetaData(
+        mergeFsEntryMeta({
+          ...getDefaultDirMeta(),
+          customOrder: {
+            folders: currentDirectoryDirs.current,
+          },
+        }),
+      );
+      directoryMeta.current = meta;
+      const content = JSON.stringify(meta);
+      const metaFilePath = getMetaFileLocationForDir(
+        directoryPath,
+        location.getDirSeparator(),
+      );
+      await location.saveTextFilePromise(
+        { path: metaFilePath, locationID: location.uuid },
+        content,
+        true,
+      );
     }
 
     // Set current directory entries
