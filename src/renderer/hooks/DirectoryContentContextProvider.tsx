@@ -339,8 +339,9 @@ export const DirectoryContentContextProvider = ({
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (
+          action.entry &&
           cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-          cleanTrailingDirSeparator(action.entry.path)
+            cleanTrailingDirSeparator(action.entry.path)
         ) {
           if (action.action === 'perspectiveChange') {
             if (action.entry.meta.perspective !== undefined) {
@@ -977,20 +978,25 @@ export const DirectoryContentContextProvider = ({
           const reloadMeta =
             cleanTrailingDirSeparator(currentDirectoryPath.current) ===
             cleanTrailingDirSeparator(dirPath);
-          return loadMetaDirectoryContent(
-            dirPath,
-            cLocation,
-            showHiddenEntries,
-          ).then((dirEntries) => {
-            if (dirEntries && reloadMeta) {
-              // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
-              return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
-                updateCurrentDirEntries(entries);
-                return true;
+          return loadMetaDirectoryContent(dirPath, cLocation, showHiddenEntries)
+            .then((dirEntries) => {
+              if (dirEntries && reloadMeta) {
+                // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
+                return loadCurrentDirMeta(dirPath, dirEntries).then(
+                  (entries) => {
+                    updateCurrentDirEntries(entries);
+                    return true;
+                  },
+                );
+              }
+              return true;
+            })
+            .then(() => {
+              setReflectMetaActions({
+                action: 'thumbGenerate',
               });
-            }
-            return true;
-          });
+              return true;
+            });
         } else {
           showNotification(t('core:invalidLink'), 'warning', true);
           return false;
