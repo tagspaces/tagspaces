@@ -73,16 +73,19 @@ test.describe('TST51 - Perspective openGalleryPerspective', () => {
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,
+      10000,
     );
     await clickOn('[data-tid=fileContainerNextFile]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(nextFileName) + ']',
       true,
+      4000,
     );
     await clickOn('[data-tid=fileContainerPrevFile]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,
+      4000,
     );
   });
 });

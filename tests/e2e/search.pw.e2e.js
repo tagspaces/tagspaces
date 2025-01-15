@@ -388,6 +388,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 8000);
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-1');
     await addSearchCommand('sample.html', true);

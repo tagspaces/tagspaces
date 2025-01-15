@@ -46,6 +46,7 @@ interface Props {
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
   haveError: (error: boolean) => void;
+  urlInputError?: string;
   tidPrefix?: string;
 }
 
@@ -57,6 +58,7 @@ function CreateLink(props: Props) {
     handleFileNameChange,
     handleFileContentChange,
     haveError,
+    urlInputError,
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
@@ -146,10 +148,10 @@ function CreateLink(props: Props) {
           <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
         )}
       </FormControl>
-      <FormControl fullWidth={true} error={urlError}>
+      <FormControl fullWidth={true} error={urlError || !!urlInputError}>
         <TsTextField
           autoFocus
-          error={urlError}
+          error={urlError || !!urlInputError}
           id="fileLinkID"
           label={t('core:linkURL')}
           onChange={handleUrlChange}
@@ -157,6 +159,7 @@ function CreateLink(props: Props) {
         {urlError && (
           <FormHelperText>{t('core:urlValidationHelp')}</FormHelperText>
         )}
+        {urlInputError && <FormHelperText>{urlInputError}</FormHelperText>}
       </FormControl>
     </StyledGrid>
   );

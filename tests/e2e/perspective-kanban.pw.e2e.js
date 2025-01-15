@@ -76,6 +76,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmMoveFiles]');
+
+    // hide empty_folder in order to expect moved file is not shown
+    await clickOn('[data-tid=empty_folderKanBanColumnActionTID]');
+    await clickOn('[data-tid=columnVisibilityTID]');
+
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),

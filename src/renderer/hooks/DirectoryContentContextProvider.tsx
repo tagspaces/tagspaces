@@ -34,8 +34,10 @@ import {
   getShowUnixHiddenEntries,
 } from '-/reducers/settings';
 import {
+  cleanMetaData,
   executePromisesInBatches,
   instanceId,
+  mergeFsEntryMeta,
   updateFsEntries,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -245,11 +247,12 @@ export const DirectoryContentContextProvider = ({
   //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
-  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
+  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
+  const defaultColumnsToShow = 3;
   const currentLocation = findLocation(currentLocationId);
 
   useEffect(() => {
@@ -336,8 +339,9 @@ export const DirectoryContentContextProvider = ({
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (
+          action.entry &&
           cleanTrailingDirSeparator(currentDirectoryPath.current) ===
-          cleanTrailingDirSeparator(action.entry.path)
+            cleanTrailingDirSeparator(action.entry.path)
         ) {
           if (action.action === 'perspectiveChange') {
             if (action.entry.meta.perspective !== undefined) {
@@ -809,9 +813,34 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryDirs.current = meta.customOrder?.folders || [];
       currentDirectoryFiles.current = meta.customOrder?.files || [];
     } else {
-      directoryMeta.current = getDefaultDirMeta();
-      currentDirectoryDirs.current = [];
       currentDirectoryFiles.current = [];
+      // add defaultColumnsToShow
+      const columnsToShow = entries
+        .filter((entry) => !entry.isFile)
+        .slice(0, defaultColumnsToShow);
+      currentDirectoryDirs.current = columnsToShow.map((dir) => ({
+        uuid: dir.uuid,
+        name: dir.name,
+      }));
+      const meta = cleanMetaData(
+        mergeFsEntryMeta({
+          ...getDefaultDirMeta(),
+          customOrder: {
+            folders: currentDirectoryDirs.current,
+          },
+        }),
+      );
+      directoryMeta.current = meta;
+      const content = JSON.stringify(meta);
+      const metaFilePath = getMetaFileLocationForDir(
+        directoryPath,
+        location.getDirSeparator(),
+      );
+      await location.saveTextFilePromise(
+        { path: metaFilePath, locationID: location.uuid },
+        content,
+        true,
+      );
     }
 
     // Set current directory entries
@@ -949,20 +978,25 @@ export const DirectoryContentContextProvider = ({
           const reloadMeta =
             cleanTrailingDirSeparator(currentDirectoryPath.current) ===
             cleanTrailingDirSeparator(dirPath);
-          return loadMetaDirectoryContent(
-            dirPath,
-            cLocation,
-            showHiddenEntries,
-          ).then((dirEntries) => {
-            if (dirEntries && reloadMeta) {
-              // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
-              return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
-                updateCurrentDirEntries(entries);
-                return true;
+          return loadMetaDirectoryContent(dirPath, cLocation, showHiddenEntries)
+            .then((dirEntries) => {
+              if (dirEntries && reloadMeta) {
+                // load meta files (reload of the same directory is not handled from ThumbGenerationContextProvider)
+                return loadCurrentDirMeta(dirPath, dirEntries).then(
+                  (entries) => {
+                    updateCurrentDirEntries(entries);
+                    return true;
+                  },
+                );
+              }
+              return true;
+            })
+            .then(() => {
+              setReflectMetaActions({
+                action: 'thumbGenerate',
               });
-            }
-            return true;
-          });
+              return true;
+            });
         } else {
           showNotification(t('core:invalidLink'), 'warning', true);
           return false;
