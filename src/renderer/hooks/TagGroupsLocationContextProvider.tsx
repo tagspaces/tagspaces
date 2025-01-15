@@ -361,7 +361,7 @@ export const TagGroupsLocationContextProvider = ({
     const metaDirectoryProperties =
       await location.getPropertiesPromise(metaDirectoryPath);
     if (!metaDirectoryProperties) {
-      await createDirectoryPromise(metaDirectoryPath, location.uuid);
+      await createDirectoryPromise(metaDirectoryPath, location.uuid, false);
     }
 
     metaFilePath = getMetaFileLocationForDir(

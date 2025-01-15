@@ -242,6 +242,7 @@ export const OpenedEntryContextProvider = ({
       for (const action of metaActions) {
         if (
           currentEntry.current &&
+          action.entry &&
           currentEntry.current.path === action.entry.path
         ) {
           if (

@@ -22,6 +22,7 @@ import { defaultSettings } from '-/perspectives/grid';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type PaginationContextData = {
   page: number;
@@ -44,6 +45,7 @@ export const PaginationContextProvider = ({
 }: PaginationContextProviderProps) => {
   const initPage = 1;
   const { currentDirectoryPath, isSearchMode } = useDirectoryContentContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { settings, showDirectories } = usePerspectiveSettingsContext();
   const { sortedDirContent } = useSortedDirContext();
 
@@ -91,17 +93,14 @@ export const PaginationContextProvider = ({
 
   function setCurrentPage(currentPage: number) {
     setPage(currentPage);
-    /*const entries = getPageFiles(currentPage, sortedDirContent);
-    return generateThumbnails(entries).then(() => {
-      return loadCurrentDirMeta(
-        currentDirectoryPath,
-        currentDirectoryEntries,
-        entries
-      ).then(entries => {
-        updateCurrentDirEntries(entries);
-        return true;
-      });
-    });*/
+    const files = getPageFiles(currentPage, sortedDirContent);
+    if (files && files.length > 0) {
+      const actions: TS.EditMetaAction[] = files.map((file) => ({
+        action: 'thumbGenerate',
+        entry: file,
+      }));
+      setReflectMetaActions(...actions);
+    }
   }
 
   const context = useMemo(() => {

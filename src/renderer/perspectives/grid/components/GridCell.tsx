@@ -208,7 +208,7 @@ function GridCell(props: Props) {
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
-        if (fsEntry.path === action.entry.path) {
+        if (action.entry && fsEntry.path === action.entry.path) {
           if (
             action.action === 'thumbChange' ||
             action.action === 'bgdColorChange' ||

@@ -82,7 +82,7 @@ export const ThumbGenerationContextProvider = ({
   const { saveBinaryFilePromise, createDirectoryPromise } =
     usePlatformFacadeContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { pageFiles, page } = usePaginationContext();
+  const { pageFiles } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
@@ -111,7 +111,7 @@ export const ThumbGenerationContextProvider = ({
     // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
   ];
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (currentDirectoryPath !== undefined) {
       const entries =
         pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
@@ -135,25 +135,39 @@ export const ThumbGenerationContextProvider = ({
         });
       }
     }
-  }, [currentDirectoryPath, page]); //, isMetaFolderExist]);
+  }, [currentDirectoryPath, page]); //, isMetaFolderExist]);*/
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
       const entries = [];
+      let genThumbs = false;
       for (const action of metaActions) {
         if (action.action === 'thumbGenerate') {
-          entries.push(action.entry);
+          genThumbs = true;
+          if (action.entry) {
+            entries.push(action.entry);
+          }
         }
       }
-      if (entries.length > 0) {
-        generateThumbnails(entries).then(() => {
-          return loadCurrentDirMeta(currentDirectoryPath, entries).then(
-            (ent) => {
-              updateCurrentDirEntries(ent);
-              return true;
-            },
-          );
-        });
+      if (genThumbs) {
+        let genEntries;
+        if (entries.length > 0) {
+          genEntries = entries;
+        } else if (pageFiles && pageFiles.length > 0) {
+          genEntries = pageFiles;
+        } else {
+          genEntries = currentDirectoryEntries;
+        }
+        if (genEntries) {
+          generateThumbnails(genEntries).then(() => {
+            return loadCurrentDirMeta(currentDirectoryPath, genEntries).then(
+              (ent) => {
+                updateCurrentDirEntries(ent);
+                return true;
+              },
+            );
+          });
+        }
       }
     }
   }, [metaActions]);

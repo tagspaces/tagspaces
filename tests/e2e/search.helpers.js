@@ -29,9 +29,10 @@ export async function addSearchCommand(
   executeSearch = true,
   forceOpenMenu = false,
 ) {
-  if (!(await isDisplayed('#textQuery'))) {
+  if (await isDisplayed('#textQuery', false, 2000)) {
     await clickOn('[data-tid=toggleSearch]');
   }
+  await expectElementExist('#textQuery', true, 3000);
   await typeInputValue('#textQuery', command);
   if (!findAction(command, true)) {
     await global.client.keyboard.press('Enter');

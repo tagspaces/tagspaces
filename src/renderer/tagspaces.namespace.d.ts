@@ -134,7 +134,7 @@ export namespace TS {
       | 'thumbGenerate'
       | 'bgdImgChange'
       | 'bgdColorChange';
-    entry: TS.FileSystemEntry;
+    entry?: TS.FileSystemEntry;
   }
 
   interface PerspectiveActions {
