@@ -16,7 +16,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { supportedFileTypes } from '-/extension-config';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
@@ -30,6 +29,7 @@ import {
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import removeMd from 'remove-markdown';
+import defaultSettings from '-/reducers/settings-default';
 import versionMeta from '../version.json';
 
 export const instanceId = getUuid();
@@ -798,14 +798,18 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
 }*/
 
 export function getDefaultViewer(fileType) {
-  const type = supportedFileTypes.find((fType) => fType.type === fileType);
+  const type = defaultSettings.supportedFileTypes.find(
+    (fType) => fType.type === fileType,
+  );
   if (type) {
     return type.viewer;
   }
   return undefined;
 }
 export function getDefaultEditor(fileType) {
-  const type = supportedFileTypes.find((fType) => fType.type === fileType);
+  const type = defaultSettings.supportedFileTypes.find(
+    (fType) => fType.type === fileType,
+  );
   if (type) {
     return type.editor;
   }

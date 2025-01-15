@@ -49,7 +49,7 @@ import {
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { AppDispatch } from '-/reducers/app';
-import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
+import defaultSettings from '-/reducers/settings-default';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 import { getUserDataDir } from '-/services/utils-io';
@@ -500,7 +500,7 @@ function SettingsFileTypes() {
           data-tid="resetFileTypesTID"
           onClick={() => {
             selectedItem.current = undefined;
-            items.current = defaultSupportedFileTypes;
+            items.current = defaultSettings.supportedFileTypes;
             dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
           }}
           color="secondary"

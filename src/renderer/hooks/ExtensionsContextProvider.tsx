@@ -25,11 +25,13 @@ import React, {
 } from 'react';
 import { AppDispatch } from '-/reducers/app';
 import AppConfig from '-/AppConfig';
-import { actions as SettingsActions } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getExtensionsFound,
+} from '-/reducers/settings';
 import { Extensions } from '../../main/types';
 import { TS } from '-/tagspaces.namespace';
-import { extensionsFound } from '-/extension-config';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { mergeByProp } from '-/services/utils-io';
 
 type ExtensionsContextData = {
@@ -56,6 +58,7 @@ export const ExtensionsContextProvider = ({
   children,
 }: ExtensionsContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
+  const extensionsFound = useSelector(getExtensionsFound);
   const extensions = useRef<TS.Extension[]>(extensionsFound);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const enableExtensionsKey = 'ENABLE_EXTENSION';
