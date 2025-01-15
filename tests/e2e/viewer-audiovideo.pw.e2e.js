@@ -82,7 +82,7 @@ test.describe('TST59 - Media player', () => {
       getGridFileSelector('sample.mp4'),
       'fileMenuOpenFile',
     );
-
+    await expectElementExist('iframe', true, 8000);
     // Access the iframe
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();
