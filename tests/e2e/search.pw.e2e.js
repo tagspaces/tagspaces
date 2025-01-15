@@ -291,7 +291,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file3, tags3), true, 5000);
 
     await addSearchCommand('-' + tags3[1], true);
-    // await expectElementExist(getFileName(file1, tags1), true, 5000);
+    await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
     await expectElementExist(getFileName(file3, tags3), false, 5000);
   });
