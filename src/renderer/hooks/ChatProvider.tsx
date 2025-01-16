@@ -46,7 +46,11 @@ import {
   extractFileExtension,
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
-import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
+import {
+  getUuid,
+  loadJSONString,
+  extractTextContent,
+} from '@tagspaces/tagspaces-common/utils-io';
 import { format } from 'date-fns';
 import React, {
   createContext,
@@ -694,7 +698,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (openedEntry.path.endsWith('.pdf')) {
       return extractPDFcontent(content);
     } else if (openedEntry.path.endsWith('.html')) {
-      // todo return extractTextContent(content);
+      return extractTextContent(openedEntry.name, content);
     }
     return Promise.resolve(content);
   }
