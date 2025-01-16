@@ -21,7 +21,11 @@ import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
-import { actions as SettingsActions } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getTagColor,
+  getTagTextColor,
+} from '-/reducers/settings';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -35,6 +39,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
 import { AppDispatch } from '-/reducers/app';
+import { getTagColors } from '-/services/taglibrary-utils';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -50,6 +55,8 @@ function AiGenTagsButton(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { openedEntry } = useOpenedEntryContext();
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
   const { generate, openedEntryModel, newChatMessage } = useChatContext();
   const { addTagsToFsEntry } = useTaggingActionsContext();
   const { showNotification } = useNotificationContext();
@@ -75,10 +82,13 @@ function AiGenTagsButton(props: Props) {
     if (response) {
       try {
         const regex = /\{([^}]+)\}/g;
-        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => ({
-          title: match[1].trim().replace(/^,|,$/g, '').toLowerCase(),
-          type: 'sidecar',
-        }));
+        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
+          const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
+          return {
+            title: tagTitle,
+            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
+          };
+        });
         addTagsToFsEntry(openedEntry, tags).then(() =>
           dispatch(
             SettingsActions.setEntryContainerTab(TabNames.propertiesTab),
@@ -119,7 +129,7 @@ function AiGenTagsButton(props: Props) {
             handleGenerationResults(results),
           );
         } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          generate(ext === 'pdf' ? 'image' : 'text', 'tags').then((results) =>
+          generate('text', 'tags').then((results) =>
             handleGenerationResults(results),
           );
         }

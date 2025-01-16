@@ -166,7 +166,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      refreshOllamaModels();
+      //refreshOllamaModels();
       window.electronIO.ipcRenderer.on(
         'PullModel',
         (message: PullModelResponse) => {
@@ -303,7 +303,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             const model = findModel(modelName);
             if (model) {
               return setModel(model);
-            } else if (currentModel.current === undefined) {
+            } else {
+              //if (currentModel.current === undefined) {
               //set defaultTextModel if not found
               return setModel(defaultAiProvider.defaultTextModel);
             }
@@ -721,7 +722,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       return currentLocation
         .getFileContentPromise(
           openedEntry.path,
-          fileContent === 'text' ? 'text' : 'arraybuffer',
+          fileContent === 'text' && !openedEntry.path.endsWith('.pdf')
+            ? 'text'
+            : 'arraybuffer',
         )
         .then((content) => getFileContent(content))
         .then((content) =>
