@@ -144,13 +144,15 @@ function EntryContainerTitle(props: Props) {
   const addMacMargin =
     AppConfig.isMacLike && desktopMode && (smallScreen || isEntryInFullWidth);
 
+  const rightMargin = smallScreen ? 35 : 70;
+
   return (
     <div
       style={{
         paddingLeft: 5,
         display: 'flex',
         alignItems: 'center',
-        marginRight: openedEntry.isFile ? 100 : 0,
+        marginRight: openedEntry.isFile ? rightMargin : 0,
         flexDirection: 'row',
         flex: '1 1',
         overflowX: 'auto',
