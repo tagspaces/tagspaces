@@ -70,6 +70,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
     }
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
     await openContextEntryMenu(
       getGridFileSelector(fileName),
       'fileMenuMoveCopyFile',
@@ -95,6 +96,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
     }
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
     await clickOn(getGridFileSelector(fileName));
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
