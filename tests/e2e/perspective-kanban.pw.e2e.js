@@ -62,6 +62,11 @@ test.beforeEach(async () => {
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   await clickOn('[data-tid=openKanbanPerspective]');
+  await expectElementExist(
+    '[data-tid=kanbanSettingsDialogOpenTID]',
+    true,
+    5000,
+  );
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
