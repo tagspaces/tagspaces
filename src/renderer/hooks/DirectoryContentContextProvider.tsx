@@ -836,11 +836,15 @@ export const DirectoryContentContextProvider = ({
         directoryPath,
         location.getDirSeparator(),
       );
-      await location.saveTextFilePromise(
-        { path: metaFilePath, locationID: location.uuid },
-        content,
-        true,
-      );
+      try {
+        await location.saveTextFilePromise(
+          { path: metaFilePath, locationID: location.uuid },
+          content,
+          true,
+        );
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     // Set current directory entries
