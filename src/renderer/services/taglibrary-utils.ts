@@ -88,15 +88,14 @@ export const getTagColors = (
   defaultTextColor: string,
   defaultBackgroundColor: string,
 ) => {
-  const tagColors = {
-    textcolor: defaultTextColor,
-    color: defaultBackgroundColor,
-  };
-  getAllTags().forEach((tag: TS.Tag) => {
-    if (tag.title === tagTitle) {
-      tagColors.textcolor = tag.textcolor;
-      tagColors.color = tag.color;
-    }
-  });
-  return tagColors;
+  const tagExist = getAllTags().find((tag: TS.Tag) => tag.title === tagTitle);
+  return tagExist
+    ? {
+        textcolor: tagExist.textcolor || defaultTextColor,
+        color: tagExist.color || defaultBackgroundColor,
+      }
+    : {
+        textcolor: defaultTextColor,
+        color: defaultBackgroundColor,
+      };
 };

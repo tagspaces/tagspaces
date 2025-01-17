@@ -62,6 +62,11 @@ test.beforeEach(async () => {
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   await clickOn('[data-tid=openKanbanPerspective]');
+  await expectElementExist(
+    '[data-tid=kanbanSettingsDialogOpenTID]',
+    true,
+    5000,
+  );
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
@@ -70,6 +75,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
     }
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
     await openContextEntryMenu(
       getGridFileSelector(fileName),
       'fileMenuMoveCopyFile',
@@ -95,6 +101,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
     }
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
     await clickOn(getGridFileSelector(fileName));
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',

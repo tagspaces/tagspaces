@@ -1,7 +1,7 @@
 import { AppConfig } from '@tagspaces/tagspaces-common';
 
 AppConfig.aiSupportedFiletypes = {
-  text: ['pdf', 'txt', 'md'], //, 'html'],
+  text: ['pdf', 'txt', 'md', 'html'],
   image: ['jpg', 'jpeg', 'png'],
 };
 AppConfig.editableFiles = [
