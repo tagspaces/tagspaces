@@ -24,7 +24,6 @@ import {
   ChatMode,
   ChatRole,
   HistoryModel,
-  Model,
   PullModelResponse,
 } from '-/components/chat/ChatTypes';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
@@ -63,27 +62,29 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { getOllamaModels } from '-/components/chat/OllamaClient';
+import { ModelResponse } from 'ollama';
 
 type ChatData = {
-  models: Model[];
+  models: ModelResponse[];
   images: ChatImage[];
-  currentModel: Model;
-  openedEntryModel: Model;
+  currentModel: ModelResponse;
+  openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
   //isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
-  setModel: (model: Model | string) => Promise<boolean>;
+  setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (modelName: string) => void;
-  findModel: (modelName: string) => Model;
+  findModel: (modelName: string) => ModelResponse;
   getHistoryFilePath: (name?: string) => string;
   changeCurrentModel: (
     newModelName: string,
     confirmCallback?: () => void,
   ) => Promise<boolean>;
-  getModel: (modelName: string) => Promise<Model>;
+  getModel: (modelName: string) => Promise<ModelResponse>;
   addTimeLineRequest: (txt: string, role: ChatRole) => void;
   addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
@@ -139,11 +140,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
-  const models = useRef<Model[]>([]);
+  const models = useRef<ModelResponse[]>([]);
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const selectedTabName = useSelector(getEntryContainerTab);
-  const currentModel = useRef<Model>(undefined);
-  const openedEntryModel = useRef<Model>(
+  const currentModel = useRef<ModelResponse>(undefined);
+  const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
   );
   const images = useRef<ChatImage[]>([]);
@@ -238,7 +239,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function getOpenedEntryModel(
     fileName: string,
     aiProvider: AIProvider,
-  ): Model {
+  ): ModelResponse {
     if (fileName && aiProvider) {
       const ext = extractFileExtension(fileName).toLowerCase();
       let model;
@@ -295,26 +296,24 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function refreshOllamaModels(modelName = undefined) {
     if (AppConfig.isElectron && defaultAiProvider) {
-      window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', defaultAiProvider.url)
-        .then((m) => {
-          if (m) {
-            models.current = m;
-            const model = findModel(modelName);
-            if (model) {
-              return setModel(model);
-            } else {
-              //if (currentModel.current === undefined) {
-              //set defaultTextModel if not found
-              return setModel(defaultAiProvider.defaultTextModel);
-            }
-            forceUpdate();
+      getOllamaModels(defaultAiProvider.url).then((m) => {
+        if (m) {
+          models.current = m;
+          const model = findModel(modelName);
+          if (model) {
+            return setModel(model);
+          } else {
+            //if (currentModel.current === undefined) {
+            //set defaultTextModel if not found
+            return setModel(defaultAiProvider.defaultTextModel);
           }
-        });
+          forceUpdate();
+        }
+      });
     }
   }
 
-  function setModel(m: Model | string): Promise<boolean> {
+  function setModel(m: ModelResponse | string): Promise<boolean> {
     const model = typeof m === 'string' ? findModel(m) : m;
     if (
       model &&
@@ -425,20 +424,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * check if model is installed and return details
    * @param modelName
    */
-  function getModel(modelName: string): Promise<Model> {
+  function getModel(modelName: string): Promise<ModelResponse> {
     if (!AppConfig.isElectron || !modelName || !defaultAiProvider) {
       return Promise.resolve(undefined);
     }
-    return window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', defaultAiProvider.url)
-      .then((m) => {
-        if (m && m.length > 0) {
-          return m.find(
-            (mm) => mm.name === modelName || mm.name === modelName + ':latest',
-          );
-        }
-        return undefined;
-      });
+    return getOllamaModels(defaultAiProvider.url).then((m) => {
+      if (m && m.length > 0) {
+        return m.find(
+          (mm) => mm.name === modelName || mm.name === modelName + ':latest',
+        );
+      }
+      return undefined;
+    });
   }
 
   function changeCurrentModel(

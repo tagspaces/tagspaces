@@ -64,6 +64,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { ChangeEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { getOllamaModels } from '-/components/chat/OllamaClient';
 
 interface Props {
   closeSettings: () => void;
@@ -103,20 +104,18 @@ function SettingsAI(props: Props) {
 
   function checkOllamaAlive() {
     aiProviders.map((provider) =>
-      window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', provider.url)
-        .then((m) => {
-          const alive = !!m;
-          providersAlive.current = {
-            ...providersAlive.current,
-            [provider.id]: alive,
-          };
-          forceUpdate();
-          return alive;
-          /*if (provider.alive !== alive) {
+      getOllamaModels(provider.url).then((m) => {
+        const alive = !!m;
+        providersAlive.current = {
+          ...providersAlive.current,
+          [provider.id]: alive,
+        };
+        forceUpdate();
+        return alive;
+        /*if (provider.alive !== alive) {
             handleChangeProvider(provider.id, 'alive', alive);
           }*/
-        }),
+      }),
     );
     //Promise.all(promises).then(() => forceUpdate());
   }
@@ -143,23 +142,21 @@ function SettingsAI(props: Props) {
     //event: ChangeEvent<HTMLInputElement>) => {
     //const provider: AIProviders = event.target.value as AIProviders;
     const providerUrl = provider === 'ollama' ? 'http://localhost:11434' : '';
-    window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', providerUrl)
-      .then((m) => {
-        const providerId = getUuid();
-        providersAlive.current = {
-          ...providersAlive.current,
-          [providerId]: !!m,
-        };
-        const aiProvider: AIProvider = {
-          id: providerId,
-          engine: provider,
-          name: provider,
-          url: providerUrl,
-          enable: true,
-        };
-        dispatch(SettingsActions.addAiProvider(aiProvider));
-      });
+    getOllamaModels(providerUrl).then((m) => {
+      const providerId = getUuid();
+      providersAlive.current = {
+        ...providersAlive.current,
+        [providerId]: !!m,
+      };
+      const aiProvider: AIProvider = {
+        id: providerId,
+        engine: provider,
+        name: provider,
+        url: providerUrl,
+        enable: true,
+      };
+      dispatch(SettingsActions.addAiProvider(aiProvider));
+    });
   };
 
   const externalConfig = typeof window.ExtAI !== 'undefined';

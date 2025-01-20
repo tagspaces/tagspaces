@@ -18,7 +18,6 @@
 
 import { AIIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsSelect from '-/components/TsSelect';
-import { Model } from '-/components/chat/ChatTypes';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useChatContext } from '-/hooks/useChatContext';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -27,6 +26,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ModelResponse } from 'ollama';
 
 interface Props {
   id?: string;
@@ -43,59 +43,122 @@ function SelectChatModel(props: Props) {
   const [isCustomModelPromptDialogOpened, setCustomModelPromptDialogOpened] =
     useState(false);
 
-  const ollamaAvailableModels: Model[] = [
+  const ollamaAvailableModels: ModelResponse[] = [
     {
       name: 'llama3.1',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format:
           '4,6 GB. The largest language model from Meta, featuring 405 billion parameters. It is one of the leading open-source AI models, capable of understanding and processing information deeply and diversely',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'llama3.2',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format:
           'new 1B and 3B lightweight models are designed for seamless integration on mobile and edge devices. With these models, you can build private, personalized AI experiences with minimal latency and resource overhead.',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'llama3.2-vision:11b',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format: 'requires least 8GB of VRAM.',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'gemma2',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format:
           "5,4 GB. One of GEMMA2's standout features is its ability to handle and integrate multiple data modalities. Traditional AI models often specialise in a single type of data — text, images, or audio. GEMMA2, however, can process and synthesise information from all these sources simultaneously.",
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'codegemma',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format:
           'CodeGemma models are text-to-text and text-to-code decoder-only models and are available as a 7 billion pretrained variant that specializes in code completion and code generation tasks, a 7 billion parameter instruction-tuned variant for code chat and instruction following and a 2 billion parameter pretrained variant.',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'llava',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format:
           'large multimodal model that is designed to understand and generate content based on both visual inputs (images) and textual instructions.',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
     {
       name: 'tinyllama',
-      engine: 'ollama',
+      modified_at: new Date(),
+      size: 1,
+      digest: '',
+      expires_at: new Date(),
+      size_vram: 0,
       details: {
+        family: 'ollama',
         format: 'TinyLlama is a compact model with only 1.1B parameters.',
+        parent_model: 'ollama',
+        families: ['ollama'],
+        parameter_size: '',
+        quantization_level: '',
       },
     },
   ];
@@ -148,7 +211,7 @@ function SelectChatModel(props: Props) {
             <MenuItem
               key={model.name}
               value={model.name}
-              title={model.modified_at}
+              title={model.modified_at.toDateString()}
             >
               {' '}
               <ListItemIcon>
