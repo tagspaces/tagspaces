@@ -172,7 +172,7 @@ export const CurrentLocationContextProvider = ({
         if (instanceId !== action.uuid) {
           if (action.type === 'addLocation') {
             const location = action.payload as TS.Location;
-            addLocationInt(new CommonLocation(location));
+            addLocationInt(new CommonLocation(location), false);
           } else if (action.type === 'editLocation') {
             const location = action.payload as TS.Location;
             skipInitialDirList.current = true; // don't change location dir after reflect
