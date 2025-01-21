@@ -81,14 +81,21 @@ function AiGenTagsButton(props: Props) {
     setIsLoading(false);
     if (response) {
       try {
-        const regex = /\{([^}]+)\}/g;
+        const tags: TS.Tag[] = response.map((tag) => {
+          const tagTitle = tag.toLowerCase();
+          return {
+            title: tagTitle,
+            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
+          };
+        });
+        /* const regex = /\{([^}]+)\}/g;
         const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
           const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
           return {
             title: tagTitle,
             ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
           };
-        });
+        });*/
         addTagsToFsEntry(openedEntry, tags).then(() =>
           dispatch(
             SettingsActions.setEntryContainerTab(TabNames.propertiesTab),

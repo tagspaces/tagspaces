@@ -64,8 +64,6 @@ function ChatView() {
     images,
     removeImage,
     chatHistoryItems,
-    addTimeLineResponse,
-    unloadCurrentModel,
     newChatMessage,
     changeCurrentModel,
     setModel,
@@ -93,24 +91,24 @@ function ChatView() {
     return ''; // Return an empty string if newText does not start with oldText
   };*/
 
-  const chatMessageHandler = useMemo(() => {
+  /*const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
       //console.log(`Chat ${msg}`);
       const items = addTimeLineResponse(msg, replace);
       if (editorRef.current) {
         const newMarkdown = formatChatItems(items);
-        /*const oldMarkdown = editorRef.current.getMarkdown();
-        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*/ // insert and preserve selection
+        /!*const oldMarkdown = editorRef.current.getMarkdown();
+        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*!/ // insert and preserve selection
         editorRef.current.update(newMarkdown);
       }
     };
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
         //console.log('ChatMessage:' + message);
@@ -136,7 +134,7 @@ function ChatView() {
         unloadCurrentModel();
       };
     }
-  }, [chatMessageHandler]);
+  }, [chatMessageHandler]);*/
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
@@ -211,16 +209,21 @@ function ChatView() {
     isTyping.current = true;
     isLoading.current = true;
     forceUpdate();
-    newChatMessage(chatMsg.current, false, 'user', currentMode.current).then(
-      (response) => {
-        console.log('newOllamaMessage response:' + response);
-        if (response) {
-          chatMsg.current = '';
-        }
-        isTyping.current = false;
-        forceUpdate();
-      },
-    );
+    newChatMessage(
+      chatMsg.current,
+      false,
+      'user',
+      currentMode.current,
+      undefined,
+      true,
+    ).then((response) => {
+      console.log('newOllamaMessage response:' + response);
+      if (response) {
+        chatMsg.current = '';
+      }
+      isTyping.current = false;
+      forceUpdate();
+    });
   };
 
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {

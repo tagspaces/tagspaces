@@ -57,21 +57,33 @@ import React, {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import { getOllamaModels } from '-/components/chat/OllamaClient';
-import { ModelResponse } from 'ollama';
+import {
+  getOllamaModels,
+  newOllamaMessage,
+} from '-/components/chat/OllamaClient';
+import { Ollama, ChatRequest, ModelResponse } from 'ollama';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z } from 'zod';
+
+/*export type TimelineItem = {
+  request: string;
+  response?: string;
+};*/
 
 type ChatData = {
+  //timelineItems: TimelineItem[];
   models: ModelResponse[];
   images: ChatImage[];
   currentModel: ModelResponse;
   openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
-  //isTyping: boolean;
+  isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
   setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
@@ -85,8 +97,7 @@ type ChatData = {
     confirmCallback?: () => void,
   ) => Promise<boolean>;
   getModel: (modelName: string) => Promise<ModelResponse>;
-  addTimeLineRequest: (txt: string, role: ChatRole) => void;
-  addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
+  addChatHistory: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
     msg?: string,
     unload?: boolean,
@@ -100,15 +111,17 @@ type ChatData = {
   generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
   initHistory: () => void;
   deleteHistory: () => Promise<boolean>;
+  checkProviderAlive: (providerUrl: string) => Promise<boolean>;
 };
 
 export const ChatContext = createContext<ChatData>({
+  //timelineItems: [],
   models: [],
   images: [],
   currentModel: undefined,
   openedEntryModel: undefined,
   chatHistoryItems: [],
-  //isTyping: false,
+  isTyping: false,
   refreshOllamaModels: undefined,
   setModel: undefined,
   setImages: undefined,
@@ -119,12 +132,12 @@ export const ChatContext = createContext<ChatData>({
   getHistoryFilePath: undefined,
   changeCurrentModel: undefined,
   getModel: undefined,
-  addTimeLineRequest: undefined,
-  addTimeLineResponse: undefined,
+  addChatHistory: undefined,
   newChatMessage: undefined,
   generate: undefined,
   initHistory: undefined,
   deleteHistory: undefined,
+  checkProviderAlive: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -161,12 +174,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   const GENERATE_IMAGE_TAGS =
     Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
-  // const isTyping = useRef<boolean>(false);
+  const isTyping = useRef<boolean>(false);
+  //const timelineItems = useRef<TimelineItem[]>([]);
+  const ollamaClient = useRef<Ollama>(undefined);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
+  /*
   useEffect(() => {
-    if (AppConfig.isElectron) {
       //refreshOllamaModels();
       window.electronIO.ipcRenderer.on(
         'PullModel',
@@ -192,12 +207,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
         unloadCurrentModel();
       };
-    }
-  }, []);
+  }, []);*/
 
   useEffect(() => {
-    refreshOllamaModels();
-    setOpenedEntryModel();
+    if (defaultAiProvider) {
+      getOllamaClient(defaultAiProvider.url).then((client) => {
+        ollamaClient.current = client;
+        refreshOllamaModels();
+        setOpenedEntryModel();
+      });
+    }
   }, [defaultAiProvider]);
 
   useEffect(() => {
@@ -206,6 +225,20 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       initHistory();
     }
   }, [openedEntry]);
+
+  async function getOllamaClient(ollamaApiUrl) {
+    if (ollamaApiUrl) {
+      try {
+        //@ts-ignore
+        const { Ollama } = await import('ollama/browser');
+
+        return new Ollama({ host: ollamaApiUrl });
+      } catch (error) {
+        console.error('Failed to load Ollama module:', error);
+      }
+    }
+    return undefined;
+  }
 
   function initHistory() {
     if (openedEntry) {
@@ -294,9 +327,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve([]);
   }
 
+  function checkProviderAlive(providerUrl: string): Promise<boolean> {
+    return getOllamaClient(providerUrl).then((client) =>
+      getOllamaModels(client).then((m) => {
+        models.current = m;
+        return m.length > 0;
+      }),
+    );
+  }
+
   function refreshOllamaModels(modelName = undefined) {
-    if (AppConfig.isElectron && defaultAiProvider) {
-      getOllamaModels(defaultAiProvider.url).then((m) => {
+    if (defaultAiProvider) {
+      getOllamaModels(ollamaClient.current).then((m) => {
         if (m) {
           models.current = m;
           const model = findModel(modelName);
@@ -425,10 +467,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * @param modelName
    */
   function getModel(modelName: string): Promise<ModelResponse> {
-    if (!AppConfig.isElectron || !modelName || !defaultAiProvider) {
+    if (!modelName || !defaultAiProvider) {
       return Promise.resolve(undefined);
     }
-    return getOllamaModels(defaultAiProvider.url).then((m) => {
+    return getOllamaModels(ollamaClient.current).then((m) => {
       if (m && m.length > 0) {
         return m.find(
           (mm) => mm.name === modelName || mm.name === modelName + ':latest',
@@ -470,7 +512,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(true);
   }
 
-  function addTimeLineRequest(txt: string, role: ChatRole) {
+  function addHistoryItem(txt: string, role: ChatRole) {
     if (txt) {
       const newItem: ChatItem = {
         engine: 'ollama',
@@ -543,13 +585,27 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function addTimeLineResponse(txt, replace = false): ChatItem[] {
+  /* function addTimeLineRequest(txt) {
+    const newItem: ChatItem = {engine: undefined, modelName: "", role: undefined, timestamp: 0, request: txt };
+    chatHistoryItems.current = [newItem, ...timelineItems.current];
+    forceUpdate();
+  }*/
+
+  function addTimeLineResponse(txt) {
+    if (chatHistoryItems.current.length > 0) {
+      const firstItem = chatHistoryItems.current.shift();
+      firstItem.response = (firstItem.response ? firstItem.response : '') + txt;
+      chatHistoryItems.current = [firstItem, ...chatHistoryItems.current];
+      forceUpdate();
+    }
+  }
+
+  function addChatHistory(txt, replace = false): ChatItem[] {
     if (txt && chatHistoryItems.current.length > 0) {
       chatHistoryItems.current[0].response =
         (!replace && chatHistoryItems.current[0].response
           ? chatHistoryItems.current[0].response
           : '') + txt;
-      //isTyping.current = true;
       // forceUpdate(); don't refresh chatHistoryItems this will reload milkdown editor just update(content)
     }
     return chatHistoryItems.current;
@@ -631,6 +687,17 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return msg;
   }
 
+  const chatMessageHandler = useMemo(() => {
+    return (msg): void => {
+      //console.log(`Chat ${msg}`);
+      isTyping.current = true;
+      addTimeLineResponse(msg);
+    };
+  }, []);
+
+  const Tags = z.object({
+    topics: z.array(z.string()),
+  });
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
@@ -647,7 +714,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     role: ChatRole = 'user',
     mode: ChatMode = undefined,
     model: string = currentModel.current?.name,
-    stream: boolean = true,
+    stream: boolean = false,
     imgArray: string[] = [],
     includeHistory = true,
   ): Promise<any> {
@@ -675,21 +742,38 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           ]
         : [];
     if (includeHistory) {
-      addTimeLineRequest(msg, role);
+      addHistoryItem(msg, role);
     }
-    return window.electronIO.ipcRenderer
+    const request: ChatRequest = {
+      model,
+      messages,
+      stream: stream,
+      ...(unload && { keep_alive: 0 }),
+      ...(mode === 'tags' && { format: zodToJsonSchema(Tags) }),
+    };
+    return newOllamaMessage(
+      ollamaClient.current,
+      request,
+      chatMessageHandler,
+    ).then((apiResponse) => {
+      isTyping.current = false;
+      if (msg && includeHistory) {
+        saveHistoryItems();
+      }
+      if (mode === 'tags') {
+        const response = Tags.parse(JSON.parse(apiResponse));
+        return response.topics;
+      }
+      return stream ? true : apiResponse;
+    });
+    /*return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', defaultAiProvider.url, {
         model,
         messages,
         stream: stream,
         ...(unload && { keep_alive: 0 }),
       })
-      .then((apiResponse) => {
-        if (msg && includeHistory) {
-          saveHistoryItems();
-        }
-        return stream ? true : apiResponse;
-      });
+      */
   }
 
   function getFileContent(content: any): Promise<string> {
@@ -748,6 +832,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   const context = useMemo(() => {
     return {
+      isTyping: isTyping.current,
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
@@ -762,16 +847,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       removeModel,
       changeCurrentModel,
       getModel,
-      addTimeLineRequest,
       addTimeLineResponse,
+      addChatHistory,
       newChatMessage,
       findModel,
       generate,
       initHistory,
       deleteHistory,
+      checkProviderAlive,
     };
   }, [
     defaultAiProvider,
+    isTyping.current,
     models.current,
     images.current,
     currentModel.current,

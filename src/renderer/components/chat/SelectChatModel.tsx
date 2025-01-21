@@ -27,6 +27,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModelResponse } from 'ollama';
+import { parseISO, format } from 'date-fns';
 
 interface Props {
   id?: string;
@@ -174,6 +175,9 @@ function SelectChatModel(props: Props) {
   const handleRemoveModel = () => {
     removeModel(chosenModel);
   };
+  function getTitle(model) {
+    return model ? format(parseISO(model.modified_at), 'yyyy-MM-dd') : '';
+  }
 
   return (
     <>
@@ -211,7 +215,7 @@ function SelectChatModel(props: Props) {
             <MenuItem
               key={model.name}
               value={model.name}
-              title={model.modified_at.toDateString()}
+              title={getTitle(model)}
             >
               {' '}
               <ListItemIcon>

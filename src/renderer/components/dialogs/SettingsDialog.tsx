@@ -157,23 +157,21 @@ function SettingsDialog(props: Props) {
           data-tid="advancedSettingsDialogTID"
           label={t('core:advancedSettingsTab')}
         />
-        {AppConfig.isElectron && (
-          <Tab
-            style={{
-              textTransform: 'unset',
-              justifyContent: 'flex-start',
-            }}
-            data-tid="aiSettingsDialogTID"
-            iconPosition="start"
-            icon={!smallScreen && <AIIcon />}
-            label={
-              <span style={{ whiteSpace: 'nowrap' }}>
-                {t('core:aiSettingsTab')}
-                <BetaLabel />
-              </span>
-            }
-          />
-        )}
+        <Tab
+          style={{
+            textTransform: 'unset',
+            justifyContent: 'flex-start',
+          }}
+          data-tid="aiSettingsDialogTID"
+          iconPosition="start"
+          icon={!smallScreen && <AIIcon />}
+          label={
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {t('core:aiSettingsTab')}
+              <BetaLabel />
+            </span>
+          }
+        />
       </Tabs>
       <div
         data-tid="settingsDialog"

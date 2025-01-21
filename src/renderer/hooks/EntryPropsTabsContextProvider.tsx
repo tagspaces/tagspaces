@@ -146,19 +146,13 @@ export const EntryPropsTabsContextProvider = ({
       tabsArray.push(tab3);
     }
 
-    if (
-      (oEntry && !oEntry.isFile) ||
-      (devMode && Pro && AppConfig.isElectron)
-    ) {
-      if (AppConfig.isElectron) {
-        // todo enable for web
-        const tab4: TabItem = {
-          icon: <AIIcon />,
-          title: t('core:aiChatTab'),
-          name: TabNames.aiTab,
-        };
-        tabsArray.push(tab4);
-      }
+    if ((oEntry && !oEntry.isFile) || (devMode && Pro)) {
+      const tab4: TabItem = {
+        icon: <AIIcon />,
+        title: t('core:aiChatTab'),
+        name: TabNames.aiTab,
+      };
+      tabsArray.push(tab4);
     }
     const tab5: TabItem = {
       icon: <LinkIcon />,

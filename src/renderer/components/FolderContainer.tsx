@@ -357,7 +357,7 @@ function FolderContainer(props: Props) {
           }}
         >
           {perspectiveToggleButtons}
-          {AppConfig.isElectron && aiDefaultProvider && (
+          {aiDefaultProvider && (
             <ToggleButton
               value=""
               aria-label="chat-label"

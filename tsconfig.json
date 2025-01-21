@@ -3,7 +3,7 @@
     "incremental": true,
     "target": "es2022",
     "ignoreDeprecations": "5.0",
-    "module": "commonjs",
+    "module": "CommonJS",
     "lib": ["dom", "dom.iterable", "es2022"],
     "jsx": "react-jsx",
     //"strict": true,

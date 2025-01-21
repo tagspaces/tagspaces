@@ -250,6 +250,7 @@ export default function loadMainEvents() {
   });
 
   ipcMain.handle('getOllamaModels', async (event, ollamaApiUrl) => {
+    console.log('Currently Ollama main thread deactivated!');
     /*try {
       const apiResponse = await ollamaGetRequest('/api/tags', ollamaApiUrl);
       return (apiResponse as ApiResponse).models;
@@ -258,7 +259,8 @@ export default function loadMainEvents() {
     }*/
   });
   ipcMain.handle('newOllamaMessage', async (event, ollamaApiUrl, msg) => {
-    const apiResponse = await ollamaPostRequest(
+    console.log('Currently Ollama main thread deactivated!');
+    /*const apiResponse = await ollamaPostRequest(
       JSON.stringify(msg),
       '/api/chat',
       ollamaApiUrl,
@@ -273,7 +275,7 @@ export default function loadMainEvents() {
         }
       },
     );
-    return apiResponse;
+    return apiResponse;*/
   });
   ipcMain.handle('pullOllamaModel', async (event, ollamaApiUrl, msg) => {
     let lastPercents = 0;
