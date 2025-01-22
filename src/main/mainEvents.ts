@@ -278,7 +278,8 @@ export default function loadMainEvents() {
     return apiResponse;*/
   });
   ipcMain.handle('pullOllamaModel', async (event, ollamaApiUrl, msg) => {
-    let lastPercents = 0;
+    console.log('Currently Ollama main thread deactivated!');
+    /*let lastPercents = 0;
     const apiResponse = await ollamaPostRequest(
       JSON.stringify(msg),
       '/api/pull',
@@ -304,10 +305,11 @@ export default function loadMainEvents() {
         }
       },
     );
-    return apiResponse;
+    return apiResponse;*/
   });
   ipcMain.handle('deleteOllamaModel', async (event, ollamaApiUrl, msg) => {
-    const apiResponse = await ollamaDeleteRequest(
+    console.log('Currently Ollama main thread deactivated!');
+    /*const apiResponse = await ollamaDeleteRequest(
       JSON.stringify(msg),
       '/api/delete',
       ollamaApiUrl,
@@ -320,7 +322,7 @@ export default function loadMainEvents() {
         }
       },
     );
-    return apiResponse;
+    return apiResponse;*/
   });
   ipcMain.handle(
     'copyFilePromiseOverwrite',

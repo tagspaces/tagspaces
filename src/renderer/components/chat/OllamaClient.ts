@@ -4,6 +4,8 @@ import {
   ModelResponse,
   ChatRequest,
   ChatResponse,
+  ProgressResponse,
+  StatusResponse,
 } from 'ollama';
 
 export async function getOllamaModels(
@@ -18,6 +20,48 @@ export async function getOllamaModels(
     }
   }
   return [];
+}
+
+export async function deleteOllamaModel(
+  ollama: Ollama,
+  model: string,
+): Promise<string> {
+  if (ollama) {
+    const response: StatusResponse = await ollama.delete({ model });
+    return response.status;
+  }
+  return '';
+}
+
+export async function pullOllamaModel(
+  ollama: Ollama,
+  model: string,
+  progress: (part: any) => void,
+): Promise<boolean> {
+  if (ollama) {
+    let lastPercents = 0;
+    const stream = await ollama.pull({ model: model, stream: true });
+    for await (const part of stream) {
+      if (part.digest) {
+        let percent = 0;
+        if (part.completed && part.total) {
+          percent = Math.round((part.completed / part.total) * 100);
+        }
+        if (lastPercents !== percent) {
+          progress({ ...part, model });
+          lastPercents = percent;
+        }
+        if (percent === 100) {
+          console.log('Download completed ' + model);
+          return true;
+        }
+      } else {
+        console.log(part.status);
+        //progress(part);
+      }
+    }
+  }
+  return false;
 }
 
 export async function newOllamaMessage(

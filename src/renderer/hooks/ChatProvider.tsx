@@ -64,8 +64,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import {
+  deleteOllamaModel,
   getOllamaModels,
   newOllamaMessage,
+  pullOllamaModel,
 } from '-/components/chat/OllamaClient';
 import { Ollama, ChatRequest, ModelResponse } from 'ollama';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -330,7 +332,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function checkProviderAlive(providerUrl: string): Promise<boolean> {
     return getOllamaClient(providerUrl).then((client) =>
       getOllamaModels(client).then((m) => {
-        models.current = m;
+        //models.current = m;
         return m.length > 0;
       }),
     );
@@ -439,7 +441,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
         showNotification('deleting ' + model.name + ' succeeded');
-        window.electronIO.ipcRenderer
+        deleteOllamaModel(ollamaClient.current, model.name).then((response) => {
+          console.log('deleteOllamaModel response:' + response);
+          if (response) {
+            if (model.name === currentModel.current?.name) {
+              currentModel.current = undefined;
+            }
+            refreshOllamaModels();
+          }
+        });
+        /*window.electronIO.ipcRenderer
           .invoke('deleteOllamaModel', defaultAiProvider.url, {
             name: model.name,
           })
@@ -451,7 +462,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
               }
               refreshOllamaModels();
             }
-          });
+          });*/
       }
     }
   }
@@ -497,7 +508,31 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         }
         // addTimeLineRequest('downloading ' + newModelName, 'system');
         openFileUploadDialog(newModelName, 'downloadChatModel');
-        return window.electronIO.ipcRenderer
+        const onProgressHandler = (message: PullModelResponse) => {
+          if (message.status) {
+            dispatch(
+              AppActions.onUploadProgress(
+                {
+                  key: message.model || message.status,
+                  loaded: message.completed,
+                  total: message.total,
+                },
+                undefined,
+                message.model,
+              ),
+            );
+          }
+        };
+        pullOllamaModel(
+          ollamaClient.current,
+          newModelName,
+          onProgressHandler,
+        ).then((response) => {
+          console.log('pullOllamaModel response:' + response);
+          refreshOllamaModels(newModelName);
+          return true;
+        });
+        /*return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', defaultAiProvider.url, {
             name: newModelName,
             stream: true,
@@ -506,7 +541,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             console.log('pullOllamaModel response:' + response);
             refreshOllamaModels(newModelName);
             return true;
-          });
+          });*/
       }
     }
     return Promise.resolve(true);
@@ -696,7 +731,45 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, []);
 
   const Tags = z.object({
-    topics: z.array(z.string()),
+    topics: z.array(z.string()).max(4), // todo define generated tags maxLength in settings
+  });
+  const Description = z.object({
+    name: z.string(),
+    summary: z.string(),
+  });
+  const ObjectSchema = z.object({
+    name: z.string().describe('The name of the object'),
+    confidence: z
+      .number()
+      .min(0)
+      .max(1)
+      .describe('The confidence score of the object detection'),
+    attributes: z
+      .record(z.any())
+      .optional()
+      .describe('Additional attributes of the object'),
+    //attributes: z.string(),
+  });
+  const ImageDescription = z.object({
+    name: z.string().describe('The name of the Image'),
+    summary: z.string().describe('A concise summary of the image'),
+    objects: z
+      .array(ObjectSchema)
+      .describe('An array of objects detected in the image'),
+    scene: z.string().describe('The scene of the image'),
+    colors: z
+      .array(z.string())
+      .describe('An array of colors detected in the image'),
+    time_of_day: z
+      .enum(['Morning', 'Afternoon', 'Evening', 'Night', 'Unknown'])
+      .describe('The time of day the image was taken'),
+    setting: z
+      .enum(['Indoor', 'Outdoor', 'Unknown'])
+      .describe('The setting of the image'),
+    text_content: z
+      .string()
+      .optional()
+      .describe('Any text detected in the image'),
   });
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
@@ -744,12 +817,26 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (includeHistory) {
       addHistoryItem(msg, role);
     }
+    let format = undefined;
+    if (mode === 'tags') {
+      if (imgArray.length > 0) {
+        format = { format: zodToJsonSchema(ImageDescription) };
+      } else {
+        format = { format: zodToJsonSchema(Tags) };
+      }
+    } else if (mode === 'description' || mode === 'summary') {
+      if (imgArray.length > 0) {
+        format = { format: zodToJsonSchema(ImageDescription) };
+      } else {
+        format = { format: zodToJsonSchema(Description) };
+      }
+    }
     const request: ChatRequest = {
       model,
       messages,
       stream: stream,
       ...(unload && { keep_alive: 0 }),
-      ...(mode === 'tags' && { format: zodToJsonSchema(Tags) }),
+      ...(format && format),
     };
     return newOllamaMessage(
       ollamaClient.current,
@@ -761,8 +848,58 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         saveHistoryItems();
       }
       if (mode === 'tags') {
-        const response = Tags.parse(JSON.parse(apiResponse));
-        return response.topics;
+        if (imgArray.length > 0) {
+          const response = ImageDescription.parse(JSON.parse(apiResponse));
+          const tags = response.objects.map((obj) => obj.name);
+          if (response.time_of_day && response.time_of_day !== 'Unknown') {
+            tags.push(response.time_of_day);
+          }
+          if (response.setting && response.setting !== 'Unknown') {
+            tags.push(response.setting);
+          }
+          return [...tags, ...response.colors];
+        } else {
+          const response = Tags.parse(JSON.parse(apiResponse));
+          return response.topics;
+        }
+      } else if (mode === 'description' || mode === 'summary') {
+        if (imgArray.length > 0) {
+          const response = ImageDescription.parse(JSON.parse(apiResponse));
+          const objArray = response.objects.map(
+            (obj) =>
+              '\n\n > ##### Name: \n\n' +
+              obj.name +
+              '\n\n > ##### Attributes: \n\n' +
+              obj.attributes,
+          );
+          return (
+            '### Name: \n\n' +
+            response.name +
+            '\n\n ### Objects: \n\n' +
+            objArray.join('\n\n') +
+            '\n\n ### Scene: \n\n' +
+            response.scene +
+            '\n\n ### Colors:\n\n' +
+            response.colors +
+            '\n\n ### Summary:\n\n' +
+            response.summary +
+            '\n\n ### Day Time:\n\n' +
+            response.time_of_day +
+            '\n\n ### Setting:\n\n' +
+            response.setting +
+            (response.text_content
+              ? '\n\n ### Content:\n\n' + response.text_content
+              : '')
+          );
+        } else {
+          const response = Description.parse(JSON.parse(apiResponse));
+          return (
+            '### Name: \n\n' +
+            response.name +
+            '\n\n ### Summary:\n\n' +
+            response.summary
+          );
+        }
       }
       return stream ? true : apiResponse;
     });
