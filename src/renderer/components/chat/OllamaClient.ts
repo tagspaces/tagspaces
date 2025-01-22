@@ -29,7 +29,7 @@ export async function newOllamaMessage(
   if (ollama) {
     if (msg.stream) {
       // Handle the case where `stream` is true
-      ollama
+      return ollama
         .chat(msg as ChatRequest & { stream: true })
         .then(async (response) => {
           if (chatMessageHandler) {
@@ -37,9 +37,8 @@ export async function newOllamaMessage(
               chatMessageHandler(part.message.content);
             }
           }
+          return undefined; // Return undefined for the streaming case if there's no final message content
         });
-
-      return undefined; // Return undefined for the streaming case if there's no final message content
     } else {
       // Handle the case where `stream` is false or undefined
       const response: ChatResponse = await ollama.chat(

@@ -70,11 +70,12 @@ function ChatView() {
     currentModel,
     getHistoryFilePath,
     deleteHistory,
+    isTyping,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
-  const isTyping = useRef<boolean>(false);
-  const isLoading = useRef<boolean>(false);
+  //const isTyping = useRef<boolean>(false);
+  //const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
@@ -206,8 +207,8 @@ function ChatView() {
   };
 
   const handleChatMessage = () => {
-    isTyping.current = true;
-    isLoading.current = true;
+    //isTyping.current = true;
+    //isLoading.current = true;
     forceUpdate();
     newChatMessage(
       chatMsg.current,
@@ -221,7 +222,7 @@ function ChatView() {
       if (response) {
         chatMsg.current = '';
       }
-      isTyping.current = false;
+      //isTyping.current = false;
       forceUpdate();
     });
   };
@@ -407,7 +408,7 @@ function ChatView() {
               <FormControl fullWidth>
                 <TsTextField
                   autoFocus
-                  disabled={isTyping.current}
+                  disabled={isTyping}
                   name="entryName"
                   //label={t('core:newChatMessage')}
                   placeholder={t('core:yourMessageForAI')}
@@ -431,7 +432,7 @@ function ChatView() {
                       ),
                       endAdornment: (
                         <InputAdornment position="end" style={{ height: 32 }}>
-                          {isLoading.current && (
+                          {isTyping && (
                             <CircularProgress size={24} color="inherit" />
                           )}
                           <Tooltip title="Send Message">
