@@ -68,7 +68,7 @@ function AiGenTagsButton(props: Props) {
   if (!generateEntries && openedEntry) {
     generateEntries = [openedEntry];
   }
-  const openedEntryModel = getEntryModel(openedEntry.name, defaultAiProvider);
+  const openedEntryModel = getEntryModel(openedEntry?.name, defaultAiProvider);
   const extensionSupported = generateEntries.every((entry) =>
     [
       ...AppConfig.aiSupportedFiletypes.text,
