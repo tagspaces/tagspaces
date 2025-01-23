@@ -51,15 +51,15 @@ export async function pullOllamaModel(
           progress({ ...part, model });
           lastPercents = percent;
         }
-        if (percent === 100) {
+        /*if (percent === 100) {
           console.log('Download completed ' + model);
-          return true;
-        }
+        }*/
       } else {
         console.log(part.status);
         //progress(part);
       }
     }
+    return true;
   }
   return false;
 }

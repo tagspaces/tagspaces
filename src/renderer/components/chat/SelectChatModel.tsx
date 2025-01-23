@@ -24,25 +24,48 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { ListItemIcon, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModelResponse } from 'ollama';
 import { parseISO, format } from 'date-fns';
+import { AIProvider } from '-/components/chat/ChatTypes';
+import { getOllamaModels } from '-/components/chat/OllamaClient';
+import { useSelector } from 'react-redux';
+import { getDefaultAIProvider } from '-/reducers/settings';
 
 interface Props {
   id?: string;
   label?: string;
   disabled?: boolean;
+  aiProvider: AIProvider;
   chosenModel: string;
   handleChangeModel: (newModelName: string) => void;
 }
 
 function SelectChatModel(props: Props) {
   const { t } = useTranslation();
-  const { id, label, chosenModel, handleChangeModel, disabled } = props;
-  const { models, removeModel } = useChatContext();
+  const { id, label, aiProvider, chosenModel, handleChangeModel, disabled } =
+    props;
+  const { removeModel, getOllamaClient, models } = useChatContext();
+
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const [isCustomModelPromptDialogOpened, setCustomModelPromptDialogOpened] =
     useState(false);
+  const [installedModels, setModels] = useState(
+    aiProvider.id === defaultAiProvider.id ? models : [],
+  );
+
+  useEffect(() => {
+    if (aiProvider.engine === 'ollama') {
+      getOllamaClient(aiProvider.url).then((client) => {
+        getOllamaModels(client).then((m) => {
+          if (!m || JSON.stringify(m) !== JSON.stringify(installedModels)) {
+            setModels(m);
+          }
+        });
+      });
+    }
+  }, [aiProvider, models]);
 
   const ollamaAvailableModels: ModelResponse[] = [
     {
@@ -210,8 +233,8 @@ function SelectChatModel(props: Props) {
         <MenuItem value="" disabled>
           {t('core:installedAIModel')}
         </MenuItem>
-        {models && models.length > 0 ? (
-          models.map((model) => (
+        {installedModels && installedModels.length > 0 ? (
+          installedModels.map((model) => (
             <MenuItem
               key={model.name}
               value={model.name}

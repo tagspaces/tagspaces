@@ -318,6 +318,7 @@ function ChatView() {
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
+              aiProvider={aiDefaultProvider}
               chosenModel={currentModel?.name}
               label={t('core:selectedAIModel')}
             />

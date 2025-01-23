@@ -406,6 +406,7 @@ function SettingsAI(props: Props) {
                   );
                   changeCurrentModel(modelName, closeSettings);
                 }}
+                aiProvider={provider}
                 chosenModel={provider.defaultTextModel}
               />
               <SelectChatModel
@@ -418,6 +419,7 @@ function SettingsAI(props: Props) {
                   );
                   changeCurrentModel(modelName, closeSettings);
                 }}
+                aiProvider={provider}
                 chosenModel={provider.defaultImageModel}
               />
               <FormControlLabel

@@ -114,6 +114,7 @@ type ChatData = {
   initHistory: () => void;
   deleteHistory: () => Promise<boolean>;
   checkProviderAlive: (providerUrl: string) => Promise<boolean>;
+  getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -140,6 +141,7 @@ export const ChatContext = createContext<ChatData>({
   initHistory: undefined,
   deleteHistory: undefined,
   checkProviderAlive: undefined,
+  getOllamaClient: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -228,7 +230,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }, [openedEntry]);
 
-  async function getOllamaClient(ollamaApiUrl) {
+  async function getOllamaClient(ollamaApiUrl: string) {
     if (ollamaApiUrl) {
       try {
         //@ts-ignore
@@ -340,20 +342,29 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function refreshOllamaModels(modelName = undefined) {
     if (defaultAiProvider) {
-      getOllamaModels(ollamaClient.current).then((m) => {
-        if (m) {
-          models.current = m;
-          const model = findModel(modelName);
-          if (model) {
-            return setModel(model);
-          } else {
-            //if (currentModel.current === undefined) {
-            //set defaultTextModel if not found
-            return setModel(defaultAiProvider.defaultTextModel);
+      getOllamaModels(ollamaClient.current)
+        .then((m) => {
+          if (m) {
+            models.current = m;
+            const model = findModel(modelName);
+            if (model) {
+              return setModel(model);
+            } else {
+              //set defaultTextModel if not found
+              const model = findModel(defaultAiProvider.defaultTextModel);
+              if (model) {
+                return setModel(defaultAiProvider.defaultTextModel);
+              }
+            }
+            return true;
           }
-          forceUpdate();
-        }
-      });
+          return false;
+        })
+        .then((success) => {
+          if (success) {
+            forceUpdate();
+          }
+        });
     }
   }
 
@@ -992,6 +1003,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       initHistory,
       deleteHistory,
       checkProviderAlive,
+      getOllamaClient,
     };
   }, [
     defaultAiProvider,
