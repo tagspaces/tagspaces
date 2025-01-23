@@ -28,9 +28,13 @@ import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AIIcon } from '../CommonIcons';
-import { actions as SettingsActions } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getDefaultAIProvider,
+} from '-/reducers/settings';
 import { AppDispatch } from '-/reducers/app';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 type Props = TSButtonProps & {};
 
@@ -38,13 +42,15 @@ function AiGenDescButton(props: Props) {
   const { t } = useTranslation();
   const { style, disabled } = props;
   const dispatch: AppDispatch = useDispatch();
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const { openedEntry } = useOpenedEntryContext();
-  const { generate, openedEntryModel } = useChatContext();
+  const { generate, getEntryModel } = useChatContext();
   const { setDescription, saveDescription } = useFilePropertiesContext();
   const { showNotification } = useNotificationContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const openedEntryModel = getEntryModel(openedEntry.name, defaultAiProvider);
   if (
     !openedEntry ||
     !openedEntryModel ||

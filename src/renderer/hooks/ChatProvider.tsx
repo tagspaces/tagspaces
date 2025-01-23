@@ -83,7 +83,7 @@ type ChatData = {
   models: ModelResponse[];
   images: ChatImage[];
   currentModel: ModelResponse;
-  openedEntryModel: ModelResponse;
+  //openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
   isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
@@ -115,6 +115,7 @@ type ChatData = {
   deleteHistory: () => Promise<boolean>;
   checkProviderAlive: (providerUrl: string) => Promise<boolean>;
   getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
+  getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -122,7 +123,7 @@ export const ChatContext = createContext<ChatData>({
   models: [],
   images: [],
   currentModel: undefined,
-  openedEntryModel: undefined,
+  //openedEntryModel: undefined,
   chatHistoryItems: [],
   isTyping: false,
   refreshOllamaModels: undefined,
@@ -142,6 +143,7 @@ export const ChatContext = createContext<ChatData>({
   deleteHistory: undefined,
   checkProviderAlive: undefined,
   getOllamaClient: undefined,
+  getEntryModel: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -161,9 +163,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const selectedTabName = useSelector(getEntryContainerTab);
   const currentModel = useRef<ModelResponse>(undefined);
-  const openedEntryModel = useRef<ModelResponse>(
+  /*const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
-  );
+  );*/
   const images = useRef<ChatImage[]>([]);
   //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
   //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
@@ -218,13 +220,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       getOllamaClient(defaultAiProvider.url).then((client) => {
         ollamaClient.current = client;
         refreshOllamaModels();
-        setOpenedEntryModel();
+        //setOpenedEntryModel();
       });
     }
   }, [defaultAiProvider]);
 
   useEffect(() => {
-    setOpenedEntryModel();
+    //setOpenedEntryModel();
     if (selectedTabName === TabNames.aiTab) {
       initHistory();
     }
@@ -259,7 +261,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function setOpenedEntryModel() {
+  /* function setOpenedEntryModel() {
     if (openedEntry) {
       const newModel = getOpenedEntryModel(openedEntry.name, defaultAiProvider);
       if (
@@ -271,9 +273,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         forceUpdate();
       }
     }
-  }
+  }*/
 
-  function getOpenedEntryModel(
+  function getEntryModel(
     fileName: string,
     aiProvider: AIProvider,
   ): ModelResponse {
@@ -946,7 +948,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     fileContent: 'text' | 'image',
     mode: ChatMode,
   ): Promise<string> {
-    if (openedEntryModel.current) {
+    const openedEntryModel = getEntryModel(openedEntry.name, defaultAiProvider);
+    if (openedEntryModel) {
       return currentLocation
         .getFileContentPromise(
           openedEntry.path,
@@ -961,7 +964,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             false,
             'user',
             mode,
-            openedEntryModel.current.name,
+            openedEntryModel.name, //openedEntryModel.current.name,
             false,
             getImageArray(fileContent, content),
             false,
@@ -983,7 +986,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
-      openedEntryModel: openedEntryModel.current,
+      //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
       refreshOllamaModels,
       getHistoryFilePath,
@@ -1003,6 +1006,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       deleteHistory,
       checkProviderAlive,
       getOllamaClient,
+      getEntryModel,
     };
   }, [
     defaultAiProvider,
@@ -1010,7 +1014,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     models.current,
     images.current,
     currentModel.current,
-    openedEntryModel.current,
+    //openedEntryModel.current,
     chatHistoryItems.current,
     openedEntry,
     selectedEntries,
