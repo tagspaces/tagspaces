@@ -60,7 +60,7 @@ function SelectChatModel(props: Props) {
       getOllamaClient(aiProvider.url).then((client) => {
         getOllamaModels(client).then((m) => {
           if (!m || JSON.stringify(m) !== JSON.stringify(installedModels)) {
-            setModels(m);
+            setModels(m ? m : []);
           }
         });
       });

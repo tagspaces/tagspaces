@@ -64,7 +64,6 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { ChangeEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOllamaModels } from '-/components/chat/OllamaClient';
 
 interface Props {
   closeSettings: () => void;

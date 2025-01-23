@@ -334,8 +334,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function checkProviderAlive(providerUrl: string): Promise<boolean> {
     return getOllamaClient(providerUrl).then((client) =>
       getOllamaModels(client).then((m) => {
-        //models.current = m;
-        return m.length > 0;
+        return !!m;
       }),
     );
   }

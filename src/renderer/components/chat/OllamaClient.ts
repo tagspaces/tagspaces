@@ -14,12 +14,16 @@ export async function getOllamaModels(
   //'http://localhost:11434'
   //const ollama = new Ollama({ host: ollamaApiUrl });
   if (ollama) {
-    const response: ListResponse = await ollama.list();
-    if (response) {
-      return response.models;
+    try {
+      const response: ListResponse = await ollama.list();
+      if (response) {
+        return response.models;
+      }
+    } catch (e) {
+      console.log('getOllamaModels', e);
     }
   }
-  return [];
+  return undefined;
 }
 
 export async function deleteOllamaModel(
