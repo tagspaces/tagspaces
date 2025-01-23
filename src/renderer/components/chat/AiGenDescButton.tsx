@@ -98,13 +98,19 @@ function AiGenDescButton(props: Props) {
       onClick={() => {
         setIsLoading(true);
         if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-          generate('image', 'description').then((results) =>
-            handleGenerationResults(results),
-          );
+          generate(
+            'image',
+            'description',
+            openedEntryModel.name,
+            openedEntry,
+          ).then((results) => handleGenerationResults(results));
         } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          generate(ext === 'pdf' ? 'image' : 'text', 'summary').then(
-            (results) => handleGenerationResults(results),
-          );
+          generate(
+            ext === 'pdf' ? 'image' : 'text',
+            'summary',
+            openedEntryModel.name,
+            openedEntry,
+          ).then((results) => handleGenerationResults(results));
         }
       }}
     >

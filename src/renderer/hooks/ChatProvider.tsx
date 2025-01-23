@@ -110,7 +110,12 @@ type ChatData = {
     images?: string[],
     includeHistory?: boolean,
   ) => Promise<any>;
-  generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
+  generate: (
+    fileContent: 'text' | 'image',
+    mode: ChatMode,
+    modelName: string,
+    entry: TS.FileSystemEntry,
+  ) => Promise<string>;
   initHistory: () => void;
   deleteHistory: () => Promise<boolean>;
   checkProviderAlive: (providerUrl: string) => Promise<boolean>;
@@ -925,11 +930,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       */
   }
 
-  function getFileContent(content: any): Promise<string> {
-    if (openedEntry.path.endsWith('.pdf')) {
+  function getFileContent(
+    entry: TS.FileSystemEntry,
+    content: any,
+  ): Promise<string> {
+    if (entry.path.endsWith('.pdf')) {
       return extractPDFcontent(content);
-    } else if (openedEntry.path.endsWith('.html')) {
-      return extractTextContent(openedEntry.name, content);
+    } else if (entry.path.endsWith('.html')) {
+      return extractTextContent(entry.name, content);
     }
     return Promise.resolve(content);
   }
@@ -947,24 +955,25 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function generate(
     fileContent: 'text' | 'image',
     mode: ChatMode,
+    modelName: string,
+    entry: TS.FileSystemEntry,
   ): Promise<string> {
-    const openedEntryModel = getEntryModel(openedEntry.name, defaultAiProvider);
-    if (openedEntryModel) {
+    if (modelName) {
       return currentLocation
         .getFileContentPromise(
-          openedEntry.path,
-          fileContent === 'text' && !openedEntry.path.endsWith('.pdf')
+          entry.path,
+          fileContent === 'text' && !entry.path.endsWith('.pdf')
             ? 'text'
             : 'arraybuffer',
         )
-        .then((content) => getFileContent(content))
+        .then((content) => getFileContent(entry, content))
         .then((content) =>
           newChatMessage(
             fileContent === 'image' ? undefined : content,
             false,
             'user',
             mode,
-            openedEntryModel.name, //openedEntryModel.current.name,
+            modelName, //openedEntryModel.current.name,
             false,
             getImageArray(fileContent, content),
             false,

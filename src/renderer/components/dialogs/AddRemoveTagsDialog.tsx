@@ -203,7 +203,11 @@ function AddRemoveTagsDialog(props: Props) {
         >
           {t('core:cancel')}
         </TsButton>
-        <AiGenTagsButton entries={selected} variant="outlined" />
+        <AiGenTagsButton
+          entries={selected}
+          variant="outlined"
+          generationCompleted={() => onCloseDialog()}
+        />
         <TsButton
           data-tid="cleanTagsMultipleEntries"
           disabled={selected.length < 1}
