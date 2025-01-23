@@ -58,7 +58,7 @@ function AiGenTagsButton(props: Props) {
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
-  const { generate, getEntryModel, newChatMessage } = useChatContext();
+  const { generate, newChatMessage } = useChatContext();
   const { addTagsToFsEntry } = useTaggingActionsContext();
   const { showNotification } = useNotificationContext();
 
@@ -68,7 +68,7 @@ function AiGenTagsButton(props: Props) {
   if (!generateEntries && openedEntry) {
     generateEntries = [openedEntry];
   }
-  const openedEntryModel = getEntryModel(openedEntry?.name, defaultAiProvider);
+
   const extensionSupported = generateEntries.every((entry) =>
     [
       ...AppConfig.aiSupportedFiletypes.text,
@@ -76,7 +76,7 @@ function AiGenTagsButton(props: Props) {
     ].includes(entry.extension),
   );
 
-  if (!generateEntries || !openedEntryModel || !extensionSupported) {
+  if (!generateEntries || !defaultAiProvider || !extensionSupported) {
     return null;
   }
 
