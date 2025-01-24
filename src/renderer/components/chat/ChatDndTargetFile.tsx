@@ -55,8 +55,8 @@ function ChatDndTargetFile(props: Props) {
       'gif',
       'bmp',
       'tiff',
-      'avif',
-      'webp',
+      // 'avif', // currently not supported
+      // 'webp', // currently not supported
     ];
     return aiSupportedImages.some((ext) =>
       filePath.toLowerCase().endsWith(ext),
