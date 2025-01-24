@@ -43,6 +43,7 @@ import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TagsSelect from '../TagsSelect';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -204,6 +205,7 @@ function AddRemoveTagsDialog(props: Props) {
           {t('core:cancel')}
         </TsButton>
         <AiGenTagsButton
+          disabled={!Pro}
           entries={selected}
           variant="outlined"
           generationCompleted={() => onCloseDialog()}

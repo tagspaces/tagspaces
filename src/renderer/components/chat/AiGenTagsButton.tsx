@@ -49,6 +49,7 @@ type Props = TSButtonProps & {
   entries?: TS.FileSystemEntry[];
   fromDescription?: boolean;
   generationCompleted?: () => void;
+  disabled?: boolean;
 };
 
 function AiGenTagsButton(props: Props) {
