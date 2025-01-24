@@ -16,27 +16,27 @@
  *
  */
 
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { styled } from '@mui/material/styles';
-import Snackbar from '@mui/material/Snackbar';
+import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getLastPublishedVersion } from '-/reducers/settings';
+import i18n from '-/services/i18n';
+import { openURLExternally } from '-/services/utils-io';
+import CloseIcon from '@mui/icons-material/Close';
+import Snackbar from '@mui/material/Snackbar';
+import { styled } from '@mui/material/styles';
+import Links from 'assets/links';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { Pro } from '../pro';
 import {
   actions as AppActions,
   AppDispatch,
   isUpdateAvailable,
 } from '../reducers/app';
-import { Pro } from '../pro';
-import Links from 'assets/links';
-import { openURLExternally } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import i18n from '-/services/i18n';
-import AppConfig from '-/AppConfig';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -147,10 +147,19 @@ function PageNotification() {
             key="changelogButton"
             color="secondary"
             onClick={openChangelogPage}
+            style={{
+              marginLeft: AppConfig.defaultSpaceBetweenButtons,
+            }}
           >
             {t('core:releaseNotes')}
           </TsButton>,
-          <TsButton key="latestVersionButton" onClick={getLatestVersion}>
+          <TsButton
+            key="latestVersionButton"
+            style={{
+              marginLeft: AppConfig.defaultSpaceBetweenButtons,
+            }}
+            onClick={getLatestVersion}
+          >
             {t('core:getItNow')}
           </TsButton>,
         ]}
