@@ -195,6 +195,7 @@
     "i18next-http-backend": "^2.2.2",
     "leaflet": "^1.9.4",
     "mgrs": "^1.0.0",
+    "ollama": "^0.5.12",
     "open-location-code": "^1.0.3",
     "open-location-code-typescript": "^1.5.0",
     "papaparse": "^5.4.1",
@@ -232,10 +233,12 @@
     "url-regex-safe": "^4.0.0",
     "use-state-with-callback": "^2.0.3",
     "utif": "github:photopea/UTIF.js",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.107"
+    "@tagspacespro/tagspacespro": "5.0.108"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",

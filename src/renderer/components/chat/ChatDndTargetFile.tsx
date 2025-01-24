@@ -47,6 +47,22 @@ function ChatDndTargetFile(props: Props) {
   //const { findLocalLocation } = useCurrentLocationContext();
   const { setImages } = useChatContext();
 
+  function isSupportedImageFormat(filePath: string) {
+    const aiSupportedImages = [
+      'jpeg',
+      'jpg',
+      'png',
+      'gif',
+      'bmp',
+      'tiff',
+      // 'avif', // currently not supported
+      // 'webp', // currently not supported
+    ];
+    return aiSupportedImages.some((ext) =>
+      filePath.toLowerCase().endsWith(ext),
+    );
+  }
+
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
       accept: accepts,
@@ -69,15 +85,12 @@ function ChatDndTargetFile(props: Props) {
           const arrPath = [];
           if (selectedEntries && selectedEntries.length > 0) {
             selectedEntries.map((entry) => {
-              if (entry.path.endsWith('.jpg') || entry.path.endsWith('.jpeg')) {
+              if (isSupportedImageFormat(entry.path)) {
                 arrPath.push(entry.path);
               }
               return true;
             });
-          } else if (
-            (path && path.endsWith('.jpg')) ||
-            path.endsWith('.jpeg')
-          ) {
+          } else if (isSupportedImageFormat(path)) {
             arrPath.push(path);
           }
           setImages(arrPath);

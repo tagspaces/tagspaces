@@ -24,7 +24,6 @@ import {
   ChatMode,
   ChatRole,
   HistoryModel,
-  Model,
   PullModelResponse,
 } from '-/components/chat/ChatTypes';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
@@ -58,34 +57,49 @@ import React, {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import {
+  deleteOllamaModel,
+  getOllamaModels,
+  newOllamaMessage,
+  pullOllamaModel,
+} from '-/components/chat/OllamaClient';
+import { Ollama, ChatRequest, ModelResponse } from 'ollama';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z } from 'zod';
+
+/*export type TimelineItem = {
+  request: string;
+  response?: string;
+};*/
 
 type ChatData = {
-  models: Model[];
+  //timelineItems: TimelineItem[];
+  models: ModelResponse[];
   images: ChatImage[];
-  currentModel: Model;
-  openedEntryModel: Model;
+  currentModel: ModelResponse;
+  //openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
-  //isTyping: boolean;
+  isTyping: boolean;
   refreshOllamaModels: (modelName?: string) => void;
-  setModel: (model: Model | string) => Promise<boolean>;
+  setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (modelName: string) => void;
-  findModel: (modelName: string) => Model;
+  findModel: (modelName: string) => ModelResponse;
   getHistoryFilePath: (name?: string) => string;
   changeCurrentModel: (
     newModelName: string,
     confirmCallback?: () => void,
   ) => Promise<boolean>;
-  getModel: (modelName: string) => Promise<Model>;
-  addTimeLineRequest: (txt: string, role: ChatRole) => void;
-  addTimeLineResponse: (txt: string, replace?: boolean) => ChatItem[];
+  getModel: (modelName: string) => Promise<ModelResponse>;
+  addChatHistory: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
     msg?: string,
     unload?: boolean,
@@ -96,18 +110,28 @@ type ChatData = {
     images?: string[],
     includeHistory?: boolean,
   ) => Promise<any>;
-  generate: (fileContent: 'text' | 'image', mode: ChatMode) => Promise<string>;
+  cancelMessage: () => void;
+  generate: (
+    fileContent: 'text' | 'image',
+    mode: ChatMode,
+    modelName: string,
+    entry: TS.FileSystemEntry,
+  ) => Promise<string>;
   initHistory: () => void;
   deleteHistory: () => Promise<boolean>;
+  checkProviderAlive: (providerUrl: string) => Promise<boolean>;
+  getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
+  getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse;
 };
 
 export const ChatContext = createContext<ChatData>({
+  //timelineItems: [],
   models: [],
   images: [],
   currentModel: undefined,
-  openedEntryModel: undefined,
+  //openedEntryModel: undefined,
   chatHistoryItems: [],
-  //isTyping: false,
+  isTyping: false,
   refreshOllamaModels: undefined,
   setModel: undefined,
   setImages: undefined,
@@ -118,12 +142,15 @@ export const ChatContext = createContext<ChatData>({
   getHistoryFilePath: undefined,
   changeCurrentModel: undefined,
   getModel: undefined,
-  addTimeLineRequest: undefined,
-  addTimeLineResponse: undefined,
+  addChatHistory: undefined,
   newChatMessage: undefined,
+  cancelMessage: undefined,
   generate: undefined,
   initHistory: undefined,
   deleteHistory: undefined,
+  checkProviderAlive: undefined,
+  getOllamaClient: undefined,
+  getEntryModel: undefined,
 });
 
 export type ChatContextProviderProps = {
@@ -139,13 +166,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
-  const models = useRef<Model[]>([]);
+  const models = useRef<ModelResponse[]>([]);
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const selectedTabName = useSelector(getEntryContainerTab);
-  const currentModel = useRef<Model>(undefined);
-  const openedEntryModel = useRef<Model>(
+  const currentModel = useRef<ModelResponse>(undefined);
+  /*const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
-  );
+  );*/
   const images = useRef<ChatImage[]>([]);
   //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
   //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
@@ -160,12 +187,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   const GENERATE_IMAGE_TAGS =
     Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
-  // const isTyping = useRef<boolean>(false);
+  const isTyping = useRef<boolean>(false);
+  //const timelineItems = useRef<TimelineItem[]>([]);
+  const ollamaClient = useRef<Ollama>(undefined);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
+  /*
   useEffect(() => {
-    if (AppConfig.isElectron) {
       //refreshOllamaModels();
       window.electronIO.ipcRenderer.on(
         'PullModel',
@@ -191,20 +220,38 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
         unloadCurrentModel();
       };
-    }
-  }, []);
+  }, []);*/
 
   useEffect(() => {
-    refreshOllamaModels();
-    setOpenedEntryModel();
+    if (defaultAiProvider) {
+      getOllamaClient(defaultAiProvider.url).then((client) => {
+        ollamaClient.current = client;
+        refreshOllamaModels();
+        //setOpenedEntryModel();
+      });
+    }
   }, [defaultAiProvider]);
 
   useEffect(() => {
-    setOpenedEntryModel();
+    //setOpenedEntryModel();
     if (selectedTabName === TabNames.aiTab) {
       initHistory();
     }
   }, [openedEntry]);
+
+  async function getOllamaClient(ollamaApiUrl: string) {
+    if (ollamaApiUrl) {
+      try {
+        //@ts-ignore
+        const { Ollama } = await import('ollama/browser');
+
+        return new Ollama({ host: ollamaApiUrl });
+      } catch (error) {
+        console.error('Failed to load Ollama module:', error);
+      }
+    }
+    return undefined;
+  }
 
   function initHistory() {
     if (openedEntry) {
@@ -221,7 +268,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function setOpenedEntryModel() {
+  /* function setOpenedEntryModel() {
     if (openedEntry) {
       const newModel = getOpenedEntryModel(openedEntry.name, defaultAiProvider);
       if (
@@ -233,12 +280,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         forceUpdate();
       }
     }
-  }
+  }*/
 
-  function getOpenedEntryModel(
+  function getEntryModel(
     fileName: string,
     aiProvider: AIProvider,
-  ): Model {
+  ): ModelResponse {
     if (fileName && aiProvider) {
       const ext = extractFileExtension(fileName).toLowerCase();
       let model;
@@ -293,10 +340,17 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve([]);
   }
 
+  function checkProviderAlive(providerUrl: string): Promise<boolean> {
+    return getOllamaClient(providerUrl).then((client) =>
+      getOllamaModels(client).then((m) => {
+        return !!m;
+      }),
+    );
+  }
+
   function refreshOllamaModels(modelName = undefined) {
-    if (AppConfig.isElectron && defaultAiProvider) {
-      window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', defaultAiProvider.url)
+    if (defaultAiProvider) {
+      getOllamaModels(ollamaClient.current)
         .then((m) => {
           if (m) {
             models.current = m;
@@ -304,17 +358,25 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             if (model) {
               return setModel(model);
             } else {
-              //if (currentModel.current === undefined) {
               //set defaultTextModel if not found
-              return setModel(defaultAiProvider.defaultTextModel);
+              const model = findModel(defaultAiProvider.defaultTextModel);
+              if (model) {
+                return setModel(defaultAiProvider.defaultTextModel);
+              }
             }
+            return true;
+          }
+          return false;
+        })
+        .then((success) => {
+          if (success) {
             forceUpdate();
           }
         });
     }
   }
 
-  function setModel(m: Model | string): Promise<boolean> {
+  function setModel(m: ModelResponse | string): Promise<boolean> {
     const model = typeof m === 'string' ? findModel(m) : m;
     if (
       model &&
@@ -398,7 +460,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
         showNotification('deleting ' + model.name + ' succeeded');
-        window.electronIO.ipcRenderer
+        deleteOllamaModel(ollamaClient.current, model.name).then((response) => {
+          console.log('deleteOllamaModel response:' + response);
+          if (response) {
+            if (model.name === currentModel.current?.name) {
+              currentModel.current = undefined;
+            }
+            refreshOllamaModels();
+          }
+        });
+        /*window.electronIO.ipcRenderer
           .invoke('deleteOllamaModel', defaultAiProvider.url, {
             name: model.name,
           })
@@ -410,7 +481,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
               }
               refreshOllamaModels();
             }
-          });
+          });*/
       }
     }
   }
@@ -425,20 +496,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * check if model is installed and return details
    * @param modelName
    */
-  function getModel(modelName: string): Promise<Model> {
-    if (!AppConfig.isElectron || !modelName || !defaultAiProvider) {
+  function getModel(modelName: string): Promise<ModelResponse> {
+    if (!modelName || !defaultAiProvider) {
       return Promise.resolve(undefined);
     }
-    return window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', defaultAiProvider.url)
-      .then((m) => {
-        if (m && m.length > 0) {
-          return m.find(
-            (mm) => mm.name === modelName || mm.name === modelName + ':latest',
-          );
-        }
-        return undefined;
-      });
+    return getOllamaModels(ollamaClient.current).then((m) => {
+      if (m && m.length > 0) {
+        return m.find(
+          (mm) => mm.name === modelName || mm.name === modelName + ':latest',
+        );
+      }
+      return undefined;
+    });
   }
 
   function changeCurrentModel(
@@ -458,7 +527,31 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         }
         // addTimeLineRequest('downloading ' + newModelName, 'system');
         openFileUploadDialog(newModelName, 'downloadChatModel');
-        return window.electronIO.ipcRenderer
+        const onProgressHandler = (message: PullModelResponse) => {
+          if (message.status) {
+            dispatch(
+              AppActions.onUploadProgress(
+                {
+                  key: message.model || message.status,
+                  loaded: message.completed,
+                  total: message.total,
+                },
+                undefined,
+                message.model,
+              ),
+            );
+          }
+        };
+        pullOllamaModel(
+          ollamaClient.current,
+          newModelName,
+          onProgressHandler,
+        ).then((response) => {
+          console.log('pullOllamaModel response:' + response);
+          refreshOllamaModels(newModelName);
+          return true;
+        });
+        /*return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', defaultAiProvider.url, {
             name: newModelName,
             stream: true,
@@ -467,13 +560,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             console.log('pullOllamaModel response:' + response);
             refreshOllamaModels(newModelName);
             return true;
-          });
+          });*/
       }
     }
     return Promise.resolve(true);
   }
 
-  function addTimeLineRequest(txt: string, role: ChatRole) {
+  function addHistoryItem(txt: string, role: ChatRole) {
     if (txt) {
       const newItem: ChatItem = {
         engine: 'ollama',
@@ -546,13 +639,27 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function addTimeLineResponse(txt, replace = false): ChatItem[] {
+  /* function addTimeLineRequest(txt) {
+    const newItem: ChatItem = {engine: undefined, modelName: "", role: undefined, timestamp: 0, request: txt };
+    chatHistoryItems.current = [newItem, ...timelineItems.current];
+    forceUpdate();
+  }*/
+
+  function addTimeLineResponse(txt) {
+    if (chatHistoryItems.current.length > 0) {
+      const firstItem = chatHistoryItems.current.shift();
+      firstItem.response = (firstItem.response ? firstItem.response : '') + txt;
+      chatHistoryItems.current = [firstItem, ...chatHistoryItems.current];
+      forceUpdate();
+    }
+  }
+
+  function addChatHistory(txt, replace = false): ChatItem[] {
     if (txt && chatHistoryItems.current.length > 0) {
       chatHistoryItems.current[0].response =
         (!replace && chatHistoryItems.current[0].response
           ? chatHistoryItems.current[0].response
           : '') + txt;
-      //isTyping.current = true;
       // forceUpdate(); don't refresh chatHistoryItems this will reload milkdown editor just update(content)
     }
     return chatHistoryItems.current;
@@ -634,6 +741,55 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return msg;
   }
 
+  const chatMessageHandler = useMemo(() => {
+    return (msg): void => {
+      //console.log(`Chat ${msg}`);
+      isTyping.current = true;
+      addTimeLineResponse(msg);
+    };
+  }, []);
+
+  const Tags = z.object({
+    topics: z.array(z.string()).max(4), // todo define generated tags maxLength in settings
+  });
+  const Description = z.object({
+    name: z.string(),
+    summary: z.string(),
+  });
+  const ObjectSchema = z.object({
+    name: z.string().describe('The name of the object'),
+    confidence: z
+      .number()
+      .min(0)
+      .max(1)
+      .describe('The confidence score of the object detection'),
+    attributes: z
+      .record(z.any())
+      .optional()
+      .describe('Additional attributes of the object'),
+    //attributes: z.string(),
+  });
+  const ImageDescription = z.object({
+    name: z.string().describe('The name of the Image'),
+    summary: z.string().describe('A concise summary of the image'),
+    objects: z
+      .array(ObjectSchema)
+      .describe('An array of objects detected in the image'),
+    scene: z.string().describe('The scene of the image'),
+    colors: z
+      .array(z.string())
+      .describe('An array of colors detected in the image'),
+    time_of_day: z
+      .enum(['Morning', 'Afternoon', 'Evening', 'Night', 'Unknown'])
+      .describe('The time of day the image was taken'),
+    setting: z
+      .enum(['Indoor', 'Outdoor', 'Unknown'])
+      .describe('The setting of the image'),
+    text_content: z
+      .string()
+      .optional()
+      .describe('Any text detected in the image'),
+  });
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
@@ -650,7 +806,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     role: ChatRole = 'user',
     mode: ChatMode = undefined,
     model: string = currentModel.current?.name,
-    stream: boolean = true,
+    stream: boolean = false,
     imgArray: string[] = [],
     includeHistory = true,
   ): Promise<any> {
@@ -678,28 +834,121 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           ]
         : [];
     if (includeHistory) {
-      addTimeLineRequest(msg, role);
+      addHistoryItem(msg, role);
     }
-    return window.electronIO.ipcRenderer
+    let format = undefined;
+    if (mode === 'tags') {
+      if (imgArray.length > 0) {
+        format = { format: zodToJsonSchema(ImageDescription) };
+      } else {
+        format = { format: zodToJsonSchema(Tags) };
+      }
+    } else if (mode === 'description' || mode === 'summary') {
+      if (imgArray.length > 0) {
+        format = { format: zodToJsonSchema(ImageDescription) };
+      } else {
+        format = { format: zodToJsonSchema(Description) };
+      }
+    }
+    const request: ChatRequest = {
+      model,
+      messages,
+      stream: stream,
+      ...(unload && { keep_alive: 0 }),
+      ...(format && format),
+    };
+    return newOllamaMessage(
+      ollamaClient.current,
+      request,
+      chatMessageHandler,
+    ).then((apiResponse) => {
+      isTyping.current = false;
+      if (msg && includeHistory) {
+        saveHistoryItems();
+      }
+      if (mode === 'tags') {
+        if (imgArray.length > 0) {
+          const response = ImageDescription.parse(JSON.parse(apiResponse));
+          const tags = response.objects.map((obj) => obj.name);
+          if (response.time_of_day && response.time_of_day !== 'Unknown') {
+            tags.push(response.time_of_day);
+          }
+          if (response.setting && response.setting !== 'Unknown') {
+            tags.push(response.setting);
+          }
+          return [...tags, ...response.colors];
+        } else {
+          const response = Tags.parse(JSON.parse(apiResponse));
+          return response.topics;
+        }
+      } else if (mode === 'description' || mode === 'summary') {
+        if (imgArray.length > 0) {
+          const response = ImageDescription.parse(JSON.parse(apiResponse));
+          const objArray = response.objects.map(
+            (obj) =>
+              '\n\n > ##### Name: \n\n' +
+              obj.name +
+              '\n\n > ##### Attributes: \n\n' +
+              obj.attributes,
+          );
+          return (
+            '### Name: \n\n' +
+            response.name +
+            '\n\n ### Objects: \n\n' +
+            objArray.join('\n\n') +
+            '\n\n ### Scene: \n\n' +
+            response.scene +
+            '\n\n ### Colors:\n\n' +
+            response.colors +
+            '\n\n ### Summary:\n\n' +
+            response.summary +
+            '\n\n ### Day Time:\n\n' +
+            response.time_of_day +
+            '\n\n ### Setting:\n\n' +
+            response.setting +
+            (response.text_content
+              ? '\n\n ### Content:\n\n' + response.text_content
+              : '')
+          );
+        } else {
+          const response = Description.parse(JSON.parse(apiResponse));
+          return (
+            '### Name: \n\n' +
+            response.name +
+            '\n\n ### Summary:\n\n' +
+            response.summary
+          );
+        }
+      }
+      return stream ? true : apiResponse;
+    });
+    /*return window.electronIO.ipcRenderer
       .invoke('newOllamaMessage', defaultAiProvider.url, {
         model,
         messages,
         stream: stream,
         ...(unload && { keep_alive: 0 }),
       })
-      .then((apiResponse) => {
-        if (msg && includeHistory) {
-          saveHistoryItems();
-        }
-        return stream ? true : apiResponse;
-      });
+      */
   }
 
-  function getFileContent(content: any): Promise<string> {
-    if (openedEntry.path.endsWith('.pdf')) {
+  function cancelMessage() {
+    if (ollamaClient.current) {
+      ollamaClient.current.abort();
+      isTyping.current = false;
+      saveHistoryItems();
+      forceUpdate();
+    }
+  }
+
+  function getFileContent(
+    entry: TS.FileSystemEntry,
+    content: any,
+  ): Promise<string> {
+    if (entry.path.endsWith('.pdf')) {
       return extractPDFcontent(content);
-    } else if (openedEntry.path.endsWith('.html')) {
-      return extractTextContent(openedEntry.name, content);
+    } else if (entry.path.endsWith('.html')) {
+      return extractTextContent(entry.name, content);
     }
     return Promise.resolve(content);
   }
@@ -717,23 +966,25 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function generate(
     fileContent: 'text' | 'image',
     mode: ChatMode,
+    modelName: string,
+    entry: TS.FileSystemEntry,
   ): Promise<string> {
-    if (openedEntryModel.current) {
+    if (modelName) {
       return currentLocation
         .getFileContentPromise(
-          openedEntry.path,
-          fileContent === 'text' && !openedEntry.path.endsWith('.pdf')
+          entry.path,
+          fileContent === 'text' && !entry.path.endsWith('.pdf')
             ? 'text'
             : 'arraybuffer',
         )
-        .then((content) => getFileContent(content))
+        .then((content) => getFileContent(entry, content))
         .then((content) =>
           newChatMessage(
             fileContent === 'image' ? undefined : content,
             false,
             'user',
             mode,
-            openedEntryModel.current.name,
+            modelName, //openedEntryModel.current.name,
             false,
             getImageArray(fileContent, content),
             false,
@@ -751,10 +1002,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   const context = useMemo(() => {
     return {
+      isTyping: isTyping.current,
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
-      openedEntryModel: openedEntryModel.current,
+      //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
       refreshOllamaModels,
       getHistoryFilePath,
@@ -765,20 +1017,25 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       removeModel,
       changeCurrentModel,
       getModel,
-      addTimeLineRequest,
       addTimeLineResponse,
+      addChatHistory,
       newChatMessage,
+      cancelMessage,
       findModel,
       generate,
       initHistory,
       deleteHistory,
+      checkProviderAlive,
+      getOllamaClient,
+      getEntryModel,
     };
   }, [
     defaultAiProvider,
+    isTyping.current,
     models.current,
     images.current,
     currentModel.current,
-    openedEntryModel.current,
+    //openedEntryModel.current,
     chatHistoryItems.current,
     openedEntry,
     selectedEntries,

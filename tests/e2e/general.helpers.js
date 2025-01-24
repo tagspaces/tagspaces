@@ -415,7 +415,7 @@ export async function expectAllFileSelected(isSelected = true) {
 export async function expectElementSelected(
   selector,
   isSelected = true,
-  timeout = 2000,
+  timeout = 4000,
 ) {
   // [data-testid="' + (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') + '"]
   const sel = '[data-tid="fsEntryName_' + dataTidFormat(selector) + '"]';

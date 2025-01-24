@@ -37,6 +37,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import CancelIcon from '@mui/icons-material/Cancel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
@@ -64,18 +65,17 @@ function ChatView() {
     images,
     removeImage,
     chatHistoryItems,
-    addTimeLineResponse,
-    unloadCurrentModel,
     newChatMessage,
     changeCurrentModel,
     setModel,
     currentModel,
     getHistoryFilePath,
     deleteHistory,
+    isTyping,
+    cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
-  const isTyping = useRef<boolean>(false);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
@@ -93,24 +93,24 @@ function ChatView() {
     return ''; // Return an empty string if newText does not start with oldText
   };*/
 
-  const chatMessageHandler = useMemo(() => {
+  /*const chatMessageHandler = useMemo(() => {
     return (msg, replace): void => {
       //console.log(`Chat ${msg}`);
       const items = addTimeLineResponse(msg, replace);
       if (editorRef.current) {
         const newMarkdown = formatChatItems(items);
-        /*const oldMarkdown = editorRef.current.getMarkdown();
-        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*/ // insert and preserve selection
+        /!*const oldMarkdown = editorRef.current.getMarkdown();
+        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*!/ // insert and preserve selection
         editorRef.current.update(newMarkdown);
       }
     };
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
         //console.log('ChatMessage:' + message);
@@ -136,7 +136,7 @@ function ChatView() {
         unloadCurrentModel();
       };
     }
-  }, [chatMessageHandler]);
+  }, [chatMessageHandler]);*/
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
@@ -208,19 +208,32 @@ function ChatView() {
   };
 
   const handleChatMessage = () => {
-    isTyping.current = true;
+    //isTyping.current = true;
     isLoading.current = true;
     forceUpdate();
-    newChatMessage(chatMsg.current, false, 'user', currentMode.current).then(
-      (response) => {
+    newChatMessage(
+      chatMsg.current,
+      false,
+      'user',
+      currentMode.current,
+      undefined,
+      true,
+    )
+      .then((response) => {
         console.log('newOllamaMessage response:' + response);
         if (response) {
           chatMsg.current = '';
         }
-        isTyping.current = false;
+        isLoading.current = false;
         forceUpdate();
-      },
-    );
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') {
+          console.log('ChatMessage request has been aborted');
+        } else {
+          console.error('An error occurred:', error);
+        }
+      });
   };
 
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -314,6 +327,7 @@ function ChatView() {
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
+              aiProvider={aiDefaultProvider}
               chosenModel={currentModel?.name}
               label={t('core:selectedAIModel')}
             />
@@ -404,7 +418,7 @@ function ChatView() {
               <FormControl fullWidth>
                 <TsTextField
                   autoFocus
-                  disabled={isTyping.current}
+                  disabled={isTyping || isLoading.current}
                   name="entryName"
                   //label={t('core:newChatMessage')}
                   placeholder={t('core:yourMessageForAI')}
@@ -428,8 +442,21 @@ function ChatView() {
                       ),
                       endAdornment: (
                         <InputAdornment position="end" style={{ height: 32 }}>
-                          {isLoading.current && (
+                          {isTyping && (
                             <CircularProgress size={24} color="inherit" />
+                          )}
+                          {isLoading.current && (
+                            <Tooltip title="Cancel Message">
+                              <IconButton
+                                onClick={() => {
+                                  isLoading.current = false;
+                                  cancelMessage();
+                                }}
+                                size="large"
+                              >
+                                <CancelIcon />
+                              </IconButton>
+                            </Tooltip>
                           )}
                           <Tooltip title="Send Message">
                             <IconButton

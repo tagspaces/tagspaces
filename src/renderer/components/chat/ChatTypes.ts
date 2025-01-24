@@ -36,14 +36,14 @@ export type AIProvider = {
   defaultTextModel?: string;
 };
 
-export type Model = {
+/*export type Model = {
   name: string;
   engine: AIProviders;
   modified_at?: string;
   size?: number;
   digest?: string;
   details?: ModelDetails;
-};
+};*/
 
 export type ChatItem = {
   request: string;

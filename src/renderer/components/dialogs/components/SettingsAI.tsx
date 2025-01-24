@@ -72,7 +72,7 @@ interface Props {
 function SettingsAI(props: Props) {
   const { i18n, t } = useTranslation();
   const { closeSettings } = props;
-  const { changeCurrentModel } = useChatContext();
+  const { changeCurrentModel, checkProviderAlive } = useChatContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const aiProviders: AIProvider[] = useSelector(getAIProviders);
   //const ollamaAlive = useRef<boolean | null>(null);
@@ -103,20 +103,14 @@ function SettingsAI(props: Props) {
 
   function checkOllamaAlive() {
     aiProviders.map((provider) =>
-      window.electronIO.ipcRenderer
-        .invoke('getOllamaModels', provider.url)
-        .then((m) => {
-          const alive = !!m;
-          providersAlive.current = {
-            ...providersAlive.current,
-            [provider.id]: alive,
-          };
-          forceUpdate();
-          return alive;
-          /*if (provider.alive !== alive) {
-            handleChangeProvider(provider.id, 'alive', alive);
-          }*/
-        }),
+      checkProviderAlive(provider.url).then((alive) => {
+        providersAlive.current = {
+          ...providersAlive.current,
+          [provider.id]: alive,
+        };
+        forceUpdate();
+        return alive;
+      }),
     );
     //Promise.all(promises).then(() => forceUpdate());
   }
@@ -143,23 +137,21 @@ function SettingsAI(props: Props) {
     //event: ChangeEvent<HTMLInputElement>) => {
     //const provider: AIProviders = event.target.value as AIProviders;
     const providerUrl = provider === 'ollama' ? 'http://localhost:11434' : '';
-    window.electronIO.ipcRenderer
-      .invoke('getOllamaModels', providerUrl)
-      .then((m) => {
-        const providerId = getUuid();
-        providersAlive.current = {
-          ...providersAlive.current,
-          [providerId]: !!m,
-        };
-        const aiProvider: AIProvider = {
-          id: providerId,
-          engine: provider,
-          name: provider,
-          url: providerUrl,
-          enable: true,
-        };
-        dispatch(SettingsActions.addAiProvider(aiProvider));
-      });
+    checkProviderAlive(providerUrl).then((isAlive) => {
+      const providerId = getUuid();
+      providersAlive.current = {
+        ...providersAlive.current,
+        [providerId]: isAlive,
+      };
+      const aiProvider: AIProvider = {
+        id: providerId,
+        engine: provider,
+        name: provider,
+        url: providerUrl,
+        enable: true,
+      };
+      dispatch(SettingsActions.addAiProvider(aiProvider));
+    });
   };
 
   const externalConfig = typeof window.ExtAI !== 'undefined';
@@ -413,6 +405,7 @@ function SettingsAI(props: Props) {
                   );
                   changeCurrentModel(modelName, closeSettings);
                 }}
+                aiProvider={provider}
                 chosenModel={provider.defaultTextModel}
               />
               <SelectChatModel
@@ -425,6 +418,7 @@ function SettingsAI(props: Props) {
                   );
                   changeCurrentModel(modelName, closeSettings);
                 }}
+                aiProvider={provider}
                 chosenModel={provider.defaultImageModel}
               />
               <FormControlLabel
