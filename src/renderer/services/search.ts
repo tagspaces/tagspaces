@@ -67,7 +67,7 @@ export const FileTypeGroups = {
     'sldx',
     'dotx',
   ],
-  audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc', 'm4a'],
+  audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc', 'm4a', 'opus'],
   video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
