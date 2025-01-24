@@ -37,6 +37,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import CancelIcon from '@mui/icons-material/Cancel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
@@ -71,11 +72,11 @@ function ChatView() {
     getHistoryFilePath,
     deleteHistory,
     isTyping,
+    cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
-  //const isTyping = useRef<boolean>(false);
-  //const isLoading = useRef<boolean>(false);
+  const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<MilkdownRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
@@ -208,7 +209,7 @@ function ChatView() {
 
   const handleChatMessage = () => {
     //isTyping.current = true;
-    //isLoading.current = true;
+    isLoading.current = true;
     forceUpdate();
     newChatMessage(
       chatMsg.current,
@@ -217,14 +218,22 @@ function ChatView() {
       currentMode.current,
       undefined,
       true,
-    ).then((response) => {
-      console.log('newOllamaMessage response:' + response);
-      if (response) {
-        chatMsg.current = '';
-      }
-      //isTyping.current = false;
-      forceUpdate();
-    });
+    )
+      .then((response) => {
+        console.log('newOllamaMessage response:' + response);
+        if (response) {
+          chatMsg.current = '';
+        }
+        isLoading.current = false;
+        forceUpdate();
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') {
+          console.log('ChatMessage request has been aborted');
+        } else {
+          console.error('An error occurred:', error);
+        }
+      });
   };
 
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -409,7 +418,7 @@ function ChatView() {
               <FormControl fullWidth>
                 <TsTextField
                   autoFocus
-                  disabled={isTyping}
+                  disabled={isTyping || isLoading.current}
                   name="entryName"
                   //label={t('core:newChatMessage')}
                   placeholder={t('core:yourMessageForAI')}
@@ -435,6 +444,19 @@ function ChatView() {
                         <InputAdornment position="end" style={{ height: 32 }}>
                           {isTyping && (
                             <CircularProgress size={24} color="inherit" />
+                          )}
+                          {isLoading.current && (
+                            <Tooltip title="Cancel Message">
+                              <IconButton
+                                onClick={() => {
+                                  isLoading.current = false;
+                                  cancelMessage();
+                                }}
+                                size="large"
+                              >
+                                <CancelIcon />
+                              </IconButton>
+                            </Tooltip>
                           )}
                           <Tooltip title="Send Message">
                             <IconButton

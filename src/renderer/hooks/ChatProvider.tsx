@@ -110,6 +110,7 @@ type ChatData = {
     images?: string[],
     includeHistory?: boolean,
   ) => Promise<any>;
+  cancelMessage: () => void;
   generate: (
     fileContent: 'text' | 'image',
     mode: ChatMode,
@@ -143,6 +144,7 @@ export const ChatContext = createContext<ChatData>({
   getModel: undefined,
   addChatHistory: undefined,
   newChatMessage: undefined,
+  cancelMessage: undefined,
   generate: undefined,
   initHistory: undefined,
   deleteHistory: undefined,
@@ -930,6 +932,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       */
   }
 
+  function cancelMessage() {
+    if (ollamaClient.current) {
+      ollamaClient.current.abort();
+      isTyping.current = false;
+      saveHistoryItems();
+      forceUpdate();
+    }
+  }
+
   function getFileContent(
     entry: TS.FileSystemEntry,
     content: any,
@@ -1009,6 +1020,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       addTimeLineResponse,
       addChatHistory,
       newChatMessage,
+      cancelMessage,
       findModel,
       generate,
       initHistory,
