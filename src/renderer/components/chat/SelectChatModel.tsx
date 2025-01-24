@@ -52,11 +52,11 @@ function SelectChatModel(props: Props) {
   const [isCustomModelPromptDialogOpened, setCustomModelPromptDialogOpened] =
     useState(false);
   const [installedModels, setModels] = useState(
-    aiProvider.id === defaultAiProvider.id ? models : [],
+    aiProvider?.id === defaultAiProvider?.id ? models : [],
   );
 
   useEffect(() => {
-    if (aiProvider.engine === 'ollama') {
+    if (aiProvider && aiProvider.engine === 'ollama') {
       getOllamaClient(aiProvider.url).then((client) => {
         getOllamaModels(client).then((m) => {
           if (!m || JSON.stringify(m) !== JSON.stringify(installedModels)) {
