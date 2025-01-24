@@ -48,8 +48,19 @@ function ChatDndTargetFile(props: Props) {
   const { setImages } = useChatContext();
 
   function isSupportedImageFormat(filePath: string) {
-    const aiSupportedImages = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff'];
-    return aiSupportedImages.some((ext) => filePath.endsWith(ext));
+    const aiSupportedImages = [
+      'jpeg',
+      'jpg',
+      'png',
+      'gif',
+      'bmp',
+      'tiff',
+      'avif',
+      'webp',
+    ];
+    return aiSupportedImages.some((ext) =>
+      filePath.toLowerCase().endsWith(ext),
+    );
   }
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
