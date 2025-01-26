@@ -42,7 +42,7 @@
     "build:web:dev": "rimraf web/dist && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.web.dev.ts",
     "bump-version": "npm run third-party && cd release/app && yarn version && cd .. && npm run version-meta",
     "clean": "npx rimraf node_modules && npx rimraf src/renderer/dist",
-    "clean-maps": "rimraf --glob release/app/dist/**/*.map && rimraf --glob web/dist/*.map",
+    "clean-maps": "rimraf --glob release/app/dist/**/*.map && rimraf --glob web/dist/*.map && rimraf --glob cordova/www/dist/*.map",
     "cordova-add-android": "cd cordova && cordova platform add android@9.1.0 && cd ..",
     "cordova-add-ios": "cd cordova && cordova platform add ios && cd ..",
     "cordova-create-app": "cordova create ./cordova org.tagspaces.iosn TagSpaces",
