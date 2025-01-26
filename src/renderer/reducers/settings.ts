@@ -1026,6 +1026,8 @@ export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes.sort((a, b) =>
     a.type > b.type ? 1 : a.type < b.type ? -1 : 0,
   );
+export const getExtensionsFound = (state: any) =>
+  state.settings.extensionsFound;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

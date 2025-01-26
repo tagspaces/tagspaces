@@ -16,7 +16,9 @@ export function getExtensions(
   const promises = packages.map(
     (packagePath) =>
       new Promise((resolve, reject) => {
-        const extPath = path.join(nodeModulesPath, packagePath);
+        const extPath = packagePath.startsWith('.')
+          ? packagePath
+          : path.join(nodeModulesPath, packagePath);
         fs.readdir(extPath, { withFileTypes: true }, (err, files) => {
           if (err) {
             console.log('Error reading directory:', err);
@@ -70,12 +72,9 @@ function processDirs(
   const supportedFileTypes = [];
 
   const extensions = dirs.map((dir) => {
-    const pluginJsonPath = path.join(
-      directoryPath,
-      packagePath,
-      dir.name,
-      'package.json',
-    );
+    const pluginJsonPath = packagePath.startsWith('.')
+      ? path.join(packagePath, dir.name, 'package.json')
+      : path.join(directoryPath, packagePath, dir.name, 'package.json');
     try {
       const packageJsonContent = fs.readFileSync(pluginJsonPath, 'utf8');
       const packageJsonObj = JSON.parse(packageJsonContent);

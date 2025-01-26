@@ -70,6 +70,8 @@ declare interface Window {
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova
   device?: any; // needed for Cordova
+  ExtSupportedFileTypes?: Array<any>;
+  ExtExtensionsFound?: Array<any>;
 }
 
 declare interface NodeModule {
