@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { supportedFileTypes } from '-/extension-config';
+import { supportedFileTypes, extensionsFound } from '-/extension-config';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -226,7 +226,12 @@ export default {
     },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
-  supportedFileTypes: supportedFileTypes,
+  supportedFileTypes: window.ExtSupportedFileTypes
+    ? [...supportedFileTypes, ...window.ExtSupportedFileTypes]
+    : supportedFileTypes,
+  extensionsFound: window.ExtExtensionsFound
+    ? [...extensionsFound, ...window.ExtExtensionsFound]
+    : extensionsFound,
   enabledExtensions: [],
   mapTileServers: [
     {
