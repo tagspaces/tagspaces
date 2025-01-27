@@ -17,7 +17,7 @@
  */
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
-import LoadingLazy from '-/components/LoadingLazy';
+import { Pro } from '-/pro';
 
 type AiGenerationDialogContextData = {
   openAiGenerationDialog: () => void;
@@ -34,18 +34,11 @@ export type AiGenerationDialogContextProviderProps = {
   children: React.ReactNode;
 };
 
-const AiGenerationDialog = React.lazy(
-  () =>
-    import(
-      /* webpackChunkName: "AiGenerationDialog" */ '../AiGenerationDialog'
-    ),
-);
-
 export const AiGenerationDialogContextProvider = ({
   children,
 }: AiGenerationDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
-
+  const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   function openDialog() {
@@ -58,14 +51,6 @@ export const AiGenerationDialogContextProvider = ({
     forceUpdate();
   }
 
-  function AiGenerationDialogAsync(props) {
-    return (
-      <React.Suspense fallback={<LoadingLazy />}>
-        <AiGenerationDialog {...props} />
-      </React.Suspense>
-    );
-  }
-
   const context = useMemo(() => {
     return {
       openAiGenerationDialog: openDialog,
@@ -75,7 +60,7 @@ export const AiGenerationDialogContextProvider = ({
 
   return (
     <AiGenerationDialogContext.Provider value={context}>
-      <AiGenerationDialogAsync open={open.current} onClose={closeDialog} />
+      <AiGenerationDialog open={open.current} onClose={closeDialog} />
       {children}
     </AiGenerationDialogContext.Provider>
   );

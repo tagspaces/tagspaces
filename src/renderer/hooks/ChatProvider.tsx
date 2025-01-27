@@ -35,8 +35,11 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
+  actions as SettingsActions,
   getDefaultAIProvider,
   getEntryContainerTab,
+  getTagColor,
+  getTagTextColor,
 } from '-/reducers/settings';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
@@ -71,7 +74,13 @@ import {
 } from '-/components/chat/OllamaClient';
 import { Ollama, ChatRequest, ModelResponse } from 'ollama';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { z } from 'zod';
+import { getTagColors } from '-/services/taglibrary-utils';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import {
+  Description,
+  ImageDescription,
+  getZodTags,
+} from '-/services/zodObjects';
 
 /*export type TimelineItem = {
   request: string;
@@ -122,6 +131,12 @@ type ChatData = {
   checkProviderAlive: (providerUrl: string) => Promise<boolean>;
   getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
   getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse;
+  tagsGenerate: (
+    generateEntries: TS.FileSystemEntry[],
+    fromDescription?: boolean,
+  ) => Promise<boolean>;
+  generationSettings: GenerationSettings;
+  setGenerationSettings: (genSettings: any) => void;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -151,16 +166,26 @@ export const ChatContext = createContext<ChatData>({
   checkProviderAlive: undefined,
   getOllamaClient: undefined,
   getEntryModel: undefined,
+  tagsGenerate: undefined,
+  generationSettings: undefined,
+  setGenerationSettings: undefined,
 });
 
 export type ChatContextProviderProps = {
   children: React.ReactNode;
 };
 
+export type GenerationSettings = {
+  maxTags: number;
+  maxTagsFromLibrary: number;
+  fromDescription: boolean;
+};
+
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const { deleteDirectory } = useIOActionsContext();
+  const { addTagsToFsEntry } = useTaggingActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -169,7 +194,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const models = useRef<ModelResponse[]>([]);
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const selectedTabName = useSelector(getEntryContainerTab);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
   const currentModel = useRef<ModelResponse>(undefined);
+  const generationSettings = useRef<GenerationSettings>({
+    maxTags: 4,
+    maxTagsFromLibrary: 4,
+    fromDescription: false,
+  });
   /*const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
   );*/
@@ -749,47 +781,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     };
   }, []);
 
-  const Tags = z.object({
-    topics: z.array(z.string()).max(4), // todo define generated tags maxLength in settings
-  });
-  const Description = z.object({
-    name: z.string(),
-    summary: z.string(),
-  });
-  const ObjectSchema = z.object({
-    name: z.string().describe('The name of the object'),
-    confidence: z
-      .number()
-      .min(0)
-      .max(1)
-      .describe('The confidence score of the object detection'),
-    attributes: z
-      .record(z.any())
-      .optional()
-      .describe('Additional attributes of the object'),
-    //attributes: z.string(),
-  });
-  const ImageDescription = z.object({
-    name: z.string().describe('The name of the Image'),
-    summary: z.string().describe('A concise summary of the image'),
-    objects: z
-      .array(ObjectSchema)
-      .describe('An array of objects detected in the image'),
-    scene: z.string().describe('The scene of the image'),
-    colors: z
-      .array(z.string())
-      .describe('An array of colors detected in the image'),
-    time_of_day: z
-      .enum(['Morning', 'Afternoon', 'Evening', 'Night', 'Unknown'])
-      .describe('The time of day the image was taken'),
-    setting: z
-      .enum(['Indoor', 'Outdoor', 'Unknown'])
-      .describe('The setting of the image'),
-    text_content: z
-      .string()
-      .optional()
-      .describe('Any text detected in the image'),
-  });
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
@@ -841,7 +832,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (imgArray.length > 0) {
         format = { format: zodToJsonSchema(ImageDescription) };
       } else {
-        format = { format: zodToJsonSchema(Tags) };
+        format = {
+          format: zodToJsonSchema(
+            getZodTags(generationSettings.current.maxTags),
+          ),
+        };
       }
     } else if (mode === 'description' || mode === 'summary') {
       if (imgArray.length > 0) {
@@ -878,7 +873,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           }
           return [...tags, ...response.colors];
         } else {
-          const response = Tags.parse(JSON.parse(apiResponse));
+          const zodTags = getZodTags(generationSettings.current.maxTags);
+          const response = zodTags.parse(JSON.parse(apiResponse));
           return response.topics;
         }
       } else if (mode === 'description' || mode === 'summary') {
@@ -1000,6 +996,89 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(undefined);
   }
 
+  function tagsGenerate(
+    generateEntries: TS.FileSystemEntry[],
+    fromDescription: boolean = false,
+  ): Promise<boolean> {
+    const promises = generateEntries.map((entry) => {
+      const entryModel: ModelResponse = getEntryModel(
+        entry.name,
+        defaultAiProvider,
+      );
+      const ext = extractFileExtension(entry.name).toLowerCase();
+      if (fromDescription && entry.meta.description) {
+        return newChatMessage(
+          entry.meta.description,
+          false,
+          'user',
+          'tags',
+          defaultAiProvider.defaultTextModel,
+          false,
+          [],
+          false,
+        ).then((results) => handleGenerationResults(entry, results));
+      } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        return generate('image', 'tags', entryModel.name, entry).then(
+          (results) => handleGenerationResults(entry, results),
+        );
+      } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+        return generate('text', 'tags', entryModel.name, entry).then(
+          (results) => handleGenerationResults(entry, results),
+        );
+      }
+      return Promise.resolve(false);
+    });
+    return Promise.all(promises).then(() => {
+      showNotification('Tags generated by an AI.');
+      return true;
+    });
+  }
+
+  function handleGenerationResults(entry, response): Promise<boolean> {
+    console.log('newOllamaMessage response:' + response);
+    if (response) {
+      try {
+        const tags: TS.Tag[] = response.map((tag) => {
+          const tagTitle = tag.toLowerCase().split(' ').join('-');
+          return {
+            title: tagTitle,
+            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
+          };
+        });
+        const uniqueTags = tags.filter(
+          (tag, index, self) =>
+            index === self.findIndex((o) => o.title === tag.title),
+        );
+        /* const regex = /\{([^}]+)\}/g;
+        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
+          const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
+          return {
+            title: tagTitle,
+            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
+          };
+        });*/
+        return addTagsToFsEntry(entry, uniqueTags).then(() => {
+          dispatch(
+            SettingsActions.setEntryContainerTab(TabNames.propertiesTab),
+          );
+          return true;
+        });
+        // showNotification('Tags for ' + entry.name + ' generated by an AI.');
+      } catch (e) {
+        console.error('parse response ' + response, e);
+      }
+    }
+    return Promise.resolve(false);
+  }
+
+  function setGenerationSettings(genSettings: any) {
+    generationSettings.current = {
+      ...generationSettings.current,
+      ...genSettings,
+    };
+    forceUpdate();
+  }
+
   const context = useMemo(() => {
     return {
       isTyping: isTyping.current,
@@ -1008,6 +1087,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       currentModel: currentModel.current,
       //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
+      generationSettings: generationSettings.current,
       refreshOllamaModels,
       getHistoryFilePath,
       setModel,
@@ -1028,6 +1108,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       checkProviderAlive,
       getOllamaClient,
       getEntryModel,
+      tagsGenerate,
+      setGenerationSettings,
     };
   }, [
     defaultAiProvider,
@@ -1035,8 +1117,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     models.current,
     images.current,
     currentModel.current,
-    //openedEntryModel.current,
     chatHistoryItems.current,
+    generationSettings.current,
     openedEntry,
     selectedEntries,
   ]);

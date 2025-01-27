@@ -18,10 +18,9 @@
 
 import React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { saveAs } from 'file-saver';
-import { Toolbar, Box, Divider, Badge } from '@mui/material/';
-import Tooltip from '-/components/Tooltip';
+import { Toolbar, Box, Divider } from '@mui/material/';
 import TsIconButton from '-/components/TsIconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import ShareIcon from '@mui/icons-material/Share';
@@ -44,7 +43,7 @@ import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
 import ZoomComponent from '-/components/ZoomComponent';
-import { getKeyBindingObject } from '-/reducers/settings';
+import { getDefaultAIProvider, getKeyBindingObject } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -55,6 +54,8 @@ import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hook
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
+import { useChatContext } from '-/hooks/useChatContext';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 interface Props {
   prefixDataTID?: string;
@@ -81,6 +82,7 @@ function MainToolbar(props: Props) {
 
   const { haveLocalSetting } = usePerspectiveSettingsContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
+  const { getEntryModel } = useChatContext();
   const { nativeDragModeEnabled, setNativeDragModeEnabled } =
     useSortedDirContext();
 
@@ -91,6 +93,7 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   //const dispatch: AppDispatch = useDispatch();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
@@ -187,16 +190,20 @@ function MainToolbar(props: Props) {
             <TagIcon />
           </TsIconButton>
         )}
-        {!readOnlyMode && Pro && (
-          <TsIconButton
-            tooltip={t('core:aiGenSelectedEntries')}
-            aria-label={t('core:aiGenSelectedEntries')}
-            data-tid={prefixDataTID + 'PerspectiveAiGenTID'}
-            onClick={() => openAiGenerationDialog()}
-          >
-            <AIIcon />
-          </TsIconButton>
-        )}
+        {!readOnlyMode &&
+          Pro &&
+          selectedEntries.every((entry) =>
+            getEntryModel(entry.name, defaultAiProvider),
+          ) && (
+            <TsIconButton
+              tooltip={t('core:aiGenSelectedEntries')}
+              aria-label={t('core:aiGenSelectedEntries')}
+              data-tid={prefixDataTID + 'PerspectiveAiGenTID'}
+              onClick={() => openAiGenerationDialog()}
+            >
+              <AIIcon />
+            </TsIconButton>
+          )}
         {!readOnlyMode && (
           <TsIconButton
             tooltip={t('core:copyMoveSelectedEntries')}
