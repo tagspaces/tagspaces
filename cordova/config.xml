@@ -18,8 +18,8 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <preference name="android-minSdkVersion" value="22" />
-        <preference name="android-targetSdkVersion" value="29" />
+        <preference name="android-minSdkVersion" value="25" />
+        <preference name="android-targetSdkVersion" value="30" />
 		<preference name="AndroidXEnabled" value="true" />
         <icon density="mdpi" src="res/icon/android/mipmap-mdpi/ic_launcher.png" />
         <icon density="hdpi" src="res/icon/android/mipmap-hdpi/ic_launcher.png" />
