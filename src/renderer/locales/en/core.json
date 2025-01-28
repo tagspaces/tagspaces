@@ -917,8 +917,9 @@
   "confirmHistoryDeletion": "Do you want to delete the AI-chat history?",
   "doubleClickToOpen": "Double-click to open",
   "tip": "Tip",
-  "generateTagsFromLibrary": "Generate Tags From Library",
   "generateSummary": "Generate Summary",
   "analyseImages": "Extended analyses for images",
+  "fromTagLibrary": "from Tag Library",
+  "fromTagLibraryHelp": "use predefined tags from Tag Library only",
   "-": "-"
 }

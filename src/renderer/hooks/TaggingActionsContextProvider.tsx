@@ -167,8 +167,7 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { findLocation, currentLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
-  const { tagGroups, reflectTagLibraryChanged, broadcast } =
-    useEditedTagLibraryContext();
+  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
     createLocationTagGroup,
     editLocationTagGroup,

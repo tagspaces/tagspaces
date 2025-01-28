@@ -1,9 +1,24 @@
 import { z } from 'zod';
 
-export const getZodTags = (max = 4) =>
-  z.object({
-    topics: z.array(z.string()).max(max),
+export const getZodTags = (max = 4, tagsArray: string[] = []) => {
+  if (tagsArray.length > 0) {
+    const [firstTag, ...restTags] = tagsArray;
+    return z.object({
+      topics: z
+        .array(z.enum([firstTag, ...restTags]))
+        .min(1)
+        .max(max)
+        .describe('The predefined topics'),
+    });
+  }
+  return z.object({
+    topics: z
+      .array(z.string())
+      .min(1)
+      .max(max)
+      .describe('The predefined topics'),
   });
+};
 export const Description = z.object({
   name: z.string(),
   summary: z.string(),
@@ -42,4 +57,5 @@ export const imageDescriptionObj = {
     .optional()
     .describe('Any text detected in the image'),
 };
+
 export const ImageDescription = z.object(imageDescriptionObj);

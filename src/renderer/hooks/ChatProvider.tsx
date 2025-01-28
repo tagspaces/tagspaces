@@ -74,7 +74,7 @@ import {
 } from '-/components/chat/OllamaClient';
 import { Ollama, ChatRequest, ModelResponse } from 'ollama';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { getTagColors } from '-/services/taglibrary-utils';
+import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import {
   Description,
@@ -177,7 +177,8 @@ export type ChatContextProviderProps = {
 
 export type GenerationSettings = {
   maxTags: number;
-  maxTagsFromLibrary: number;
+  tagsFromLibrary: boolean;
+  tagGroupsIds: string[];
   fromDescription: boolean;
 };
 
@@ -199,8 +200,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const currentModel = useRef<ModelResponse>(undefined);
   const generationSettings = useRef<GenerationSettings>({
     maxTags: 4,
-    maxTagsFromLibrary: 4,
+    tagsFromLibrary: false,
     fromDescription: false,
+    tagGroupsIds: [],
   });
   /*const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
@@ -781,6 +783,23 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     };
   }, []);
 
+  function getTagsFromLibrary(): string[] {
+    const tagsFromLibrary: string[] = [];
+    if (
+      generationSettings.current.tagsFromLibrary &&
+      generationSettings.current.tagGroupsIds.length > 0
+    ) {
+      const tagLibrary: TS.TagGroup[] = getTagLibrary();
+      generationSettings.current.tagGroupsIds.forEach((tagGroupId) => {
+        const tagGroup = tagLibrary.find((tg) => tg.uuid === tagGroupId);
+        if (tagGroup) {
+          tagsFromLibrary.push(...tagGroup.children.map((tag) => tag.title));
+        }
+      });
+    }
+    return tagsFromLibrary;
+  }
+
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
@@ -829,12 +848,20 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
     let format = undefined;
     if (mode === 'tags') {
+      const tagsFromLibrary = getTagsFromLibrary();
+      if (tagsFromLibrary.length > 0) {
+        format = {
+          format: zodToJsonSchema(
+            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
+          ),
+        };
+      }
       if (imgArray.length > 0) {
         format = { format: zodToJsonSchema(ImageDescription) };
       } else {
         format = {
           format: zodToJsonSchema(
-            getZodTags(generationSettings.current.maxTags),
+            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
           ),
         };
       }
@@ -857,29 +884,46 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       request,
       chatMessageHandler,
     ).then((apiResponse) => {
+      console.log('apiResponse:' + apiResponse);
       isTyping.current = false;
       if (msg && includeHistory) {
         saveHistoryItems();
       }
       if (mode === 'tags') {
         if (imgArray.length > 0) {
-          const response = ImageDescription.parse(JSON.parse(apiResponse));
-          const tags = response.objects.map((obj) => obj.name);
+          const response = JSON.parse(apiResponse); // ImageDescription.parse(JSON.parse(apiResponse));
+          const tags = response.objects
+            ? response.objects.map((obj) => obj.name)
+            : [];
           if (response.time_of_day && response.time_of_day !== 'Unknown') {
             tags.push(response.time_of_day);
           }
           if (response.setting && response.setting !== 'Unknown') {
             tags.push(response.setting);
           }
+          if (response.topics) {
+            tags.push(response.topics);
+          }
           return [...tags, ...response.colors];
         } else {
-          const zodTags = getZodTags(generationSettings.current.maxTags);
-          const response = zodTags.parse(JSON.parse(apiResponse));
-          return response.topics;
+          let tags: string[] = [];
+          try {
+            const response = JSON.parse(apiResponse);
+            tags = response.topics;
+          } catch (e) {
+            console.log('JSON.parse error for:' + apiResponse, e);
+            if (apiResponse) {
+              tags = apiResponse.split(' ');
+            }
+            //const zodTags = getZodTags(generationSettings.current.maxTags);
+            //response = zodTags.parse(JSON.parse(apiResponse));
+          }
+
+          return tags.slice(0, generationSettings.current.maxTags);
         }
       } else if (mode === 'description' || mode === 'summary') {
         if (imgArray.length > 0) {
-          const response = ImageDescription.parse(JSON.parse(apiResponse));
+          const response = JSON.parse(apiResponse);
           const objArray = response.objects.map(
             (obj) =>
               '\n\n > ##### Name: \n\n' +
@@ -1006,7 +1050,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         defaultAiProvider,
       );
       const ext = extractFileExtension(entry.name).toLowerCase();
-      if (fromDescription && entry.meta.description) {
+      if (
+        (fromDescription || generationSettings.current.fromDescription) &&
+        entry.meta.description
+      ) {
         return newChatMessage(
           entry.meta.description,
           false,
@@ -1035,19 +1082,35 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function handleGenerationResults(entry, response): Promise<boolean> {
-    console.log('newOllamaMessage response:' + response);
-    if (response) {
+    //console.log('newOllamaMessage response:' + response);
+    if (response && response.length > 0) {
       try {
         const tags: TS.Tag[] = response.map((tag) => {
-          const tagTitle = tag.toLowerCase().split(' ').join('-');
-          return {
-            title: tagTitle,
-            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
-          };
+          if (tag) {
+            const tagTitle = tag
+              .replace(/[-/=[\]{}!@#$%^&*(),.?":{}|<>]/g, ' ')
+              .toLowerCase()
+              .split(' ')
+              .filter((str) => str.trim() !== '')
+              .slice(0, 3)
+              .join('-');
+            if (tagTitle) {
+              return {
+                title: tagTitle,
+                ...getTagColors(
+                  tagTitle,
+                  defaultTextColor,
+                  defaultBackgroundColor,
+                ),
+              };
+            }
+          }
+          return undefined;
         });
         const uniqueTags = tags.filter(
           (tag, index, self) =>
-            index === self.findIndex((o) => o.title === tag.title),
+            tag && // Exclude undefined or null tags
+            index === self.findIndex((t) => t?.title === tag.title),
         );
         /* const regex = /\{([^}]+)\}/g;
         const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
@@ -1065,8 +1128,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         });
         // showNotification('Tags for ' + entry.name + ' generated by an AI.');
       } catch (e) {
-        console.error('parse response ' + response, e);
+        console.error('newOllamaMessage response ' + response, e);
       }
+    } else {
+      console.error('no response ' + response);
     }
     return Promise.resolve(false);
   }
