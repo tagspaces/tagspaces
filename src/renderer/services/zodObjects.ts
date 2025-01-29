@@ -1,4 +1,15 @@
 import { z } from 'zod';
+export type StructuredDataProps = {
+  name?: boolean;
+  summary?: boolean;
+  objects?: boolean;
+  scene?: boolean;
+  colors?: boolean;
+  time_of_day?: boolean;
+  settings?: boolean;
+  text_content?: boolean;
+  topics?: boolean;
+};
 
 export const getZodTags = (max = 4, tagsArray: string[] = []) => {
   if (tagsArray.length > 0) {
@@ -58,4 +69,18 @@ export const imageDescriptionObj = {
     .describe('Any text detected in the image'),
 };
 
-export const ImageDescription = z.object(imageDescriptionObj);
+export const getImageDescription = (options: StructuredDataProps) =>
+  z.object({
+    ...(options.name && { name: imageDescriptionObj.name }),
+    ...(options.summary && { summary: imageDescriptionObj.summary }),
+    ...(options.objects && { objects: imageDescriptionObj.objects }),
+    ...(options.scene && { scene: imageDescriptionObj.scene }),
+    ...(options.colors && { colors: imageDescriptionObj.colors }),
+    ...(options.time_of_day && {
+      time_of_day: imageDescriptionObj.time_of_day,
+    }),
+    ...(options.settings && { setting: imageDescriptionObj.setting }),
+    ...(options.text_content && {
+      text_content: imageDescriptionObj.text_content,
+    }),
+  });
