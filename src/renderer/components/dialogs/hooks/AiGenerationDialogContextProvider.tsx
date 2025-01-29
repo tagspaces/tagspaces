@@ -18,6 +18,8 @@
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { Pro } from '-/pro';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useTranslation } from 'react-i18next';
 
 type AiGenerationDialogContextData = {
   openAiGenerationDialog: () => void;
@@ -37,6 +39,7 @@ export type AiGenerationDialogContextProviderProps = {
 export const AiGenerationDialogContextProvider = ({
   children,
 }: AiGenerationDialogContextProviderProps) => {
+  const { t } = useTranslation();
   const open = useRef<boolean>(false);
   const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -60,7 +63,16 @@ export const AiGenerationDialogContextProvider = ({
 
   return (
     <AiGenerationDialogContext.Provider value={context}>
-      <AiGenerationDialog open={open.current} onClose={closeDialog} />
+      {AiGenerationDialog ? (
+        <AiGenerationDialog open={open.current} onClose={closeDialog} />
+      ) : (
+        <ConfirmDialog
+          open={true}
+          onClose={() => {}}
+          title={t('core:thisFunctionalityIsAvailableInPro')}
+          confirmCallback={() => {}}
+        />
+      )}
       {children}
     </AiGenerationDialogContext.Provider>
   );
