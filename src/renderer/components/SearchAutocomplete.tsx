@@ -71,6 +71,7 @@ import { removePrefix } from '-/services/utils-io';
 import { isDesktopMode } from '-/reducers/settings';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   style?: any;
@@ -160,10 +161,12 @@ function SearchAutocomplete(props: Props) {
   // const mainSearchField = useRef<HTMLInputElement>(null);
   const isOpen = useRef<boolean>(true);
 
-  // const firstRender = useFirstRender();
+  const firstRender = useFirstRender();
 
   useEffect(() => {
-    processSearchQuery();
+    if (!firstRender) {
+      processSearchQuery();
+    }
   }, [searchQuery]);
 
   function processSearchQuery() {

@@ -25,7 +25,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { getEnableWS } from '-/reducers/settings';
 import Search from '-/services/search';
-import { executePromisesInBatches } from '-/services/utils-io';
+import {
+  executePromisesInBatches,
+  isWorkerAvailable,
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
@@ -346,67 +349,93 @@ export const LocationIndexContextProvider = ({
       if (Pro && Pro.Watcher) {
         Pro.Watcher.stopWatching();
       }
-      const loc = findLocation(param.locationID);
-      const dirPath = cleanTrailingDirSeparator(param.path);
-      if (
-        enableWS &&
-        !loc.haveObjectStoreSupport() &&
-        !loc.haveWebDavSupport() &&
-        !AppConfig.isCordova
-      ) {
-        // Start indexing in worker if not in the object store mode
-        return loc
-          .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
-          .then((result) => {
-            if (result && result.success) {
-              return loadIndexFromDisk(dirPath, param.locationID);
-            } else if (result && result.error) {
-              console.error(
-                'createDirectoryIndexInWorker failed:' + result.error,
-              );
-            } else {
-              console.error(
-                'createDirectoryIndexInWorker failed: unknown error',
-              );
-            }
-            return undefined; // todo create index not in worker
-          });
-      }
-
-      const mode = ['extractThumbPath'];
-      if (extractText) {
-        mode.push('extractTextContent');
-        mode.push('extractLinks');
-      }
-      return createIndex(
-        {
-          ...param,
-          listDirectoryPromise: loc.listDirectoryPromise,
-          getFileContentPromise: loc.getFileContentPromise,
-        },
-        mode,
-        ignorePatterns,
-        isWalking,
-      )
-        .then((directoryIndex) => {
-          if (!loc.isReadOnly) {
-            persistIndex(param, directoryIndex).then((success) => {
-              if (success) {
-                console.log('Index generated in folder: ' + dirPath);
+      return isWorkerAvailable().then((isWorkerAvailable) => {
+        const loc = findLocation(param.locationID);
+        const dirPath = cleanTrailingDirSeparator(param.path);
+        if (
+          isWorkerAvailable &&
+          enableWS &&
+          !loc.haveObjectStoreSupport() &&
+          !loc.haveWebDavSupport() &&
+          !AppConfig.isCordova
+        ) {
+          // Start indexing in worker if not in the object store mode
+          return loc
+            .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
+            .then((result) => {
+              if (result && result.success) {
+                return loadIndexFromDisk(dirPath, param.locationID);
+              } else if (result && result.error) {
+                console.error(
+                  'createDirectoryIndexInWorker failed:' + result.error,
+                );
+              } else {
+                console.error(
+                  'createDirectoryIndexInWorker failed: unknown error',
+                );
               }
+              return createNotWorkerIndex(
+                param,
+                loc,
+                extractText,
+                ignorePatterns,
+                isWalking,
+              );
             });
-          }
-          return enhanceDirectoryIndex(
-            directoryIndex,
-            param.locationID,
-            param.path,
-          );
-        })
-        .catch((err) => {
-          console.log('Error creating index: ', err);
-        });
+        }
+
+        return createNotWorkerIndex(
+          param,
+          loc,
+          extractText,
+          ignorePatterns,
+          isWalking,
+        );
+      });
     }
     return Promise.resolve(undefined);
+  }
+
+  function createNotWorkerIndex(
+    param: any,
+    loc: CommonLocation,
+    extractText = false,
+    ignorePatterns: Array<string> = [],
+    isWalking = () => true,
+  ): Promise<TS.FileSystemEntry[]> {
+    const mode = ['extractThumbPath'];
+    if (extractText) {
+      mode.push('extractTextContent');
+      mode.push('extractLinks');
+    }
+    return createIndex(
+      {
+        ...param,
+        listDirectoryPromise: loc.listDirectoryPromise,
+        getFileContentPromise: loc.getFileContentPromise,
+      },
+      mode,
+      ignorePatterns,
+      isWalking,
+    )
+      .then((directoryIndex) => {
+        if (!loc.isReadOnly) {
+          persistIndex(param, directoryIndex).then((success) => {
+            if (success) {
+              console.log('Index generated in folder: ' + param.path);
+            }
+          });
+        }
+        return enhanceDirectoryIndex(
+          directoryIndex,
+          param.locationID,
+          param.path,
+        );
+      })
+      .catch((err) => {
+        console.log('Error creating index: ', err);
+        return undefined;
+      });
   }
 
   function createDirectoryIndexWrapper(
