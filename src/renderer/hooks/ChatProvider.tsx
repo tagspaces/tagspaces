@@ -82,10 +82,6 @@ import {
   getZodTags,
   StructuredDataProps,
 } from '-/services/zodObjects';
-import {
-  bookmarksKey,
-  generationSettingsKey,
-} from '../../../tagspacespro/modules/keys';
 
 /*export type TimelineItem = {
   request: string;
@@ -283,7 +279,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, [openedEntry]);
 
   function getGenerationSettings(): GenerationSettings {
-    const item = localStorage.getItem(generationSettingsKey);
+    const item = localStorage.getItem(Pro.keys.generationSettingsKey);
     if (item) {
       return JSON.parse(item);
     }
