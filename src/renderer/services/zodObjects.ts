@@ -30,10 +30,10 @@ export const getZodTags = (max = 4, tagsArray: string[] = []) => {
       .describe('The predefined topics'),
   });
 };
-export const Description = z.object({
+/*export const Description = z.object({
   name: z.string(),
   summary: z.string(),
-});
+});*/
 const ObjectSchema = z.object({
   name: z.string().describe('The name of the object'),
   confidence: z
@@ -69,7 +69,7 @@ export const imageDescriptionObj = {
     .describe('Any text detected in the image'),
 };
 
-export const getImageDescription = (options: StructuredDataProps) =>
+export const getZodDescription = (options: StructuredDataProps) =>
   z.object({
     ...(options.name && { name: imageDescriptionObj.name }),
     ...(options.summary && { summary: imageDescriptionObj.summary }),

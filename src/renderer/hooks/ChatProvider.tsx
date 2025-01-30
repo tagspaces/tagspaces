@@ -77,8 +77,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import {
-  Description,
-  getImageDescription,
+  getZodDescription,
   getZodTags,
   StructuredDataProps,
 } from '-/services/zodObjects';
@@ -878,7 +877,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (imgArray.length > 0) {
         format = {
           format: zodToJsonSchema(
-            getImageDescription(generationSettings.current.structuredDataProps),
+            getZodDescription(generationSettings.current.structuredDataProps),
           ),
         };
       } else {
@@ -892,12 +891,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (imgArray.length > 0) {
         format = {
           format: zodToJsonSchema(
-            getImageDescription(generationSettings.current.structuredDataProps),
+            getZodDescription(generationSettings.current.structuredDataProps),
           ),
         };
-      } else {
-        format = { format: zodToJsonSchema(Description) };
-      }
+      } /* else {
+        format = {
+          format: zodToJsonSchema(
+            getZodDescription({ name: true, summary: true }),
+          ),
+        };
+      }*/
     }
     const request: ChatRequest = {
       model,
@@ -949,66 +952,68 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           return tags.slice(0, generationSettings.current.maxTags);
         }
       } else if (mode === 'description' || mode === 'summary') {
-        const response = JSON.parse(apiResponse);
-        const arrReturn = [];
-        if (
-          generationSettings.current.structuredDataProps.name &&
-          response.name
-        ) {
-          arrReturn.push('### Name: \n\n' + response.name);
-        }
-        if (
-          generationSettings.current.structuredDataProps.objects &&
-          response.objects
-        ) {
-          arrReturn.push(
-            response.objects.map(
-              (obj) =>
-                '\n\n > ##### Name: \n\n' +
-                obj.name +
-                '\n\n > ##### Attributes: \n\n' +
-                obj.attributes,
-            ),
-          );
-        }
+        if (format) {
+          const response = JSON.parse(apiResponse);
+          const arrReturn = [];
+          if (
+            generationSettings.current.structuredDataProps.name &&
+            response.name
+          ) {
+            arrReturn.push('### Name: ' + response.name);
+          }
+          if (
+            generationSettings.current.structuredDataProps.objects &&
+            response.objects
+          ) {
+            arrReturn.push(
+              response.objects.map(
+                (obj) =>
+                  '\n\n> > Object Name: ' +
+                  obj.name +
+                  '\n\n> > Attributes: ' +
+                  obj.attributes,
+              ),
+            );
+          }
 
-        if (
-          generationSettings.current.structuredDataProps.scene &&
-          response.scene
-        ) {
-          arrReturn.push('### Scene: \n\n' + response.scene);
+          if (
+            generationSettings.current.structuredDataProps.scene &&
+            response.scene
+          ) {
+            arrReturn.push('### Scene: ' + response.scene);
+          }
+          if (
+            generationSettings.current.structuredDataProps.colors &&
+            response.colors
+          ) {
+            arrReturn.push('### Colors: ' + response.colors);
+          }
+          if (
+            generationSettings.current.structuredDataProps.summary &&
+            response.summary
+          ) {
+            arrReturn.push('### Summary: ' + response.summary);
+          }
+          if (
+            generationSettings.current.structuredDataProps.time_of_day &&
+            response.time_of_day
+          ) {
+            arrReturn.push('### Day Time: ' + response.time_of_day);
+          }
+          if (
+            generationSettings.current.structuredDataProps.settings &&
+            response.setting
+          ) {
+            arrReturn.push('### Setting: ' + response.setting);
+          }
+          if (
+            response.text_content &&
+            generationSettings.current.structuredDataProps.text_content
+          ) {
+            arrReturn.push('### Content: ' + response.text_content);
+          }
+          return arrReturn.join('\n\n') + '\n\n';
         }
-        if (
-          generationSettings.current.structuredDataProps.colors &&
-          response.colors
-        ) {
-          arrReturn.push('### Colors: \n\n' + response.colors);
-        }
-        if (
-          generationSettings.current.structuredDataProps.summary &&
-          response.summary
-        ) {
-          arrReturn.push('### Summary: \n\n' + response.summary);
-        }
-        if (
-          generationSettings.current.structuredDataProps.time_of_day &&
-          response.time_of_day
-        ) {
-          arrReturn.push('### Day Time: \n\n' + response.time_of_day);
-        }
-        if (
-          generationSettings.current.structuredDataProps.settings &&
-          response.setting
-        ) {
-          arrReturn.push('### Setting: \n\n' + response.setting);
-        }
-        if (
-          response.text_content &&
-          generationSettings.current.structuredDataProps.text_content
-        ) {
-          arrReturn.push('### Content: \n\n' + response.text_content);
-        }
-        return arrReturn.join('\n\n');
       }
       return stream ? true : apiResponse;
     });
@@ -1110,7 +1115,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           );
         }
       } else {
-        console.error('Description generation not supported for:' + entry.name);
+        showNotification(
+          'Description generation not supported for:' + entry.name,
+        );
       }
       return Promise.resolve(entry);
     });
@@ -1175,14 +1182,18 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           );
         }
       } else {
-        console.error('Tags generation not supported for:' + entry.name);
+        showNotification('Tags generation not supported for:' + entry.name);
       }
 
       return Promise.resolve(false);
     });
-    return Promise.all(promises).then(() => {
-      showNotification('Tags generated by an AI.');
-      return true;
+    return Promise.all(promises).then((results) => {
+      if (results && results.every((result) => result)) {
+        showNotification('Tags generated by an AI.');
+        return true;
+      } else {
+        return false;
+      }
     });
   }
 

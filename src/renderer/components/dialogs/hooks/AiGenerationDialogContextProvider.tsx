@@ -22,7 +22,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useTranslation } from 'react-i18next';
 
 type AiGenerationDialogContextData = {
-  openAiGenerationDialog: () => void;
+  openAiGenerationDialog: (optionSelected?: generateOptionType) => void;
   closeAiGenerationDialog: () => void;
 };
 
@@ -36,16 +36,20 @@ export type AiGenerationDialogContextProviderProps = {
   children: React.ReactNode;
 };
 
+export type generateOptionType = 'tags' | 'summary' | 'analyseImages';
+
 export const AiGenerationDialogContextProvider = ({
   children,
 }: AiGenerationDialogContextProviderProps) => {
   const { t } = useTranslation();
   const open = useRef<boolean>(false);
+  const option = useRef<generateOptionType>(undefined);
   const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog() {
+  function openDialog(optionSelected: generateOptionType = undefined) {
     open.current = true;
+    option.current = optionSelected;
     forceUpdate();
   }
 
@@ -64,7 +68,11 @@ export const AiGenerationDialogContextProvider = ({
   return (
     <AiGenerationDialogContext.Provider value={context}>
       {AiGenerationDialog ? (
-        <AiGenerationDialog open={open.current} onClose={closeDialog} />
+        <AiGenerationDialog
+          open={open.current}
+          onClose={closeDialog}
+          option={option.current}
+        />
       ) : (
         <ConfirmDialog
           open={true}

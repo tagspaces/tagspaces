@@ -40,6 +40,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
 import { AppDispatch } from '-/reducers/app';
 import { getTagColors } from '-/services/taglibrary-utils';
+import TsIconButton from '-/components/TsIconButton';
+import { ButtonGroup } from '@mui/material';
+import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -64,6 +67,7 @@ function AiGenTagsButton(props: Props) {
   const { t } = useTranslation();
   const { openedEntry } = useOpenedEntryContext();
   const { tagsGenerate } = useChatContext();
+  const { openAiGenerationDialog } = useAiGenerationDialogContext();
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -95,21 +99,33 @@ function AiGenTagsButton(props: Props) {
   };
 
   return (
-    <TsButton
-      loading={isLoading}
-      disabled={isLoading || disabled}
-      tooltip="Uses currently configured AI model to generate tags for this file"
-      startIcon={<AIIcon />}
-      style={style}
-      data-tid="generateTagsAITID"
-      onClick={handleGeneration}
-      variant={variant}
-    >
-      {t(
-        'core:' +
-          (fromDescription ? 'generateTagsFromDescription' : 'generateTags'),
-      )}
-    </TsButton>
+    <ButtonGroup>
+      <TsButton
+        loading={isLoading}
+        disabled={isLoading || disabled}
+        tooltip="Uses currently configured AI model to generate tags for this file"
+        startIcon={<AIIcon />}
+        style={style}
+        data-tid="generateTagsAITID"
+        onClick={handleGeneration}
+        variant={variant}
+      >
+        {t(
+          'core:' +
+            (fromDescription ? 'generateTagsFromDescription' : 'generateTags'),
+        )}
+      </TsButton>
+      <TsIconButton
+        tooltip={t('core:openGenSettings')}
+        aria-label={t('core:openGenSettings')}
+        data-tid="fileContainerPrevFile"
+        onClick={() => {
+          openAiGenerationDialog('tags');
+        }}
+      >
+        <AIIcon />
+      </TsIconButton>
+    </ButtonGroup>
   );
 }
 

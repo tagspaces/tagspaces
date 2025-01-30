@@ -16,18 +16,15 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
-import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AIIcon } from '../CommonIcons';
+import { AIIcon, PrevDocumentIcon } from '../CommonIcons';
 import {
   actions as SettingsActions,
   getDefaultAIProvider,
@@ -37,6 +34,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { ButtonGroup } from '@mui/material';
+import TsIconButton from '-/components/TsIconButton';
+import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 
 type Props = TSButtonProps & {};
 
@@ -50,6 +50,7 @@ function AiGenDescButton(props: Props) {
   const { getEntryModel, descriptionGenerate } = useChatContext();
   const { setDescription, saveDescription } = useFilePropertiesContext();
   const { showNotification } = useNotificationContext();
+  const { openAiGenerationDialog } = useAiGenerationDialogContext();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -78,22 +79,34 @@ function AiGenDescButton(props: Props) {
   }
 
   return (
-    <TsButton
-      loading={isLoading}
-      disabled={isLoading || disabled}
-      tooltip="Uses currently configured AI model to generate description for this file"
-      startIcon={<AIIcon />}
-      data-tid="generateDescriptionAITID"
-      style={style}
-      onClick={() => {
-        setIsLoading(true);
-        descriptionGenerate([openedEntry]).then((entries) => {
-          handleGenerationResults(entries);
-        });
-      }}
-    >
-      {t('core:generateDescription')}
-    </TsButton>
+    <ButtonGroup>
+      <TsButton
+        loading={isLoading}
+        disabled={isLoading || disabled}
+        tooltip="Uses currently configured AI model to generate description for this file"
+        startIcon={<AIIcon />}
+        data-tid="generateDescriptionAITID"
+        style={style}
+        onClick={() => {
+          setIsLoading(true);
+          descriptionGenerate([openedEntry]).then((entries) => {
+            handleGenerationResults(entries);
+          });
+        }}
+      >
+        {t('core:generateDescription')}
+      </TsButton>
+      <TsIconButton
+        tooltip={t('core:openGenSettings')}
+        aria-label={t('core:openGenSettings')}
+        data-tid="fileContainerPrevFile"
+        onClick={() => {
+          openAiGenerationDialog('summary');
+        }}
+      >
+        <AIIcon />
+      </TsIconButton>
+    </ButtonGroup>
   );
 }
 
