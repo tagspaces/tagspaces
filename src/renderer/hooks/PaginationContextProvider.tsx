@@ -27,7 +27,7 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 type PaginationContextData = {
   page: number;
   pageFiles: TS.FileSystemEntry[];
-  setCurrentPage: (page: number) => void;
+  setCurrentPage: (page?: number) => void;
 };
 
 export const PaginationContext = createContext<PaginationContextData>({
@@ -44,7 +44,7 @@ export const PaginationContextProvider = ({
   children,
 }: PaginationContextProviderProps) => {
   const initPage = 1;
-  const { currentDirectoryPath, isSearchMode } = useDirectoryContentContext();
+  const { currentDirectoryPath, searchQuery } = useDirectoryContentContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { settings, showDirectories } = usePerspectiveSettingsContext();
   const { sortedDirContent } = useSortedDirContext();
@@ -63,7 +63,7 @@ export const PaginationContextProvider = ({
         console.debug('meta loaded')
       );
     }*/
-  }, [currentDirectoryPath, isSearchMode]); //, isMetaFolderExist]);
+  }, [currentDirectoryPath, searchQuery]); //, isSearchMode isMetaFolderExist]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     return getPageFiles(page, sortedDirContent);
@@ -91,15 +91,18 @@ export const PaginationContextProvider = ({
     return files;
   }
 
-  function setCurrentPage(currentPage: number) {
-    setPage(currentPage);
-    const files = getPageFiles(currentPage, sortedDirContent);
-    if (files && files.length > 0) {
-      const actions: TS.EditMetaAction[] = files.map((file) => ({
-        action: 'thumbGenerate',
-        entry: file,
-      }));
-      setReflectMetaActions(...actions);
+  function setCurrentPage(currentPage?: number) {
+    const cPage = currentPage ? currentPage : initPage;
+    if (page !== cPage) {
+      setPage(cPage);
+      const files = getPageFiles(cPage, sortedDirContent);
+      if (files && files.length > 0) {
+        const actions: TS.EditMetaAction[] = files.map((file) => ({
+          action: 'thumbGenerate',
+          entry: file,
+        }));
+        setReflectMetaActions(...actions);
+      }
     }
   }
 
