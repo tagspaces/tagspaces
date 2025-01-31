@@ -81,6 +81,7 @@ import {
   getZodTags,
   StructuredDataProps,
 } from '-/services/zodObjects';
+import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 
 /*export type TimelineItem = {
   request: string;
@@ -140,7 +141,7 @@ type ChatData = {
   ) => Promise<TS.FileSystemEntry[]>;
   generationSettings: GenerationSettings;
   setGenerationSettings: (genSettings: any) => void;
-  resetGenerationSettings: () => void;
+  resetGenerationSettings: (option: generateOptionType) => void;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -182,6 +183,7 @@ export type ChatContextProviderProps = {
 };
 
 export type GenerationSettings = {
+  option: generateOptionType;
   maxTags: number;
   maxChars: number;
   tagsFromLibrary: boolean;
@@ -222,6 +224,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     Pro && Pro.UI ? Pro.UI.DEFAULT_SYSTEM_PROMPT : false;
   const SUMMARIZE_PROMPT = Pro && Pro.UI ? Pro.UI.SUMMARIZE_PROMPT : false;
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+  const IMAGE_DESCRIPTION_STRUCTURED =
+    Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION_STRUCTURED : false;
   const TEXT_DESCRIPTION = Pro && Pro.UI ? Pro.UI.TEXT_DESCRIPTION : false;
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   const GENERATE_IMAGE_TAGS =
@@ -278,18 +282,20 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }, [openedEntry]);
 
-  function getGenerationSettings(): GenerationSettings {
+  function getGenerationSettings(
+    option: generateOptionType = 'tags',
+  ): GenerationSettings {
     const item = localStorage.getItem(Pro.keys.generationSettingsKey);
-    if (item) {
-      return JSON.parse(item);
-    }
+    const storedObj = item ? JSON.parse(item) : {};
     return {
+      option: option,
       structuredDataProps: { name: true, summary: true },
       maxTags: 4,
       maxChars: undefined,
       tagsFromLibrary: false,
       fromDescription: false,
       tagGroupsIds: [],
+      ...storedObj,
     };
   }
 
@@ -769,8 +775,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
     } else if (mode === 'description') {
       if (msg) {
-        return TEXT_DESCRIPTION.replace('{input_text}', msg);
-      } else if (IMAGE_DESCRIPTION) {
+        return TEXT_DESCRIPTION.replace('{input_text}', msg).replace(
+          '{max_chars}',
+          generationSettings.current.maxChars
+            ? 'max ' + generationSettings.current.maxChars + ' characters'
+            : '',
+        );
+      } else {
+        if (generationSettings.current.option === 'analyseImages') {
+          return IMAGE_DESCRIPTION_STRUCTURED;
+        }
         return IMAGE_DESCRIPTION.replace(
           '{file_name}',
           openedEntry ? openedEntry.name : '',
@@ -898,19 +912,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         };
       }
     } else if (mode === 'description' || mode === 'summary') {
-      if (imgArray.length > 0) {
+      if (
+        imgArray.length > 0 &&
+        generationSettings.current.option === 'analyseImages'
+      ) {
         format = {
           format: zodToJsonSchema(
             getZodDescription(generationSettings.current.structuredDataProps),
           ),
         };
-      } /* else {
-        format = {
-          format: zodToJsonSchema(
-            getZodDescription({ name: true, summary: true }),
-          ),
-        };
-      }*/
+      }
     }
     const request: ChatRequest = {
       model,
@@ -969,7 +980,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             generationSettings.current.structuredDataProps.name &&
             response.name
           ) {
-            arrReturn.push('### Name: ' + response.name);
+            arrReturn.push('**Name:** ' + response.name);
           }
           if (
             generationSettings.current.structuredDataProps.objects &&
@@ -978,10 +989,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             arrReturn.push(
               response.objects.map(
                 (obj) =>
-                  '\n\n> > Object Name: ' +
-                  obj.name +
-                  '\n\n> > Attributes: ' +
-                  obj.attributes,
+                  (obj.name ? '\n\n> > **Object Name:** ' + obj.name : '') +
+                  (obj.attributes
+                    ? '\n\n> > **Attributes:** ' +
+                      JSON.stringify(obj.attributes, null, 4).replace(
+                        /[{}\[\]]/g,
+                        '',
+                      )
+                    : ''),
               ),
             );
           }
@@ -990,37 +1005,37 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             generationSettings.current.structuredDataProps.scene &&
             response.scene
           ) {
-            arrReturn.push('### Scene: ' + response.scene);
+            arrReturn.push('**Scene:** ' + response.scene);
           }
           if (
             generationSettings.current.structuredDataProps.colors &&
             response.colors
           ) {
-            arrReturn.push('### Colors: ' + response.colors);
+            arrReturn.push('**Colors:** ' + response.colors);
           }
           if (
             generationSettings.current.structuredDataProps.summary &&
             response.summary
           ) {
-            arrReturn.push('### Summary: ' + response.summary);
+            arrReturn.push('**Summary:** ' + response.summary);
           }
           if (
             generationSettings.current.structuredDataProps.time_of_day &&
             response.time_of_day
           ) {
-            arrReturn.push('### Day Time: ' + response.time_of_day);
+            arrReturn.push('**Day Time:** ' + response.time_of_day);
           }
           if (
             generationSettings.current.structuredDataProps.settings &&
             response.setting
           ) {
-            arrReturn.push('### Setting: ' + response.setting);
+            arrReturn.push('**Setting:** ' + response.setting);
           }
           if (
             response.text_content &&
             generationSettings.current.structuredDataProps.text_content
           ) {
-            arrReturn.push('### Content: ' + response.text_content);
+            arrReturn.push('**Content:** ' + response.text_content);
           }
           return arrReturn.join('\n\n') + '\n\n';
         }
@@ -1270,8 +1285,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     forceUpdate();
   }
 
-  function resetGenerationSettings() {
-    generationSettings.current = getGenerationSettings();
+  function resetGenerationSettings(option: generateOptionType) {
+    generationSettings.current = getGenerationSettings(option);
     forceUpdate();
   }
 
