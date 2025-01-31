@@ -19,30 +19,19 @@
 import AppConfig from '-/AppConfig';
 import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { AIProvider } from '-/components/chat/ChatTypes';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
-import {
-  actions as SettingsActions,
-  getTagColor,
-  getTagTextColor,
-} from '-/reducers/settings';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
 import { OverridableStringUnion } from '@mui/types';
-import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
-import { AppDispatch } from '-/reducers/app';
-import { getTagColors } from '-/services/taglibrary-utils';
-import TsIconButton from '-/components/TsIconButton';
 import { ButtonGroup } from '@mui/material';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
+import TsIconButton from '-/components/TsIconButton';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
