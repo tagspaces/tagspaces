@@ -6,7 +6,7 @@ import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
-import { ButtonGroup } from '@mui/material';
+import { Box, ButtonGroup } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -101,32 +101,23 @@ const EditDescriptionButtons: React.FC = () => {
         <ProTooltip
           tooltip={'Add AI generated description based on the file content'}
         >
-          <AiGenDescButton
-            disabled={!Pro}
-            style={{
-              borderTopRightRadius: openedEntry.meta.description
-                ? 0
-                : AppConfig.defaultCSSRadius,
-              borderBottomRightRadius: openedEntry.meta.description
-                ? 0
-                : AppConfig.defaultCSSRadius,
-            }}
-          />
+          <AiGenDescButton disabled={!Pro} variant="outlined" />
         </ProTooltip>
         {openedEntry.meta.description && (
-          <ProTooltip
-            tooltip={'Add AI generated tags based on the description'}
-          >
-            <AiGenTagsButton
-              disabled={!Pro}
-              style={{
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-              }}
-              fromDescription={true}
-              variant="outlined"
-            />
-          </ProTooltip>
+          <>
+            <Box
+              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            ></Box>
+            <ProTooltip
+              tooltip={'Add AI generated tags based on the description'}
+            >
+              <AiGenTagsButton
+                disabled={!Pro}
+                fromDescription={true}
+                variant="outlined"
+              />
+            </ProTooltip>
+          </>
         )}
       </ButtonGroup>
     </div>

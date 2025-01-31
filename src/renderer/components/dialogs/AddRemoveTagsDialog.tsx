@@ -39,11 +39,9 @@ import {
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import React, { useReducer, useRef, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TagsSelect from '../TagsSelect';
-import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
-import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -204,12 +202,12 @@ function AddRemoveTagsDialog(props: Props) {
         >
           {t('core:cancel')}
         </TsButton>
-        <AiGenTagsButton
+        {/* <AiGenTagsButton
           disabled={!Pro}
           entries={selected}
           variant="outlined"
           generationCompleted={() => onCloseDialog()}
-        />
+        /> */}
         <TsButton
           data-tid="cleanTagsMultipleEntries"
           disabled={selected.length < 1}

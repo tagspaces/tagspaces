@@ -17,22 +17,21 @@
  */
 
 import TsButton, { TSButtonProps } from '-/components/TsButton';
+import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { ButtonGroup } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AIIcon } from '../CommonIcons';
-import { actions as SettingsActions } from '-/reducers/settings';
-import { AppDispatch } from '-/reducers/app';
 import { useDispatch } from 'react-redux';
-import { TS } from '-/tagspaces.namespace';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { Button, ButtonGroup } from '@mui/material';
-import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
-import TsIconButton from '-/components/TsIconButton';
+import { AIIcon } from '../CommonIcons';
 
 type Props = TSButtonProps & {};
 
@@ -89,10 +88,14 @@ function AiGenDescButton(props: Props) {
       <TsButton
         loading={isLoading}
         disabled={isLoading || disabled}
-        tooltip="Uses currently configured AI model to generate description for this file"
-        startIcon={<AIIcon />}
+        // tooltip="Uses currently configured AI model to generate description for this file"
+        // startIcon={<AIIcon />}
         data-tid="generateDescriptionAITID"
-        style={style}
+        style={{
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0,
+          paddingLeft: 28,
+        }}
         onClick={() => {
           setIsLoading(true);
           descriptionGenerate([openedEntry]).then((entries) => {
@@ -102,16 +105,20 @@ function AiGenDescButton(props: Props) {
       >
         {t('core:generateDescription')}
       </TsButton>
-      <TsIconButton
-        tooltip={t('core:openGenSettings')}
+      <TsButton
+        // tooltip={t('core:openGenSettings')}
         aria-label={t('core:openGenSettings')}
         data-tid="fileContainerPrevFile"
         onClick={() => {
           openAiGenerationDialog('summary');
         }}
+        style={{
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+        }}
       >
-        <AIIcon />
-      </TsIconButton>
+        <AIIcon fontSize="small" />
+      </TsButton>
     </ButtonGroup>
   );
 }
