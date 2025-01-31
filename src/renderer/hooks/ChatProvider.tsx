@@ -96,7 +96,7 @@ type ChatData = {
   //openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
   isTyping: boolean;
-  refreshOllamaModels: (modelName?: string) => void;
+  refreshOllamaModels: (modelName?: string) => Promise<boolean>;
   setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
@@ -408,9 +408,19 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     );
   }
 
-  function refreshOllamaModels(modelName = undefined) {
+  /**
+   * return true if model is loaded successful false otherwise
+   */
+  function checkOllamaModels(): Promise<boolean> {
+    if (!models.current || models.current.length === 0) {
+      return refreshOllamaModels();
+    }
+    return Promise.resolve(true);
+  }
+
+  function refreshOllamaModels(modelName = undefined): Promise<boolean> {
     if (defaultAiProvider) {
-      getOllamaModels(ollamaClient.current)
+      return getOllamaModels(ollamaClient.current)
         .then((m) => {
           if (m) {
             models.current = m;
@@ -432,8 +442,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           if (success) {
             forceUpdate();
           }
+          return success;
         });
     }
+    return Promise.resolve(false);
   }
 
   function setModel(m: ModelResponse | string): Promise<boolean> {
@@ -608,8 +620,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           onProgressHandler,
         ).then((response) => {
           console.log('pullOllamaModel response:' + response);
-          refreshOllamaModels(newModelName);
-          return true;
+          return refreshOllamaModels(newModelName);
         });
         /*return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', defaultAiProvider.url, {
@@ -936,6 +947,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       chatMessageHandler,
     ).then((apiResponse) => {
       console.log('apiResponse:' + apiResponse);
+      if (apiResponse === undefined) {
+        showNotification('Error check if Ollama service is alive');
+        return undefined;
+      }
       isTyping.current = false;
       if (msg && includeHistory) {
         saveHistoryItems();
@@ -1123,33 +1138,46 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function descriptionGenerate(
     generateEntries: TS.FileSystemEntry[],
   ): Promise<TS.FileSystemEntry[]> {
-    const promises = generateEntries.map((entry) => {
-      const entryModel: ModelResponse = getEntryModel(
-        entry.name,
-        defaultAiProvider,
-      );
-      if (entryModel) {
-        const ext = extractFileExtension(entry.name).toLowerCase();
-        if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-          return generate('image', 'description', entryModel.name, entry).then(
-            (results) => handleGenDescResults(entry, results),
+    return checkOllamaModels().then((success) => {
+      if (success) {
+        const promises = generateEntries.map((entry) => {
+          const entryModel: ModelResponse = getEntryModel(
+            entry.name,
+            defaultAiProvider,
           );
-        } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          return generate('text', 'description', entryModel.name, entry).then(
-            (results) => handleGenDescResults(entry, results),
-          );
-        }
+          if (entryModel) {
+            const ext = extractFileExtension(entry.name).toLowerCase();
+            if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+              return generate(
+                'image',
+                'description',
+                entryModel.name,
+                entry,
+              ).then((results) => handleGenDescResults(entry, results));
+            } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+              return generate(
+                'text',
+                'description',
+                entryModel.name,
+                entry,
+              ).then((results) => handleGenDescResults(entry, results));
+            }
+          } else {
+            showNotification(
+              'Error No Model selected or there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
+            );
+            return Promise.resolve(undefined);
+          }
+          return Promise.resolve(entry);
+        });
+        return Promise.all(promises);
       } else {
         showNotification(
-          'Description generation not supported for:' + entry.name,
+          'Ollama Models not loaded. Check if Ollama service is alive.',
         );
+        return undefined;
       }
-      return Promise.resolve(entry);
     });
-    return Promise.all(promises); /*.then((entries) => {
-      showNotification('Description generated by an AI.');
-      return entries;
-    });*/
   }
 
   function handleGenDescResults(entry, response): TS.FileSystemEntry {
@@ -1164,59 +1192,65 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         ? entry.meta.description + '\n---\n' + generatedDesc
         : generatedDesc;
 
-      //openEntry(openedEntry.path).then(() => {
-      /*showNotification(
-        'Description for ' + entry.name + ' generated by an AI.',
-      );*/
+      return entry;
     }
-    return entry;
+    return undefined;
   }
 
   function tagsGenerate(
     generateEntries: TS.FileSystemEntry[],
     fromDescription: boolean = false,
   ): Promise<boolean> {
-    const promises = generateEntries.map((entry) => {
-      const entryModel: ModelResponse = getEntryModel(
-        entry.name,
-        defaultAiProvider,
-      );
-      if (entryModel) {
-        const ext = extractFileExtension(entry.name).toLowerCase();
-        if (
-          (fromDescription || generationSettings.current.fromDescription) &&
-          entry.meta.description
-        ) {
-          return newChatMessage(
-            entry.meta.description,
-            false,
-            'user',
-            'tags',
-            defaultAiProvider.defaultTextModel,
-            false,
-            [],
-            false,
-          ).then((results) => handleGenTagsResults(entry, results));
-        } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-          return generate('image', 'tags', entryModel.name, entry).then(
-            (results) => handleGenTagsResults(entry, results),
+    return checkOllamaModels().then((success) => {
+      if (success) {
+        const promises = generateEntries.map((entry) => {
+          const entryModel: ModelResponse = getEntryModel(
+            entry.name,
+            defaultAiProvider,
           );
-        } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-          return generate('text', 'tags', entryModel.name, entry).then(
-            (results) => handleGenTagsResults(entry, results),
-          );
-        }
-      } else {
-        showNotification('Tags generation not supported for:' + entry.name);
-      }
+          if (entryModel) {
+            const ext = extractFileExtension(entry.name).toLowerCase();
+            if (
+              (fromDescription || generationSettings.current.fromDescription) &&
+              entry.meta.description
+            ) {
+              return newChatMessage(
+                entry.meta.description,
+                false,
+                'user',
+                'tags',
+                defaultAiProvider.defaultTextModel,
+                false,
+                [],
+                false,
+              ).then((results) => handleGenTagsResults(entry, results));
+            } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+              return generate('image', 'tags', entryModel.name, entry).then(
+                (results) => handleGenTagsResults(entry, results),
+              );
+            } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+              return generate('text', 'tags', entryModel.name, entry).then(
+                (results) => handleGenTagsResults(entry, results),
+              );
+            }
+          } else {
+            showNotification('Tags generation not supported for:' + entry.name);
+          }
 
-      return Promise.resolve(false);
-    });
-    return Promise.all(promises).then((results) => {
-      if (results && results.every((result) => result)) {
-        showNotification('Tags generated by an AI.');
-        return true;
+          return Promise.resolve(false);
+        });
+        return Promise.all(promises).then((results) => {
+          if (results && results.every((result) => result)) {
+            showNotification('Tags generated by an AI.');
+            return true;
+          } else {
+            return false;
+          }
+        });
       } else {
+        showNotification(
+          'Ollama Models not loaded. Check if Ollama service is alive.',
+        );
         return false;
       }
     });
