@@ -183,6 +183,7 @@ export type ChatContextProviderProps = {
 
 export type GenerationSettings = {
   maxTags: number;
+  maxChars: number;
   tagsFromLibrary: boolean;
   tagGroupsIds: string[];
   fromDescription: boolean;
@@ -285,6 +286,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return {
       structuredDataProps: { name: true, summary: true },
       maxTags: 4,
+      maxChars: undefined,
       tagsFromLibrary: false,
       fromDescription: false,
       tagGroupsIds: [],
@@ -754,6 +756,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           );
         } else {
           prompt = prompt.replace('{file_path}', '');
+        }
+        if (generationSettings.current.maxChars) {
+          prompt = prompt.replace(
+            '{max_chars}',
+            'max ' + generationSettings.current.maxChars + ' characters',
+          );
+        } else {
+          prompt = prompt.replace('{max_chars}', '');
         }
         return prompt;
       }

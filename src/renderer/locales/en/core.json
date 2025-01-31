@@ -932,6 +932,13 @@
   "setting": "Settings",
   "text_content": "Text content in image",
   "maxTags": "Max Tags",
+  "maxTagsHelp": "Max Tags to generate",
   "fromDescription": "From Description",
+  "fromDescriptionHelp": "Generate Tags From Description",
+  "limitSummary": "Limit Summary",
+  "limitSummaryHelp": "Used for short or long Summary",
+  "maxChars": "Max characters for Summary",
+  "maxCharsHelp": "Limit the characters used bu AI to generate Summary",
+  "aiGenSelectedEntries": "AI generation settings",
   "-": "-"
 }

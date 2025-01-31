@@ -502,16 +502,16 @@ function EntryContainer() {
   };
 
   const savingFile = (force = false) => {
-    if (
-      fileViewer &&
-      fileViewer.current &&
-      fileViewer.current.contentWindow &&
-      // @ts-ignore
-      fileViewer.current.contentWindow.getContent
-    ) {
-      // @ts-ignore
-      const fileContent = fileViewer.current.contentWindow.getContent();
-      try {
+    try {
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow &&
+        // @ts-ignore
+        fileViewer.current.contentWindow.getContent
+      ) {
+        // @ts-ignore
+        const fileContent = fileViewer.current.contentWindow.getContent();
         //check if file is changed
         if (fileChanged || force) {
           isSavingInProgress.current = true;
@@ -528,10 +528,10 @@ function EntryContainer() {
             isSavingInProgress.current = false;
           });
         }
-      } catch (e) {
-        isSavingInProgress.current = false;
-        console.debug('function getContent not exist for video file:', e);
       }
+    } catch (e) {
+      isSavingInProgress.current = false;
+      console.debug('function getContent not exist for file:', e);
     }
   };
 
