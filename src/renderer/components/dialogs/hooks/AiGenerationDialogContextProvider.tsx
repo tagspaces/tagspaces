@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces GmbH
+ * Copyright (C) 2024-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,9 +16,9 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
-import { Pro } from '-/pro';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { Pro } from '-/pro';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type AiGenerationDialogContextData = {

@@ -936,9 +936,10 @@
   "fromDescription": "From Description",
   "fromDescriptionHelp": "Generate Tags From Description",
   "limitSummary": "Limit Summary",
-  "limitSummaryHelp": "Used for short or long Summary",
+  "limitSummaryHelp": "Used for short or long summary",
   "maxChars": "Max characters for Summary",
-  "maxCharsHelp": "Limit the characters used bu AI to generate Summary",
+  "maxCharsHelp": "Limit the characters of the generated summary",
   "aiGenSelectedEntries": "AI generation settings",
+  "saveSettings": "Save Settings",
   "-": "-"
 }
