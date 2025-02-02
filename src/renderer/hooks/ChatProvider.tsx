@@ -35,8 +35,11 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
+  actions as SettingsActions,
   getDefaultAIProvider,
   getEntryContainerTab,
+  getTagColor,
+  getTagTextColor,
 } from '-/reducers/settings';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
@@ -57,10 +60,10 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import {
@@ -71,7 +74,14 @@ import {
 } from '-/components/chat/OllamaClient';
 import { Ollama, ChatRequest, ModelResponse } from 'ollama';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { z } from 'zod';
+import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import {
+  getZodDescription,
+  getZodTags,
+  StructuredDataProps,
+} from '-/services/zodObjects';
+import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 
 /*export type TimelineItem = {
   request: string;
@@ -86,7 +96,7 @@ type ChatData = {
   //openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
   isTyping: boolean;
-  refreshOllamaModels: (modelName?: string) => void;
+  refreshOllamaModels: (modelName?: string) => Promise<boolean>;
   setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
@@ -122,6 +132,16 @@ type ChatData = {
   checkProviderAlive: (providerUrl: string) => Promise<boolean>;
   getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
   getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse;
+  tagsGenerate: (
+    generateEntries: TS.FileSystemEntry[],
+    fromDescription?: boolean,
+  ) => Promise<boolean>;
+  descriptionGenerate: (
+    generateEntries: TS.FileSystemEntry[],
+  ) => Promise<TS.FileSystemEntry[]>;
+  generationSettings: GenerationSettings;
+  setGenerationSettings: (genSettings: any) => void;
+  resetGenerationSettings: (option: generateOptionType) => void;
 };
 
 export const ChatContext = createContext<ChatData>({
@@ -151,16 +171,32 @@ export const ChatContext = createContext<ChatData>({
   checkProviderAlive: undefined,
   getOllamaClient: undefined,
   getEntryModel: undefined,
+  tagsGenerate: undefined,
+  descriptionGenerate: undefined,
+  generationSettings: undefined,
+  setGenerationSettings: undefined,
+  resetGenerationSettings: undefined,
 });
 
 export type ChatContextProviderProps = {
   children: React.ReactNode;
 };
 
+export type GenerationSettings = {
+  option: generateOptionType;
+  maxTags: number;
+  maxChars: number;
+  tagsFromLibrary: boolean;
+  tagGroupsIds: string[];
+  fromDescription: boolean;
+  structuredDataProps: StructuredDataProps;
+};
+
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const { deleteDirectory } = useIOActionsContext();
+  const { addTagsToFsEntry } = useTaggingActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -169,7 +205,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const models = useRef<ModelResponse[]>([]);
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const selectedTabName = useSelector(getEntryContainerTab);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
   const currentModel = useRef<ModelResponse>(undefined);
+  const generationSettings = useRef<GenerationSettings>(
+    getGenerationSettings(),
+  );
   /*const openedEntryModel = useRef<ModelResponse>(
     getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
   );*/
@@ -183,6 +224,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     Pro && Pro.UI ? Pro.UI.DEFAULT_SYSTEM_PROMPT : false;
   const SUMMARIZE_PROMPT = Pro && Pro.UI ? Pro.UI.SUMMARIZE_PROMPT : false;
   const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+  const IMAGE_DESCRIPTION_STRUCTURED =
+    Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION_STRUCTURED : false;
   const TEXT_DESCRIPTION = Pro && Pro.UI ? Pro.UI.TEXT_DESCRIPTION : false;
   const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
   const GENERATE_IMAGE_TAGS =
@@ -238,6 +281,23 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       initHistory();
     }
   }, [openedEntry]);
+
+  function getGenerationSettings(
+    option: generateOptionType = 'tags',
+  ): GenerationSettings {
+    const item = localStorage.getItem(Pro.keys.generationSettingsKey);
+    const storedObj = item ? JSON.parse(item) : {};
+    return {
+      option: option,
+      structuredDataProps: { name: true, summary: true },
+      maxTags: 4,
+      maxChars: undefined,
+      tagsFromLibrary: false,
+      fromDescription: false,
+      tagGroupsIds: [],
+      ...storedObj,
+    };
+  }
 
   async function getOllamaClient(ollamaApiUrl: string) {
     if (ollamaApiUrl) {
@@ -348,9 +408,19 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     );
   }
 
-  function refreshOllamaModels(modelName = undefined) {
+  /**
+   * return true if model is loaded successful false otherwise
+   */
+  function checkOllamaModels(): Promise<boolean> {
+    if (!models.current || models.current.length === 0) {
+      return refreshOllamaModels();
+    }
+    return Promise.resolve(true);
+  }
+
+  function refreshOllamaModels(modelName = undefined): Promise<boolean> {
     if (defaultAiProvider) {
-      getOllamaModels(ollamaClient.current)
+      return getOllamaModels(ollamaClient.current)
         .then((m) => {
           if (m) {
             models.current = m;
@@ -372,8 +442,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           if (success) {
             forceUpdate();
           }
+          return success;
         });
     }
+    return Promise.resolve(false);
   }
 
   function setModel(m: ModelResponse | string): Promise<boolean> {
@@ -548,8 +620,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           onProgressHandler,
         ).then((response) => {
           console.log('pullOllamaModel response:' + response);
-          refreshOllamaModels(newModelName);
-          return true;
+          return refreshOllamaModels(newModelName);
         });
         /*return window.electronIO.ipcRenderer
           .invoke('pullOllamaModel', defaultAiProvider.url, {
@@ -703,12 +774,28 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         } else {
           prompt = prompt.replace('{file_path}', '');
         }
+        if (generationSettings.current.maxChars) {
+          prompt = prompt.replace(
+            '{max_chars}',
+            'max ' + generationSettings.current.maxChars + ' characters',
+          );
+        } else {
+          prompt = prompt.replace('{max_chars}', '');
+        }
         return prompt;
       }
     } else if (mode === 'description') {
       if (msg) {
-        return TEXT_DESCRIPTION.replace('{input_text}', msg);
-      } else if (IMAGE_DESCRIPTION) {
+        return TEXT_DESCRIPTION.replace('{input_text}', msg).replace(
+          '{max_chars}',
+          generationSettings.current.maxChars
+            ? 'max ' + generationSettings.current.maxChars + ' characters'
+            : '',
+        );
+      } else {
+        if (generationSettings.current.option === 'analyseImages') {
+          return IMAGE_DESCRIPTION_STRUCTURED;
+        }
         return IMAGE_DESCRIPTION.replace(
           '{file_name}',
           openedEntry ? openedEntry.name : '',
@@ -749,47 +836,23 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     };
   }, []);
 
-  const Tags = z.object({
-    topics: z.array(z.string()).max(4), // todo define generated tags maxLength in settings
-  });
-  const Description = z.object({
-    name: z.string(),
-    summary: z.string(),
-  });
-  const ObjectSchema = z.object({
-    name: z.string().describe('The name of the object'),
-    confidence: z
-      .number()
-      .min(0)
-      .max(1)
-      .describe('The confidence score of the object detection'),
-    attributes: z
-      .record(z.any())
-      .optional()
-      .describe('Additional attributes of the object'),
-    //attributes: z.string(),
-  });
-  const ImageDescription = z.object({
-    name: z.string().describe('The name of the Image'),
-    summary: z.string().describe('A concise summary of the image'),
-    objects: z
-      .array(ObjectSchema)
-      .describe('An array of objects detected in the image'),
-    scene: z.string().describe('The scene of the image'),
-    colors: z
-      .array(z.string())
-      .describe('An array of colors detected in the image'),
-    time_of_day: z
-      .enum(['Morning', 'Afternoon', 'Evening', 'Night', 'Unknown'])
-      .describe('The time of day the image was taken'),
-    setting: z
-      .enum(['Indoor', 'Outdoor', 'Unknown'])
-      .describe('The setting of the image'),
-    text_content: z
-      .string()
-      .optional()
-      .describe('Any text detected in the image'),
-  });
+  function getTagsFromLibrary(): string[] {
+    const tagsFromLibrary: string[] = [];
+    if (
+      generationSettings.current.tagsFromLibrary &&
+      generationSettings.current.tagGroupsIds.length > 0
+    ) {
+      const tagLibrary: TS.TagGroup[] = getTagLibrary();
+      generationSettings.current.tagGroupsIds.forEach((tagGroupId) => {
+        const tagGroup = tagLibrary.find((tg) => tg.uuid === tagGroupId);
+        if (tagGroup) {
+          tagsFromLibrary.push(...tagGroup.children.map((tag) => tag.title));
+        }
+      });
+    }
+    return tagsFromLibrary;
+  }
+
   /**
    * @param msg If the messages array is empty, the model will be loaded into memory.
    * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
@@ -838,16 +901,37 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
     let format = undefined;
     if (mode === 'tags') {
+      const tagsFromLibrary = getTagsFromLibrary();
+      if (tagsFromLibrary.length > 0) {
+        format = {
+          format: zodToJsonSchema(
+            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
+          ),
+        };
+      }
       if (imgArray.length > 0) {
-        format = { format: zodToJsonSchema(ImageDescription) };
+        format = {
+          format: zodToJsonSchema(
+            getZodDescription(generationSettings.current.structuredDataProps),
+          ),
+        };
       } else {
-        format = { format: zodToJsonSchema(Tags) };
+        format = {
+          format: zodToJsonSchema(
+            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
+          ),
+        };
       }
     } else if (mode === 'description' || mode === 'summary') {
-      if (imgArray.length > 0) {
-        format = { format: zodToJsonSchema(ImageDescription) };
-      } else {
-        format = { format: zodToJsonSchema(Description) };
+      if (
+        imgArray.length > 0 &&
+        generationSettings.current.option === 'analyseImages'
+      ) {
+        format = {
+          format: zodToJsonSchema(
+            getZodDescription(generationSettings.current.structuredDataProps),
+          ),
+        };
       }
     }
     const request: ChatRequest = {
@@ -862,62 +946,113 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       request,
       chatMessageHandler,
     ).then((apiResponse) => {
+      console.log('apiResponse:' + apiResponse);
+      if (apiResponse === undefined) {
+        showNotification('Error check if Ollama service is alive');
+        return undefined;
+      }
       isTyping.current = false;
       if (msg && includeHistory) {
         saveHistoryItems();
       }
       if (mode === 'tags') {
         if (imgArray.length > 0) {
-          const response = ImageDescription.parse(JSON.parse(apiResponse));
-          const tags = response.objects.map((obj) => obj.name);
+          const response = JSON.parse(apiResponse); // ImageDescription.parse(JSON.parse(apiResponse));
+          const tags = response.objects
+            ? response.objects.map((obj) => obj.name)
+            : [];
           if (response.time_of_day && response.time_of_day !== 'Unknown') {
             tags.push(response.time_of_day);
           }
           if (response.setting && response.setting !== 'Unknown') {
             tags.push(response.setting);
           }
+          if (response.topics) {
+            tags.push(response.topics);
+          }
           return [...tags, ...response.colors];
         } else {
-          const response = Tags.parse(JSON.parse(apiResponse));
-          return response.topics;
+          let tags: string[] = [];
+          try {
+            const response = JSON.parse(apiResponse);
+            tags = response.topics;
+          } catch (e) {
+            console.log('JSON.parse error for:' + apiResponse, e);
+            if (apiResponse) {
+              tags = apiResponse.split(' ');
+            }
+            //const zodTags = getZodTags(generationSettings.current.maxTags);
+            //response = zodTags.parse(JSON.parse(apiResponse));
+          }
+
+          return tags.slice(0, generationSettings.current.maxTags);
         }
       } else if (mode === 'description' || mode === 'summary') {
-        if (imgArray.length > 0) {
-          const response = ImageDescription.parse(JSON.parse(apiResponse));
-          const objArray = response.objects.map(
-            (obj) =>
-              '\n\n > ##### Name: \n\n' +
-              obj.name +
-              '\n\n > ##### Attributes: \n\n' +
-              obj.attributes,
-          );
-          return (
-            '### Name: \n\n' +
-            response.name +
-            '\n\n ### Objects: \n\n' +
-            objArray.join('\n\n') +
-            '\n\n ### Scene: \n\n' +
-            response.scene +
-            '\n\n ### Colors:\n\n' +
-            response.colors +
-            '\n\n ### Summary:\n\n' +
-            response.summary +
-            '\n\n ### Day Time:\n\n' +
-            response.time_of_day +
-            '\n\n ### Setting:\n\n' +
-            response.setting +
-            (response.text_content
-              ? '\n\n ### Content:\n\n' + response.text_content
-              : '')
-          );
-        } else {
-          const response = Description.parse(JSON.parse(apiResponse));
-          return (
-            '### Name: \n\n' +
-            response.name +
-            '\n\n ### Summary:\n\n' +
+        if (format) {
+          const response = JSON.parse(apiResponse);
+          const arrReturn = [];
+          if (
+            generationSettings.current.structuredDataProps.name &&
+            response.name
+          ) {
+            arrReturn.push('**Name:** ' + response.name);
+          }
+          if (
+            generationSettings.current.structuredDataProps.objects &&
+            response.objects
+          ) {
+            arrReturn.push(
+              response.objects.map(
+                (obj) =>
+                  (obj.name ? '\n\n> > **Object Name:** ' + obj.name : '') +
+                  (obj.attributes
+                    ? '\n\n> > **Attributes:** ' +
+                      JSON.stringify(obj.attributes, null, 4).replace(
+                        /[{}\[\]]/g,
+                        '',
+                      )
+                    : ''),
+              ),
+            );
+          }
+
+          if (
+            generationSettings.current.structuredDataProps.scene &&
+            response.scene
+          ) {
+            arrReturn.push('**Scene:** ' + response.scene);
+          }
+          if (
+            generationSettings.current.structuredDataProps.colors &&
+            response.colors
+          ) {
+            arrReturn.push('**Colors:** ' + response.colors);
+          }
+          if (
+            generationSettings.current.structuredDataProps.summary &&
             response.summary
-          );
+          ) {
+            arrReturn.push('**Summary:** ' + response.summary);
+          }
+          if (
+            generationSettings.current.structuredDataProps.time_of_day &&
+            response.time_of_day
+          ) {
+            arrReturn.push('**Day Time:** ' + response.time_of_day);
+          }
+          if (
+            generationSettings.current.structuredDataProps.settings &&
+            response.setting
+          ) {
+            arrReturn.push('**Setting:** ' + response.setting);
+          }
+          if (
+            response.text_content &&
+            generationSettings.current.structuredDataProps.text_content
+          ) {
+            arrReturn.push('**Content:** ' + response.text_content);
+          }
+          return arrReturn.join('\n\n') + '\n\n';
         }
       }
       return stream ? true : apiResponse;
@@ -1000,6 +1135,195 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve(undefined);
   }
 
+  function descriptionGenerate(
+    generateEntries: TS.FileSystemEntry[],
+  ): Promise<TS.FileSystemEntry[]> {
+    return checkOllamaModels().then((success) => {
+      if (success) {
+        const promises = generateEntries.map((entry) => {
+          const entryModel: ModelResponse = getEntryModel(
+            entry.name,
+            defaultAiProvider,
+          );
+          if (entryModel) {
+            const ext = extractFileExtension(entry.name).toLowerCase();
+            if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+              return generate(
+                'image',
+                'description',
+                entryModel.name,
+                entry,
+              ).then((results) => handleGenDescResults(entry, results));
+            } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+              return generate(
+                'text',
+                'description',
+                entryModel.name,
+                entry,
+              ).then((results) => handleGenDescResults(entry, results));
+            }
+          } else {
+            showNotification(
+              'Error No Model selected or there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
+            );
+            return Promise.resolve(undefined);
+          }
+          return Promise.resolve(entry);
+        });
+        return Promise.all(promises);
+      } else {
+        showNotification(
+          'Ollama Models not loaded. Check if Ollama service is alive.',
+        );
+        return undefined;
+      }
+    });
+  }
+
+  function handleGenDescResults(entry, response): TS.FileSystemEntry {
+    if (response) {
+      const generatedDesc =
+        response +
+        '\\\n *Generated with AI on ' +
+        formatDateTime(new Date(), true) +
+        '* \n';
+      //dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
+      entry.meta.description = entry.meta?.description
+        ? entry.meta.description + '\n---\n' + generatedDesc
+        : generatedDesc;
+
+      return entry;
+    }
+    return undefined;
+  }
+
+  function tagsGenerate(
+    generateEntries: TS.FileSystemEntry[],
+    fromDescription: boolean = false,
+  ): Promise<boolean> {
+    return checkOllamaModels().then((success) => {
+      if (success) {
+        const promises = generateEntries.map((entry) => {
+          const entryModel: ModelResponse = getEntryModel(
+            entry.name,
+            defaultAiProvider,
+          );
+          if (entryModel) {
+            const ext = extractFileExtension(entry.name).toLowerCase();
+            if (
+              (fromDescription || generationSettings.current.fromDescription) &&
+              entry.meta.description
+            ) {
+              return newChatMessage(
+                entry.meta.description,
+                false,
+                'user',
+                'tags',
+                defaultAiProvider.defaultTextModel,
+                false,
+                [],
+                false,
+              ).then((results) => handleGenTagsResults(entry, results));
+            } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+              return generate('image', 'tags', entryModel.name, entry).then(
+                (results) => handleGenTagsResults(entry, results),
+              );
+            } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+              return generate('text', 'tags', entryModel.name, entry).then(
+                (results) => handleGenTagsResults(entry, results),
+              );
+            }
+          } else {
+            showNotification('Tags generation not supported for:' + entry.name);
+          }
+
+          return Promise.resolve(false);
+        });
+        return Promise.all(promises).then((results) => {
+          if (results && results.every((result) => result)) {
+            showNotification('Tags generated by an AI.');
+            return true;
+          } else {
+            return false;
+          }
+        });
+      } else {
+        showNotification(
+          'Ollama Models not loaded. Check if Ollama service is alive.',
+        );
+        return false;
+      }
+    });
+  }
+
+  function handleGenTagsResults(entry, response): Promise<boolean> {
+    //console.log('newOllamaMessage response:' + response);
+    if (response && response.length > 0) {
+      try {
+        const tags: TS.Tag[] = response.map((tag) => {
+          if (tag) {
+            const tagTitle = tag
+              .replace(/[-/=[\]{}!@#$%^&*(),.?":{}|<>]/g, ' ')
+              .toLowerCase()
+              .split(' ')
+              .filter((str) => str.trim() !== '')
+              .slice(0, 3)
+              .join('-');
+            if (tagTitle) {
+              return {
+                title: tagTitle,
+                ...getTagColors(
+                  tagTitle,
+                  defaultTextColor,
+                  defaultBackgroundColor,
+                ),
+              };
+            }
+          }
+          return undefined;
+        });
+        const uniqueTags = tags.filter(
+          (tag, index, self) =>
+            tag && // Exclude undefined or null tags
+            index === self.findIndex((t) => t?.title === tag.title),
+        );
+        /* const regex = /\{([^}]+)\}/g;
+        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
+          const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
+          return {
+            title: tagTitle,
+            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
+          };
+        });*/
+        return addTagsToFsEntry(entry, uniqueTags).then(() => {
+          dispatch(
+            SettingsActions.setEntryContainerTab(TabNames.propertiesTab),
+          );
+          return true;
+        });
+        // showNotification('Tags for ' + entry.name + ' generated by an AI.');
+      } catch (e) {
+        console.error('newOllamaMessage response ' + response, e);
+      }
+    } else {
+      console.error('no response ' + response);
+    }
+    return Promise.resolve(false);
+  }
+
+  function setGenerationSettings(genSettings: any) {
+    generationSettings.current = {
+      ...generationSettings.current,
+      ...genSettings,
+    };
+    forceUpdate();
+  }
+
+  function resetGenerationSettings(option: generateOptionType) {
+    generationSettings.current = getGenerationSettings(option);
+    forceUpdate();
+  }
+
   const context = useMemo(() => {
     return {
       isTyping: isTyping.current,
@@ -1008,6 +1332,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       currentModel: currentModel.current,
       //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
+      generationSettings: generationSettings.current,
       refreshOllamaModels,
       getHistoryFilePath,
       setModel,
@@ -1028,6 +1353,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       checkProviderAlive,
       getOllamaClient,
       getEntryModel,
+      tagsGenerate,
+      descriptionGenerate,
+      setGenerationSettings,
+      resetGenerationSettings,
     };
   }, [
     defaultAiProvider,
@@ -1035,8 +1364,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     models.current,
     images.current,
     currentModel.current,
-    //openedEntryModel.current,
     chatHistoryItems.current,
+    generationSettings.current,
     openedEntry,
     selectedEntries,
   ]);

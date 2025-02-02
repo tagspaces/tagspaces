@@ -86,13 +86,20 @@ export async function newOllamaMessage(
             }
           }
           return undefined; // Return undefined for the streaming case if there's no final message content
+        })
+        .catch((e) => {
+          console.error('newOllamaMessage error', e);
         });
     } else {
       // Handle the case where `stream` is false or undefined
-      const response: ChatResponse = await ollama.chat(
-        msg as ChatRequest & { stream?: false },
-      );
-      return response.message.content;
+      try {
+        const response: ChatResponse = await ollama.chat(
+          msg as ChatRequest & { stream?: false },
+        );
+        return response.message.content;
+      } catch (e) {
+        console.error('newOllamaMessage error', e);
+      }
     }
   }
   return undefined;

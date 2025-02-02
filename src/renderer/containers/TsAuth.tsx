@@ -61,7 +61,7 @@ const TsAuth: React.FC<any> = (props) => {
           <AmplifyTotpSetup
             headerText="TagSpaces Time-Based One-Time Password Login"
             slot="totp-setup"
-            issuer={t('core:name') + ' ' + window.location.hostname}
+            issuer={t('core:appName') + ' ' + window.location.hostname}
             // user={props.user}
           />
           <AmplifySignUp

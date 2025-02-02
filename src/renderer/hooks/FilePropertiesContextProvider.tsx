@@ -44,7 +44,7 @@ type FilePropertiesContextData = {
   setEditDescriptionMode: (editMode: boolean) => void;
   setSaveDescriptionConfirmOpened: (open: boolean) => void;
   setDescription: (description: string) => void;
-  saveDescription: () => void;
+  saveDescription: () => Promise<boolean>;
 };
 
 export const FilePropertiesContext = createContext<FilePropertiesContextData>({
@@ -101,7 +101,7 @@ export const FilePropertiesContextProvider = ({
     }
   }, [openedEntry]);
 
-  const saveDescription = () => {
+  function saveDescription(): Promise<boolean> {
     if (lastOpenedFile.current !== undefined) {
       const location = findLocation(lastOpenedFile.current.locationID);
       if (!location || location.isReadOnly) {
@@ -116,17 +116,19 @@ export const FilePropertiesContextProvider = ({
       isDescriptionChanged.current = false;
       isEditMode.current = false;
       forceUpdate();
-      setDescriptionChange(
+      return setDescriptionChange(
         lastOpenedFile.current,
         lastOpenedFile.current.meta?.description,
       ).then(() => {
         if (lastOpenedFile.current.path !== openedEntry.path) {
           lastOpenedFile.current = { ...openedEntry };
         }
+        return true;
         // description.current = openedEntry.meta?.description;
       });
     }
-  };
+    return Promise.resolve(false);
+  }
 
   function setDescription(d: string) {
     lastOpenedFile.current = {

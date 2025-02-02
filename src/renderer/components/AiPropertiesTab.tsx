@@ -40,13 +40,8 @@ function AiPropertiesTab(props: Props) {
   return (
     <Box position="relative" display="inline-flex">
       <AiGenDescButton />
-      <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
-        <AiGenTagsButton />
-      </span>
       {openedEntry.meta.description && (
-        <span style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
-          <AiGenTagsButton fromDescription={true} />
-        </span>
+        <AiGenTagsButton fromDescription={true} />
       )}
     </Box>
   );

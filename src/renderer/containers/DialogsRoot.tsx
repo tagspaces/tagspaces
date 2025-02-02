@@ -39,6 +39,7 @@ import {
   DownloadUrlContextProvider,
   DownloadUrlDialogContext,
 } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
+import { AiGenerationDialogContextProvider } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -58,21 +59,23 @@ function DialogsRoot({ children }: DialogsRootProps) {
                       <LicenseDialogContextProvider>
                         <ThirdPartyLibsDialogContextProvider>
                           <AboutDialogContextProvider>
-                            <OnboardingDialogContextProvider>
-                              <KeyboardDialogContextProvider>
-                                <LinkDialogContextProvider>
-                                  <ProTeaserDialogContextProvider>
-                                    <SettingsDialogContextProvider>
-                                      <ResolveConflictContextProvider>
-                                        <DownloadUrlContextProvider>
-                                          {children}
-                                        </DownloadUrlContextProvider>
-                                      </ResolveConflictContextProvider>
-                                    </SettingsDialogContextProvider>
-                                  </ProTeaserDialogContextProvider>
-                                </LinkDialogContextProvider>
-                              </KeyboardDialogContextProvider>
-                            </OnboardingDialogContextProvider>
+                            <AiGenerationDialogContextProvider>
+                              <OnboardingDialogContextProvider>
+                                <KeyboardDialogContextProvider>
+                                  <LinkDialogContextProvider>
+                                    <ProTeaserDialogContextProvider>
+                                      <SettingsDialogContextProvider>
+                                        <ResolveConflictContextProvider>
+                                          <DownloadUrlContextProvider>
+                                            {children}
+                                          </DownloadUrlContextProvider>
+                                        </ResolveConflictContextProvider>
+                                      </SettingsDialogContextProvider>
+                                    </ProTeaserDialogContextProvider>
+                                  </LinkDialogContextProvider>
+                                </KeyboardDialogContextProvider>
+                              </OnboardingDialogContextProvider>
+                            </AiGenerationDialogContextProvider>
                           </AboutDialogContextProvider>
                         </ThirdPartyLibsDialogContextProvider>
                       </LicenseDialogContextProvider>

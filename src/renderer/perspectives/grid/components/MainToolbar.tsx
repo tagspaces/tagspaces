@@ -18,10 +18,9 @@
 
 import React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { saveAs } from 'file-saver';
-import { Toolbar, Box, Divider, Badge } from '@mui/material/';
-import Tooltip from '-/components/Tooltip';
+import { Toolbar, Box, Divider } from '@mui/material/';
 import TsIconButton from '-/components/TsIconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import ShareIcon from '@mui/icons-material/Share';
@@ -33,20 +32,18 @@ import {
   DownloadIcon,
   TagIcon,
   DeleteIcon,
-} from '-/components/CommonIcons';
-import CopyIcon from '@mui/icons-material/FileCopy';
-import ExportIcon from '@mui/icons-material/AssignmentReturn';
-import {
   ParentFolderIcon,
   FolderPropertiesIcon,
   PerspectiveSettingsIcon,
+  AIIcon,
 } from '-/components/CommonIcons';
+import CopyIcon from '@mui/icons-material/FileCopy';
+import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
 import ZoomComponent from '-/components/ZoomComponent';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -56,6 +53,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -80,8 +78,8 @@ function MainToolbar(props: Props) {
     openShareFilesDialog,
   } = props;
 
-  const { haveLocalSetting, setSettings, saveSettings } =
-    usePerspectiveSettingsContext();
+  const { haveLocalSetting } = usePerspectiveSettingsContext();
+  const { openAiGenerationDialog } = useAiGenerationDialogContext();
   const { nativeDragModeEnabled, setNativeDragModeEnabled } =
     useSortedDirContext();
 
@@ -92,7 +90,6 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  //const dispatch: AppDispatch = useDispatch();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
@@ -186,6 +183,16 @@ function MainToolbar(props: Props) {
             onClick={openAddRemoveTagsDialog}
           >
             <TagIcon />
+          </TsIconButton>
+        )}
+        {!readOnlyMode && (
+          <TsIconButton
+            tooltip={t('core:aiGenSelectedEntries')}
+            aria-label={t('core:aiGenSelectedEntries')}
+            data-tid={prefixDataTID + 'PerspectiveAiGenTID'}
+            onClick={() => openAiGenerationDialog()}
+          >
+            <AIIcon />
           </TsIconButton>
         )}
         {!readOnlyMode && (
