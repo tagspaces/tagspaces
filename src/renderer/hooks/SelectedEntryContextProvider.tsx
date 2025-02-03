@@ -78,9 +78,10 @@ export const SelectedEntryContextProvider = ({
       if (!selectedEntries.current.some((e) => e.path === entry.path)) {
         // exclude current folder from selection
         const currentFolder = extractContainingDirectoryPath(entry.path);
-        const currentSelected = selectedEntries.current.filter(
-          (data) => data.path !== currentFolder,
-        );
+        const currentSelected = selectedEntries.current.filter((data) => {
+          const parentFolder = extractContainingDirectoryPath(data.path);
+          return parentFolder === currentFolder;
+        });
         selectedEntries.current = [...currentSelected, entry];
       }
     } else {
