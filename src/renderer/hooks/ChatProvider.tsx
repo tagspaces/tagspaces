@@ -137,8 +137,8 @@ type ChatData = {
     fromDescription?: boolean,
   ) => Promise<boolean>;
   descriptionGenerate: (
-    generateEntries: TS.FileSystemEntry[],
-  ) => Promise<TS.FileSystemEntry[]>;
+    entry: TS.FileSystemEntry,
+  ) => Promise<TS.FileSystemEntry>;
   generationSettings: GenerationSettings;
   setGenerationSettings: (genSettings: any) => void;
   resetGenerationSettings: (option: generateOptionType) => void;
@@ -190,6 +190,8 @@ export type GenerationSettings = {
   tagGroupsIds: string[];
   fromDescription: boolean;
   structuredDataProps: StructuredDataProps;
+  appendToDescription: boolean;
+  appendAnalysisToDescription: boolean;
 };
 
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
@@ -295,6 +297,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       tagsFromLibrary: false,
       fromDescription: false,
       tagGroupsIds: [],
+      appendToDescription: true,
+      appendAnalysisToDescription: true,
       ...storedObj,
     };
   }
@@ -1136,40 +1140,48 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function descriptionGenerate(
+    entry: TS.FileSystemEntry,
+  ): Promise<TS.FileSystemEntry> {
+    const entryModel: ModelResponse = getEntryModel(
+      entry.name,
+      defaultAiProvider,
+    );
+    if (entryModel) {
+      const ext = extractFileExtension(entry.name).toLowerCase();
+      if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        return generate('image', 'description', entryModel.name, entry).then(
+          (results) =>
+            handleGenDescResults(
+              entry,
+              results,
+              generationSettings.current.appendAnalysisToDescription,
+            ),
+        );
+      } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+        return generate('text', 'description', entryModel.name, entry).then(
+          (results) =>
+            handleGenDescResults(
+              entry,
+              results,
+              generationSettings.current.appendToDescription,
+            ),
+        );
+      }
+    } else {
+      showNotification(
+        'Error No Model selected or there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
+      );
+      return Promise.resolve(undefined);
+    }
+    return Promise.resolve(entry);
+  }
+
+  /* function descriptionGenerateAll(
     generateEntries: TS.FileSystemEntry[],
   ): Promise<TS.FileSystemEntry[]> {
     return checkOllamaModels().then((success) => {
       if (success) {
-        const promises = generateEntries.map((entry) => {
-          const entryModel: ModelResponse = getEntryModel(
-            entry.name,
-            defaultAiProvider,
-          );
-          if (entryModel) {
-            const ext = extractFileExtension(entry.name).toLowerCase();
-            if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-              return generate(
-                'image',
-                'description',
-                entryModel.name,
-                entry,
-              ).then((results) => handleGenDescResults(entry, results));
-            } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-              return generate(
-                'text',
-                'description',
-                entryModel.name,
-                entry,
-              ).then((results) => handleGenDescResults(entry, results));
-            }
-          } else {
-            showNotification(
-              'Error No Model selected or there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
-            );
-            return Promise.resolve(undefined);
-          }
-          return Promise.resolve(entry);
-        });
+        const promises = generateEntries.map((entry) => descriptionGenerate(entry));
         return Promise.all(promises);
       } else {
         showNotification(
@@ -1178,9 +1190,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         return undefined;
       }
     });
-  }
+  }*/
 
-  function handleGenDescResults(entry, response): TS.FileSystemEntry {
+  function handleGenDescResults(
+    entry: TS.FileSystemEntry,
+    response: string,
+    append: boolean,
+  ): TS.FileSystemEntry {
     if (response) {
       const generatedDesc =
         response +
@@ -1188,9 +1204,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         formatDateTime(new Date(), true) +
         '* \n';
       //dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
-      entry.meta.description = entry.meta?.description
-        ? entry.meta.description + '\n---\n' + generatedDesc
-        : generatedDesc;
+      entry.meta.description =
+        entry.meta?.description && append
+          ? entry.meta.description + '\n---\n' + generatedDesc
+          : generatedDesc;
 
       return entry;
     }

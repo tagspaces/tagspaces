@@ -938,5 +938,9 @@
   "maxCharsHelp": "Limit the characters of the generated summary",
   "aiGenSelectedEntries": "AI generation settings",
   "saveSettings": "Save Settings",
+  "appendToDescription": "Append To Description",
+  "appendToDescriptionHelp": "Append or Replace Generated text To Description",
+  "appendAnalysisToDescription": "Append Analysis To Description",
+  "appendAnalysisToDescriptionHelp": "Append or Replace Analysis To Description",
   "-": "-"
 }
