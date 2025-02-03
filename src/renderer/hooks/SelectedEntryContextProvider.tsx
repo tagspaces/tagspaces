@@ -23,10 +23,10 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 type SelectedEntryContextData = {
   selectedEntries: TS.FileSystemEntry[];
@@ -76,7 +76,12 @@ export const SelectedEntryContextProvider = ({
   const selectEntry = (entry: TS.FileSystemEntry, select: boolean = true) => {
     if (select) {
       if (!selectedEntries.current.some((e) => e.path === entry.path)) {
-        selectedEntries.current = [...selectedEntries.current, entry];
+        // exclude current folder from selection
+        const currentFolder = extractContainingDirectoryPath(entry.path);
+        const currentSelected = selectedEntries.current.filter(
+          (data) => data.path !== currentFolder,
+        );
+        selectedEntries.current = [...currentSelected, entry];
       }
     } else {
       //deselect
