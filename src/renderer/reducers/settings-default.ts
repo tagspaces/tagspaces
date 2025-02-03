@@ -17,10 +17,10 @@
  */
 
 import AppConfig from '-/AppConfig';
-import keyBindings from '-/reducers/keybindings-default';
+import { extensionsFound, supportedFileTypes } from '-/extension-config';
 import { PerspectiveIDs } from '-/perspectives';
+import keyBindings from '-/reducers/keybindings-default';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { supportedFileTypes, extensionsFound } from '-/extension-config';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -223,6 +223,14 @@ export default {
     {
       iso: 'zh_HK',
       title: '漢語 (Chinese Hong Kong)',
+    },
+    {
+      iso: 'he',
+      title: 'עִבְרִית (Hebrew)',
+    },
+    {
+      iso: 'es_CL',
+      title: 'Español chileno (Chilean Spanish)',
     },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
