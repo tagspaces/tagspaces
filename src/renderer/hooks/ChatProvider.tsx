@@ -26,12 +26,22 @@ import {
   HistoryModel,
   PullModelResponse,
 } from '-/components/chat/ChatTypes';
+import {
+  deleteOllamaModel,
+  getOllamaModels,
+  newOllamaMessage,
+  pullOllamaModel,
+} from '-/components/chat/OllamaClient';
+import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
@@ -41,19 +51,27 @@ import {
   getTagColor,
   getTagTextColor,
 } from '-/reducers/settings';
+import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
+import {
+  StructuredDataProps,
+  getZodDescription,
+  getZodTags,
+} from '-/services/zodObjects';
 import { TS } from '-/tagspaces.namespace';
+import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import {
   extractFileExtension,
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import {
+  extractTextContent,
   getUuid,
   loadJSONString,
-  extractTextContent,
 } from '@tagspaces/tagspaces-common/utils-io';
 import { format } from 'date-fns';
+import { ChatRequest, ModelResponse, Ollama } from 'ollama';
 import React, {
   createContext,
   useEffect,
@@ -63,25 +81,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import {
-  deleteOllamaModel,
-  getOllamaModels,
-  newOllamaMessage,
-  pullOllamaModel,
-} from '-/components/chat/OllamaClient';
-import { Ollama, ChatRequest, ModelResponse } from 'ollama';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import {
-  getZodDescription,
-  getZodTags,
-  StructuredDataProps,
-} from '-/services/zodObjects';
-import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 
 /*export type TimelineItem = {
   request: string;
@@ -784,7 +784,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         if (generationSettings.current.maxChars) {
           prompt = prompt.replace(
             '{max_chars}',
-            'max ' + generationSettings.current.maxChars + ' characters',
+            'maximal ' +
+              generationSettings.current.maxChars +
+              ' characters long ',
           );
         } else {
           prompt = prompt.replace('{max_chars}', '');
@@ -812,7 +814,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             '{language}',
             generationSettings.current.language
               ? generationSettings.current.language
-              : '',
+              : 'native',
           );
       } else {
         if (generationSettings.current.option === 'analyseImages') {
@@ -821,6 +823,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         return IMAGE_DESCRIPTION.replace(
           '{file_name}',
           openedEntry ? openedEntry.name : '',
+        ).replace(
+          '{language}',
+          generationSettings.current.language
+            ? generationSettings.current.language
+            : 'English',
         );
       }
     } else if (mode === 'tags') {
@@ -963,12 +970,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       ...(unload && { keep_alive: 0 }),
       ...(format && format),
     };
+    // console.log('AI question: ' + JSON.stringify(messages));
     return newOllamaMessage(
       ollamaClient.current,
       request,
       chatMessageHandler,
     ).then((apiResponse) => {
-      console.log('apiResponse:' + apiResponse);
+      // console.log('apiResponse:' + apiResponse);
       if (apiResponse === undefined) {
         showNotification('Error check if Ollama service is alive');
         return undefined;
