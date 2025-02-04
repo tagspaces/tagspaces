@@ -112,6 +112,8 @@ export { default as ArrowBackIcon } from '@mui/icons-material/ArrowBackIos';
 
 export { default as SelectedIcon } from '@mui/icons-material/CheckCircle';
 
+export { default as CheckIcon } from '@mui/icons-material/Check';
+
 export { default as UnSelectedIcon } from '@mui/icons-material/RadioButtonUnchecked';
 
 export { default as MoreMenuIcon } from '@mui/icons-material/MoreVert';
