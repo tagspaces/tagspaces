@@ -194,6 +194,7 @@ export type GenerationSettings = {
   structuredDataProps: StructuredDataProps;
   appendToDescription: boolean;
   appendAnalysisToDescription: boolean;
+  language: string;
 };
 
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
@@ -788,16 +789,31 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         } else {
           prompt = prompt.replace('{max_chars}', '');
         }
+        if (generationSettings.current.language) {
+          prompt = prompt.replace(
+            '{language}',
+            generationSettings.current.language,
+          );
+        } else {
+          prompt = prompt.replace('{language}', 'native');
+        }
         return prompt;
       }
     } else if (mode === 'description') {
       if (msg) {
-        return TEXT_DESCRIPTION.replace('{input_text}', msg).replace(
-          '{max_chars}',
-          generationSettings.current.maxChars
-            ? 'max ' + generationSettings.current.maxChars + ' characters'
-            : '',
-        );
+        return TEXT_DESCRIPTION.replace('{input_text}', msg)
+          .replace(
+            '{max_chars}',
+            generationSettings.current.maxChars
+              ? 'max ' + generationSettings.current.maxChars + ' characters'
+              : '',
+          )
+          .replace(
+            '{language}',
+            generationSettings.current.language
+              ? generationSettings.current.language
+              : '',
+          );
       } else {
         if (generationSettings.current.option === 'analyseImages') {
           return IMAGE_DESCRIPTION_STRUCTURED;
