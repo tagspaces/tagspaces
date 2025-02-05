@@ -59,11 +59,11 @@ function DialogsRoot({ children }: DialogsRootProps) {
                       <LicenseDialogContextProvider>
                         <ThirdPartyLibsDialogContextProvider>
                           <AboutDialogContextProvider>
-                            <AiGenerationDialogContextProvider>
-                              <OnboardingDialogContextProvider>
-                                <KeyboardDialogContextProvider>
-                                  <LinkDialogContextProvider>
-                                    <ProTeaserDialogContextProvider>
+                            <OnboardingDialogContextProvider>
+                              <KeyboardDialogContextProvider>
+                                <LinkDialogContextProvider>
+                                  <ProTeaserDialogContextProvider>
+                                    <AiGenerationDialogContextProvider>
                                       <SettingsDialogContextProvider>
                                         <ResolveConflictContextProvider>
                                           <DownloadUrlContextProvider>
@@ -71,11 +71,11 @@ function DialogsRoot({ children }: DialogsRootProps) {
                                           </DownloadUrlContextProvider>
                                         </ResolveConflictContextProvider>
                                       </SettingsDialogContextProvider>
-                                    </ProTeaserDialogContextProvider>
-                                  </LinkDialogContextProvider>
-                                </KeyboardDialogContextProvider>
-                              </OnboardingDialogContextProvider>
-                            </AiGenerationDialogContextProvider>
+                                    </AiGenerationDialogContextProvider>
+                                  </ProTeaserDialogContextProvider>
+                                </LinkDialogContextProvider>
+                              </KeyboardDialogContextProvider>
+                            </OnboardingDialogContextProvider>
                           </AboutDialogContextProvider>
                         </ThirdPartyLibsDialogContextProvider>
                       </LicenseDialogContextProvider>

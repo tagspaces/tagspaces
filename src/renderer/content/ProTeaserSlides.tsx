@@ -41,6 +41,7 @@ export const slidesNames = [
   'search',
   'folderColor',
   'enterprise',
+  'ai',
 ];
 
 export function getProTeaserSlides(t) {
@@ -296,6 +297,30 @@ export function getProTeaserSlides(t) {
         .
       </>,
     ],
+    ctaURL: Links.links.emailContact,
+    ctaTitle: t('contactUs'),
+    pictureURL: EnterpriseImage,
+    pictureHeight: 200,
+  };
+  slidesEN[slidesNames[10]] = {
+    title: 'TagSpaces Pro AI',
+    description: (
+      <>
+        <p>
+          The TagSpaces project is fully supported by its subscribers. We do not
+          rely on advertising or data sharing for revenue, so purchasing a Pro
+          subscription directly supports the ongoing development of our core
+          product, TagSpaces Lite, as well as our browser extensions, which
+          remain free to use.
+        </p>
+        <p>
+          In addition, a Pro subscription unlocks a wide range of valuable
+          features, including advanced search capabilities, unique perspectives
+          for organizing your files and folders, and geo-tagging. Some of these
+          features will be highlighted in the following slides.
+        </p>
+      </>
+    ),
     ctaURL: Links.links.emailContact,
     ctaTitle: t('contactUs'),
     pictureURL: EnterpriseImage,

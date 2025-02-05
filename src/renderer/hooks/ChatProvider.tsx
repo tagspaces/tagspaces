@@ -290,7 +290,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function getGenerationSettings(
     option: generateOptionType = 'tags',
   ): GenerationSettings {
-    const item = localStorage.getItem(Pro.keys.generationSettingsKey);
+    const item = Pro
+      ? localStorage.getItem(Pro.keys.generationSettingsKey)
+      : undefined;
     const storedObj = item ? JSON.parse(item) : {};
     return {
       option: option,
@@ -803,7 +805,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
     } else if (mode === 'description') {
       if (msg) {
-        return TEXT_DESCRIPTION.replace('{input_text}', msg)
+        return TEXT_DESCRIPTION?.replace('{input_text}', msg)
           .replace(
             '{max_chars}',
             generationSettings.current.maxChars
@@ -820,7 +822,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         if (generationSettings.current.option === 'analyseImages') {
           return IMAGE_DESCRIPTION_STRUCTURED;
         }
-        return IMAGE_DESCRIPTION.replace(
+        return IMAGE_DESCRIPTION?.replace(
           '{file_name}',
           openedEntry ? openedEntry.name : '',
         ).replace(

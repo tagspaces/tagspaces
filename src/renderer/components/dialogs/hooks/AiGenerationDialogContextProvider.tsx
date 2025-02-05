@@ -16,10 +16,9 @@
  *
  */
 
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { Pro } from '-/pro';
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 
 type AiGenerationDialogContextData = {
   openAiGenerationDialog: (optionSelected?: generateOptionType) => void;
@@ -41,16 +40,20 @@ export type generateOptionType = 'tags' | 'summary' | 'analyseImages';
 export const AiGenerationDialogContextProvider = ({
   children,
 }: AiGenerationDialogContextProviderProps) => {
-  const { t } = useTranslation();
+  const { openProTeaserDialog } = useProTeaserDialogContext();
   const open = useRef<boolean>(false);
   const option = useRef<generateOptionType>(undefined);
   const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   function openDialog(optionSelected: generateOptionType = undefined) {
-    open.current = true;
-    option.current = optionSelected;
-    forceUpdate();
+    if (AiGenerationDialog) {
+      open.current = true;
+      option.current = optionSelected;
+      forceUpdate();
+    } else {
+      openProTeaserDialog('ai');
+    }
   }
 
   function closeDialog() {
@@ -67,18 +70,11 @@ export const AiGenerationDialogContextProvider = ({
 
   return (
     <AiGenerationDialogContext.Provider value={context}>
-      {AiGenerationDialog ? (
+      {AiGenerationDialog && (
         <AiGenerationDialog
           open={open.current}
           onClose={closeDialog}
           option={option.current}
-        />
-      ) : (
-        <ConfirmDialog
-          open={true}
-          onClose={() => {}}
-          title={t('core:thisFunctionalityIsAvailableInPro')}
-          confirmCallback={() => {}}
         />
       )}
       {children}
