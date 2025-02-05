@@ -16,9 +16,9 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import { slidesNames } from '-/content/ProTeaserSlides';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
 
 type ProTeaserDialogContextData = {
   openProTeaserDialog: (slidePage?: string) => void;
@@ -50,7 +50,7 @@ export const ProTeaserDialogContextProvider = ({
 
   function getProTeaserSlideIndex(slideName: string): number {
     if (!slideName) {
-      return -1;
+      return 0;
     }
     return slidesNames.findIndex((key) => key === slideName);
   }

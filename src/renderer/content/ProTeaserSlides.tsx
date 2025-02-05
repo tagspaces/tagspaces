@@ -16,19 +16,18 @@
  *
  */
 
-import Links from 'assets/links';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import KanbanImage from '-/assets/images/kanban-perspective.jpg';
-import GalleryImage from '-/assets/images/gallery-perspective.jpg';
-import FolderVizImage from '-/assets/images/folderviz-perspective.jpg';
-import MapImage from '-/assets/images/mapique-perspective.jpg';
-import EntryDescription from '-/assets/images/entry-description.jpg';
-import SearchImage from '-/assets/images/search-undraw.svg';
+import AiToolsImage from '-/assets/images/ai-tools.jpg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
+import EntryDescription from '-/assets/images/entry-description.jpg';
+import FolderVizImage from '-/assets/images/folderviz-perspective.jpg';
+import GalleryImage from '-/assets/images/gallery-perspective.jpg';
+import KanbanImage from '-/assets/images/kanban-perspective.jpg';
+import MapImage from '-/assets/images/mapique-perspective.jpg';
+import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import { PerspectiveIDs } from '-/perspectives';
-import React from 'react';
+import Links from 'assets/links';
 
 export const slidesNames = [
   'general',
@@ -36,17 +35,17 @@ export const slidesNames = [
   PerspectiveIDs.FOLDERVIZ,
   PerspectiveIDs.MAPIQUE,
   PerspectiveIDs.GALLERY,
+  'ai',
   'annotation',
   'revisions',
-  'search',
+  // 'search',
   'folderColor',
   'enterprise',
-  'ai',
 ];
 
 export function getProTeaserSlides(t) {
   const slidesEN = [];
-  slidesEN[slidesNames['general']] = {
+  slidesEN[slidesNames[0]] = {
     title: 'Why TagSpaces Pro ?',
     description: (
       <>
@@ -96,30 +95,34 @@ export function getProTeaserSlides(t) {
           results as a graphical tree. It currently supports the following
           views:
         </p>
-        <ul>
+        <ul style={{ marginTop: -10 }}>
           <li>
-            <b>Horizontal Tree</b> – Visualizes the location of files from the
-            search results
+            <b>Tag Graph</b> – Shows all used tags with the tagged entries in a
+            given location.
           </li>
           <li>
-            <b>Radial Tree</b> – Helps you identify folders with a large number
-            of files
+            <b>Links Graph</b> – Shows links between files and folder and their
+            links to external website.
           </li>
           <li>
-            <b>Treemap</b> – Assists in identifying large files
+            <b>Folder Tree</b> – Visualizes the location of files from the
+            search results.
+          </li>
+          <li>
+            <b>Circular Folder Tree</b> – Helps you identify folders with a
+            large number of files.
+          </li>
+          <li>
+            <b>Treemap</b> – Assists in identifying large files.
           </li>
         </ul>
-        <small>
-          <b>Note:</b> This perspective is still in development and currently
-          has a preview status.
-        </small>
       </>
     ),
     ctaURL: Links.documentationLinks.foldervizPerspective,
     ctaTitle: t('showMeMore'),
     pictureURL: FolderVizImage,
     pictureShadow: true,
-    pictureHeight: 300,
+    pictureHeight: 350,
   };
   slidesEN[slidesNames[3]] = {
     title: 'Mapique Perspective in TagSpaces Pro',
@@ -128,9 +131,7 @@ export function getProTeaserSlides(t) {
         <p>
           The Mapique Perspective displays files and folders tagged with
           geo-tags on a digital map. It can also automatically extract
-          geo-coordinates from EXIF/IPTC data stored in JPEG files. By default,
-          OpenStreetMap is used as the map provider, but other compatible map
-          tile servers can be integrated as well.
+          geo-coordinates from EXIF/IPTC data stored in JPEG files.
         </p>
         <p>
           Users can tag files and folders with geolocation data (geo-tagging).
@@ -163,6 +164,41 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[5]] = {
+    title: 'Automate tasks with local AI models',
+    description: (
+      <>
+        <p>
+          TagSpaces Pro can connect to Ollama as an external local AI service.
+          This will allow you to use features like:
+        </p>
+        <ul style={{ marginTop: -10 }}>
+          <li>
+            <b>Content summarization</b> – for text, markdown, html and pdf
+            files.
+          </li>
+          <li>
+            <b>Generating image describing</b> – for JPG, PNG and GIF files.
+          </li>
+          <li>
+            <b>Extraction of tags</b> – for text, markdown, html, pdf and
+            various image formats.
+          </li>
+          <li>
+            <b>Batch processing</b> – apply the above for many files at once.
+          </li>
+        </ul>
+        <small>
+          <b>Note: </b>TagSpaces does not have a build-in AI functionality, it
+          relays entirely on the external local LLM models.
+        </small>
+      </>
+    ),
+    ctaURL: Links.links.emailContact,
+    ctaTitle: t('contactUs'),
+    pictureURL: AiToolsImage,
+    pictureHeight: 300,
+  };
+  slidesEN[slidesNames[6]] = {
     title: 'Annotate and link your files and folders',
     description: (
       <>
@@ -195,7 +231,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[6]] = {
+  slidesEN[slidesNames[7]] = {
     title: 'File revisions and auto-save for text files',
     description: (
       <>
@@ -218,36 +254,36 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 400,
   };
-  slidesEN[slidesNames[7]] = {
-    title: 'Extended Search',
-    description: (
-      <>
-        The search functionality is significantly enhanced in the PRO version.
-      </>
-    ),
-    items: [
-      <>
-        <b>Stored search queries</b> – save frequently used or complex queries
-        for future use.
-      </>,
-      <>
-        <b>Full-text search</b> across text, markdown, and HTML files.
-      </>,
-      <>
-        <b>Global search</b> – search across all local locations in one step.
-      </>,
-      <>
-        <b>Filter by file type</b> – documents, notes, audio or video files,
-        archives, bookmarks, ebooks, and more.
-      </>,
-      <>Filter by files, folders, or untagged files.</>,
-      <>Filter by size and date.</>,
-    ],
-    ctaURL: Links.links.productProAdvancedSearch,
-    ctaTitle: t('showMeMore'),
-    pictureURL: SearchImage,
-    pictureHeight: 150,
-  };
+  // slidesEN[slidesNames['search]] = {
+  //   title: 'Extended Search',
+  //   description: (
+  //     <>
+  //       The search functionality is significantly enhanced in the PRO version.
+  //     </>
+  //   ),
+  //   items: [
+  //     <>
+  //       <b>Stored search queries</b> – save frequently used or complex queries
+  //       for future use.
+  //     </>,
+  //     <>
+  //       <b>Full-text search</b> across text, markdown, and HTML files.
+  //     </>,
+  //     <>
+  //       <b>Global search</b> – search across all local locations in one step.
+  //     </>,
+  //     <>
+  //       <b>Filter by file type</b> – documents, notes, audio or video files,
+  //       archives, bookmarks, ebooks, and more.
+  //     </>,
+  //     <>Filter by files, folders, or untagged files.</>,
+  //     <>Filter by size and date.</>,
+  //   ],
+  //   ctaURL: Links.links.productProAdvancedSearch,
+  //   ctaTitle: t('showMeMore'),
+  //   pictureURL: SearchImage,
+  //   pictureHeight: 150,
+  // };
   slidesEN[slidesNames[8]] = {
     title: 'Folders with custom backgrounds',
     description: (
@@ -297,30 +333,6 @@ export function getProTeaserSlides(t) {
         .
       </>,
     ],
-    ctaURL: Links.links.emailContact,
-    ctaTitle: t('contactUs'),
-    pictureURL: EnterpriseImage,
-    pictureHeight: 200,
-  };
-  slidesEN[slidesNames[10]] = {
-    title: 'TagSpaces Pro AI',
-    description: (
-      <>
-        <p>
-          The TagSpaces project is fully supported by its subscribers. We do not
-          rely on advertising or data sharing for revenue, so purchasing a Pro
-          subscription directly supports the ongoing development of our core
-          product, TagSpaces Lite, as well as our browser extensions, which
-          remain free to use.
-        </p>
-        <p>
-          In addition, a Pro subscription unlocks a wide range of valuable
-          features, including advanced search capabilities, unique perspectives
-          for organizing your files and folders, and geo-tagging. Some of these
-          features will be highlighted in the following slides.
-        </p>
-      </>
-    ),
     ctaURL: Links.links.emailContact,
     ctaTitle: t('contactUs'),
     pictureURL: EnterpriseImage,

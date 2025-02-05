@@ -16,10 +16,12 @@
  *
  */
 
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import AppConfig from '-/AppConfig';
@@ -80,13 +82,6 @@ function Slide(props: SlideProps) {
       >
         {title}
       </Typography>
-      {/* <div
-        style={{
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          width: '100%',
-        }}
-      > */}
       {description && (
         <Typography variant="subtitle1">{description}</Typography>
       )}
@@ -94,8 +89,7 @@ function Slide(props: SlideProps) {
         items.map((item) => (
           <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
         ))}
-      <Typography variant="subtitle1">&nbsp;</Typography>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: 'center', paddingTop: 10 }}>
         {pictureURL && (
           <a
             href="#"
@@ -134,7 +128,6 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
-        {/* </div> */}
         <TsButton
           onClick={() => {
             openURLExternally(Links.links.productsOverview, true);
@@ -216,10 +209,11 @@ function ProTeaserDialog(props: Props) {
       fullScreen={smallScreen}
       keepMounted
       scroll="paper"
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle
         closeButtonTestId="closeProTeaserTID"
-        style={{ height: 25 }}
         onClose={onClose}
         dialogTitle={''}
       />
