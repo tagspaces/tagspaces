@@ -221,9 +221,7 @@ function ChatView() {
     )
       .then((response) => {
         console.log('newOllamaMessage response:' + response);
-        if (response) {
-          chatMsg.current = '';
-        }
+        chatMsg.current = '';
         isLoading.current = false;
         forceUpdate();
       })

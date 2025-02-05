@@ -979,11 +979,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       chatMessageHandler,
     ).then((apiResponse) => {
       // console.log('apiResponse:' + apiResponse);
-      if (apiResponse === undefined) {
+      isTyping.current = false;
+      forceUpdate();
+      if (apiResponse === undefined && stream === false) {
         showNotification('Error check if Ollama service is alive');
         return undefined;
       }
-      isTyping.current = false;
       if (msg && includeHistory) {
         saveHistoryItems();
       }
