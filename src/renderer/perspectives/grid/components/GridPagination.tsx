@@ -41,6 +41,8 @@ import GridCellsContainer from './GridCellsContainer';
 import { dataTidFormat } from '-/services/test';
 import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
+import { SelectionArea } from '-/components/drag/SelectionArea';
 
 interface Props {
   desktopMode: boolean;
@@ -159,6 +161,41 @@ function GridPagination(props: Props) {
     folderSummary = selectedEntries.length + ' entries selected';
   }
 
+  // **********************************************************************
+  // Utility: Check if Two Rectangles Intersect
+  // **********************************************************************
+  const rectIntersects = (r1: DOMRect, r2: DOMRect): boolean => {
+    return !(
+      r2.left > r1.right ||
+      r2.right < r1.left ||
+      r2.top > r1.bottom ||
+      r2.bottom < r1.top
+    );
+  };
+
+  // Called when a selection drag ends. We look for any item elements whose
+  // bounding rectangle intersects the drag rectangle.
+  const handleSelect = (selectionRect: DOMRect) => {
+    const container = containerEl.current;
+    if (!container) return;
+
+    const newlySelected: string[] = [];
+    // Find all elements that represent items (we use the data-item attribute)
+    const itemElements = container.querySelectorAll('[data-entry-id]');
+    itemElements.forEach((el) => {
+      const itemRect = el.getBoundingClientRect();
+      if (rectIntersects(selectionRect, itemRect)) {
+        const id = el.getAttribute('data-entry-id');
+        newlySelected.push(id);
+      }
+    });
+    if (newlySelected.length > 0) {
+      setSelectedEntries(
+        pageFiles.filter((e) => newlySelected.includes(e.uuid)),
+      );
+    }
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
@@ -168,259 +205,265 @@ function GridPagination(props: Props) {
         background: `${dirColor}`,
       }}
     >
-      <div
-        ref={containerEl}
-        onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
-          props.onContextMenu(event)
-        }
-        onClick={(event: React.MouseEvent<HTMLDivElement>) =>
-          props.onClick(event)
-        }
-        style={{
-          height: '100%',
-          overflowY: 'auto',
-          backgroundImage: backgroundImage.current,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12} style={{ height: 70 }} />
-          {showDetails && (
-            <Grid item xs={12}>
-              <div
-                style={{
-                  marginLeft: 10,
-                  marginRight: 10,
-                  marginTop: 0,
-                  marginBottom: 0,
-                  height:
-                    !showDescription &&
-                    directoryMeta &&
-                    directoryMeta.description
-                      ? 150
-                      : 110,
-                  position: 'relative',
-                }}
-              >
-                {((folderName && folderName.length > 0) ||
-                  (directoryMeta &&
-                    directoryMeta.tags &&
-                    directoryMeta.tags.length > 0)) && (
+      <SelectionDragLayer />
+      <SelectionArea onSelect={handleSelect}>
+        <div
+          ref={containerEl}
+          onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
+            props.onContextMenu(event)
+          }
+          onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+            props.onClick(event)
+          }
+          style={{
+            height: '100%',
+            overflowY: 'auto',
+            backgroundImage: backgroundImage.current,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} style={{ height: 70 }} />
+            {showDetails && (
+              <Grid item xs={12}>
+                <div
+                  style={{
+                    marginLeft: 10,
+                    marginRight: 10,
+                    marginTop: 0,
+                    marginBottom: 0,
+                    height:
+                      !showDescription &&
+                      directoryMeta &&
+                      directoryMeta.description
+                        ? 150
+                        : 110,
+                    position: 'relative',
+                  }}
+                >
+                  {((folderName && folderName.length > 0) ||
+                    (directoryMeta &&
+                      directoryMeta.tags &&
+                      directoryMeta.tags.length > 0)) && (
+                    <Box
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        overflow: 'auto',
+                        padding: 10,
+                        marginRight: 160,
+                        width: 'fit-content',
+                        borderRadius: 8,
+                        color: theme.palette.text.primary,
+                      }}
+                    >
+                      <Tooltip title={t('core:renameDirectory')}>
+                        <ButtonBase
+                          data-tid={'currentDir_' + dataTidFormat(folderName)}
+                          style={{
+                            fontSize: '1.5rem',
+                            filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                          }}
+                          onClick={() => {
+                            setSelectedEntries([]);
+                            openRenameEntryDialog();
+                          }}
+                        >
+                          {folderName}
+                        </ButtonBase>
+                      </Tooltip>
+                      {showTags ? (
+                        <span style={{ paddingLeft: 5 }}>
+                          {directoryMeta?.tags?.map((tag: TS.Tag) => {
+                            return <TagContainer tag={tag} tagMode="display" />;
+                          })}
+                        </span>
+                      ) : (
+                        <TagsPreview tags={directoryMeta?.tags} />
+                      )}
+                    </Box>
+                  )}
                   <Box
+                    data-tid={'allFilesCount' + files.length}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      overflow: 'auto',
-                      padding: 10,
+                      paddingBottom: 5,
+                      marginTop: 10,
                       marginRight: 160,
+                      padding: 10,
+                      borderRadius: 10,
                       width: 'fit-content',
-                      borderRadius: 8,
                       color: theme.palette.text.primary,
                     }}
                   >
-                    <Tooltip title={t('core:renameDirectory')}>
-                      <ButtonBase
-                        data-tid={'currentDir_' + dataTidFormat(folderName)}
-                        style={{
-                          fontSize: '1.5rem',
-                          filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                        }}
-                        onClick={() => {
-                          setSelectedEntries([]);
-                          openRenameEntryDialog();
-                        }}
-                      >
-                        {folderName}
-                      </ButtonBase>
-                    </Tooltip>
-                    {showTags ? (
-                      <span style={{ paddingLeft: 5 }}>
-                        {directoryMeta?.tags?.map((tag: TS.Tag) => {
-                          return <TagContainer tag={tag} tagMode="display" />;
-                        })}
-                      </span>
-                    ) : (
-                      <TagsPreview tags={directoryMeta?.tags} />
-                    )}
+                    <Typography
+                      style={{
+                        fontSize: '0.9rem',
+                        filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                      }}
+                    >
+                      {folderSummary}
+                    </Typography>
+                    {!showDescription &&
+                      directoryMeta &&
+                      directoryMeta.description && (
+                        <Typography
+                          style={{
+                            fontSize: '0.8rem',
+                            wordBreak: 'break-all',
+                            filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                            height: 45,
+                            overflowY: 'auto',
+                          }}
+                        >
+                          {getDescriptionPreview(
+                            directoryMeta.description,
+                            200,
+                          )}
+                        </Typography>
+                      )}
                   </Box>
-                )}
-                <Box
-                  data-tid={'allFilesCount' + files.length}
-                  style={{
-                    paddingBottom: 5,
-                    marginTop: 10,
-                    marginRight: 160,
-                    padding: 10,
-                    borderRadius: 10,
-                    width: 'fit-content',
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  <Typography
+                  <div
+                    data-tid="folderThumbTID"
                     style={{
-                      fontSize: '0.9rem',
-                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                      borderRadius: 10,
+                      height: 100,
+                      width: 140,
+                      backgroundImage: thumbImage.current,
+                      backgroundSize: 'cover', // cover contain
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center center',
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
                     }}
-                  >
-                    {folderSummary}
-                  </Typography>
-                  {!showDescription &&
-                    directoryMeta &&
-                    directoryMeta.description && (
-                      <Typography
-                        style={{
-                          fontSize: '0.8rem',
-                          wordBreak: 'break-all',
-                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
-                          height: 45,
-                          overflowY: 'auto',
-                        }}
-                      >
-                        {getDescriptionPreview(directoryMeta.description, 200)}
-                      </Typography>
-                    )}
-                </Box>
-                <div
-                  data-tid="folderThumbTID"
-                  style={{
-                    borderRadius: 10,
-                    height: 100,
-                    width: 140,
-                    backgroundImage: thumbImage.current,
-                    backgroundSize: 'cover', // cover contain
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center center',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                  }}
+                  />
+                </div>
+              </Grid>
+            )}
+            {showDescription && directoryMeta && directoryMeta.description && (
+              <Grid
+                item
+                xs={12}
+                style={{
+                  backgroundColor: theme.palette.background.default,
+                  marginTop: showDetails ? 0 : 10,
+                  marginLeft: 25,
+                  marginRight: 10,
+                  padding: 10,
+                  borderRadius: 10,
+                }}
+              >
+                <MilkdownEditor
+                  content={directoryMeta.description}
+                  readOnly={true}
+                  /*dark={theme.palette.mode === 'dark'}*/
+                  currentFolder={currentDirectoryPath}
+                  lightMode={true}
                 />
-              </div>
-            </Grid>
-          )}
-          {showDescription && directoryMeta && directoryMeta.description && (
-            <Grid
-              item
-              xs={12}
-              style={{
-                backgroundColor: theme.palette.background.default,
-                marginTop: showDetails ? 0 : 10,
-                marginLeft: 25,
-                marginRight: 10,
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
-              <MilkdownEditor
-                content={directoryMeta.description}
-                readOnly={true}
-                /*dark={theme.palette.mode === 'dark'}*/
-                currentFolder={currentDirectoryPath}
-                lightMode={true}
+              </Grid>
+            )}
+          </Grid>
+          <GridCellsContainer>
+            {pageFiles.map((entry, index, dArray) => (
+              <CellView
+                fsEntry={entry}
+                index={index}
+                cellContent={getCellContent}
+                setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
+                setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
+                isLast={index === dArray.length - 1}
               />
-            </Grid>
-          )}
-        </Grid>
-        <GridCellsContainer>
-          {pageFiles.map((entry, index, dArray) => (
-            <CellView
-              fsEntry={entry}
-              index={index}
-              cellContent={getCellContent}
-              setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-              setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-              isLast={index === dArray.length - 1}
-            />
-          ))}
-          {pageFiles.length < 1 && (
-            <div style={{ textAlign: 'center' }}>
-              {!showDescription &&
-                directoryMeta &&
-                directoryMeta.description && (
-                  <div
-                    style={{
-                      position: 'relative',
-                      margin: 'auto',
-                      maxWidth: 150,
-                    }}
-                  >
-                    <EntryIcon isFile={false} />
-                  </div>
-                )}
-              <Typography
-                style={{ padding: 15, color: theme.palette.text.secondary }}
-              >
-                {t('core:noFileFolderFound')}
-              </Typography>
-              {!AppConfig.isCordova && (
-                <Typography style={{ color: theme.palette.text.secondary }}>
-                  {t('core:dragAndDropToImport')}
+            ))}
+            {pageFiles.length < 1 && (
+              <div style={{ textAlign: 'center' }}>
+                {!showDescription &&
+                  directoryMeta &&
+                  directoryMeta.description && (
+                    <div
+                      style={{
+                        position: 'relative',
+                        margin: 'auto',
+                        maxWidth: 150,
+                      }}
+                    >
+                      <EntryIcon isFile={false} />
+                    </div>
+                  )}
+                <Typography
+                  style={{ padding: 15, color: theme.palette.text.secondary }}
+                >
+                  {t('core:noFileFolderFound')}
                 </Typography>
-              )}
+                {!AppConfig.isCordova && (
+                  <Typography style={{ color: theme.palette.text.secondary }}>
+                    {t('core:dragAndDropToImport')}
+                  </Typography>
+                )}
+              </div>
+            )}
+            {files.length < 1 && dirs.length >= 1 && !showDirectories && (
+              <div style={{ textAlign: 'center' }}>
+                {!showDescription &&
+                  directoryMeta &&
+                  directoryMeta.description && (
+                    <div
+                      style={{
+                        position: 'relative',
+                        margin: 'auto',
+                        maxWidth: 150,
+                      }}
+                    >
+                      <EntryIcon isFile={false} />
+                    </div>
+                  )}
+                <Typography
+                  style={{ padding: 15, color: theme.palette.text.secondary }}
+                >
+                  {t('core:noFileButFoldersFound')}
+                </Typography>
+                {!AppConfig.isCordova && (
+                  <Typography style={{ color: theme.palette.text.secondary }}>
+                    {t('core:dragAndDropToImport')}
+                  </Typography>
+                )}
+              </div>
+            )}
+          </GridCellsContainer>
+          {showPagination && (
+            <Tooltip title={folderSummary}>
+              <Pagination
+                style={{
+                  left: 15,
+                  bottom: -40,
+                  zIndex: 1100,
+                  position: 'absolute',
+                  backgroundColor: theme.palette.background.default,
+                  opacity: 0.97,
+                  border: '1px solid lightgray',
+                  borderRadius: 5,
+                  padding: 3,
+                }}
+                count={paginationCount}
+                page={page}
+                onChange={handleChange}
+              />
+            </Tooltip>
+          )}
+          {!showDetails && !showPagination && pageFiles.length > 0 && (
+            <div style={{ padding: 15, bottom: 10 }}>
+              <Typography
+                style={{
+                  fontSize: '0.9rem',
+                  color: theme.palette.text.primary,
+                }}
+              >
+                {folderSummary}
+              </Typography>
             </div>
           )}
-          {files.length < 1 && dirs.length >= 1 && !showDirectories && (
-            <div style={{ textAlign: 'center' }}>
-              {!showDescription &&
-                directoryMeta &&
-                directoryMeta.description && (
-                  <div
-                    style={{
-                      position: 'relative',
-                      margin: 'auto',
-                      maxWidth: 150,
-                    }}
-                  >
-                    <EntryIcon isFile={false} />
-                  </div>
-                )}
-              <Typography
-                style={{ padding: 15, color: theme.palette.text.secondary }}
-              >
-                {t('core:noFileButFoldersFound')}
-              </Typography>
-              {!AppConfig.isCordova && (
-                <Typography style={{ color: theme.palette.text.secondary }}>
-                  {t('core:dragAndDropToImport')}
-                </Typography>
-              )}
-            </div>
-          )}
-        </GridCellsContainer>
-        {showPagination && (
-          <Tooltip title={folderSummary}>
-            <Pagination
-              style={{
-                left: 15,
-                bottom: -40,
-                zIndex: 1100,
-                position: 'absolute',
-                backgroundColor: theme.palette.background.default,
-                opacity: 0.97,
-                border: '1px solid lightgray',
-                borderRadius: 5,
-                padding: 3,
-              }}
-              count={paginationCount}
-              page={page}
-              onChange={handleChange}
-            />
-          </Tooltip>
-        )}
-        {!showDetails && !showPagination && pageFiles.length > 0 && (
-          <div style={{ padding: 15, bottom: 10 }}>
-            <Typography
-              style={{
-                fontSize: '0.9rem',
-                color: theme.palette.text.primary,
-              }}
-            >
-              {folderSummary}
-            </Typography>
-          </div>
-        )}
-      </div>
+        </div>
+      </SelectionArea>
     </div>
   );
 }
