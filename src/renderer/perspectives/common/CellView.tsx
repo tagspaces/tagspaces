@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
@@ -45,6 +45,8 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import i18n from '-/services/i18n';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useDragSelect } from '-/hooks/DragSelectProvider';
+import DragSelect from 'dragselect';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -88,10 +90,18 @@ function CellView(props: Props) {
     useEntryExistDialogContext();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
+  const ds = useDragSelect();
+  const cellRef = useRef<DragSelect | null>(null);
 
   const desktopMode = useSelector(getDesktopMode);
   const selectedTabName = useSelector(getEntryContainerTab);
   // const fileSourceRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const element = cellRef.current as unknown as HTMLElement;
+    if (!element || !ds) return;
+    ds.addSelectables(element);
+  }, [ds, cellRef]);
 
   /*useEffect(() => {
     const dragItem = fileSourceRef.current;
@@ -350,6 +360,9 @@ function CellView(props: Props) {
       style={{
         position: 'relative',
       }}
+      //@ts-ignore
+      ref={cellRef}
+      aria-labelledby="Selectable"
       key={key}
     >
       <TargetFileBox accepts={[FILE]} directoryPath={fsEntry.path}>

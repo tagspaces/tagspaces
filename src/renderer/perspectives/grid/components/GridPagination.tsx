@@ -41,6 +41,7 @@ import GridCellsContainer from './GridCellsContainer';
 import { dataTidFormat } from '-/services/test';
 import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { useDragSelect } from '-/hooks/DragSelectProvider';
 
 interface Props {
   desktopMode: boolean;
@@ -87,6 +88,7 @@ function GridPagination(props: Props) {
   const { directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const ds = useDragSelect();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const theme = useTheme();
@@ -124,6 +126,23 @@ function GridPagination(props: Props) {
         });
     }
   }, [currentDirectoryPath, containerEl.current, directoryMeta]);
+
+  useEffect(() => {
+    if (!ds) return;
+
+    const cb = ({ items = [] }) => {
+      console.log('CALLBACK', items);
+      //setSelectedAmount(items.length)
+    };
+    ds?.subscribe('DS:end', cb);
+    return () => {
+      ds?.unsubscribe('DS:end', cb);
+    };
+  }, [ds]);
+  /* const cb: DSPubCallback<"DS:end"> = ({ items = [] }) => {
+    console.log("CALLBACK", items);
+    //setSelectedAmount(items.length);
+  };*/
 
   const handleChange = (event, value) => {
     setCurrentPage(value);
@@ -325,6 +344,7 @@ function GridPagination(props: Props) {
         <GridCellsContainer>
           {pageFiles.map((entry, index, dArray) => (
             <CellView
+              key={entry.uuid}
               fsEntry={entry}
               index={index}
               cellContent={getCellContent}

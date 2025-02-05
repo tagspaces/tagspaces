@@ -34,6 +34,7 @@ import TargetFileBox from '-/components/TargetFileBox';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { DragSelectProvider } from '-/hooks/DragSelectProvider';
 
 const GridPerspective = React.lazy(
   () =>
@@ -47,7 +48,9 @@ function GridPerspectiveAsync(props) {
         <SortedDirContextProvider>
           <PaginationContextProvider>
             <ThumbGenerationContextProvider>
-              <GridPerspective {...props} />
+              <DragSelectProvider>
+                <GridPerspective {...props} />
+              </DragSelectProvider>
             </ThumbGenerationContextProvider>
           </PaginationContextProvider>
         </SortedDirContextProvider>
