@@ -204,7 +204,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { addTagsToFsEntry } = useTaggingActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { saveFilePromise, deleteEntriesPromise } = usePlatformFacadeContext();
   const { openedEntry } = useOpenedEntryContext();
   const models = useRef<ModelResponse[]>([]);
@@ -240,6 +240,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const ollamaClient = useRef<Ollama>(undefined);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   /*
   useEffect(() => {

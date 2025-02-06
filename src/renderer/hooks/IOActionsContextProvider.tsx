@@ -291,8 +291,7 @@ export const IOActionsContextProvider = ({
   const { setReflectKanBanActions } = useEditedKanBanMetaContext();
   const { currentDirectoryPath, openDirectory, getAllPropertiesPromise } =
     useDirectoryContentContext();
-  const { currentLocation, findLocation, getFirstRWLocation } =
-    useCurrentLocationContext();
+  const { findLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { reflectUpdateSidecarMeta } = useLocationIndexContext();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -300,6 +299,7 @@ export const IOActionsContextProvider = ({
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   const firstRender = useFirstRender();
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (!firstRender && actions && actions.length > 0) {

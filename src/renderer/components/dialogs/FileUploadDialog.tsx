@@ -58,10 +58,11 @@ function FileUploadDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
 
   const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (AppConfig.isElectron) {

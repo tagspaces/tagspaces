@@ -124,9 +124,11 @@ function FileMenu(props: Props) {
     useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocationId, findLocation, readOnlyMode } =
+    useCurrentLocationContext();
   const downloadFileUrl = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (currentLocation.haveObjectStoreSupport()) {
@@ -137,7 +139,7 @@ function FileMenu(props: Props) {
           forceUpdate();
         });
     }
-  }, [currentLocation, selectedFilePath]);
+  }, [currentLocationId, selectedFilePath]);
 
   function generateFileLink(): Promise<string> {
     const entryPath = selectedEntries[0].path;
@@ -147,7 +149,7 @@ function FileMenu(props: Props) {
       selectedEntries[0].uuid,
       currentLocation,
     ).then((id) =>
-      generateSharingLink(currentLocation.uuid, relativePath, undefined, id),
+      generateSharingLink(currentLocationId, relativePath, undefined, id),
     );
   }
 

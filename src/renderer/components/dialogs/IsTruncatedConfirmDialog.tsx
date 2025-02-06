@@ -45,7 +45,8 @@ function IsTruncatedConfirmDialog(props: Props) {
   const { t } = useTranslation();
 
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
-  const { currentLocation, editLocation } = useCurrentLocationContext();
+  const { findLocation, editLocation } = useCurrentLocationContext();
+  const currentLocation = findLocation();
 
   let defaultMaxLoops = AppConfig.maxLoops;
   if (

@@ -81,7 +81,8 @@ function CellView(props: Props) {
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
-  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
+  const { readOnlyMode, currentLocationId, findLocation } =
+    useCurrentLocationContext();
   const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
     useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
@@ -291,10 +292,10 @@ function CellView(props: Props) {
       handleEntryExist(item.selectedEntries, item.targetPath).then((exist) => {
         if (exist) {
           openEntryExistDialog(exist, () => {
-            moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+            moveFiles(arrPath, item.targetPath, currentLocationId);
           });
         } else {
-          moveFiles(arrPath, item.targetPath, currentLocation.uuid);
+          moveFiles(arrPath, item.targetPath, currentLocationId);
         }
       });
     }
@@ -303,6 +304,7 @@ function CellView(props: Props) {
   const key = fsEntry.path;
 
   if (fsEntry.isFile) {
+    const currentLocation = findLocation();
     return (
       <div>
         {nativeDragModeEnabled &&

@@ -112,7 +112,7 @@ function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
-  const { setSelectedLocation, currentLocation } = useCurrentLocationContext();
+  const { setSelectedLocation, findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openFileUpload } = useFileUploadContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
@@ -132,6 +132,7 @@ function MobileNavigation(props: Props) {
   const switchTheme = () => dispatch(SettingsActions.switchTheme());
   const [openedCreateMenu, setOpenCreateMenu] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
+  const currentLocation = findLocation();
 
   const handleToggle = () => {
     setOpenCreateMenu((prevOpen) => !prevOpen);

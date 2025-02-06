@@ -41,7 +41,7 @@ interface Props {
 function LocalForm(props: Props) {
   const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
 
   const openDirectory = () => {
     selectDirectoryDialog()
@@ -49,6 +49,7 @@ function LocalForm(props: Props) {
         const selectedPath = decodeURI(selectedPaths[0]);
         setPath(selectedPath);
         if (name.length < 1 && selectedPath.length > 0) {
+          const currentLocation = findLocation();
           const dirName = extractDirectoryName(
             selectedPath,
             currentLocation?.getDirSeparator(),
