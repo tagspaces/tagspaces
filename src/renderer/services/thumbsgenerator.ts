@@ -22,7 +22,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
-import { FileTypeGroups } from '-/services/search';
 import * as pdfjsModule from 'pdfjs-dist/legacy/build/pdf.min.mjs';
 
 const pdfjs = (
@@ -37,7 +36,7 @@ let maxSize = AppConfig.maxThumbSize;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
 
 export const supportedMisc = ['url', 'html'];
-export const supportedImgs = FileTypeGroups.images;
+export const supportedImgs = AppConfig.SearchTypeGroups.images;
 export const supportedContainers = [
   'zip',
   'pages',

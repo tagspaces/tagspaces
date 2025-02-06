@@ -18,6 +18,7 @@ import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
+import { Pro } from '-/pro';
 
 export class CommonLocation implements TS.Location {
   uuid: string;
@@ -77,7 +78,7 @@ export class CommonLocation implements TS.Location {
     this.watchForChanges = location.watchForChanges;
     this.disableIndexing = location.disableIndexing;
     this.disableThumbnailGeneration = location.disableThumbnailGeneration;
-    this.fullTextIndex = location.fullTextIndex;
+    this.fullTextIndex = Pro && location.fullTextIndex;
     this.maxIndexAge = location.maxIndexAge;
     this.maxLoops = location.maxLoops;
     this.persistTagsInSidecarFile = location.persistTagsInSidecarFile;
