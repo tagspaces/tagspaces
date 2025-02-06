@@ -49,6 +49,7 @@ import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
 
 interface Props {
   style?: any;
@@ -65,10 +66,6 @@ interface Props {
   setFolderOpenHistory: (value: boolean) => void;
   setFileEditHistory: (value: boolean) => void;
 }
-
-const SaveSearchDialog = Pro?.UI?.SaveSearchDialog
-  ? Pro.UI.SaveSearchDialog
-  : false;
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
@@ -499,22 +496,20 @@ function StoredSearches(props: Props) {
             update={forceUpdate}
           />
         )}
-        {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
-          <SaveSearchDialog
-            open={true}
-            onClose={(searchQuery: TS.SearchQuery) => {
-              setSaveSearchDialogOpened(undefined);
-              if (searchQuery) {
-                setSearchQuery({
-                  ...searchQuery,
-                  showUnixHiddenEntries: props.showUnixHiddenEntries,
-                });
-              }
-            }}
-            onClearSearch={() => console.log('search deleted')}
-            searchQuery={saveSearchDialogOpened}
-          />
-        )}
+        <SaveSearchDialog
+          open={saveSearchDialogOpened !== undefined}
+          onClose={(searchQuery: TS.SearchQuery) => {
+            setSaveSearchDialogOpened(undefined);
+            if (searchQuery) {
+              setSearchQuery({
+                ...searchQuery,
+                showUnixHiddenEntries: props.showUnixHiddenEntries,
+              });
+            }
+          }}
+          onClearSearch={() => console.log('search deleted')}
+          searchQuery={saveSearchDialogOpened}
+        />
       </div>
       <input
         style={{ display: 'none' }}

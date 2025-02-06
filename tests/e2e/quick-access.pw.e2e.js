@@ -68,7 +68,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST09 - Quick access', () => {
-  test('TST0901 - Create, rename and delete stored search [electron,minio,_pro]', async () => {
+  test('TST0901 - Create, rename and delete stored search [electron,minio]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
     //await expectElementExist('[data-tid=quickAccessButton]');
@@ -93,7 +93,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0902 - Create, execute and delete stored search [electron,minio,_pro]', async () => {
+  test('TST0902 - Create, execute and delete stored search [electron,minio]', async () => {
     const storedSearchTitle = 'jpgExecutedSearch';
     const textQuery = 'jpg';
     await createSavedSearch({ title: storedSearchTitle, textQuery });

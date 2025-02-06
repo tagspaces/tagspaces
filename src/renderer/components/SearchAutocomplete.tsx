@@ -166,11 +166,14 @@ function SearchAutocomplete(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (!firstRender) {
+    if (!firstRender || searchQuery?.executeSearch) {
       processSearchQuery();
     }
   }, [searchQuery]);
 
+  /**
+   * todo move in useDirectoryContentContext or create SearchContextProvider
+   */
   function processSearchQuery() {
     if (Object.keys(searchQuery).length > 0) {
       let emptySearch = true;

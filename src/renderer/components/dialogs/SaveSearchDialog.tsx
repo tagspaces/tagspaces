@@ -33,7 +33,7 @@ import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -51,17 +51,25 @@ function SaveSearchDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { t } = useTranslation();
   const [inputError, setInputError] = useState<string>('');
-  const title = useRef<string>(
-    searchQuery && searchQuery.uuid !== undefined
-      ? searchQuery.title
-      : defaultTitle(searchQuery),
-  );
+  const title = useRef<string>(getTitle());
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (searchQuery && searchQuery.uuid === undefined) {
-      handleValidation();
+    if (searchQuery) {
+      if (searchQuery.uuid === undefined) {
+        handleValidation();
+      } else {
+        title.current = getTitle();
+        forceUpdate();
+      }
     }
-  }, []);
+  }, [searchQuery]);
+
+  function getTitle() {
+    return searchQuery && searchQuery.uuid !== undefined
+      ? searchQuery.title
+      : defaultTitle(searchQuery);
+  }
 
   function onDelete() {
     removeSearch(searchQuery?.uuid);
@@ -119,7 +127,6 @@ function SaveSearchDialog(props: Props) {
       open={open}
       onClose={() => onClose()}
       fullScreen={smallScreen}
-      keepMounted
       PaperComponent={smallScreen ? Paper : DraggablePaper}
       scroll="paper"
       onKeyDown={(event) => {
@@ -148,12 +155,13 @@ function SaveSearchDialog(props: Props) {
             error={inputError !== ''}
             autoFocus
             name="name"
-            defaultValue={title.current}
+            value={title.current}
             label={t('core:searchQueryName')}
             onChange={(event) => {
               const { target } = event;
               title.current = target.value;
               handleValidation();
+              forceUpdate();
             }}
             // updateValue={(value) => {
             //   title.current = value;
