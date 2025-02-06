@@ -23,10 +23,7 @@
     "gatekeeperAssess": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
-    "icon": "resources/icon.icns",
-    "notarize": {
-      "teamId": "DLK22E2679"
-    }
+    "icon": "resources/icon.icns"
   },
   "linux": {
     "target": ["deb", "tar.gz", "appImage"],
