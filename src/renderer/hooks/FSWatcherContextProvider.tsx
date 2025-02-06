@@ -59,7 +59,7 @@ export type FSWatcherContextProviderProps = {
 export const FSWatcherContextProvider = ({
   children,
 }: FSWatcherContextProviderProps) => {
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocationId, findLocation } = useCurrentLocationContext();
   const {
     getAllPropertiesPromise,
     currentDirectoryEntries,
@@ -72,6 +72,7 @@ export const FSWatcherContextProvider = ({
   const watchingFolderPath = useRef<string>(undefined);
   let timer; // Timer variable to delay batch execution
   const actionsQueue: TS.EditAction[] = [];
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (
@@ -87,7 +88,7 @@ export const FSWatcherContextProvider = ({
     } else {
       stopWatching();
     }
-  }, [currentLocation, currentDirectoryPath]);
+  }, [currentLocationId, currentDirectoryPath]);
 
   function watchFolder(locationPath, depth) {
     if (

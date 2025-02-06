@@ -81,8 +81,9 @@ interface Props {
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
+  const currentLocation = findLocation();
   let pathParts: Array<string> = [];
 
   const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =

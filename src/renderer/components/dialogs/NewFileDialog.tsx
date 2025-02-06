@@ -53,7 +53,7 @@ function NewFileDialog(props: Props) {
   const { open, onClose, fileType } = props;
   const { t } = useTranslation();
   const { createFileAdvanced } = useOpenedEntryContext();
-  const { currentLocation, openLocation, getFirstRWLocation } =
+  const { findLocation, openLocation, getFirstRWLocation } =
     useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
@@ -91,6 +91,7 @@ function NewFileDialog(props: Props) {
   }
 
   function loadLocation() {
+    const currentLocation = findLocation();
     const isCloudLocation =
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
     // no currentDirectoryPath in root cloud location

@@ -26,8 +26,9 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 function TargetPath() {
   const { t } = useTranslation();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { targetDirectoryPath } = useTargetPathContext();
+  const currentLocation = findLocation();
 
   return (
     <Grid item style={{ marginTop: 20 }} xs={12}>

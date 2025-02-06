@@ -165,7 +165,7 @@ export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { findLocation, currentLocation, persistTagsInSidecarFile } =
+  const { findLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
   const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
   const {
@@ -197,6 +197,7 @@ export const TaggingActionsContextProvider = ({
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   function addTagsToFilePath(path: string, tags: string[]) {
     if (tags && tags.length > 0) {

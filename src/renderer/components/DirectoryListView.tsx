@@ -31,10 +31,10 @@ interface Props {
 function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
   const { t } = useTranslation();
-  const { currentLocation, findLocation, locations } =
-    useCurrentLocationContext();
+  const { findLocation, locations } = useCurrentLocationContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
+  const currentLocation = findLocation();
   const chosenLocationId = useRef<string>(
     currentLocation ? currentLocation.uuid : undefined,
   );

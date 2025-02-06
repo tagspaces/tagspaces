@@ -253,7 +253,7 @@ export const DirectoryContentContextProvider = ({
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
   const defaultColumnsToShow = 3;
-  const currentLocation = findLocation(currentLocationId);
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -1183,7 +1183,7 @@ export const DirectoryContentContextProvider = ({
     entryPath: string,
     locationID: string = undefined,
   ): Promise<TS.FileSystemEntry> {
-    const location = locationID ? findLocation(locationID) : currentLocation;
+    const location = findLocation(locationID);
     return location.checkFileEncryptedPromise(entryPath).then((encrypted) =>
       location
         .getPropertiesPromise(entryPath, encrypted)

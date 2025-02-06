@@ -49,16 +49,16 @@ export type SelectedEntryContextProviderProps = {
 export const SelectedEntryContextProvider = ({
   children,
 }: SelectedEntryContextProviderProps) => {
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocationId } = useCurrentLocationContext();
   const selectedEntries = useRef<TS.FileSystemEntry[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (!firstRender && !currentLocation) {
+    if (!firstRender && !currentLocationId) {
       setSelectedEntries([]);
     }
-  }, [currentLocation]);
+  }, [currentLocationId]);
 
   //const lastSelectedEntry = useRef<TS.FileSystemEntry>(undefined);
 

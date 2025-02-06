@@ -76,8 +76,9 @@ const TagContainerDnd = (props: Props) => {
   } = props;
 
   const { addTags } = useTaggingActionsContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
+  const currentLocation = findLocation();
 
   const endDrag = (item, monitor) => {
     // const item = monitor.getItem();

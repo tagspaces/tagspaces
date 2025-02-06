@@ -38,7 +38,7 @@ export type TargetPathContextProviderProps = {
 export const TargetPathContextProvider = ({
   children,
 }: TargetPathContextProviderProps) => {
-  const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
+  const { findLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { currentDirectoryPath, getPerspective } = useDirectoryContentContext();
 
@@ -56,6 +56,7 @@ export const TargetPathContextProvider = ({
     }
 
     if (!targetDirectoryPath) {
+      const currentLocation = findLocation();
       const isCloudLocation =
         currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
       if (isCloudLocation) {

@@ -50,7 +50,7 @@ function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const { renameDirectory, renameFile } = useIOActionsContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
@@ -58,6 +58,7 @@ function RenameEntryDialog(props: Props) {
   const disableConfirmButton = useRef<boolean>(true);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const currentLocation = findLocation();
 
   let defaultName = '';
   let originPath;

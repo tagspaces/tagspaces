@@ -62,7 +62,7 @@ function ListPerspective(props: Props) {
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const { actions } = usePerspectiveActionsContext();
   const { showDirectories } = usePerspectiveSettingsContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useIOActionsContext();
   const { openDeleteMultipleEntriesDialog } =
@@ -193,6 +193,7 @@ function ListPerspective(props: Props) {
   };
 
   const openShareFilesDialog = () => {
+    const currentLocation = findLocation();
     if (currentLocation && currentLocation.haveObjectStoreSupport()) {
       setIsShareFilesDialogOpened(true);
     }

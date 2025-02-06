@@ -95,7 +95,7 @@ function SearchAutocomplete(props: Props) {
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const { openLink } = useOpenedEntryContext();
-  const { locations, currentLocation, changeLocationByID, openLocationById } =
+  const { locations, currentLocationId, changeLocationByID, openLocationById } =
     useCurrentLocationContext();
   const {
     currentDirectoryPath,
@@ -219,7 +219,7 @@ function SearchAutocomplete(props: Props) {
       }
 
       if (searchQuery.searchBoxing) {
-        const sBoxing = !currentLocation
+        const sBoxing = !currentLocationId
           ? scope.global
           : searchQuery.searchBoxing;
         setSearchBoxing(sBoxing);

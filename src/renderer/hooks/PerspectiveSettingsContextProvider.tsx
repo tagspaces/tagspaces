@@ -86,7 +86,7 @@ export type PerspectiveSettingsContextProviderProps = {
 export const PerspectiveSettingsContextProvider = ({
   children,
 }: PerspectiveSettingsContextProviderProps) => {
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const {
     currentDirectoryPath,
     directoryMeta,
@@ -207,8 +207,9 @@ export const PerspectiveSettingsContextProvider = ({
     perspective: string,
     folderSettings?: TS.FolderSettings,
   ): Promise<TS.FileSystemEntryMeta> {
+    const currentLocation = findLocation();
     return currentLocation
-      .loadMetaDataPromise(path)
+      ?.loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         return {
           ...(fsEntryMeta && fsEntryMeta),

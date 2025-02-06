@@ -64,7 +64,7 @@ function LocationView(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
     openLocation,
-    currentLocation,
+    findLocation,
     readOnlyMode,
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
@@ -78,7 +78,7 @@ function LocationView(props: Props) {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
 
   const dispatch: AppDispatch = useDispatch();
-
+  const currentLocation = findLocation();
   const { location, hideDrawer } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 

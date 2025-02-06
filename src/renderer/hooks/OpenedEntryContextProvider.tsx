@@ -151,13 +151,8 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const {
-    currentLocation,
-    findLocation,
-    openLocation,
-    getLocationPath,
-    getFirstRWLocation,
-  } = useCurrentLocationContext();
+  const { findLocation, openLocation, getLocationPath, getFirstRWLocation } =
+    useCurrentLocationContext();
   const { getMetadata } = useIOActionsContext();
   const {
     currentDirectoryPath,
@@ -186,6 +181,7 @@ export const OpenedEntryContextProvider = ({
     useState<string>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   /**
    * Handle openLink from initApp

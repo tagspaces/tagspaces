@@ -156,7 +156,7 @@ interface Props {
 
 function RenderPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocationId } = useCurrentLocationContext();
   const { getPerspective } = useDirectoryContentContext();
   const { metaActions } = useEditedEntryMetaContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -172,7 +172,7 @@ function RenderPerspective(props: Props) {
     }
   }, [metaActions]);
 
-  const showWelcomePanel = !currentLocation;
+  const showWelcomePanel = !currentLocationId;
   //!currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {

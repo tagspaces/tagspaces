@@ -55,7 +55,7 @@ function LocationManager(props: Props) {
   const { t } = useTranslation();
   const {
     locations,
-    currentLocation,
+    findLocation,
     addLocations,
     moveLocation,
     deleteLocation,
@@ -105,6 +105,7 @@ function LocationManager(props: Props) {
   };
 
   const { reduceHeightBy, show } = props;
+  const currentLocation = findLocation();
   return (
     <SidePanel
       style={{

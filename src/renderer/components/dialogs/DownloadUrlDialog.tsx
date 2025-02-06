@@ -52,7 +52,8 @@ function DownloadUrlDialog(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const { currentLocation, getFirstRWLocation } = useCurrentLocationContext();
+  const { currentLocationId, findLocation, getFirstRWLocation } =
+    useCurrentLocationContext();
   const { setReflectActions } = useEditedEntryContext();
   const { downloadUrl } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -73,7 +74,9 @@ function DownloadUrlDialog(props: Props) {
 
   function downloadURL() {
     if (fileUrl.current) {
-      const location = currentLocation ? currentLocation : getFirstRWLocation();
+      const location = currentLocationId
+        ? findLocation()
+        : getFirstRWLocation();
       try {
         const url = new URL(fileUrl.current);
         if (invalidURL) {
