@@ -124,7 +124,6 @@ function TargetFileBox(props: Props) {
         }
 
         if (files && files.length) {
-          const location = findLocation(locationId);
           if (AppConfig.isElectron) {
             files = files.map((file) => {
               if (!file.path) {
@@ -133,7 +132,7 @@ function TargetFileBox(props: Props) {
               return file;
             });
           }
-
+          const location = findLocation(locationId);
           if (
             AppConfig.isElectron &&
             !location.haveObjectStoreSupport() &&

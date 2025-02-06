@@ -61,7 +61,7 @@ interface Props {
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
   const { createDirectory, setBackgroundColorChange } = useIOActionsContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -74,6 +74,7 @@ function CreateDirectoryDialog(props: Props) {
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath } = props;
+  const currentLocation = findLocation();
 
   const defaultBackgrounds = [
     'transparent',

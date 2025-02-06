@@ -90,9 +90,10 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
+  const currentLocation = findLocation();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, TabNames.propertiesTab);

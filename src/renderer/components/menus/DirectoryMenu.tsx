@@ -82,7 +82,7 @@ function DirectoryMenu(props: Props) {
   const { addTags } = useTaggingActionsContext();
   const { openProgressDialog } = useProgressDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
-  const { currentLocation, readOnlyMode, getLocationPath, findLocation } =
+  const { readOnlyMode, getLocationPath, findLocation } =
     useCurrentLocationContext();
   const { setThumbnailImageChange, getMetadataID } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -115,10 +115,11 @@ function DirectoryMenu(props: Props) {
     switchPerspective,
     perspectiveMode,
   } = props;
+  const currentLocation = findLocation();
   const directoryPath = props.directoryPath || currentDirectoryPath;
 
   function generateFolderLink(): Promise<any> {
-    let locationID = currentLocation.uuid;
+    let locationID = undefined;
     let entryPath = currentDirectoryPath;
     if (selectedEntries && selectedEntries.length > 0) {
       if (selectedEntries[0]['locationID']) {

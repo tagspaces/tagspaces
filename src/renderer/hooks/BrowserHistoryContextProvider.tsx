@@ -33,7 +33,8 @@ export type BrowserHistoryContextProviderProps = {
 export const BrowserHistoryContextProvider = ({
   children,
 }: BrowserHistoryContextProviderProps) => {
-  const { currentLocation, openLocationById } = useCurrentLocationContext();
+  const { currentLocationId, findLocation, openLocationById } =
+    useCurrentLocationContext();
   const { openedEntry, openLink, openEntry } = useOpenedEntryContext();
   const { currentLocationPath, currentDirectoryPath } =
     useDirectoryContentContext();
@@ -42,6 +43,7 @@ export const BrowserHistoryContextProvider = ({
   );
   const historyIndex = useRef<number>(0);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -99,8 +101,8 @@ export const BrowserHistoryContextProvider = ({
       );
       addHistory(
         currentDirectoryPath,
-        generateSharingLink(currentLocation.uuid, relEntryPath, relEntryPath),
-        currentLocation.uuid,
+        generateSharingLink(currentLocationId, relEntryPath, relEntryPath),
+        currentLocationId,
       );
     }
   }, [currentDirectoryPath]);
@@ -150,7 +152,7 @@ export const BrowserHistoryContextProvider = ({
     if (item.url) {
       openLink(item.url, { fullWidth: false });
     } else {
-      if (item.lid !== currentLocation.uuid) {
+      if (item.lid !== currentLocationId) {
         openLocationById(item.lid);
       }
       openEntry(item.path);

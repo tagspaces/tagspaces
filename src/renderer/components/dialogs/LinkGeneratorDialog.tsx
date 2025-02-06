@@ -48,7 +48,7 @@ interface Props {
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
   const { t } = useTranslation();
-  const { findLocation, currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
   const linkValidityDuration = useRef<number>(60 * 15);
@@ -58,9 +58,7 @@ function LinkGeneratorDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   let location = findLocation(openedEntry?.locationID);
-  if (!location) {
-    location = currentLocation;
-  }
+
   const gPath = path || openedEntry.path;
 
   useEffect(() => {

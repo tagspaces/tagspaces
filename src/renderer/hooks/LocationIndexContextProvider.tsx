@@ -96,7 +96,7 @@ export const LocationIndexContextProvider = ({
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { locations, findLocation, currentLocation, getLocationPath } =
+  const { locations, findLocation, currentLocationId, getLocationPath } =
     useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
@@ -114,14 +114,15 @@ export const LocationIndexContextProvider = ({
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
+  const currentLocation = findLocation();
   const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
 
   useEffect(() => {
-    if (currentLocation) {
+    if (currentLocationId) {
       clearDirectoryIndex(false);
-      maxIndexAge.current = getMaxIndexAge(currentLocation);
+      maxIndexAge.current = getMaxIndexAge(findLocation());
     }
-  }, [currentLocation]);
+  }, [currentLocationId]);
 
   useEffect(() => {
     if (!firstRender && actions && actions.length > 0) {

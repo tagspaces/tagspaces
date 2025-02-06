@@ -85,11 +85,12 @@ function GridPagination(props: Props) {
     showTags,
     gridPageLimit,
   } = usePerspectiveSettingsContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const currentLocation = findLocation();
 
   const theme = useTheme();
   const showPagination = sortedDirContent.length !== pageFiles.length;

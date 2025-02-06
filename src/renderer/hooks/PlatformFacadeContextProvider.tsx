@@ -174,7 +174,7 @@ export const PlatformFacadeContextProvider = ({
     reflectDeleteEntries,
     setReflectActions,
   } = useEditedEntryContext();
-  const { currentLocation, findLocation } = useCurrentLocationContext();
+  const { currentLocationId, findLocation } = useCurrentLocationContext();
   const { getAllPropertiesPromise } = useDirectoryContentContext();
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext(); //watcher
 
@@ -183,10 +183,7 @@ export const PlatformFacadeContextProvider = ({
 
   function getLocation(param: getLocationProps): CommonLocation {
     const { locationID } = param;
-    if (locationID) {
-      return findLocation(locationID);
-    }
-    return currentLocation;
+    return findLocation(locationID);
   }
 
   function createDirectoryPromise(
@@ -195,17 +192,15 @@ export const PlatformFacadeContextProvider = ({
     reflect: boolean = true,
   ): Promise<any> {
     ignoreByWatcher(path);
-
-    return getLocation({ locationID })
-      .createDirectoryPromise(path)
-      .then((result) => {
-        if (result !== undefined && reflect) {
-          // do not reflect if directory not created
-          reflectAddEntry(currentLocation.toFsEntry(path, false));
-        }
-        deignoreByWatcher(path);
-        return result;
-      });
+    const currentLocation = getLocation({ locationID });
+    return currentLocation.createDirectoryPromise(path).then((result) => {
+      if (result !== undefined && reflect) {
+        // do not reflect if directory not created
+        reflectAddEntry(currentLocation.toFsEntry(path, false));
+      }
+      deignoreByWatcher(path);
+      return result;
+    });
   }
 
   /**
@@ -213,6 +208,7 @@ export const PlatformFacadeContextProvider = ({
    * return Promise<destThumbPath>
    */
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
+    const currentLocation = findLocation();
     const directoryPath = extractContainingDirectoryPath(
       filePath,
       currentLocation?.getDirSeparator(),
@@ -744,7 +740,7 @@ export const PlatformFacadeContextProvider = ({
       deleteEntriesPromise,
       setFolderThumbnailPromise,
     };
-  }, [ignored, currentLocation]); //watcher
+  }, [ignored, currentLocationId]); //watcher
 
   return (
     <PlatformFacadeContext.Provider value={context}>

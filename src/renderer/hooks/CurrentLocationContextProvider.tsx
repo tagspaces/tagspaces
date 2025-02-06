@@ -45,13 +45,14 @@ import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
   locations: CommonLocation[];
-  currentLocation: CommonLocation;
+  //currentLocation: CommonLocation;
   currentLocationId: string;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
-  findLocation: (locationID: string) => CommonLocation;
+  findLocation: (locationID?: string) => CommonLocation;
+  getDirSeparator: (locationID?: string) => string;
   findLocalLocation: () => CommonLocation;
   changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
   editLocation: (location: CommonLocation, openAfterEdit?: boolean) => void;
@@ -87,13 +88,14 @@ type CurrentLocationContextData = {
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     locations: undefined,
-    currentLocation: undefined,
+    //currentLocation: undefined,
     currentLocationId: undefined,
     readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
     findLocation: undefined,
+    getDirSeparator: undefined,
     findLocalLocation: undefined,
     changeLocation: () => {},
     editLocation: () => {},
@@ -137,7 +139,7 @@ export const CurrentLocationContextProvider = ({
   const allLocations = useRef<CommonLocation[]>(
     locations.map((l) => new CommonLocation(l)),
   );
-  const currentLocation = useRef<string>(undefined); //defaultLocationId);
+  const currentLocationId = useRef<string>(undefined); //defaultLocationId);
   const selectedLocation = useRef<CommonLocation>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const initLocations = useRef<boolean>(false);
@@ -152,7 +154,7 @@ export const CurrentLocationContextProvider = ({
 
   useEffect(() => {
     if (
-      !currentLocation.current &&
+      !currentLocationId.current &&
       defaultLocationId &&
       defaultLocationId.length > 0
     ) {
@@ -199,9 +201,9 @@ export const CurrentLocationContextProvider = ({
       setDefaultLocations();
     } else {
       // check if current location exist (or is removed)
-      if (currentLocation.current) {
+      if (currentLocationId.current) {
         const location = locations.find(
-          (location) => location.uuid === currentLocation.current,
+          (location) => location.uuid === currentLocationId.current,
         );
         if (!location) {
           setCurrentLocation(undefined);
@@ -254,13 +256,24 @@ export const CurrentLocationContextProvider = ({
 
   function findLocation(locationID: string = undefined): CommonLocation {
     if (!locationID) {
-      locationID = currentLocation.current;
+      return allLocations.current.find(
+        (l) => l.uuid === currentLocationId.current,
+      );
     }
     const loc = allLocations.current.find((l) => l.uuid === locationID);
     if (loc) {
       return loc;
     }
-    return undefined;
+    return allLocations.current.find(
+      (l) => l.uuid === currentLocationId.current,
+    );
+  }
+  function getDirSeparator(locationID: string = undefined): string {
+    const loc = findLocation(locationID);
+    if (loc) {
+      return loc.getDirSeparator();
+    }
+    return AppConfig.dirSeparator;
   }
 
   function findLocalLocation(): CommonLocation {
@@ -448,8 +461,8 @@ export const CurrentLocationContextProvider = ({
 
   function setCurrentLocation(location) {
     const newLocationId = location?.uuid;
-    if (currentLocation.current !== newLocationId) {
-      currentLocation.current = newLocationId;
+    if (currentLocationId.current !== newLocationId) {
+      currentLocationId.current = newLocationId;
       forceUpdate();
     }
   }
@@ -471,7 +484,7 @@ export const CurrentLocationContextProvider = ({
     dispatch(LocationActions.changeLocation(location));
     forceUpdate();
     if (openAfterEdit) {
-      currentLocation.current = location.uuid;
+      currentLocationId.current = location.uuid;
       /*
        * check if location uuid is changed
        */
@@ -498,33 +511,38 @@ export const CurrentLocationContextProvider = ({
     return foundLocation;
   }
 
-  const location: CommonLocation = useMemo(
+  /*const location: CommonLocation = useMemo(
     () => findLocation(),
     [currentLocation.current, allLocations.current],
-  );
+  );*/
 
   const readOnlyMode: boolean = useMemo(() => {
-    if (location) {
-      return location.isReadOnly;
+    if (currentLocationId.current) {
+      const location = findLocation();
+      return location?.isReadOnly;
     }
     return false;
-  }, [currentLocation.current]);
+  }, [currentLocationId.current]);
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
+    const location = findLocation();
     const locationPersistTagsInSidecarFile =
       location && location.persistTagsInSidecarFile;
     if (locationPersistTagsInSidecarFile !== undefined) {
       return locationPersistTagsInSidecarFile;
     }
     return settingsPersistTagsInSidecarFile;
-  }, [location, settingsPersistTagsInSidecarFile]);
+  }, [currentLocationId.current, settingsPersistTagsInSidecarFile]);
 
   function changeLocation(
     location: CommonLocation,
     skipInitDirList: boolean = false,
   ) {
     skipInitialDirList.current = skipInitDirList;
-    if (!currentLocation.current || location.uuid !== currentLocation.current) {
+    if (
+      !currentLocationId.current ||
+      location.uuid !== currentLocationId.current
+    ) {
       if (location && location.name) {
         document.title = location.name + ' | ' + versionMeta.name;
       }
@@ -533,7 +551,10 @@ export const CurrentLocationContextProvider = ({
   }
 
   function changeLocationByID(locationId: string) {
-    if (!currentLocation.current || locationId !== currentLocation.current) {
+    if (
+      !currentLocationId.current ||
+      locationId !== currentLocationId.current
+    ) {
       const location = findLocation(locationId);
       if (location) {
         setCurrentLocation(location);
@@ -564,7 +585,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function closeLocation(locationId: string) {
-    if (currentLocation.current && currentLocation.current === locationId) {
+    if (currentLocationId.current && currentLocationId.current === locationId) {
       locations.map((location) => {
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
@@ -589,20 +610,21 @@ export const CurrentLocationContextProvider = ({
     return locations.findIndex((location) => location.uuid === locationId);
   }
 
-  function isCurrentLocation(uuid: string) {
+  /*function isCurrentLocation(uuid: string) {
     return currentLocation.current && currentLocation.current === uuid;
-  }
+  }*/
 
   const context = useMemo(() => {
     return {
       locations: allLocations.current,
-      currentLocation: location,
-      currentLocationId: currentLocation.current,
+      //currentLocation: location,
+      currentLocationId: currentLocationId.current,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
       getLocationPath,
       findLocation,
+      getDirSeparator,
       findLocalLocation,
       changeLocation,
       addLocation,
@@ -626,7 +648,7 @@ export const CurrentLocationContextProvider = ({
     };
   }, [
     allLocations.current,
-    currentLocation.current,
+    currentLocationId.current,
     selectedLocation.current,
     persistTagsInSidecarFile,
     skipInitialDirList.current,

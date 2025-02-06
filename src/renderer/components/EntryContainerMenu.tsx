@@ -71,16 +71,16 @@ function EntryContainerMenu(props: Props) {
     sharingParentFolderLink,
   } = useOpenedEntryContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { deleteFile, downloadFsEntry } = useIOActionsContext();
   //const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
-
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] =
     useState<boolean>(false);
+  const currentLocation = findLocation();
 
   const navigateToFolder = () => {
     if (openedEntry.isFile) {

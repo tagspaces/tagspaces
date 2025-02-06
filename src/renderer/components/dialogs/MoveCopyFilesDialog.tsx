@@ -39,7 +39,7 @@ interface Props {
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { currentLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
@@ -58,6 +58,7 @@ function MoveCopyFilesDialog(props: Props) {
   const allEntries = useRef<TS.FileSystemEntry[]>(
     entries && entries.length > 0 ? entries : selectedEntries,
   );
+  const currentLocation = findLocation();
 
   const selectedFiles = allEntries.current
     ? allEntries.current
