@@ -98,7 +98,6 @@
     "postinstall-electron-debug": "cross-env PD_PLATFORM=electron npm install --foreground-scripts @tagspaces/tagspaces-platforms@1.3.45",
     "postinstall-node-check": "cross-env PD_PLATFORM=node node scripts/postinstall.js",
     "postinstall-web-check": "cross-env PD_PLATFORM=web node scripts/postinstall.js",
-    "precommit": "lint-staged",
     "prepare": "husky install",
     "prepare-cordova": "npm run install-ext-web-check && npm run postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL release/app/node_modules cordova/www && shx cp LICENSE.txt cordova/www",
     "prepare-cordova-pro": "npm run install-ext-web-check && npm run postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL release/app/node_modules cordova/www && shx cp node_modules/@tagspacespro/tagspacespro/EULA.txt cordova/www",
@@ -243,7 +242,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.113"
+    "@tagspacespro/tagspacespro": "5.0.114"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
@@ -317,7 +316,6 @@
     "jsonwebtoken": "^8.5.1",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
-    "lint-staged": "^8.1.0",
     "mini-css-extract-plugin": "^2.7.6",
     "npm": "^8.5.5",
     "playwright": "1.46.1",

@@ -76,7 +76,7 @@ const SelectionDragLayer: React.FC = () => {
           width,
           height,
           border: '1px dashed black',
-          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+          backgroundColor: alpha(theme.palette.primary.main, 0.2),
         }}
       />
     </div>

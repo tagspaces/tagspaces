@@ -24,90 +24,41 @@ import { parseGeoLocation } from '-/utils/geo';
 import jmespath from '@gorillastack/jmespath';
 import { isPathStartsWith } from '@tagspaces/tagspaces-common/paths';
 import Fuse from 'fuse.js';
-import { Pro } from '../pro';
-
-// export type FileTypeGroups = 'images' | 'notes' | 'documents' | 'audio' | 'video' | 'archives';
-
-export const FileTypeGroups = {
-  any: [''],
-  images: [
-    'jpg',
-    'jpeg',
-    'jfif',
-    'jif',
-    'jiff',
-    'png',
-    'gif',
-    'svg',
-    'webp',
-    'bmp',
-    'tga',
-    'tif',
-    'tiff',
-    'nef',
-    'cr2',
-    'dng',
-    'psd',
-    'avif',
-    'nef',
-  ],
-  notes: ['md', 'mdown', 'txt', 'html'],
-  documents: [
-    'pdf',
-    'doc',
-    'docx',
-    'xls',
-    'xlsx',
-    'odt',
-    'ods',
-    'odp',
-    'pptx',
-    'numbers',
-    'potx',
-    'sldx',
-    'dotx',
-  ],
-  audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc', 'm4a', 'opus'],
-  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
-  archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
-  bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
-  ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
-  emails: ['eml', 'msg'],
-  folders: ['folders'],
-  files: ['files'],
-  untagged: ['untagged'],
-};
+import AppConfig from '-/AppConfig';
 
 export function haveSearchFilters(searchQuery: TS.SearchQuery) {
   return (
-    searchQuery.textQuery ||
-    (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
-    (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
-    (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
-    (searchQuery.fileTypes !== undefined &&
-      searchQuery.fileTypes !== FileTypeGroups.any) ||
-    searchQuery.lastModified ||
-    searchQuery.tagTimePeriodFrom ||
-    searchQuery.tagTimePeriodTo ||
-    searchQuery.tagPlaceLat ||
-    searchQuery.tagPlaceLong ||
-    searchQuery.fileSize
+    searchQuery &&
+    (searchQuery.textQuery ||
+      (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
+      (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
+      (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
+      (searchQuery.fileTypes !== undefined &&
+        searchQuery.fileTypes !== AppConfig.SearchTypeGroups.any) ||
+      searchQuery.lastModified ||
+      searchQuery.tagTimePeriodFrom ||
+      searchQuery.tagTimePeriodTo ||
+      searchQuery.tagPlaceLat ||
+      searchQuery.tagPlaceLong ||
+      searchQuery.fileSize)
   );
 }
 
 export function defaultTitle(searchQuery: TS.SearchQuery) {
   let title = '';
-  if (searchQuery.textQuery) {
-    title += searchQuery.textQuery;
-  }
-  if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
-    title += searchQuery.tagsAND.map((tag) => ' +' + tag.title);
-  }
-  if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
-    title += searchQuery.tagsNOT.map((tag) => ' -' + tag.title);
-  }
-  if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
-    title += searchQuery.tagsOR.map((tag) => ' |' + tag.title);
+  if (searchQuery) {
+    if (searchQuery.textQuery) {
+      title += searchQuery.textQuery;
+    }
+    if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
+      title += searchQuery.tagsAND.map((tag) => ' +' + tag.title);
+    }
+    if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
+      title += searchQuery.tagsNOT.map((tag) => ' -' + tag.title);
+    }
+    if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
+      title += searchQuery.tagsOR.map((tag) => ' |' + tag.title);
+    }
   }
   return title.trim();
 }
@@ -261,9 +212,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
     }
   }
 
-  const extensionQuery = Pro
-    ? Pro.Search.constructFileTypeQuery(searchQuery)
-    : '';
+  const extensionQuery = constructFileTypeQuery(searchQuery);
   if (extensionQuery.length > 0) {
     jmespathQuery =
       jmespathQuery.length > 0
@@ -394,13 +343,15 @@ export default class Search {
         searched = searched || results.length <= resultCount;
       }
 
-      if (Pro && Pro.Search.filterIndex) {
-        const resultCount = results.length;
-        results = Pro.Search.filterIndex(results, searchQuery);
-        searched = searched || results.length <= resultCount;
-      }
+      const resultCount = results.length;
+      results = filterIndex(results, searchQuery);
+      searched = searched || results.length <= resultCount;
 
-      if (searchQuery.textQuery && searchQuery.textQuery.length > 1) {
+      if (
+        searchQuery &&
+        searchQuery.textQuery &&
+        searchQuery.textQuery.length > 1
+      ) {
         const resultCount = results.length;
         console.log('fuse query: ' + searchQuery.textQuery);
         console.time('fuse');
@@ -451,6 +402,7 @@ export default class Search {
       if (searched) {
         console.log('Results found: ' + results.length);
         if (
+          searchQuery &&
           searchQuery.maxSearchResults &&
           results.length >= searchQuery.maxSearchResults
         ) {
@@ -475,3 +427,174 @@ export default class Search {
       resolve(results);
     });
 }
+
+//export const searchHistorySize = 15; // Should be moved in the default settings of the PRO
+
+function filterIndex(data, searchQuery: TS.SearchQuery) {
+  console.log('Pro filter ' + JSON.stringify(searchQuery));
+  let results = data;
+
+  const now = new Date();
+  const today = new Date(
+    now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getUTCDate(),
+  );
+  const msInDay = 1000 * 60 * 60 * 24;
+  if (searchQuery.lastModified === 'today') {
+    results = results.filter((entry) => entry.lmdt > today.getTime());
+  } else if (searchQuery.lastModified === 'yesterday') {
+    results = results.filter(
+      (entry) =>
+        entry.lmdt > today.getTime() - msInDay && entry.lmdt < today.getTime(),
+    );
+  } else if (searchQuery.lastModified === 'past7Days') {
+    results = results.filter(
+      (entry) =>
+        entry.lmdt > today.getTime() - msInDay * 7 &&
+        entry.lmdt < today.getTime(),
+    );
+  } else if (searchQuery.lastModified === 'past30Days') {
+    results = results.filter(
+      (entry) =>
+        entry.lmdt > today.getTime() - msInDay * 30 &&
+        entry.lmdt < today.getTime(),
+    );
+  } else if (searchQuery.lastModified === 'past6Months') {
+    results = results.filter(
+      (entry) =>
+        entry.lmdt > today.getTime() - msInDay * 30 * 6 &&
+        entry.lmdt < today.getTime(),
+    );
+  } else if (searchQuery.lastModified === 'pastYear') {
+    results = results.filter(
+      (entry) =>
+        entry.lmdt > today.getTime() - msInDay * 365 &&
+        entry.lmdt < today.getTime(),
+    );
+  } else if (searchQuery.lastModified === 'moreThanYear') {
+    results = results.filter(
+      (entry) => entry.lmdt < today.getTime() - msInDay * 365,
+    );
+  }
+
+  if (searchQuery.fileSize === 'sizeEmpty') {
+    results = results.filter((entry) => entry.size === 0 && entry.isFile);
+  } else if (searchQuery.fileSize === 'sizeTiny') {
+    // till 10KB
+    results = results.filter((entry) => entry.size <= 10000 && entry.isFile);
+  } else if (searchQuery.fileSize === 'sizeVerySmall') {
+    // till 100KB
+    results = results.filter((entry) => entry.size <= 100000 && entry.isFile);
+  } else if (searchQuery.fileSize === 'sizeSmall') {
+    // till 1MB
+    results = results.filter((entry) => entry.size <= 1000000 && entry.isFile);
+  } else if (searchQuery.fileSize === 'sizeMedium') {
+    // till 50MB
+    results = results.filter((entry) => entry.size <= 50000000 && entry.isFile);
+  } else if (searchQuery.fileSize === 'sizeLarge') {
+    // till 1GB
+    results = results.filter(
+      (entry) => entry.size <= 1000000000 && entry.isFile,
+    );
+  } else if (searchQuery.fileSize === 'sizeHuge') {
+    // over 1GB
+    results = results.filter(
+      (entry) => entry.size > 1000000000 && entry.isFile,
+    );
+  }
+
+  if (searchQuery.tagTimePeriodFrom && searchQuery.tagTimePeriodTo) {
+    results = results.filter(
+      (entry) =>
+        searchQuery.tagTimePeriodFrom <= entry.fromTime &&
+        entry.toTime <= searchQuery.tagTimePeriodTo,
+    );
+  }
+
+  if (searchQuery.tagPlaceLat && searchQuery.tagPlaceLong) {
+    results = results.filter(
+      (entry) =>
+        searchQuery.tagPlaceLat === entry.lat &&
+        searchQuery.tagPlaceLong === entry.lon,
+    );
+  }
+
+  // results = results.filter(entry => (entry.tags.filter(tag => tag.title === 'done').length > 0));
+  return results;
+  /*
+      var tests = Object.keys(criteria).reduce(function(tests, key) {
+          var field = criteria[key];
+          if ('min' in field) {tests.push(function(item) {
+              return item[key] > field.min;
+          });}
+          if ('max' in field) {tests.push(function(item) {
+              return item[key] < field.max;
+          });}
+          return tests;
+      }, []);
+      return function(item) {
+          return tests.every(function(test) {return test(item);});
+      };
+  */
+}
+
+function constructFileTypeQuery(searchQuery: TS.SearchQuery) {
+  // (!isFile)
+  // ( extension=='md' || extension=='mdown' || extension=='txt' || extension=='html'  )
+  let extensionQuery = '';
+  if (searchQuery.fileTypes && searchQuery.fileTypes.length >= 1) {
+    if (searchQuery.fileTypes[0] === AppConfig.SearchTypeGroups.folders[0]) {
+      extensionQuery = '[? (!isFile)]';
+    } else if (
+      searchQuery.fileTypes[0] === AppConfig.SearchTypeGroups.files[0]
+    ) {
+      extensionQuery = '[? (isFile)]';
+    } else if (
+      searchQuery.fileTypes[0] === AppConfig.SearchTypeGroups.untagged[0]
+    ) {
+      extensionQuery = '[? (!tags)]';
+    } else if (searchQuery.fileTypes[0] === AppConfig.SearchTypeGroups.any[0]) {
+      // all results
+    } else {
+      extensionQuery = '[? ( ';
+      searchQuery.fileTypes.map((ext) => {
+        extensionQuery += "extension=='" + ext + "' || ";
+        return true;
+      });
+      if (extensionQuery.endsWith('|| ')) {
+        extensionQuery = extensionQuery.substring(0, extensionQuery.length - 3);
+        extensionQuery += ' ) ]';
+      }
+    }
+  }
+  return extensionQuery;
+}
+
+/**
+ * @deprecated
+ * @param searchQuery
+ */
+/*export function constructTagQuery(searchQuery: TS.SearchQuery): string {
+
+  let tagQuery = '';
+  if (searchQuery.tags && searchQuery.tags.length >= 1) {
+    let tagConjunction = ' || ';
+    if (searchQuery.tagConjunction === 'AND') {
+      tagConjunction = ' && ';
+    }
+    tagQuery = ' ';
+    searchQuery.tags.map((tag) => {
+      const cleanedTag = tag.trim(); // .toLowerCase();
+      if (cleanedTag.length > 0) {
+        tagQuery += "tags[? (title=='" + cleanedTag + "' )]" + tagConjunction;
+      }
+      return true;
+    });
+    if (tagQuery.endsWith('|| ')) {
+      tagQuery = tagQuery.substring(0, tagQuery.length - 3) + ' ';
+    }
+    if (tagQuery.endsWith('& ')) {
+      tagQuery = tagQuery.substring(0, tagQuery.length - 3) + ' ';
+    }
+  }
+  return tagQuery;
+}*/

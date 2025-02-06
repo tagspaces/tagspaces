@@ -72,6 +72,7 @@ declare interface Window {
   device?: any; // needed for Cordova
   ExtSupportedFileTypes?: Array<any>;
   ExtExtensionsFound?: Array<any>;
+  ExtSearchTypeGroups?: any;
 }
 
 declare interface NodeModule {

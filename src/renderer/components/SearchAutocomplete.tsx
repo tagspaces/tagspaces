@@ -37,7 +37,7 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries,
 } from '-/reducers/settings';
-import { FileTypeGroups, haveSearchFilters } from '-/services/search';
+import { haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import AppConfig from '-/AppConfig';
@@ -126,7 +126,9 @@ function SearchAutocomplete(props: Props) {
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
   const currentOptions = useRef<string>(undefined);
   const fileTypes = useRef<Array<string>>(
-    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
+    searchQuery.fileTypes
+      ? searchQuery.fileTypes
+      : AppConfig.SearchTypeGroups.any,
   );
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const actionValues = useRef<Array<SearchOptionType>>([]);
@@ -232,12 +234,12 @@ function SearchAutocomplete(props: Props) {
       if (
         searchQuery.fileTypes &&
         JSON.stringify(searchQuery.fileTypes) !==
-          JSON.stringify(FileTypeGroups.any)
+          JSON.stringify(AppConfig.SearchTypeGroups.any)
       ) {
         fileTypes.current = searchQuery.fileTypes;
         emptySearch = false;
         let keyFileType;
-        Object.entries(FileTypeGroups).forEach(([key, value]) => {
+        Object.entries(AppConfig.SearchTypeGroups).forEach(([key, value]) => {
           if (JSON.stringify(value) === JSON.stringify(searchQuery.fileTypes)) {
             keyFileType = key;
           }
@@ -371,7 +373,7 @@ function SearchAutocomplete(props: Props) {
         isAction(action.action, SearchQueryComposition.TYPE),
       )
     ) {
-      fileTypes.current = FileTypeGroups.any;
+      fileTypes.current = AppConfig.SearchTypeGroups.any;
     }
     if (
       !exceptions.some((action) =>
@@ -692,12 +694,13 @@ function SearchAutocomplete(props: Props) {
       if (currentOptions.current !== SearchQueryComposition.TYPE.shortName) {
         currentOptions.current = action;
         const options = [];
-        Object.entries(FileTypeGroups).forEach(([key, value]) => {
+        Object.entries(AppConfig.SearchTypeGroups).forEach(([key, value]) => {
+          const typedValue = value as string[];
           options.push({
             id: key,
             action: ExecActions.TYPE_SEARCH,
             label: t('core:' + key),
-            descr: value.join(', '),
+            descr: typedValue.join(', '),
             filter,
           });
         });

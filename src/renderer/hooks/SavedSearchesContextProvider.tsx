@@ -140,7 +140,7 @@ export const SavedSearchesContextProvider = ({
   }
 
   function removeSearch(uuid: string) {
-    if (searches.current) {
+    if (searches.current && uuid) {
       searches.current = searches.current.filter((item) => item.uuid !== uuid);
       localStorage.setItem(searchesKey, JSON.stringify(searches.current));
       sendMessage();
