@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -225,13 +225,16 @@ const TagContainerDnd = (props: Props) => {
       // Implement hover logic here
     },*/
   });
-  // Use empty image as a drag preview so browsers don't draw it
-  // and we can draw whatever we want on the custom drag layer instead.
-  preview(getEmptyImage(), {
-    // IE fallback: specify that we'd rather screenshot the node
-    // when it already knows it's being dragged so we can hide it with CSS.
-    captureDraggingState: true,
-  });
+  // Disable the default drag preview by using an empty image.
+  useEffect(() => {
+    // Use empty image as a drag preview so browsers don't draw it
+    // and we can draw whatever we want on the custom drag layer instead.
+    preview(getEmptyImage(), {
+      // IE fallback: specify that we'd rather screenshot the node
+      // when it already knows it's being dragged so we can hide it with CSS.
+      captureDraggingState: true,
+    });
+  }, [preview]);
 
   const { isDragging } = collected;
 
