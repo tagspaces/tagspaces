@@ -36,10 +36,11 @@ import {
   VideoIcon,
 } from '-/components/CommonIcons';
 import { SidePanel, classes } from '-/components/SidePanels.css';
-import Tooltip from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
+import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
@@ -73,8 +74,6 @@ import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TagsSelect from './TagsSelect';
-import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
-import TooltipTS from '-/components/Tooltip';
 
 interface Props {
   style?: any;
@@ -421,7 +420,9 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const indexStatus = getIndex() ? getIndex().length + ' indexed entries' : '';
+  const indexStatus = getIndex()
+    ? '(' + getIndex().length + ' indexed entries)'
+    : t('core:indexEmpty');
   return (
     <SidePanel
       style={{
@@ -440,10 +441,10 @@ function SearchPopover(props: Props) {
           className={classes.header}
           style={{ flex: 1, margin: 'auto', paddingLeft: 10 }}
         >
-          {'(' + indexStatus + ')'}
+          {indexStatus}
         </Typography>
         <TsIconButton
-          style={{ marginLeft: 'auto' }}
+          style={{ marginLeft: 'auto', height: 40 }}
           data-tid="closeSearchTID"
           onClick={props.onClose}
         >
@@ -546,7 +547,7 @@ function SearchPopover(props: Props) {
                 input: {
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Tooltip
+                      <TooltipTS
                         title={
                           <>
                             <Typography variant="subtitle1" color="inherit">
@@ -585,7 +586,7 @@ function SearchPopover(props: Props) {
                         }
                       >
                         <InfoTooltipIcon />
-                      </Tooltip>
+                      </TooltipTS>
                     </InputAdornment>
                   ),
                 },
@@ -605,19 +606,19 @@ function SearchPopover(props: Props) {
             value={searchBoxing}
           >
             <ToggleButton value="location">
-              <Tooltip title={t('searchPlaceholder')}>
+              <TooltipTS title={t('searchPlaceholder')}>
                 <div>{t('location')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
             <ToggleButton value="folder">
-              <Tooltip title={t('searchCurrentFolderWithSubFolders')}>
+              <TooltipTS title={t('searchCurrentFolderWithSubFolders')}>
                 <div>{t('folder')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
             <ToggleButton value="global">
-              <Tooltip title={t('searchInAllLocationTooltip')}>
+              <TooltipTS title={t('searchInAllLocationTooltip')}>
                 <div>{t('globalSearch')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
@@ -633,19 +634,19 @@ function SearchPopover(props: Props) {
             value={searchType}
           >
             <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
-              <Tooltip title={t('searchTypeFuzzyTooltip')}>
+              <TooltipTS title={t('searchTypeFuzzyTooltip')}>
                 <div>{t('searchTypeFuzzy')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
             <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-              <Tooltip title={t('searchTypeSemiStrictTooltip')}>
+              <TooltipTS title={t('searchTypeSemiStrictTooltip')}>
                 <div>{t('searchTypeSemiStrict')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
             <ToggleButton value="strict" data-tid="strictSearchTID">
-              <Tooltip title={t('searchTypeStrictTooltip')}>
+              <TooltipTS title={t('searchTypeStrictTooltip')}>
                 <div>{t('searchTypeStrict')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
@@ -664,14 +665,14 @@ function SearchPopover(props: Props) {
             value={forceIndexing.current}
           >
             <ToggleButton value={false}>
-              <Tooltip title={t('useCurrentIndexTooltip')}>
+              <TooltipTS title={t('useCurrentIndexTooltip')}>
                 <div>{t('useCurrentIndex')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
             <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip title={t('forceReindexTooltip')}>
+              <TooltipTS title={t('forceReindexTooltip')}>
                 <div>{t('forceReindex')}</div>
-              </Tooltip>
+              </TooltipTS>
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
