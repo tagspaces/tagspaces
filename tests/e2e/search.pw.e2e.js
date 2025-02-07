@@ -406,7 +406,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   /**
    * for web fulltext index is not created in tsi.json
    */
-  test('TST0636 - Search q. fulltext in content [electron]', async () => {
+  test('TST0636 - Search q. fulltext in content [electron,_pro]', async () => {
     await createFile('fulltext.txt', 'testing fulltext');
 
     await addSearchCommand('sc:', false);
