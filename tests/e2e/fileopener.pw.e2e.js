@@ -85,8 +85,6 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0801 - Arrow keys select next prev file (keybindings) [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
-    //await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    //await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -112,9 +110,6 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
-
-    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -131,8 +126,6 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
-    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -260,9 +253,6 @@ test.describe('TST08 - File folder properties', () => {
       getGridFileSelector('sample[' + tagName + '].txt'),
       'showPropertiesTID',
     );
-
-    //await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
-    //await clickOn('[data-tid=detailsTabTID]');
 
     //const propsTags = await getPropertiesTags();
     // expect(propsTags).toContain(tagName);
