@@ -38,6 +38,7 @@ import {
   getAIProviders,
   getDefaultAIProvider,
 } from '-/reducers/settings';
+import { openURLExternally } from '-/services/utils-io';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
@@ -176,12 +177,24 @@ function SettingsAI(props: Props) {
             <Typography>{t('core:aiSettings')}</Typography>
             <br />
             <Typography variant="caption">
-              TagSpaces do <b>not</b> have its own AI engine or models, but
-              relays entirely on external services like Ollama. If you haven't
-              already installed Ollama, you can download it from the{' '}
-              <a href="https://ollama.com/download" target="_blank">
-                official website
-              </a>{' '}
+              TagSpaces do not have its own AI engine or models, but relays
+              entirely on external software like Ollama. If you don't have
+              Ollama, you can download it for free from
+              <TsButton
+                style={{
+                  fontSize: 13,
+                  textTransform: 'unset',
+                  fontWeight: 'normal',
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }}
+                variant="text"
+                onClick={() => {
+                  openURLExternally('https://ollama.com/download', true);
+                }}
+              >
+                ollama.com/download
+              </TsButton>{' '}
               and follow the installation instructions to get it set up on your
               computer.
             </Typography>
