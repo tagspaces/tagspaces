@@ -56,9 +56,10 @@ const FileSourceDnd: React.FC<Props> = ({ children }) => {
       captureDraggingState: true,
     });
   }, [preview]);
+  const { isDragging, ...rest } = collected;
 
   return (
-    <span ref={drag} {...collected}>
+    <span ref={drag} {...rest}>
       {children}
     </span>
   );

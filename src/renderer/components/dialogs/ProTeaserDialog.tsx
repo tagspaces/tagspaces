@@ -16,6 +16,7 @@
  *
  */
 
+import React from 'react';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -46,7 +47,7 @@ interface SlideProps {
   description?: '';
   ctaURL?: string;
   ctaTitle?: string;
-  items?: Array<string>;
+  items?: Array<React.ReactNode>;
   pictureURL?: string;
   pictureShadow?: boolean;
   videoURL?: string;
@@ -86,8 +87,10 @@ function Slide(props: SlideProps) {
         <Typography variant="subtitle1">{description}</Typography>
       )}
       {items &&
-        items.map((item) => (
-          <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
+        items.map((item, index) => (
+          <Typography key={index} variant="subtitle1">
+            &#x2605;&nbsp;{item}
+          </Typography>
         ))}
       <div style={{ textAlign: 'center', paddingTop: 10 }}>
         {pictureURL && (

@@ -34,10 +34,10 @@ type TSTextFieldProps = TextFieldProps & {
 };
 
 function TsTextField(props: TSTextFieldProps) {
-  const { updateValue, retrieveValue, children, label } = props;
+  const { updateValue, retrieveValue, children, label, ...restProps } = props;
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
-  const textFieldRef = useRef(null);
+  //const textFieldRef = useRef(null);
 
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
@@ -111,8 +111,8 @@ function TsTextField(props: TSTextFieldProps) {
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
         fullWidth={true}
-        ref={textFieldRef}
-        {...props}
+        // ref={textFieldRef}
+        {...restProps}
         label={undefined}
       >
         {children}

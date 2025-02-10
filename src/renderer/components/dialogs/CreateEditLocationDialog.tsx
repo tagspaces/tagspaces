@@ -909,7 +909,11 @@ function CreateEditLocationDialog(props: Props) {
                       exclusive
                     >
                       <ToggleButton
-                        value={null}
+                        value={
+                          persistTagsInSidecarFile !== null
+                            ? persistTagsInSidecarFile
+                            : false
+                        }
                         data-tid="settingsSetPersistTagsDefault"
                         onClick={() => setPersistTagsInSidecarFile(null)}
                       >

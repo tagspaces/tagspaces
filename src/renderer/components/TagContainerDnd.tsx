@@ -236,12 +236,12 @@ const TagContainerDnd = (props: Props) => {
     });
   }, [preview]);
 
-  const { isDragging } = collected;
+  const { isDragging, ...rest } = collected;
 
   drag(drop(tagContainerRef));
 
   return (
-    <span ref={tagContainerRef} {...collected}>
+    <span ref={tagContainerRef} {...rest}>
       <TagContainer
         tag={tag}
         tagGroup={tagGroup}

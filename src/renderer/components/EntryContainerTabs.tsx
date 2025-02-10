@@ -234,6 +234,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         >
           {tabsArray.current.map((tab, index) => (
             <StyledTab
+              key={'key' + tab.name + index}
               data-tid={tab.name + 'TID'}
               icon={tab.icon}
               title={tab.title}

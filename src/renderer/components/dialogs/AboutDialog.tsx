@@ -160,8 +160,10 @@ function AboutDialog(props: Props) {
           </strong>
           is made possible by the TagSpaces project and other open source
           software listed in the:
-          <p style={{ marginBottom: 5 }} />
-          <TsButton onClick={() => openThirdPartyLibsDialog()}>
+          <TsButton
+            style={{ marginTop: 5 }}
+            onClick={() => openThirdPartyLibsDialog()}
+          >
             Software Acknowledgements
           </TsButton>
           <br />
@@ -179,47 +181,45 @@ function AboutDialog(props: Props) {
           for more details.
           <br />
           <br />
-          <div>
-            {imprintURL && (
-              <TsButton
-                style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
-                variant="text"
-                onClick={() => {
-                  openURLExternally(imprintURL, true);
-                }}
-              >
-                Imprint
-              </TsButton>
-            )}
-            {privacyURL && (
-              <TsButton
-                style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
-                variant="text"
-                onClick={() => {
-                  openURLExternally(privacyURL, true);
-                }}
-              >
-                Privacy Policy
-              </TsButton>
-            )}
+          {imprintURL && (
             <TsButton
               style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
               onClick={() => {
-                openURLExternally(Links.links.changelogURL, true);
+                openURLExternally(imprintURL, true);
               }}
             >
-              Changelog
+              Imprint
             </TsButton>
+          )}
+          {privacyURL && (
             <TsButton
               style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
-              data-tid="openLicenseDialog"
-              onClick={() => openLicenseDialog()}
+              onClick={() => {
+                openURLExternally(privacyURL, true);
+              }}
             >
-              {t('core:license')}
+              Privacy Policy
             </TsButton>
-          </div>
+          )}
+          <TsButton
+            style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+            variant="text"
+            onClick={() => {
+              openURLExternally(Links.links.changelogURL, true);
+            }}
+          >
+            Changelog
+          </TsButton>
+          <TsButton
+            style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+            variant="text"
+            data-tid="openLicenseDialog"
+            onClick={() => openLicenseDialog()}
+          >
+            {t('core:license')}
+          </TsButton>
         </Typography>
       </DialogContent>
       <TsDialogActions style={{ justifyContent: 'space-between' }}>

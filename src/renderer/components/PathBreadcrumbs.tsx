@@ -145,7 +145,8 @@ function PathBreadcrumbs(props: Props) {
       );
     }
 
-    currentFolderChipIcon = pathParts.length === 1 && locationTypeIcon;
+    currentFolderChipIcon =
+      pathParts.length === 1 ? locationTypeIcon : undefined;
 
     if (pathParts.length >= 1) {
       pathParts = pathParts.slice(1, pathParts.length); // remove current directory
@@ -169,13 +170,14 @@ function PathBreadcrumbs(props: Props) {
           pathPart,
           currentLocation?.getDirSeparator(),
         );
+        const icon = index === 0 ? locationTypeIcon : undefined;
         return (
           <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>
             <StyledBreadcrumb
               component="a"
               href="#"
               label={folderName}
-              icon={index === 0 && locationTypeIcon}
+              icon={icon}
               onClick={() => openDirectory(pathPart)}
             />
           </Tooltip>

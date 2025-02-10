@@ -368,6 +368,7 @@ function GridPagination(props: Props) {
           <GridCellsContainer>
             {pageFiles.map((entry, index, dArray) => (
               <CellView
+                key={entry.uuid + index}
                 fsEntry={entry}
                 index={index}
                 cellContent={getCellContent}
