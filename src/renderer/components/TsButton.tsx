@@ -39,16 +39,16 @@ export type TSButtonProps = ButtonProps & {
 };
 
 function TsButton(props: TSButtonProps) {
-  const { children, style, tooltip, loading, ...rest } = props;
+  const { children, style, tooltip, loading, startIcon, ...rest } = props;
   const desktopMode = useSelector(isDesktopMode);
   let button;
   if (loading !== undefined) {
     button = (
       <LoadingButton
         loading={loading}
-        loadingPosition="start"
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
+        {...(startIcon && { startIcon: startIcon, loadingPosition: 'start' })}
         {...rest}
         style={{
           borderRadius: AppConfig.defaultCSSRadius,

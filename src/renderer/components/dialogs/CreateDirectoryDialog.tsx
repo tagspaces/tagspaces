@@ -16,6 +16,7 @@
  *
  */
 
+import React, { useReducer, useRef, useState } from 'react';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -42,7 +43,6 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
-import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const FolderColorTextField = styled(TsTextField)(({ theme }) => ({
@@ -243,9 +243,8 @@ function CreateDirectoryDialog(props: Props) {
                   <InputAdornment position="end" style={{ height: 300 }}>
                     <Box style={{ padding: 10, width: 300 }}>
                       {defaultBackgrounds.map((background, cnt) => (
-                        <>
+                        <React.Fragment key={cnt}>
                           <TsIconButton
-                            key={cnt}
                             tooltip={background}
                             data-tid={'bgTID' + cnt}
                             aria-label="changeFolderBackground"
@@ -265,7 +264,7 @@ function CreateDirectoryDialog(props: Props) {
                             <SetBackgroundIcon />
                           </TsIconButton>
                           {(cnt + 1) % 5 === 0 && <br />}
-                        </>
+                        </React.Fragment>
                       ))}
                     </Box>
                   </InputAdornment>
