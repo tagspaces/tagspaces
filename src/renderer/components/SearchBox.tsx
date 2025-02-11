@@ -17,35 +17,22 @@
  */
 
 import React, { useState } from 'react';
-import { alpha, useTheme } from '@mui/material/styles';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
 }
 
 function SearchBox(props: Props) {
-  const theme = useTheme();
-  const { searchQuery } = useDirectoryContentContext();
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null,
   );
 
-  const [textQuery, setTextQuery] = useState<string>(
-    searchQuery.textQuery || '',
-  );
-
   return (
     <>
-      <SearchAutocomplete
-        open={props.open}
-        textQuery={textQuery}
-        setTextQuery={setTextQuery}
-        setAnchorSearch={setAnchorSearch}
-      />
+      <SearchAutocomplete open={props.open} setAnchorSearch={setAnchorSearch} />
       {props.open && (
         <Popover
           open={Boolean(anchorSearch)}
@@ -74,11 +61,7 @@ function SearchBox(props: Props) {
             WebkitAppRegion: 'no-drag',
           }}
         >
-          <SearchPopover
-            onClose={() => setAnchorSearch(null)}
-            textQuery={textQuery}
-            setTextQuery={setTextQuery}
-          />
+          <SearchPopover onClose={() => setAnchorSearch(null)} />
         </Popover>
       )}
     </>

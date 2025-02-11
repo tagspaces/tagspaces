@@ -35,18 +35,19 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import EditSearchQuery from '-/components/EditSearchQuery';
 
 interface Props {
   open: boolean;
   onClose: (searchQuery?: TS.SearchQuery) => void;
-  onClearSearch: () => void;
-  searchQuery: TS.SearchQuery;
 }
 
 function SaveSearchDialog(props: Props) {
-  const { open, onClose, searchQuery, onClearSearch } = props;
+  const { open, onClose } = props;
   const { searches, addSearch, editSearch, removeSearch } =
     useSavedSearchesContext();
+  const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { t } = useTranslation();
@@ -55,42 +56,38 @@ function SaveSearchDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (searchQuery) {
-      if (searchQuery.uuid === undefined) {
+    if (tempSearchQuery) {
+      if (tempSearchQuery.uuid === undefined) {
         handleValidation();
       } else {
         title.current = getTitle();
         forceUpdate();
       }
     }
-  }, [searchQuery]);
+  }, [tempSearchQuery]);
 
   function getTitle() {
-    return searchQuery && searchQuery.uuid !== undefined
-      ? searchQuery.title
-      : defaultTitle(searchQuery);
+    return tempSearchQuery && tempSearchQuery.uuid !== undefined
+      ? tempSearchQuery.title
+      : defaultTitle(tempSearchQuery);
   }
 
   function onDelete() {
-    removeSearch(searchQuery?.uuid);
-    onClearSearch();
+    removeSearch(tempSearchQuery?.uuid);
     onClose();
   }
 
   function onConfirm() {
     if (title.current) {
-      const searchQuery = {
-        ...props.searchQuery,
-        title: title.current,
-      };
+      setTempSearchQuery({ title: title.current });
 
-      if (props.searchQuery.uuid !== undefined) {
-        editSearch(searchQuery);
+      if (tempSearchQuery.uuid !== undefined) {
+        editSearch(tempSearchQuery);
         onClose();
       } else {
-        searchQuery.uuid = getUuid();
-        addSearch(searchQuery);
-        onClose(searchQuery);
+        tempSearchQuery.uuid = getUuid();
+        addSearch(tempSearchQuery);
+        onClose();
       }
     }
   }
@@ -141,7 +138,7 @@ function SaveSearchDialog(props: Props) {
     >
       <TsDialogTitle
         dialogTitle={t(
-          searchQuery?.uuid !== undefined
+          tempSearchQuery?.uuid !== undefined
             ? 'core:editSavedSearchTitle'
             : 'core:createNewSavedSearchTitle',
         )}
@@ -163,9 +160,6 @@ function SaveSearchDialog(props: Props) {
               handleValidation();
               forceUpdate();
             }}
-            // updateValue={(value) => {
-            //   title.current = value;
-            // }}
             retrieveValue={() => title.current}
             data-tid="savedSearchTID"
           />
@@ -173,7 +167,8 @@ function SaveSearchDialog(props: Props) {
             {inputError !== '' ? inputError : t('core:savedSearchHelp')}
           </FormHelperText>
         </FormControl>
-        {searchQuery?.uuid !== undefined && (
+        <EditSearchQuery />
+        {tempSearchQuery?.uuid !== undefined && (
           <TsButton
             onClick={onDelete}
             data-tid="deleteSavedSearchTID"
