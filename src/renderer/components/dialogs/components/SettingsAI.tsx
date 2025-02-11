@@ -193,7 +193,7 @@ function SettingsAI(props: Props) {
                   openURLExternally('https://ollama.com/download', true);
                 }}
               >
-                ollama.com/download
+                ollama.com
               </TsButton>{' '}
               and follow the installation instructions to get it set up on your
               computer.
