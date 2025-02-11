@@ -117,6 +117,7 @@ export async function setInputValue(selector, value) {
  * @param value
  * @param delay
  * @returns {Promise<*>}
+ * @deprecated use typeInputValue instead
  */
 export async function setInputKeys(tid, value, delay = 0) {
   // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });

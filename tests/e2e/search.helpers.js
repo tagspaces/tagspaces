@@ -99,15 +99,17 @@ export async function createSavedSearch(searchQuery) {
   await global.client.waitForTimeout(1000); // todo remove timeout (toggleSearch and advancedSearch is not click)
   await clickOn('[data-tid=toggleSearch]');
   await clickOn('[data-tid=advancedSearch]');
-
+  await expectElementExist('#searchTerm');
+  await global.client.dblclick('#searchTerm');
   await typeInputValue('#searchTerm', searchQuery.textQuery, 0);
   //await typeInputValue('#textQuery', searchQuery.textQuery, 10);
   //await clickOn('#searchButton');
   await clickOn('#searchButtonAdvTID');
   await clickOn('[data-tid=advancedSearch]');
   await clickOn('[data-tid=addSearchBtnTID]');
+  await expectElementExist('[data-tid=savedSearchTID]');
   await global.client.dblclick('[data-tid=savedSearchTID]');
-  await setInputKeys('savedSearchTID', searchQuery.title);
+  await typeInputValue('[data-tid=savedSearchTID] input', searchQuery.title, 0);
   await clickOn('[data-tid=confirmSavedSearchTID]');
   await clickOn('[data-tid=closeSearchTID]');
 }
