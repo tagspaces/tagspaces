@@ -44,8 +44,9 @@ function ProTeaser(props: Props) {
     <>
       <CardContent
         style={{
-          padding: 5,
-          paddingTop: 34,
+          paddingLeft: 5,
+          paddingRight: 5,
+          paddingTop: 0,
           paddingBottom: 0,
           textAlign: 'center',
           cursor: 'pointer',
