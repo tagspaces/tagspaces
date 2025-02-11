@@ -152,6 +152,13 @@ test.describe('TST50 - Perspective Grid', () => {
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        true,
+        5000,
+      );
+    }
     //await selectFilesByID(selectedIds);
 
     await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
