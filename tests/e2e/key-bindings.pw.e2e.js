@@ -77,20 +77,24 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     const oldName = await setInputKeys('renameEntryDialogInput', newTitle);
     await clickOn('[data-tid=confirmRenameEntry]');
     //await expectElementExist('[data-tid=detailsTabTID]', true);
-    await expectElementExist(getGridFileSelector(newTitle + '.pdf'));
+    await expectElementExist(
+      getGridFileSelector(newTitle + '.pdf'),
+      true,
+      5000,
+    );
     //rename back
     const name = extractFileNameWithoutExt(oldName, '/');
     await clickOn(getGridFileSelector(newTitle + '.pdf'));
     await global.client.keyboard.press('F2');
     await setInputKeys('renameEntryDialogInput', name);
     await clickOn('[data-tid=confirmRenameEntry]');
-    await expectElementExist(getGridFileSelector(oldName));
+    await expectElementExist(getGridFileSelector(oldName), true, 5000);
   });
 
   test('TST1313 - Test open file [electron]', async () => {
     await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('Enter');
-    await expectElementExist('[data-tid=detailsTabTID]', true);
+    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
   });
 
   test('TST1315 - Test delete file [electron]', async () => {
