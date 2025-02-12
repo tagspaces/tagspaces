@@ -2,7 +2,14 @@
 Copyright (c) 2024-present The TagSpaces GmbH. All rights reserved.
 */
 
-import React, { createContext, useReducer, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import { TS } from '-/tagspaces.namespace';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -13,7 +20,7 @@ import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 type SearchQueryContextData = {
   tempSearchQuery: TS.SearchQuery;
-  setTempSearchQuery: (props: any) => void;
+  setTempSearchQuery: (props: any, override?: boolean) => TS.SearchQuery;
   executeSearch: () => void;
   clearSearch: () => void;
   openSaveSearchDialog: (savedSearchUuid?: string) => void;
@@ -44,26 +51,40 @@ export const SearchQueryContextProvider = ({
     currentDirectoryPath,
   } = useDirectoryContentContext();
   const { searches } = useSavedSearchesContext();
-  const tempSearchQuery = useRef<TS.SearchQuery>(searchQuery);
+  const tempSearchQuery = useRef<TS.SearchQuery>({ ...searchQuery });
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
     useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function setTempSearchQuery(props: any) {
-    tempSearchQuery.current = {
-      searchBoxing: 'location',
-      ...searchQuery,
-      ...tempSearchQuery.current,
-      executeSearch: false,
-      ...props,
-    };
+  useEffect(() => {
+    if (searchQuery) {
+      tempSearchQuery.current = { ...searchQuery };
+    } else {
+      tempSearchQuery.current = {};
+    }
     forceUpdate();
+  }, [searchQuery]);
+
+  function setTempSearchQuery(props: any, override = false): TS.SearchQuery {
+    if (override) {
+      tempSearchQuery.current = props;
+    } else {
+      tempSearchQuery.current = {
+        searchBoxing: 'location', // default
+        //...searchQuery,
+        ...tempSearchQuery.current,
+        //executeSearch: false,
+        ...props,
+      };
+    }
+    forceUpdate();
+    return tempSearchQuery.current;
   }
 
   function clearSearch() {
     openCurrentDirectory().then(() => {
-      tempSearchQuery.current = { ...searchQuery };
+      tempSearchQuery.current = {}; //...searchQuery };
       setSearchQuery({});
       exitSearchMode();
     });
@@ -72,17 +93,17 @@ export const SearchQueryContextProvider = ({
   function executeSearch() {
     const tagsAND = mergeWithExtractedTags(
       tempSearchQuery.current.textQuery,
-      searchQuery.tagsAND,
+      tempSearchQuery.current.tagsAND,
       '+',
     );
     const tagsOR = mergeWithExtractedTags(
       tempSearchQuery.current.textQuery,
-      searchQuery.tagsOR,
+      tempSearchQuery.current.tagsOR,
       '|',
     );
     const tagsNOT = mergeWithExtractedTags(
       tempSearchQuery.current.textQuery,
-      searchQuery.tagsNOT,
+      tempSearchQuery.current.tagsNOT,
       '-',
     );
     const query: TS.SearchQuery = {
@@ -104,7 +125,7 @@ export const SearchQueryContextProvider = ({
       showUnixHiddenEntries,
       executeSearch: true,
     };
-    console.log('Search object: ' + JSON.stringify(searchQuery));
+    console.log('Search object: ' + JSON.stringify(query));
     setSearchQuery(query);
   }
 
@@ -114,8 +135,10 @@ export const SearchQueryContextProvider = ({
         (search) => search.uuid === savedSearchUuid,
       );
       if (savedSearch) {
-        setTempSearchQuery({ ...savedSearch });
+        setTempSearchQuery({ ...savedSearch }, true);
       }
+    } else {
+      setTempSearchQuery({ uuid: undefined });
     }
     setSaveSearchDialogOpened(true);
   }
@@ -124,14 +147,16 @@ export const SearchQueryContextProvider = ({
     setSaveSearchDialogOpened(false);
   }
 
-  const context = {
-    tempSearchQuery: tempSearchQuery.current,
-    executeSearch: executeSearch,
-    clearSearch: clearSearch,
-    setTempSearchQuery: setTempSearchQuery,
-    openSaveSearchDialog: openSaveSearchDialog,
-    closeSaveSearchDialog: closeSaveSearchDialog,
-  };
+  const context = useMemo(() => {
+    return {
+      tempSearchQuery: tempSearchQuery.current,
+      executeSearch: executeSearch,
+      clearSearch: clearSearch,
+      setTempSearchQuery: setTempSearchQuery,
+      openSaveSearchDialog: openSaveSearchDialog,
+      closeSaveSearchDialog: closeSaveSearchDialog,
+    };
+  }, [tempSearchQuery.current]);
 
   return (
     <SearchQueryContext.Provider value={context}>

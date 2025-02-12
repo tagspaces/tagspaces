@@ -56,6 +56,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TagsSelect from './TagsSelect';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { Stack } from '@mui/material';
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -160,7 +161,7 @@ function EditSearchQuery(props: Props) {
   };
 
   return (
-    <>
+    <Stack component="form" spacing={2} noValidate autoComplete="off">
       <TsTextField
         id="searchTerm"
         label={t('core:searchQueryInfo')}
@@ -553,7 +554,11 @@ function EditSearchQuery(props: Props) {
                 <DatePicker
                   disabled={isIndexing !== undefined}
                   format="yyyy-MM-dd"
-                  value={new Date(tempSearchQuery.tagTimePeriodFrom)}
+                  value={
+                    tempSearchQuery.tagTimePeriodFrom
+                      ? new Date(tempSearchQuery.tagTimePeriodFrom)
+                      : undefined
+                  }
                   onChange={(fromDataTime: Date) => {
                     if (fromDataTime) {
                       setTempSearchQuery({
@@ -570,7 +575,11 @@ function EditSearchQuery(props: Props) {
                 <DatePicker
                   disabled={isIndexing !== undefined}
                   format="yyyy-MM-dd"
-                  value={new Date(tempSearchQuery.tagTimePeriodTo)}
+                  value={
+                    tempSearchQuery.tagTimePeriodTo
+                      ? new Date(tempSearchQuery.tagTimePeriodTo)
+                      : undefined
+                  }
                   onChange={(toDataTime: Date) => {
                     if (toDataTime) {
                       setTempSearchQuery({
@@ -584,7 +593,7 @@ function EditSearchQuery(props: Props) {
           </LocalizationProvider>
         </TooltipTS>
       </FormControl>
-    </>
+    </Stack>
   );
 }
 

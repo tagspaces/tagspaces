@@ -51,11 +51,15 @@ interface Props {
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
-  const { openCurrentDirectory, searchQuery, setSearchQuery, exitSearchMode } =
+  const { openCurrentDirectory, setSearchQuery, exitSearchMode } =
     useDirectoryContentContext();
   const { searches } = useSavedSearchesContext();
-  const { setTempSearchQuery, openSaveSearchDialog, executeSearch } =
-    useSearchQueryContext();
+  const {
+    tempSearchQuery,
+    setTempSearchQuery,
+    openSaveSearchDialog,
+    executeSearch,
+  } = useSearchQueryContext();
   const { getIndex, isIndexing } = useLocationIndexContext();
 
   const handleSavedSearchChange = (
@@ -69,7 +73,7 @@ function SearchPopover(props: Props) {
     if (!savedSearch) {
       return true;
     }
-    setTempSearchQuery({ ...savedSearch });
+    setTempSearchQuery({ ...savedSearch }, true);
   };
 
   const clearSearch = () => {
@@ -78,10 +82,6 @@ function SearchPopover(props: Props) {
       setSearchQuery({});
       exitSearchMode();
     });
-  };
-
-  const saveSearch = (isNew = true) => {
-    openSaveSearchDialog();
   };
 
   const indexStatus = getIndex()
@@ -155,7 +155,7 @@ function SearchPopover(props: Props) {
                   displayEmpty
                   fullWidth
                   variant="outlined"
-                  value={searchQuery.uuid ? searchQuery.uuid : -1}
+                  value={tempSearchQuery.uuid ? tempSearchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
                   {searches.length < 1 && (
@@ -181,11 +181,11 @@ function SearchPopover(props: Props) {
                 width: '100%',
               }}
             >
-              {searchQuery.uuid && (
+              {tempSearchQuery.uuid && (
                 <TsIconButton
                   tooltip={t('editSavedSearchTitle')}
                   data-tid="editSearchBtnTID"
-                  onClick={() => saveSearch(false)}
+                  onClick={() => openSaveSearchDialog(tempSearchQuery.uuid)}
                 >
                   <EditIcon />
                 </TsIconButton>
@@ -193,7 +193,7 @@ function SearchPopover(props: Props) {
               <TsIconButton
                 tooltip={t('createNewSavedSearchTitle')}
                 data-tid="addSearchBtnTID"
-                onClick={() => saveSearch()}
+                onClick={() => openSaveSearchDialog()}
               >
                 <CreateFileIcon />
               </TsIconButton>

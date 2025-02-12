@@ -358,7 +358,7 @@ function SearchAutocomplete(props: Props) {
   };
 
   function resetValues(exceptions: Array<SearchOptionType>) {
-    setTempSearchQuery({ textQuery: '' });
+    setTempSearchQuery({ textQuery: '' }, true);
     if (
       !exceptions.some((action) =>
         isAction(action.action, SearchQueryComposition.SCOPE),
@@ -1090,7 +1090,7 @@ function SearchAutocomplete(props: Props) {
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
-          setTempSearchQuery({ textQuery: option.label });
+          setTempSearchQuery({ textQuery: option.label }, true);
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
@@ -1123,7 +1123,7 @@ function SearchAutocomplete(props: Props) {
       const inputArr = valueArr.filter(
         (action) => !actionValues.current.some((v) => v.label === action),
       );
-      setTempSearchQuery({ textQuery: inputArr.join(' ') });
+      setTempSearchQuery({ textQuery: inputArr.join(' ') }, true);
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();

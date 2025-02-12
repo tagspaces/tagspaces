@@ -51,18 +51,19 @@ function SaveSearchDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { t } = useTranslation();
-  const [inputError, setInputError] = useState<string>('');
+  const inputError = useRef<string>(undefined);
   const title = useRef<string>(getTitle());
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (tempSearchQuery) {
+      title.current = getTitle();
       if (tempSearchQuery.uuid === undefined) {
         handleValidation();
-      } else {
-        title.current = getTitle();
-        forceUpdate();
+      } else if (inputError.current) {
+        inputError.current = undefined;
       }
+      forceUpdate();
     }
   }, [tempSearchQuery]);
 
@@ -79,14 +80,14 @@ function SaveSearchDialog(props: Props) {
 
   function onConfirm() {
     if (title.current) {
-      setTempSearchQuery({ title: title.current });
+      const searchQuery = setTempSearchQuery({ title: title.current });
 
-      if (tempSearchQuery.uuid !== undefined) {
-        editSearch(tempSearchQuery);
+      if (searchQuery.uuid !== undefined) {
+        editSearch(searchQuery);
         onClose();
       } else {
-        tempSearchQuery.uuid = getUuid();
-        addSearch(tempSearchQuery);
+        searchQuery.uuid = getUuid();
+        addSearch(searchQuery);
         onClose();
       }
     }
@@ -94,19 +95,22 @@ function SaveSearchDialog(props: Props) {
 
   function handleValidation() {
     if (!title.current) {
-      setInputError(t('core:emptyTitle'));
+      inputError.current = t('core:emptyTitle');
+      forceUpdate();
     } else if (
       searches.findIndex((search) => search.title === title.current) > -1
     ) {
-      setInputError(t('core:duplicateTitle'));
-    } else if (inputError) {
-      setInputError('');
+      inputError.current = t('core:duplicateTitle');
+      forceUpdate();
+    } else if (inputError.current) {
+      inputError.current = undefined;
+      forceUpdate();
     }
   }
 
   const okButton = (
     <TsButton
-      disabled={inputError !== ''}
+      disabled={!!inputError.current}
       onClick={onConfirm}
       data-tid="confirmSavedSearchTID"
       variant="contained"
@@ -149,7 +153,7 @@ function SaveSearchDialog(props: Props) {
       <DialogContent style={{ minWidth: smallScreen ? 'unset' : 300 }}>
         <FormControl fullWidth={true}>
           <TsTextField
-            error={inputError !== ''}
+            error={!!inputError.current}
             autoFocus
             name="name"
             value={title.current}
@@ -163,27 +167,38 @@ function SaveSearchDialog(props: Props) {
             retrieveValue={() => title.current}
             data-tid="savedSearchTID"
           />
-          <FormHelperText style={{ marginLeft: 0 }} error={inputError !== ''}>
-            {inputError !== '' ? inputError : t('core:savedSearchHelp')}
+          <FormHelperText
+            style={{ marginLeft: 0 }}
+            error={!!inputError.current}
+          >
+            {!!inputError.current
+              ? inputError.current
+              : t('core:savedSearchHelp')}
           </FormHelperText>
         </FormControl>
         <EditSearchQuery />
-        {tempSearchQuery?.uuid !== undefined && (
-          <TsButton
-            onClick={onDelete}
-            data-tid="deleteSavedSearchTID"
-            style={{ marginTop: AppConfig.defaultSpaceBetweenButtons }}
-          >
-            {t('core:delete')}
-          </TsButton>
-        )}
       </DialogContent>
       {!smallScreen && (
-        <TsDialogActions>
-          <TsButton data-tid="closeSavedSearchTID" onClick={() => onClose()}>
-            {t('core:cancel')}
-          </TsButton>
-          {okButton}
+        <TsDialogActions style={{ justifyContent: 'space-between' }}>
+          <div>
+            {tempSearchQuery?.uuid !== undefined && (
+              <TsButton onClick={onDelete} data-tid="deleteSavedSearchTID">
+                {t('core:delete')}
+              </TsButton>
+            )}
+          </div>
+          <div>
+            <TsButton
+              data-tid="closeSavedSearchTID"
+              onClick={() => onClose()}
+              style={{
+                marginRight: AppConfig.defaultSpaceBetweenButtons,
+              }}
+            >
+              {t('core:cancel')}
+            </TsButton>
+            {okButton}
+          </div>
         </TsDialogActions>
       )}
     </Dialog>
