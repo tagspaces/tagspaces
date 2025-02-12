@@ -357,7 +357,7 @@ function EditSearchQuery(props: Props) {
           </FormHelperText>
           <Select
             fullWidth
-            value={tempSearchQuery.fileTypes}
+            value={JSON.stringify(tempSearchQuery.fileTypes)}
             onChange={handleFileTypeChange}
             size={desktopMode ? 'small' : 'medium'}
             input={<OutlinedInput name="fileTypes" id="file-type" />}

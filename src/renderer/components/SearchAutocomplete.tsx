@@ -1273,7 +1273,9 @@ function SearchAutocomplete(props: Props) {
             v.fullName ? v.fullName : v.label,
           )}
           onChange={handleChange}
-          inputValue={tempSearchQuery.textQuery}
+          inputValue={
+            tempSearchQuery.textQuery ? tempSearchQuery.textQuery : ''
+          }
           onInputChange={handleInputChange}
           open={isOpen.current}
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
