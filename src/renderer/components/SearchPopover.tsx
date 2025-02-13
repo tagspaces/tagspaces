@@ -50,6 +50,7 @@ interface Props {
 
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
+  const { onClose } = props;
   const desktopMode = useSelector(isDesktopMode);
   const { openCurrentDirectory, setSearchQuery, exitSearchMode } =
     useDirectoryContentContext();
@@ -77,7 +78,7 @@ function SearchPopover(props: Props) {
   };
 
   const clearSearch = () => {
-    props.onClose();
+    onClose();
     openCurrentDirectory().then(() => {
       setSearchQuery({});
       exitSearchMode();
@@ -110,7 +111,7 @@ function SearchPopover(props: Props) {
         <TsIconButton
           style={{ marginLeft: 'auto', height: 40 }}
           data-tid="closeSearchTID"
-          onClick={props.onClose}
+          onClick={onClose}
         >
           <CloseIcon />
         </TsIconButton>
@@ -228,7 +229,10 @@ function SearchPopover(props: Props) {
             variant="contained"
             disabled={isIndexing !== undefined}
             id="searchButtonAdvTID"
-            onClick={() => executeSearch()}
+            onClick={() => {
+              executeSearch();
+              onClose();
+            }}
           >
             {isIndexing !== undefined
               ? 'Search disabled while indexing'
