@@ -45,16 +45,15 @@ export function getSearchOptions(): Array<SearchOptionType> {
     });
   }
 
-  if (Pro) {
-    options.push({
-      id: SearchActions.SEARCH.shortName,
-      label: SearchActions.SEARCH.shortName,
-      fullName: SearchActions.SEARCH.fullName,
-      action: SearchActions.SEARCH.shortName,
-      descr: 'find and execute saved search queries',
-      group: 'actions',
-    });
-  }
+  options.push({
+    id: SearchActions.SEARCH.shortName,
+    label: SearchActions.SEARCH.shortName,
+    fullName: SearchActions.SEARCH.fullName,
+    action: SearchActions.SEARCH.shortName,
+    descr: 'find and execute saved search queries',
+    group: 'actions',
+  });
+
   if (Pro) {
     options.push({
       id: SearchActions.SEARCH_HISTORY.shortName,
