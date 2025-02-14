@@ -72,12 +72,11 @@ import { isDesktopMode } from '-/reducers/settings';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 
 interface Props {
   style?: any;
   open: boolean;
-  textQuery: string;
-  setTextQuery: (value: string) => void;
   setAnchorSearch: (el: HTMLButtonElement) => void;
 }
 
@@ -104,6 +103,7 @@ function SearchAutocomplete(props: Props) {
     searchQuery,
     setSearchQuery,
   } = useDirectoryContentContext();
+  const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const { openHistoryItem } = useBrowserHistoryContext();
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
@@ -120,7 +120,7 @@ function SearchAutocomplete(props: Props) {
 
   const openLinkDispatch = (link, options) => openLink(link, options);
 
-  const { setTextQuery, textQuery, open, setAnchorSearch } = props;
+  const { open, setAnchorSearch } = props;
   const [openSavedSearches, setOpenSavedSearches] =
     useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
@@ -215,11 +215,10 @@ function SearchAutocomplete(props: Props) {
 
       let txtQuery = '';
       if (searchQuery.textQuery) {
-        setTextQuery(searchQuery.textQuery);
         txtQuery = searchQuery.textQuery;
         emptySearch = false;
-      } else if (textQuery) {
-        txtQuery = textQuery;
+      } else if (tempSearchQuery && tempSearchQuery.textQuery) {
+        txtQuery = tempSearchQuery.textQuery;
         emptySearch = false;
       }
 
@@ -344,7 +343,10 @@ function SearchAutocomplete(props: Props) {
         forceUpdate();
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
-      if (textQuery.length === 0 && actionValues.current.length > 0) {
+      if (
+        tempSearchQuery.textQuery.length === 0 &&
+        actionValues.current.length > 0
+      ) {
         actionValues.current = actionValues.current.slice(0, -1);
         resetActions(actionValues.current);
         isOpen.current = true;
@@ -356,7 +358,7 @@ function SearchAutocomplete(props: Props) {
   };
 
   function resetValues(exceptions: Array<SearchOptionType>) {
-    setTextQuery('');
+    setTempSearchQuery({ textQuery: '' }, true);
     if (
       !exceptions.some((action) =>
         isAction(action.action, SearchQueryComposition.SCOPE),
@@ -499,10 +501,10 @@ function SearchAutocomplete(props: Props) {
       return;
     }
     if (
-      textQuery.startsWith('ts:?ts') ||
-      textQuery.startsWith(AppConfig.tsProtocol + '?ts')
+      tempSearchQuery.textQuery.startsWith('ts:?ts') ||
+      tempSearchQuery.textQuery.startsWith(AppConfig.tsProtocol + '?ts')
     ) {
-      openLinkDispatch(textQuery, { fullWidth: false });
+      openLinkDispatch(tempSearchQuery.textQuery, { fullWidth: false });
       clearSearch();
       return;
     }
@@ -516,7 +518,7 @@ function SearchAutocomplete(props: Props) {
       SearchQueryComposition.TAG_NOT,
     );
     const sQuery: TS.SearchQuery = {
-      textQuery: textQuery,
+      textQuery: tempSearchQuery.textQuery,
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -983,7 +985,7 @@ function SearchAutocomplete(props: Props) {
             tagsNOT,
             executeSearch: false,
           });
-          setTextQuery('');
+          setTempSearchQuery({ textQuery: '' });
           if (hasOptionsChanged) {
             changeOptions(option.action);
           }
@@ -1088,7 +1090,7 @@ function SearchAutocomplete(props: Props) {
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
-          setTextQuery(option.label);
+          setTempSearchQuery({ textQuery: option.label }, true);
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
@@ -1121,7 +1123,7 @@ function SearchAutocomplete(props: Props) {
       const inputArr = valueArr.filter(
         (action) => !actionValues.current.some((v) => v.label === action),
       );
-      setTextQuery(inputArr.join(' '));
+      setTempSearchQuery({ textQuery: inputArr.join(' ') }, true);
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();
@@ -1182,7 +1184,6 @@ function SearchAutocomplete(props: Props) {
     if (actions.length === 0) {
       searchOptions.current = getSearchOptions();
       currentOptions.current = undefined;
-      // textQuery.current = ''; todo remove tagsAnd from search query
     } else {
       actionValues.current = execActions(actions, [], false);
       searchOptions.current = getSearchOptions().filter(
@@ -1272,7 +1273,9 @@ function SearchAutocomplete(props: Props) {
             v.fullName ? v.fullName : v.label,
           )}
           onChange={handleChange}
-          inputValue={textQuery}
+          inputValue={
+            tempSearchQuery.textQuery ? tempSearchQuery.textQuery : ''
+          }
           onInputChange={handleInputChange}
           open={isOpen.current}
           filterOptions={(options: Array<SearchOptionType>, state: any) => {

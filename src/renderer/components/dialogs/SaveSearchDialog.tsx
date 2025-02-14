@@ -35,81 +35,82 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import EditSearchQuery from '-/components/EditSearchQuery';
 
 interface Props {
   open: boolean;
   onClose: (searchQuery?: TS.SearchQuery) => void;
-  onClearSearch: () => void;
-  searchQuery: TS.SearchQuery;
 }
 
 function SaveSearchDialog(props: Props) {
-  const { open, onClose, searchQuery, onClearSearch } = props;
+  const { open, onClose } = props;
   const { searches, addSearch, editSearch, removeSearch } =
     useSavedSearchesContext();
+  const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { t } = useTranslation();
-  const [inputError, setInputError] = useState<string>('');
+  const inputError = useRef<string>(undefined);
   const title = useRef<string>(getTitle());
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (searchQuery) {
-      if (searchQuery.uuid === undefined) {
+    if (tempSearchQuery) {
+      title.current = getTitle();
+      if (tempSearchQuery.uuid === undefined) {
         handleValidation();
-      } else {
-        title.current = getTitle();
-        forceUpdate();
+      } else if (inputError.current) {
+        inputError.current = undefined;
       }
+      forceUpdate();
     }
-  }, [searchQuery]);
+  }, [tempSearchQuery]);
 
   function getTitle() {
-    return searchQuery && searchQuery.uuid !== undefined
-      ? searchQuery.title
-      : defaultTitle(searchQuery);
+    return tempSearchQuery && tempSearchQuery.uuid !== undefined
+      ? tempSearchQuery.title
+      : defaultTitle(tempSearchQuery);
   }
 
   function onDelete() {
-    removeSearch(searchQuery?.uuid);
-    onClearSearch();
+    removeSearch(tempSearchQuery?.uuid);
     onClose();
   }
 
   function onConfirm() {
     if (title.current) {
-      const searchQuery = {
-        ...props.searchQuery,
-        title: title.current,
-      };
+      const searchQuery = setTempSearchQuery({ title: title.current });
 
-      if (props.searchQuery.uuid !== undefined) {
+      if (searchQuery.uuid !== undefined) {
         editSearch(searchQuery);
         onClose();
       } else {
         searchQuery.uuid = getUuid();
         addSearch(searchQuery);
-        onClose(searchQuery);
+        onClose();
       }
     }
   }
 
   function handleValidation() {
     if (!title.current) {
-      setInputError(t('core:emptyTitle'));
+      inputError.current = t('core:emptyTitle');
+      forceUpdate();
     } else if (
       searches.findIndex((search) => search.title === title.current) > -1
     ) {
-      setInputError(t('core:duplicateTitle'));
-    } else if (inputError) {
-      setInputError('');
+      inputError.current = t('core:duplicateTitle');
+      forceUpdate();
+    } else if (inputError.current) {
+      inputError.current = undefined;
+      forceUpdate();
     }
   }
 
   const okButton = (
     <TsButton
-      disabled={inputError !== ''}
+      disabled={!!inputError.current}
       onClick={onConfirm}
       data-tid="confirmSavedSearchTID"
       variant="contained"
@@ -141,7 +142,7 @@ function SaveSearchDialog(props: Props) {
     >
       <TsDialogTitle
         dialogTitle={t(
-          searchQuery?.uuid !== undefined
+          tempSearchQuery?.uuid !== undefined
             ? 'core:editSavedSearchTitle'
             : 'core:createNewSavedSearchTitle',
         )}
@@ -152,7 +153,7 @@ function SaveSearchDialog(props: Props) {
       <DialogContent style={{ minWidth: smallScreen ? 'unset' : 300 }}>
         <FormControl fullWidth={true}>
           <TsTextField
-            error={inputError !== ''}
+            error={!!inputError.current}
             autoFocus
             name="name"
             value={title.current}
@@ -163,32 +164,41 @@ function SaveSearchDialog(props: Props) {
               handleValidation();
               forceUpdate();
             }}
-            // updateValue={(value) => {
-            //   title.current = value;
-            // }}
             retrieveValue={() => title.current}
             data-tid="savedSearchTID"
           />
-          <FormHelperText style={{ marginLeft: 0 }} error={inputError !== ''}>
-            {inputError !== '' ? inputError : t('core:savedSearchHelp')}
+          <FormHelperText
+            style={{ marginLeft: 0 }}
+            error={!!inputError.current}
+          >
+            {!!inputError.current
+              ? inputError.current
+              : t('core:savedSearchHelp')}
           </FormHelperText>
         </FormControl>
-        {searchQuery?.uuid !== undefined && (
-          <TsButton
-            onClick={onDelete}
-            data-tid="deleteSavedSearchTID"
-            style={{ marginTop: AppConfig.defaultSpaceBetweenButtons }}
-          >
-            {t('core:delete')}
-          </TsButton>
-        )}
+        <EditSearchQuery />
       </DialogContent>
       {!smallScreen && (
-        <TsDialogActions>
-          <TsButton data-tid="closeSavedSearchTID" onClick={() => onClose()}>
-            {t('core:cancel')}
-          </TsButton>
-          {okButton}
+        <TsDialogActions style={{ justifyContent: 'space-between' }}>
+          <div>
+            {tempSearchQuery?.uuid !== undefined && (
+              <TsButton onClick={onDelete} data-tid="deleteSavedSearchTID">
+                {t('core:delete')}
+              </TsButton>
+            )}
+          </div>
+          <div>
+            <TsButton
+              data-tid="closeSavedSearchTID"
+              onClick={() => onClose()}
+              style={{
+                marginRight: AppConfig.defaultSpaceBetweenButtons,
+              }}
+            >
+              {t('core:cancel')}
+            </TsButton>
+            {okButton}
+          </div>
         </TsDialogActions>
       )}
     </Dialog>

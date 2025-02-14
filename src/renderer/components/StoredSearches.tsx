@@ -50,6 +50,7 @@ import RenderHistory from '-/components/RenderHistory';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 
 interface Props {
   style?: any;
@@ -69,8 +70,8 @@ interface Props {
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
-  const { setSearchQuery } = useDirectoryContentContext();
   const { searches, findFromSavedSearch } = useSavedSearchesContext();
+  const { openSaveSearchDialog } = useSearchQueryContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(
         Pro?.contextProviders?.BookmarksContext,
@@ -79,8 +80,6 @@ function StoredSearches(props: Props) {
   const historyContext = Pro?.contextProviders?.HistoryContext
     ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
-  const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
-    useState<TS.SearchQuery>(undefined);
   const [searchMenuAnchorEl, setSearchMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [historyMenuAnchorEl, setHistoryMenuAnchorEl] =
@@ -109,14 +108,6 @@ function StoredSearches(props: Props) {
 
   const handleCloseSearchMenu = () => {
     setSearchMenuAnchorEl(null);
-  };
-
-  const editSearch = (uuid: string) => {
-    const savedSearch = searches.find((search) => search.uuid === uuid);
-    if (!savedSearch) {
-      return true;
-    }
-    setSaveSearchDialogOpened(savedSearch);
   };
 
   function handleFileInputChange(selection: any) {
@@ -276,7 +267,7 @@ function StoredSearches(props: Props) {
               <Grid item xs={2}>
                 <TsIconButton
                   aria-label={t('core:searchEditBtn')}
-                  onClick={() => editSearch(search.uuid)}
+                  onClick={() => openSaveSearchDialog(search.uuid)}
                   data-tid="editSearchTID"
                 >
                   <EditIcon />
@@ -496,20 +487,6 @@ function StoredSearches(props: Props) {
             update={forceUpdate}
           />
         )}
-        <SaveSearchDialog
-          open={saveSearchDialogOpened !== undefined}
-          onClose={(searchQuery: TS.SearchQuery) => {
-            setSaveSearchDialogOpened(undefined);
-            if (searchQuery) {
-              setSearchQuery({
-                ...searchQuery,
-                showUnixHiddenEntries: props.showUnixHiddenEntries,
-              });
-            }
-          }}
-          onClearSearch={() => console.log('search deleted')}
-          searchQuery={saveSearchDialogOpened}
-        />
       </div>
       <input
         style={{ display: 'none' }}
