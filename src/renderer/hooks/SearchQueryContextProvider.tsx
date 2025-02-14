@@ -1,7 +1,27 @@
-/*
-Copyright (c) 2024-present The TagSpaces GmbH. All rights reserved.
-*/
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2025-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 
+import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import React, {
   createContext,
   useEffect,
@@ -10,13 +30,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
-import { TS } from '-/tagspaces.namespace';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
 import { useSelector } from 'react-redux';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
-import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 
 type SearchQueryContextData = {
   tempSearchQuery: TS.SearchQuery;
