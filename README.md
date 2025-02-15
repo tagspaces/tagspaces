@@ -177,7 +177,7 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 
 ## Feeds
 
-- Subscribe to RSS feed updates for the [tagspaces blog](http://tagspaces.org/blog/feed.xml)
+- Subscribe to RSS feed updates for the [tagspaces blog](http://www.tagspaces.org/blog/rss.xml)
 - Subscribe to RSS feed updates for the [master branch](https://github.com/tagspaces/tagspaces/commits/master.atom)
 
 ## License
