@@ -17,8 +17,6 @@
  */
 
 import React from 'react';
-import AppConfig from '-/AppConfig';
-import LoadingLazy from '-/components/LoadingLazy';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Box } from '@mui/material';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';

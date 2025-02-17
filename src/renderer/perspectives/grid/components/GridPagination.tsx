@@ -31,7 +31,6 @@ import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { getDescriptionPreview } from '-/services/utils-io';
-import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -355,13 +354,12 @@ function GridPagination(props: Props) {
                   borderRadius: 10,
                 }}
               >
-                <MilkdownEditor
+                {/*<MilkdownEditor
                   content={directoryMeta.description}
                   readOnly={true}
-                  /*dark={theme.palette.mode === 'dark'}*/
                   currentFolder={currentDirectoryPath}
                   lightMode={true}
-                />
+                />*/}
               </Grid>
             )}
           </Grid>

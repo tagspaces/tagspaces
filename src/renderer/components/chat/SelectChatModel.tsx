@@ -70,6 +70,7 @@ function SelectChatModel(props: Props) {
   const ollamaAvailableModels: ModelResponse[] = [
     {
       name: 'llama3.1',
+      model: 'llama3.1',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -87,6 +88,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llama3.2',
+      model: 'llama3.2',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -104,6 +106,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llama3.2-vision:11b',
+      model: 'llama3.2-vision:11b',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -120,6 +123,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'gemma2',
+      model: 'gemma2',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -137,6 +141,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'codegemma',
+      model: 'codegemma',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -154,6 +159,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'llava',
+      model: 'llava',
       modified_at: new Date(),
       size: 1,
       digest: '',
@@ -171,6 +177,7 @@ function SelectChatModel(props: Props) {
     },
     {
       name: 'tinyllama',
+      model: 'tinyllama',
       modified_at: new Date(),
       size: 1,
       digest: '',

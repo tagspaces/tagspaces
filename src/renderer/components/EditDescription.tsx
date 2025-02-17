@@ -21,9 +21,9 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import CrepeMdEditor from '-/components/CrepeMdEditor';
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -38,13 +38,13 @@ function EditDescription() {
     isEditMode,
   } = useFilePropertiesContext();
 
-  const fileDescriptionRef = useRef<MilkdownRef>(null);
+  //const fileDescriptionRef = useRef<MilkdownRef>(null);
   const descriptionFocus = useRef<boolean>(false);
   // const descriptionButtonsRef = useRef(null);
 
-  useEffect(() => {
+  /*useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
+  }, [theme]);*/
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -116,20 +116,11 @@ function EditDescription() {
                 }
              `}
             </style>
-            <MilkdownEditor
-              ref={fileDescriptionRef}
+            <CrepeMdEditor
               content={description || ''}
+              isEditMode={isEditDescriptionMode}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}
-              readOnly={!isEditDescriptionMode}
-              lightMode={false}
-              excludePlugins={
-                !isEditDescriptionMode
-                  ? ['menu', 'upload', 'slash']
-                  : ['slash', 'block']
-              }
-              mode="description"
-              currentFolder={currentDirectoryPath}
             />
           </>
         )}
@@ -145,7 +136,7 @@ function EditDescription() {
           <b className={classes.mdHelpers}>**bold**</b>{' '}
           <span className={classes.mdHelpers}>* list item</span>{' '}
           <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography> 
+        </Typography>
       </span> */}
     </div>
   );

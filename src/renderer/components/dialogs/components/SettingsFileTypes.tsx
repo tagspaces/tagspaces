@@ -280,7 +280,7 @@ function SettingsFileTypes() {
         sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
       />
     ),
-    TableHead,
+    //TableHead: CustomTableHead,
     TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
     TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
       <TableBody {...props} ref={ref} />

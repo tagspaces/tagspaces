@@ -45,7 +45,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { format } from 'date-fns';
 import React, {
   ChangeEvent,
@@ -78,7 +77,7 @@ function ChatView() {
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
-  const editorRef = useRef<MilkdownRef>(null);
+  //const editorRef = useRef<MilkdownRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>(undefined);
   //const txtInputRef = useRef<HTMLInputElement>(null);
@@ -106,9 +105,9 @@ function ChatView() {
     };
   }, []);*/
 
-  useEffect(() => {
+  /* useEffect(() => {
     editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
+  }, [theme]);*/
 
   /*useEffect(() => {
     if (AppConfig.isElectron) {
@@ -289,7 +288,7 @@ function ChatView() {
 
   const saveAsMarkdown = () => {
     setAnchorEl(null);
-    if (editorRef.current) {
+    /* if (editorRef.current) {
       const md = editorRef.current.getMarkdown();
       const blob = new Blob([md], {
         type: 'text/markdown',
@@ -298,7 +297,7 @@ function ChatView() {
       const filename = 'tagspaces-chat [export ' + dateTimeTag + '].md';
 
       saveAsTextFile(blob, filename);
-    }
+    }*/
   };
 
   const { FILE } = NativeTypes;
@@ -372,12 +371,12 @@ function ChatView() {
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
-            <MilkdownEditor
+            {/*<MilkdownEditor
               ref={editorRef}
               content={formatChatItems(chatHistoryItems)}
               readOnly={true}
               lightMode={true}
-            />
+            />*/}
           </div>
         </Grid2>
         <Grid2 container spacing={1} direction="column">
