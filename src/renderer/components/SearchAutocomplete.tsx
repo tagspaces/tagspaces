@@ -501,8 +501,9 @@ function SearchAutocomplete(props: Props) {
       return;
     }
     if (
-      tempSearchQuery.textQuery.startsWith('ts:?ts') ||
-      tempSearchQuery.textQuery.startsWith(AppConfig.tsProtocol + '?ts')
+      tempSearchQuery.textQuery &&
+      (tempSearchQuery.textQuery.startsWith('ts:?ts') ||
+        tempSearchQuery.textQuery.startsWith(AppConfig.tsProtocol + '?ts'))
     ) {
       openLinkDispatch(tempSearchQuery.textQuery, { fullWidth: false });
       clearSearch();

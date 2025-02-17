@@ -418,14 +418,30 @@ export async function expectElementSelected(
   isSelected = true,
   timeout = 4000,
 ) {
-  // [data-testid="' + (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') + '"]
-  const sel = '[data-tid="fsEntryName_' + dataTidFormat(selector) + '"]';
+  const sel = `[data-tid="fsEntryName_${dataTidFormat(selector)}"]`;
+
   await expectElementExist(sel, true, timeout);
+
   const item = await global.client.$(sel);
-  const style = await item.getAttribute('style');
-  const selected =
-    style.indexOf('rgb(29') !== -1 && style.indexOf('transparent') === -1;
-  expect(selected).toBe(isSelected);
+
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    const finalStyle = await item.evaluate((el) => el.getAttribute('style'));
+    const selected =
+      finalStyle.includes('rgb(29') && !finalStyle.includes('transparent');
+
+    if (selected === isSelected) {
+      expect(selected).toBe(isSelected); // Pass the test if the condition is met
+      return;
+    }
+
+    await global.client.waitForTimeout(100); // Small delay to avoid excessive CPU usage
+  }
+
+  throw new Error(
+    `Element ${sel} did not reach expected selected state: ${isSelected} within ${timeout}ms`,
+  );
 }
 
 export async function expectElementExist(

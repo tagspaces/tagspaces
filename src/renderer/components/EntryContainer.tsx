@@ -325,7 +325,11 @@ function EntryContainer() {
                 ? content.slice(1)
                 : content;
               fileViewer.current.contentWindow.postMessage(
-                { action: 'fileContent', content: cleanedContent },
+                {
+                  action: 'fileContent',
+                  content: cleanedContent,
+                  isEditMode: isEditMode,
+                },
                 '*',
               );
             });

@@ -247,6 +247,7 @@ test.describe('TST50** - Right button on a file', () => {
 
     // cleanup
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
     await selectRowFiles([0, 1, 2]);
     await AddRemoveTagsToSelectedFiles('grid', [testTagName], false);
     await expectElementExist(

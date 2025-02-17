@@ -19,13 +19,11 @@
 import React, { MutableRefObject, useEffect } from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import useEventListener from '-/utils/useEventListener';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import AppConfig from '-/AppConfig';
-import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   isFullscreen?: boolean;

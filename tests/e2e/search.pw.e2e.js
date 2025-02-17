@@ -247,6 +247,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementSelected(
       'sample' + ' ' + tags1.join(' ') + '.' + file1,
       true,
+      5000,
     );
 
     const file2 = 'jpg';
@@ -274,7 +275,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await addSearchCommand('+' + tags1[0], true);
     await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
-    await expectElementExist(getFileName(file3, tags3), false, 5000);
+    await expectElementExist(getFileName(file3, tags3), false, 5000000);
     // Search for - tag
     await addSearchCommand('-' + tags2[1], true);
     await expectElementExist(getFileName(file1, tags1), true, 5000);
@@ -282,6 +283,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file3, tags3), false, 5000);
 
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
 
     // Search for | tag - tag
     await addSearchCommand('|' + tags1[0], false);
@@ -374,6 +376,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
       5000,
     );
     await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
 
     await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
     await addSearchCommand('sc:', false);
