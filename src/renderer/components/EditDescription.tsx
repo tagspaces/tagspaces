@@ -23,7 +23,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import CrepeMdEditor from '-/components/CrepeMdEditor';
+import CrepeMdEditor from '-/components/md/CrepeMdEditor';
 
 function EditDescription() {
   const { t } = useTranslation();

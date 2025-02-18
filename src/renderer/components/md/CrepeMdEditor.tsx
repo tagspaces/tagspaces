@@ -16,12 +16,15 @@
  *
  */
 import React, { useRef } from 'react';
-
+import { editorViewOptionsCtx } from '@milkdown/core';
 import AppConfig from '-/AppConfig';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { Crepe } from '@milkdown/crepe';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { EditorView } from 'prosemirror-view';
+import { Ctx } from '@milkdown/ctx';
+import { getHref } from '-/components/md/utils';
 
 interface CrepeMdEditorProps {
   isEditMode: boolean;
@@ -32,7 +35,7 @@ interface CrepeMdEditorProps {
 
 const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
   const { isEditMode, content, onChange, onFocus } = props;
-  const { openedEntry } = useOpenedEntryContext();
+  const { openedEntry, openLink } = useOpenedEntryContext();
   const focus = useRef<boolean>(false);
 
   const { get, loading } = useEditor(
@@ -78,17 +81,19 @@ const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
         console.log('Editor created');
         //sendMessageToHost({ command: 'parentLoadTextContent' });
       });
-      /*crepe.editor.config((ctx: Ctx) => {
-      ctx.update(editorViewOptionsCtx, prev => ({
-        ...prev,
-        /!*attributes: {
-          class: 'mx-auto h-full' // text-center w-1/2 flex justify-center items-center h-screen
-        },*!/
-        editable: () => isEditable,
-        handleClickOn: (view: EditorView, pos: number) =>
-            handleClick(textEditorMode, ctx, view, pos) //, node)
-      }));
-    });*/
+      crepe.editor.config((ctx: Ctx) => {
+        ctx.update(editorViewOptionsCtx, (prev) => ({
+          ...prev,
+          handleClickOn: (view: EditorView, pos: number) => {
+            if (!isEditMode) {
+              const href = getHref(ctx, view, pos);
+              if (href) {
+                openLink(href, { fullWidth: false });
+              }
+            }
+          },
+        }));
+      });
 
       //preventDefaultClick
       /* const observer = new MutationObserver(() => {
@@ -103,7 +108,7 @@ const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
 
       return crepe;
     },
-    [isEditMode],
+    [isEditMode, content],
   );
 
   return <Milkdown />;
