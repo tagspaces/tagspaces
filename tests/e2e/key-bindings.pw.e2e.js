@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { extractFileNameWithoutExt } from '@tagspaces/tagspaces-common/paths';
 import { test, expect } from './fixtures';
 import { defaultLocationName } from './location.helpers';
 import {
@@ -9,7 +8,7 @@ import {
   expectElementExist,
   getGridFileSelector,
   selectorFile,
-  setInputKeys,
+  setInputValue,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
@@ -70,23 +69,20 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
   });
 
   test('TST1312 - Test rename file [electron]', async () => {
-    const newTitle = 'renamed';
+    const newTitle = 'renamed.pdf';
     await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('F2');
-    //await setInputValue('[data-tid=renameEntryDialogInput] input', newTitle);
-    const oldName = await setInputKeys('renameEntryDialogInput', newTitle);
+    const inputSelector = '[data-tid=renameEntryDialogInput] input';
+    const oldName = await global.client.inputValue(inputSelector);
+    await setInputValue(inputSelector, newTitle);
     await clickOn('[data-tid=confirmRenameEntry]');
     //await expectElementExist('[data-tid=detailsTabTID]', true);
-    await expectElementExist(
-      getGridFileSelector(newTitle + '.pdf'),
-      true,
-      5000,
-    );
+    await expectElementExist(getGridFileSelector(newTitle), true, 5000);
     //rename back
-    const name = extractFileNameWithoutExt(oldName, '/');
-    await clickOn(getGridFileSelector(newTitle + '.pdf'));
+    //const name = extractFileNameWithoutExt(oldName, '/');
+    await clickOn(getGridFileSelector(newTitle));
     await global.client.keyboard.press('F2');
-    await setInputKeys('renameEntryDialogInput', name);
+    await setInputValue(inputSelector, oldName);
     await clickOn('[data-tid=confirmRenameEntry]');
     await expectElementExist(getGridFileSelector(oldName), true, 5000);
   });

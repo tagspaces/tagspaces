@@ -142,6 +142,10 @@ export async function typeInputValue(inputSelector, value, delay = 0) {
   await global.client.type(inputSelector, value, {
     delay,
   });
+  if (global.isWin) {
+    // todo on windows not always wait for typing value
+    await global.client.waitForTimeout(1000);
+  }
   return oldValue;
 }
 
