@@ -17,8 +17,11 @@
  */
 import React, { useRef } from 'react';
 
+import AppConfig from '-/AppConfig';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { Crepe } from '@milkdown/crepe';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface CrepeMdEditorProps {
   isEditMode: boolean;
@@ -29,14 +32,14 @@ interface CrepeMdEditorProps {
 
 const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
   const { isEditMode, content, onChange, onFocus } = props;
-
+  const { openedEntry } = useOpenedEntryContext();
   const focus = useRef<boolean>(false);
 
   const { get, loading } = useEditor(
     (root) => {
       const crepe = new Crepe({
         root,
-        defaultValue: content || 'Loading...',
+        defaultValue: content,
         /* features: {
         [Crepe.Feature.CodeMirror]: false,
       },*/
@@ -45,9 +48,10 @@ const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
             text: 'Type / to use slash command',
           },
           [Crepe.Feature.ImageBlock]: {
-            /* proxyDomURL: (originalURL: string) => {
-              return mediaProtocol+`://example.com/${originalURL}`;
-            }*/
+            proxyDomURL: (originalURL: string) => {
+              const dirPath = extractContainingDirectoryPath(openedEntry.path);
+              return AppConfig.mediaProtocol + `:///${dirPath}/${originalURL}`;
+            },
           },
         },
       });
