@@ -16,14 +16,14 @@
  *
  */
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
+import CrepeMdEditor from '-/components/md/CrepeMdEditor';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import CrepeMdEditor from '-/components/md/CrepeMdEditor';
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -84,7 +84,7 @@ function EditDescription() {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          height: 'calc(100% - 20px)',
+          height: '100%',
           width: '100%',
           overflowY: 'auto',
         }}
@@ -108,6 +108,9 @@ function EditDescription() {
           <>
             <style>
               {`
+                .milkdown .ProseMirror {
+                    padding: 10px 30px 10px 80px;
+                }
                 .prose a {
                     color: ${theme.palette.primary.main};
                 }
