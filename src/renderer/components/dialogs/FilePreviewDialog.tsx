@@ -55,7 +55,6 @@ function FilePreviewDialog(props: Props) {
     useRef<HTMLIFrameElement>(null);
   const fileViewerContainer: MutableRefObject<HTMLDivElement> =
     useRef<HTMLDivElement>(null);
-  const eventID = useRef<string>(getUuid());
 
   const openedFile: TS.OpenedEntry =
     fsEntry && openedEntry
@@ -67,22 +66,6 @@ function FilePreviewDialog(props: Props) {
           // editMode: false,
         }
       : undefined;
-
-  useEventListener('message', (e) => {
-    if (typeof e.data === 'string') {
-      try {
-        const dataObj = JSON.parse(e.data);
-        if (dataObj.eventID === eventID.current) {
-          handleMessage(dataObj);
-        }
-      } catch (ex) {
-        console.debug(
-          'useEventListener message:' + e.data + ' parse error:',
-          ex,
-        );
-      }
-    }
-  });
 
   const handleMessage = (data: any) => {
     let message;
@@ -198,7 +181,7 @@ function FilePreviewDialog(props: Props) {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
-          eventID={eventID.current}
+          handleMessage={handleMessage}
         />
       </DialogContent>
     </Dialog>

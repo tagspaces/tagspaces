@@ -44,23 +44,26 @@ import {
   openFileMessage,
 } from '-/services/utils-io';
 import TsMenuList from '-/components/TsMenuList';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
   startClosingEntry: (event) => void;
-  toggleFullScreen: () => void;
   reloadDocument: () => void;
+  fileViewerContainer: HTMLDivElement;
 }
 
 function EntryContainerMenu(props: Props) {
   const {
     anchorEl,
     handleClose,
-    toggleFullScreen,
     reloadDocument,
     startClosingEntry,
+    fileViewerContainer,
   } = props;
+
+  const { toggleFullScreen } = useFullScreenContext();
   const { openedEntry } = useOpenedEntryContext();
   const { t } = useTranslation();
   // const theme = useTheme();
@@ -181,7 +184,7 @@ function EntryContainerMenu(props: Props) {
         data-tid="fileContainerSwitchToFullScreen"
         aria-label={t('core:switchToFullscreen')}
         onClick={() => {
-          toggleFullScreen();
+          toggleFullScreen(fileViewerContainer);
           handleClose();
         }}
       >

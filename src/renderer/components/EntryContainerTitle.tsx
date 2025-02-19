@@ -61,22 +61,22 @@ const FileBadge = styled('span')(({ theme }) => ({
 }));
 
 interface Props {
-  toggleFullScreen: () => void;
   reloadDocument: () => void;
   startClosingEntry: (event) => void;
   isEntryInFullWidth: boolean;
   desktopMode: boolean;
   smallScreen: boolean;
+  fileViewerContainer: HTMLDivElement;
 }
 
 function EntryContainerTitle(props: Props) {
   const {
     reloadDocument,
-    toggleFullScreen,
     startClosingEntry,
     isEntryInFullWidth,
     desktopMode,
     smallScreen,
+    fileViewerContainer,
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
@@ -304,7 +304,7 @@ function EntryContainerTitle(props: Props) {
         startClosingEntry={startClosingEntry}
         handleClose={() => setAnchorEl(null)}
         reloadDocument={reloadDocument}
-        toggleFullScreen={toggleFullScreen}
+        fileViewerContainer={fileViewerContainer}
       />
     </div>
   );

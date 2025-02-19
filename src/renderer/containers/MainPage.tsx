@@ -44,6 +44,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
+import { FullScreenContextProvider } from '-/hooks/FullScreenContextProvider';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -248,9 +249,11 @@ function MainPage(props: Props) {
             toggleDrawer={toggleDrawer}
             drawerOpened={drawerOpened}
           />
-          <FilePropertiesContextProvider>
-            <EntryContainer key="EntryContainerID" />
-          </FilePropertiesContextProvider>
+          <FullScreenContextProvider>
+            <FilePropertiesContextProvider>
+              <EntryContainer key="EntryContainerID" />
+            </FilePropertiesContextProvider>
+          </FullScreenContextProvider>
         </>
       );
     }
@@ -268,9 +271,11 @@ function MainPage(props: Props) {
           drawerOpened={drawerOpened}
         />
         {openedEntry && (
-          <FilePropertiesContextProvider>
-            <EntryContainer key="EntryContainerID" />
-          </FilePropertiesContextProvider>
+          <FullScreenContextProvider>
+            <FilePropertiesContextProvider>
+              <EntryContainer key="EntryContainerID" />
+            </FilePropertiesContextProvider>
+          </FullScreenContextProvider>
         )}
       </Split>
     );

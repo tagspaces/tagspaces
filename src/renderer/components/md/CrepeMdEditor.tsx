@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { replaceAll } from '@milkdown/utils';
 import { EditorStatus, editorViewOptionsCtx } from '@milkdown/kit/core';
-import { getMarkdown } from '@milkdown/kit/utils';
+import { getMarkdown, insert } from '@milkdown/kit/utils';
 import { Crepe } from '@milkdown/crepe';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { EditorView } from 'prosemirror-view';
@@ -39,6 +39,7 @@ interface CrepeMdEditorProps {
 
 export interface CrepeRef {
   update: (markdown: string) => void;
+  insert: (markdown: string) => void;
   setDarkMode: (isDark: boolean) => void;
   setEditMode: (isEditMode: boolean) => void;
   openSearchDialog: () => void;
@@ -145,6 +146,12 @@ const CrepeMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
         if (loading || !editor || editor.status !== EditorStatus.Created)
           return;
         editor.action(replaceAll(markdown));
+      },
+      insert: (markdown: string) => {
+        const editor = get();
+        if (loading || !editor || editor.status !== EditorStatus.Created)
+          return;
+        editor.action(insert(markdown));
       },
       setDarkMode: (isDarkMode: boolean) => {
         // setDarkMode(isDarkMode);

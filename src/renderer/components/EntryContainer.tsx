@@ -17,12 +17,8 @@
  */
 
 import AppConfig from '-/AppConfig';
-import {
-  CancelIcon,
-  CloseEditIcon,
-  EditIcon,
-  SaveIcon,
-} from '-/components/CommonIcons';
+import { CancelIcon, CloseEditIcon, SaveIcon } from '-/components/CommonIcons';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
@@ -47,15 +43,11 @@ import {
   isRevisionsEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import useEventListener from '-/utils/useEventListener';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Switch, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { useTheme } from '@mui/material/styles';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import fscreen from 'fscreen';
 import React, {
   MutableRefObject,
   useCallback,
@@ -68,6 +60,7 @@ import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import EditFileButton from '-/components/EditFileButton';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -81,6 +74,7 @@ function EntryContainer() {
     setFileChanged,
   } = useOpenedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
+  const { toggleFullScreen } = useFullScreenContext();
   const { saveDescription, isEditMode, setEditMode } =
     useFilePropertiesContext();
   const { setAutoSave } = useIOActionsContext();
@@ -106,7 +100,6 @@ function EntryContainer() {
 
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [
@@ -126,90 +119,7 @@ function EntryContainer() {
     useRef<HTMLIFrameElement>(null);
   const fileViewerContainer: MutableRefObject<HTMLDivElement> =
     useRef<HTMLDivElement>(null);
-  const eventID = useRef<string>(getUuid());
   const cLocation = findLocation(openedEntry.locationID);
-
-  useEventListener('message', (e) => {
-    if (typeof e.data === 'string') {
-      // console.log(e.data);
-      try {
-        const dataObj = JSON.parse(e.data);
-        if (dataObj.eventID === eventID.current) {
-          handleMessage(dataObj);
-        }
-      } catch (ex) {
-        console.debug(
-          'useEventListener message:' + e.data + ' parse error:',
-          ex,
-        );
-      }
-    }
-  });
-
-  const handleFullscreenChange = useCallback((e) => {
-    let change = '';
-    if (fscreen.fullscreenElement !== null) {
-      change = 'Entered fullscreen mode';
-      setFullscreen(true);
-      if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow
-      ) {
-        try {
-          // @ts-ignore
-          fileViewer.current.contentWindow.enterFullscreen();
-        } catch (ex) {
-          console.log('err:', ex);
-        }
-      }
-    } else {
-      change = 'Exited fullscreen mode';
-      setFullscreen(false);
-      if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow
-      ) {
-        try {
-          // @ts-ignore
-          fileViewer.current.contentWindow.exitFullscreen();
-        } catch (ex) {
-          console.log('err:', ex);
-        }
-      }
-    }
-    console.log(change, e);
-  }, []);
-
-  const handleFullscreenError = useCallback((e) => {
-    console.log('Fullscreen Error', e);
-  }, []);
-
-  const toggleFullScreen = useCallback(() => {
-    if (openedEntry.isFile) {
-      if (isFullscreen) {
-        fscreen.exitFullscreen();
-      } else {
-        fscreen.requestFullscreen(fileViewerContainer.current);
-      }
-    }
-  }, [isFullscreen]);
-
-  useEffect(() => {
-    if (fscreen.fullscreenEnabled) {
-      fscreen.addEventListener(
-        'fullscreenchange',
-        handleFullscreenChange,
-        false,
-      );
-      fscreen.addEventListener('fullscreenerror', handleFullscreenError, false);
-      return () => {
-        fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
-        fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
-      };
-    }
-  });
 
   useEffect(() => {
     if (openedEntry && openedEntry.meta && openedEntry.meta.autoSave) {
@@ -773,7 +683,7 @@ function EntryContainer() {
         reloadDocument: reloadDocument,
         deleteDocument: () => {}, // TODO move delete functionality from entry container menu
         openInFullWidth: toggleEntryFullWidth,
-        toggleFullScreen,
+        toggleFullScreen: () => toggleFullScreen(fileViewerContainer.current),
       }}
       keyMap={{
         closeViewer: keyBindings.closeViewer,
@@ -817,9 +727,9 @@ function EntryContainer() {
           >
             <EntryContainerTitle
               reloadDocument={reloadDocument}
-              toggleFullScreen={toggleFullScreen}
               startClosingEntry={startClosingEntry}
               isEntryInFullWidth={isEntryInFullWidth}
+              fileViewerContainer={fileViewerContainer.current}
               desktopMode={desktopMode}
               smallScreen={smallScreen}
             />
@@ -858,12 +768,14 @@ function EntryContainer() {
         {openedEntry.isFile && (
           <FileView
             key="FileViewID"
-            isFullscreen={isFullscreen}
             fileViewer={fileViewer}
             fileViewerContainer={fileViewerContainer}
-            toggleFullScreen={toggleFullScreen}
-            eventID={eventID.current}
             height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
+            setSavingInProgress={(isSaving: boolean) => {
+              isSavingInProgress.current = isSaving;
+              forceUpdate();
+            }}
+            handleMessage={handleMessage}
           />
         )}
       </div>
