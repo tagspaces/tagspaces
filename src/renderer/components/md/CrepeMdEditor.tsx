@@ -19,6 +19,9 @@ import React, { useRef } from 'react';
 import { editorViewOptionsCtx } from '@milkdown/core';
 import AppConfig from '-/AppConfig';
 import { Milkdown, useEditor } from '@milkdown/react';
+import { replaceAll } from '@milkdown/utils';
+import { EditorStatus } from '@milkdown/kit/core';
+import { getMarkdown } from '@milkdown/kit/utils';
 import { Crepe } from '@milkdown/crepe';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -29,89 +32,122 @@ import { getHref } from '-/components/md/utils';
 interface CrepeMdEditorProps {
   isEditMode: boolean;
   content: string;
+  placeholder?: string; //'Type / to use slash command'
   onChange?: (markdown: string, prevMarkdown: string) => void;
   onFocus?: () => void;
+  instance?: (crepe: Crepe) => void;
 }
 
-const CrepeMdEditor: React.FC<CrepeMdEditorProps> = (props) => {
-  const { isEditMode, content, onChange, onFocus } = props;
-  const { openedEntry, openLink } = useOpenedEntryContext();
-  const focus = useRef<boolean>(false);
+export interface CrepeRef {
+  update: (markdown: string) => void;
+  setDarkMode: (isDark: boolean) => void;
+  openSearchDialog: () => void;
+  getMarkdown: () => string;
+}
 
-  const { get, loading } = useEditor(
-    (root) => {
-      const crepe = new Crepe({
-        root,
-        defaultValue: content,
-        /* features: {
+const CrepeMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
+  (props, ref) => {
+    const { isEditMode, content, onChange, onFocus, placeholder, instance } =
+      props;
+    const { openedEntry, openLink } = useOpenedEntryContext();
+    const focus = useRef<boolean>(false);
+
+    const { get, loading } = useEditor(
+      (root) => {
+        const crepe = new Crepe({
+          root,
+          defaultValue: content,
+          /* features: {
         [Crepe.Feature.CodeMirror]: false,
       },*/
-        featureConfigs: {
-          [Crepe.Feature.Placeholder]: {
-            text: 'Type / to use slash command',
-          },
-          [Crepe.Feature.ImageBlock]: {
-            proxyDomURL: (originalURL: string) => {
-              const dirPath = extractContainingDirectoryPath(openedEntry.path);
-              return AppConfig.mediaProtocol + `:///${dirPath}/${originalURL}`;
+          featureConfigs: {
+            [Crepe.Feature.Placeholder]: {
+              text: placeholder || '',
+            },
+            [Crepe.Feature.ImageBlock]: {
+              proxyDomURL: (originalURL: string) => {
+                const dirPath = extractContainingDirectoryPath(
+                  openedEntry.path,
+                );
+                return (
+                  AppConfig.mediaProtocol + `:///${dirPath}/${originalURL}`
+                );
+              },
             },
           },
-        },
-      });
-      crepe.on((listener) => {
-        listener.markdownUpdated(
-          (_, markdown: string, prevMarkdown: string) => {
-            if (focus.current) {
-              console.log('Change listener:' + markdown);
-              if (onChange) {
-                onChange(markdown, prevMarkdown);
+        });
+        crepe.editor.config((ctx: Ctx) => {
+          ctx.update(editorViewOptionsCtx, (prev) => ({
+            ...prev,
+            handleClickOn: (view: EditorView, pos: number) => {
+              if (!isEditMode) {
+                const href = getHref(ctx, view, pos);
+                if (href) {
+                  openLink(href, { fullWidth: false });
+                }
               }
+            },
+          }));
+        });
+
+        crepe
+          .on((listener) => {
+            listener.markdownUpdated(
+              (_, markdown: string, prevMarkdown: string) => {
+                if (focus.current) {
+                  console.log('Change listener:' + markdown);
+                  if (onChange) {
+                    onChange(markdown, prevMarkdown);
+                  }
+                }
+              },
+            );
+            listener.focus(() => {
+              focus.current = true;
+              if (onFocus) {
+                onFocus();
+              }
+            });
+          })
+          .setReadonly(!isEditMode);
+
+        crepe.editor.onStatusChange((status: EditorStatus) => {
+          if (status === EditorStatus.Created) {
+            console.log(status);
+            if (instance) {
+              instance(crepe);
             }
-          },
-        );
-        listener.focus(() => {
-          focus.current = true;
-          if (onFocus) {
-            onFocus();
           }
         });
-      });
-      crepe.setReadonly(!isEditMode);
-      crepe.create().then(() => {
-        console.log('Editor created');
-        //sendMessageToHost({ command: 'parentLoadTextContent' });
-      });
-      crepe.editor.config((ctx: Ctx) => {
-        ctx.update(editorViewOptionsCtx, (prev) => ({
-          ...prev,
-          handleClickOn: (view: EditorView, pos: number) => {
-            if (!isEditMode) {
-              const href = getHref(ctx, view, pos);
-              if (href) {
-                openLink(href, { fullWidth: false });
-              }
-            }
-          },
-        }));
-      });
 
-      //preventDefaultClick
-      /* const observer = new MutationObserver(() => {
-      const links = Array.from(root.querySelectorAll('a'));
-      links.forEach(link => {
-        link.onclick = () => false;
-      });
-    });
-    observer.observe(root, {
-      childList: true
-    });*/
+        return crepe;
+      },
+      [isEditMode, content],
+    );
 
-      return crepe;
-    },
-    [isEditMode, content],
-  );
+    React.useImperativeHandle(ref, () => ({
+      update: (markdown: string) => {
+        const editor = get();
+        if (loading || !editor || editor.status !== EditorStatus.Created)
+          return;
+        editor.action(replaceAll(markdown));
+      },
+      setDarkMode: (isDarkMode: boolean) => {
+        // setDarkMode(isDarkMode);
+      },
+      openSearchDialog: () => {
+        // openSearchDialog();
+      },
+      getMarkdown: () => {
+        const editor = get();
+        if (loading || !editor || editor.status !== EditorStatus.Created)
+          return;
+        return editor.action(getMarkdown());
+      },
+    }));
 
-  return <Milkdown />;
-};
+    return <Milkdown />;
+  },
+);
 
 export default CrepeMdEditor;
