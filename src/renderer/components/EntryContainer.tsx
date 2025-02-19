@@ -67,6 +67,7 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import EditFileButton from '-/components/EditFileButton';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -80,7 +81,7 @@ function EntryContainer() {
     setFileChanged,
   } = useOpenedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { saveDescription, isEditMode, setEditMode, isEditDescriptionMode } =
+  const { saveDescription, isEditMode, setEditMode } =
     useFilePropertiesContext();
   const { setAutoSave } = useIOActionsContext();
   const { findLocation } = useCurrentLocationContext();
@@ -710,18 +711,7 @@ function EntryContainer() {
           </ButtonGroup>
         );
       } else {
-        editFile = (
-          <TsButton
-            tooltip={t('core:editFile')}
-            disabled={isEditDescriptionMode}
-            onClick={editOpenedFile}
-            aria-label={t('core:editFile')}
-            data-tid="fileContainerEditFile"
-            startIcon={<EditIcon />}
-          >
-            {t('core:edit')}
-          </TsButton>
-        );
+        editFile = <EditFileButton />;
       }
     }
 

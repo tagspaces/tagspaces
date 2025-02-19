@@ -16,13 +16,13 @@
  *
  */
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
-import CrepeMdEditor from '-/components/md/CrepeMdEditor';
+import CrepeMdEditor, { CrepeRef } from '-/components/md/CrepeMdEditor';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function EditDescription() {
@@ -38,13 +38,21 @@ function EditDescription() {
     isEditMode,
   } = useFilePropertiesContext();
 
-  //const fileDescriptionRef = useRef<MilkdownRef>(null);
+  const fileDescriptionRef = useRef<CrepeRef>(null);
   const descriptionFocus = useRef<boolean>(false);
   // const descriptionButtonsRef = useRef(null);
 
-  /*useEffect(() => {
+  useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);*/
+  }, [theme]);
+
+  useEffect(() => {
+    fileDescriptionRef.current?.setEditMode(isEditDescriptionMode);
+  }, [isEditDescriptionMode]);
+
+  useEffect(() => {
+    fileDescriptionRef.current?.update(description);
+  }, [description]);
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -120,10 +128,12 @@ function EditDescription() {
              `}
             </style>
             <CrepeMdEditor
-              content={description}
-              isEditMode={isEditDescriptionMode}
+              ref={fileDescriptionRef}
+              defaultContent={description}
+              defaultEditMode={true}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}
+              currentFolder={currentDirectoryPath}
             />
           </>
         )}

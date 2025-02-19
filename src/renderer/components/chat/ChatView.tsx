@@ -373,8 +373,8 @@ function ChatView() {
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
             <CrepeMdEditor
-              content={formatChatItems(chatHistoryItems)}
-              isEditMode={false}
+              defaultContent={formatChatItems(chatHistoryItems)}
+              defaultEditMode={false}
               ref={editorRef}
             />
           </div>

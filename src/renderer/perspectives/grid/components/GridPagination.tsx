@@ -356,8 +356,8 @@ function GridPagination(props: Props) {
                 }}
               >
                 <CrepeMdEditor
-                  content={directoryMeta.description}
-                  isEditMode={false}
+                  defaultContent={directoryMeta.description}
+                  defaultEditMode={false}
                 />
               </Grid>
             )}
