@@ -42,6 +42,7 @@ import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import { SelectionArea } from '-/components/drag/SelectionArea';
+import CrepeMdEditor from '-/components/md/CrepeMdEditor';
 
 interface Props {
   desktopMode: boolean;
@@ -354,12 +355,10 @@ function GridPagination(props: Props) {
                   borderRadius: 10,
                 }}
               >
-                {/*<MilkdownEditor
+                <CrepeMdEditor
                   content={directoryMeta.description}
-                  readOnly={true}
-                  currentFolder={currentDirectoryPath}
-                  lightMode={true}
-                />*/}
+                  isEditMode={false}
+                />
               </Grid>
             )}
           </Grid>

@@ -120,7 +120,7 @@ function EditDescription() {
              `}
             </style>
             <CrepeMdEditor
-              content={description || ''}
+              content={description}
               isEditMode={isEditDescriptionMode}
               onChange={milkdownListener}
               onFocus={milkdownOnFocus}

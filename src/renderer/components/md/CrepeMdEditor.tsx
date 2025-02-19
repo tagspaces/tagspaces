@@ -32,7 +32,7 @@ import { getHref } from '-/components/md/utils';
 interface CrepeMdEditorProps {
   isEditMode: boolean;
   content: string;
-  placeholder?: string; //'Type / to use slash command'
+  placeholder?: string;
   onChange?: (markdown: string, prevMarkdown: string) => void;
   onFocus?: () => void;
   instance?: (crepe: Crepe) => void;
@@ -56,13 +56,13 @@ const CrepeMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
       (root) => {
         const crepe = new Crepe({
           root,
-          defaultValue: content,
+          defaultValue: content || '',
           /* features: {
         [Crepe.Feature.CodeMirror]: false,
       },*/
           featureConfigs: {
             [Crepe.Feature.Placeholder]: {
-              text: placeholder || '',
+              text: placeholder || 'Type / to use slash command',
             },
             [Crepe.Feature.ImageBlock]: {
               proxyDomURL: (originalURL: string) => {
@@ -79,13 +79,19 @@ const CrepeMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
         crepe.editor.config((ctx: Ctx) => {
           ctx.update(editorViewOptionsCtx, (prev) => ({
             ...prev,
+            attributes: {
+              class: 'mx-auto full-height',
+            },
+            editable: () => isEditMode,
             handleClickOn: (view: EditorView, pos: number) => {
               if (!isEditMode) {
                 const href = getHref(ctx, view, pos);
                 if (href) {
                   openLink(href, { fullWidth: false });
+                  return true;
                 }
               }
+              return false;
             },
           }));
         });

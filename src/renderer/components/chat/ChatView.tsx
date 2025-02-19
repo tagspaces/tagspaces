@@ -377,12 +377,6 @@ function ChatView() {
               isEditMode={false}
               ref={editorRef}
             />
-            {/*<MilkdownEditor
-              ref={editorRef}
-              content={formatChatItems(chatHistoryItems)}
-              readOnly={true}
-              lightMode={true}
-            />*/}
           </div>
         </Grid2>
         <Grid2 container spacing={1} direction="column">
