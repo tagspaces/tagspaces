@@ -16,40 +16,40 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import Tooltip from '-/components/Tooltip';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Typography from '@mui/material/Typography';
-import TsIconButton from '-/components/TsIconButton';
-import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
-import DefaultLocationIcon from '@mui/icons-material/Highlight';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { actions as AppActions, AppDispatch } from '../reducers/app';
-import TargetMoveFileBox from './TargetMoveFileBox';
-import DragItemTypes from './DragItemTypes';
+import { CloudLocationIcon, LocalLocationIcon } from '-/components/CommonIcons';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
-import { classes, SidePanel } from '-/components/SidePanels.css';
-import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
-import CustomDragLayer from '-/components/CustomDragLayer';
+import { SidePanel, classes } from '-/components/SidePanels.css';
 import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { TS } from '-/tagspaces.namespace';
+import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import DefaultLocationIcon from '@mui/icons-material/Highlight';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ListItemText } from '@mui/material';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Typography from '@mui/material/Typography';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import React, { useRef } from 'react';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { actions as AppActions, AppDispatch } from '../reducers/app';
+import DragItemTypes from './DragItemTypes';
+import TargetMoveFileBox from './TargetMoveFileBox';
 
 interface Props {
   location: CommonLocation;
@@ -185,7 +185,7 @@ function LocationView(props: Props) {
     }
   };
 
-  let locationNameTitle = currentLocationPath;
+  let locationNameTitle = location?.path;
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -195,29 +195,27 @@ function LocationView(props: Props) {
   }
 
   const LocationTitle = (
-    <Tooltip title={locationNameTitle}>
-      <div
+    <div
+      style={{
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: 240,
+      }}
+    >
+      <Typography
+        variant="inherit"
         style={{
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          maxWidth: 240,
+          paddingLeft: 5,
+          paddingRight: 5,
         }}
+        className={classes.header}
+        data-tid="locationTitleElement"
+        noWrap
       >
-        <Typography
-          variant="inherit"
-          style={{
-            paddingLeft: 5,
-            paddingRight: 5,
-          }}
-          className={classes.header}
-          data-tid="locationTitleElement"
-          noWrap
-        >
-          {location.name}
-        </Typography>
-      </div>
-    </Tooltip>
+        <Tooltip title={locationNameTitle}>{location.name}</Tooltip>
+      </Typography>
+    </div>
   );
   const { FILE } = NativeTypes;
   return (
