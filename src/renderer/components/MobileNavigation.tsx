@@ -16,75 +16,77 @@
  *
  */
 
-import React, { useState } from 'react';
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
-import Box from '@mui/material/Box';
-import Tooltip from '-/components/Tooltip';
-import ToggleButton from '@mui/material/ToggleButton';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import TsButton from '-/components/TsButton';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import TsIconButton from '-/components/TsIconButton';
-import { Divider } from '@mui/material';
+import AppConfig from '-/AppConfig';
 import {
-  OpenLinkIcon,
-  OpenNewWindowIcon,
-  NewFileIcon,
-  NewFolderIcon,
-  LocalLocationIcon,
-  SettingsIcon,
-  CreateFileIcon,
-  MarkdownFileIcon,
-  AudioFileIcon,
-  HTMLFileIcon,
-  LinkFileIcon,
   AccountIcon,
   AddExistingFileIcon,
+  AudioFileIcon,
+  CreateFileIcon,
+  HTMLFileIcon,
   HelpIcon,
-  ThemingIcon,
-  TagLibraryIcon,
+  LinkFileIcon,
+  LocalLocationIcon,
+  MarkdownFileIcon,
+  NewFileIcon,
+  NewFolderIcon,
+  OpenLinkIcon,
+  OpenNewWindowIcon,
   RecentThingsIcon,
+  SettingsIcon,
+  TagLibraryIcon,
+  ThemingIcon,
 } from '-/components/CommonIcons';
-import InfoIcon from '-/components/InfoIcon';
-import Popover from '@mui/material/Popover';
-import { Pro } from '-/pro';
 import CustomLogo from '-/components/CustomLogo';
-import ProTeaser from '-/components/ProTeaser';
-import TagLibrary from '-/components/TagLibrary';
-import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import MenuItem from '@mui/material/MenuItem';
-import TsMenuList from '-/components/TsMenuList';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { AppDispatch } from '-/reducers/app';
 import { ProLabel } from '-/components/HelperComponents';
-import { actions as SettingsActions } from '-/reducers/settings';
+import InfoIcon from '-/components/InfoIcon';
+import LocationManager from '-/components/LocationManager';
+import ProTeaser from '-/components/ProTeaser';
 import StoredSearches from '-/components/StoredSearches';
+import TagLibrary from '-/components/TagLibrary';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsMenuList from '-/components/TsMenuList';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
-import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
-import { getKeyBindingObject } from '-/reducers/settings';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { createNewInstance } from '-/services/utils-io';
-import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
-import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import { useDownloadUrlDialogContext } from '-/components/dialogs/hooks/useDownloadUrlDialogContext';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useNewAudioDialogContext } from '-/components/dialogs/hooks/useNewAudioDialogContext';
+import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
 import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
-import { useFileUploadContext } from '-/hooks/useFileUploadContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
-import { useDownloadUrlDialogContext } from '-/components/dialogs/hooks/useDownloadUrlDialogContext';
+import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
+import {
+  actions as SettingsActions,
+  getKeyBindingObject,
+} from '-/reducers/settings';
+import { createNewInstance } from '-/services/utils-io';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { Divider } from '@mui/material';
+import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Grow from '@mui/material/Grow';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Popover from '@mui/material/Popover';
+import Popper from '@mui/material/Popper';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { alpha, styled, useTheme } from '@mui/material/styles';
+import classNames from 'classnames';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 const PREFIX = 'MobileNavigation';
 
@@ -164,7 +166,7 @@ function MobileNavigation(props: Props) {
       <Box
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)',
+          height: showProTeaser ? 'calc(100% - 186px)' : 'calc(100% - 55px)',
         }}
       >
         <Box>
