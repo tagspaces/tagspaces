@@ -400,7 +400,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         })
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
-          if (currentModel.current === undefined) {
+          if (currentModel.current === undefined && defaultAiProvider) {
             //set defaultTextModel if not currentModel
             setModel(defaultAiProvider.defaultTextModel);
           }

@@ -56,7 +56,8 @@ import React, {
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import CrepeMdEditor, { CrepeRef } from '-/components/md/CrepeMdEditor';
+import ChatMdEditor from '-/components/md/ChatMdEditor';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -105,6 +106,11 @@ function ChatView() {
       }
     };
   }, []);*/
+  useEffect(() => {
+    return () => {
+      editorRef.current?.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
@@ -372,9 +378,8 @@ function ChatView() {
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
-            <CrepeMdEditor
+            <ChatMdEditor
               defaultContent={formatChatItems(chatHistoryItems)}
-              defaultEditMode={false}
               ref={editorRef}
             />
           </div>

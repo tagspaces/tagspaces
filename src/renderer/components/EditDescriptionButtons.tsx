@@ -86,9 +86,12 @@ const EditDescriptionButtons: React.FC = () => {
             }}
             onClick={() => {
               if (isEditDescriptionMode) {
-                saveDescription();
+                saveDescription().then(() => {
+                  setEditDescriptionMode(false);
+                });
+              } else {
+                setEditDescriptionMode(true);
               }
-              setEditDescriptionMode(!isEditDescriptionMode);
             }}
           >
             {isEditDescriptionMode

@@ -16,14 +16,14 @@
  *
  */
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
-import CrepeMdEditor, { CrepeRef } from '-/components/md/CrepeMdEditor';
+import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -39,20 +39,26 @@ function EditDescription() {
   } = useFilePropertiesContext();
 
   const fileDescriptionRef = useRef<CrepeRef>(null);
-  const descriptionFocus = useRef<boolean>(false);
+  //const descriptionFocus = useRef<boolean>(false);
   // const descriptionButtonsRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      fileDescriptionRef.current?.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     fileDescriptionRef.current?.setEditMode(isEditDescriptionMode);
-  }, [isEditDescriptionMode]);
+  }, [isEditDescriptionMode]);*/
 
-  useEffect(() => {
+  /* useEffect(() => {
     fileDescriptionRef.current?.update(description);
-  }, [description]);
+  }, [description]);*/
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -61,12 +67,13 @@ function EditDescription() {
     } /!*dispatch(AppActions.openNextFile())*!/
   };*/
 
-  const milkdownOnFocus = React.useCallback(
+  /* const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
     [],
-  );
+  );*/
   const milkdownListener = React.useCallback((markdown: string) => {
-    if (descriptionFocus.current && markdown !== description) {
+    if (markdown !== description) {
+      //descriptionFocus.current &&
       setDescription(markdown);
       /*if (descriptionButtonsRef.current) {
         descriptionButtonsRef.current.setDescriptionChanged(true);
@@ -74,7 +81,14 @@ function EditDescription() {
     }
   }, []);
 
-  const noDescription = !description || description.length < 1;
+  //const noDescription = !description || description.length < 1;
+  const placeholder = isEditDescriptionMode
+    ? undefined
+    : t(
+        Pro
+          ? 'core:addMarkdownDescription'
+          : 'core:thisFunctionalityIsAvailableInPro',
+      );
   return (
     <div
       style={{
@@ -97,25 +111,8 @@ function EditDescription() {
           overflowY: 'auto',
         }}
       >
-        {noDescription && !isEditDescriptionMode ? (
-          <Typography
-            variant="caption"
-            style={{
-              color: theme.palette.text.primary,
-              padding: 10,
-              lineHeight: 4,
-            }}
-          >
-            {t(
-              Pro
-                ? 'core:addMarkdownDescription'
-                : 'core:thisFunctionalityIsAvailableInPro',
-            )}
-          </Typography>
-        ) : (
-          <>
-            <style>
-              {`
+        <style>
+          {`
                 .milkdown .ProseMirror {
                     padding: 10px 30px 10px 80px;
                 }
@@ -126,17 +123,15 @@ function EditDescription() {
                     max-width: 99%;
                 }
              `}
-            </style>
-            <CrepeMdEditor
-              ref={fileDescriptionRef}
-              defaultContent={description}
-              defaultEditMode={true}
-              onChange={milkdownListener}
-              onFocus={milkdownOnFocus}
-              currentFolder={currentDirectoryPath}
-            />
-          </>
-        )}
+        </style>
+        <DescriptionMdEditor
+          ref={fileDescriptionRef}
+          defaultContent={description}
+          placeholder={placeholder}
+          defaultEditMode={isEditDescriptionMode}
+          onChange={milkdownListener}
+          currentFolder={currentDirectoryPath}
+        />
       </div>
       {/* <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
       <Typography

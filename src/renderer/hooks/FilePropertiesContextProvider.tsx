@@ -111,17 +111,19 @@ export const FilePropertiesContextProvider = ({
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return Promise.resolve(false);
     }
-    // to reload description
-    lastOpenedFile.current = { ...lastOpenedFile.current };
-    isDescriptionChanged.current = false;
-    setIsEditMode(false);
+
     return setDescriptionChange(
       lastOpenedFile.current,
       lastOpenedFile.current.meta?.description,
     ).then(() => {
       if (lastOpenedFile.current.path !== openedEntry.path) {
         lastOpenedFile.current = { ...openedEntry };
+      } else {
+        // to reload description
+        lastOpenedFile.current = { ...lastOpenedFile.current };
       }
+      isDescriptionChanged.current = false;
+      setIsEditMode(false);
       return true;
     });
   }
