@@ -87,6 +87,7 @@ test.describe('TST03 - Testing locations:', () => {
       '[data-tid=location_' + testLocationName + ']',
       false,
     );
+    await expectElementExist('[data-tid=WelcomePanelTID]', true);
   });
 
   test('TST0303 - Rename location [web,electron]', async () => {
