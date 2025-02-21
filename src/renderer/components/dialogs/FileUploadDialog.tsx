@@ -93,7 +93,7 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      if (currentLocation.haveObjectStoreSupport()) {
+      if (currentLocation?.haveObjectStoreSupport()) {
         const progresses = progress.map((fileProgress) => {
           fileProgress.abort();
           return { ...fileProgress, state: 'finished' };
