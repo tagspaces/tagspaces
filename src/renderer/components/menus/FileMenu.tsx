@@ -131,7 +131,7 @@ function FileMenu(props: Props) {
   const currentLocation = findLocation();
 
   useEffect(() => {
-    if (currentLocation.haveObjectStoreSupport()) {
+    if (currentLocation?.haveObjectStoreSupport()) {
       currentLocation
         .generateURLforPath(selectedFilePath, 86400)
         .then((url) => {

@@ -93,6 +93,7 @@ export const FSWatcherContextProvider = ({
   function watchFolder(locationPath, depth) {
     if (
       Pro &&
+      currentLocation &&
       !currentLocation.haveObjectStoreSupport() &&
       !currentLocation.haveWebDavSupport()
     ) {

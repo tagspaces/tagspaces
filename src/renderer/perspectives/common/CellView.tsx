@@ -309,6 +309,7 @@ function CellView(props: Props) {
       <div>
         {nativeDragModeEnabled &&
           AppConfig.isElectron &&
+          currentLocation &&
           !currentLocation.haveObjectStoreSupport() && (
             <div
               style={{

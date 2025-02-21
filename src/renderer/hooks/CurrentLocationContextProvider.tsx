@@ -51,7 +51,7 @@ type CurrentLocationContextData = {
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
-  findLocation: (locationID?: string) => CommonLocation;
+  findLocation: (locationID?: string) => CommonLocation | undefined;
   getDirSeparator: (locationID?: string) => string;
   findLocalLocation: () => CommonLocation;
   changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
@@ -254,7 +254,9 @@ export const CurrentLocationContextProvider = ({
     return Promise.resolve(locationPath);
   }
 
-  function findLocation(locationID: string = undefined): CommonLocation {
+  function findLocation(
+    locationID: string = undefined,
+  ): CommonLocation | undefined {
     if (!locationID) {
       return allLocations.current.find(
         (l) => l.uuid === currentLocationId.current,

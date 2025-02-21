@@ -79,6 +79,7 @@ function MoveCopyFilesDialog(props: Props) {
     if (
       selectedDirs.length > 0 &&
       AppConfig.isElectron &&
+      currentLocation &&
       !currentLocation.haveObjectStoreSupport() &&
       !currentLocation.haveWebDavSupport()
     ) {

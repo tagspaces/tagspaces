@@ -106,7 +106,7 @@ function MainToolbar(props: Props) {
           ? entry.path.substr(1)
           : entry.path;
         currentLocation
-          .generateURLforPath(cleanedPath, 900)
+          ?.generateURLforPath(cleanedPath, 900)
           .then((url) => fetch(url))
           .then((res) => res.blob()) // Gets the response and returns it as a blob
           .then((blob) => {
@@ -267,7 +267,7 @@ function MainToolbar(props: Props) {
         <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
-      {AppConfig.isElectron && !currentLocation.haveObjectStoreSupport() && (
+      {AppConfig.isElectron && !currentLocation?.haveObjectStoreSupport() && (
         <TsIconButton
           tooltip={t('core:dragMode')}
           data-tid={prefixDataTID + 'PerspectiveDragNative'}

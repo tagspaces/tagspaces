@@ -322,16 +322,18 @@ export const OpenedEntryContextProvider = ({
   }
 
   function getOpenedDirProps(): Promise<TS.DirProp> {
-    if (
-      currentEntry.current &&
-      !currentEntry.current.isFile &&
-      !currentLocation.haveObjectStoreSupport() &&
-      !currentLocation.haveWebDavSupport()
-    ) {
-      return getDirProperties(currentEntry.current.path).catch((ex) => {
-        console.debug('getDirProperties:', ex.message);
-        return Promise.resolve(undefined);
-      });
+    if (currentEntry.current && !currentEntry.current.isFile) {
+      const location = findLocation(currentEntry.current.locationID);
+      if (
+        location &&
+        !location.haveObjectStoreSupport() &&
+        !location.haveWebDavSupport()
+      ) {
+        return getDirProperties(currentEntry.current.path).catch((ex) => {
+          console.debug('getDirProperties:', ex.message);
+          return Promise.resolve(undefined);
+        });
+      }
     }
     return Promise.resolve(undefined);
   }
