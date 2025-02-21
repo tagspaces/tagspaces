@@ -58,6 +58,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
+import { MilkdownProvider } from '@milkdown/react';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -378,10 +379,12 @@ function ChatView() {
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
-            <ChatMdEditor
-              defaultContent={formatChatItems(chatHistoryItems)}
-              ref={editorRef}
-            />
+            <MilkdownProvider>
+              <ChatMdEditor
+                defaultContent={formatChatItems(chatHistoryItems)}
+                ref={editorRef}
+              />
+            </MilkdownProvider>
           </div>
         </Grid2>
         <Grid2 container spacing={1} direction="column">

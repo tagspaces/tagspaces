@@ -43,6 +43,7 @@ import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirConte
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import LightMdEditor from '-/components/md/LigthMdEditor';
+import { MilkdownProvider } from '@milkdown/react';
 
 interface Props {
   desktopMode: boolean;
@@ -355,10 +356,12 @@ function GridPagination(props: Props) {
                   borderRadius: 10,
                 }}
               >
-                <LightMdEditor
-                  defaultContent={directoryMeta.description}
-                  placeholder=""
-                />
+                <MilkdownProvider>
+                  <LightMdEditor
+                    defaultContent={directoryMeta.description}
+                    placeholder=""
+                  />
+                </MilkdownProvider>
               </Grid>
             )}
           </Grid>

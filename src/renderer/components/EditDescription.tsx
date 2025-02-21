@@ -24,6 +24,7 @@ import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
+import { MilkdownProvider } from '@milkdown/react';
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -124,14 +125,16 @@ function EditDescription() {
                 }
              `}
         </style>
-        <DescriptionMdEditor
-          ref={fileDescriptionRef}
-          defaultContent={description}
-          placeholder={placeholder}
-          defaultEditMode={isEditDescriptionMode}
-          onChange={milkdownListener}
-          currentFolder={currentDirectoryPath}
-        />
+        <MilkdownProvider>
+          <DescriptionMdEditor
+            ref={fileDescriptionRef}
+            defaultContent={description}
+            placeholder={placeholder}
+            defaultEditMode={isEditDescriptionMode}
+            onChange={milkdownListener}
+            currentFolder={currentDirectoryPath}
+          />
+        </MilkdownProvider>
       </div>
       {/* <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
       <Typography
