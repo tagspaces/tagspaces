@@ -355,10 +355,10 @@ function GridPagination(props: Props) {
                   borderRadius: 10,
                 }}
               >
-                {/*<LightMdEditor
+                <LightMdEditor
                   defaultContent={directoryMeta.description}
                   placeholder=""
-                />*/}
+                />
               </Grid>
             )}
           </Grid>
