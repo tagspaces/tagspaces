@@ -105,7 +105,7 @@ function AiGenDescButton(props: Props) {
         aria-label={t('core:openGenSettings')}
         data-tid="fileContainerPrevFile"
         onClick={() => {
-          openAiGenerationDialog('summary');
+          openAiGenerationDialog('summary', [openedEntry]);
         }}
         style={{
           borderTopLeftRadius: 0,

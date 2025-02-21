@@ -19,9 +19,13 @@
 import { Pro } from '-/pro';
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { TS } from '-/tagspaces.namespace';
 
 type AiGenerationDialogContextData = {
-  openAiGenerationDialog: (optionSelected?: generateOptionType) => void;
+  openAiGenerationDialog: (
+    optionSelected?: generateOptionType,
+    selectedEntries?: TS.FileSystemEntry[],
+  ) => void;
   closeAiGenerationDialog: () => void;
 };
 
@@ -43,13 +47,18 @@ export const AiGenerationDialogContextProvider = ({
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const open = useRef<boolean>(false);
   const option = useRef<generateOptionType>(undefined);
+  const selected = useRef<TS.FileSystemEntry[]>(undefined);
   const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog(optionSelected: generateOptionType = undefined) {
+  function openDialog(
+    optionSelected: generateOptionType = undefined,
+    selectedEntries: TS.FileSystemEntry[] = undefined,
+  ) {
     if (AiGenerationDialog) {
       open.current = true;
       option.current = optionSelected;
+      selected.current = selectedEntries;
       forceUpdate();
     } else {
       openProTeaserDialog('ai');
@@ -75,6 +84,7 @@ export const AiGenerationDialogContextProvider = ({
           open={open.current}
           onClose={closeDialog}
           option={option.current}
+          selected={selected.current}
         />
       )}
       {children}
