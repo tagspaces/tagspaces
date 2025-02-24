@@ -16,34 +16,34 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import Tooltip from '-/components/Tooltip';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
-import Pagination from '@mui/material/Pagination';
 import AppConfig from '-/AppConfig';
-import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import EntryIcon from '-/components/EntryIcon';
-import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
-import { TS } from '-/tagspaces.namespace';
-import { getDescriptionPreview } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
+import TagsPreview from '-/components/TagsPreview';
+import Tooltip from '-/components/Tooltip';
+import { SelectionArea } from '-/components/drag/SelectionArea';
+import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
+import LightMdEditor from '-/components/md/LigthMdEditor';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import GridCellsContainer from './GridCellsContainer';
-import { dataTidFormat } from '-/services/test';
 import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
-import { SelectionArea } from '-/components/drag/SelectionArea';
-import LightMdEditor from '-/components/md/LigthMdEditor';
+import { dataTidFormat } from '-/services/test';
+import { getDescriptionPreview } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import { MilkdownProvider } from '@milkdown/react';
+import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import Grid from '@mui/material/Grid';
+import Pagination from '@mui/material/Pagination';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import GridCellsContainer from './GridCellsContainer';
 
 interface Props {
   desktopMode: boolean;
@@ -220,6 +220,7 @@ function GridPagination(props: Props) {
           style={{
             height: '100%',
             overflowY: 'auto',
+            overflowX: 'hidden',
             backgroundImage: backgroundImage.current,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
@@ -343,19 +344,34 @@ function GridPagination(props: Props) {
                 </div>
               </Grid>
             )}
-            {showDescription && directoryMeta && directoryMeta.description && (
+            {showDescription && directoryMeta?.description && (
               <Grid
                 item
                 xs={12}
                 style={{
                   backgroundColor: theme.palette.background.default,
+                  borderBottom: '1px solid lightgray',
                   marginTop: showDetails ? 0 : 10,
                   marginLeft: 25,
                   marginRight: 10,
                   padding: 10,
-                  borderRadius: 10,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
                 }}
               >
+                <style>
+                  {`
+                      .milkdown .ProseMirror {
+                          padding: 0;
+                      }
+                      .milkdown .ProseMirror a {
+                          color: ${theme.palette.primary.main};
+                      }
+                      .milkdown .ProseMirror img {
+                          max-width: 99%;
+                      }
+                  `}
+                </style>
                 <MilkdownProvider>
                   <LightMdEditor
                     defaultContent={directoryMeta.description}
