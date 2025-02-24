@@ -16,47 +16,47 @@
  *
  */
 
-import React, { useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTheme, styled } from '@mui/material/styles';
-import classNames from 'classnames';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Tooltip from '-/components/Tooltip';
-import IconButton from '@mui/material/IconButton';
+import AppConfig from '-/AppConfig';
 import {
-  SelectedIcon,
-  UnSelectedIcon,
   FolderOutlineIcon,
   MoreMenuIcon,
+  SelectedIcon,
+  UnSelectedIcon,
 } from '-/components/CommonIcons';
-import {
-  formatFileSize,
-  formatDateTime,
-} from '@tagspaces/tagspaces-common/misc';
-import {
-  extractTagsAsObjects,
-  extractTitle,
-} from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
+import TagContainer from '-/components/TagContainer';
+import TagContainerDnd from '-/components/TagContainerDnd';
+import TagsPreview from '-/components/TagsPreview';
+import Tooltip from '-/components/Tooltip';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import i18n from '-/services/i18n';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
   getDescriptionPreview,
 } from '-/services/utils-io';
-import TagContainerDnd from '-/components/TagContainerDnd';
-import TagContainer from '-/components/TagContainer';
-import TagsPreview from '-/components/TagsPreview';
 import { TS } from '-/tagspaces.namespace';
-import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
-import { defaultSettings } from '../index';
+import Grid from '@mui/material/Grid2';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { styled, useTheme } from '@mui/material/styles';
+import {
+  formatDateTime,
+  formatFileSize,
+} from '@tagspaces/tagspaces-common/misc';
+import {
+  extractTagsAsObjects,
+  extractTitle,
+} from '@tagspaces/tagspaces-common/paths';
+import classNames from 'classnames';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import i18n from '-/services/i18n';
+import { useSelector } from 'react-redux';
+import { defaultSettings } from '../index';
 
 const PREFIX = 'RowStyles';
 export const classes = {
@@ -374,7 +374,6 @@ function RowCell(props: Props) {
         sx={{ backgroundColor, borderRadius: '4px' }}
       >
         <Grid
-          item
           style={{
             minHeight: entryHeight,
             width: 45,
@@ -390,11 +389,10 @@ function RowCell(props: Props) {
         </Grid>
         {isSmall ? (
           <Grid
-            item
-            xs
-            zeroMinWidth
             style={{
               display: 'flex',
+              width: '100%',
+              marginLeft: 5,
             }}
           >
             <Typography
@@ -418,7 +416,7 @@ function RowCell(props: Props) {
             </Typography>
           </Grid>
         ) : (
-          <Grid item xs zeroMinWidth style={{ alignSelf: 'center' }}>
+          <Grid style={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
             <Typography
               variant="body1"
               title={fsEntry.name}
@@ -452,7 +450,6 @@ function RowCell(props: Props) {
         )}
         {fsEntry.meta && fsEntry.meta.thumbPath && (
           <Grid
-            item
             style={{
               display: 'flex',
               width: entryHeight,
@@ -487,10 +484,10 @@ function RowCell(props: Props) {
           </Grid>
         )}
         <Grid
-          item
           style={{
             display: 'flex',
             alignItems: 'center',
+            marginRight: 5,
           }}
         >
           <IconButton

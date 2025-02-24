@@ -16,25 +16,23 @@
  *
  */
 
-import { TS } from '-/tagspaces.namespace';
-import Grid from '@mui/material/Grid';
-import React, { useContext } from 'react';
+import AppConfig from '-/AppConfig';
+import { HistoryIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
-import ListItem from '@mui/material/ListItem';
-import { Tooltip } from '@mui/material';
+import TsIconButton from '-/components/TsIconButton';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { Pro } from '-/pro';
+import { dataTidFormat } from '-/services/test';
+import { TS } from '-/tagspaces.namespace';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
+import { Tooltip } from '@mui/material';
+import ListItem from '@mui/material/ListItem';
 import {
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import TsIconButton from '-/components/TsIconButton';
-import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
-import { dataTidFormat } from '-/services/test';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import AppConfig from '-/AppConfig';
-import TooltipTS from '-/components/Tooltip';
-import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 
 interface Props {
   historyKey: string;
@@ -67,73 +65,71 @@ function RenderHistory(props: Props) {
               style={{ paddingLeft: 0 }}
               key={item.creationTimeStamp}
             >
-              <Grid item xs={10} style={{ minWidth: 245, maxWidth: 245 }}>
-                <TsButton
-                  data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
-                  variant="text"
-                  style={{
-                    textTransform: 'none',
-                    fontWeight: 'normal',
-                    justifyContent: 'start',
-                  }}
-                  onClick={() => openHistoryItem(item as TS.HistoryItem)}
+              <TsButton
+                data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
+                variant="text"
+                style={{
+                  textTransform: 'none',
+                  fontWeight: 'normal',
+                  justifyContent: 'start',
+                  minWidth: 245,
+                  maxWidth: 245,
+                }}
+                onClick={() => openHistoryItem(item as TS.HistoryItem)}
+              >
+                <Tooltip
+                  title={
+                    <span style={{ fontSize: 14 }}>
+                      <b>{t('core:filePath')}:</b> {item.path}
+                      <br />
+                      <br />
+                      {/* <b>Opened on: </b>{' '} */}
+                      {new Date(item.creationTimeStamp)
+                        .toISOString()
+                        .substring(0, 19)
+                        .split('T')
+                        .join(' ')}
+                    </span>
+                  }
                 >
-                  <Tooltip
-                    title={
-                      <span style={{ fontSize: 14 }}>
-                        <b>{t('core:filePath')}:</b> {item.path}
-                        <br />
-                        <br />
-                        {/* <b>Opened on: </b>{' '} */}
-                        {new Date(item.creationTimeStamp)
-                          .toISOString()
-                          .substring(0, 19)
-                          .split('T')
-                          .join(' ')}
-                      </span>
-                    }
-                  >
-                    {historyKey === Pro.keys.bookmarksKey ? (
-                      <BookmarkTwoToneIcon />
-                    ) : (
-                      <HistoryIcon />
-                    )}
-                  </Tooltip>
-                  &nbsp;
-                  <span
-                    style={{
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      maxWidth: 220,
-                    }}
-                  >
-                    {itemName}
-                  </span>
-                </TsButton>
-              </Grid>
+                  {historyKey === Pro.keys.bookmarksKey ? (
+                    <BookmarkTwoToneIcon />
+                  ) : (
+                    <HistoryIcon />
+                  )}
+                </Tooltip>
+                &nbsp;
+                <span
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    maxWidth: 220,
+                  }}
+                >
+                  {itemName}
+                </span>
+              </TsButton>
               {showDelete && (
-                <Grid item xs={2}>
-                  <TsIconButton
-                    tooltip={t('delete')}
-                    aria-label={t('core:clearHistory')}
-                    onClick={() => {
-                      if (historyKey === Pro.keys.bookmarksKey) {
-                        //del bookmarks
-                        bookmarksContext.delBookmark(item.path);
-                      } else {
-                        historyContext.delHistory(
-                          historyKey,
-                          item.creationTimeStamp,
-                        );
-                      }
-                      update();
-                    }}
-                    data-tid="deleteHistoryItemTID"
-                  >
-                    <RemoveIcon />
-                  </TsIconButton>
-                </Grid>
+                <TsIconButton
+                  tooltip={t('delete')}
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => {
+                    if (historyKey === Pro.keys.bookmarksKey) {
+                      //del bookmarks
+                      bookmarksContext.delBookmark(item.path);
+                    } else {
+                      historyContext.delHistory(
+                        historyKey,
+                        item.creationTimeStamp,
+                      );
+                    }
+                    update();
+                  }}
+                  data-tid="deleteHistoryItemTID"
+                >
+                  <RemoveIcon />
+                </TsIconButton>
               )}
             </ListItem>
           );
