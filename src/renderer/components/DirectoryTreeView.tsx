@@ -16,21 +16,22 @@
  *
  */
 
-import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
-import { useSelector } from 'react-redux';
-import Table from 'rc-table';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import DragItemTypes from '-/components/DragItemTypes';
-import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { FolderOutlineIcon } from '-/components/CommonIcons';
 import CustomDragLayer from '-/components/CustomDragLayer';
+import DragItemTypes from '-/components/DragItemTypes';
 import TargetFileBox from '-/components/TargetFileBox';
+import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { alpha, useTheme } from '@mui/material/styles';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import Table from 'rc-table';
+import { Ref, forwardRef, useImperativeHandle, useState } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { useSelector } from 'react-redux';
 
 interface Props {
   classes: any;
@@ -47,6 +48,7 @@ export interface DirectoryTreeViewRef {
 
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
+    const theme = useTheme();
     const { classes, location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
     const { findLocation, changeLocation, getLocationPath } =
@@ -352,8 +354,12 @@ const DirectoryTreeView = forwardRef(
       return (
         <Table
           key={location.uuid}
-          // defaultExpandAllRows
-          // className={classes.locationListArea}
+          style={{
+            borderRadius: AppConfig.defaultCSSRadius,
+            backgroundColor: alpha(theme.palette.grey.A400, 0.2),
+            marginTop: 5,
+            marginBottom: 5,
+          }}
           components={{
             // header: { cell: this.renderHeaderRow },
             body: { row: renderBodyRow },
