@@ -62,7 +62,7 @@ import {
   inputBaseClasses,
 } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import { styled, useTheme } from '@mui/material/styles';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
@@ -96,74 +96,6 @@ import TagDropContainer from './TagDropContainer';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-
-const PREFIX = 'EntryProperties';
-
-const classes = {
-  entryProperties: `${PREFIX}-entryProperties`,
-  tags: `${PREFIX}-tags`,
-  editTagsButton: `${PREFIX}-editTagsButton`,
-  textField: `${PREFIX}-textField`,
-  dropText: `${PREFIX}-dropText`,
-  propertyName: `${PREFIX}-propertyName`,
-  actionPlaceholder: `${PREFIX}-actionPlaceholder`,
-  button: `${PREFIX}-button`,
-  mdHelpers: `${PREFIX}-mdHelpers`,
-  formControl: `${PREFIX}-formControl`,
-};
-
-const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.tags}`]: {
-    padding: '5px 5px 2px 2px',
-    margin: 6,
-    clear: 'both',
-    boxShadow:
-      '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)',
-  },
-
-  [`& .${classes.editTagsButton}`]: {
-    float: 'right',
-    margin: '0 0 10px 0',
-  },
-
-  [`& .${classes.textField}`]: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: '100vh',
-  },
-
-  [`& .${classes.dropText}`]: {
-    display: 'flex',
-    width: '100%',
-    padding: '20px',
-    color: '#728496',
-  },
-
-  [`& .${classes.propertyName}`]: {
-    marginTop: 10,
-  },
-
-  [`& .${classes.actionPlaceholder}`]: {
-    textAlign: 'end',
-  },
-
-  [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '8px 12px 6px 8px',
-    margin: '0',
-  },
-
-  [`& .${classes.mdHelpers}`]: {
-    borderRadius: '0.25rem',
-    paddingLeft: '0.25rem',
-    paddingRight: '0.25rem',
-    backgroundColor: '#bcc0c561',
-  },
-  [`& .${classes.formControl}`]: {
-    marginLeft: theme.spacing(0),
-    width: '100%',
-  },
-}));
 
 const ThumbnailTextField = styled(TextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -383,9 +315,6 @@ function EntryProperties(props: Props) {
   };
 
   const toggleMoveCopyFilesDialog = () => {
-    /*props.setSelectedEntries([
-      { name: '', isFile: true, tags: [], ...openedEntry.current }
-    ]);*/
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
@@ -426,10 +355,6 @@ function EntryProperties(props: Props) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    /*if (!Pro.MetaOperations) {
-      showNotification(t('Saving color not supported'));
-      return;
-    }*/
     setDisplayColorPicker(!displayColorPicker);
   };
 
@@ -483,7 +408,6 @@ function EntryProperties(props: Props) {
             (tag) => !openedEntry.tags.some((obj) => obj.title === tag.title),
           );
     return addTagsToFsEntry(openedEntry, tags);
-    //return addTags([openedEntry.path], tags);
   };
 
   if (!openedEntry || !openedEntry.path || openedEntry.path === '') {
@@ -505,14 +429,6 @@ function EntryProperties(props: Props) {
       perspective,
     };
     saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationID);
-    /*.then((entryMeta: TS.FileSystemEntryMeta) => {
-        openedEntry.meta = entryMeta;
-        //return updateOpenedFile(openedEntry.path, entryMeta);
-      })
-      .catch((error) => {
-        console.warn('Error saving perspective for folder ' + error);
-        showNotification(t('Error saving perspective for folder'));
-      });*/
   };
 
   let perspectiveDefault;
@@ -558,19 +474,10 @@ function EntryProperties(props: Props) {
   const showLinkForDownloading =
     isCloudLocation && openedEntry.isFile && !openedEntry.isEncrypted;
 
-  /*const thumbUrl = location.getThumbPath(
-    openedEntry.meta?.thumbPath,
-    openedEntry.meta?.lastUpdated,
-  );
-  const backgroundUrl = location.getFolderBgndPath(
-    openedEntry.path,
-    openedEntry.meta?.lastUpdated,
-  );*/
-
   return (
-    <Root>
+    <div>
       <Grid container>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TsTextField
             error={fileNameError.current}
             label={
@@ -618,7 +525,7 @@ function EntryProperties(props: Props) {
             }}
             name="name"
             data-tid="fileNameProperties"
-            defaultValue={entryName} // openedEntry.current.name}
+            defaultValue={entryName}
             inputRef={fileNameRef}
             retrieveValue={() => fileNameRef.current.value}
             onClick={() => {
@@ -642,17 +549,12 @@ function EntryProperties(props: Props) {
             </FormHelperText>
           )}
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TagDropContainer entryPath={openedEntry.path}>
             <TagsSelect
               label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
               placeholderText={t('core:dropHere')}
-              /*isReadOnlyMode={
-                isReadOnlyMode ||
-                openedEntry.current.editMode ||
-                editName !== undefined
-              }*/
               tags={getAllTags(openedEntry)}
               tagMode="default"
               handleChange={handleChange}
@@ -664,7 +566,7 @@ function EntryProperties(props: Props) {
         </Grid>
 
         {geoLocation && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <MapContainer
               style={{
                 height: '200px',
@@ -756,67 +658,64 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
 
-        <Grid container item xs={12} spacing={1}>
-          <Grid item xs={12}>
+        <Grid size={12}>
+          <TsTextField
+            value={ldtm}
+            label={t('core:fileLDTM')}
+            retrieveValue={() => ldtm}
+            slotProps={{
+              input: {
+                readOnly: true,
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <Tooltip
+            title={
+              !location?.haveObjectStoreSupport() &&
+              dirProps.current &&
+              !openedEntry.isFile &&
+              dirProps.current.dirsCount +
+                ' ' +
+                t('core:directories') +
+                ', ' +
+                dirProps.current.filesCount +
+                ' ' +
+                t('core:files')
+            }
+          >
             <TsTextField
-              value={ldtm}
-              label={t('core:fileLDTM')}
-              retrieveValue={() => ldtm}
+              value={fileSize()}
+              retrieveValue={() => fileSize()}
+              label={t('core:fileSize')}
               slotProps={{
                 input: {
                   readOnly: true,
+                  ...(!openedEntry.isFile && {
+                    endAdornment: (
+                      <TsButton
+                        variant="text"
+                        onClick={() =>
+                          getOpenedDirProps().then((props) => {
+                            dirProps.current = props;
+                            forceUpdate();
+                          })
+                        }
+                      >
+                        {t('core:calculate')}
+                      </TsButton>
+                    ),
+                  }),
                 },
               }}
             />
-          </Grid>
-        </Grid>
-        <Grid container item xs={12} spacing={1}>
-          <Grid item xs={12}>
-            <Tooltip
-              title={
-                !location?.haveObjectStoreSupport() &&
-                dirProps.current &&
-                !openedEntry.isFile &&
-                dirProps.current.dirsCount +
-                  ' ' +
-                  t('core:directories') +
-                  ', ' +
-                  dirProps.current.filesCount +
-                  ' ' +
-                  t('core:files')
-              }
-            >
-              <TsTextField
-                value={fileSize()}
-                retrieveValue={() => fileSize()}
-                label={t('core:fileSize')}
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                    ...(!openedEntry.isFile && {
-                      endAdornment: (
-                        <TsButton
-                          variant="text"
-                          onClick={() =>
-                            getOpenedDirProps().then((props) => {
-                              dirProps.current = props;
-                              forceUpdate();
-                            })
-                          }
-                        >
-                          {t('core:calculate')}
-                        </TsButton>
-                      ),
-                    }),
-                  },
-                }}
-              />
-            </Tooltip>
-          </Grid>
+          </Tooltip>
         </Grid>
 
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} className={classes.formControl}>
+        <Grid size={12}>
+          <FormControl fullWidth={true}>
             <TsTextField
               name="path"
               title={openedEntry.url || openedEntry.path}
@@ -861,55 +760,47 @@ function EntryProperties(props: Props) {
           </FormControl>
         </Grid>
 
-        <Grid
-          container
-          item
-          xs={12}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Grid item xs={12}>
-            <TsTextField
-              data-tid="sharingLinkTID"
-              name="sharinglink"
-              label={<>{t('core:sharingLink')}</>}
-              value={sharingLink}
-              inputRef={sharingLinkRef}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <TsButton
-                        tooltip={t('core:copyLinkToClipboard')}
-                        data-tid="copyLinkToClipboardTID"
-                        variant="text"
-                        onClick={() => {
-                          const entryTitle = extractTitle(
-                            openedEntry.name,
-                            !openedEntry.isFile,
-                            location?.getDirSeparator(),
-                          );
-                          const clibboardItem = generateClipboardLink(
-                            sharingLink,
-                            entryTitle,
-                          );
-                          const promise =
-                            navigator.clipboard.write(clibboardItem);
-                          showNotification(t('core:linkCopied'));
-                        }}
-                      >
-                        {t('core:copy')}
-                      </TsButton>
-                      <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Grid>
+        <Grid size={12}>
+          <TsTextField
+            data-tid="sharingLinkTID"
+            name="sharinglink"
+            label={<>{t('core:sharingLink')}</>}
+            value={sharingLink}
+            inputRef={sharingLinkRef}
+            slotProps={{
+              input: {
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <TsButton
+                      tooltip={t('core:copyLinkToClipboard')}
+                      data-tid="copyLinkToClipboardTID"
+                      variant="text"
+                      onClick={() => {
+                        const entryTitle = extractTitle(
+                          openedEntry.name,
+                          !openedEntry.isFile,
+                          location?.getDirSeparator(),
+                        );
+                        const clibboardItem = generateClipboardLink(
+                          sharingLink,
+                          entryTitle,
+                        );
+                        const promise =
+                          navigator.clipboard.write(clibboardItem);
+                        showNotification(t('core:linkCopied'));
+                      }}
+                    >
+                      {t('core:copy')}
+                    </TsButton>
+                    <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
           {showLinkForDownloading && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TsTextField
                 name="downloadLink"
                 label={<>{t('core:downloadLink')}</>}
@@ -942,7 +833,7 @@ function EntryProperties(props: Props) {
         </Grid>
 
         {!openedEntry.isFile && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <PerspectiveSelector
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
@@ -953,7 +844,7 @@ function EntryProperties(props: Props) {
         )}
 
         {!openedEntry.isFile && (
-          <Grid item xs={12} style={{ marginTop: 5 }}>
+          <Grid size={12} style={{ marginTop: 5 }}>
             <TsTextField
               name="path"
               label={<>{t('core:backgroundColor')}</>}
@@ -1059,14 +950,76 @@ function EntryProperties(props: Props) {
             />
           </Grid>
         )}
-        <Grid container item xs={12} spacing={1}>
-          <Grid item xs={openedEntry.isFile ? 12 : 6}>
-            <FormHelperText>{t('core:thumbnail')}</FormHelperText>
+        <Grid size={openedEntry.isFile ? 12 : 6}>
+          <FormHelperText>{t('core:thumbnail')}</FormHelperText>
+          <ThumbnailTextField
+            margin="dense"
+            variant="outlined"
+            style={{ marginTop: 0 }}
+            fullWidth
+            slotProps={{
+              input: {
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="end">
+                    <Stack
+                      direction="column"
+                      spacing={0}
+                      style={{ alignItems: 'center' }}
+                    >
+                      {!readOnlyMode &&
+                        !isEditMode &&
+                        editName === undefined && (
+                          <ProTooltip tooltip={t('changeThumbnail')}>
+                            <TsButton
+                              data-tid="changeThumbnailTID"
+                              fullWidth
+                              variant="text"
+                              onClick={toggleThumbFilesDialog}
+                            >
+                              {t('core:change')}
+                            </TsButton>
+                          </ProTooltip>
+                        )}
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        style={{
+                          backgroundSize: 'cover',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundImage: thumbImage.current,
+                          backgroundPosition: 'center',
+                          borderRadius: 8,
+                          minHeight: 150,
+                          minWidth: 150,
+                          marginBottom: 5,
+                        }}
+                        onClick={toggleThumbFilesDialog}
+                      />
+                    </Stack>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Grid>
+        {!openedEntry.isFile && (
+          <Grid size={6}>
+            <FormHelperText
+              style={{
+                marginLeft: AppConfig.defaultSpaceBetweenButtons,
+              }}
+            >
+              {t('core:backgroundImage')}
+            </FormHelperText>
             <ThumbnailTextField
               margin="dense"
-              variant="outlined"
-              style={{ marginTop: 0 }}
               fullWidth
+              style={{
+                marginTop: 0,
+                marginLeft: AppConfig.defaultSpaceBetweenButtons,
+              }}
+              variant="outlined"
               slotProps={{
                 input: {
                   readOnly: true,
@@ -1080,31 +1033,32 @@ function EntryProperties(props: Props) {
                         {!readOnlyMode &&
                           !isEditMode &&
                           editName === undefined && (
-                            <ProTooltip tooltip={t('changeThumbnail')}>
+                            <ProTooltip tooltip={t('changeBackgroundImage')}>
                               <TsButton
-                                data-tid="changeThumbnailTID"
+                                data-tid="changeBackgroundImageTID"
                                 fullWidth
                                 variant="text"
-                                onClick={toggleThumbFilesDialog}
+                                onClick={toggleBgndImgDialog}
                               >
                                 {t('core:change')}
                               </TsButton>
                             </ProTooltip>
                           )}
                         <div
+                          data-tid="propsBgnImageTID"
                           role="button"
                           tabIndex={0}
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: thumbImage.current,
+                            backgroundImage: backgroundImage.current,
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,
                             minWidth: 150,
                             marginBottom: 5,
                           }}
-                          onClick={toggleThumbFilesDialog}
+                          onClick={toggleBgndImgDialog}
                         />
                       </Stack>
                     </InputAdornment>
@@ -1113,73 +1067,8 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-          {!openedEntry.isFile && (
-            <Grid item xs={6}>
-              <FormHelperText>{t('core:backgroundImage')}</FormHelperText>
-              <ThumbnailTextField
-                margin="dense"
-                fullWidth
-                style={{ marginTop: 0 }}
-                variant="outlined"
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                    startAdornment: (
-                      <InputAdornment position="end">
-                        <Stack
-                          direction="column"
-                          spacing={0}
-                          style={{ alignItems: 'center' }}
-                        >
-                          {!readOnlyMode &&
-                            !isEditMode &&
-                            editName === undefined && (
-                              <ProTooltip tooltip={t('changeBackgroundImage')}>
-                                <TsButton
-                                  data-tid="changeBackgroundImageTID"
-                                  fullWidth
-                                  variant="text"
-                                  onClick={toggleBgndImgDialog}
-                                >
-                                  {t('core:change')}
-                                </TsButton>
-                              </ProTooltip>
-                            )}
-                          <div
-                            data-tid="propsBgnImageTID"
-                            role="button"
-                            tabIndex={0}
-                            style={{
-                              backgroundSize: 'cover',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundImage: backgroundImage.current,
-                              backgroundPosition: 'center',
-                              borderRadius: 8,
-                              minHeight: 150,
-                              minWidth: 150,
-                              marginBottom: 5,
-                            }}
-                            onClick={toggleBgndImgDialog}
-                          />
-                        </Stack>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </Grid>
-          )}
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        item
-        xs={12}
-        spacing={1}
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Grid item xs={12}>
+        )}
+        <Grid size={12}>
           <TsTextField
             data-tid="entryIDTID"
             name="entryid"
@@ -1189,12 +1078,6 @@ function EntryProperties(props: Props) {
             slotProps={{
               input: {
                 readOnly: true,
-                // startAdornment: (
-                //   <InputAdornment position="start">
-                //     <InfoIcon tooltip={t('core:entryIdTooltip')} />
-                //     {/* <IDIcon style={{ color: theme.palette.text.secondary }} /> */}
-                //   </InputAdornment>
-                // ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <TsButton
@@ -1289,7 +1172,7 @@ function EntryProperties(props: Props) {
           currentDirectoryPath={openedEntry.path}
         />
       )}
-    </Root>
+    </div>
   );
 }
 

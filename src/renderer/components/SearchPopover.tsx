@@ -16,9 +16,9 @@
  *
  */
 
-import React from 'react';
 import AppConfig from '-/AppConfig';
 import { CloseIcon, CreateFileIcon, EditIcon } from '-/components/CommonIcons';
+import EditSearchQuery from '-/components/EditSearchQuery';
 import { SidePanel, classes } from '-/components/SidePanels.css';
 import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
@@ -26,21 +26,21 @@ import TsIconButton from '-/components/TsIconButton';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import EditSearchQuery from '-/components/EditSearchQuery';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 
 interface Props {
   style?: any;
@@ -138,7 +138,7 @@ function SearchPopover(props: Props) {
           justifyContent="center"
           alignItems="flex-end"
         >
-          <Grid item xs={9}>
+          <Grid size={9}>
             <TooltipTS title={t('storedSearchQueriesTooltip')}>
               <FormControl
                 variant="outlined"
@@ -172,8 +172,7 @@ function SearchPopover(props: Props) {
             </TooltipTS>
           </Grid>
           <Grid
-            item
-            xs={3}
+            size={3}
             style={{ display: 'flex', alignSelf: 'center', paddingTop: 40 }}
           >
             <ButtonGroup
@@ -200,7 +199,7 @@ function SearchPopover(props: Props) {
               </TsIconButton>
             </ButtonGroup>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <EditSearchQuery />
           </Grid>
         </Grid>

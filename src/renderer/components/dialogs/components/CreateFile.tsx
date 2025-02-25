@@ -16,34 +16,19 @@
  *
  */
 
-import React, { useEffect, useReducer, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import TsButton from '-/components/TsButton';
+import Tooltip from '-/components/Tooltip';
+import TsTextField from '-/components/TsTextField';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { fileNameValidation } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { FormControl } from '@mui/material';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Tooltip from '-/components/Tooltip';
 import FormHelperText from '@mui/material/FormHelperText';
-import { FormControl } from '@mui/material';
-import TsTextField from '-/components/TsTextField';
-import { fileNameValidation } from '-/services/utils-io';
-import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
-
-const PREFIX = 'CreateFile';
-
-const classes = {
-  createButton: `${PREFIX}-createButton`,
-};
-
-const StyledGrid = styled(Grid)(() => ({
-  [`& .${classes.createButton}`]: {
-    width: '100%',
-    textAlign: 'center',
-  },
-}));
 
 interface Props {
   fileName: string;
@@ -124,7 +109,7 @@ function CreateFile(props: Props) {
   };
 
   return (
-    <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+    <Grid container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
         <TsTextField
           error={inputError}
@@ -160,61 +145,48 @@ function CreateFile(props: Props) {
           />
         </FormControl>
       ) : (
-        <Grid item xs={12}>
-          <ButtonGroup
-            style={{
-              textAlign: 'center',
-              width: '100%',
-            }}
+        <ButtonGroup style={{ margin: '0 auto' }}>
+          <Button
+            onClick={() => createFile('md')}
+            data-tid={tid('createMarkdownButton')}
+            disabled={noSuitableLocation}
           >
-            <Button
-              // variant="contained"
-              onClick={() => createFile('md')}
-              className={classes.createButton}
-              data-tid={tid('createMarkdownButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createMarkdownTitle')}>
-                <Typography
-                  variant="button"
-                  style={{ fontWeight: 'bold' }}
-                  display="block"
-                  gutterBottom
-                >
-                  {t('createMarkdown')}
-                </Typography>
-              </Tooltip>
-            </Button>
-            <Button
-              // variant="contained"
-              onClick={() => createFile('html')}
-              className={classes.createButton}
-              data-tid={tid('createRichTextFileButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createNoteTitle')}>
-                <Typography variant="button" display="block" gutterBottom>
-                  {t('createRichTextFile')}
-                </Typography>
-              </Tooltip>
-            </Button>
-            <Button
-              // variant="contained"
-              onClick={() => createFile('txt')}
-              className={classes.createButton}
-              data-tid={tid('createTextFileButton')}
-              disabled={noSuitableLocation}
-            >
-              <Tooltip title={t('createTextFileTitle')}>
-                <Typography variant="button" display="block" gutterBottom>
-                  {t('createTextFile')}
-                </Typography>
-              </Tooltip>
-            </Button>
-          </ButtonGroup>
-        </Grid>
+            <Tooltip title={t('createMarkdownTitle')}>
+              <Typography
+                variant="button"
+                style={{ fontWeight: 'bold' }}
+                display="block"
+                gutterBottom
+              >
+                {t('createMarkdown')}
+              </Typography>
+            </Tooltip>
+          </Button>
+          <Button
+            onClick={() => createFile('html')}
+            data-tid={tid('createRichTextFileButton')}
+            disabled={noSuitableLocation}
+          >
+            <Tooltip title={t('createNoteTitle')}>
+              <Typography variant="button" display="block" gutterBottom>
+                {t('createRichTextFile')}
+              </Typography>
+            </Tooltip>
+          </Button>
+          <Button
+            onClick={() => createFile('txt')}
+            data-tid={tid('createTextFileButton')}
+            disabled={noSuitableLocation}
+          >
+            <Tooltip title={t('createTextFileTitle')}>
+              <Typography variant="button" display="block" gutterBottom>
+                {t('createTextFile')}
+              </Typography>
+            </Tooltip>
+          </Button>
+        </ButtonGroup>
       )}
-    </StyledGrid>
+    </Grid>
   );
 }
 

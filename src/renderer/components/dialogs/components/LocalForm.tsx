@@ -24,7 +24,7 @@ import { selectDirectoryDialog } from '-/services/utils-io';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import InputAdornment from '@mui/material/InputAdornment';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
@@ -65,7 +65,7 @@ function LocalForm(props: Props) {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             required
@@ -82,7 +82,7 @@ function LocalForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             required

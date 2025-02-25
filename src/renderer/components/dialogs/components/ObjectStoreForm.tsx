@@ -23,7 +23,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTranslation } from 'react-i18next';
 
@@ -145,7 +145,7 @@ function ObjectStoreForm(props: Props) {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             required
@@ -168,7 +168,7 @@ function ObjectStoreForm(props: Props) {
           )}
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             name="storePath"
@@ -189,7 +189,7 @@ function ObjectStoreForm(props: Props) {
           )}
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             required
@@ -211,7 +211,7 @@ function ObjectStoreForm(props: Props) {
           )}
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         {/* error={cloudErrorSecretAccessKey} */}
         <FormControl fullWidth={true}>
           <TsTextField
@@ -244,7 +244,7 @@ function ObjectStoreForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             name="sessionToken"
@@ -258,7 +258,7 @@ function ObjectStoreForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
           <TsTextField
             name="bucketName"
@@ -272,7 +272,7 @@ function ObjectStoreForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true}>
           <TsTextField
             name="endpointURL"
@@ -284,7 +284,7 @@ function ObjectStoreForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <FormControl fullWidth={true} error={cloudErrorRegion}>
           <Autocomplete
             options={regions}

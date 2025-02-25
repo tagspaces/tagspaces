@@ -16,19 +16,19 @@
  *
  */
 
-import React, { useRef } from 'react';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DragItemTypes from '-/components/DragItemTypes';
+import { SidePanel, classes } from '-/components/SidePanels.css';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Grid from '@mui/material/Grid2';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import Grid from '@mui/material/Grid';
-import { TS } from '-/tagspaces.namespace';
-import DragItemTypes from '-/components/DragItemTypes';
-import { classes, SidePanel } from '-/components/SidePanels.css';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   index: number;
@@ -135,7 +135,7 @@ function TagGroupTitleDnD(props: Props) {
         alignContent="center"
         style={{ flexWrap: 'nowrap' }}
       >
-        <Grid item xs={2} style={{ maxWidth: 40 }}>
+        <Grid size={2} style={{ maxWidth: 40 }}>
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
@@ -144,7 +144,7 @@ function TagGroupTitleDnD(props: Props) {
             {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
           </IconButton>
         </Grid>
-        <Grid item xs={8} style={{ alignSelf: 'center' }}>
+        <Grid size={8} style={{ alignSelf: 'center' }}>
           <Typography
             variant="inherit"
             className={classes.header}
@@ -177,7 +177,7 @@ function TagGroupTitleDnD(props: Props) {
             )}
           </Typography>
         </Grid>
-        <Grid item xs={2} style={{ textAlign: 'end' }}>
+        <Grid size={2} style={{ textAlign: 'end' }}>
           {!isReadOnly && (
             <IconButton
               style={{ minWidth: 'auto', padding: 7 }}

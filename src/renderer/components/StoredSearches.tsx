@@ -16,20 +16,15 @@
  *
  */
 
-import React, { useContext, useReducer, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import TsIconButton from '-/components/TsIconButton';
+import RenderHistory from '-/components/RenderHistory';
+import { SidePanel, classes } from '-/components/SidePanels.css';
 import TsButton from '-/components/TsButton';
-import Grid from '@mui/material/Grid';
-import EditIcon from '@mui/icons-material/Edit';
-import MenuIcon from '@mui/icons-material/MoreVert';
-import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
-import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
+import TsIconButton from '-/components/TsIconButton';
+import BookmarksMenu from '-/components/menus/BookmarksMenu';
+import HistoryMenu from '-/components/menus/HistoryMenu';
+import SearchMenu from '-/components/menus/SearchMenu';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import {
   actions as SettingsActions,
   getFileEditHistory,
@@ -39,18 +34,20 @@ import {
   getShowUnixHiddenEntries,
   getStoredSearchesVisible,
 } from '-/reducers/settings';
-import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
-import SearchMenu from '-/components/menus/SearchMenu';
-import HistoryMenu from '-/components/menus/HistoryMenu';
-import BookmarksMenu from '-/components/menus/BookmarksMenu';
-import { classes, SidePanel } from '-/components/SidePanels.css';
+import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
+import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import MenuIcon from '@mui/icons-material/MoreVert';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import classNames from 'classnames';
+import React, { useContext, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import RenderHistory from '-/components/RenderHistory';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
-import SaveSearchDialog from '-/components/dialogs/SaveSearchDialog';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Pro } from '../pro';
 
 interface Props {
   style?: any;
@@ -177,7 +174,7 @@ function StoredSearches(props: Props) {
         }}
       >
         <Grid container direction="row">
-          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.storedSearchesVisible
@@ -206,7 +203,7 @@ function StoredSearches(props: Props) {
               {t('core:savedSearchesTitle')}
             </Typography>
           </Grid>
-          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ alignSelf: 'center' }}>
             <SearchMenu
               anchorEl={searchMenuAnchorEl}
               open={Boolean(searchMenuAnchorEl)}
@@ -228,55 +225,57 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.storedSearchesVisible && noSearchesFound && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noSavedSearches')}</Typography>
             </Grid>
           )}
         </Grid>
-        {props.storedSearchesVisible &&
-          searches.map((search) => (
-            <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
-              <Grid item xs={10} style={{ width: 250 }}>
-                <TsButton
-                  data-tid={
-                    'StoredSearchTID' +
-                    search.title.trim().replaceAll(/\s+/g, '-')
-                  }
-                  variant="text"
-                  style={{
-                    textTransform: 'none',
-                    fontWeight: 'normal',
-                    justifyContent: 'start',
-                  }}
-                  onClick={() => findFromSavedSearch(search.uuid)}
-                >
-                  <SearchIcon />
-                  &nbsp;
-                  <span
+        <Grid>
+          {props.storedSearchesVisible &&
+            searches.map((search) => (
+              <Grid container direction="row" key={search.uuid}>
+                <Grid size={10}>
+                  <TsButton
+                    data-tid={
+                      'StoredSearchTID' +
+                      search.title.trim().replaceAll(/\s+/g, '-')
+                    }
+                    variant="text"
                     style={{
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      maxWidth: 220,
+                      textTransform: 'none',
+                      fontWeight: 'normal',
+                      justifyContent: 'start',
                     }}
+                    onClick={() => findFromSavedSearch(search.uuid)}
                   >
-                    {search.title}
-                  </span>
-                </TsButton>
+                    <SearchIcon />
+                    &nbsp;
+                    <span
+                      style={{
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        maxWidth: 220,
+                      }}
+                    >
+                      {search.title}
+                    </span>
+                  </TsButton>
+                </Grid>
+                <Grid size={2}>
+                  <TsIconButton
+                    aria-label={t('core:searchEditBtn')}
+                    onClick={() => openSaveSearchDialog(search.uuid)}
+                    data-tid="editSearchTID"
+                  >
+                    <EditIcon />
+                  </TsIconButton>
+                </Grid>
               </Grid>
-              <Grid item xs={2}>
-                <TsIconButton
-                  aria-label={t('core:searchEditBtn')}
-                  onClick={() => openSaveSearchDialog(search.uuid)}
-                  data-tid="editSearchTID"
-                >
-                  <EditIcon />
-                </TsIconButton>
-              </Grid>
-            </ListItem>
-          ))}
+            ))}
+        </Grid>
         <Grid container direction="row">
-          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="BookmarksTID"
               style={{ minWidth: 'auto', padding: 7 }}
@@ -293,7 +292,7 @@ function StoredSearches(props: Props) {
               {t('core:showBookmarks')}
             </Typography>
           </Grid>
-          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="BookmarksMenuTID"
               onClick={(event: any) => {
@@ -307,7 +306,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.showBookmarks && !bookmarksAvailable && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -320,7 +319,7 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.fileOpenHistory
@@ -341,7 +340,7 @@ function StoredSearches(props: Props) {
               {t('core:fileOpenHistory')}
             </Typography>
           </Grid>
-          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="fileOpenMenuTID"
               onClick={(event: any) => {
@@ -355,7 +354,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.fileOpenHistory && !openedFilesAvailable && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -368,7 +367,7 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="fileEditHistoryTID"
               style={{ minWidth: 'auto', padding: 7 }}
@@ -385,7 +384,7 @@ function StoredSearches(props: Props) {
               {t('core:fileEditHistory')}
             </Typography>
           </Grid>
-          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="FileEditedMenuTID"
               onClick={(event: any) => {
@@ -399,7 +398,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.fileEditHistory && !editedFilesAvailable && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -412,7 +411,7 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.folderOpenHistory
@@ -437,7 +436,7 @@ function StoredSearches(props: Props) {
               {t('core:folderOpenHistory')}
             </Typography>
           </Grid>
-          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="FolderOpenMenuTID"
               onClick={(event: any) => {
@@ -475,7 +474,7 @@ function StoredSearches(props: Props) {
         />
         <Grid container direction="row">
           {props.folderOpenHistory && !openedFoldersAvailable && (
-            <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}

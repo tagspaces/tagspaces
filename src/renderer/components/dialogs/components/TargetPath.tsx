@@ -16,13 +16,12 @@
  *
  */
 
-import React from 'react';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import { InfoIcon } from '-/components/CommonIcons';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 function TargetPath() {
   const { t } = useTranslation();
@@ -31,7 +30,7 @@ function TargetPath() {
   const currentLocation = findLocation();
 
   return (
-    <Grid item style={{ marginTop: 20 }} xs={12}>
+    <Grid container style={{ marginTop: 20 }}>
       {targetDirectoryPath ? (
         <Typography
           style={{ display: 'flex', alignItems: 'center' }}

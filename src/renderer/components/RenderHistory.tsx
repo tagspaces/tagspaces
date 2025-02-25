@@ -62,7 +62,7 @@ function RenderHistory(props: Props) {
           return (
             <ListItem
               dense
-              style={{ paddingLeft: 0 }}
+              style={{ paddingLeft: 0, height: 40 }}
               key={item.creationTimeStamp}
             >
               <TsButton

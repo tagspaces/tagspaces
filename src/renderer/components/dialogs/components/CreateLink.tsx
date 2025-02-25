@@ -16,29 +16,15 @@
  *
  */
 
-import React, { useEffect, useReducer, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
 import TsTextField from '-/components/TsTextField';
-import FormHelperText from '@mui/material/FormHelperText';
-import { FormControl } from '@mui/material';
-import { fileNameValidation, urlValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import { useTranslation } from 'react-i18next';
+import { fileNameValidation, urlValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-
-const PREFIX = 'CreateLink';
-
-const classes = {
-  createButton: `${PREFIX}-createButton`,
-};
-
-const StyledGrid = styled(Grid)(() => ({
-  [`& .${classes.createButton}`]: {
-    width: '100%',
-    textAlign: 'center',
-  },
-}));
+import { FormControl } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid2';
+import React, { useEffect, useReducer, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   fileName: string;
@@ -125,7 +111,7 @@ function CreateLink(props: Props) {
   };
 
   return (
-    <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+    <Grid container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
         <TsTextField
           error={inputError}
@@ -161,7 +147,7 @@ function CreateLink(props: Props) {
         )}
         {urlInputError && <FormHelperText>{urlInputError}</FormHelperText>}
       </FormControl>
-    </StyledGrid>
+    </Grid>
   );
 }
 
