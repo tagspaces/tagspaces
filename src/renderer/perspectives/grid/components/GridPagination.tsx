@@ -36,7 +36,7 @@ import { TS } from '-/tagspaces.namespace';
 import { MilkdownProvider } from '@milkdown/react';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -227,13 +227,13 @@ function GridPagination(props: Props) {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12} style={{ height: 70 }} />
+            <Grid size={12} style={{ height: 70 }} />
             {showDetails && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <div
                   style={{
-                    marginLeft: 10,
-                    marginRight: 10,
+                    marginLeft: 8,
+                    marginRight: 8,
                     marginTop: 0,
                     marginBottom: 0,
                     height:
@@ -346,14 +346,13 @@ function GridPagination(props: Props) {
             )}
             {showDescription && directoryMeta?.description && (
               <Grid
-                item
-                xs={12}
+                size={12}
                 style={{
                   backgroundColor: theme.palette.background.default,
                   borderBottom: '1px solid lightgray',
                   marginTop: showDetails ? 0 : 10,
-                  marginLeft: 25,
-                  marginRight: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
                   padding: 10,
                   borderTopLeftRadius: 10,
                   borderTopRightRadius: 10,
