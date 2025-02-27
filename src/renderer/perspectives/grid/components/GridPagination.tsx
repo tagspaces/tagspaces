@@ -207,159 +207,154 @@ function GridPagination(props: Props) {
         background: `${dirColor}`,
       }}
     >
-      <SelectionDragLayer />
-      <SelectionArea onSelect={handleSelect}>
-        <div
-          ref={containerEl}
-          onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
-            props.onContextMenu(event)
-          }
-          onClick={(event: React.MouseEvent<HTMLDivElement>) =>
-            props.onClick(event)
-          }
-          style={{
-            height: '100%',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            backgroundImage: backgroundImage.current,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid size={12} style={{ height: 70 }} />
-            {showDetails && (
-              <Grid size={12}>
-                <div
-                  style={{
-                    marginLeft: 8,
-                    marginRight: 8,
-                    marginTop: 0,
-                    marginBottom: 0,
-                    height:
-                      !showDescription &&
-                      directoryMeta &&
-                      directoryMeta.description
-                        ? 150
-                        : 110,
-                    position: 'relative',
-                  }}
-                >
-                  {((folderName && folderName.length > 0) ||
-                    (directoryMeta &&
-                      directoryMeta.tags &&
-                      directoryMeta.tags.length > 0)) && (
-                    <Box
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        overflow: 'auto',
-                        padding: 10,
-                        marginRight: 160,
-                        width: 'fit-content',
-                        borderRadius: 8,
-                        color: theme.palette.text.primary,
-                      }}
-                    >
-                      <Tooltip title={t('core:renameDirectory')}>
-                        <ButtonBase
-                          data-tid={'currentDir_' + dataTidFormat(folderName)}
-                          style={{
-                            fontSize: '1.5rem',
-                            filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                          }}
-                          onClick={() => {
-                            setSelectedEntries([]);
-                            openRenameEntryDialog();
-                          }}
-                        >
-                          {folderName}
-                        </ButtonBase>
-                      </Tooltip>
-                      {showTags ? (
-                        <span style={{ paddingLeft: 5 }}>
-                          {directoryMeta?.tags?.map((tag: TS.Tag) => {
-                            return <TagContainer tag={tag} tagMode="display" />;
-                          })}
-                        </span>
-                      ) : (
-                        <TagsPreview tags={directoryMeta?.tags} />
-                      )}
-                    </Box>
-                  )}
+      <div
+        ref={containerEl}
+        onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
+          props.onContextMenu(event)
+        }
+        onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+          props.onClick(event)
+        }
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          backgroundImage: backgroundImage.current,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid size={12} style={{ height: 70 }} />
+          {showDetails && (
+            <Grid size={12}>
+              <div
+                style={{
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginTop: 0,
+                  marginBottom: 0,
+                  height:
+                    !showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description
+                      ? 150
+                      : 110,
+                  position: 'relative',
+                }}
+              >
+                {((folderName && folderName.length > 0) ||
+                  (directoryMeta &&
+                    directoryMeta.tags &&
+                    directoryMeta.tags.length > 0)) && (
                   <Box
-                    data-tid={'allFilesCount' + files.length}
                     style={{
-                      paddingBottom: 5,
-                      marginTop: 10,
-                      marginRight: 160,
+                      display: 'flex',
+                      alignItems: 'center',
+                      overflow: 'auto',
                       padding: 10,
-                      borderRadius: 10,
+                      marginRight: 160,
                       width: 'fit-content',
+                      borderRadius: 8,
                       color: theme.palette.text.primary,
                     }}
                   >
-                    <Typography
-                      style={{
-                        fontSize: '0.9rem',
-                        filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                      }}
-                    >
-                      {folderSummary}
-                    </Typography>
-                    {!showDescription &&
-                      directoryMeta &&
-                      directoryMeta.description && (
-                        <Typography
-                          style={{
-                            fontSize: '0.8rem',
-                            wordBreak: 'break-all',
-                            filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
-                            height: 45,
-                            overflowY: 'auto',
-                          }}
-                        >
-                          {getDescriptionPreview(
-                            directoryMeta.description,
-                            200,
-                          )}
-                        </Typography>
-                      )}
+                    <Tooltip title={t('core:renameDirectory')}>
+                      <ButtonBase
+                        data-tid={'currentDir_' + dataTidFormat(folderName)}
+                        style={{
+                          fontSize: '1.5rem',
+                          filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                        }}
+                        onClick={() => {
+                          setSelectedEntries([]);
+                          openRenameEntryDialog();
+                        }}
+                      >
+                        {folderName}
+                      </ButtonBase>
+                    </Tooltip>
+                    {showTags ? (
+                      <span style={{ paddingLeft: 5 }}>
+                        {directoryMeta?.tags?.map((tag: TS.Tag) => {
+                          return <TagContainer tag={tag} tagMode="display" />;
+                        })}
+                      </span>
+                    ) : (
+                      <TagsPreview tags={directoryMeta?.tags} />
+                    )}
                   </Box>
-                  <div
-                    data-tid="folderThumbTID"
+                )}
+                <Box
+                  data-tid={'allFilesCount' + files.length}
+                  style={{
+                    paddingBottom: 5,
+                    marginTop: 10,
+                    marginRight: 160,
+                    padding: 10,
+                    borderRadius: 10,
+                    width: 'fit-content',
+                    color: theme.palette.text.primary,
+                  }}
+                >
+                  <Typography
                     style={{
-                      borderRadius: 10,
-                      height: 100,
-                      width: 140,
-                      backgroundImage: thumbImage.current,
-                      backgroundSize: 'cover', // cover contain
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center center',
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
+                      fontSize: '0.9rem',
+                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                     }}
-                  />
-                </div>
-              </Grid>
-            )}
-            {showDescription && directoryMeta?.description && (
-              <Grid
-                size={12}
-                style={{
-                  backgroundColor: theme.palette.background.default,
-                  borderBottom: '1px solid lightgray',
-                  marginTop: showDetails ? 0 : 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  padding: 10,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                }}
-              >
-                <style>
-                  {`
+                  >
+                    {folderSummary}
+                  </Typography>
+                  {!showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description && (
+                      <Typography
+                        style={{
+                          fontSize: '0.8rem',
+                          wordBreak: 'break-all',
+                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                          height: 45,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {getDescriptionPreview(directoryMeta.description, 200)}
+                      </Typography>
+                    )}
+                </Box>
+                <div
+                  data-tid="folderThumbTID"
+                  style={{
+                    borderRadius: 10,
+                    height: 100,
+                    width: 140,
+                    backgroundImage: thumbImage.current,
+                    backgroundSize: 'cover', // cover contain
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center center',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                  }}
+                />
+              </div>
+            </Grid>
+          )}
+          {showDescription && directoryMeta?.description && (
+            <Grid
+              size={12}
+              style={{
+                backgroundColor: theme.palette.background.default,
+                borderBottom: '1px solid lightgray',
+                marginTop: showDetails ? 0 : 10,
+                marginLeft: 8,
+                marginRight: 8,
+                padding: 10,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+              }}
+            >
+              <style>
+                {`
                       .milkdown .ProseMirror {
                           padding: 0;
                       }
@@ -370,16 +365,19 @@ function GridPagination(props: Props) {
                           max-width: 99%;
                       }
                   `}
-                </style>
-                <MilkdownProvider>
-                  <LightMdEditor
-                    defaultContent={directoryMeta.description}
-                    placeholder=""
-                  />
-                </MilkdownProvider>
-              </Grid>
-            )}
-          </Grid>
+              </style>
+              <MilkdownProvider>
+                <LightMdEditor
+                  defaultContent={directoryMeta.description}
+                  placeholder=""
+                />
+              </MilkdownProvider>
+            </Grid>
+          )}
+        </Grid>
+
+        <SelectionDragLayer />
+        <SelectionArea onSelect={handleSelect}>
           <GridCellsContainer>
             {pageFiles.map((entry, index, dArray) => (
               <CellView
@@ -479,8 +477,8 @@ function GridPagination(props: Props) {
               </Typography>
             </div>
           )}
-        </div>
-      </SelectionArea>
+        </SelectionArea>
+      </div>
     </div>
   );
 }
