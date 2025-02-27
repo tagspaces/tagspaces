@@ -117,6 +117,10 @@ function ChatView() {
     editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]);
 
+  useEffect(() => {
+    editorRef.current?.update(formatChatItems(chatHistoryItems));
+  }, [chatHistoryItems]);
+
   /*useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
@@ -144,6 +148,10 @@ function ChatView() {
       };
     }
   }, [chatMessageHandler]);*/
+
+  const defaultContent = useMemo(() => {
+    return formatChatItems(chatHistoryItems);
+  }, []);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
@@ -380,10 +388,7 @@ function ChatView() {
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
             <MilkdownProvider>
-              <ChatMdEditor
-                defaultContent={formatChatItems(chatHistoryItems)}
-                ref={editorRef}
-              />
+              <ChatMdEditor defaultContent={defaultContent} ref={editorRef} />
             </MilkdownProvider>
           </div>
         </Grid2>

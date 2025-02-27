@@ -78,7 +78,7 @@ export const FilePropertiesContextProvider = ({
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isEditDescriptionMode, setIsEditDescriptionMode] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
 

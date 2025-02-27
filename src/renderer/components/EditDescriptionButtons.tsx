@@ -18,7 +18,7 @@ const EditDescriptionButtons: React.FC = () => {
     isEditDescriptionMode,
     setEditDescriptionMode,
   } = useFilePropertiesContext();
-  const { openedEntry } = useOpenedEntryContext();
+  const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   /*React.useImperativeHandle(buttonsRef, () => ({
@@ -66,6 +66,7 @@ const EditDescriptionButtons: React.FC = () => {
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             onClick={() => {
               setEditDescriptionMode(false);
+              return reloadOpenedFile();
             }}
           >
             {t('core:cancel')}
