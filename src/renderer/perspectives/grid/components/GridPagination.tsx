@@ -355,7 +355,7 @@ function GridPagination(props: Props) {
                 className="gridPagination"
                 style={{
                   backgroundColor: theme.palette.background.default,
-                  borderBottom: '1px solid lightgray',
+                  borderBottom: '1px solid ' + theme.palette.divider,
                   marginTop: showDetails ? 0 : 10,
                   marginLeft: 8,
                   marginRight: 8,
