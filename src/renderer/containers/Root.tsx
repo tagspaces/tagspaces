@@ -55,7 +55,7 @@ import { ChatContextProvider } from '-/hooks/ChatProvider';
 import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
 import { EntryPropsTabsContextProvider } from '-/hooks/EntryPropsTabsContextProvider';
 import { SearchQueryContextProvider } from '-/hooks/SearchQueryContextProvider';
-import { MilkdownProvider } from '@milkdown/react';
+import { DarkModeProvider } from '-/components/md/DarkModeProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -103,21 +103,23 @@ export default function Root({ store, persistor }: RootType) {
                                                     <BrowserHistoryContextProvider>
                                                       <FileUploadDialogContextProvider>
                                                         <ChatContextProvider>
-                                                          {Pro ? (
-                                                            <Pro.contextProviders.BookmarksContextProvider>
-                                                              <Pro.contextProviders.HistoryContextProvider>
-                                                                <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                  <DialogsRoot>
-                                                                    <MainPage />
-                                                                  </DialogsRoot>
-                                                                </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                              </Pro.contextProviders.HistoryContextProvider>
-                                                            </Pro.contextProviders.BookmarksContextProvider>
-                                                          ) : (
-                                                            <DialogsRoot>
-                                                              <MainPage />
-                                                            </DialogsRoot>
-                                                          )}
+                                                          <DarkModeProvider>
+                                                            {Pro ? (
+                                                              <Pro.contextProviders.BookmarksContextProvider>
+                                                                <Pro.contextProviders.HistoryContextProvider>
+                                                                  <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                    <DialogsRoot>
+                                                                      <MainPage />
+                                                                    </DialogsRoot>
+                                                                  </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                </Pro.contextProviders.HistoryContextProvider>
+                                                              </Pro.contextProviders.BookmarksContextProvider>
+                                                            ) : (
+                                                              <DialogsRoot>
+                                                                <MainPage />
+                                                              </DialogsRoot>
+                                                            )}
+                                                          </DarkModeProvider>
                                                         </ChatContextProvider>
                                                       </FileUploadDialogContextProvider>
                                                     </BrowserHistoryContextProvider>
