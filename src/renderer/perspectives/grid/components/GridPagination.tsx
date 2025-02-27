@@ -44,6 +44,8 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   desktopMode: boolean;
@@ -90,6 +92,7 @@ function GridPagination(props: Props) {
   const { directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const { openEntry } = useOpenedEntryContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
@@ -352,6 +355,9 @@ function GridPagination(props: Props) {
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
               }}
+              onDoubleClick={() =>
+                openEntry(currentDirectoryPath, TabNames.descriptionTab)
+              }
             >
               <style>
                 {`

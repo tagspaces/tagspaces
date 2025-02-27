@@ -31,7 +31,7 @@ export function createCrepeEditor(
       },
       [Crepe.Feature.ImageBlock]: {
         proxyDomURL: (originalURL: string) => {
-          if (currentFolder) {
+          if (currentFolder && !originalURL.startsWith('data:')) {
             return (
               AppConfig.mediaProtocol + `:///${currentFolder}/${originalURL}`
             );
