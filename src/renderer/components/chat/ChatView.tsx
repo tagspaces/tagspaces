@@ -59,6 +59,7 @@ import { useSelector } from 'react-redux';
 import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { MilkdownProvider } from '@milkdown/react';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -77,6 +78,7 @@ function ChatView() {
     cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
@@ -191,8 +193,13 @@ function ChatView() {
           ? item.imagePaths.map((i) => {
               return (
                 '![chat image](' +
-                (AppConfig.isWeb ? '' : 'file://') +
-                getHistoryFilePath(i) +
+                //(AppConfig.isWeb ? '' : 'file://') +
+                // getHistoryFilePath(i) +
+                AppConfig.metaFolder +
+                '/' +
+                AppConfig.aiFolder +
+                '/' +
+                i +
                 ')'
               );
             })
@@ -388,7 +395,11 @@ function ChatView() {
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div ref={milkdownDivRef}>
             <MilkdownProvider>
-              <ChatMdEditor defaultContent={defaultContent} ref={editorRef} />
+              <ChatMdEditor
+                defaultContent={defaultContent}
+                ref={editorRef}
+                currentFolder={currentDirectoryPath}
+              />
             </MilkdownProvider>
           </div>
         </Grid2>
