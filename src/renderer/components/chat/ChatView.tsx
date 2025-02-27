@@ -29,15 +29,19 @@ import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
+import ChatMdEditor from '-/components/md/ChatMdEditor';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { saveAsTextFile } from '-/services/utils-io';
+import { MilkdownProvider } from '@milkdown/react';
+import CancelIcon from '@mui/icons-material/Cancel';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import CancelIcon from '@mui/icons-material/Cancel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
@@ -56,10 +60,6 @@ import React, {
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ChatMdEditor from '-/components/md/ChatMdEditor';
-import { CrepeRef } from '-/components/md/useCrepeHandler';
-import { MilkdownProvider } from '@milkdown/react';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -393,7 +393,20 @@ function ChatView() {
           </Grid2>
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
-          <div ref={milkdownDivRef}>
+          <div className="chatMD" ref={milkdownDivRef}>
+            <style>
+              {`
+                .chatMD .milkdown .ProseMirror {
+                    padding: 10px;
+                }
+                .chatMD .milkdown .ProseMirror a {
+                    color: ${theme.palette.primary.main};
+                }
+                .chatMD .milkdown .ProseMirror img {
+                    max-width: 99%;
+                }
+            `}
+            </style>
             <MilkdownProvider>
               <ChatMdEditor
                 defaultContent={defaultContent}

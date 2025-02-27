@@ -946,5 +946,7 @@
   "summaryLanguage": "Language for the generated summary",
   "tags": "Tags",
   "languages": "Language",
+  "folderDescription": "Folder description",
+  "doubleClickToEdit": "Double-click to edit",
   "-": "-"
 }

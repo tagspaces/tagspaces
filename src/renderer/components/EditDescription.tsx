@@ -17,14 +17,14 @@
  */
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
+import { MilkdownProvider } from '@milkdown/react';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CrepeRef } from '-/components/md/useCrepeHandler';
-import { MilkdownProvider } from '@milkdown/react';
 
 function EditDescription() {
   const { t } = useTranslation();
@@ -98,6 +98,7 @@ function EditDescription() {
     >
       <EditDescriptionButtons />
       <div
+        className="descriptionEditor"
         data-tid="descriptionTID"
         onDoubleClick={() => {
           if (Pro && !isEditDescriptionMode && !isEditMode) {
@@ -114,13 +115,13 @@ function EditDescription() {
       >
         <style>
           {`
-                .milkdown .ProseMirror {
+                .descriptionEditor .milkdown .ProseMirror {
                     padding: 10px 30px 10px 80px;
                 }
-                .prose a {
+                .descriptionEditor .prose a {
                     color: ${theme.palette.primary.main};
                 }
-                .prose img {
+                .descriptionEditor .prose img {
                     max-width: 99%;
                 }
              `}
@@ -136,19 +137,6 @@ function EditDescription() {
           />
         </MilkdownProvider>
       </div>
-      {/* <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-      <Typography
-          variant="caption"
-          style={{
-            color: theme.palette.text.primary,
-          }}
-        >
-          Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
-          <b className={classes.mdHelpers}>**bold**</b>{' '}
-          <span className={classes.mdHelpers}>* list item</span>{' '}
-          <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography>
-      </span> */}
     </div>
   );
 }

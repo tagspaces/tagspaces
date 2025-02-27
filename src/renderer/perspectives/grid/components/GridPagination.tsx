@@ -20,12 +20,14 @@ import AppConfig from '-/AppConfig';
 import EntryIcon from '-/components/EntryIcon';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import Tooltip from '-/components/Tooltip';
+import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import LightMdEditor from '-/components/md/LigthMdEditor';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import CellView from '-/perspectives/common/CellView';
@@ -44,8 +46,6 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 interface Props {
   desktopMode: boolean;
@@ -343,42 +343,54 @@ function GridPagination(props: Props) {
             </Grid>
           )}
           {showDescription && directoryMeta?.description && (
-            <Grid
-              size={12}
-              style={{
-                backgroundColor: theme.palette.background.default,
-                borderBottom: '1px solid lightgray',
-                marginTop: showDetails ? 0 : 10,
-                marginLeft: 8,
-                marginRight: 8,
-                padding: 10,
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 10,
-              }}
-              onDoubleClick={() =>
-                openEntry(currentDirectoryPath, TabNames.descriptionTab)
+            <TooltipTS
+              title={
+                t('core:folderDescription') +
+                ' - ' +
+                t('core:doubleClickToEdit')
               }
             >
-              <style>
-                {`
-                      .milkdown .ProseMirror {
-                          padding: 0;
+              <Grid
+                size={12}
+                className="gridPagination"
+                style={{
+                  backgroundColor: theme.palette.background.default,
+                  borderBottom: '1px solid lightgray',
+                  marginTop: showDetails ? 0 : 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }}
+                onDoubleClick={() =>
+                  openEntry(currentDirectoryPath, TabNames.descriptionTab)
+                }
+              >
+                <style>
+                  {`
+                     .gridPagination .milkdown {
+                          border-top-left-radius: 10px;
+                          border-top-right-radius: 10px;
                       }
-                      .milkdown .ProseMirror a {
+                      .gridPagination .milkdown .ProseMirror {
+                          padding: 10px;
+                      }
+                      .gridPagination .milkdown .ProseMirror a {
                           color: ${theme.palette.primary.main};
                       }
-                      .milkdown .ProseMirror img {
+                      .gridPagination .milkdown .ProseMirror img {
                           max-width: 99%;
                       }
                   `}
-              </style>
-              <MilkdownProvider>
-                <LightMdEditor
-                  defaultContent={directoryMeta.description}
-                  placeholder=""
-                />
-              </MilkdownProvider>
-            </Grid>
+                </style>
+                <MilkdownProvider>
+                  <LightMdEditor
+                    defaultContent={directoryMeta.description}
+                    placeholder=""
+                  />
+                </MilkdownProvider>
+              </Grid>
+            </TooltipTS>
           )}
         </Grid>
 
