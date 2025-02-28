@@ -245,13 +245,15 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           ))}
         </StyledTabs>
       </Box>
-      <React.Suspense fallback={<LoadingLazy />}>
-        {tabsArray.current.map((tab, index) => (
-          <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
-            {getTabContainer(tab.name)}
-          </TsTabPanel>
-        ))}
-      </React.Suspense>
+      {tabsArray.current.map((tab, index) => (
+        <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
+          {selectedTabIndex === index && (
+            <React.Suspense fallback={<LoadingLazy />}>
+              {getTabContainer(tab.name)}
+            </React.Suspense>
+          )}
+        </TsTabPanel>
+      ))}
     </div>
   );
 }

@@ -16,7 +16,6 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
@@ -25,19 +24,23 @@ import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
-import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
+import { AIProvider, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
+import ChatMdEditor from '-/components/md/ChatMdEditor';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { saveAsTextFile } from '-/services/utils-io';
+import { MilkdownProvider } from '@milkdown/react';
+import CancelIcon from '@mui/icons-material/Cancel';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import CancelIcon from '@mui/icons-material/Cancel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import IconButton from '@mui/material/IconButton';
@@ -45,15 +48,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
-import { format } from 'date-fns';
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { ChangeEvent, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -64,21 +59,20 @@ function ChatView() {
   const {
     images,
     removeImage,
-    chatHistoryItems,
     newChatMessage,
     changeCurrentModel,
     setModel,
     currentModel,
-    getHistoryFilePath,
     deleteHistory,
     isTyping,
     cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
-  const editorRef = useRef<MilkdownRef>(null);
+  const editorRef = useRef<CrepeRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>(undefined);
   //const txtInputRef = useRef<HTMLInputElement>(null);
@@ -105,10 +99,6 @@ function ChatView() {
       }
     };
   }, []);*/
-
-  useEffect(() => {
-    editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
 
   /*useEffect(() => {
     if (AppConfig.isElectron) {
@@ -160,45 +150,6 @@ function ChatView() {
         console.log(err);
       });
   };
-
-  function formatChatItems(chatItems: ChatItem[]): string {
-    if (chatItems) {
-      const formattedItems = chatItems.map((item) => {
-        const date = item.timestamp
-          ? '**User on ' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + '**'
-          : '**User**';
-        const request = item.request ? item.request : '';
-        const model = item.modelName ? item.modelName : 'AI model';
-        const response = item.response
-          ? '**' + model + '**:\\\n' + item.response
-          : '';
-        const images = item.imagePaths
-          ? item.imagePaths.map((i) => {
-              return (
-                '![chat image](' +
-                (AppConfig.isWeb ? '' : 'file://') +
-                getHistoryFilePath(i) +
-                ')'
-              );
-            })
-          : '';
-        return (
-          '' +
-          date +
-          ': \\\n' +
-          request +
-          '\n' +
-          images +
-          '\n' +
-          response +
-          '\n *** \n'
-        );
-      });
-      const markdown = formattedItems.join(' ');
-      return markdown;
-    }
-    return '';
-  }
 
   const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {
     currentMode.current = event.target.value
@@ -371,13 +322,26 @@ function ChatView() {
           </Grid2>
         </Grid2>
         <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
-          <div ref={milkdownDivRef}>
-            <MilkdownEditor
-              ref={editorRef}
-              content={formatChatItems(chatHistoryItems)}
-              readOnly={true}
-              lightMode={true}
-            />
+          <div className="chatMD" ref={milkdownDivRef}>
+            <style>
+              {`
+                .chatMD .milkdown .ProseMirror {
+                    padding: 10px;
+                }
+                .chatMD .milkdown .ProseMirror a {
+                    color: ${theme.palette.primary.main};
+                }
+                .chatMD .milkdown .ProseMirror img {
+                    max-width: 99%;
+                }
+            `}
+            </style>
+            <MilkdownProvider>
+              <ChatMdEditor
+                ref={editorRef}
+                currentFolder={currentDirectoryPath}
+              />
+            </MilkdownProvider>
           </div>
         </Grid2>
         <Grid2 container spacing={1} direction="column">
@@ -466,7 +430,7 @@ function ChatView() {
                           </Tooltip>
                           <TsSelect
                             id="select-mode"
-                            value={currentMode.current}
+                            value={currentMode.current || ''}
                             onChange={handleChangeMode}
                             variant="standard"
                             sx={{ width: currentMode.current ? 170 : 25 }}

@@ -16,12 +16,13 @@
  *
  */
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
+import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
+import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
-import Typography from '@mui/material/Typography';
+import { MilkdownProvider } from '@milkdown/react';
 import { useTheme } from '@mui/material/styles';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,13 +39,16 @@ function EditDescription() {
     isEditMode,
   } = useFilePropertiesContext();
 
-  const fileDescriptionRef = useRef<MilkdownRef>(null);
-  const descriptionFocus = useRef<boolean>(false);
+  const milkdownDivRef = useRef<HTMLDivElement>(null);
+  const fileDescriptionRef = useRef<CrepeRef>(null);
+  //const descriptionFocus = useRef<boolean>(false);
   // const descriptionButtonsRef = useRef(null);
 
   useEffect(() => {
-    fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
+    return () => {
+      fileDescriptionRef.current?.destroy();
+    };
+  }, []);
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -53,12 +57,13 @@ function EditDescription() {
     } /!*dispatch(AppActions.openNextFile())*!/
   };*/
 
-  const milkdownOnFocus = React.useCallback(
+  /* const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
     [],
-  );
+  );*/
   const milkdownListener = React.useCallback((markdown: string) => {
-    if (descriptionFocus.current && markdown !== description) {
+    if (markdown !== description) {
+      //descriptionFocus.current &&
       setDescription(markdown);
       /*if (descriptionButtonsRef.current) {
         descriptionButtonsRef.current.setDescriptionChanged(true);
@@ -66,15 +71,26 @@ function EditDescription() {
     }
   }, []);
 
-  const noDescription = !description || description.length < 1;
+  //const noDescription = !description || description.length < 1;
+  const placeholder = isEditDescriptionMode
+    ? undefined
+    : t(
+        Pro
+          ? 'core:addMarkdownDescription'
+          : 'core:thisFunctionalityIsAvailableInPro',
+      );
   return (
     <div
       style={{
         height: 'calc(100% - 50px)',
       }}
     >
-      <EditDescriptionButtons />
+      <EditDescriptionButtons
+        getHtml={() => milkdownDivRef.current?.innerHTML}
+      />
       <div
+        ref={milkdownDivRef}
+        className="descriptionEditor"
         data-tid="descriptionTID"
         onDoubleClick={() => {
           if (Pro && !isEditDescriptionMode && !isEditMode) {
@@ -84,69 +100,35 @@ function EditDescription() {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          height: 'calc(100% - 20px)',
+          height: '100%',
           width: '100%',
           overflowY: 'auto',
         }}
       >
-        {noDescription && !isEditDescriptionMode ? (
-          <Typography
-            variant="caption"
-            style={{
-              color: theme.palette.text.primary,
-              padding: 10,
-              lineHeight: 4,
-            }}
-          >
-            {t(
-              Pro
-                ? 'core:addMarkdownDescription'
-                : 'core:thisFunctionalityIsAvailableInPro',
-            )}
-          </Typography>
-        ) : (
-          <>
-            <style>
-              {`
-                .prose a {
+        <style>
+          {`
+                .descriptionEditor .milkdown .ProseMirror {
+                    padding: 10px 30px 10px 80px;
+                }
+                .descriptionEditor .prose a {
                     color: ${theme.palette.primary.main};
                 }
-                .prose img {
+                .descriptionEditor .prose img {
                     max-width: 99%;
                 }
              `}
-            </style>
-            <MilkdownEditor
-              ref={fileDescriptionRef}
-              content={description || ''}
-              onChange={milkdownListener}
-              onFocus={milkdownOnFocus}
-              readOnly={!isEditDescriptionMode}
-              lightMode={false}
-              excludePlugins={
-                !isEditDescriptionMode
-                  ? ['menu', 'upload', 'slash']
-                  : ['slash', 'block']
-              }
-              mode="description"
-              currentFolder={currentDirectoryPath}
-            />
-          </>
-        )}
+        </style>
+        <MilkdownProvider>
+          <DescriptionMdEditor
+            ref={fileDescriptionRef}
+            defaultContent={description}
+            placeholder={placeholder}
+            defaultEditMode={isEditDescriptionMode}
+            onChange={milkdownListener}
+            currentFolder={currentDirectoryPath}
+          />
+        </MilkdownProvider>
       </div>
-      {/* <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-      <Typography
-          variant="caption"
-          style={{
-            color: theme.palette.text.primary,
-          }}
-        >
-          Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
-          <b className={classes.mdHelpers}>**bold**</b>{' '}
-          <span className={classes.mdHelpers}>* list item</span>{' '}
-          <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography> 
-      </span> */}
     </div>
   );
 }

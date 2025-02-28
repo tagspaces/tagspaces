@@ -400,7 +400,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         })
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
-          if (currentModel.current === undefined) {
+          if (currentModel.current === undefined && defaultAiProvider) {
             //set defaultTextModel if not currentModel
             setModel(defaultAiProvider.defaultTextModel);
           }
@@ -720,19 +720,14 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  /* function addTimeLineRequest(txt) {
-    const newItem: ChatItem = {engine: undefined, modelName: "", role: undefined, timestamp: 0, request: txt };
-    chatHistoryItems.current = [newItem, ...timelineItems.current];
-    forceUpdate();
-  }*/
-
   function addTimeLineResponse(txt) {
-    if (chatHistoryItems.current.length > 0) {
-      const firstItem = chatHistoryItems.current.shift();
-      firstItem.response = (firstItem.response ? firstItem.response : '') + txt;
-      chatHistoryItems.current = [firstItem, ...chatHistoryItems.current];
-      forceUpdate();
-    }
+    if (!chatHistoryItems.current.length) return;
+    const [first, ...rest] = chatHistoryItems.current;
+    chatHistoryItems.current = [
+      { ...first, response: (first.response || '') + txt },
+      ...rest,
+    ];
+    forceUpdate();
   }
 
   function addChatHistory(txt, replace = false): ChatItem[] {

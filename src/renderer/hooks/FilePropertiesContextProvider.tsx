@@ -72,13 +72,16 @@ export const FilePropertiesContextProvider = ({
   const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const { setDescriptionChange } = useIOActionsContext();
-  //const description = useRef<string>(openedEntry.meta?.description);
+
   const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
   const isDescriptionChanged = useRef<boolean>(false);
-  const isEditMode = useRef<boolean>(false);
-  const isEditDescriptionMode = useRef<boolean>(false);
+
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isEditDescriptionMode, setIsEditDescriptionMode] =
+    useState<boolean>(true);
   const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
     useState<boolean>(false);
+
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -87,11 +90,8 @@ export const FilePropertiesContextProvider = ({
         // handle not saved changes
         saveDescriptionConfirmOpened(true);
       } else {
-        if (
-          lastOpenedFile.current !== undefined &&
-          lastOpenedFile.current.path !== openedEntry.path
-        ) {
-          isEditMode.current = false;
+        if (lastOpenedFile.current?.path !== openedEntry.path) {
+          setIsEditMode(false);
         }
         lastOpenedFile.current = { ...openedEntry };
         forceUpdate();
@@ -102,39 +102,37 @@ export const FilePropertiesContextProvider = ({
   }, [openedEntry]);
 
   function saveDescription(): Promise<boolean> {
-    if (lastOpenedFile.current !== undefined) {
-      const location = findLocation(lastOpenedFile.current.locationID);
-      if (!location || location.isReadOnly) {
-        return;
-      }
-      if (!Pro) {
-        showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-        return;
-      }
-      // to reload description
-      lastOpenedFile.current = { ...lastOpenedFile.current };
-      isDescriptionChanged.current = false;
-      isEditMode.current = false;
-      forceUpdate();
-      return setDescriptionChange(
-        lastOpenedFile.current,
-        lastOpenedFile.current.meta?.description,
-      ).then(() => {
-        if (lastOpenedFile.current.path !== openedEntry.path) {
-          lastOpenedFile.current = { ...openedEntry };
-        }
-        return true;
-        // description.current = openedEntry.meta?.description;
-      });
+    if (!lastOpenedFile.current) return Promise.resolve(false);
+
+    const location = findLocation(lastOpenedFile.current.locationID);
+    if (!location || location.isReadOnly) return Promise.resolve(false);
+
+    if (!Pro) {
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      return Promise.resolve(false);
     }
-    return Promise.resolve(false);
+
+    return setDescriptionChange(
+      lastOpenedFile.current,
+      lastOpenedFile.current.meta?.description,
+    ).then(() => {
+      if (lastOpenedFile.current.path !== openedEntry.path) {
+        lastOpenedFile.current = { ...openedEntry };
+      } else {
+        // to reload description
+        lastOpenedFile.current = { ...lastOpenedFile.current };
+      }
+      isDescriptionChanged.current = false;
+      setIsEditMode(false);
+      return true;
+    });
   }
 
   function setDescription(d: string) {
     lastOpenedFile.current = {
       ...lastOpenedFile.current,
       meta: {
-        ...(lastOpenedFile.current.meta && lastOpenedFile.current.meta),
+        ...lastOpenedFile.current?.meta,
         description: d,
       },
     };
@@ -142,65 +140,68 @@ export const FilePropertiesContextProvider = ({
   }
 
   function setEditMode(editMode: boolean) {
-    if (isEditMode.current !== editMode) {
-      isEditMode.current = editMode;
-      isDescriptionChanged.current = false;
-      lastOpenedFile.current = { ...openedEntry };
-      forceUpdate();
-    }
+    setIsEditMode((prev) => {
+      if (prev !== editMode) {
+        isDescriptionChanged.current = false;
+        lastOpenedFile.current = { ...openedEntry };
+        return editMode;
+      }
+      return prev;
+    });
   }
   function setEditDescriptionMode(editMode: boolean) {
-    if (isEditDescriptionMode.current !== editMode) {
-      isEditDescriptionMode.current = editMode;
-      forceUpdate();
-      if (AppConfig.isElectron) {
-        window.electronIO.ipcRenderer.sendMessage(
-          'description-changed',
-          editMode,
-        );
+    setIsEditDescriptionMode((prev) => {
+      if (prev !== editMode) {
+        if (AppConfig.isElectron) {
+          window.electronIO.ipcRenderer.sendMessage(
+            'description-changed',
+            editMode,
+          );
+        }
+        return editMode;
       }
-    }
+      return prev;
+    });
   }
 
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
       isDescriptionChanged.current = false;
-      isEditDescriptionMode.current = false;
       lastOpenedFile.current = { ...openedEntry };
+      setIsEditDescriptionMode(false);
     }
     saveDescriptionConfirmOpened(isOpened);
   }
 
-  const context = useMemo(() => {
-    return {
+  const context = useMemo(
+    () => ({
       description: lastOpenedFile.current?.meta?.description,
       isDescriptionChanged: isDescriptionChanged.current,
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,
       saveDescription,
-      isEditMode: isEditMode.current,
+      isEditMode,
       setEditMode,
-      isEditDescriptionMode: isEditDescriptionMode.current,
+      isEditDescriptionMode,
       setEditDescriptionMode,
-    };
-  }, [
-    openedEntry,
-    isDescriptionChanged.current,
-    lastOpenedFile.current,
-    isEditMode.current,
-    isEditDescriptionMode.current,
-    isSaveDescriptionConfirmOpened,
-  ]);
+    }),
+    [
+      openedEntry,
+      isDescriptionChanged.current,
+      lastOpenedFile.current,
+      isEditMode,
+      isEditDescriptionMode,
+      isSaveDescriptionConfirmOpened,
+    ],
+  );
 
   return (
     <FilePropertiesContext.Provider value={context}>
       {children}
       <ConfirmDialog
         open={isSaveDescriptionConfirmOpened}
-        onClose={() => {
-          setSaveDescriptionConfirmOpened(false);
-        }}
+        onClose={() => setSaveDescriptionConfirmOpened(false)}
         title={t('core:confirm')}
         content={t('core:saveFileBeforeClosingFile')}
         confirmCallback={(result) => {

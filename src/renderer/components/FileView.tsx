@@ -16,39 +16,56 @@
  *
  */
 
-import React, { MutableRefObject, useEffect } from 'react';
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
+import fscreen from 'fscreen';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import AppConfig from '-/AppConfig';
+import useEventListener from '-/utils/useEventListener';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
+import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import useFirstRender from '-/utils/useFirstRender';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 interface Props {
-  isFullscreen?: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
-  toggleFullScreen?: () => void;
+  handleMessage: (obj: any) => void;
+  setSavingInProgress?: (isSaving: boolean) => void;
   height?: string;
-  eventID: string;
 }
 
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
-  const { openedEntry } = useOpenedEntryContext();
+  const { openedEntry, fileChanged, setFileChanged } = useOpenedEntryContext();
+  const { saveFileOpen } = useResolveConflictContext();
   const { isEditMode } = useFilePropertiesContext();
+  const { setFullscreen, isFullscreen, toggleFullScreen } =
+    useFullScreenContext();
+  const { searchQuery, isSearchMode } = useDirectoryContentContext();
   const {
     fileViewer,
-    isFullscreen,
     fileViewerContainer,
-    toggleFullScreen,
     height,
-    eventID,
+    setSavingInProgress,
+    handleMessage,
   } = props;
 
-  const { searchQuery, isSearchMode } = useDirectoryContentContext();
+  const eventID = useRef<string>(getUuid());
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -63,7 +80,114 @@ function FileView(props: Props) {
         }
       };
     }
+    if (fscreen.fullscreenEnabled) {
+      fscreen.addEventListener(
+        'fullscreenchange',
+        handleFullscreenChange,
+        false,
+      );
+      fscreen.addEventListener('fullscreenerror', handleFullscreenError, false);
+    }
+
+    return () => {
+      if (AppConfig.isElectron && window.electronIO.ipcRenderer) {
+        window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+      }
+      fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
+      fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
+    };
   }, []);
+
+  const handleFullscreenChange = useCallback((e) => {
+    let change = '';
+    if (fscreen.fullscreenElement !== null) {
+      change = 'Entered fullscreen mode';
+      setFullscreen(true);
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow
+      ) {
+        try {
+          // @ts-ignore
+          fileViewer.current.contentWindow.enterFullscreen();
+        } catch (ex) {
+          console.log('err:', ex);
+        }
+      }
+    } else {
+      change = 'Exited fullscreen mode';
+      setFullscreen(false);
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow
+      ) {
+        try {
+          // @ts-ignore
+          fileViewer.current.contentWindow.exitFullscreen();
+        } catch (ex) {
+          console.log('err:', ex);
+        }
+      }
+    }
+    console.log(change, e);
+  }, []);
+
+  const handleFullscreenError = useCallback((e) => {
+    console.log('Fullscreen Error', e);
+  }, []);
+
+  useEventListener('message', (e) => {
+    if (typeof e.data === 'string') {
+      // console.log(e.data);
+      try {
+        const dataObj = JSON.parse(e.data);
+        if (dataObj.eventID === eventID.current) {
+          handleMessage(dataObj);
+        }
+      } catch (ex) {
+        console.debug(
+          'useEventListener message:' + e.data + ' parse error:',
+          ex,
+        );
+      }
+    }
+  });
+
+  const savingFile = (force = false) => {
+    try {
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow &&
+        // @ts-ignore
+        fileViewer.current.contentWindow.getContent
+      ) {
+        // @ts-ignore
+        const fileContent = fileViewer.current.contentWindow.getContent();
+        //check if file is changed
+        if (fileChanged || force) {
+          setSavingInProgress(true);
+          forceUpdate();
+          saveFileOpen(openedEntry, fileContent).then((success) => {
+            if (success) {
+              setFileChanged(false);
+              // showNotification(
+              //   t('core:fileSavedSuccessfully'),
+              //   NotificationTypes.default
+              // );
+            }
+            // change state will not render DOT before file name too
+            setSavingInProgress(false);
+          });
+        }
+      }
+    } catch (e) {
+      setSavingInProgress(false);
+      console.debug('function getContent not exist for file:', e);
+    }
+  };
 
   function getFileOpenerURL(): string {
     if (openedEntry && openedEntry.path) {
@@ -91,7 +215,7 @@ function FileView(props: Props) {
           bgndColor.startsWith('#') ? bgndColor : rgbToHex(bgndColor),
         );
 
-      const event = eventID ? '&eventID=' + eventID : '';
+      const event = eventID.current ? '&eventID=' + eventID.current : '';
       const extQuery =
         searchQuery.textQuery && isSearchMode
           ? '&query=' + encodeURIComponent(searchQuery.textQuery)
@@ -152,7 +276,7 @@ function FileView(props: Props) {
             zIndex: 10000,
             color: theme.palette.primary.main,
           }}
-          onClick={toggleFullScreen}
+          onClick={() => toggleFullScreen(fileViewerContainer.current)}
         >
           <CloseIcon />
           <br />
@@ -172,7 +296,7 @@ function FileView(props: Props) {
           src={getFileOpenerURL() /*fileOpenerURL.current*/}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
-          id={'FileViewer' + eventID}
+          id={'FileViewer' + eventID.current}
         />
       )}
     </div>

@@ -16,33 +16,36 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import Tooltip from '-/components/Tooltip';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
-import Pagination from '@mui/material/Pagination';
 import AppConfig from '-/AppConfig';
-import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import EntryIcon from '-/components/EntryIcon';
-import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
-import { TS } from '-/tagspaces.namespace';
-import { getDescriptionPreview } from '-/services/utils-io';
-import { MilkdownEditor } from '@tagspaces/tagspaces-md';
-import { useTranslation } from 'react-i18next';
+import TagsPreview from '-/components/TagsPreview';
+import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
+import { SelectionArea } from '-/components/drag/SelectionArea';
+import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
+import LightMdEditor from '-/components/md/LigthMdEditor';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import GridCellsContainer from './GridCellsContainer';
-import { dataTidFormat } from '-/services/test';
 import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
-import { SelectionArea } from '-/components/drag/SelectionArea';
+import { dataTidFormat } from '-/services/test';
+import { getDescriptionPreview } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { MilkdownProvider } from '@milkdown/react';
+import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
+import Grid from '@mui/material/Grid2';
+import Pagination from '@mui/material/Pagination';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import GridCellsContainer from './GridCellsContainer';
 
 interface Props {
   desktopMode: boolean;
@@ -89,6 +92,7 @@ function GridPagination(props: Props) {
   const { directoryMeta } = useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const { openEntry } = useOpenedEntryContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
@@ -206,165 +210,192 @@ function GridPagination(props: Props) {
         background: `${dirColor}`,
       }}
     >
-      <SelectionDragLayer />
-      <SelectionArea onSelect={handleSelect}>
-        <div
-          ref={containerEl}
-          onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
-            props.onContextMenu(event)
-          }
-          onClick={(event: React.MouseEvent<HTMLDivElement>) =>
-            props.onClick(event)
-          }
-          style={{
-            height: '100%',
-            overflowY: 'auto',
-            backgroundImage: backgroundImage.current,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} style={{ height: 70 }} />
-            {showDetails && (
-              <Grid item xs={12}>
-                <div
-                  style={{
-                    marginLeft: 10,
-                    marginRight: 10,
-                    marginTop: 0,
-                    marginBottom: 0,
-                    height:
-                      !showDescription &&
-                      directoryMeta &&
-                      directoryMeta.description
-                        ? 150
-                        : 110,
-                    position: 'relative',
-                  }}
-                >
-                  {((folderName && folderName.length > 0) ||
-                    (directoryMeta &&
-                      directoryMeta.tags &&
-                      directoryMeta.tags.length > 0)) && (
-                    <Box
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        overflow: 'auto',
-                        padding: 10,
-                        marginRight: 160,
-                        width: 'fit-content',
-                        borderRadius: 8,
-                        color: theme.palette.text.primary,
-                      }}
-                    >
-                      <Tooltip title={t('core:renameDirectory')}>
-                        <ButtonBase
-                          data-tid={'currentDir_' + dataTidFormat(folderName)}
-                          style={{
-                            fontSize: '1.5rem',
-                            filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                          }}
-                          onClick={() => {
-                            setSelectedEntries([]);
-                            openRenameEntryDialog();
-                          }}
-                        >
-                          {folderName}
-                        </ButtonBase>
-                      </Tooltip>
-                      {showTags ? (
-                        <span style={{ paddingLeft: 5 }}>
-                          {directoryMeta?.tags?.map((tag: TS.Tag) => {
-                            return <TagContainer tag={tag} tagMode="display" />;
-                          })}
-                        </span>
-                      ) : (
-                        <TagsPreview tags={directoryMeta?.tags} />
-                      )}
-                    </Box>
-                  )}
+      <div
+        ref={containerEl}
+        onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
+          props.onContextMenu(event)
+        }
+        onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+          props.onClick(event)
+        }
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          backgroundImage: backgroundImage.current,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid size={12} style={{ height: 70 }} />
+          {showDetails && (
+            <Grid size={12}>
+              <div
+                style={{
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginTop: 0,
+                  marginBottom: 0,
+                  height:
+                    !showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description
+                      ? 150
+                      : 110,
+                  position: 'relative',
+                }}
+              >
+                {((folderName && folderName.length > 0) ||
+                  (directoryMeta &&
+                    directoryMeta.tags &&
+                    directoryMeta.tags.length > 0)) && (
                   <Box
-                    data-tid={'allFilesCount' + files.length}
                     style={{
-                      paddingBottom: 5,
-                      marginTop: 10,
-                      marginRight: 160,
+                      display: 'flex',
+                      alignItems: 'center',
+                      overflow: 'auto',
                       padding: 10,
-                      borderRadius: 10,
+                      marginRight: 160,
                       width: 'fit-content',
+                      borderRadius: 8,
                       color: theme.palette.text.primary,
                     }}
                   >
-                    <Typography
-                      style={{
-                        fontSize: '0.9rem',
-                        filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                      }}
-                    >
-                      {folderSummary}
-                    </Typography>
-                    {!showDescription &&
-                      directoryMeta &&
-                      directoryMeta.description && (
-                        <Typography
-                          style={{
-                            fontSize: '0.8rem',
-                            wordBreak: 'break-all',
-                            filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
-                            height: 45,
-                            overflowY: 'auto',
-                          }}
-                        >
-                          {getDescriptionPreview(
-                            directoryMeta.description,
-                            200,
-                          )}
-                        </Typography>
-                      )}
+                    <Tooltip title={t('core:renameDirectory')}>
+                      <ButtonBase
+                        data-tid={'currentDir_' + dataTidFormat(folderName)}
+                        style={{
+                          fontSize: '1.5rem',
+                          filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                        }}
+                        onClick={() => {
+                          setSelectedEntries([]);
+                          openRenameEntryDialog();
+                        }}
+                      >
+                        {folderName}
+                      </ButtonBase>
+                    </Tooltip>
+                    {showTags ? (
+                      <span style={{ paddingLeft: 5 }}>
+                        {directoryMeta?.tags?.map((tag: TS.Tag) => {
+                          return <TagContainer tag={tag} tagMode="display" />;
+                        })}
+                      </span>
+                    ) : (
+                      <TagsPreview tags={directoryMeta?.tags} />
+                    )}
                   </Box>
-                  <div
-                    data-tid="folderThumbTID"
+                )}
+                <Box
+                  data-tid={'allFilesCount' + files.length}
+                  style={{
+                    paddingBottom: 5,
+                    marginTop: 10,
+                    marginRight: 160,
+                    padding: 10,
+                    borderRadius: 10,
+                    width: 'fit-content',
+                    color: theme.palette.text.primary,
+                  }}
+                >
+                  <Typography
                     style={{
-                      borderRadius: 10,
-                      height: 100,
-                      width: 140,
-                      backgroundImage: thumbImage.current,
-                      backgroundSize: 'cover', // cover contain
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center center',
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
+                      fontSize: '0.9rem',
+                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                     }}
-                  />
-                </div>
-              </Grid>
-            )}
-            {showDescription && directoryMeta && directoryMeta.description && (
+                  >
+                    {folderSummary}
+                  </Typography>
+                  {!showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description && (
+                      <Typography
+                        style={{
+                          fontSize: '0.8rem',
+                          wordBreak: 'break-all',
+                          filter: `drop-shadow(0px 0px 2px ${theme.palette.background.default})`,
+                          height: 45,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {getDescriptionPreview(directoryMeta.description, 200)}
+                      </Typography>
+                    )}
+                </Box>
+                <div
+                  data-tid="folderThumbTID"
+                  style={{
+                    borderRadius: 10,
+                    height: 100,
+                    width: 140,
+                    backgroundImage: thumbImage.current,
+                    backgroundSize: 'cover', // cover contain
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center center',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                  }}
+                />
+              </div>
+            </Grid>
+          )}
+          {showDescription && directoryMeta?.description && (
+            <TooltipTS
+              title={
+                t('core:folderDescription') +
+                ' - ' +
+                t('core:doubleClickToEdit')
+              }
+            >
               <Grid
-                item
-                xs={12}
+                size={12}
+                className="gridPagination"
                 style={{
                   backgroundColor: theme.palette.background.default,
+                  borderBottom: '1px solid ' + theme.palette.divider,
                   marginTop: showDetails ? 0 : 10,
-                  marginLeft: 25,
-                  marginRight: 10,
-                  padding: 10,
-                  borderRadius: 10,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
                 }}
+                onDoubleClick={() =>
+                  openEntry(currentDirectoryPath, TabNames.descriptionTab)
+                }
               >
-                <MilkdownEditor
-                  content={directoryMeta.description}
-                  readOnly={true}
-                  /*dark={theme.palette.mode === 'dark'}*/
-                  currentFolder={currentDirectoryPath}
-                  lightMode={true}
-                />
+                <style>
+                  {`
+                     .gridPagination .milkdown {
+                          border-top-left-radius: 10px;
+                          border-top-right-radius: 10px;
+                      }
+                      .gridPagination .milkdown .ProseMirror {
+                          padding: 10px;
+                      }
+                      .gridPagination .milkdown .ProseMirror a {
+                          color: ${theme.palette.primary.main};
+                      }
+                      .gridPagination .milkdown .ProseMirror img {
+                          max-width: 99%;
+                      }
+                  `}
+                </style>
+                <MilkdownProvider>
+                  <LightMdEditor
+                    defaultContent={directoryMeta.description}
+                    placeholder=""
+                  />
+                </MilkdownProvider>
               </Grid>
-            )}
-          </Grid>
+            </TooltipTS>
+          )}
+        </Grid>
+
+        <SelectionDragLayer />
+        <SelectionArea onSelect={handleSelect}>
           <GridCellsContainer>
             {pageFiles.map((entry, index, dArray) => (
               <CellView
@@ -464,8 +495,8 @@ function GridPagination(props: Props) {
               </Typography>
             </div>
           )}
-        </div>
-      </SelectionArea>
+        </SelectionArea>
+      </div>
     </div>
   );
 }

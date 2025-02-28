@@ -55,7 +55,7 @@ const initialize = () => {
         filepath +
         ' as local path: ' +
         pathname +
-        ' as file:' +
+        ' as: ' +
         asFileUrl,
     );
 

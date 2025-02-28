@@ -30,6 +30,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 declare module '@mui/material/styles' {
   interface Theme extends Record<string, any> {
@@ -175,6 +176,17 @@ function App(props: Props) {
       break;
     }
   }
+
+  useEffect(() => {
+    const darkMode = currentTheme === 'dark';
+    // For Algolia DocSearch
+    document.documentElement.setAttribute(
+      'data-theme',
+      darkMode ? 'dark' : 'light',
+    );
+    // For TailwindCSS
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [currentTheme]);
 
   return (
     <StyledEngineProvider injectFirst>
