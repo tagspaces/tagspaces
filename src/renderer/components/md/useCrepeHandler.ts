@@ -6,12 +6,10 @@ import type { Editor } from '@milkdown/kit/core';
 import { editorViewOptionsCtx } from '@milkdown/kit/core';
 import { getMarkdown, insert } from '@milkdown/kit/utils';
 import { Crepe } from '@milkdown/crepe';
-import { useSetDarkMode } from '-/components/md/DarkModeProvider';
 
 export interface CrepeRef {
   update: (markdown: string) => void;
   insert: (markdown: string) => void;
-  setDarkMode: (isDark: boolean) => void;
   setEditMode: (isEditMode: boolean) => void;
   openSearchDialog: () => void;
   getMarkdown: () => string;
@@ -24,7 +22,6 @@ export function useCrepeHandler(
   get: () => Editor | undefined,
   loading: boolean,
 ) {
-  const setDarkMode = useSetDarkMode();
   useImperativeHandle(ref, () => ({
     update: (markdown: string) => {
       const editor = get();
@@ -35,9 +32,6 @@ export function useCrepeHandler(
       const editor = get();
       if (loading || !editor || editor.status !== EditorStatus.Created) return;
       editor.action(insert(markdown));
-    },
-    setDarkMode: (isDarkMode: boolean) => {
-      setDarkMode(isDarkMode);
     },
     setEditMode: (isEditable: boolean) => {
       const crepe = getCrepe();

@@ -49,9 +49,9 @@ function EditDescription() {
     };
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
+  }, [theme]);*/
 
   /* useEffect(() => {
     fileDescriptionRef.current?.setEditMode(isEditDescriptionMode);

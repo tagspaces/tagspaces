@@ -16,7 +16,6 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
@@ -25,7 +24,7 @@ import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
-import { AIProvider, ChatItem, ChatMode } from '-/components/chat/ChatTypes';
+import { AIProvider, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
@@ -49,14 +48,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import { format } from 'date-fns';
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { ChangeEvent, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -67,12 +59,10 @@ function ChatView() {
   const {
     images,
     removeImage,
-    chatHistoryItems,
     newChatMessage,
     changeCurrentModel,
     setModel,
     currentModel,
-    getHistoryFilePath,
     deleteHistory,
     isTyping,
     cancelMessage,
@@ -109,19 +99,6 @@ function ChatView() {
       }
     };
   }, []);*/
-  useEffect(() => {
-    return () => {
-      editorRef.current?.destroy();
-    };
-  }, []);
-
-  useEffect(() => {
-    editorRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);
-
-  useEffect(() => {
-    editorRef.current?.update(formatChatItems(chatHistoryItems));
-  }, [chatHistoryItems]);
 
   /*useEffect(() => {
     if (AppConfig.isElectron) {
@@ -151,10 +128,6 @@ function ChatView() {
     }
   }, [chatMessageHandler]);*/
 
-  const defaultContent = useMemo(() => {
-    return formatChatItems(chatHistoryItems);
-  }, []);
-
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
     forceUpdate();
@@ -177,50 +150,6 @@ function ChatView() {
         console.log(err);
       });
   };
-
-  function formatChatItems(chatItems: ChatItem[]): string {
-    if (chatItems) {
-      const formattedItems = chatItems.map((item) => {
-        const date = item.timestamp
-          ? '**User on ' + format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') + '**'
-          : '**User**';
-        const request = item.request ? item.request : '';
-        const model = item.modelName ? item.modelName : 'AI model';
-        const response = item.response
-          ? '**' + model + '**:\\\n' + item.response
-          : '';
-        const images = item.imagePaths
-          ? item.imagePaths.map((i) => {
-              return (
-                '![chat image](' +
-                //(AppConfig.isWeb ? '' : 'file://') +
-                // getHistoryFilePath(i) +
-                AppConfig.metaFolder +
-                '/' +
-                AppConfig.aiFolder +
-                '/' +
-                i +
-                ')'
-              );
-            })
-          : '';
-        return (
-          '' +
-          date +
-          ': \\\n' +
-          request +
-          '\n' +
-          images +
-          '\n' +
-          response +
-          '\n *** \n'
-        );
-      });
-      const markdown = formattedItems.join(' ');
-      return markdown;
-    }
-    return '';
-  }
 
   const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {
     currentMode.current = event.target.value
@@ -409,7 +338,6 @@ function ChatView() {
             </style>
             <MilkdownProvider>
               <ChatMdEditor
-                defaultContent={defaultContent}
                 ref={editorRef}
                 currentFolder={currentDirectoryPath}
               />
@@ -502,7 +430,7 @@ function ChatView() {
                           </Tooltip>
                           <TsSelect
                             id="select-mode"
-                            value={currentMode.current}
+                            value={currentMode.current || ''}
                             onChange={handleChangeMode}
                             variant="standard"
                             sx={{ width: currentMode.current ? 170 : 25 }}

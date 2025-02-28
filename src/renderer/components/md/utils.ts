@@ -60,8 +60,8 @@ export function createCrepeEditor(
     }));
   });
 
-  crepe
-    .on((listener) => {
+  if (onChange || onFocus) {
+    crepe.on((listener) => {
       listener.markdownUpdated((_, markdown: string, prevMarkdown: string) => {
         const view = crepe.editor.ctx.get(editorViewCtx);
         if (view && view.hasFocus()) {
@@ -76,8 +76,9 @@ export function createCrepeEditor(
           onFocus();
         }
       });
-    })
-    .setReadonly(!defaultEditMode);
+    });
+  }
+  crepe.setReadonly(!defaultEditMode);
 
   return crepe;
 }
