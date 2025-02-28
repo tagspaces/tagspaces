@@ -39,6 +39,7 @@ function EditDescription() {
     isEditMode,
   } = useFilePropertiesContext();
 
+  const milkdownDivRef = useRef<HTMLDivElement>(null);
   const fileDescriptionRef = useRef<CrepeRef>(null);
   //const descriptionFocus = useRef<boolean>(false);
   // const descriptionButtonsRef = useRef(null);
@@ -48,18 +49,6 @@ function EditDescription() {
       fileDescriptionRef.current?.destroy();
     };
   }, []);
-
-  /* useEffect(() => {
-    fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]);*/
-
-  /* useEffect(() => {
-    fileDescriptionRef.current?.setEditMode(isEditDescriptionMode);
-  }, [isEditDescriptionMode]);*/
-
-  /* useEffect(() => {
-    fileDescriptionRef.current?.update(description);
-  }, [description]);*/
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -96,8 +85,11 @@ function EditDescription() {
         height: 'calc(100% - 50px)',
       }}
     >
-      <EditDescriptionButtons />
+      <EditDescriptionButtons
+        getHtml={() => milkdownDivRef.current?.innerHTML}
+      />
       <div
+        ref={milkdownDivRef}
         className="descriptionEditor"
         data-tid="descriptionTID"
         onDoubleClick={() => {

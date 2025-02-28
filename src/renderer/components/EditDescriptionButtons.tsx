@@ -9,8 +9,17 @@ import { Pro } from '-/pro';
 import { Box, ButtonGroup } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import TsIconButton from '-/components/TsIconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import DescriptionMenu from '-/components/md/DescriptionMenu';
+import { saveAsTextFile } from '-/services/utils-io';
 
-const EditDescriptionButtons: React.FC = () => {
+interface ButtonsProps {
+  getHtml: () => string;
+}
+
+const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
   const { t } = useTranslation();
   const {
     saveDescription,
@@ -19,6 +28,7 @@ const EditDescriptionButtons: React.FC = () => {
     setEditDescriptionMode,
   } = useFilePropertiesContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   /*React.useImperativeHandle(buttonsRef, () => ({
@@ -52,12 +62,48 @@ const EditDescriptionButtons: React.FC = () => {
   //   return true;
   // };
 
+  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const saveAsHtml = () => {
+    setAnchorEl(null);
+    const html = getHtml();
+    if (html) {
+      const blob = new Blob([html], {
+        type: 'text/html',
+      });
+      const dateTimeTag = formatDateTime4Tag(new Date(), true);
+      const filename =
+        openedEntry.name + 'description [' + dateTimeTag + '].html';
+
+      saveAsTextFile(blob, filename);
+    }
+  };
+
+  const saveAsMarkdown = () => {
+    setAnchorEl(null);
+    if (openedEntry.meta.description) {
+      const blob = new Blob([openedEntry.meta.description], {
+        type: 'text/markdown',
+      });
+      const dateTimeTag = formatDateTime4Tag(new Date(), true);
+      const filename =
+        openedEntry.name + '-description [' + dateTimeTag + '].md';
+
+      saveAsTextFile(blob, filename);
+    }
+  };
+
   return (
     <div
       style={{
-        float: 'left',
         display: 'flex',
         marginBottom: AppConfig.defaultSpaceBetweenButtons,
+        justifyContent: 'space-between',
       }}
     >
       <ButtonGroup>
@@ -124,6 +170,23 @@ const EditDescriptionButtons: React.FC = () => {
           </>
         )}
       </ButtonGroup>
+      <TsIconButton
+        tooltip={t('core:chatMore')}
+        onClick={handleMoreClick}
+        data-tid="chatMoreTID"
+        aria-label={t('core:chatMore')}
+        aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+      >
+        <MoreVertIcon />
+      </TsIconButton>
+      <DescriptionMenu
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        saveAsHtml={saveAsHtml}
+        saveAsMarkdown={saveAsMarkdown}
+      />
     </div>
   );
 };
