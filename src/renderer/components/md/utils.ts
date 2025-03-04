@@ -31,9 +31,13 @@ export function createCrepeEditor(
       },
       [Crepe.Feature.ImageBlock]: {
         proxyDomURL: (originalURL: string) => {
+          if (originalURL.length === 0) {
+            return '';
+          }
           if (
             currentFolder &&
             !originalURL.startsWith('data:') &&
+            !originalURL.startsWith('blob') &&
             !originalURL.startsWith('http')
           ) {
             return (
@@ -67,13 +71,13 @@ export function createCrepeEditor(
   if (onChange || onFocus) {
     crepe.on((listener) => {
       listener.markdownUpdated((_, markdown: string, prevMarkdown: string) => {
-        const view = crepe.editor.ctx.get(editorViewCtx);
-        if (view && view.hasFocus()) {
-          console.log('Change listener:' + markdown);
-          if (onChange) {
-            onChange(markdown, prevMarkdown);
-          }
+        //const view = crepe.editor.ctx.get(editorViewCtx);
+        //if (view && view.hasFocus()) {
+        console.log('Change listener:' + markdown);
+        if (onChange) {
+          onChange(markdown, prevMarkdown);
         }
+        //}
       });
       listener.focus(() => {
         if (onFocus) {
