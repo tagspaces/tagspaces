@@ -24,12 +24,11 @@ import { EditIcon } from '-/components/CommonIcons';
 
 function EditFileButton() {
   const { t } = useTranslation();
-  const { setEditMode, isEditDescriptionMode } = useFilePropertiesContext();
+  const { setEditMode } = useFilePropertiesContext();
 
   return (
     <TsButton
       tooltip={t('core:editFile')}
-      disabled={isEditDescriptionMode}
       onClick={() => setEditMode(true)}
       aria-label={t('core:editFile')}
       data-tid="fileContainerEditFile"
