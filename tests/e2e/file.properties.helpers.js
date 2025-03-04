@@ -91,7 +91,7 @@ export async function AddRemovePropertiesTags(
 export async function getPropertiesFileName() {
   let fileName;
   const selectorFileProps = '[data-tid=fileNameProperties] input';
-  if (await isDisplayed(selectorFileProps, false, 3000)) {
+  if (!(await isDisplayed(selectorFileProps, true, 3000))) {
     await clickOn('[data-tid=detailsTabTID]');
   }
   fileName = await global.client.inputValue(selectorFileProps); // https://github.com/microsoft/playwright/issues/3265

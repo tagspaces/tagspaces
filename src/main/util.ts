@@ -335,33 +335,35 @@ export function isWorkerAvailable(): Promise<boolean> {
   /*if (settings.getToken() !== undefined) {
     return Promise.resolve(settings.getToken() !== 'not');
   }*/
-  try {
-    return fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
-      method: 'HEAD',
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          const config = require('./config/config.json');
-          if (config && config.jwt) {
-            settings.setToken(config.jwt);
-            return true;
-          } else {
-            console.error('jwt token not generated');
-            settings.setToken('not');
-          }
-        }
-        return false;
+  if (settings.getUsedWsPort()) {
+    try {
+      return fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
+        method: 'HEAD',
       })
-      .catch((e) => {
-        console.debug('isWorkerAvailable:', e);
-        return false;
-      });
-  } catch (e) {
-    if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
-      console.error('WS error MODULE_NOT_FOUND');
-      settings.setToken('not');
+        .then((res) => {
+          if (res.status === 200) {
+            const config = require('./config/config.json');
+            if (config && config.jwt) {
+              settings.setToken(config.jwt);
+              return true;
+            } else {
+              console.error('jwt token not generated');
+              settings.setToken('not');
+            }
+          }
+          return false;
+        })
+        .catch((e) => {
+          console.debug('isWorkerAvailable:', e);
+          return false;
+        });
+    } catch (e) {
+      if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
+        console.error('WS error MODULE_NOT_FOUND');
+        settings.setToken('not');
+      }
+      console.debug('isWorkerAvailable:', e);
     }
-    console.debug('isWorkerAvailable:', e);
   }
   return Promise.resolve(false);
 }

@@ -432,14 +432,17 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0827 - Link for internal sharing + copy [web,electron]', async () => {
     const fileName = 'sample.jpg';
-    await clickOn(getGridFileSelector(fileName));
-    await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    await clickOn('[data-tid=detailsTabTID]');
+    //await clickOn(getGridFileSelector(fileName));
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID',
+    );
+    //await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
+    //await clickOn('[data-tid=detailsTabTID]');
 
-    const sharingLink = await global.client.$(
+    const sharingLinkValue = await global.client.inputValue(
       '[data-tid=sharingLinkTID] input',
     );
-    const sharingLinkValue = await sharingLink.getAttribute('value');
 
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
