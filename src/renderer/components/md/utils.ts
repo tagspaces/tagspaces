@@ -10,6 +10,7 @@ export function createCrepeEditor(
   root: HTMLElement,
   defaultContent: string,
   defaultEditMode: boolean,
+  features?: {}, //[Crepe.Feature.CodeMirror]: false,
   placeholder?: string,
   currentFolder?: string,
   openLink?: (url: string, options?) => void,
@@ -19,9 +20,7 @@ export function createCrepeEditor(
   const crepe = new Crepe({
     root,
     defaultValue: defaultContent || '',
-    /* features: {
-  [Crepe.Feature.CodeMirror]: false,
-},*/
+    features: features,
     featureConfigs: {
       [Crepe.Feature.Placeholder]: {
         text:

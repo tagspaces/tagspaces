@@ -100,7 +100,7 @@ function EditDescription() {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          height: '100%',
+          height: 'calc(100% - 20px)',
           width: '100%',
           overflowY: 'auto',
         }}

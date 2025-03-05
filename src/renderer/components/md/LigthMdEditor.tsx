@@ -20,6 +20,7 @@ import { Milkdown, useEditor } from '@milkdown/react';
 import { createCrepeEditor } from '-/components/md/utils';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Crepe } from '@milkdown/crepe';
 
 interface LightMdEditorProps {
   defaultContent: string;
@@ -36,6 +37,12 @@ function LightMdEditor(props: LightMdEditorProps) {
         root,
         defaultContent,
         false,
+        {
+          [Crepe.Feature.BlockEdit]: false,
+          [Crepe.Feature.Toolbar]: false,
+          [Crepe.Feature.Placeholder]: false,
+          [Crepe.Feature.Cursor]: false,
+        },
         placeholder,
         currentDirectoryPath,
         openLink,

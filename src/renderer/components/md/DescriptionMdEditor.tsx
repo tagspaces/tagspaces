@@ -54,6 +54,7 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
           root,
           defaultContent,
           defaultEditMode,
+          {},
           placeholder,
           currentFolder,
           openLink,

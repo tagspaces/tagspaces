@@ -47,6 +47,12 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
           root,
           formatChatItems(chatHistoryItems),
           false,
+          {
+            [Crepe.Feature.BlockEdit]: false,
+            [Crepe.Feature.Toolbar]: false,
+            [Crepe.Feature.Placeholder]: false,
+            [Crepe.Feature.Cursor]: false,
+          },
           placeholder,
           currentFolder,
           openLink,
