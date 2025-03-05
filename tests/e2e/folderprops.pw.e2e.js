@@ -220,7 +220,7 @@ test.describe('TST02 - Folder properties', () => {
     const desc = 'test description';
 
     await clickOn('[data-tid=descriptionTabTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
+    //await clickOn('[data-tid=editDescriptionTID]');
     // await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
     const editor = await global.client.waitForSelector(

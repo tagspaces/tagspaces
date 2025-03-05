@@ -282,7 +282,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(fileSelector);
     //await clickOn('[data-tid=fileContainerToggleProperties]');
     await clickOn('[data-tid=descriptionTabTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
+    //await clickOn('[data-tid=editDescriptionTID]');
     //await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
 
