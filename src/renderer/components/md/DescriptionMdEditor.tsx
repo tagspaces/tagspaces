@@ -17,11 +17,13 @@
  */
 import React, { useRef } from 'react';
 import { Milkdown, useEditor } from '@milkdown/react';
-import { EditorStatus } from '@milkdown/kit/core';
+import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
+import { $useKeymap, $command } from '@milkdown/kit/utils';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { createCrepeEditor } from '-/components/md/utils';
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
 import { Crepe } from '@milkdown/crepe';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 
 interface CrepeMdEditorProps {
   defaultEditMode: boolean;
@@ -42,7 +44,9 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
       onFocus,
       placeholder,
     } = props;
+    const { saveDescription } = useFilePropertiesContext();
     const { openLink } = useOpenedEntryContext();
+    //const keyBindings = useSelector(getKeyBindingObject);
     const crepeInstanceRef = useRef<Crepe>(undefined);
 
     const { get, loading } = useEditor(
@@ -73,6 +77,26 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
             crepeInstanceRef.current = crepe;
           }
         });
+
+        const saveCommand = $command('saveCommand', () => () => {
+          return () => {
+            saveDescription();
+            return true;
+          };
+        });
+
+        const saveKeyMap = $useKeymap('saveKeymap', {
+          saveDescription: {
+            //https://prosemirror.net/docs/ref/version/0.18.0.html#keymap
+            shortcuts: 'Mod-s', //keyBindings['saveDocument'], //You can use Mod- as a shorthand for Cmd- on Mac and Ctrl- on other platforms.
+            command: (ctx) => {
+              const commands = ctx.get(commandsCtx);
+              return () => commands.call(saveCommand.key);
+            },
+          },
+        });
+
+        crepe.editor.use([saveCommand, saveKeyMap].flat());
 
         return crepe;
       },

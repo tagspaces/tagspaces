@@ -194,12 +194,12 @@ test.describe('TST51 - Perspective Grid', () => {
     const fLocator = await frameLocator();
     const fabMenu = await fLocator.locator('#extFabMenu');
     //await fabMenu.scrollIntoViewIfNeeded();
-    const box = await fabMenu.boundingBox();
+    /*const box = await fabMenu.boundingBox();
     console.log(box);
     const height = await global.client.evaluate(
       () => document.body.scrollHeight,
     );
-    console.log(`Page height: ${height}`);
+    console.log(`Page height: ${height}`);*/
     await fabMenu.click({ force: true });
     const exifButton = await fLocator.locator('#exifButton');
     await exifButton.click({ force: true });
