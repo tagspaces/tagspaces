@@ -24,29 +24,23 @@ import { createCrepeEditor } from '-/components/md/utils';
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
 import { Crepe } from '@milkdown/crepe';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useTranslation } from 'react-i18next';
+import { Pro } from '-/pro';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface CrepeMdEditorProps {
-  defaultEditMode: boolean;
-  defaultContent: string;
-  currentFolder?: string;
-  placeholder?: string;
   onChange?: (markdown: string, prevMarkdown: string) => void;
   onFocus?: () => void;
 }
 
 const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
   (props, ref) => {
-    const {
-      defaultEditMode,
-      defaultContent,
-      currentFolder,
-      onChange,
-      onFocus,
-      placeholder,
-    } = props;
-    const { saveDescription } = useFilePropertiesContext();
+    const { onChange, onFocus } = props;
+    const { t } = useTranslation();
+    const { currentDirectoryPath } = useDirectoryContentContext();
+    const { saveDescription, isEditDescriptionMode, description } =
+      useFilePropertiesContext();
     const { openLink } = useOpenedEntryContext();
-    //const keyBindings = useSelector(getKeyBindingObject);
     const crepeInstanceRef = useRef<Crepe>(undefined);
 
     const { get, loading } = useEditor(
@@ -54,13 +48,20 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
         /*if (crepeInstanceRef.current) {
           return crepeInstanceRef.current;
         }*/
+        const placeholder = isEditDescriptionMode
+          ? undefined
+          : t(
+              Pro
+                ? 'core:addMarkdownDescription'
+                : 'core:thisFunctionalityIsAvailableInPro',
+            );
         const crepe = createCrepeEditor(
           root,
-          defaultContent,
-          defaultEditMode,
+          description,
+          isEditDescriptionMode,
           {},
           placeholder,
-          currentFolder,
+          currentDirectoryPath,
           openLink,
           onChange,
           onFocus,
@@ -100,7 +101,7 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentFolder, defaultEditMode, defaultContent],
+      [currentDirectoryPath, isEditDescriptionMode],
     );
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);

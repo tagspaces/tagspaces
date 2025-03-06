@@ -136,7 +136,10 @@ export const FilePropertiesContextProvider = ({
         description: d,
       },
     };
-    isDescriptionChanged.current = true;
+    if (!isDescriptionChanged.current) {
+      isDescriptionChanged.current = true;
+      forceUpdate();
+    }
   }
 
   function setEditMode(editMode: boolean) {
@@ -151,7 +154,7 @@ export const FilePropertiesContextProvider = ({
   }
   function setEditDescriptionMode(editMode: boolean) {
     setIsEditDescriptionMode((prev) => {
-      if (prev !== editMode) {
+      if (prev !== editMode && !isEditMode) {
         if (AppConfig.isElectron) {
           window.electronIO.ipcRenderer.sendMessage(
             'description-changed',

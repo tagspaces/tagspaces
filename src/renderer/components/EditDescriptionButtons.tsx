@@ -24,6 +24,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
   const {
     saveDescription,
     isEditMode,
+    isDescriptionChanged,
     isEditDescriptionMode,
     setEditDescriptionMode,
   } = useFilePropertiesContext();
@@ -116,7 +117,6 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
             }}
           >
             {t('core:cancel')}
-            {/* {t(isDescriptionChanged ? 'core:cancel' : 'core:close')} */}
           </TsButton>
         )}
         <ProTooltip tooltip={t('editDescription')}>
@@ -130,6 +130,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
               borderBottomLeftRadius: isEditDescriptionMode
                 ? 0
                 : AppConfig.defaultCSSRadius,
+              whiteSpace: 'nowrap',
             }}
             onClick={() => {
               if (isEditDescriptionMode) {
@@ -142,7 +143,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
             }}
           >
             {isEditDescriptionMode
-              ? t('core:confirmSaveButton')
+              ? t('core:confirmSaveButton') + (isDescriptionChanged ? ' ⬤' : '')
               : t('core:editDescription')}
           </TsButton>
         </ProTooltip>

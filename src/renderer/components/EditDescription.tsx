@@ -24,25 +24,15 @@ import { Pro } from '-/pro';
 import { MilkdownProvider } from '@milkdown/react';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 function EditDescription() {
-  const { t } = useTranslation();
   const theme = useTheme();
-  // const { openedEntry } = useOpenedEntryContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
-  const {
-    description,
-    setDescription,
-    isEditDescriptionMode,
-    setEditDescriptionMode,
-    isEditMode,
-  } = useFilePropertiesContext();
+  const { openedEntry } = useOpenedEntryContext();
+  const { setDescription, setEditDescriptionMode } = useFilePropertiesContext();
 
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const fileDescriptionRef = useRef<CrepeRef>(null);
-  //const descriptionFocus = useRef<boolean>(false);
-  // const descriptionButtonsRef = useRef(null);
 
   useEffect(() => {
     return () => {
@@ -50,19 +40,9 @@ function EditDescription() {
     };
   }, []);
 
-  /*const keyBindingHandlers = {
-    saveDocument: () => {
-      //setEditDescriptionMode(!editMode);
-      toggleEditDescriptionField();
-    } /!*dispatch(AppActions.openNextFile())*!/
-  };*/
-
-  /* const milkdownOnFocus = React.useCallback(
-    () => (descriptionFocus.current = true),
-    [],
-  );*/
   const milkdownListener = React.useCallback((markdown: string) => {
-    if (markdown !== description) {
+    if (markdown !== openedEntry.meta?.description) {
+      // description) {
       //descriptionFocus.current &&
       setDescription(markdown);
       /*if (descriptionButtonsRef.current) {
@@ -72,13 +52,7 @@ function EditDescription() {
   }, []);
 
   //const noDescription = !description || description.length < 1;
-  const placeholder = isEditDescriptionMode
-    ? undefined
-    : t(
-        Pro
-          ? 'core:addMarkdownDescription'
-          : 'core:thisFunctionalityIsAvailableInPro',
-      );
+
   return (
     <div
       style={{
@@ -93,7 +67,7 @@ function EditDescription() {
         className="descriptionEditor"
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (Pro && !isEditDescriptionMode && !isEditMode) {
+          if (Pro) {
             setEditDescriptionMode(true);
           }
         }}
@@ -121,11 +95,7 @@ function EditDescription() {
         <MilkdownProvider>
           <DescriptionMdEditor
             ref={fileDescriptionRef}
-            defaultContent={description}
-            placeholder={placeholder}
-            defaultEditMode={isEditDescriptionMode}
             onChange={milkdownListener}
-            currentFolder={currentDirectoryPath}
           />
         </MilkdownProvider>
       </div>
