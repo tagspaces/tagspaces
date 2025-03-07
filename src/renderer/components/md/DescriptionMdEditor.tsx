@@ -69,7 +69,7 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         crepe.editor.onStatusChange((status: EditorStatus) => {
           if (status === EditorStatus.Created) {
-            console.log(status);
+            //console.log(status);
             /* if (crepeInstanceRef.current) {
               console.log('Destroyed...');
               crepeInstanceRef.current.destroy();

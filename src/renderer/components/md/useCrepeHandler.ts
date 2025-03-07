@@ -1,6 +1,5 @@
 import React, { useImperativeHandle } from 'react';
 import { replaceAll } from '@milkdown/utils';
-import { Ctx } from '@milkdown/ctx';
 import { EditorStatus } from '@milkdown/core';
 import type { Editor } from '@milkdown/kit/core';
 import { getMarkdown, insert } from '@milkdown/kit/utils';

@@ -246,6 +246,11 @@ function EntryContainer() {
             });
         }
         break;
+      case 'savingFile':
+        if (fileChanged) {
+          saveFile(data.content);
+        }
+        break;
       case 'editDocument':
         if (editingSupported) {
           editOpenedFile();
@@ -425,30 +430,40 @@ function EntryContainer() {
         // @ts-ignore
         fileViewer.current.contentWindow.getContent
       ) {
-        // @ts-ignore
-        const fileContent = fileViewer.current.contentWindow.getContent();
         //check if file is changed
         if (fileChanged || force) {
-          isSavingInProgress.current = true;
-          forceUpdate();
-          saveFileOpen(openedEntry, fileContent).then((success) => {
-            if (success) {
-              setFileChanged(false);
-              // showNotification(
-              //   t('core:fileSavedSuccessfully'),
-              //   NotificationTypes.default
-              // );
-            }
-            // change state will not render DOT before file name too
-            isSavingInProgress.current = false;
-          });
+          // @ts-ignore
+          const fileContent = fileViewer.current.contentWindow.getContent();
+          saveFile(fileContent);
         }
+      } else {
+        //console.log('saving crepe file');
+        fileViewer.current.contentWindow.postMessage(
+          { action: 'savingFile' },
+          '*',
+        );
       }
     } catch (e) {
       isSavingInProgress.current = false;
       console.debug('function getContent not exist for file:', e);
     }
   };
+
+  function saveFile(fileContent: string) {
+    isSavingInProgress.current = true;
+    forceUpdate();
+    saveFileOpen(openedEntry, fileContent).then((success) => {
+      if (success) {
+        setFileChanged(false);
+        // showNotification(
+        //   t('core:fileSavedSuccessfully'),
+        //   NotificationTypes.default
+        // );
+      }
+      // change state will not render DOT before file name too
+      isSavingInProgress.current = false;
+    });
+  }
 
   const editOpenedFile = () => {
     // addToEntryContainer(openedEntry);
