@@ -101,7 +101,7 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentDirectoryPath, isEditDescriptionMode],
+      [currentDirectoryPath, isEditDescriptionMode, description],
     );
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);

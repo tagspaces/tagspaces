@@ -97,7 +97,10 @@ export const FilePropertiesContextProvider = ({
         forceUpdate();
       }
     } else {
-      lastOpenedFile.current = undefined;
+      if (isDescriptionChanged.current) {
+        saveDescriptionConfirmOpened(true);
+      }
+      //lastOpenedFile.current = undefined;
     }
   }, [openedEntry]);
 
@@ -116,7 +119,7 @@ export const FilePropertiesContextProvider = ({
       lastOpenedFile.current,
       lastOpenedFile.current.meta?.description,
     ).then(() => {
-      if (lastOpenedFile.current.path !== openedEntry.path) {
+      if (lastOpenedFile.current.path !== openedEntry?.path) {
         lastOpenedFile.current = { ...openedEntry };
       } else {
         // to reload description
@@ -206,7 +209,7 @@ export const FilePropertiesContextProvider = ({
         open={isSaveDescriptionConfirmOpened}
         onClose={() => setSaveDescriptionConfirmOpened(false)}
         title={t('core:confirm')}
-        content={t('core:saveFileBeforeClosingFile')}
+        content={t('core:saveDescriptionOnClosing')}
         confirmCallback={(result) => {
           if (result) {
             saveDescription();

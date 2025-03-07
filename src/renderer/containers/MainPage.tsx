@@ -249,11 +249,11 @@ function MainPage(props: Props) {
             toggleDrawer={toggleDrawer}
             drawerOpened={drawerOpened}
           />
-          <FullScreenContextProvider>
-            <FilePropertiesContextProvider>
+          <FilePropertiesContextProvider>
+            <FullScreenContextProvider>
               <EntryContainer key="EntryContainerID" />
-            </FilePropertiesContextProvider>
-          </FullScreenContextProvider>
+            </FullScreenContextProvider>
+          </FilePropertiesContextProvider>
         </>
       );
     }
@@ -270,13 +270,13 @@ function MainPage(props: Props) {
           toggleDrawer={toggleDrawer}
           drawerOpened={drawerOpened}
         />
-        {openedEntry && (
-          <FullScreenContextProvider>
-            <FilePropertiesContextProvider>
+        <FilePropertiesContextProvider>
+          {openedEntry && (
+            <FullScreenContextProvider>
               <EntryContainer key="EntryContainerID" />
-            </FilePropertiesContextProvider>
-          </FullScreenContextProvider>
-        )}
+            </FullScreenContextProvider>
+          )}
+        </FilePropertiesContextProvider>
       </Split>
     );
   }

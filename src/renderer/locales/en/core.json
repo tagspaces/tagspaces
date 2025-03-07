@@ -351,6 +351,7 @@
   "toggleEntryProperties": "Toggle entry properties",
   "closeEntry": "Close entry",
   "saveFileBeforeClosingFile": "Do you want to save the changes before closing the file?",
+  "saveDescriptionOnClosing": "Description is changed do you want to save the changes?",
   "openDirectoryMenu": "Open folder menu",
   "pleaseOpenLocation": "Please   open   location",
   "thisIsStartupLocation": "This is the startup location",
