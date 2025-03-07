@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import EntryIcon from '-/components/EntryIcon';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
+import { default as Tooltip } from '-/components/Tooltip';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import LightMdEditor from '-/components/md/LigthMdEditor';
@@ -227,8 +227,8 @@ function GridPagination(props: Props) {
           backgroundRepeat: 'no-repeat',
         }}
       >
-        <Grid container spacing={2}>
-          <Grid size={12} style={{ height: 70 }} />
+        <Grid container spacing={0}>
+          <Grid size={12} style={{ height: showDetails ? 70 : 10 }} />
           {showDetails && (
             <Grid size={12}>
               <div
@@ -343,31 +343,40 @@ function GridPagination(props: Props) {
             </Grid>
           )}
           {showDescription && directoryMeta?.description && (
-            <TooltipTS
+            // <TooltipTS
+            //   title={
+            //     t('core:folderDescription') +
+            //     ' - ' +
+            //     t('core:doubleClickToEdit')
+            //   }
+            // >
+            <Grid
               title={
                 t('core:folderDescription') +
                 ' - ' +
                 t('core:doubleClickToEdit')
               }
+              size={12}
+              className="gridPagination"
+              spacing={0}
+              style={{
+                backgroundColor: theme.palette.background.default,
+                borderBottom: '1px solid ' + theme.palette.divider,
+                marginTop: showDetails ? 0 : 10,
+                marginLeft: 8,
+                marginRight: 8,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+              }}
+              onDoubleClick={() =>
+                openEntry(currentDirectoryPath, TabNames.descriptionTab)
+              }
             >
-              <Grid
-                size={12}
-                className="gridPagination"
-                style={{
-                  backgroundColor: theme.palette.background.default,
-                  borderBottom: '1px solid ' + theme.palette.divider,
-                  marginTop: showDetails ? 0 : 10,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                }}
-                onDoubleClick={() =>
-                  openEntry(currentDirectoryPath, TabNames.descriptionTab)
-                }
-              >
-                <style>
-                  {`
+              <style>
+                {`
+                      .gridPagination .milkdown .ProseMirror h1 {
+                          margin-top: 10px;
+                      }
                      .gridPagination .milkdown {
                           border-top-left-radius: 10px;
                           border-top-right-radius: 10px;
@@ -382,15 +391,15 @@ function GridPagination(props: Props) {
                           max-width: 99%;
                       }
                   `}
-                </style>
-                <MilkdownProvider>
-                  <LightMdEditor
-                    defaultContent={directoryMeta.description}
-                    placeholder=""
-                  />
-                </MilkdownProvider>
-              </Grid>
-            </TooltipTS>
+              </style>
+              <MilkdownProvider>
+                <LightMdEditor
+                  defaultContent={directoryMeta.description}
+                  placeholder=""
+                />
+              </MilkdownProvider>
+            </Grid>
+            // </TooltipTS>
           )}
         </Grid>
 

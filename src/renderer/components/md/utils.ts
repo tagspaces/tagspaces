@@ -1,10 +1,9 @@
-import { EditorView } from 'prosemirror-view';
-import { linkSchema } from '@milkdown/preset-commonmark';
-import { Crepe } from '@milkdown/crepe';
-import { editorViewCtx } from '@milkdown/core';
 import AppConfig from '-/AppConfig';
+import { Crepe } from '@milkdown/crepe';
 import { Ctx } from '@milkdown/ctx';
 import { editorViewOptionsCtx } from '@milkdown/kit/core';
+import { linkSchema } from '@milkdown/preset-commonmark';
+import { EditorView } from 'prosemirror-view';
 
 export function createCrepeEditor(
   root: HTMLElement,
@@ -72,7 +71,7 @@ export function createCrepeEditor(
       listener.markdownUpdated((_, markdown: string, prevMarkdown: string) => {
         //const view = crepe.editor.ctx.get(editorViewCtx);
         //if (view && view.hasFocus()) {
-        console.log('Change listener:' + markdown);
+        // console.log('Change listener:' + markdown);
         if (onChange) {
           onChange(markdown, prevMarkdown);
         }
