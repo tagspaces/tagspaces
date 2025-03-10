@@ -22,7 +22,7 @@
     "@tagspaces/tagspaces-common-node": "4.5.51",
     "@tagspaces/tagspaces-ws": "4.5.51",
     "sharp": "0.32.6",
-    "ws": "8.16.0"
+    "ws": "8.18.1"
   },
   "optionalDependencies": {
     "@tagspacespro/extensions": "2.0.5"
