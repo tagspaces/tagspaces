@@ -16,6 +16,7 @@
  *
  */
 
+import DraggablePaper from '-/components/DraggablePaper';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
@@ -26,6 +27,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useState } from 'react';
@@ -106,6 +108,7 @@ function OpenLinkDialog(props: Props) {
       open={open}
       onClose={onClose}
       fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();

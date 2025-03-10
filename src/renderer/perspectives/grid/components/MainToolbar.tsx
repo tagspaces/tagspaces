@@ -16,44 +16,43 @@
  *
  */
 
-import React from 'react';
-import { alpha, useTheme } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
-import { saveAs } from 'file-saver';
-import { Toolbar, Box, Divider } from '@mui/material/';
-import TsIconButton from '-/components/TsIconButton';
-import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
-import ShareIcon from '@mui/icons-material/Share';
-import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
-import DragOffIcon from '@mui/icons-material/CopyAll';
-import {
-  SelectedIcon,
-  UnSelectedIcon,
-  DownloadIcon,
-  TagIcon,
-  DeleteIcon,
-  ParentFolderIcon,
-  FolderPropertiesIcon,
-  PerspectiveSettingsIcon,
-  AIIcon,
-} from '-/components/CommonIcons';
-import CopyIcon from '@mui/icons-material/FileCopy';
-import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import AppConfig from '-/AppConfig';
-import { Pro } from '-/pro';
+import {
+  AIIcon,
+  DeleteIcon,
+  DownloadIcon,
+  FolderPropertiesIcon,
+  ParentFolderIcon,
+  PerspectiveSettingsIcon,
+  SelectedIcon,
+  TagIcon,
+  UnSelectedIcon,
+} from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
+import TsIconButton from '-/components/TsIconButton';
 import ZoomComponent from '-/components/ZoomComponent';
-import { getKeyBindingObject } from '-/reducers/settings';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { Pro } from '-/pro';
+import { getKeyBindingObject } from '-/reducers/settings';
+import ExportIcon from '@mui/icons-material/AssignmentReturn';
+import DragOffIcon from '@mui/icons-material/CopyAll';
+import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
+import CopyIcon from '@mui/icons-material/FileCopy';
+import ShareIcon from '@mui/icons-material/Share';
+import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
+import { Box, Divider, Toolbar } from '@mui/material/';
+import { alpha, useTheme } from '@mui/material/styles';
+import { saveAs } from 'file-saver';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   prefixDataTID?: string;
@@ -173,7 +172,7 @@ function MainToolbar(props: Props) {
       >
         <FolderPropertiesIcon />
       </TsIconButton>
-      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
         {!readOnlyMode && (
           <TsIconButton
@@ -262,7 +261,7 @@ function MainToolbar(props: Props) {
             <ExportIcon />
           </TsIconButton>
         )}
-      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
       <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
         <ZoomComponent preview={false} />
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />

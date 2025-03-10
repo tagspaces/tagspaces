@@ -16,7 +16,6 @@
  *
  */
 
-import React, { useReducer, useRef, useState } from 'react';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -43,6 +42,7 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
+import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const FolderColorTextField = styled(TsTextField)(({ theme }) => ({
@@ -204,7 +204,7 @@ function CreateDirectoryDialog(props: Props) {
         actionSlot={okButton}
       />
       <DialogContent>
-        <FormControl fullWidth={true} error={inputError}>
+        <FormControl fullWidth error={inputError}>
           <TsTextField
             error={inputError}
             autoFocus
@@ -228,10 +228,9 @@ function CreateDirectoryDialog(props: Props) {
             <FormHelperText>{t('core:directoryNameHelp')}</FormHelperText>
           )}
         </FormControl>
-        <FormControl>
+        <FormControl fullWidth>
           <FolderColorTextField
             data-tid="folderColorTID"
-            fullWidth
             label={t('backgroundColor')}
             retrieveValue={() => backgroundColor.current}
             value={' '}

@@ -34,7 +34,8 @@ function TSDialogActions(props: TSDialogActions) {
     <DialogActions
       {...props}
       style={{
-        padding: smallScreen ? '10px 20px 20px 30px' : 'inherited',
+        padding: '10px 20px 20px 20px',
+        // padding: smallScreen ? '10px 20px 20px 30px' : 'inherited',
         ...style,
       }}
     >
