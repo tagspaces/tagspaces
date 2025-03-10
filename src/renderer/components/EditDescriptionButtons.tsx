@@ -1,19 +1,19 @@
 import AppConfig from '-/AppConfig';
 import { ProTooltip } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import DescriptionMenu from '-/components/md/DescriptionMenu';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
+import { saveAsTextFile } from '-/services/utils-io';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, ButtonGroup } from '@mui/material';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import TsIconButton from '-/components/TsIconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import DescriptionMenu from '-/components/md/DescriptionMenu';
-import { saveAsTextFile } from '-/services/utils-io';
 
 interface ButtonsProps {
   getHtml: () => string;
@@ -102,9 +102,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
   return (
     <div
       style={{
-        display: 'flex',
         marginBottom: AppConfig.defaultSpaceBetweenButtons,
-        justifyContent: 'space-between',
       }}
     >
       <ButtonGroup>
@@ -143,7 +141,8 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
             }}
           >
             {isEditDescriptionMode
-              ? t('core:confirmSaveButton') + (isDescriptionChanged ? ' ⬤' : '')
+              ? t('core:confirmSaveButton') +
+                (isDescriptionChanged ? String.fromCharCode(0x25cf) : '')
               : t('core:editDescription')}
           </TsButton>
         </ProTooltip>
@@ -174,6 +173,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       <TsIconButton
         tooltip={t('core:chatMore')}
         onClick={handleMoreClick}
+        style={{ float: 'right' }}
         data-tid="chatMoreTID"
         aria-label={t('core:chatMore')}
         aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
