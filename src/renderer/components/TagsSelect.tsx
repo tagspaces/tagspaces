@@ -17,6 +17,7 @@
  */
 
 import TagContainer from '-/components/TagContainer';
+import TsTextField from '-/components/TsTextField';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -31,7 +32,6 @@ import { TS } from '-/tagspaces.namespace';
 import { Box, InputAdornment } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
-import TextField from '@mui/material/TextField';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -205,9 +205,8 @@ function TagsSelect(props: Props) {
         renderInput={(params) => (
           <>
             <FormHelperText style={{ marginLeft: 0 }}>{label}</FormHelperText>
-            <TextField
+            <TsTextField
               {...params}
-              variant="outlined"
               label={undefined}
               placeholder={placeholderText}
               margin="normal"

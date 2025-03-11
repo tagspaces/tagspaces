@@ -16,17 +16,18 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import FormHelperText from '@mui/material/FormHelperText';
+import TsTextField from '-/components/TsTextField';
 import { isDesktopMode } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
+import FormHelperText from '@mui/material/FormHelperText';
+import { TextFieldProps } from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
+import { useSelector } from 'react-redux';
 
 type TSSelectProps = TextFieldProps & {};
 
 function TsSelect(props: TSSelectProps) {
   const { children, label } = props;
+  const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
 
   return (
@@ -34,21 +35,17 @@ function TsSelect(props: TSSelectProps) {
       <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
         {label}
       </FormHelperText>
-      <TextField
+      <TsTextField
         style={{
           cursor: 'context-menu',
           marginTop: 0,
         }}
-        margin="dense"
-        size={desktopMode ? 'small' : 'medium'}
-        variant="outlined"
         select
-        fullWidth={true}
         {...props}
         label={undefined}
       >
         {children}
-      </TextField>
+      </TsTextField>
     </div>
   );
 }

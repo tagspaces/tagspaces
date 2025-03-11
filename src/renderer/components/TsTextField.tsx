@@ -16,17 +16,18 @@
  *
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import TsMenuList from '-/components/TsMenuList';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { isDesktopMode } from '-/reducers/settings';
+import FormHelperText from '@mui/material/FormHelperText';
+import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import TsMenuList from '-/components/TsMenuList';
-import ListItemText from '@mui/material/ListItemText';
-import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { isDesktopMode } from '-/reducers/settings';
+import { useSelector } from 'react-redux';
 
 type TSTextFieldProps = TextFieldProps & {
   updateValue?: (string) => void;
@@ -35,6 +36,7 @@ type TSTextFieldProps = TextFieldProps & {
 
 function TsTextField(props: TSTextFieldProps) {
   const { updateValue, retrieveValue, children, label, ...restProps } = props;
+  const theme = useTheme();
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
   //const textFieldRef = useRef(null);
@@ -111,7 +113,38 @@ function TsTextField(props: TSTextFieldProps) {
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
         fullWidth={true}
-        // ref={textFieldRef}
+        // sx={{
+        //   backgroundColor: alpha(theme.palette.divider, 0.2),
+        //   '&:hover': {
+        //     backgroundColor: alpha(theme.palette.divider, 0.5),
+        //   },
+        //   '& .Mui-focused': {
+        //     backgroundColor: 'transparent !important',
+        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
+        //   },
+        //   borderRadius: AppConfig.defaultCSSRadius + 'px',
+        //   transition: '0.3s',
+        //   '&:hover .MuiOutlinedInput-notchedOutline': {
+        //     border: '2px solid transparent',
+        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
+        //   },
+        //   '& .MuiOutlinedInput-notchedOutline': {
+        //     border: '2px solid transparent',
+        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
+        //   },
+        //   '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+        //     border: '2px solid ' + alpha(theme.palette.divider, 0.5),
+        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
+        //   },
+        //   // '& fieldset': {
+        //   //   border: '2px solid transparent',
+        //   //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
+        //   // },
+        //   // '& fieldset:focus': {
+        //   //   border: '2px solid red !important',
+        //   //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
+        //   // },
+        // }}
         {...restProps}
         label={undefined}
       >
