@@ -948,7 +948,7 @@ function EntryProperties(props: Props) {
             />
           </Grid>
         )}
-        <Grid container spacing={1}>
+        <Grid container spacing={1} size={12}>
           <Grid size={openedEntry.isFile ? 12 : 6}>
             <FormHelperText>{t('core:thumbnail')}</FormHelperText>
             <ThumbnailTextField

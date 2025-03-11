@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import TsMenuList from '-/components/TsMenuList';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { isDesktopMode } from '-/reducers/settings';
@@ -24,7 +25,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -113,38 +114,38 @@ function TsTextField(props: TSTextFieldProps) {
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
         fullWidth={true}
-        // sx={{
-        //   backgroundColor: alpha(theme.palette.divider, 0.2),
-        //   '&:hover': {
-        //     backgroundColor: alpha(theme.palette.divider, 0.5),
-        //   },
-        //   '& .Mui-focused': {
-        //     backgroundColor: 'transparent !important',
-        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
-        //   },
-        //   borderRadius: AppConfig.defaultCSSRadius + 'px',
-        //   transition: '0.3s',
-        //   '&:hover .MuiOutlinedInput-notchedOutline': {
-        //     border: '2px solid transparent',
-        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
-        //   },
-        //   '& .MuiOutlinedInput-notchedOutline': {
-        //     border: '2px solid transparent',
-        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
-        //   },
-        //   '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-        //     border: '2px solid ' + alpha(theme.palette.divider, 0.5),
-        //     borderRadius: AppConfig.defaultCSSRadius + 'px',
-        //   },
-        //   // '& fieldset': {
-        //   //   border: '2px solid transparent',
-        //   //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
-        //   // },
-        //   // '& fieldset:focus': {
-        //   //   border: '2px solid red !important',
-        //   //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
-        //   // },
-        // }}
+        sx={{
+          backgroundColor: alpha(theme.palette.divider, 0.2),
+          '&:hover': {
+            backgroundColor: alpha(theme.palette.divider, 0.5),
+          },
+          '& .Mui-focused': {
+            backgroundColor: 'transparent !important',
+            borderRadius: AppConfig.defaultCSSRadius + 'px',
+          },
+          borderRadius: AppConfig.defaultCSSRadius + 'px',
+          transition: '0.3s',
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            border: '2px solid transparent !important',
+            borderRadius: AppConfig.defaultCSSRadius + 'px',
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: '2px solid transparent',
+            borderRadius: AppConfig.defaultCSSRadius + 'px',
+          },
+          '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
+            borderRadius: AppConfig.defaultCSSRadius + 'px',
+          },
+          // '& fieldset': {
+          //   border: '2px solid transparent',
+          //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
+          // },
+          // '& fieldset:focus': {
+          //   border: '2px solid red !important',
+          //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
+          // },
+        }}
         {...restProps}
         label={undefined}
       >
