@@ -23,6 +23,7 @@ import { SidePanel, classes } from '-/components/SidePanels.css';
 import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
@@ -35,7 +36,6 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
 import React from 'react';
@@ -147,15 +147,10 @@ function SearchPopover(props: Props) {
                 <FormHelperText style={{ marginLeft: 0 }}>
                   {t('core:savedSearchesTitle')}
                 </FormHelperText>
-                <Select
+                <TsSelect
                   name="savedSearch"
-                  labelId="saved-searches"
                   disabled={isIndexing !== undefined}
-                  size={desktopMode ? 'small' : 'medium'}
                   onChange={handleSavedSearchChange}
-                  displayEmpty
-                  fullWidth
-                  variant="outlined"
                   value={tempSearchQuery.uuid ? tempSearchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
@@ -167,7 +162,7 @@ function SearchPopover(props: Props) {
                       <span style={{ width: '100%' }}>{search.title}</span>
                     </MenuItem>
                   ))}
-                </Select>
+                </TsSelect>
               </FormControl>
             </TooltipTS>
           </Grid>

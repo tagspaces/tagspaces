@@ -21,7 +21,6 @@ import { styled } from '@mui/material/styles';
 const PREFIX = 'SidePanel';
 export const classes = {
   panel: `${PREFIX}-panel`,
-  fontIcon: `${PREFIX}-fontIcon`,
   header: `${PREFIX}-header`,
   icon: `${PREFIX}-icon`,
   locationListArea: `${PREFIX}-locationListArea`,
@@ -29,7 +28,6 @@ export const classes = {
   listItemSelected: `${PREFIX}-listItemSelected`,
   panelTitle: `${PREFIX}-panelTitle`,
   toolbar: `${PREFIX}-toolbar`,
-  formControl: `${PREFIX}-formControl`,
   mainActionButton: `${PREFIX}-mainActionButton`,
   leftIcon: `${PREFIX}-leftIcon`,
 };
@@ -38,9 +36,6 @@ export const SidePanel = styled('div')(({ theme }) => ({
   height: '100%',
   paddingLeft: 5,
   paddingRight: 0,
-  [`& .${classes.fontIcon}`]: {
-    color: theme.palette.text.primary,
-  },
   [`& .${classes.header}`]: {
     color: theme.palette.text.primary,
   },
@@ -72,10 +67,6 @@ export const SidePanel = styled('div')(({ theme }) => ({
   },
   [`& .${classes.toolbar}`]: {
     display: 'flex',
-  },
-  [`& .${classes.formControl}`]: {
-    width: '100%',
-    marginBottom: 10,
   },
   [`& .${classes.mainActionButton}`]: {
     marginTop: 10,

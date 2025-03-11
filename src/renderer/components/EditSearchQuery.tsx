@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import AppConfig from '-/AppConfig';
 import {
   ArchiveIcon,
@@ -33,30 +32,28 @@ import {
   UntaggedIcon,
   VideoIcon,
 } from '-/components/CommonIcons';
-import { classes } from '-/components/SidePanels.css';
+import TagsSelect from '-/components/TagsSelect';
 import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { isDesktopMode } from '-/reducers/settings';
+import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TagsSelect from './TagsSelect';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
-import { Stack } from '@mui/material';
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -73,9 +70,7 @@ function EditSearchQuery(props: Props) {
   const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
-    if (name === 'fileSize') {
-      setTempSearchQuery({ fileSize: value });
-    }
+    setTempSearchQuery({ fileSize: value });
   };
 
   const handleLastModifiedChange = (
@@ -84,9 +79,7 @@ function EditSearchQuery(props: Props) {
     const { target } = event;
     const { value, name } = target;
 
-    if (name === 'lastModified') {
-      setTempSearchQuery({ lastModified: value });
-    }
+    setTempSearchQuery({ lastModified: value });
   };
 
   function removeTags(tagsArray, removeTagsArray) {
@@ -154,10 +147,10 @@ function EditSearchQuery(props: Props) {
     const { target } = event;
     const { value, name } = target;
 
-    if (name === 'fileTypes') {
-      const types = JSON.parse(value);
-      setTempSearchQuery({ fileTypes: types });
-    }
+    // if (name === 'fileTypes') {
+    const types = JSON.parse(value);
+    setTempSearchQuery({ fileTypes: types });
+    // }
   };
 
   return (
@@ -222,10 +215,7 @@ function EditSearchQuery(props: Props) {
           },
         }}
       />
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <ToggleButtonGroup
           onChange={switchSearchBoxing}
           size="small"
@@ -250,10 +240,7 @@ function EditSearchQuery(props: Props) {
           </ToggleButton>
         </ToggleButtonGroup>
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <ToggleButtonGroup
           onChange={switchSearchType}
           size="small"
@@ -278,10 +265,7 @@ function EditSearchQuery(props: Props) {
           </ToggleButton>
         </ToggleButtonGroup>
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <ToggleButtonGroup
           onChange={() => {
             setTempSearchQuery({
@@ -305,10 +289,7 @@ function EditSearchQuery(props: Props) {
           </ToggleButton>
         </ToggleButtonGroup>
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TagsSelect
           dataTid="searchTagsAndTID"
           placeholderText={t('core:selectTags')}
@@ -319,10 +300,7 @@ function EditSearchQuery(props: Props) {
           tagMode="remove"
         />
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TagsSelect
           dataTid="searchTagsOrTID"
           placeholderText={t('core:selectTags')}
@@ -333,10 +311,7 @@ function EditSearchQuery(props: Props) {
           tagMode="remove"
         />
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TagsSelect
           dataTid="searchTagsNotTID"
           placeholderText={t('core:selectTags')}
@@ -347,20 +322,14 @@ function EditSearchQuery(props: Props) {
           tagMode="remove"
         />
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TooltipTS title={t('filterByTypTooltip')}>
           <FormHelperText style={{ marginLeft: 0 }}>
             {t('core:fileType')}
           </FormHelperText>
-          <Select
-            fullWidth
+          <TsSelect
             value={JSON.stringify(tempSearchQuery.fileTypes)}
             onChange={handleFileTypeChange}
-            size={desktopMode ? 'small' : 'medium'}
-            input={<OutlinedInput name="fileTypes" id="file-type" />}
           >
             <MenuItem value={JSON.stringify(AppConfig.SearchTypeGroups.any)}>
               {t('core:anyType')}
@@ -468,24 +437,17 @@ function EditSearchQuery(props: Props) {
               </TsIconButton>
               {t('core:searchEmails')}
             </MenuItem>
-          </Select>
+          </TsSelect>
         </TooltipTS>
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TooltipTS title={t('filterBySizeTooltip')}>
           <FormHelperText style={{ marginLeft: 0 }}>
             {t('core:sizeSearchTitle')}
           </FormHelperText>
-          <Select
-            fullWidth
+          <TsSelect
             value={tempSearchQuery.fileSize}
             onChange={handleFileSizeChange}
-            size={desktopMode ? 'small' : 'medium'}
-            input={<OutlinedInput name="fileSize" id="file-size" />}
-            displayEmpty
           >
             <MenuItem value="">{t('core:sizeAny')}</MenuItem>
             <MenuItem value="sizeEmpty">{t('core:sizeEmpty')}</MenuItem>
@@ -513,24 +475,17 @@ function EditSearchQuery(props: Props) {
               {t('core:sizeHuge')}
               &nbsp;(&gt;&nbsp;1GB)
             </MenuItem>
-          </Select>
+          </TsSelect>
         </TooltipTS>
       </FormControl>
-      <FormControl
-        className={classes.formControl}
-        disabled={isIndexing !== undefined}
-      >
+      <FormControl disabled={isIndexing !== undefined}>
         <TooltipTS title={t('filterByLastModifiedDateTooltip')}>
           <FormHelperText style={{ marginLeft: 0 }}>
             {t('core:lastModifiedSearchTitle')}
           </FormHelperText>
-          <Select
-            fullWidth
+          <TsSelect
             value={tempSearchQuery.lastModified}
             onChange={handleLastModifiedChange}
-            size={desktopMode ? 'small' : 'medium'}
-            input={<OutlinedInput name="lastModified" id="modification-date" />}
-            displayEmpty
           >
             <MenuItem value="">{t('core:anyTime')}</MenuItem>
             <MenuItem value="today">{t('core:today')}</MenuItem>
@@ -540,10 +495,10 @@ function EditSearchQuery(props: Props) {
             <MenuItem value="past6Months">{t('core:past6Months')}</MenuItem>
             <MenuItem value="pastYear">{t('core:pastYear')}</MenuItem>
             <MenuItem value="moreThanYear">{t('core:moreThanYear')}</MenuItem>
-          </Select>
+          </TsSelect>
         </TooltipTS>
       </FormControl>
-      <FormControl className={classes.formControl}>
+      <FormControl>
         <TooltipTS title={t('enterTimePeriodTooltip')}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box position="relative" display="inline-flex">

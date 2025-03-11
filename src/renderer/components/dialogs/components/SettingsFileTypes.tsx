@@ -16,46 +16,45 @@
  *
  */
 
-import React, { useState, useEffect, useRef, useReducer } from 'react';
-import { styled } from '@mui/material/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import MenuItem from '@mui/material/MenuItem';
-import Input from '@mui/material/Input';
-import FormControl from '@mui/material/FormControl';
-import TsIconButton from '-/components/TsIconButton';
-import RemoveIcon from '@mui/icons-material/RemoveCircle';
-import TsButton from '-/components/TsButton';
-import Select from '@mui/material/Select';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import {
-  TableVirtuoso,
-  TableComponents,
-  TableVirtuosoHandle,
-} from 'react-virtuoso';
-import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import AppConfig from '-/AppConfig';
 import TransparentBackground from '-/components/TransparentBackground';
-import { TS } from '-/tagspaces.namespace';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
+import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useExtensionsContext } from '-/hooks/useExtensionsContext';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getSupportedFileTypes,
   isDevMode,
 } from '-/reducers/settings';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { AppDispatch } from '-/reducers/app';
 import defaultSettings from '-/reducers/settings-default';
-import useFirstRender from '-/utils/useFirstRender';
-import { useTranslation } from 'react-i18next';
-import { getUserDataDir } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
-import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 import { dataTidFormat } from '-/services/test';
+import { getUserDataDir } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
+import RemoveIcon from '@mui/icons-material/RemoveCircle';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import { styled } from '@mui/material/styles';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  TableComponents,
+  TableVirtuoso,
+  TableVirtuosoHandle,
+} from 'react-virtuoso';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -264,7 +263,7 @@ function SettingsFileTypes() {
       dataKey: 'editor',
     },
     {
-      //width: 80,
+      width: 100,
       label: t('core:actions'),
       dataKey: 'color',
     },
@@ -337,7 +336,7 @@ function SettingsFileTypes() {
   function rowContent(_index: number, item: TS.FileTypes) {
     return (
       <React.Fragment>
-        <TableCell sx={{ padding: '0 5px 20px 5px' }}>
+        <TableCell align={'center'} sx={{ padding: '0 5px 0px 5px' }}>
           <FormControl
             error={
               (isValidationInProgress.current && item.type === '') ||
@@ -346,7 +345,7 @@ function SettingsFileTypes() {
               ).length > 1
             }
           >
-            <Input
+            <TsTextField
               data-tid={'typeTID' + item.type}
               defaultValue={item.type}
               error={
@@ -363,16 +362,16 @@ function SettingsFileTypes() {
             />
           </FormControl>
         </TableCell>
-        <TableCell align={'left'} sx={{ padding: '0 5px 20px 0' }}>
+        <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
           <FormControl
             error={isValidationInProgress.current && item.viewer === ''}
           >
-            <Select
+            <TsSelect
               data-tid={'viewerTID' + item.type}
               error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
-              sx={{ width: 180 }}
-              input={<Input id="" />}
+              style={{ maxWidth: 170, marginTop: 0 }}
+              // input={<Input id="" />}
               onChange={(event) => {
                 const extension: TS.Extension = extensions.find(
                   (ext) => ext.extensionId === event.target.value,
@@ -410,14 +409,14 @@ function SettingsFileTypes() {
                     </MenuItem>
                   ),
               )}
-            </Select>
+            </TsSelect>
           </FormControl>
         </TableCell>
-        <TableCell align={'right'} sx={{ padding: '0 5px 20px 0' }}>
-          <Select
+        <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
+          <TsSelect
             value={item.editor}
-            input={<Input id="" />}
-            sx={{ width: 180 }}
+            // input={<Input id="" />}
+            style={{ maxWidth: 170, marginTop: 0 }}
             onChange={(event) =>
               updateItems(item, 'editor', event.target.value)
             }
@@ -438,9 +437,9 @@ function SettingsFileTypes() {
                   <small style={{ marginLeft: 5 }}>v{extension.version}</small>
                 </MenuItem>
               ))}
-          </Select>
+          </TsSelect>
         </TableCell>
-        <TableCell sx={{ padding: '0 5px 20px 5px' }}>
+        <TableCell align={'center'} sx={{ padding: '0 5px 0px 5px' }}>
           <TransparentBackground>
             <TsButton
               tooltip={t('core:colorPickerDialogTitle')}
@@ -532,7 +531,7 @@ function SettingsFileTypes() {
       <TableVirtuoso
         style={{
           overflowX: 'hidden',
-          height: 'calc(100% - 30px)',
+          height: 'calc(100% - 50px)',
           overflowY: 'auto',
           background: 'transparent',
         }}

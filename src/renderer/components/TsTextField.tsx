@@ -113,7 +113,7 @@ function TsTextField(props: TSTextFieldProps) {
         margin="dense"
         size={desktopMode ? 'small' : 'medium'}
         variant="outlined"
-        fullWidth={true}
+        fullWidth
         sx={{
           backgroundColor: alpha(theme.palette.divider, 0.2),
           '&:hover': {

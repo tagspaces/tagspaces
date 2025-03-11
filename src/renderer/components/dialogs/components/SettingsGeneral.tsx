@@ -427,24 +427,6 @@ function SettingsGeneral() {
           checked={settings.showUnixHiddenEntries}
         />
       </ListItem>
-      {/* <ListItem>
-          <ListItemText style={{ maxWidth: '300px' }} primary={t('core:tagDelimiterChoose')} />
-          <Select
-            style={{ minWidth: '170px' }}
-            data-tid="settingsTagDelimiterChoose"
-            value={this.settings.tagDelimiter}
-            onChange={this.handleTagDelimiterChange}
-             slotProps={{
-              input: {
-              name: 'tagDelimiter',
-              id: 'tag-delimiter',
-            }}}
-          >
-            <MenuItem value=" ">{t('core:tagDelimiterSpace')}</MenuItem>
-            <MenuItem value="_">{t('core:tagDelimiterUnderscore')}</MenuItem>
-            <MenuItem value=",">{t('core:tagDelimiterComma')}</MenuItem>
-          </Select>
-        </ListItem> */}
       <ListItem>
         <ListItemText primary={t('core:maxSearchResultChoose')} />
         <TsTextField
