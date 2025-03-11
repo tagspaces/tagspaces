@@ -24,12 +24,16 @@ import { ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import NoTileServer from '-/components/NoTileServer';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
+import TagDropContainer from '-/components/TagDropContainer';
+import TagsSelect from '-/components/TagsSelect';
 import Tooltip from '-/components/Tooltip';
+import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
+import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -57,7 +61,6 @@ import {
   FormControl,
   InputAdornment,
   Popover,
-  TextField,
   Typography,
   inputBaseClasses,
 } from '@mui/material';
@@ -92,12 +95,8 @@ import {
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
-import TagDropContainer from './TagDropContainer';
-import TagsSelect from './TagsSelect';
-import TransparentBackground from './TransparentBackground';
-import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 
-const ThumbnailTextField = styled(TextField)(({ theme }) => ({
+const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
     height: 220,
   },
@@ -842,7 +841,6 @@ function EntryProperties(props: Props) {
             />
           </Grid>
         )}
-
         {!openedEntry.isFile && (
           <Grid size={12} style={{ marginTop: 5 }}>
             <TsTextField
@@ -950,76 +948,14 @@ function EntryProperties(props: Props) {
             />
           </Grid>
         )}
-        <Grid size={openedEntry.isFile ? 12 : 6}>
-          <FormHelperText>{t('core:thumbnail')}</FormHelperText>
-          <ThumbnailTextField
-            margin="dense"
-            variant="outlined"
-            style={{ marginTop: 0 }}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <Stack
-                      direction="column"
-                      spacing={0}
-                      style={{ alignItems: 'center' }}
-                    >
-                      {!readOnlyMode &&
-                        !isEditMode &&
-                        editName === undefined && (
-                          <ProTooltip tooltip={t('changeThumbnail')}>
-                            <TsButton
-                              data-tid="changeThumbnailTID"
-                              fullWidth
-                              variant="text"
-                              onClick={toggleThumbFilesDialog}
-                            >
-                              {t('core:change')}
-                            </TsButton>
-                          </ProTooltip>
-                        )}
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        style={{
-                          backgroundSize: 'cover',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundImage: thumbImage.current,
-                          backgroundPosition: 'center',
-                          borderRadius: 8,
-                          minHeight: 150,
-                          minWidth: 150,
-                          marginBottom: 5,
-                        }}
-                        onClick={toggleThumbFilesDialog}
-                      />
-                    </Stack>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Grid>
-        {!openedEntry.isFile && (
-          <Grid size={6}>
-            <FormHelperText
-              style={{
-                marginLeft: AppConfig.defaultSpaceBetweenButtons,
-              }}
-            >
-              {t('core:backgroundImage')}
-            </FormHelperText>
+        <Grid container spacing={1}>
+          <Grid size={openedEntry.isFile ? 12 : 6}>
+            <FormHelperText>{t('core:thumbnail')}</FormHelperText>
             <ThumbnailTextField
               margin="dense"
-              fullWidth
-              style={{
-                marginTop: 0,
-                marginLeft: AppConfig.defaultSpaceBetweenButtons,
-              }}
               variant="outlined"
+              style={{ marginTop: 0 }}
+              fullWidth
               slotProps={{
                 input: {
                   readOnly: true,
@@ -1033,32 +969,31 @@ function EntryProperties(props: Props) {
                         {!readOnlyMode &&
                           !isEditMode &&
                           editName === undefined && (
-                            <ProTooltip tooltip={t('changeBackgroundImage')}>
+                            <ProTooltip tooltip={t('changeThumbnail')}>
                               <TsButton
-                                data-tid="changeBackgroundImageTID"
+                                data-tid="changeThumbnailTID"
                                 fullWidth
                                 variant="text"
-                                onClick={toggleBgndImgDialog}
+                                onClick={toggleThumbFilesDialog}
                               >
                                 {t('core:change')}
                               </TsButton>
                             </ProTooltip>
                           )}
                         <div
-                          data-tid="propsBgnImageTID"
                           role="button"
                           tabIndex={0}
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: backgroundImage.current,
+                            backgroundImage: thumbImage.current,
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,
                             minWidth: 150,
                             marginBottom: 5,
                           }}
-                          onClick={toggleBgndImgDialog}
+                          onClick={toggleThumbFilesDialog}
                         />
                       </Stack>
                     </InputAdornment>
@@ -1067,7 +1002,65 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-        )}
+          {!openedEntry.isFile && (
+            <Grid size={6}>
+              <FormHelperText>{t('core:backgroundImage')}</FormHelperText>
+              <ThumbnailTextField
+                margin="dense"
+                fullWidth
+                style={{
+                  marginTop: 0,
+                }}
+                variant="outlined"
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    startAdornment: (
+                      <InputAdornment position="end">
+                        <Stack
+                          direction="column"
+                          spacing={0}
+                          style={{ alignItems: 'center' }}
+                        >
+                          {!readOnlyMode &&
+                            !isEditMode &&
+                            editName === undefined && (
+                              <ProTooltip tooltip={t('changeBackgroundImage')}>
+                                <TsButton
+                                  data-tid="changeBackgroundImageTID"
+                                  fullWidth
+                                  variant="text"
+                                  onClick={toggleBgndImgDialog}
+                                >
+                                  {t('core:change')}
+                                </TsButton>
+                              </ProTooltip>
+                            )}
+                          <div
+                            data-tid="propsBgnImageTID"
+                            role="button"
+                            tabIndex={0}
+                            style={{
+                              backgroundSize: 'cover',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundImage: backgroundImage.current,
+                              backgroundPosition: 'center',
+                              borderRadius: 8,
+                              minHeight: 150,
+                              minWidth: 150,
+                              marginBottom: 5,
+                            }}
+                            onClick={toggleBgndImgDialog}
+                          />
+                        </Stack>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+          )}
+        </Grid>
         <Grid size={12}>
           <TsTextField
             data-tid="entryIDTID"

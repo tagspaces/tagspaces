@@ -685,7 +685,7 @@ function CreateEditLocationDialog(props: Props) {
               {content}
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     data-tid="locationIsDefault"
@@ -700,7 +700,7 @@ function CreateEditLocationDialog(props: Props) {
               />
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     disabled={!Pro}
@@ -749,7 +749,7 @@ function CreateEditLocationDialog(props: Props) {
                   AppConfig.isCordova
                 }
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     data-tid="changeWatchForChanges"
@@ -780,10 +780,10 @@ function CreateEditLocationDialog(props: Props) {
             <Typography>{t('core:switchAdvanced')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <FormGroup style={{ width: '100%' }}>
+            <FormGroup>
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     disabled={!Pro}
@@ -804,7 +804,7 @@ function CreateEditLocationDialog(props: Props) {
               />
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     data-tid="locationSettingsGenThumbsTID"
@@ -819,7 +819,7 @@ function CreateEditLocationDialog(props: Props) {
               />
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     disabled={!Pro}
@@ -840,7 +840,7 @@ function CreateEditLocationDialog(props: Props) {
               />
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between' }}
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <TsTextField
                     name="maxIndexAge"
@@ -866,7 +866,7 @@ function CreateEditLocationDialog(props: Props) {
               {type === locationType.TYPE_CLOUD && (
                 <FormControlLabel
                   labelPlacement="start"
-                  style={{ justifyContent: 'space-between' }}
+                  style={{ justifyContent: 'space-between', marginLeft: 0 }}
                   control={
                     <MaxLoopsSelect
                       maxLoops={maxLoops}
@@ -884,7 +884,7 @@ function CreateEditLocationDialog(props: Props) {
               {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
                 <FormControlLabel
                   labelPlacement="start"
-                  style={{ justifyContent: 'space-between' }}
+                  style={{ justifyContent: 'space-between', marginLeft: 0 }}
                   control={
                     <TsButton disabled>
                       {currentTagsSetting
@@ -901,7 +901,11 @@ function CreateEditLocationDialog(props: Props) {
               ) : (
                 <FormControlLabel
                   labelPlacement="top"
-                  style={{ alignItems: 'start', marginBottom: 10 }}
+                  style={{
+                    alignItems: 'start',
+                    marginBottom: 10,
+                    marginLeft: 0,
+                  }}
                   control={
                     <ToggleButtonGroup
                       value={persistTagsInSidecarFile}
@@ -1004,7 +1008,12 @@ function CreateEditLocationDialog(props: Props) {
                 <FormControlLabel
                   disabled={!Pro}
                   labelPlacement="start"
-                  style={{ justifyContent: 'space-between', marginTop: 15 }}
+                  style={{
+                    justifyContent: 'space-between',
+                    marginTop: 15,
+                    marginLeft: 0,
+                    marginRight: 0,
+                  }}
                   control={
                     <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
                       <TsButton
