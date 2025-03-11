@@ -40,16 +40,19 @@ function EditDescription() {
     };
   }, []);
 
-  const milkdownListener = React.useCallback((markdown: string) => {
-    if (markdown !== openedEntry.meta?.description) {
-      // description) {
-      //descriptionFocus.current &&
-      setDescription(markdown);
-      /*if (descriptionButtonsRef.current) {
+  const milkdownListener = React.useCallback(
+    (markdown: string) => {
+      if (markdown !== openedEntry.meta?.description) {
+        // description) {
+        //descriptionFocus.current &&
+        setDescription(markdown);
+        /*if (descriptionButtonsRef.current) {
         descriptionButtonsRef.current.setDescriptionChanged(true);
       }*/
-    }
-  }, []);
+      }
+    },
+    [openedEntry],
+  );
 
   //const noDescription = !description || description.length < 1;
 

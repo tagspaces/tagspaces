@@ -10,7 +10,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { saveAsTextFile } from '-/services/utils-io';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, ButtonGroup } from '@mui/material';
+import { Box, ButtonGroup, Tooltip, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
   } = useFilePropertiesContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const theme = useTheme();
   //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   /*React.useImperativeHandle(buttonsRef, () => ({
@@ -99,6 +100,20 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
     }
   };
 
+  const descrChangedMarker = isDescriptionChanged ? (
+    <Tooltip title={t('core:fileChanged')}>
+      <span
+        style={{
+          color: theme.palette.text.primary,
+          marginLeft: 3,
+          marginTop: -2,
+        }}
+      >
+        {String.fromCharCode(0x25cf)}
+      </span>
+    </Tooltip>
+  ) : null;
+
   return (
     <div
       style={{
@@ -117,7 +132,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
             {t('core:cancel')}
           </TsButton>
         )}
-        <ProTooltip tooltip={t('editDescription')}>
+        <ProTooltip tooltip={!isEditDescriptionMode && t('editDescription')}>
           <TsButton
             data-tid="editDescriptionTID"
             disabled={!Pro || isEditMode}
@@ -140,10 +155,13 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
               }
             }}
           >
-            {isEditDescriptionMode
-              ? t('core:confirmSaveButton') +
-                (isDescriptionChanged ? String.fromCharCode(0x25cf) : '')
-              : t('core:editDescription')}
+            {isEditDescriptionMode ? (
+              <>
+                {t('core:confirmSaveButton')} {descrChangedMarker}
+              </>
+            ) : (
+              t('core:editDescription')
+            )}
           </TsButton>
         </ProTooltip>
       </ButtonGroup>

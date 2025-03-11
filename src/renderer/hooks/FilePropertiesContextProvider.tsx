@@ -132,16 +132,18 @@ export const FilePropertiesContextProvider = ({
   }
 
   function setDescription(d: string) {
-    lastOpenedFile.current = {
-      ...lastOpenedFile.current,
-      meta: {
-        ...lastOpenedFile.current?.meta,
-        description: d,
-      },
-    };
-    if (!isDescriptionChanged.current) {
-      isDescriptionChanged.current = true;
-      forceUpdate();
+    if (lastOpenedFile.current?.meta?.description !== d) {
+      lastOpenedFile.current = {
+        ...lastOpenedFile.current,
+        meta: {
+          ...lastOpenedFile.current?.meta,
+          description: d,
+        },
+      };
+      if (!isDescriptionChanged.current) {
+        isDescriptionChanged.current = true;
+        forceUpdate();
+      }
     }
   }
 
