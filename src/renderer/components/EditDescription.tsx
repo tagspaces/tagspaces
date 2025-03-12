@@ -15,16 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { MilkdownProvider } from '@milkdown/react';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useRef } from 'react';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 function EditDescription() {
   const theme = useTheme();
@@ -76,24 +76,22 @@ function EditDescription() {
         }}
         style={{
           border: '1px solid lightgray',
-          borderRadius: 5,
+          borderRadius: AppConfig.defaultCSSRadius,
           height: 'calc(100% - 20px)',
           width: '100%',
           overflowY: 'auto',
         }}
       >
         <style>
-          {`
-                .descriptionEditor .milkdown .ProseMirror {
-                    padding: 10px 30px 10px 80px;
-                }
-                .descriptionEditor .prose a {
-                    color: ${theme.palette.primary.main};
-                }
-                .descriptionEditor .prose img {
-                    max-width: 99%;
-                }
-             `}
+          {`.descriptionEditor .milkdown .ProseMirror {
+              padding: 10px 30px 10px 80px;
+          }
+          .descriptionEditor .prose a {
+              color: ${theme.palette.primary.main};
+          }
+          .descriptionEditor .prose img {
+              max-width: 99%;
+          }`}
         </style>
         <MilkdownProvider>
           <DescriptionMdEditor

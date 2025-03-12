@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { ArrowDownIcon, ArrowUpIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
@@ -161,7 +162,7 @@ function GridSettingsDialog(props: Props) {
             </TsButton>
           </>
         )}
-        <Box style={{ display: 'flex' }}>
+        <Box style={{ display: 'flex', marginTop: 8 }}>
           <Typography
             style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
@@ -170,6 +171,7 @@ function GridSettingsDialog(props: Props) {
           </Typography>
           <ZoomComponent preview={true} />
         </Box>
+        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
         <FormGroup>
           <FormControlLabel
             // labelPlacement="start"
@@ -215,7 +217,7 @@ function GridSettingsDialog(props: Props) {
             }
             label={t('core:showHideEntriesDescription')}
           />
-          <Divider />
+          <Divider style={{ marginTop: 8, marginBottom: 8 }} />
           <FormControlLabel
             control={
               <Switch
@@ -245,7 +247,7 @@ function GridSettingsDialog(props: Props) {
             />
           )}
         </FormGroup>
-        <Divider />
+        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
         <MenuItem
           data-tid="gridPerspectiveToggleThumbnailsMode"
           title={t('core:toggleThumbnailModeTitle')}
@@ -266,7 +268,7 @@ function GridSettingsDialog(props: Props) {
           </ListItemIcon>
           <ListItemText primary={t('core:toggleThumbnailMode')} />
         </MenuItem>
-        <Divider />
+        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
         <MenuItem
           data-tid="sortByMenuTID"
           title={t('core:sortBy')}
@@ -276,12 +278,12 @@ function GridSettingsDialog(props: Props) {
           }}
         >
           <ListItemText
+            style={{ display: 'flex' }}
             primary={
-              t('core:sort') +
-              ': ' +
-              t(sortBy) +
-              ' ' +
-              (orderBy ? 'ASC' : 'DESC')
+              <>
+                {t('core:sort') + ': ' + t(sortBy) + '  '}
+                {orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />}
+              </>
             }
           />
         </MenuItem>

@@ -2,7 +2,6 @@
 @import 'assets/scrollbars.css';
 @import 'assets/minireset.css';
 @import 'assets/fonts/roboto/index.css';
-@import 'assets/milkdown.dark.css';
 @import '~rc-table/assets/index.css';
 @import 'assets/rc-table.css';
 @import '~leaflet/dist/leaflet.css';
@@ -12,6 +11,7 @@
 @import '~react-leaflet-markercluster/styles';
 @import "~@milkdown/crepe/theme/common/style.css";
 @import "~@milkdown/crepe/theme/frame.css";
+@import 'assets/milkdown.css';
 
 /* Needed to disable border on focused HotKey element */
 div[tabindex='-1']:focus {

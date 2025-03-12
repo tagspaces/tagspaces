@@ -1,3 +1,7 @@
+.milkdown {
+    --crepe-font-title: 'Open Sans', Arial, Helvetica, sans-serif !important;
+}
+
 .dark .milkdown {
     --crepe-color-background: #1f1b16;
     --crepe-color-on-background: #eae1d9;
@@ -17,7 +21,7 @@
     --crepe-color-selected: #3b342b;
     --crepe-color-inline-area: #3f3830;
 
-    --crepe-font-title: Georgia, Cambria, 'Times New Roman', Times, serif;
+    /* --crepe-font-title: Georgia, Cambria, 'Times New Roman', Times, serif; */
     --crepe-font-default: 'Open Sans', Arial, Helvetica, sans-serif;
     --crepe-font-code:
             Fira Code, Menlo, Monaco, 'Courier New', Courier, monospace;

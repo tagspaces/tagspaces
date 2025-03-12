@@ -186,3 +186,7 @@ export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
 export { default as OptionsIcon } from '@mui/icons-material/FactCheck';
 
 export { default as AdvancedSettingsIcon } from '@mui/icons-material/DisplaySettings';
+
+export { default as ArrowUpIcon } from '@mui/icons-material/ArrowUpward';
+
+export { default as ArrowDownIcon } from '@mui/icons-material/ArrowDownward';

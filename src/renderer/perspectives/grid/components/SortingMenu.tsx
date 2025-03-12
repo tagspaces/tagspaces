@@ -16,18 +16,15 @@
  *
  */
 
-import React from 'react';
-import ListItemText from '@mui/material/ListItemText';
+import { ArrowDownIcon, ArrowUpIcon } from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
-import TsMenuList from '-/components/TsMenuList';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;

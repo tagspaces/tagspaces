@@ -184,7 +184,7 @@ function CreateTagGroupDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ paddingTop: 10 }}>
+      <DialogContent style={{ paddingTop: 10, minWidth: 300 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}

@@ -80,7 +80,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename =
-        openedEntry.name + 'description [' + dateTimeTag + '].html';
+        openedEntry.name + ' [description ' + dateTimeTag + '].html';
 
       saveAsTextFile(blob, filename);
     }
@@ -94,7 +94,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename =
-        openedEntry.name + '-description [' + dateTimeTag + '].md';
+        openedEntry.name + ' [description ' + dateTimeTag + '].md';
 
       saveAsTextFile(blob, filename);
     }
@@ -191,7 +191,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       <TsIconButton
         tooltip={t('core:chatMore')}
         onClick={handleMoreClick}
-        style={{ float: 'right' }}
+        style={{ float: 'right', marginTop: -5 }}
         data-tid="chatMoreTID"
         aria-label={t('core:chatMore')}
         aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
