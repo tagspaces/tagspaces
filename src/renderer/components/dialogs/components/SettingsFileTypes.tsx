@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { RemoveIcon } from '-/components/CommonIcons';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -36,7 +37,6 @@ import { dataTidFormat } from '-/services/test';
 import { getUserDataDir } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import RemoveIcon from '@mui/icons-material/RemoveCircle';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -60,29 +60,11 @@ import {
 const PREFIX = 'SettingsFileTypes';
 
 const classes = {
-  fileTypeColorDialog: `${PREFIX}-fileTypeColorDialog`,
-  colorChooserButton: `${PREFIX}-colorChooserButton`,
   fileExtRemove: `${PREFIX}-fileExtRemove`,
 };
 
 const Root = styled('div')(({ theme: any }) => ({
-  [`& .${classes.fileTypeColorDialog}`]: {
-    width: 60,
-    padding: '0 12px 0 0',
-  },
-
-  [`& .${classes.colorChooserButton}`]: {
-    maxWidth: 30,
-    width: 30,
-    border: '1px solid lightgray',
-  },
-
-  [`& .${classes.fileExtRemove}`]: {
-    height: '38px',
-    cursor: 'pointer',
-    marginLeft: 10,
-    padding: '0',
-  },
+  [`& .${classes.fileExtRemove}`]: {},
 }));
 
 function SettingsFileTypes() {
@@ -347,8 +329,6 @@ function SettingsFileTypes() {
               style={{
                 width: 160,
                 marginTop: 0,
-                paddingLeft: 0,
-                paddingRight: 0,
               }}
               error={
                 (isValidationInProgress.current && item.type === '') ||
@@ -369,12 +349,10 @@ function SettingsFileTypes() {
                         <TsButton
                           tooltip={t('core:colorPickerDialogTitle')}
                           data-tid="settingsFileTypes_openColorPicker_"
-                          className={classes.colorChooserButton}
                           style={{
+                            border: '1px solid lightgray',
                             backgroundColor: `${item.color}`,
                             minWidth: 40,
-                            maxWidth: 40,
-                            cursor: 'pointer',
                           }}
                           onClick={() => {
                             openColorPicker(item);
@@ -391,7 +369,6 @@ function SettingsFileTypes() {
                       <TsIconButton
                         tooltip={t('removeFileType', { itemType: item.type })}
                         data-tid="settingsFileTypes_remove_"
-                        className={classes.fileExtRemove}
                         onClick={() => onRemoveItem(item)}
                       >
                         <RemoveIcon />

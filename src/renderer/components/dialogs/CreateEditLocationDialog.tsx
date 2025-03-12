@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { ExpandIcon, IDIcon } from '-/components/CommonIcons';
+import { ExpandIcon, IDIcon, RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel, ProLabel, ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -43,7 +43,6 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
 import CheckIcon from '@mui/icons-material/Check';
 import PasswordIcon from '@mui/icons-material/Password';
-import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
