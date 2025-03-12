@@ -228,7 +228,7 @@ function GridPagination(props: Props) {
         }}
       >
         <Grid container spacing={0}>
-          <Grid size={12} style={{ height: showDetails ? 70 : 10 }} />
+          <Grid size={12} style={{ height: showDetails ? 70 : 50 }} />
           {showDetails && (
             <Grid size={12}>
               <div
