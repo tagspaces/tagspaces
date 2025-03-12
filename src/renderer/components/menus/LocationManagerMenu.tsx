@@ -16,33 +16,32 @@
  *
  */
 
-import React, { useState } from 'react';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ExportImportIcon from '@mui/icons-material/SwapHoriz';
-import CloseIcon from '@mui/icons-material/Close';
-import UpdateIndexIcon from '@mui/icons-material/Update';
-import classNames from 'classnames';
-import Typography from '@mui/material/Typography';
-import TsIconButton from '-/components/TsIconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppConfig from '-/AppConfig';
-import { Pro } from '../../pro';
-import Links from 'assets/links';
-import { ProLabel } from '-/components/HelperComponents';
 import {
-  OpenLinkIcon,
   HelpIcon,
   LocalLocationIcon,
+  MoreMenuIcon,
 } from '-/components/CommonIcons';
+import { ProLabel } from '-/components/HelperComponents';
+import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
-import { openURLExternally } from '-/services/utils-io';
-import { useTranslation } from 'react-i18next';
+import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
+import { openURLExternally } from '-/services/utils-io';
+import CloseIcon from '@mui/icons-material/Close';
+import ExportImportIcon from '@mui/icons-material/SwapHoriz';
+import UpdateIndexIcon from '@mui/icons-material/Update';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import Links from 'assets/links';
+import classNames from 'classnames';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pro } from '../../pro';
 
 interface Props {
   classes: any;
@@ -213,7 +212,7 @@ function LocationManagerMenu(props: Props) {
             setLocationManagerMenuAnchorEl(event.currentTarget)
           }
         >
-          <MoreVertIcon />
+          <MoreMenuIcon />
         </TsIconButton>
       </div>
       <Menu
