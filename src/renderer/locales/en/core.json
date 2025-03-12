@@ -949,5 +949,6 @@
   "languages": "Language",
   "folderDescription": "Folder description",
   "doubleClickToEdit": "Double-click to edit",
+  "tsLinksHelp": "TagSpaces links begin with ts://? and are used for internal sharing of files and folders",
   "-": "-"
 }

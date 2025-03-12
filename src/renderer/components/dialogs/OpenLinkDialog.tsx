@@ -143,7 +143,7 @@ function OpenLinkDialog(props: Props) {
               input: {
                 endAdornment: (
                   <InputAdornment position="start">
-                    <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
+                    <InfoIcon tooltip={t('core:tsLinksHelp')} />
                   </InputAdornment>
                 ),
               },
