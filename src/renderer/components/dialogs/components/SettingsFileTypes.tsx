@@ -38,6 +38,7 @@ import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import RemoveIcon from '@mui/icons-material/RemoveCircle';
 import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -248,24 +249,19 @@ function SettingsFileTypes() {
 
   const columns: ColumnData[] = [
     {
-      width: 60,
+      width: '160px',
       label: t('core:fileExtension'),
       dataKey: 'type',
     },
     {
-      //width: '35%',
+      width: '45%',
       label: t('core:fileOpener'),
       dataKey: 'viewer',
     },
     {
-      // width: '45%',
+      width: '45%',
       label: t('core:fileEditor'),
       dataKey: 'editor',
-    },
-    {
-      width: 100,
-      label: t('core:actions'),
-      dataKey: 'color',
     },
   ];
 
@@ -336,7 +332,7 @@ function SettingsFileTypes() {
   function rowContent(_index: number, item: TS.FileTypes) {
     return (
       <React.Fragment>
-        <TableCell align={'center'} sx={{ padding: '0 5px 0px 5px' }}>
+        <TableCell align={'left'} sx={{ padding: '0 5px 0px 5px' }}>
           <FormControl
             error={
               (isValidationInProgress.current && item.type === '') ||
@@ -348,6 +344,12 @@ function SettingsFileTypes() {
             <TsTextField
               data-tid={'typeTID' + item.type}
               defaultValue={item.type}
+              style={{
+                width: 160,
+                marginTop: 0,
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
               error={
                 (isValidationInProgress.current && item.type === '') ||
                 items.current.filter(
@@ -359,10 +361,52 @@ function SettingsFileTypes() {
                 const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
                 updateItems(item, 'type', withoutSpecialChars);
               }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <TransparentBackground>
+                        <TsButton
+                          tooltip={t('core:colorPickerDialogTitle')}
+                          data-tid="settingsFileTypes_openColorPicker_"
+                          className={classes.colorChooserButton}
+                          style={{
+                            backgroundColor: `${item.color}`,
+                            minWidth: 40,
+                            maxWidth: 40,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            openColorPicker(item);
+                          }}
+                        >
+                          &nbsp;
+                          <div />
+                        </TsButton>
+                      </TransparentBackground>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <TsIconButton
+                        tooltip={t('removeFileType', { itemType: item.type })}
+                        data-tid="settingsFileTypes_remove_"
+                        className={classes.fileExtRemove}
+                        onClick={() => onRemoveItem(item)}
+                      >
+                        <RemoveIcon />
+                      </TsIconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
           </FormControl>
         </TableCell>
-        <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
+        <TableCell
+          align={'center'}
+          sx={{ minWith: 180, padding: '0 5px 0px 0' }}
+        >
           <FormControl
             error={isValidationInProgress.current && item.viewer === ''}
           >
@@ -370,8 +414,7 @@ function SettingsFileTypes() {
               data-tid={'viewerTID' + item.type}
               error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
-              style={{ maxWidth: 170, marginTop: 0 }}
-              // input={<Input id="" />}
+              style={{ minWidth: 150, maxWidth: 190, marginTop: 0 }}
               onChange={(event) => {
                 const extension: TS.Extension = extensions.find(
                   (ext) => ext.extensionId === event.target.value,
@@ -415,8 +458,7 @@ function SettingsFileTypes() {
         <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
           <TsSelect
             value={item.editor}
-            // input={<Input id="" />}
-            style={{ maxWidth: 170, marginTop: 0 }}
+            style={{ minWidth: 150, maxWidth: 190, marginTop: 0 }}
             onChange={(event) =>
               updateItems(item, 'editor', event.target.value)
             }
@@ -438,35 +480,6 @@ function SettingsFileTypes() {
                 </MenuItem>
               ))}
           </TsSelect>
-        </TableCell>
-        <TableCell align={'center'} sx={{ padding: '0 5px 0px 5px' }}>
-          <TransparentBackground>
-            <TsButton
-              tooltip={t('core:colorPickerDialogTitle')}
-              data-tid="settingsFileTypes_openColorPicker_"
-              className={classes.colorChooserButton}
-              style={{
-                backgroundColor: `${item.color}`,
-                minWidth: 50,
-                maxWidth: 50,
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                openColorPicker(item);
-              }}
-            >
-              &nbsp;
-              <div />
-            </TsButton>
-          </TransparentBackground>
-          <TsIconButton
-            tooltip={t('removeFileType', { itemType: item.type })}
-            data-tid="settingsFileTypes_remove_"
-            className={classes.fileExtRemove}
-            onClick={() => onRemoveItem(item)}
-          >
-            <RemoveIcon />
-          </TsIconButton>
         </TableCell>
       </React.Fragment>
     );
