@@ -25,6 +25,7 @@ import {
   ParentFolderIcon,
   PerspectiveSettingsIcon,
   SelectedIcon,
+  ShareIcon,
   TagIcon,
   UnSelectedIcon,
 } from '-/components/CommonIcons';
@@ -46,7 +47,6 @@ import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import DragOffIcon from '@mui/icons-material/CopyAll';
 import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
 import CopyIcon from '@mui/icons-material/FileCopy';
-import ShareIcon from '@mui/icons-material/Share';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import { Box, Divider, Toolbar } from '@mui/material/';
 import { alpha, useTheme } from '@mui/material/styles';

@@ -16,27 +16,28 @@
  *
  */
 
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import Edit from '@mui/icons-material/Edit';
-import ArrowDownward from '@mui/icons-material/ArrowDownward';
-import ArrowUpward from '@mui/icons-material/ArrowUpward';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  DeleteIcon,
+  EditIcon,
+  TagIcon,
+} from '-/components/CommonIcons';
+import InfoIcon from '-/components/InfoIcon';
+import TsMenuList from '-/components/TsMenuList';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getMaxSearchResults } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
+import SortTagGroupIcon from '@mui/icons-material/SortByAlpha';
+import CollectTagsIcon from '@mui/icons-material/Voicemail';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import DeleteTagGroupIcon from '@mui/icons-material/DeleteForever';
-import SortTagGroupIcon from '@mui/icons-material/SortByAlpha';
-import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
-import TagIcon from '@mui/icons-material/LocalOffer';
-import CollectTagsIcon from '@mui/icons-material/Voicemail';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { getMaxSearchResults } from '-/reducers/settings';
-import TsMenuList from '-/components/TsMenuList';
-import { TS } from '-/tagspaces.namespace';
-import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   classes?: any;
@@ -127,19 +128,19 @@ function TagGroupMenu(props: Props) {
           </MenuItem>
           <MenuItem data-tid="editTagGroup" onClick={showEditTagGroupDialog}>
             <ListItemIcon>
-              <Edit />
+              <EditIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:editTagGroup')} />
           </MenuItem>
           <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUpInt}>
             <ListItemIcon>
-              <ArrowUpward />
+              <ArrowUpIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:moveTagGroupUp')} />
           </MenuItem>
           <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDownInt}>
             <ListItemIcon>
-              <ArrowDownward />
+              <ArrowDownIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:moveTagGroupDown')} />
           </MenuItem>
@@ -161,7 +162,7 @@ function TagGroupMenu(props: Props) {
             onClick={showDeleteTagGroupDialog}
           >
             <ListItemIcon>
-              <DeleteTagGroupIcon />
+              <DeleteIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:deleteTagGroup')} />
           </MenuItem>

@@ -16,18 +16,16 @@
  *
  */
 
-import React from 'react';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import HelpIcon from '@mui/icons-material/Help';
-import ExportImportIcon from '@mui/icons-material/SwapHoriz';
+import { ExportImportIcon, HelpIcon } from '-/components/CommonIcons';
+import { ProLabel } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
 import { Pro } from '-/pro';
-import Links from 'assets/links';
-import { ProLabel } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
 
 interface Props {

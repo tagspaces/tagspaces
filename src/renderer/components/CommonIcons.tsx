@@ -44,6 +44,7 @@ export { default as GoBackIcon } from '@mui/icons-material/ArrowBack';
 export { default as GoForwardIcon } from '@mui/icons-material/ArrowForward';
 
 export { default as HelpIcon } from '@mui/icons-material/Help';
+
 export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
@@ -196,3 +197,7 @@ export { default as SmallArrowUpIcon } from '@mui/icons-material/KeyboardArrowDo
 export { default as SmallArrowDownIcon } from '@mui/icons-material/KeyboardArrowDown';
 
 export { default as SmallArrowRightIcon } from '@mui/icons-material/KeyboardArrowRight';
+
+export { default as ExportImportIcon } from '@mui/icons-material/SwapHoriz';
+
+export { default as ShareIcon } from '@mui/icons-material/Share';

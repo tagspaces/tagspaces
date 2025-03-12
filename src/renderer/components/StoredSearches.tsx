@@ -16,7 +16,11 @@
  *
  */
 
-import { MoreMenuIcon } from '-/components/CommonIcons';
+import {
+  MoreMenuIcon,
+  SmallArrowDownIcon,
+  SmallArrowRightIcon,
+} from '-/components/CommonIcons';
 import RenderHistory from '-/components/RenderHistory';
 import { SidePanel, classes } from '-/components/SidePanels.css';
 import TsButton from '-/components/TsButton';
@@ -38,8 +42,6 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
-import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import classNames from 'classnames';
@@ -187,9 +189,9 @@ function StoredSearches(props: Props) {
               }
             >
               {props.storedSearchesVisible ? (
-                <ArrowDownIcon />
+                <SmallArrowDownIcon />
               ) : (
-                <ArrowRightIcon />
+                <SmallArrowRightIcon />
               )}
             </TsIconButton>
             <Typography
@@ -281,7 +283,11 @@ function StoredSearches(props: Props) {
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
             >
-              {props.showBookmarks ? <ArrowDownIcon /> : <ArrowRightIcon />}
+              {props.showBookmarks ? (
+                <SmallArrowDownIcon />
+              ) : (
+                <SmallArrowRightIcon />
+              )}
             </TsIconButton>
             <Typography
               variant="inherit"
@@ -329,7 +335,11 @@ function StoredSearches(props: Props) {
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
             >
-              {props.fileOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+              {props.fileOpenHistory ? (
+                <SmallArrowDownIcon />
+              ) : (
+                <SmallArrowRightIcon />
+              )}
             </TsIconButton>
             <Typography
               variant="inherit"
@@ -373,7 +383,11 @@ function StoredSearches(props: Props) {
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
             >
-              {props.fileEditHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+              {props.fileEditHistory ? (
+                <SmallArrowDownIcon />
+              ) : (
+                <SmallArrowRightIcon />
+              )}
             </TsIconButton>
             <Typography
               variant="inherit"
@@ -423,7 +437,11 @@ function StoredSearches(props: Props) {
                 props.setFolderOpenHistory(!props.folderOpenHistory)
               }
             >
-              {props.folderOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+              {props.folderOpenHistory ? (
+                <SmallArrowDownIcon />
+              ) : (
+                <SmallArrowRightIcon />
+              )}
             </TsIconButton>
             <Typography
               variant="inherit"

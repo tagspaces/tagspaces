@@ -17,11 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { FolderIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { selectDirectoryDialog } from '-/services/utils-io';
-import FolderIcon from '@mui/icons-material/Folder';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
