@@ -16,14 +16,17 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
+import {
+  MoreMenuIcon,
+  SmallArrowDownIcon,
+  SmallArrowRightIcon,
+} from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import { SidePanel, classes } from '-/components/SidePanels.css';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -125,7 +128,11 @@ function TagGroupTitleDnD(props: Props) {
   const tagGroupTitle = (
     <SidePanel
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
-      className={classes.listItem}
+      style={{
+        padding: 0,
+        paddingRight: 0,
+        borderRadius: AppConfig.defaultCSSRadius,
+      }}
       title={'Number of tags in this tag group: ' + tagGroup.children.length}
     >
       <Grid
@@ -141,10 +148,14 @@ function TagGroupTitleDnD(props: Props) {
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
             size="large"
           >
-            {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+            {tagGroup.expanded ? (
+              <SmallArrowDownIcon />
+            ) : (
+              <SmallArrowRightIcon />
+            )}
           </IconButton>
         </Grid>
-        <Grid size={8} style={{ alignSelf: 'center' }}>
+        <Grid size={9} style={{ alignSelf: 'center' }}>
           <Typography
             variant="inherit"
             className={classes.header}
@@ -177,7 +188,7 @@ function TagGroupTitleDnD(props: Props) {
             )}
           </Typography>
         </Grid>
-        <Grid size={2} style={{ textAlign: 'end' }}>
+        <Grid size={1} style={{ textAlign: 'end' }}>
           {!isReadOnly && (
             <IconButton
               style={{ minWidth: 'auto', padding: 7 }}
@@ -187,7 +198,7 @@ function TagGroupTitleDnD(props: Props) {
               onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
               size="large"
             >
-              <MoreVertIcon />
+              <MoreMenuIcon />
             </IconButton>
           )}
         </Grid>

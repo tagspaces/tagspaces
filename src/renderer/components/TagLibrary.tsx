@@ -17,10 +17,21 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { MoreMenuIcon } from '-/components/CommonIcons';
 import { SidePanel, classes } from '-/components/SidePanels.css';
+import TagContainer from '-/components/TagContainer';
+import TagContainerDnd from '-/components/TagContainerDnd';
+import TagGroupContainer from '-/components/TagGroupContainer';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 import TsIconButton from '-/components/TsIconButton';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import CreateTagGroupDialog from '-/components/dialogs/CreateTagGroupDialog';
+import CreateTagsDialog from '-/components/dialogs/CreateTagsDialog';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
+import EditTagGroupDialog from '-/components/dialogs/EditTagGroupDialog';
+import TagGroupMenu from '-/components/menus/TagGroupMenu';
+import TagLibraryMenu from '-/components/menus/TagLibraryMenu';
+import TagMenu from '-/components/menus/TagMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -28,35 +39,24 @@ import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
-import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
-import { TS } from '-/tagspaces.namespace';
-import { CommonLocation } from '-/utils/CommonLocation';
-import useFirstRender from '-/utils/useFirstRender';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Collapse from '@mui/material/Collapse';
-import Typography from '@mui/material/Typography';
-import classNames from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as SettingsActions,
   getSaveTagInLocation,
   getTagColor,
   getTagGroupCollapsed,
   getTagTextColor,
-} from '../reducers/settings';
-import SmartTags from '../reducers/smart-tags';
-import TagContainer from './TagContainer';
-import TagContainerDnd from './TagContainerDnd';
-import TagGroupContainer from './TagGroupContainer';
-import ConfirmDialog from './dialogs/ConfirmDialog';
-import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
-import CreateTagsDialog from './dialogs/CreateTagsDialog';
-import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
-import TagGroupMenu from './menus/TagGroupMenu';
-import TagLibraryMenu from './menus/TagLibraryMenu';
-import TagMenu from './menus/TagMenu';
+} from '-/reducers/settings';
+import SmartTags from '-/reducers/smart-tags';
+import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import useFirstRender from '-/utils/useFirstRender';
+import Collapse from '@mui/material/Collapse';
+import Typography from '@mui/material/Typography';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   style?: any;
@@ -319,7 +319,7 @@ function TagLibrary(props: Props) {
             data-tid="tagLibraryMenu"
             onClick={handleTagLibraryMenu}
           >
-            <MoreVertIcon />
+            <MoreMenuIcon />
           </TsIconButton>
         )}
       </div>

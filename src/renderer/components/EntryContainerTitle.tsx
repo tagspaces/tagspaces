@@ -199,7 +199,6 @@ function EntryContainerTitle(props: Props) {
             aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-            // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               setAnchorEl(event.currentTarget);
             }}
@@ -230,7 +229,6 @@ function EntryContainerTitle(props: Props) {
           aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-          // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             setAnchorEl(event.currentTarget);
           }}

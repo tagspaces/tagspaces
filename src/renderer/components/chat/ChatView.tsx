@@ -16,7 +16,7 @@
  *
  */
 
-import { CloseIcon } from '-/components/CommonIcons';
+import { CloseIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -37,7 +37,6 @@ import { getDefaultAIProvider } from '-/reducers/settings';
 import { saveAsTextFile } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
 import CancelIcon from '@mui/icons-material/Cancel';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid2, MenuItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -292,7 +291,7 @@ function ChatView() {
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
             >
-              <MoreVertIcon />
+              <MoreMenuIcon />
             </TsIconButton>
             <ChatMenu
               anchorEl={anchorEl}

@@ -1,4 +1,5 @@
 import AppConfig from '-/AppConfig';
+import { MoreMenuIcon } from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -9,7 +10,6 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { saveAsTextFile } from '-/services/utils-io';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, ButtonGroup, Tooltip, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import React from 'react';
@@ -198,7 +198,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
         aria-haspopup="true"
         aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
       >
-        <MoreVertIcon />
+        <MoreMenuIcon />
       </TsIconButton>
       <DescriptionMenu
         anchorEl={anchorEl}

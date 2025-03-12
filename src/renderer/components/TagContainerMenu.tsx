@@ -16,10 +16,9 @@
  *
  */
 
+import { MoreMenuIcon, RemoveIcon } from '-/components/CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
-import RemoveTagIcon from '@mui/icons-material/Close';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface Props {
   tag: TS.Tag;
@@ -39,7 +38,7 @@ function TagContainerMenu(props: Props) {
   }
   return tagMode === 'remove' ? (
     deleteIcon || (
-      <RemoveTagIcon
+      <RemoveIcon
         data-tid={'tagRemoveButton_' + tag.title?.replace(/ /g, '_')}
         style={{
           color: tag.textcolor,
@@ -51,7 +50,7 @@ function TagContainerMenu(props: Props) {
       />
     )
   ) : (
-    <MoreVertIcon
+    <MoreMenuIcon
       data-tid={'tagMoreButton_' + tag.title?.replace(/ /g, '_')}
       style={{
         color: tag.textcolor,

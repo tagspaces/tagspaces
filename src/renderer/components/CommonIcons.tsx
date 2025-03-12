@@ -190,3 +190,9 @@ export { default as AdvancedSettingsIcon } from '@mui/icons-material/DisplaySett
 export { default as ArrowUpIcon } from '@mui/icons-material/ArrowUpward';
 
 export { default as ArrowDownIcon } from '@mui/icons-material/ArrowDownward';
+
+export { default as SmallArrowUpIcon } from '@mui/icons-material/KeyboardArrowDown';
+
+export { default as SmallArrowDownIcon } from '@mui/icons-material/KeyboardArrowDown';
+
+export { default as SmallArrowRightIcon } from '@mui/icons-material/KeyboardArrowRight';

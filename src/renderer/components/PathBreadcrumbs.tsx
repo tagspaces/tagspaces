@@ -16,25 +16,27 @@
  *
  */
 
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { emphasize, Theme } from '@mui/material/styles';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Tooltip from '-/components/Tooltip';
-import Chip from '@mui/material/Chip';
-import ExpandMoreIcon from '@mui/icons-material/MoreVert';
-import {
-  normalizePath,
-  extractShortDirectoryName,
-} from '@tagspaces/tagspaces-common/paths';
-import DirectoryMenu from './menus/DirectoryMenu';
-import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import AppConfig from '-/AppConfig';
+import {
+  CloudLocationIcon,
+  LocalLocationIcon,
+  MoreMenuIcon,
+} from '-/components/CommonIcons';
+import Tooltip from '-/components/Tooltip';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Chip from '@mui/material/Chip';
+import { emphasize, styled } from '@mui/material/styles';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import {
+  extractShortDirectoryName,
+  normalizePath,
+} from '@tagspaces/tagspaces-common/paths';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import DirectoryMenu from './menus/DirectoryMenu';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -196,7 +198,7 @@ function PathBreadcrumbs(props: Props) {
             data-tid="folderContainerOpenDirMenu"
             label={currentFolderName}
             icon={currentFolderChipIcon}
-            deleteIcon={<ExpandMoreIcon />}
+            deleteIcon={<MoreMenuIcon />}
             onDelete={openDirectoryMenu}
             onClick={openDirectoryMenu}
             onContextMenu={openDirectoryMenu}

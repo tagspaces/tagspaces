@@ -16,6 +16,7 @@
  *
  */
 
+import { MoreMenuIcon } from '-/components/CommonIcons';
 import RenderHistory from '-/components/RenderHistory';
 import { SidePanel, classes } from '-/components/SidePanels.css';
 import TsButton from '-/components/TsButton';
@@ -39,7 +40,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import MenuIcon from '@mui/icons-material/MoreVert';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import classNames from 'classnames';
@@ -203,7 +203,7 @@ function StoredSearches(props: Props) {
               {t('core:savedSearchesTitle')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ textAlign: 'right' }}>
             <SearchMenu
               anchorEl={searchMenuAnchorEl}
               open={Boolean(searchMenuAnchorEl)}
@@ -219,7 +219,7 @@ function StoredSearches(props: Props) {
               data-tid="StoredSearchesMenuTID"
               onClick={handleSearchMenu}
             >
-              <MenuIcon />
+              <MoreMenuIcon />
             </TsIconButton>
           </Grid>
         </Grid>
@@ -292,7 +292,7 @@ function StoredSearches(props: Props) {
               {t('core:showBookmarks')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="BookmarksMenuTID"
               onClick={(event: any) => {
@@ -300,7 +300,7 @@ function StoredSearches(props: Props) {
                 setBookmarksMenuAnchorEl(event.currentTarget);
               }}
             >
-              <MenuIcon />
+              <MoreMenuIcon />
             </TsIconButton>
           </Grid>
         </Grid>
@@ -340,7 +340,7 @@ function StoredSearches(props: Props) {
               {t('core:fileOpenHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="fileOpenMenuTID"
               onClick={(event: any) => {
@@ -348,7 +348,7 @@ function StoredSearches(props: Props) {
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
             >
-              <MenuIcon />
+              <MoreMenuIcon />
             </TsIconButton>
           </Grid>
         </Grid>
@@ -384,7 +384,7 @@ function StoredSearches(props: Props) {
               {t('core:fileEditHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="FileEditedMenuTID"
               onClick={(event: any) => {
@@ -392,7 +392,7 @@ function StoredSearches(props: Props) {
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
             >
-              <MenuIcon />
+              <MoreMenuIcon />
             </TsIconButton>
           </Grid>
         </Grid>
@@ -436,7 +436,7 @@ function StoredSearches(props: Props) {
               {t('core:folderOpenHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ alignSelf: 'center' }}>
+          <Grid size={2} style={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="FolderOpenMenuTID"
               onClick={(event: any) => {
@@ -444,7 +444,7 @@ function StoredSearches(props: Props) {
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
             >
-              <MenuIcon />
+              <MoreMenuIcon />
             </TsIconButton>
           </Grid>
         </Grid>

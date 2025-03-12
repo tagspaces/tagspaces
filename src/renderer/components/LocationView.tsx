@@ -17,7 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CloudLocationIcon, LocalLocationIcon } from '-/components/CommonIcons';
+import {
+  CloudLocationIcon,
+  LocalLocationIcon,
+  MoreMenuIcon,
+} from '-/components/CommonIcons';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
@@ -37,7 +41,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -292,7 +295,7 @@ function LocationView(props: Props) {
               handleLocationContextMenuClick(event, location)
             }
           >
-            <MoreVertIcon />
+            <MoreMenuIcon />
           </TsIconButton>
         </ListItem>
       </TargetFileBox>
