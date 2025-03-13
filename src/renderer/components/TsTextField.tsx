@@ -137,14 +137,6 @@ function TsTextField(props: TSTextFieldProps) {
             border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
             borderRadius: AppConfig.defaultCSSRadius + 'px',
           },
-          // '& fieldset': {
-          //   border: '2px solid transparent',
-          //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
-          // },
-          // '& fieldset:focus': {
-          //   border: '2px solid red !important',
-          //   borderRadius:  AppConfig.defaultCSSRadius + 'px',
-          // },
         }}
         {...restProps}
         label={undefined}

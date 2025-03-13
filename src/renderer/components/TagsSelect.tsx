@@ -204,10 +204,9 @@ function TagsSelect(props: Props) {
         )}
         renderInput={(params) => (
           <>
-            <FormHelperText style={{ marginLeft: 0 }}>{label}</FormHelperText>
             <TsTextField
               {...params}
-              label={undefined}
+              label={label}
               placeholder={placeholderText}
               margin="normal"
               autoFocus={autoFocus}

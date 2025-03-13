@@ -238,6 +238,7 @@ function StoredSearches(props: Props) {
               <Grid container direction="row" key={search.uuid}>
                 <Grid size={10}>
                   <TsButton
+                    tooltip={t('core:searchTitle')}
                     data-tid={
                       'StoredSearchTID' +
                       search.title.trim().replaceAll(/\s+/g, '-')
@@ -266,11 +267,12 @@ function StoredSearches(props: Props) {
                 </Grid>
                 <Grid size={2}>
                   <TsIconButton
+                    tooltip={t('core:editSavedSearchTitle')}
                     aria-label={t('core:searchEditBtn')}
                     onClick={() => openSaveSearchDialog(search.uuid)}
                     data-tid="editSearchTID"
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </TsIconButton>
                 </Grid>
               </Grid>
