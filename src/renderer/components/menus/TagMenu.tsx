@@ -70,6 +70,7 @@ function TagMenu(props: Props) {
         tagsAND: [selectedTag],
         maxSearchResults: maxSearchResults,
         executeSearch: true,
+        forceIndexing: true,
       });
     }
     onClose();
