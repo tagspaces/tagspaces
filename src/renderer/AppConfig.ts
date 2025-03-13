@@ -30,12 +30,45 @@ AppConfig.editableFiles = [
   'sh',
   'sql',
 ];
+AppConfig.SearchTypes = {
+  any: 'any',
+  images: 'images',
+  notes: 'notes',
+  documents: 'documents',
+  audio: 'audio',
+  video: 'video',
+  archives: 'archives',
+  bookmarks: 'bookmarks',
+  ebooks: 'ebooks',
+  emails: 'emails',
+  folders: 'folders',
+  files: 'files',
+  untagged: 'untagged',
+};
+AppConfig.SearchSizes = {
+  empty: { key: 'sizeEmpty', thresholdBytes: 0 }, // empty
+  tiny: { key: 'sizeTiny', thresholdBytes: 10 * 1024 }, // 1KB - 10KB
+  verySmall: { key: 'sizeVerySmall', thresholdBytes: 100 * 1024 }, // 10KB - 100KB
+  small: { key: 'sizeSmall', thresholdBytes: 1024 * 1024 }, // 100KB - 1MB
+  medium: { key: 'sizeMedium', thresholdBytes: 100 * 1024 * 1024 }, // 1MB - 50MB
+  large: { key: 'sizeLarge', thresholdBytes: 1024 * 1024 * 1024 }, // 50MB - 1GB
+  huge: { key: 'sizeHuge', thresholdBytes: 1024 * 1024 * 1024 }, // over 1GB
+};
+AppConfig.SearchTimePeriods = {
+  today: { key: 'today' },
+  yesterday: { key: 'yesterday' },
+  past7Days: { key: 'past7Days' },
+  past30Days: { key: 'past30Days' },
+  past6Months: { key: 'past6Months' },
+  pastYear: { key: 'pastYear' },
+  moreThanYear: { key: 'moreThanYear' },
+};
 AppConfig.SearchTypeGroups =
   typeof window !== 'undefined' && window.ExtSearchTypeGroups !== undefined
     ? window.ExtSearchTypeGroups
     : {
-        any: [''],
-        images: [
+        [AppConfig.SearchTypes.any]: [''],
+        [AppConfig.SearchTypes.images]: [
           'jpg',
           'jpeg',
           'jfif',
@@ -56,8 +89,8 @@ AppConfig.SearchTypeGroups =
           'avif',
           'nef',
         ],
-        notes: ['md', 'mdown', 'txt', 'html'],
-        documents: [
+        [AppConfig.SearchTypes.notes]: ['md', 'mdown', 'txt', 'html', 'mdx'],
+        [AppConfig.SearchTypes.documents]: [
           'pdf',
           'doc',
           'docx',
@@ -72,11 +105,43 @@ AppConfig.SearchTypeGroups =
           'sldx',
           'dotx',
         ],
-        audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc', 'm4a', 'opus'],
-        video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2', 'mov'],
-        archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
-        bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
-        ebooks: [
+        [AppConfig.SearchTypes.audio]: [
+          'ogg',
+          'mp3',
+          'wav',
+          'wave',
+          'flac',
+          'acc',
+          'm4a',
+          'opus',
+        ],
+        [AppConfig.SearchTypes.video]: [
+          'ogv',
+          'mp4',
+          'webm',
+          'm4v',
+          'mkv',
+          'avi',
+          '3gp',
+          '3g2',
+          'mov',
+        ],
+        [AppConfig.SearchTypes.archives]: [
+          'zip',
+          'rar',
+          'gz',
+          'tgz',
+          'arc',
+          '7z',
+        ],
+        [AppConfig.SearchTypes.bookmarks]: [
+          'url',
+          'lnk',
+          'sym',
+          'desktop',
+          'website',
+        ],
+        [AppConfig.SearchTypes.ebooks]: [
           'epub',
           'mobi',
           'azw',
@@ -87,10 +152,10 @@ AppConfig.SearchTypeGroups =
           'azw8',
           'azk',
         ],
-        emails: ['eml', 'msg'],
-        folders: ['folders'],
-        files: ['files'],
-        untagged: ['untagged'],
+        [AppConfig.SearchTypes.emails]: ['eml', 'msg'],
+        [AppConfig.SearchTypes.folders]: ['folders'],
+        [AppConfig.SearchTypes.files]: ['files'],
+        [AppConfig.SearchTypes.untagged]: ['untagged'],
       };
 AppConfig.autoSaveInterval = 40000;
 AppConfig.maxCollectedTag = 500;
