@@ -32,7 +32,7 @@ function TsSelect(props: TSSelectProps) {
 
   return (
     <div>
-      <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+      <FormHelperText style={{ marginLeft: 5, marginTop: 0 }}>
         {label}
       </FormHelperText>
       <TsTextField
