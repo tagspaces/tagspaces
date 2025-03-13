@@ -950,5 +950,6 @@
   "folderDescription": "Folder description",
   "doubleClickToEdit": "Double-click to edit",
   "tsLinksHelp": "TagSpaces links begin with ts://? and are used for internal sharing of files and folders",
+  "pasteImageFromClipboard": "To paste an image from clipboard by pressing",
   "-": "-"
 }
