@@ -85,22 +85,39 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0801 - Arrow keys select next prev file (keybindings) [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
-    const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
+
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(firstFileName) + ']',
+      true,
+      28000,
+    );
+
+    const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
 
     if (await isDisplayed('[data-tid=fileNameProperties] input', true, 3000)) {
       await clickOn('[data-tid=detailsTabTID]');
     }
     await global.client.keyboard.press('ArrowDown');
-    const propsNextFileName = await getPropertiesFileName();
     const secondFileName = await getGridFileName(1);
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(secondFileName) + ']',
+      true,
+      5000,
+    );
+    const propsNextFileName = await getPropertiesFileName();
     expect(secondFileName).toBe(propsNextFileName);
 
     if (await isDisplayed('[data-tid=fileNameProperties] input', true, 3000)) {
       await clickOn('[data-tid=detailsTabTID]');
     }
     await global.client.keyboard.press('ArrowUp');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(firstFileName) + ']',
+      true,
+      5000,
+    );
     const propsPrevFileName = await getPropertiesFileName();
     expect(propsPrevFileName).toBe(firstFileName);
   });
