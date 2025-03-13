@@ -72,8 +72,8 @@ function RenderHistory(props: Props) {
                   textTransform: 'none',
                   fontWeight: 'normal',
                   justifyContent: 'start',
-                  minWidth: 245,
-                  maxWidth: 245,
+                  minWidth: 255,
+                  maxWidth: 255,
                 }}
                 onClick={() => openHistoryItem(item as TS.HistoryItem)}
               >
@@ -128,7 +128,7 @@ function RenderHistory(props: Props) {
                   }}
                   data-tid="deleteHistoryItemTID"
                 >
-                  <RemoveIcon />
+                  <RemoveIcon fontSize="small" />
                 </TsIconButton>
               )}
             </ListItem>

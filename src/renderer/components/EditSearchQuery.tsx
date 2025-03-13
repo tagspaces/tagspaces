@@ -34,13 +34,13 @@ import {
 } from '-/components/CommonIcons';
 import TagsSelect from '-/components/TagsSelect';
 import TooltipTS from '-/components/Tooltip';
-import TsIconButton from '-/components/TsIconButton';
+import TsDatePicker from '-/components/TsDatePicker';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { isDesktopMode } from '-/reducers/settings';
-import { Stack } from '@mui/material';
+import { ListItemText, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -49,11 +49,13 @@ import MenuItem from '@mui/material/MenuItem';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import TsIconButton from './TsIconButton';
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -147,11 +149,25 @@ function EditSearchQuery(props: Props) {
     const { target } = event;
     const { value, name } = target;
 
-    // if (name === 'fileTypes') {
-    const types = JSON.parse(value);
+    const types = AppConfig.SearchTypeGroups[value];
     setTempSearchQuery({ fileTypes: types });
-    // }
   };
+
+  function findPropertiesByValues(searchValues) {
+    if (searchValues) {
+      const array = Object.keys(AppConfig.SearchTypeGroups).filter(
+        (key) =>
+          Array.isArray(AppConfig.SearchTypeGroups[key]) &&
+          searchValues.some((value) =>
+            AppConfig.SearchTypeGroups[key].includes(value),
+          ),
+      );
+      if (array.length > 0) {
+        return array[0];
+      }
+    }
+    return undefined;
+  }
 
   return (
     <Stack component="form" spacing={2} noValidate autoComplete="off">
@@ -220,7 +236,7 @@ function EditSearchQuery(props: Props) {
           onChange={switchSearchBoxing}
           size="small"
           exclusive
-          style={{ marginBottom: 10, alignSelf: 'center' }}
+          style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.searchBoxing}
         >
           <ToggleButton value="location">
@@ -245,7 +261,7 @@ function EditSearchQuery(props: Props) {
           onChange={switchSearchType}
           size="small"
           exclusive
-          style={{ marginBottom: 10, alignSelf: 'center' }}
+          style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.searchType}
         >
           <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
@@ -274,7 +290,7 @@ function EditSearchQuery(props: Props) {
           }}
           size="small"
           exclusive
-          style={{ marginBottom: 10, alignSelf: 'center' }}
+          style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.forceIndexing}
         >
           <ToggleButton value={false}>
@@ -323,180 +339,195 @@ function EditSearchQuery(props: Props) {
         />
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
-        <TooltipTS title={t('filterByTypTooltip')}>
-          <FormHelperText style={{ marginLeft: 0 }}>
-            {t('core:fileType')}
-          </FormHelperText>
-          <TsSelect
-            value={JSON.stringify(tempSearchQuery.fileTypes)}
-            onChange={handleFileTypeChange}
+        <FormHelperText style={{ marginLeft: 0 }}></FormHelperText>
+        <TsSelect
+          value={findPropertiesByValues(tempSearchQuery.fileTypes)}
+          onChange={handleFileTypeChange}
+          label={t('core:fileType')}
+          // title={t('filterByTypTooltip')}
+        >
+          <MenuItem value={AppConfig.SearchTypes.any}>
+            <ListItemText primary={t('core:anyType')} />
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTypes.folders}>
+            <TsIconButton size="small">
+              <FolderIcon />
+            </TsIconButton>
+            {t('core:searchFolders')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTypes.files}>
+            <TsIconButton size="small">
+              <FileIcon />
+            </TsIconButton>
+            {t('core:searchFiles')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTypes.untagged}>
+            <TsIconButton size="small">
+              <UntaggedIcon />
+            </TsIconButton>
+            {t('core:searchUntaggedEntries')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.images.toString()}
+            value={AppConfig.SearchTypes.images}
           >
-            <MenuItem value={JSON.stringify(AppConfig.SearchTypeGroups.any)}>
-              {t('core:anyType')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.folders)}
-            >
-              <TsIconButton size="small">
-                <FolderIcon />
-              </TsIconButton>
-              {t('core:searchFolders')}
-            </MenuItem>
-            <MenuItem value={JSON.stringify(AppConfig.SearchTypeGroups.files)}>
-              <TsIconButton size="small">
-                <FileIcon />
-              </TsIconButton>
-              {t('core:searchFiles')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.untagged)}
-            >
-              <TsIconButton size="small">
-                <UntaggedIcon />
-              </TsIconButton>
-              {t('core:searchUntaggedEntries')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.images)}
-              title={AppConfig.SearchTypeGroups.images.toString()}
-            >
-              <TsIconButton size="small">
-                <PictureIcon />
-              </TsIconButton>
-              {t('core:searchPictures')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.documents)}
-              title={AppConfig.SearchTypeGroups.documents.toString()}
-            >
-              <TsIconButton size="small">
-                <DocumentIcon />
-              </TsIconButton>
-              {t('core:searchDocuments')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.notes)}
-              title={AppConfig.SearchTypeGroups.notes.toString()}
-            >
-              <TsIconButton size="small">
-                <NoteIcon />
-              </TsIconButton>
-              {t('core:searchNotes')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.audio)}
-              title={AppConfig.SearchTypeGroups.audio.toString()}
-            >
-              <TsIconButton size="small">
-                <AudioIcon />
-              </TsIconButton>
-              {t('core:searchAudio')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.video)}
-              title={AppConfig.SearchTypeGroups.video.toString()}
-            >
-              <TsIconButton size="small">
-                <VideoIcon />
-              </TsIconButton>
-              {t('core:searchVideoFiles')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.archives)}
-              title={AppConfig.SearchTypeGroups.archives.toString()}
-            >
-              <TsIconButton size="small">
-                <ArchiveIcon />
-              </TsIconButton>
-              {t('core:searchArchives')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.bookmarks)}
-              title={AppConfig.SearchTypeGroups.bookmarks.toString()}
-            >
-              <TsIconButton size="small">
-                <BookmarkIcon />
-              </TsIconButton>
-              {t('core:searchBookmarks')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.ebooks)}
-              title={AppConfig.SearchTypeGroups.ebooks.toString()}
-            >
-              <TsIconButton size="small">
-                <BookIcon />
-              </TsIconButton>
-              {t('core:searchEbooks')}
-            </MenuItem>
-            <MenuItem
-              value={JSON.stringify(AppConfig.SearchTypeGroups.emails)}
-              title={AppConfig.SearchTypeGroups.emails.toString()}
-            >
-              <TsIconButton size="small">
-                <EmailIcon />
-              </TsIconButton>
-              {t('core:searchEmails')}
-            </MenuItem>
-          </TsSelect>
-        </TooltipTS>
+            <TsIconButton size="small">
+              <PictureIcon />
+            </TsIconButton>
+            {t('core:searchPictures')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.documents.toString()}
+            value={AppConfig.SearchTypes.documents}
+          >
+            <TsIconButton size="small">
+              <DocumentIcon />
+            </TsIconButton>
+            {t('core:searchDocuments')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.notes.toString()}
+            value={AppConfig.SearchTypes.notes}
+          >
+            <TsIconButton size="small">
+              <NoteIcon />
+            </TsIconButton>
+            {t('core:searchNotes')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.audio.toString()}
+            value={AppConfig.SearchTypes.audio}
+          >
+            <TsIconButton size="small">
+              <AudioIcon />
+            </TsIconButton>
+            {t('core:searchAudio')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.video.toString()}
+            value={AppConfig.SearchTypes.video}
+          >
+            <TsIconButton size="small">
+              <VideoIcon />
+            </TsIconButton>
+            {t('core:searchVideoFiles')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.archives.toString()}
+            value={AppConfig.SearchTypes.archives}
+          >
+            <TsIconButton size="small">
+              <ArchiveIcon />
+            </TsIconButton>
+            {t('core:searchArchives')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.bookmarks.toString()}
+            value={AppConfig.SearchTypes.bookmarks}
+          >
+            <TsIconButton size="small">
+              <BookmarkIcon />
+            </TsIconButton>
+            {t('core:searchBookmarks')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.ebooks.toString()}
+            value={AppConfig.SearchTypes.ebooks}
+          >
+            <TsIconButton size="small">
+              <BookIcon />
+            </TsIconButton>
+            {t('core:searchEbooks')}
+          </MenuItem>
+          <MenuItem
+            title={AppConfig.SearchTypeGroups.emails.toString()}
+            value={AppConfig.SearchTypes.emails}
+          >
+            <TsIconButton size="small">
+              <EmailIcon />
+            </TsIconButton>
+            {t('core:searchEmails')}
+          </MenuItem>
+        </TsSelect>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
-        <TooltipTS title={t('filterBySizeTooltip')}>
-          <FormHelperText style={{ marginLeft: 0 }}>
-            {t('core:sizeSearchTitle')}
-          </FormHelperText>
-          <TsSelect
-            value={tempSearchQuery.fileSize}
-            onChange={handleFileSizeChange}
-          >
-            <MenuItem value="">{t('core:sizeAny')}</MenuItem>
-            <MenuItem value="sizeEmpty">{t('core:sizeEmpty')}</MenuItem>
-            <MenuItem value="sizeTiny">
-              {t('core:sizeTiny')}
-              &nbsp;(&lt;&nbsp;10KB)
-            </MenuItem>
-            <MenuItem value="sizeVerySmall">
-              {t('core:sizeVerySmall')}
-              &nbsp;(&lt;&nbsp;100KB)
-            </MenuItem>
-            <MenuItem value="sizeSmall">
-              {t('core:sizeSmall')}
-              &nbsp;(&lt;&nbsp;1MB)
-            </MenuItem>
-            <MenuItem value="sizeMedium">
-              {t('core:sizeMedium')}
-              &nbsp;(&lt;&nbsp;50MB)
-            </MenuItem>
-            <MenuItem value="sizeLarge">
-              {t('core:sizeLarge')}
-              &nbsp;(&lt;&nbsp;1GB)
-            </MenuItem>
-            <MenuItem value="sizeHuge">
-              {t('core:sizeHuge')}
-              &nbsp;(&gt;&nbsp;1GB)
-            </MenuItem>
-          </TsSelect>
-        </TooltipTS>
+        <TsSelect
+          value={tempSearchQuery.fileSize}
+          onChange={handleFileSizeChange}
+          label={t('core:sizeSearchTitle')}
+          title={t('filterBySizeTooltip')}
+        >
+          <MenuItem value="">{t('core:sizeAny')}</MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.empty.key}>
+            {t('core:sizeEmpty')}&nbsp;({formatFileSize(0)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.tiny.key}>
+            {t('core:sizeTiny')}
+            &nbsp;(&lt;&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.tiny.thresholdBytes)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.verySmall.key}>
+            {t('core:sizeVerySmall')}
+            &nbsp;({formatFileSize(AppConfig.SearchSizes.tiny.thresholdBytes)}
+            &nbsp;-&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.verySmall.thresholdBytes)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.small.key}>
+            {t('core:sizeSmall')}
+            &nbsp;(
+            {formatFileSize(AppConfig.SearchSizes.verySmall.thresholdBytes)}
+            &nbsp;-&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.small.thresholdBytes)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.medium.key}>
+            {t('core:sizeMedium')}
+            &nbsp;({formatFileSize(AppConfig.SearchSizes.small.thresholdBytes)}
+            &nbsp;-&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.medium.thresholdBytes)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.large.key}>
+            {t('core:sizeLarge')}
+            &nbsp;({formatFileSize(AppConfig.SearchSizes.medium.thresholdBytes)}
+            &nbsp;-&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.large.thresholdBytes)})
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchSizes.huge.key}>
+            {t('core:sizeHuge')}
+            &nbsp;(&gt;&nbsp;
+            {formatFileSize(AppConfig.SearchSizes.huge.thresholdBytes)})
+          </MenuItem>
+        </TsSelect>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
-        <TooltipTS title={t('filterByLastModifiedDateTooltip')}>
-          <FormHelperText style={{ marginLeft: 0 }}>
-            {t('core:lastModifiedSearchTitle')}
-          </FormHelperText>
-          <TsSelect
-            value={tempSearchQuery.lastModified}
-            onChange={handleLastModifiedChange}
-          >
-            <MenuItem value="">{t('core:anyTime')}</MenuItem>
-            <MenuItem value="today">{t('core:today')}</MenuItem>
-            <MenuItem value="yesterday">{t('core:yesterday')}</MenuItem>
-            <MenuItem value="past7Days">{t('core:past7Days')}</MenuItem>
-            <MenuItem value="past30Days">{t('core:past30Days')}</MenuItem>
-            <MenuItem value="past6Months">{t('core:past6Months')}</MenuItem>
-            <MenuItem value="pastYear">{t('core:pastYear')}</MenuItem>
-            <MenuItem value="moreThanYear">{t('core:moreThanYear')}</MenuItem>
-          </TsSelect>
-        </TooltipTS>
+        <TsSelect
+          value={tempSearchQuery.lastModified}
+          onChange={handleLastModifiedChange}
+          label={t('core:lastModifiedSearchTitle')}
+          // title={t('filterByLastModifiedDateTooltip')}
+        >
+          <MenuItem value="">{t('core:anyTime')}</MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.today.key}>
+            {t('core:today')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.yesterday.key}>
+            {t('core:yesterday')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past7Days.key}>
+            {t('core:past7Days')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past30Days.key}>
+            {t('core:past30Days')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past6Months.key}>
+            {t('core:past6Months')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.pastYear.key}>
+            {t('core:pastYear')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.moreThanYear.key}>
+            {t('core:moreThanYear')}
+          </MenuItem>
+        </TsSelect>
       </FormControl>
       <FormControl>
         <TooltipTS title={t('enterTimePeriodTooltip')}>
@@ -506,9 +537,8 @@ function EditSearchQuery(props: Props) {
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodFrom')}
                 </FormHelperText>
-                <DatePicker
+                <TsDatePicker
                   disabled={isIndexing !== undefined}
-                  format="yyyy-MM-dd"
                   value={
                     tempSearchQuery.tagTimePeriodFrom
                       ? new Date(tempSearchQuery.tagTimePeriodFrom)
@@ -527,9 +557,8 @@ function EditSearchQuery(props: Props) {
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodTo')}
                 </FormHelperText>
-                <DatePicker
+                <TsDatePicker
                   disabled={isIndexing !== undefined}
-                  format="yyyy-MM-dd"
                   value={
                     tempSearchQuery.tagTimePeriodTo
                       ? new Date(tempSearchQuery.tagTimePeriodTo)

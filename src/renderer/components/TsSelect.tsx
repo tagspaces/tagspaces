@@ -36,6 +36,9 @@ function TsSelect(props: TSSelectProps) {
         {label}
       </FormHelperText>
       <TsTextField
+        slotProps={{
+          select: { displayEmpty: true },
+        }}
         style={{
           cursor: 'context-menu',
           marginTop: 0,

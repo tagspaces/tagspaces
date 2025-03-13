@@ -168,7 +168,7 @@ function SearchPopover(props: Props) {
           </Grid>
           <Grid
             size={3}
-            style={{ display: 'flex', alignSelf: 'center', paddingTop: 40 }}
+            style={{ display: 'flex', alignSelf: 'center', paddingTop: 25 }}
           >
             <ButtonGroup
               style={{
