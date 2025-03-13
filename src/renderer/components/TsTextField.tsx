@@ -100,7 +100,7 @@ function TsTextField(props: TSTextFieldProps) {
   return (
     <div>
       {label && (
-        <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+        <FormHelperText style={{ marginLeft: 5, marginTop: 0 }}>
           {label}
         </FormHelperText>
       )}
