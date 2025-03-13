@@ -12,6 +12,7 @@ import { Pro } from '-/pro';
 import { saveAsTextFile } from '-/services/utils-io';
 import { Box, ButtonGroup, Tooltip, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -80,7 +81,10 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename =
-        openedEntry.name + ' [description ' + dateTimeTag + '].html';
+        extractTitle(openedEntry.name) +
+        ' [description ' +
+        dateTimeTag +
+        '].html';
 
       saveAsTextFile(blob, filename);
     }
@@ -94,7 +98,10 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename =
-        openedEntry.name + ' [description ' + dateTimeTag + '].md';
+        extractTitle(openedEntry.name) +
+        ' [description ' +
+        dateTimeTag +
+        '].md';
 
       saveAsTextFile(blob, filename);
     }
