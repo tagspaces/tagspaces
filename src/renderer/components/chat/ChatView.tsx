@@ -20,7 +20,6 @@ import { CloseIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
-import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
@@ -38,7 +37,7 @@ import { saveAsTextFile } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, Grid2, MenuItem } from '@mui/material';
+import { Box, Grid2 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -427,11 +426,10 @@ function ChatView() {
                               <SendIcon />
                             </IconButton>
                           </Tooltip>
-                          <TsSelect
+                          {/* <TsSelect
                             id="select-mode"
                             value={currentMode.current || ''}
                             onChange={handleChangeMode}
-                            variant="standard"
                             sx={{ width: currentMode.current ? 170 : 25 }}
                           >
                             <MenuItem value="">None</MenuItem>
@@ -447,7 +445,7 @@ function ChatView() {
                             >
                               Generate Summary
                             </MenuItem>
-                          </TsSelect>
+                          </TsSelect> */}
                         </InputAdornment>
                       ),
                     },
