@@ -102,7 +102,7 @@ function ChatDndTargetFile(props: Props) {
         isActive: m.isOver({ shallow: true }) && m.canDrop(),
       }),
     }),
-    [],
+    [setImages],
   );
 
   const { isActive, handlerId } = collectedProps;

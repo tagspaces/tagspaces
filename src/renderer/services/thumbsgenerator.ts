@@ -346,15 +346,21 @@ export function getMimeType(extension) {
  */
 export function getResizedImageThumbnail(
   src: string,
-  maxTmbSize?: number,
+  maxTmbSize: number = AppConfig.maxTmbSize,
 ): Promise<string> {
   return new Promise((resolve) => {
     let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    let img: HTMLImageElement = new Image();
+    if (!ctx) {
+      console.log('Unable to get canvas context');
+      resolve('');
+      return;
+    }
     if (maxTmbSize && maxTmbSize > maxSize) {
       maxSize = maxTmbSize;
     }
+
+    let img: HTMLImageElement = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       // EXIF extraction not need because the image are rotated
@@ -420,13 +426,12 @@ export function getResizedImageThumbnail(
       resolve(dataurl);
       img = null;
       canvas = null;
-      // });
     };
-    img.src = src;
     img.onerror = (err) => {
-      console.log(`Error getResizedImageThumbnail`, err);
+      console.error('Error loading image in getResizedImageThumbnail:', err);
       resolve('');
     };
+    img.src = src;
   });
 }
 

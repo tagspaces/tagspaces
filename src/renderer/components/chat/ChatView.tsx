@@ -30,7 +30,6 @@ import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { saveAsTextFile } from '-/services/utils-io';
@@ -50,6 +49,7 @@ import React, { ChangeEvent, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -66,7 +66,7 @@ function ChatView() {
     cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { openedEntry } = useOpenedEntryContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
@@ -335,10 +335,7 @@ function ChatView() {
             `}
             </style>
             <MilkdownProvider>
-              <ChatMdEditor
-                ref={editorRef}
-                currentFolder={currentDirectoryPath}
-              />
+              <ChatMdEditor ref={editorRef} currentFolder={openedEntry.path} />
             </MilkdownProvider>
           </div>
         </Grid2>
