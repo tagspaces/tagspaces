@@ -16,56 +16,55 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import Tooltip from '-/components/Tooltip';
-import { FolderOutlineIcon } from '-/components/CommonIcons';
-import IconButton from '@mui/material/IconButton';
+import AppConfig from '-/AppConfig';
 import {
+  FolderOutlineIcon,
+  MoreMenuIcon,
   SelectedIcon,
   UnSelectedIcon,
-  MoreMenuIcon,
 } from '-/components/CommonIcons';
+import EntryIcon from '-/components/EntryIcon';
+import TagContainer from '-/components/TagContainer';
+import TagContainerDnd from '-/components/TagContainerDnd';
+import TagsPreview from '-/components/TagsPreview';
+import Tooltip from '-/components/Tooltip';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import i18n from '-/services/i18n';
+import { dataTidFormat } from '-/services/test';
 import {
-  formatFileSize,
+  findBackgroundColorForFolder,
+  findColorForEntry,
+  getDescriptionPreview,
+} from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { arrayBufferToDataURL } from '-/utils/dom';
+import useFirstRender from '-/utils/useFirstRender';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import {
   formatDateTime,
-  locationType,
+  formatFileSize,
 } from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
   extractTitle,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import {
-  findBackgroundColorForFolder,
-  findColorForEntry,
-  getDescriptionPreview,
-} from '-/services/utils-io';
-import TagContainerDnd from '-/components/TagContainerDnd';
-import TagContainer from '-/components/TagContainer';
-import TagsPreview from '-/components/TagsPreview';
-import EntryIcon from '-/components/EntryIcon';
-import { TS } from '-/tagspaces.namespace';
-import { dataTidFormat } from '-/services/test';
-import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { defaultSettings } from '../index';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import i18n from '-/services/i18n';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import useFirstRender from '-/utils/useFirstRender';
-import { arrayBufferToDataURL } from '-/utils/dom';
 
 export function urlGetDelim(url) {
   return url.indexOf('?') > 0 ? '&' : '?';
@@ -74,9 +73,9 @@ export function urlGetDelim(url) {
 export function calculateEntryWidth(entrySize: TS.EntrySizes) {
   let entryWidth = 200;
   if (entrySize === 'tiny') {
-    entryWidth = 100;
+    entryWidth = 130;
   } else if (entrySize === 'small') {
-    entryWidth = 150;
+    entryWidth = 160;
   } else if (entrySize === 'normal') {
     entryWidth = 200;
   } else if (entrySize === 'big') {
@@ -90,9 +89,9 @@ export function calculateEntryWidth(entrySize: TS.EntrySizes) {
 export function calculateEntryHeight(entrySize: TS.EntrySizes) {
   let entryHeight = 200;
   if (entrySize === 'tiny') {
-    entryHeight = 100;
+    entryHeight = 130;
   } else if (entrySize === 'small') {
-    entryHeight = 150;
+    entryHeight = 160;
   } else if (entrySize === 'normal') {
     entryHeight = 200;
   } else if (entrySize === 'big') {
