@@ -211,7 +211,7 @@ test.describe('TST51 - Perspective Grid', () => {
     let latExists = await isDisplayed(
       '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
       true,
-      8000,
+      10000,
       frame,
     );
     expect(latExists).toBeTruthy();

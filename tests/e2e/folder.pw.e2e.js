@@ -85,6 +85,12 @@ test.describe('TST01 - Folder management', () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=currentDir_' + testFolder + ']',
+      true,
+      8000,
+    );
+
     await deleteDirectory();
     // await takeScreenshot('TST0101 after deleteDirectory');
     await reloadDirectory();
@@ -281,6 +287,7 @@ test.describe('TST01 - Folder management', () => {
       folderThumbStyle,
       'style',
     );
+    console.log('style changed:' + newStyle);
 
     // await global.client.waitForTimeout(1000000);
 

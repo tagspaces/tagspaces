@@ -90,7 +90,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(firstFileName) + ']',
       true,
-      28000,
+      8000,
     );
 
     const propsFileName = await getPropertiesFileName();
@@ -125,32 +125,48 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0802 - Open next file buttons [web,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
-    //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
-    const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(firstFileName) + ']',
+      true,
+      8000,
+    );
+    const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
 
     await clickOn('[data-tid=fileContainerNextFile]');
-    const propsNextFileName = await getPropertiesFileName();
 
     const secondFileName = await getGridFileName(1);
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(secondFileName) + ']',
+      true,
+      5000,
+    );
+    const propsNextFileName = await getPropertiesFileName();
     expect(secondFileName).toBe(propsNextFileName);
   });
 
   test('TST0803 - Open previous files buttons [web,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
-    //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
-    const propsFileName = await getPropertiesFileName();
+
     const firstFileName = await getGridFileName(0);
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(firstFileName) + ']',
+      true,
+      8000,
+    );
+    const propsFileName = await getPropertiesFileName();
     expect(firstFileName).toBe(propsFileName);
 
     await clickOn('[data-tid=fileContainerPrevFile]');
-    const propsNextFileName = await getPropertiesFileName();
-
     const lastFileName = await getGridFileName(-1);
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(lastFileName) + ']',
+      true,
+      5000,
+    );
+    const propsNextFileName = await getPropertiesFileName();
     expect(lastFileName).toBe(propsNextFileName);
   });
 

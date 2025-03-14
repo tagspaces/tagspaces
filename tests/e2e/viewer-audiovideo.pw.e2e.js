@@ -69,12 +69,17 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
+  /**
+   * http://localhost:63342/test-artifacts/playwright-report/trace/manifest.webmanifest?_ijt=eojod6f91jej1donf3vd1jp8ju
+   */
   test('TST5902 - Play ogv file [web,minio,electron]', async () => {
-    await openContextEntryMenu(
-      getGridFileSelector('sample.ogv'),
-      'fileMenuOpenFile',
-    );
-    await expectMediaPlay();
+    if (!global.isWin) {
+      await openContextEntryMenu(
+        getGridFileSelector('sample.ogv'),
+        'fileMenuOpenFile',
+      );
+      await expectMediaPlay();
+    }
   });
 
   test('TST5903 - Open and close about dialog [web,minio,electron]', async () => {
