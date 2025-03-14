@@ -16,35 +16,35 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import clsx from 'clsx';
-import { bindActionCreators } from 'redux';
-import { connect, useSelector } from 'react-redux';
-import { useMediaQuery } from '@mui/material';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Drawer from '@mui/material/Drawer';
-import { HotKeys } from 'react-hotkeys';
-import { Split } from 'ts-react-splitter';
-import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import MobileNavigation from '../components/MobileNavigation';
-import FolderContainer from '../components/FolderContainer';
+import PageNotification from '-/containers/PageNotification';
+import { FilePropertiesContextProvider } from '-/hooks/FilePropertiesContextProvider';
+import { FullScreenContextProvider } from '-/hooks/FullScreenContextProvider';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePanelsContext } from '-/hooks/usePanelsContext';
+import { useUserContext } from '-/hooks/useUserContext';
+import useEventListener from '-/utils/useEventListener';
+import { useMediaQuery } from '@mui/material';
+import Drawer from '@mui/material/Drawer';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { styled, useTheme } from '@mui/material/styles';
+import { buffer } from '@tagspaces/tagspaces-common/misc';
+import clsx from 'clsx';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { HotKeys } from 'react-hotkeys';
+import { connect, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Split } from 'ts-react-splitter';
 import EntryContainer from '../components/EntryContainer';
+import FolderContainer from '../components/FolderContainer';
+import MobileNavigation from '../components/MobileNavigation';
 import {
+  actions as SettingsActions,
   getDesktopMode,
   getKeyBindingObject,
   getMainVerticalSplitSize,
-  actions as SettingsActions,
 } from '../reducers/settings';
-import useEventListener from '-/utils/useEventListener';
-import PageNotification from '-/containers/PageNotification';
-import { styled, useTheme } from '@mui/material/styles';
-import { FilePropertiesContextProvider } from '-/hooks/FilePropertiesContextProvider';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { usePanelsContext } from '-/hooks/usePanelsContext';
-import { useUserContext } from '-/hooks/useUserContext';
-import { FullScreenContextProvider } from '-/hooks/FullScreenContextProvider';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -186,7 +186,11 @@ function MainPage(props: Props) {
       showPanel('tagLibraryPanel');
       setDrawerOpened(true);
     },
-    openSearch: () => enterSearchMode(),
+    openSearch: () => {
+      if (!isEntryInFullWidth) {
+        enterSearchMode();
+      }
+    },
     closeSearch: () => {
       exitSearchMode();
       openCurrentDirectory();
