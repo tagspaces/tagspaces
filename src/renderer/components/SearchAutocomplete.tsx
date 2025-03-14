@@ -16,6 +16,52 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
+import { CloseIcon } from '-/components/CommonIcons';
+import {
+  ActionType,
+  ExecActions,
+  ScopeType,
+  SearchActions,
+  SearchOptionType,
+  SearchQueryComposition,
+  accuracy,
+  findAction,
+  isAction,
+  scope,
+} from '-/components/SearchOptions';
+import { getSearchOptions } from '-/components/SearchOptionsMenu';
+import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
+import TsTextField from '-/components/TsTextField';
+import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { Pro } from '-/pro';
+import {
+  getMaxSearchResults,
+  getShowUnixHiddenEntries,
+  isDesktopMode,
+} from '-/reducers/settings';
+import { haveSearchFilters } from '-/services/search';
+import { getTagLibrary } from '-/services/taglibrary-utils';
+import { dataTidFormat } from '-/services/test';
+import { removePrefix } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
+import { Autocomplete, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
+import { format, formatDistanceToNow } from 'date-fns';
+import Fuse from 'fuse.js';
 import React, {
   useContext,
   useEffect,
@@ -23,56 +69,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import Fuse from 'fuse.js';
-import { useSelector, useDispatch } from 'react-redux';
-import { format, formatDistanceToNow } from 'date-fns';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import TsButton from '-/components/TsButton';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Tooltip from '-/components/Tooltip';
-import TsIconButton from '-/components/TsIconButton';
-import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
-import { actions as AppActions, AppDispatch } from '../reducers/app';
-import {
-  getMaxSearchResults,
-  getShowUnixHiddenEntries,
-} from '-/reducers/settings';
-import { haveSearchFilters } from '-/services/search';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import AppConfig from '-/AppConfig';
-import { Autocomplete, Box } from '@mui/material';
-import {
-  accuracy,
-  ActionType,
-  ExecActions,
-  FileSize,
-  findAction,
-  isAction,
-  LastModified,
-  scope,
-  ScopeType,
-  SearchActions,
-  SearchOptionType,
-  SearchQueryComposition,
-} from '-/components/SearchOptions';
-import { CloseIcon } from '-/components/CommonIcons';
-import { getTagLibrary } from '-/services/taglibrary-utils';
-import { getSearchOptions } from '-/components/SearchOptionsMenu';
-import TsTextField from '-/components/TsTextField';
-import { dataTidFormat } from '-/services/test';
-import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { removePrefix } from '-/services/utils-io';
-import { isDesktopMode } from '-/reducers/settings';
-import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
-import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
-import useFirstRender from '-/utils/useFirstRender';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions as AppActions, AppDispatch } from '../reducers/app';
 
 interface Props {
   style?: any;
@@ -718,24 +717,45 @@ function SearchAutocomplete(props: Props) {
         currentOptions.current = action;
         const options = [];
 
-        Object.entries(FileSize).forEach(([key, value]) => {
+        Object.entries(AppConfig.SearchSizes).forEach((size: any) => {
           let descr = '';
-          if (value > 0) {
-            if (value < 1000000) {
-              descr = value / 1000 + 'KB';
-            } else if (value < 1000000000) {
-              descr = value / 1000000 + 'MB';
-            } else if (value === 1000000000) {
-              descr = value / 1000000000 + 'G';
-            } else {
-              descr = 'over 1GB';
-            }
+          if (size[1].key === AppConfig.SearchSizes.empty.key) {
+            descr = formatFileSize(size[1].thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.tiny.key) {
+            descr =
+              formatFileSize(AppConfig.SearchSizes.empty.thresholdBytes) +
+              ' < ' +
+              formatFileSize(AppConfig.SearchSizes.tiny.thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.verySmall.key) {
+            descr =
+              formatFileSize(AppConfig.SearchSizes.tiny.thresholdBytes) +
+              ' < ' +
+              formatFileSize(AppConfig.SearchSizes.verySmall.thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.small.key) {
+            descr =
+              formatFileSize(AppConfig.SearchSizes.verySmall.thresholdBytes) +
+              ' < ' +
+              formatFileSize(AppConfig.SearchSizes.small.thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.medium.key) {
+            descr =
+              formatFileSize(AppConfig.SearchSizes.small.thresholdBytes) +
+              ' < ' +
+              formatFileSize(AppConfig.SearchSizes.medium.thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.large.key) {
+            descr =
+              formatFileSize(AppConfig.SearchSizes.medium.thresholdBytes) +
+              ' < ' +
+              formatFileSize(AppConfig.SearchSizes.large.thresholdBytes);
+          } else if (size[1].key === AppConfig.SearchSizes.huge.key) {
+            descr =
+              ' > ' +
+              formatFileSize(AppConfig.SearchSizes.large.thresholdBytes);
           }
           options.push({
-            id: key,
+            id: size[1].key,
             action: ExecActions.SIZE_SEARCH,
-            label: t('core:' + key),
-            descr: descr,
+            label: t('core:' + size[1].key),
+            descr: '(' + descr + ')',
             filter,
           });
         });
@@ -750,11 +770,11 @@ function SearchAutocomplete(props: Props) {
         currentOptions.current = action;
         const options = [];
 
-        Object.entries(LastModified).forEach(([key, value]) => {
+        Object.entries(AppConfig.SearchTimePeriods).forEach((period: any) => {
           options.push({
-            id: key,
+            id: period[1].key,
             action: ExecActions.LAST_MODIFIED_SEARCH,
-            label: t('core:' + key),
+            label: t('core:' + period[1].key),
             filter,
           });
         });

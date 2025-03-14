@@ -48,12 +48,6 @@ export const SearchQueryComposition = {
   },
 };
 
-/*export const searchMode = {
-  NOT_IN_SEARCH_MODE: 'NOT_IN_SEARCH_MODE',
-  // search mode but search is not started
-  INITIAL_SEARCH_MODE: 'NOT_IN_SEARCH_MODE'
-};*/
-
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
@@ -81,19 +75,6 @@ export const SearchActions = {
   },
 };
 
-/*export const SearchCommandFullNames = {
-  TYPE: 'type:',
-  SIZE: 'size:',
-  LAST_MODIFIED: 'lastmod:',
-  SCOPE: 'scope:',
-  ACCURACY: 'accuracy:',
-  LOCATION: 'location:',
-  FILTER: 'filter:',
-  HISTORY: 'history:',
-  BOOK: 'bookmark:',
-  SEARCH: 'search:'
-};*/
-
 export const ExecActions = {
   OPEN_LOCATION: 'open_location',
   OPEN_HISTORY: 'open_history',
@@ -109,25 +90,6 @@ export const ExecActions = {
   ACCURACY_SEARCH: 'accuracy_search',
 };
 
-export const FileSize = {
-  sizeEmpty: 0,
-  sizeTiny: 10000, // 10KB
-  sizeVerySmall: 100000, // 100KB
-  sizeSmall: 1000000, // 1MB
-  sizeMedium: 50000000, // 50 mB
-  sizeLarge: 1000000000, // 1GB
-  sizeHuge: 1000000001, // over 1GB
-};
-
-export const LastModified = {
-  today: 86400000, // 1 day
-  yesterday: 172800000, // 48 hours
-  past7Days: 604800000, // 7 days
-  past30Days: 2592000000, // 30 days
-  past6Months: 15778476000, // 6 months
-  pastYear: 31556952000, // 1 year
-  moreThanYear: 31556952001, // over 1 year
-};
 export const scope = {
   location: 'location' as ScopeType,
   folder: 'folder' as ScopeType,
@@ -141,18 +103,6 @@ export const accuracy = {
 };
 
 export type ScopeType = 'location' | 'folder' | 'global';
-
-/*export function toActionFullName(action): string {
-  const actions = {
-    ...SearchQueryComposition,
-    ...SearchActions
-  };
-  const actionFind = Object.entries(actions).find(a => a[1] === action);
-  if (actionFind && SearchCommandFullNames[actionFind[0]]) {
-    return SearchCommandFullNames[actionFind[0]];
-  }
-  return action;
-}*/
 
 export function isAction(action: string, actionType: ActionType): boolean {
   return (
@@ -173,9 +123,6 @@ export function findAction(option: string, equal = false): string {
   );
   if (action) {
     return action.fullName ? action.fullName : action.shortName;
-    /*action = Object.values(SearchCommandFullNames).find(a =>
-      equal ? option === a : option.startsWith(a)
-    );*/
   }
   return undefined;
 }

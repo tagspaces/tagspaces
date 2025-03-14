@@ -54,14 +54,15 @@ AppConfig.SearchSizes = {
   large: { key: 'sizeLarge', thresholdBytes: 1024 * 1024 * 1024 }, // 50MB - 1GB
   huge: { key: 'sizeHuge', thresholdBytes: 1024 * 1024 * 1024 }, // over 1GB
 };
+// periodSpan is currently not used
 AppConfig.SearchTimePeriods = {
-  today: { key: 'today' },
-  yesterday: { key: 'yesterday' },
-  past7Days: { key: 'past7Days' },
-  past30Days: { key: 'past30Days' },
-  past6Months: { key: 'past6Months' },
-  pastYear: { key: 'pastYear' },
-  moreThanYear: { key: 'moreThanYear' },
+  today: { key: 'today', periodSpan: 86400000 },
+  yesterday: { key: 'yesterday', periodSpan: 172800000 }, // 48 hours
+  past7Days: { key: 'past7Days', periodSpan: 604800000 },
+  past30Days: { key: 'past30Days', periodSpan: 2592000000 },
+  past6Months: { key: 'past6Months', periodSpan: 15778476000 },
+  pastYear: { key: 'pastYear', periodSpan: 31556952000 },
+  moreThanYear: { key: 'moreThanYear', periodSpan: 31556952001 },
 };
 AppConfig.SearchTypeGroups =
   typeof window !== 'undefined' && window.ExtSearchTypeGroups !== undefined
