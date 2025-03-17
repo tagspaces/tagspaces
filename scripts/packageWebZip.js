@@ -10,7 +10,7 @@ const sourceFolder = path.join(__dirname, '../web'); // Folder to zip
 
 try {
   const zip = new AdmZip();
-  zip.addLocalFolder(sourceFolder); // Add the entire folder
+  zip.addLocalFolder(sourceFolder, 'web'); // Add the entire folder
   zip.writeZip(outputZipPath); // Write the zip archive
   console.log(`Successfully created zip: ${outputZipPath}`);
 } catch (error) {
