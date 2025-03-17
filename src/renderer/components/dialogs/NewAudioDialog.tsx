@@ -72,7 +72,6 @@ function NewAudioDialog(props: Props) {
           style={{
             minWidth: 200,
             minHeight: 200,
-            marginBottom: 20,
             overflow: 'overlay',
           }}
           data-tid="keyboardShortCutsDialog"

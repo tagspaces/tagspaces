@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { ArrowBackIcon, CloseIcon } from '-/components/CommonIcons';
+import { ArrowBackIcon, CloseDialogIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import { isDesktopMode } from '-/reducers/settings';
 import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
@@ -63,7 +63,7 @@ function TsDialogTitle(props: TSDialogTitle) {
       data-tid={closeButtonTestId}
       onClick={onClose}
     >
-      <CloseIcon />
+      <CloseDialogIcon />
     </TsIconButton>
   );
 
