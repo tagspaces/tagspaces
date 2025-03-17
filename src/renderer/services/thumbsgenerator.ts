@@ -471,7 +471,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         console.log(`Error opening: ${fileURL} for tmb gen with: ${err} `);
         resolve('');
       };
-      video.src = fileURL;
+      video.src = fileURL.replace(/#/g, '%23');
     } catch (e) {
       console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
       resolve('');

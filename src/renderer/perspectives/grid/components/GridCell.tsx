@@ -458,7 +458,7 @@ function GridCell(props: Props) {
             onError={(i) => (i.target.style.display = 'none')}
             alt="thumbnail image"
             height="auto"
-            src={thumbPath.current}
+            src={thumbPath.current.replace(/#/g, '%23')}
             style={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,
