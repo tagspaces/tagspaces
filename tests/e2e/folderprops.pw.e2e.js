@@ -212,6 +212,7 @@ test.describe('TST02 - Folder properties', () => {
       '[data-tid=PropertiesTagsSelectTID]',
     );
 
+    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
     //const propsTags = await getPropertiesTags();
     //expect(propsTags).toContain(tagName);
   });
