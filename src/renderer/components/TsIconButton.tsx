@@ -28,12 +28,13 @@ export type TSIconButtonProps = IconButtonProps & {
 };
 
 function TsIconButton(props: TSIconButtonProps) {
-  const { children, keyBinding, tooltip, disabled, ...restProps } = props;
+  const { children, style, keyBinding, tooltip, disabled, ...restProps } =
+    props;
   const desktopMode = useSelector(isDesktopMode);
   const iconButton = (
     <IconButton
       size={desktopMode ? 'medium' : 'large'}
-      style={{ borderRadius: AppConfig.defaultCSSRadius }}
+      style={{ borderRadius: AppConfig.defaultCSSRadius, ...style }}
       disabled={disabled}
       {...restProps}
     >

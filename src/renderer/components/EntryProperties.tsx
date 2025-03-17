@@ -21,12 +21,16 @@ import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
 import {
+  CalendarIcon,
   ClearColorIcon,
+  CloudLocationIcon,
   ColorPaletteIcon,
   IDIcon,
+  LocalLocationIcon,
   OpenLinkIcon,
   QrCodeIcon,
   SetColorIcon,
+  SizeIcon,
 } from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -668,6 +672,11 @@ function EntryProperties(props: Props) {
             slotProps={{
               input: {
                 readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CalendarIcon />
+                  </InputAdornment>
+                ),
               },
             }}
           />
@@ -696,6 +705,11 @@ function EntryProperties(props: Props) {
                 input: {
                   readOnly: true,
                   ...(!openedEntry.isFile && {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SizeIcon />
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <TsButton
                         variant="text"
@@ -728,19 +742,19 @@ function EntryProperties(props: Props) {
               slotProps={{
                 input: {
                   readOnly: true,
-                  // startAdornment: (
-                  //   <InputAdornment position="start">
-                  //     {isCloudLocation ? (
-                  //       <CloudLocationIcon
-                  //         style={{ color: theme.palette.text.secondary }}
-                  //       />
-                  //     ) : (
-                  //       <LocalLocationIcon
-                  //         style={{ color: theme.palette.text.secondary }}
-                  //       />
-                  //     )}
-                  //   </InputAdornment>
-                  // ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {isCloudLocation ? (
+                        <CloudLocationIcon
+                          style={{ color: theme.palette.text.secondary }}
+                        />
+                      ) : (
+                        <LocalLocationIcon
+                          style={{ color: theme.palette.text.secondary }}
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       {!readOnlyMode &&

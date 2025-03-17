@@ -256,3 +256,7 @@ export { default as EntryBookmarkAddIcon } from '@mui/icons-material/BookmarkAdd
 export { default as EntryBookmarkIcon } from '@mui/icons-material/BookmarkTwoTone';
 
 export { default as EncryptedIcon } from '@mui/icons-material/HttpsOutlined';
+
+export { default as SizeIcon } from '@mui/icons-material/BubbleChartOutlined';
+
+export { default as CalendarIcon } from '@mui/icons-material/CalendarMonthOutlined';
