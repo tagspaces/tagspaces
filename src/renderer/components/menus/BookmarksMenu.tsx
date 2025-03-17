@@ -16,13 +16,12 @@
  *
  */
 
-import React from 'react';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import { Menu, MenuItem } from '@mui/material';
 import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import { Pro } from '-/pro';
+import { Menu, MenuItem } from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { useTranslation } from 'react-i18next';
 
 interface Props {

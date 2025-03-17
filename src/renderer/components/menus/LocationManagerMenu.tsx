@@ -19,8 +19,9 @@
 import AppConfig from '-/AppConfig';
 import {
   CloseIcon,
-  ExportImportIcon,
+  ExportIcon,
   HelpIcon,
+  ImportIcon,
   LocalLocationIcon,
   MoreMenuIcon,
   ReloadIcon,
@@ -112,7 +113,7 @@ function LocationManagerMenu(props: Props) {
         }}
       >
         <ListItemIcon>
-          <ExportImportIcon />
+          <ExportIcon />
         </ListItemIcon>
         <ListItemText
           primary={
@@ -135,7 +136,7 @@ function LocationManagerMenu(props: Props) {
         }}
       >
         <ListItemIcon>
-          <ExportImportIcon />
+          <ImportIcon />
         </ListItemIcon>
         <ListItemText
           primary={

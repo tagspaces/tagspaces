@@ -16,13 +16,12 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { getSearches } from '-/reducers/searches';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { getSearches } from '-/reducers/searches';
 import { useTranslation } from 'react-i18next';
-import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;

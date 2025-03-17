@@ -16,9 +16,8 @@
  *
  */
 
-import React from 'react';
-import Typography from '@mui/material/Typography';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import Typography from '@mui/material/Typography';
 
 interface Props {
   keyBinding?: string;

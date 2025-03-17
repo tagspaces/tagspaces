@@ -19,8 +19,9 @@
 import AppConfig from '-/AppConfig';
 import {
   CreateFileIcon,
-  ExportImportIcon,
+  ExportIcon,
   HelpIcon,
+  ImportIcon,
   ReloadIcon,
 } from '-/components/CommonIcons';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
@@ -154,14 +155,14 @@ function TagLibraryMenu(props: Props) {
           </ProTooltip>
           <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
             <ListItemIcon>
-              <ExportImportIcon />
+              <ImportIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:importTags')} />
           </MenuItem>
           {!AppConfig.isCordovaAndroid && (
             <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
               <ListItemIcon>
-                <ExportImportIcon />
+                <ExportIcon />
               </ListItemIcon>
               <ListItemText primary={t('core:exportTagGroupsButton')} />
             </MenuItem>

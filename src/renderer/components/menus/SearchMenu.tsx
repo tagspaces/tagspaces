@@ -16,7 +16,7 @@
  *
  */
 
-import { ExportImportIcon, HelpIcon } from '-/components/CommonIcons';
+import { ExportIcon, HelpIcon, ImportIcon } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
 import { Pro } from '-/pro';
@@ -51,7 +51,7 @@ function SearchMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <ExportImportIcon />
+        <ExportIcon />
       </ListItemIcon>
       <ListItemText
         primary={
@@ -74,7 +74,7 @@ function SearchMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <ExportImportIcon />
+        <ImportIcon />
       </ListItemIcon>
       <ListItemText
         primary={
