@@ -16,30 +16,32 @@
  *
  */
 
-import React from 'react';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
-import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
-import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
-import TsMenuList from '-/components/TsMenuList';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { useTranslation } from 'react-i18next';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CloseIcon,
+  DeleteIcon,
+  EditIcon,
+  OpenNewWindowIcon,
+  ReloadIcon,
+} from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
+import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
-import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   //setEditLocationDialogOpened: (open: boolean) => void;
@@ -205,7 +207,7 @@ function LocationContextMenu(props: Props) {
       onClick={indexLocation}
     >
       <ListItemIcon>
-        <RefreshIcon />
+        <ReloadIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:indexLocation')} />
     </MenuItem>,
@@ -219,7 +221,7 @@ function LocationContextMenu(props: Props) {
         onClick={moveLocationUpInt}
       >
         <ListItemIcon>
-          <ArrowUpwardIcon />
+          <ArrowUpIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveUp')} />
       </MenuItem>,
@@ -231,7 +233,7 @@ function LocationContextMenu(props: Props) {
         onClick={moveLocationDownInt}
       >
         <ListItemIcon>
-          <ArrowDownwardIcon />
+          <ArrowDownIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveDown')} />
       </MenuItem>,

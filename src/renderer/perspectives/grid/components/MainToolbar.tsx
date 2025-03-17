@@ -19,13 +19,18 @@
 import AppConfig from '-/AppConfig';
 import {
   AIIcon,
+  CopyMoveIcon,
   DeleteIcon,
   DownloadIcon,
-  FolderPropertiesIcon,
+  DragOffIcon,
+  DragOnIcon,
+  EntryPropertiesIcon,
+  ExportIcon,
   ParentFolderIcon,
   PerspectiveSettingsIcon,
   SelectedIcon,
   ShareIcon,
+  SortingIcon,
   TagIcon,
   UnSelectedIcon,
 } from '-/components/CommonIcons';
@@ -43,11 +48,6 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
 import { getKeyBindingObject } from '-/reducers/settings';
-import ExportIcon from '@mui/icons-material/AssignmentReturn';
-import DragOffIcon from '@mui/icons-material/CopyAll';
-import DragOnIcon from '@mui/icons-material/CopyAllTwoTone';
-import CopyIcon from '@mui/icons-material/FileCopy';
-import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import { Box, Divider, Toolbar } from '@mui/material/';
 import { alpha, useTheme } from '@mui/material/styles';
 import { saveAs } from 'file-saver';
@@ -170,7 +170,7 @@ function MainToolbar(props: Props) {
         data-tid="openFolderProperties"
         onClick={showProperties}
       >
-        <FolderPropertiesIcon />
+        <EntryPropertiesIcon />
       </TsIconButton>
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
@@ -203,7 +203,7 @@ function MainToolbar(props: Props) {
             data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
             onClick={openMoveCopyFilesDialog}
           >
-            <CopyIcon />
+            <CopyMoveIcon />
           </TsIconButton>
         )}
         {!readOnlyMode && (

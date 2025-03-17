@@ -1,39 +1,38 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
-import MoveCopy from '@mui/icons-material/FileCopy';
-import ListItemText from '@mui/material/ListItemText';
-import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import AppConfig from '-/AppConfig';
-import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
-import Divider from '@mui/material/Divider';
-import { Pro } from '-/pro';
-import ImageIcon from '@mui/icons-material/Image';
-import ImportTagsIcon from '@mui/icons-material/FindInPage';
-import { BetaLabel, ProLabel } from '-/components/HelperComponents';
-import { AvailablePerspectives } from '-/perspectives';
-import PropertiesIcon from '@mui/icons-material/Info';
 import {
-  ReloadIcon,
-  OpenNewWindowIcon,
-  DeleteIcon,
-  LinkIcon,
+  AddExistingFileIcon,
   AudioRecordIcon,
+  CopyMoveIcon,
+  DeleteIcon,
+  EntryPropertiesIcon,
+  HTMLFileIcon,
+  ImportTagsIcon,
+  LinkFileIcon,
+  LinkIcon,
+  MarkdownFileIcon,
   NewFileIcon,
   NewFolderIcon,
-  AddExistingFileIcon,
+  OpenEntryNativelyIcon,
+  OpenFolderIcon,
+  OpenNewWindowIcon,
+  PictureIcon,
+  ReloadIcon,
+  RenameIcon,
   TagIcon,
-  MarkdownFileIcon,
-  HTMLFileIcon,
-  LinkFileIcon,
 } from '-/components/CommonIcons';
-import { getKeyBindingObject } from '-/reducers/settings';
-import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { CommonLocation } from '-/utils/CommonLocation';
+import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { AvailablePerspectives } from '-/perspectives';
+import { Pro } from '-/pro';
+import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import { useSelector } from 'react-redux';
 
 export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
@@ -129,7 +128,7 @@ export function getDirectoryMenuItems(
           }}
         >
           <ListItemIcon>
-            <RenameFolderIcon />
+            <RenameIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:renameDirectory')} />
           <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
@@ -154,7 +153,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <MoveCopy />
+          <CopyMoveIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyDirectory')} />
         <MenuKeyBinding keyBinding={keyBindings['copyMoveSelectedEntries']} />
@@ -201,7 +200,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <OpenFolderNativelyIcon />
+          <OpenEntryNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
         <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
@@ -301,6 +300,7 @@ export function getDirectoryMenuItems(
       );
     }
     if (showCreateDirectoryDialog) {
+      menuItems.push(<Divider />);
       menuItems.push(
         <MenuItem
           key="newSubDirectory"
@@ -352,7 +352,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <ImageIcon />
+          <PictureIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
       </MenuItem>,
@@ -489,7 +489,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <PropertiesIcon />
+          <EntryPropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:directoryPropertiesTitle')} />
         <MenuKeyBinding keyBinding={keyBindings['openEntryDetails']} />

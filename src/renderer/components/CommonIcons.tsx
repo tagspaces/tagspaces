@@ -17,7 +17,7 @@
  */
 
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import MarkdownRawIcon from '@mui/icons-material/SimCardDownload';
+import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
 
 export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} {...props} />
@@ -31,11 +31,11 @@ export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as FolderIcon } from '@mui/icons-material/Folder';
+export { default as FolderIcon } from '@mui/icons-material/FolderOutlined';
 
 export { default as FolderOutlineIcon } from '@mui/icons-material/FolderOpen';
 
-export { default as FileIcon } from '@mui/icons-material/InsertDriveFile';
+export { default as FileIcon } from '@mui/icons-material/InsertDriveFileOutlined';
 
 export { default as MainMenuIcon } from '@mui/icons-material/Menu';
 
@@ -43,11 +43,11 @@ export { default as GoBackIcon } from '@mui/icons-material/ArrowBack';
 
 export { default as GoForwardIcon } from '@mui/icons-material/ArrowForward';
 
-export { default as HelpIcon } from '@mui/icons-material/Help';
+export { default as HelpIcon } from '@mui/icons-material/HelpOutlineOutlined';
 
 export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
+export { default as EntryPropertiesIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as RemoveIcon } from '@mui/icons-material/DeleteOutline';
 
@@ -57,7 +57,7 @@ export { default as SettingsIcon } from '@mui/icons-material/Settings';
 
 export { default as PerspectiveSettingsIcon } from '@mui/icons-material/DisplaySettings';
 
-export { default as CreateFileIcon } from '@mui/icons-material/Add';
+export { default as CreateFileIcon } from '@mui/icons-material/AddCircleOutlineOutlined';
 
 export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
 
@@ -75,7 +75,7 @@ export { default as OpenNewWindowIcon } from '@mui/icons-material/OpenInBrowser'
 
 export { default as ReloadIcon } from '@mui/icons-material/Refresh';
 
-export { default as DeleteIcon } from '@mui/icons-material/Delete';
+export { default as DeleteIcon } from '@mui/icons-material/DeleteOutlined';
 
 export { default as LinkIcon } from '@mui/icons-material/Link';
 
@@ -93,21 +93,21 @@ export { default as EmailIcon } from '@mui/icons-material/MailOutline';
 
 export { default as DateIcon } from '@mui/icons-material/DateRange';
 
-export { default as PictureIcon } from '@mui/icons-material/Panorama';
+export { default as PictureIcon } from '@mui/icons-material/PanoramaOutlined';
 
-export { default as DocumentIcon } from '@mui/icons-material/PictureAsPdf';
+export { default as DocumentIcon } from '@mui/icons-material/PictureAsPdfOutlined';
 
-export { default as NoteIcon } from '@mui/icons-material/Note';
+export { default as NoteIcon } from '@mui/icons-material/NoteOutlined';
 
 export { default as AudioIcon } from '@mui/icons-material/MusicVideo';
 
 export { default as VideoIcon } from '@mui/icons-material/OndemandVideo';
 
-export { default as ArchiveIcon } from '@mui/icons-material/Archive';
+export { default as ArchiveIcon } from '@mui/icons-material/ArchiveOutlined';
 
 export { default as SearchIcon } from '@mui/icons-material/Search';
 
-export { default as CloseIcon } from '@mui/icons-material/Close';
+export { default as CloseIcon } from '@mui/icons-material/CancelOutlined';
 
 export { default as ArrowBackIcon } from '@mui/icons-material/ArrowBackIos';
 
@@ -127,9 +127,9 @@ export { default as EditDescriptionIcon } from '@mui/icons-material/EditNote';
 
 export { default as AudioRecordIcon } from '@mui/icons-material/KeyboardVoice';
 
-export { default as NewFileIcon } from '@mui/icons-material/InsertDriveFile';
+export { default as NewFileIcon } from '@mui/icons-material/InsertDriveFileOutlined';
 
-export { default as NewFolderIcon } from '@mui/icons-material/CreateNewFolder';
+export { default as NewFolderIcon } from '@mui/icons-material/CreateNewFolderOutlined';
 
 export { default as AddExistingFileIcon } from '@mui/icons-material/ExitToApp';
 
@@ -141,17 +141,17 @@ export { default as PauseIcon } from '@mui/icons-material/Pause';
 
 export { default as SaveIcon } from '@mui/icons-material/Save';
 
-export { default as DownloadIcon } from '@mui/icons-material/DownloadForOffline';
+export { default as DownloadIcon } from '@mui/icons-material/DownloadForOfflineOutlined';
 
-export { default as TagIcon } from '@mui/icons-material/LocalOffer';
+export { default as TagIcon } from '@mui/icons-material/LocalOfferOutlined';
 
 export { default as IDIcon } from '@mui/icons-material/Abc';
 
-export { default as AudioFileIcon } from '@mui/icons-material/AudioFile';
+export { default as AudioFileIcon } from '@mui/icons-material/AudioFileOutlined';
 
-export { default as HTMLFileIcon } from '@mui/icons-material/Description';
+export { default as HTMLFileIcon } from '@mui/icons-material/DescriptionOutlined';
 
-export { default as LinkFileIcon } from '@mui/icons-material/FileOpen';
+export { default as LinkFileIcon } from '@mui/icons-material/FileOpenOutlined';
 
 export { default as AccountIcon } from '@mui/icons-material/AccountCircle';
 
@@ -178,7 +178,7 @@ export { default as TagLibraryIcon } from '@mui/icons-material/LocalOfferOutline
 
 export { default as RecentThingsIcon } from '@mui/icons-material/BookmarksOutlined';
 
-export { default as AIIcon } from '@mui/icons-material/AutoFixHigh'; // AutoAwesome AutoFixHigh
+export { default as AIIcon } from '@mui/icons-material/AutoFixHighOutlined'; // AutoAwesome AutoFixHigh
 
 export { default as ExtensionIcon } from '@mui/icons-material/Extension';
 
@@ -188,9 +188,9 @@ export { default as OptionsIcon } from '@mui/icons-material/FactCheck';
 
 export { default as AdvancedSettingsIcon } from '@mui/icons-material/DisplaySettings';
 
-export { default as ArrowUpIcon } from '@mui/icons-material/ArrowUpward';
+export { default as ArrowUpIcon } from '@mui/icons-material/ArrowCircleUpOutlined';
 
-export { default as ArrowDownIcon } from '@mui/icons-material/ArrowDownward';
+export { default as ArrowDownIcon } from '@mui/icons-material/ArrowCircleDownOutlined';
 
 export { default as SmallArrowUpIcon } from '@mui/icons-material/KeyboardArrowDown';
 
@@ -200,4 +200,36 @@ export { default as SmallArrowRightIcon } from '@mui/icons-material/KeyboardArro
 
 export { default as ExportImportIcon } from '@mui/icons-material/SwapHoriz';
 
+export { default as ExportIcon } from '@mui/icons-material/AssignmentReturnOutlined';
+
+export { default as SortingIcon } from '@mui/icons-material/SwapVerticalCircleOutlined';
+
 export { default as ShareIcon } from '@mui/icons-material/Share';
+
+export { default as CopyMoveIcon } from '@mui/icons-material/FileCopyOutlined';
+
+export { default as DragOffIcon } from '@mui/icons-material/CopyAll';
+
+export { default as DragOnIcon } from '@mui/icons-material/CopyAllTwoTone';
+
+export { default as ImportTagsIcon } from '@mui/icons-material/FindInPageOutlined';
+
+export { default as RenameIcon } from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+
+export { default as OpenEntryNativelyIcon } from '@mui/icons-material/Launch';
+
+export { default as OpenFolderIcon } from '@mui/icons-material/SubdirectoryArrowLeft';
+
+export { default as OpenFileIcon } from '@mui/icons-material/SubdirectoryArrowRight';
+
+export { default as DuplicateFile } from '@mui/icons-material/DifferenceOutlined';
+
+export { default as DefaultLocationIcon } from '@mui/icons-material/HighlightOutlined';
+
+export { default as MoreInfoIcon } from '@mui/icons-material/OfflineBoltOutlined';
+
+export { default as ArrowLeftIcon } from '@mui/icons-material/ArrowCircleLeftOutlined';
+
+export { default as ArrowRightIcon } from '@mui/icons-material/ArrowCircleRightOutlined';
+
+export { default as PlayIcon } from '@mui/icons-material/PlayCircleFilledWhiteOutlined';

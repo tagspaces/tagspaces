@@ -16,28 +16,29 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import ListItemText from '@mui/material/ListItemText';
+import AppConfig from '-/AppConfig';
+import {
+  CreateFileIcon,
+  ExportImportIcon,
+  HelpIcon,
+  ReloadIcon,
+} from '-/components/CommonIcons';
+import { ProLabel, ProTooltip } from '-/components/HelperComponents';
+import TsMenuList from '-/components/TsMenuList';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { Pro } from '-/pro';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { openURLExternally } from '-/services/utils-io';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ImportExportIcon from '@mui/icons-material/SwapHoriz';
-import HelpIcon from '@mui/icons-material/Help';
-import AddIcon from '@mui/icons-material/Add';
-import ReloadIcon from '@mui/icons-material/Sync';
-import AppConfig from '-/AppConfig';
-import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import Links from 'assets/links';
-import TsMenuList from '-/components/TsMenuList';
-import { ProLabel, ProTooltip } from '-/components/HelperComponents';
-import { Pro } from '-/pro';
-import { openURLExternally } from '-/services/utils-io';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useSelector } from 'react-redux';
-import { getSaveTagInLocation } from '-/reducers/settings';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 
 interface Props {
   classes?: any;
@@ -122,7 +123,7 @@ function TagLibraryMenu(props: Props) {
             }}
           >
             <ListItemIcon>
-              <AddIcon />
+              <CreateFileIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:createTagGroupTitle')} />
           </MenuItem>
@@ -153,14 +154,14 @@ function TagLibraryMenu(props: Props) {
           </ProTooltip>
           <MenuItem data-tid="importTagGroup" onClick={handleImportTagGroup}>
             <ListItemIcon>
-              <ImportExportIcon />
+              <ExportImportIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:importTags')} />
           </MenuItem>
           {!AppConfig.isCordovaAndroid && (
             <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
               <ListItemIcon>
-                <ImportExportIcon />
+                <ExportImportIcon />
               </ListItemIcon>
               <ListItemText primary={t('core:exportTagGroupsButton')} />
             </MenuItem>

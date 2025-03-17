@@ -18,11 +18,22 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CopyMoveIcon,
   DeleteIcon,
   DownloadIcon,
+  DuplicateFile,
+  EntryPropertiesIcon,
+  FolderIcon,
   LinkIcon,
+  OpenEntryNativelyIcon,
+  OpenFileIcon,
   OpenNewWindowIcon,
   ParentFolderIcon,
+  PictureIcon,
+  RenameIcon,
+  ShareIcon,
   TagIcon,
 } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
@@ -46,17 +57,6 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
-import MoveCopy from '@mui/icons-material/FileCopy';
-import OpenFolderInternally from '@mui/icons-material/Folder';
-import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
-import ImageIcon from '@mui/icons-material/Image';
-import PropertiesIcon from '@mui/icons-material/Info';
-import OpenFileNatively from '@mui/icons-material/Launch';
-import DuplicateFile from '@mui/icons-material/PostAdd';
-import ShareIcon from '@mui/icons-material/Share';
-import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
-import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
 import { Menu, MenuItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -331,7 +331,7 @@ function FileMenu(props: Props) {
         onClick={openFile}
       >
         <ListItemIcon>
-          <OpenFile />
+          <OpenFileIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:openFile')} />
         <MenuKeyBinding keyBinding={keyBindings['openEntry']} />
@@ -378,7 +378,7 @@ function FileMenu(props: Props) {
         onClick={openFileNativelyHandler}
       >
         <ListItemIcon>
-          <OpenFileNatively />
+          <OpenEntryNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:openFileNatively')} />
         <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
@@ -397,7 +397,7 @@ function FileMenu(props: Props) {
           }}
         >
           <ListItemIcon>
-            <OpenFolderInternally />
+            <FolderIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:showInFileManager')} />
         </MenuItem>,
@@ -430,7 +430,7 @@ function FileMenu(props: Props) {
           }}
         >
           <ListItemIcon>
-            <MoveToTopIcon />
+            <ArrowUpIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:moveToTop')} />
         </MenuItem>,
@@ -447,7 +447,7 @@ function FileMenu(props: Props) {
           }}
         >
           <ListItemIcon>
-            <MoveToBottomIcon />
+            <ArrowDownIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:moveToBottom')} />
         </MenuItem>,
@@ -461,7 +461,7 @@ function FileMenu(props: Props) {
         onClick={showRenameFileDialog}
       >
         <ListItemIcon>
-          <RenameFile />
+          <RenameIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:renameFile')} />
         <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
@@ -508,7 +508,7 @@ function FileMenu(props: Props) {
         onClick={showMoveCopyFilesDialog}
       >
         <ListItemIcon>
-          <MoveCopy />
+          <CopyMoveIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyFile')} />
         <MenuKeyBinding keyBinding={keyBindings['copyMoveSelectedEntries']} />
@@ -536,7 +536,7 @@ function FileMenu(props: Props) {
           onClick={setFolderThumbnail}
         >
           <ListItemIcon>
-            <ImageIcon />
+            <PictureIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:setAsThumbnail')} />
         </MenuItem>,
@@ -549,7 +549,7 @@ function FileMenu(props: Props) {
             onClick={() => setFolderBackground()}
           >
             <ListItemIcon>
-              <ImageIcon />
+              <PictureIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:setAsBackground')} />
           </MenuItem>,
@@ -616,7 +616,7 @@ function FileMenu(props: Props) {
         onClick={showProperties}
       >
         <ListItemIcon>
-          <PropertiesIcon />
+          <EntryPropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:filePropertiesTitle')} />
         <MenuKeyBinding keyBinding={keyBindings['openEntryDetails']} />

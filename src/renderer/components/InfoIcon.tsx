@@ -16,10 +16,8 @@
  *
  */
 
-import React from 'react';
-import { InfoTooltipIcon } from '-/components/CommonIcons';
-import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import Tooltip from '-/components/Tooltip';
+import HelpOutlined from '@mui/icons-material/NotListedLocationOutlined';
 
 interface Props {
   tooltip?: string;
@@ -29,7 +27,7 @@ function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip title={tooltip}>
-      <NotListedLocationIcon style={{ opacity: '0.7' }} />
+      <HelpOutlined fontSize="small" style={{ opacity: '0.7' }} />
     </Tooltip>
   );
 }

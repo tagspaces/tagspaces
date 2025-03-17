@@ -22,6 +22,7 @@ import {
   AddExistingFileIcon,
   AudioFileIcon,
   CreateFileIcon,
+  DownloadIcon,
   HTMLFileIcon,
   HelpIcon,
   LinkFileIcon,
@@ -69,7 +70,6 @@ import {
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Divider } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -376,7 +376,7 @@ function MobileNavigation(props: Props) {
                           }}
                         >
                           <ListItemIcon>
-                            <FileDownloadIcon />
+                            <DownloadIcon />
                           </ListItemIcon>
                           <ListItemText
                             primary={t('core:newFromDownloadURL')}

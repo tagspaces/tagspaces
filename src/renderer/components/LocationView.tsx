@@ -19,6 +19,7 @@
 import AppConfig from '-/AppConfig';
 import {
   CloudLocationIcon,
+  DefaultLocationIcon,
   LocalLocationIcon,
   MoreMenuIcon,
 } from '-/components/CommonIcons';
@@ -40,7 +41,6 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';

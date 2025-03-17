@@ -18,9 +18,12 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  CloseIcon,
+  ExportImportIcon,
   HelpIcon,
   LocalLocationIcon,
   MoreMenuIcon,
+  ReloadIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsIconButton from '-/components/TsIconButton';
@@ -29,9 +32,6 @@ import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogCo
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { openURLExternally } from '-/services/utils-io';
-import CloseIcon from '@mui/icons-material/Close';
-import ExportImportIcon from '@mui/icons-material/SwapHoriz';
-import UpdateIndexIcon from '@mui/icons-material/Update';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -175,7 +175,7 @@ function LocationManagerMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <UpdateIndexIcon />
+        <ReloadIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:updateAllLocationIndexes')} />
     </MenuItem>,

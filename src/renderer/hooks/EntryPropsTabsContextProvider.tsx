@@ -21,16 +21,16 @@ import {
   AIIcon,
   DescriptionIcon,
   EditDescriptionIcon,
-  FolderPropertiesIcon,
+  EntryPropertiesIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
-import LinkIcon from '@mui/icons-material/Link';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
-import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
+import { isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
+import LinkIcon from '@mui/icons-material/Link';
 import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
 import React, { createContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +120,7 @@ export const EntryPropsTabsContextProvider = ({
   async function getTabsArray(oEntry: TS.OpenedEntry): Promise<TabItem[]> {
     //const location: CommonLocation = findLocation(oEntry.locationID);
     const tab1: TabItem = {
-      icon: <FolderPropertiesIcon />,
+      icon: <EntryPropertiesIcon />,
       title: t('core:details'),
       name: TabNames.propertiesTab,
     };
