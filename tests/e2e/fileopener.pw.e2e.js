@@ -160,14 +160,14 @@ test.describe('TST08 - File folder properties', () => {
     expect(firstFileName).toBe(propsFileName);
 
     await clickOn('[data-tid=fileContainerPrevFile]');
-    const lastFileName = await getGridFileName(-1);
+    const lastFileName = await getGridFileName(-1, false);
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(lastFileName) + ']',
       true,
       5000,
     );
     const propsNextFileName = await getPropertiesFileName();
-    expect(lastFileName).toBe(propsNextFileName);
+    expect(lastFileName.replace(/ *\[[^\]]*]/, '')).toBe(propsNextFileName);
   });
 
   /**
