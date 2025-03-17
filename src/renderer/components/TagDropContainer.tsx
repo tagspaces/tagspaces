@@ -23,8 +23,8 @@ import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   children: ReactNode;
-  entryPath: string;
-  selectedEntries?: Array<TS.FileSystemEntry>;
+  entry?: TS.FileSystemEntry;
+  //selectedEntries?: Array<TS.FileSystemEntry>;
 }
 
 interface DragItem {
@@ -34,6 +34,7 @@ interface DragItem {
 }
 
 function TagDropContainer(props: Props) {
+  const { entry } = props;
   const ref = useRef<HTMLDivElement>(null);
 
   const [collectedProps, drop] = useDrop({
@@ -44,16 +45,18 @@ function TagDropContainer(props: Props) {
         handlerId: monitor.getHandlerId(),
         isActive,
         canDrop: monitor.canDrop(),
-        selectedEntries: props.selectedEntries,
-        entryPath: props.entryPath,
+        //selectedEntries: props.selectedEntries,
+        entryPath: entry?.path,
+        isFile: entry?.isFile,
       };
     },
     drop(item: DragItem, monitor: DropTargetMonitor) {
       // console.log('DROP: ', item);
       // console.log('DROP: ', monitor.canDrop());
       return {
-        selectedEntries: collectedProps.selectedEntries,
+        //selectedEntries: collectedProps.selectedEntries,
         entryPath: collectedProps.entryPath,
+        isFile: collectedProps.isFile,
       };
     },
   });

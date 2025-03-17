@@ -319,12 +319,7 @@ function GridPerspective(props: Props) {
 
     const selectionMode = selectedEntries.length > 1;
     return (
-      <TagDropContainer
-        entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
-        selectedEntries={
-          selectedEntries.length > 0 ? selectedEntries : [fsEntry]
-        }
-      >
+      <TagDropContainer entry={fsEntry}>
         <GridCell
           selected={selected}
           fsEntry={fsEntry}

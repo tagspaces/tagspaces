@@ -108,7 +108,7 @@ const TagContainerDnd = (props: Props) => {
         addTags(selectedEntries, [item.tag]);
       } else {
         addTags(
-          [currentLocation.toFsEntry(dropResult.entryPath, true)],
+          [currentLocation.toFsEntry(dropResult.entryPath, dropResult.isFile)],
           [item.tag],
         );
       }
