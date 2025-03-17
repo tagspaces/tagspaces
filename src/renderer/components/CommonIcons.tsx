@@ -16,6 +16,7 @@
  *
  */
 
+import ImportIcon from '@mui/icons-material/AssignmentReturnOutlined';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
 
@@ -198,7 +199,12 @@ export { default as SmallArrowRightIcon } from '@mui/icons-material/KeyboardArro
 
 export { default as ExportImportIcon } from '@mui/icons-material/SwapHoriz';
 
-export { default as ExportIcon } from '@mui/icons-material/AssignmentReturnOutlined';
+export { default as ImportIcon } from '@mui/icons-material/AssignmentReturnOutlined';
+
+//             style={{ transform: 'scale(-1, 1)' }}
+export const ExportIcon = (props) => (
+  <ImportIcon style={{ transform: 'rotate(180deg)' }} {...props} />
+);
 
 export { default as SortingIcon } from '@mui/icons-material/SwapVerticalCircleOutlined';
 

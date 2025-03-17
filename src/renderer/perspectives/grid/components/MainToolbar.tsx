@@ -256,7 +256,6 @@ function MainToolbar(props: Props) {
             tooltip={t('core:exportCsv')}
             data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
             onClick={handleExportCsvMenu}
-            style={{ transform: 'scale(-1, 1)' }}
           >
             <ExportIcon />
           </TsIconButton>
