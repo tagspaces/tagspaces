@@ -93,7 +93,7 @@ test.describe('TST01 - Folder management', () => {
 
     await deleteDirectory();
     // await takeScreenshot('TST0101 after deleteDirectory');
-    await reloadDirectory();
+    // await reloadDirectory();
     // await takeScreenshot('TST0101 after reloadDirectory');
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -281,15 +281,16 @@ test.describe('TST01 - Folder management', () => {
     );
 
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
-
     const newStyle = await waitUntilChanged(
       '[data-tid=folderThumbTID]',
       folderThumbStyle,
       'style',
     );
-    console.log('style changed:' + newStyle);
+    //console.log('style changed:' + newStyle); style changed:border-radius: 10px; height: 100px; width: 140px; background-image: url("http://127.0.0.1:9000/supported-filestypes/empty_folder/.ts/tst.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=minioadmin%2F20250317%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250317T112107Z&X-Amz-Expires=900&X-Amz-Signature=c0ccb39b79e20291b3c889c728e27b989119b5a542ba8b304e0e2486f20b4d47&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"); background-size: cover; background-repeat: no-repeat; background-position: center center; position: absolute; top: 0px; right: 0px;
 
-    // await global.client.waitForTimeout(1000000);
+    if (global.isWin && global.isWeb) {
+      await global.client.waitForTimeout(2000); // todo in Web Windows style is changed before thumbnail changes
+    }
 
     const withThumbScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',

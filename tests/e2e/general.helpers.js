@@ -205,9 +205,10 @@ export async function typeInputValue(inputSelector, value, delay = 0) {
 
 /**
  * @param fileIndex
+ * @param cleanTags
  * @returns {Promise<string>} fileName; example usage: getFileName(-1) will return the last one
  */
-export async function getGridFileName(fileIndex) {
+export async function getGridFileName(fileIndex, cleanTags = true) {
   try {
     const filesList = await global.client.$$(selectorFile);
     if (filesList.length > 0) {
@@ -221,7 +222,7 @@ export async function getGridFileName(fileIndex) {
       //file = await file.$('div');
       const fileNameElem = await file.$('div div div:nth-child(2) p');
       const fileName = await fileNameElem.getAttribute('title');
-      return fileName.replace(/ *\[[^\]]*]/, '');
+      return cleanTags ? fileName.replace(/ *\[[^\]]*]/, '') : fileName;
       /*const fileName = await getElementText(fileNameElem);
       const divs = await file.$$('div');
       const lastDiv = await divs[divs.length - 1];
