@@ -20,6 +20,14 @@ import AppConfig from '-/AppConfig';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import MarkerShadowIcon from '-/assets/icons/marker-shadow.png';
+import {
+  ClearColorIcon,
+  ColorPaletteIcon,
+  IDIcon,
+  OpenLinkIcon,
+  QrCodeIcon,
+  SetColorIcon,
+} from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import NoTileServer from '-/components/NoTileServer';
@@ -52,10 +60,6 @@ import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
 import { parseGeoLocation } from '-/utils/geo';
 import useFirstRender from '-/utils/useFirstRender';
-import ColorPaletteIcon from '@mui/icons-material/ColorLens';
-import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
-import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
-import QRCodeIcon from '@mui/icons-material/QrCode';
 import {
   Box,
   FormControl,
@@ -769,6 +773,11 @@ function EntryProperties(props: Props) {
             slotProps={{
               input: {
                 readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <OpenLinkIcon />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <TsButton
@@ -813,15 +822,15 @@ function EntryProperties(props: Props) {
                           tooltip={t('core:generateDownloadLink')}
                           onClick={() => setShowSharingLinkDialog(true)}
                           variant="text"
-                          startIcon={
-                            <QRCodeIcon
-                              style={{ color: theme.palette.text.secondary }}
-                            />
-                          }
                         >
                           {t('core:generateDownloadLink')}
                         </TsButton>
                         <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
+                      </InputAdornment>
+                    ),
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <QrCodeIcon />
                       </InputAdornment>
                     ),
                   },
@@ -912,7 +921,7 @@ function EntryProperties(props: Props) {
                                     margin: 5,
                                   }}
                                 >
-                                  <SetBackgroundIcon />
+                                  <SetColorIcon />
                                 </TsIconButton>
                                 {cnt % 4 === 3 && <br />}
                               </>
@@ -931,7 +940,7 @@ function EntryProperties(props: Props) {
                                 setConfirmResetColorDialogOpened(true)
                               }
                             >
-                              <ClearBackgroundIcon />
+                              <ClearColorIcon />
                             </TsIconButton>
                           </ProTooltip>
                         </>
@@ -1071,6 +1080,11 @@ function EntryProperties(props: Props) {
             slotProps={{
               input: {
                 readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IDIcon />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <TsButton

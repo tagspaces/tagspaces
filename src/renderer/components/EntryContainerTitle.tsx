@@ -19,6 +19,9 @@
 import AppConfig from '-/AppConfig';
 import {
   ArrowBackIcon,
+  EncryptedIcon,
+  EntryBookmarkAddIcon,
+  EntryBookmarkIcon,
   FolderIcon,
   MoreMenuIcon,
 } from '-/components/CommonIcons';
@@ -35,9 +38,6 @@ import { getSupportedFileTypes } from '-/reducers/settings';
 import { dataTidFormat } from '-/services/test';
 import { findColorForEntry, getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
-import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
-import HttpsIcon from '@mui/icons-material/Https';
 import Box from '@mui/material/Box';
 import { styled, useTheme } from '@mui/material/styles';
 import {
@@ -273,13 +273,13 @@ function EntryContainerTitle(props: Props) {
         >
           {bookmarksContext &&
           bookmarksContext.haveBookmark(openedEntry.path) ? (
-            <BookmarkIcon
+            <EntryBookmarkIcon
               style={{
                 color: theme.palette.primary.main,
               }}
             />
           ) : (
-            <BookmarkAddIcon
+            <EntryBookmarkAddIcon
               style={{
                 color: theme.palette.text.secondary,
               }}
@@ -290,7 +290,7 @@ function EntryContainerTitle(props: Props) {
       <TagsPreview tags={getAllTags(openedEntry)} />
       {openedEntry.isEncrypted && (
         <Tooltip title={t('core:encryptedTooltip')}>
-          <HttpsIcon
+          <EncryptedIcon
             style={{
               color: theme.palette.primary.main,
             }}

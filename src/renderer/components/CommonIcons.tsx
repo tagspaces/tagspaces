@@ -241,3 +241,17 @@ export { default as PlayIcon } from '@mui/icons-material/PlayCircleFilledWhiteOu
 export { default as FullScreenIcon } from '@mui/icons-material/ZoomOutMap';
 
 export { default as FullWidthIcon } from '@mui/icons-material/SettingsEthernet';
+
+export { default as ColorPaletteIcon } from '@mui/icons-material/ColorLensOutlined';
+
+export { default as ClearColorIcon } from '@mui/icons-material/FormatColorResetOutlined';
+
+export { default as SetColorIcon } from '@mui/icons-material/WaterDropOutlined';
+
+export { default as QrCodeIcon } from '@mui/icons-material/QrCode2Outlined';
+
+export { default as EntryBookmarkAddIcon } from '@mui/icons-material/BookmarkAddTwoTone';
+
+export { default as EntryBookmarkIcon } from '@mui/icons-material/BookmarkTwoTone';
+
+export { default as EncryptedIcon } from '@mui/icons-material/HttpsOutlined';

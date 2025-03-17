@@ -17,14 +17,17 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { HistoryIcon, RemoveIcon } from '-/components/CommonIcons';
+import {
+  EntryBookmarkIcon,
+  HistoryIcon,
+  RemoveIcon,
+} from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
 import { TS } from '-/tagspaces.namespace';
-import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import { Tooltip } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import {
@@ -93,7 +96,7 @@ function RenderHistory(props: Props) {
                   }
                 >
                   {historyKey === Pro.keys.bookmarksKey ? (
-                    <BookmarkTwoToneIcon />
+                    <EntryBookmarkIcon />
                   ) : (
                     <HistoryIcon />
                   )}
