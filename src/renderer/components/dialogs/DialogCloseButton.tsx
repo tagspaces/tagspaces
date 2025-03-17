@@ -16,9 +16,8 @@
  *
  */
 
-import React from 'react';
+import { CloseDialogIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
-import { CloseIcon } from '-/components/CommonIcons';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -43,7 +42,7 @@ function DialogCloseButton(props: Props) {
       data-tid={testId && testId}
       onClick={onClose}
     >
-      <CloseIcon />
+      <CloseDialogIcon />
     </TsIconButton>
   );
 }

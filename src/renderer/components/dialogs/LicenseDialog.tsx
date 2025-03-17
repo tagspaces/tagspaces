@@ -28,8 +28,6 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 
-// import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
 interface Props {
   open: boolean;
   onClose: () => void;
