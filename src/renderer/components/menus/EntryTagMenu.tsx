@@ -56,7 +56,8 @@ function EntryTagMenu(props: Props) {
   const { t } = useTranslation();
 
   const { setSearchQuery } = useDirectoryContentContext();
-  const { removeTags, openEditEntryTagDialog } = useTaggingActionsContext();
+  const { removeTagsFromEntry, openEditEntryTagDialog } =
+    useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
 
@@ -86,7 +87,7 @@ function EntryTagMenu(props: Props) {
     if (removeTagsProps) {
       removeTagsProps([currentEntry.path], [selectedTag]);
     } else {
-      removeTags([currentEntry.path], [selectedTag]);
+      removeTagsFromEntry(currentEntry, [selectedTag]);
     }
     onClose();
   }

@@ -321,7 +321,7 @@ export const renderCellPlaceholder = () => {
         position: 'relative',
       }}
     >
-      <TagDropContainer entryPath="">
+      <TagDropContainer>
         <div></div>
       </TagDropContainer>
     </div>

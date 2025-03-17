@@ -81,9 +81,14 @@ type TaggingActionsContextData = {
     collectTags?: boolean,
   ) => Promise<TS.FileSystemEntry>;
   editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
-  removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
-  removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<string>;
-  removeAllTags: (paths: Array<string>) => Promise<boolean>;
+  removeTags: (
+    fsEntries: TS.FileSystemEntry[],
+    tags?: Array<TS.Tag>,
+  ) => Promise<boolean>;
+  removeTagsFromEntry: (
+    fsEntry: TS.FileSystemEntry,
+    tags?: Array<TS.Tag>,
+  ) => Promise<string>;
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   createTagGroup: (
     entry: TS.TagGroup,
@@ -130,7 +135,6 @@ export const TaggingActionsContext = createContext<TaggingActionsContextData>({
   editTagForEntry: undefined,
   removeTags: undefined,
   removeTagsFromEntry: undefined,
-  removeAllTags: undefined,
   collectTagsFromLocation: undefined,
   createTagGroup: undefined,
   mergeTagGroup: undefined,
@@ -779,11 +783,11 @@ export const TaggingActionsContextProvider = ({
   }
 
   function removeTags(
-    paths: Array<string>,
+    fsEntries: TS.FileSystemEntry[],
     tags?: Array<TS.Tag>,
   ): Promise<boolean> {
-    const promises = paths.map((path) =>
-      removeTagsFromEntry(path, tags, false),
+    const promises = fsEntries.map((entry) =>
+      removeTagsFromEntry(entry, tags, false),
     );
     return Promise.all(promises).then((editedPaths) => {
       const promiseReflect: Promise<TS.EditAction>[] = [];
@@ -795,7 +799,7 @@ export const TaggingActionsContextProvider = ({
                 const currentAction: TS.EditAction = {
                   action: 'update',
                   entry: fsEntry,
-                  oldEntryPath: paths[i],
+                  oldEntryPath: fsEntries[i].path,
                 };
                 return currentAction;
               },
@@ -811,13 +815,13 @@ export const TaggingActionsContextProvider = ({
   }
 
   /**
-   * @param path
+   * @param fsEntry: TS.FileSystemEntry
    * @param tags? if undefined will remove all tags
    * @param reflect
    * return newPath
    */
   function removeTagsFromEntry(
-    path: string,
+    fsEntry: TS.FileSystemEntry,
     tags?: Array<TS.Tag>,
     reflect: boolean = true,
   ): Promise<string> {
@@ -825,7 +829,7 @@ export const TaggingActionsContextProvider = ({
       ? tags.map((tag) => tag.title)
       : undefined;
     return currentLocation
-      .loadMetaDataPromise(path)
+      .loadMetaDataPromise(fsEntry.path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         return removeTagsFromFilename(fsEntryMeta.isFile, reflect).then(
           (newFilePath) => {
@@ -852,9 +856,11 @@ export const TaggingActionsContextProvider = ({
         );
       })
       .catch((error) => {
-        console.log('Error removing tags for ' + path + ' with ' + error);
+        console.log(
+          'Error removing tags for ' + fsEntry.path + ' with ' + error,
+        );
         // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
-        return removeTagsFromFilename(true, reflect);
+        return removeTagsFromFilename(fsEntry.isFile, reflect);
       });
 
     function removeTagsFromSideCar(
@@ -903,17 +909,21 @@ export const TaggingActionsContextProvider = ({
       reflect = true,
     ): Promise<string> {
       if (!isFile) {
-        return Promise.resolve(path);
+        return Promise.resolve(fsEntry.path);
       }
       return new Promise(async (resolve, reject) => {
         const dirSeparator = currentLocation
           ? currentLocation.getDirSeparator()
           : AppConfig.dirSeparator;
-        let extractedTags = extractTags(path, tagDelimiter, dirSeparator);
+        let extractedTags = extractTags(
+          fsEntry.path,
+          tagDelimiter,
+          dirSeparator,
+        );
         if (extractedTags.length > 0) {
-          const fileName = extractFileName(path, dirSeparator);
+          const fileName = extractFileName(fsEntry.path, dirSeparator);
           const containingDirectoryPath = extractContainingDirectoryPath(
-            path,
+            fsEntry.path,
             dirSeparator,
           );
           if (tagTitlesForRemoving) {
@@ -942,9 +952,9 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer,
               filenameTagPlacedAtEnd,
             );
-          if (path !== newFilePath) {
+          if (fsEntry.path !== newFilePath) {
             const success = await renameFile(
-              path,
+              fsEntry.path,
               newFilePath,
               currentLocation.uuid,
               reflect,
@@ -957,14 +967,10 @@ export const TaggingActionsContextProvider = ({
           }
           resolve(newFilePath);
         } else {
-          resolve(path);
+          resolve(fsEntry.path);
         }
       });
     }
-  }
-
-  function removeAllTags(paths: Array<string>): Promise<boolean> {
-    return removeTags(paths);
   }
 
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
@@ -1466,7 +1472,6 @@ export const TaggingActionsContextProvider = ({
       editTagForEntry,
       removeTags,
       removeTagsFromEntry,
-      removeAllTags,
       collectTagsFromLocation,
       createTagGroup,
       mergeTagGroup,

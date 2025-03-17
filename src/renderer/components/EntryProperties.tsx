@@ -166,8 +166,7 @@ function EntryProperties(props: Props) {
     saveDirectoryPerspective,
   } = useIOActionsContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { addTagsToFsEntry, removeTags, removeAllTags } =
-    useTaggingActionsContext();
+  const { addTagsToFsEntry, removeTagsFromEntry } = useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
 
@@ -396,12 +395,12 @@ function EntryProperties(props: Props) {
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element
-        return removeAllTags([openedEntry.path]);
+        return removeTagsFromEntry(openedEntry);
       } else {
-        return removeTags([openedEntry.path], value);
+        return removeTagsFromEntry(openedEntry, value);
       }
     } else if (action === 'clear') {
-      return removeAllTags([openedEntry.path]);
+      return removeTagsFromEntry(openedEntry);
     }
     // create-option or select-option
     const tags =
@@ -553,7 +552,7 @@ function EntryProperties(props: Props) {
           )}
         </Grid>
         <Grid size={12}>
-          <TagDropContainer entryPath={openedEntry.path}>
+          <TagDropContainer entry={openedEntry}>
             <TagsSelect
               label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
