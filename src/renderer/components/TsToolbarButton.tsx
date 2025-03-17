@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2024-present TagSpaces GmbH
+ * Copyright (C) 2025-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -19,25 +19,55 @@
 import AppConfig from '-/AppConfig';
 import TooltipTS from '-/components/Tooltip';
 import { isDesktopMode } from '-/reducers/settings';
+import { Typography } from '@mui/material';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 
 export type TSIconButtonProps = IconButtonProps & {
+  title?: string;
   tooltip?: string;
   keyBinding?: string;
+  showTitle?: boolean;
 };
 
-function TsIconButton(props: TSIconButtonProps) {
-  const { children, keyBinding, tooltip, disabled, ...restProps } = props;
+function TsToolbarButton(props: TSIconButtonProps) {
+  const {
+    children,
+    keyBinding,
+    tooltip,
+    title,
+    disabled,
+    // showTitle = false,
+    ...restProps
+  } = props;
+  const showTitle = true;
   const desktopMode = useSelector(isDesktopMode);
+  const theme = useTheme();
   const iconButton = (
     <IconButton
       size={desktopMode ? 'medium' : 'large'}
-      style={{ borderRadius: AppConfig.defaultCSSRadius }}
       disabled={disabled}
+      style={{ borderRadius: AppConfig.defaultCSSRadius, display: 'block' }}
+      sx={{
+        '& .MuiSvgIcon-root ': {
+          width: showTitle ? '0.8em' : '1em',
+          heigh: showTitle ? '0.8em' : '1em',
+        },
+        // border: '1px solid transparent',
+        // '&:hover': {
+        //   border: '1px solid ' + alpha(theme.palette.divider, 0.9),
+        //   borderRadius: AppConfig.defaultCSSRadius,
+        // },
+      }}
       {...restProps}
     >
       {children}
+      {showTitle && (
+        <Typography style={{ display: 'block', fontSize: 11, marginTop: -5 }}>
+          {title}
+        </Typography>
+      )}
     </IconButton>
   );
   return tooltip && !disabled ? (
@@ -49,4 +79,4 @@ function TsIconButton(props: TSIconButtonProps) {
   );
 }
 
-export default TsIconButton;
+export default TsToolbarButton;

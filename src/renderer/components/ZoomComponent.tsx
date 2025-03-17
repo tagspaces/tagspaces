@@ -16,27 +16,29 @@
  *
  */
 
-import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
-import ZoomInIcon from '@mui/icons-material/ControlPoint';
-import Typography from '@mui/material/Typography';
-import TsIconButton from '-/components/TsIconButton';
+import TsToolbarButton from '-/components/TsToolbarButton';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import ZoomInIcon from '@mui/icons-material/ControlPoint';
+import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import { useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   preview: boolean;
+  showTitle?: boolean;
 }
 
 export default function ZoomComponent(props: Props) {
-  const { preview } = props;
+  const { preview, showTitle } = props;
   const { entrySize, setSettings, saveSettings } =
     usePerspectiveSettingsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
   const entrySizePercent = mapEntrySizeToPercent();
+  const { t } = useTranslation();
 
   function mapEntrySizeToPercent() {
     if (entrySize === 'huge') {
@@ -90,18 +92,18 @@ export default function ZoomComponent(props: Props) {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <TsIconButton onClick={zoomOut}>
+      <TsToolbarButton tooltip={t('core:zoomOut')} title="‎" onClick={zoomOut}>
         <ZoomOutIcon />
-      </TsIconButton>
+      </TsToolbarButton>
       <Typography
         variant="overline"
         style={{ color: theme.palette.text.primary, marginTop: 4 }}
       >
         {entrySizePercent}
       </Typography>
-      <TsIconButton onClick={zoomIn}>
+      <TsToolbarButton tooltip={t('core:zoomIn')} title="‎" onClick={zoomIn}>
         <ZoomInIcon />
-      </TsIconButton>
+      </TsToolbarButton>
     </Box>
   );
 }
