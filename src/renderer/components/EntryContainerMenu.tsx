@@ -1,50 +1,45 @@
-import React, { useState } from 'react';
-import {
-  baseName,
-  extractFileName,
-  extractDirectoryName,
-} from '@tagspaces/tagspaces-common/paths';
-import {
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Divider,
-} from '@mui/material';
-import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import {
+  CloseIcon,
   DeleteIcon,
+  DownloadIcon,
+  FullScreenIcon,
+  FullWidthIcon,
   LinkIcon,
   NavigateToFolderIcon,
+  OpenEntryNativelyIcon,
   OpenNewWindowIcon,
   ParentFolderIcon,
   ReloadIcon,
-  CloseIcon,
-  DownloadIcon,
 } from '-/components/CommonIcons';
-import ExpandIcon from '@mui/icons-material/SettingsEthernet';
-import OpenNativelyIcon from '@mui/icons-material/Launch';
-import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
+import TsMenuList from '-/components/TsMenuList';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import {
+  getKeyBindingObject,
   getWarningOpeningFilesExternally,
   isDesktopMode,
 } from '-/reducers/settings';
-import { useTranslation } from 'react-i18next';
-import { getKeyBindingObject } from '-/reducers/settings';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import {
   createNewInstance,
   openDirectoryMessage,
   openFileMessage,
 } from '-/services/utils-io';
-import TsMenuList from '-/components/TsMenuList';
-import { useFullScreenContext } from '-/hooks/useFullScreenContext';
+import {
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -207,7 +202,7 @@ function EntryContainerMenu(props: Props) {
           }}
         >
           <ListItemIcon>
-            <ExpandIcon />
+            <FullWidthIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
           <MenuKeyBinding keyBinding={keyBindings['openInFullWidth']} />
@@ -293,7 +288,7 @@ function EntryContainerMenu(props: Props) {
           onClick={openNatively}
         >
           <ListItemIcon>
-            <OpenNativelyIcon />
+            <OpenEntryNativelyIcon />
           </ListItemIcon>
           <ListItemText
             primary={t(
@@ -368,7 +363,7 @@ function EntryContainerMenu(props: Props) {
           onClick={openNatively}
         >
           <ListItemIcon>
-            <OpenNativelyIcon />
+            <OpenEntryNativelyIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openDirectoryExternally')} />
         </MenuItem>,
@@ -386,7 +381,7 @@ function EntryContainerMenu(props: Props) {
           }}
         >
           <ListItemIcon>
-            <ExpandIcon />
+            <FullWidthIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
           <MenuKeyBinding keyBinding={keyBindings['openInFullWidth']} />

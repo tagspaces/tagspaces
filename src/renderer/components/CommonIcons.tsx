@@ -159,8 +159,6 @@ export { default as PreviewIcon } from '@mui/icons-material/Preview';
 
 export { default as RestoreIcon } from '@mui/icons-material/SettingsBackupRestore';
 
-export { default as CloseEntryIcon } from '@mui/icons-material/HighlightOffOutlined';
-
 import ExpandCircleDownOutlined from '@mui/icons-material/ExpandCircleDownOutlined';
 
 export const PrevDocumentIcon = (props) => (
@@ -233,3 +231,7 @@ export { default as ArrowLeftIcon } from '@mui/icons-material/ArrowCircleLeftOut
 export { default as ArrowRightIcon } from '@mui/icons-material/ArrowCircleRightOutlined';
 
 export { default as PlayIcon } from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
+
+export { default as FullScreenIcon } from '@mui/icons-material/ZoomOutMap';
+
+export { default as FullWidthIcon } from '@mui/icons-material/SettingsEthernet';

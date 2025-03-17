@@ -16,28 +16,25 @@
  *
  */
 
-import React, {
+import AppConfig from '-/AppConfig';
+import { CloseIcon } from '-/components/CommonIcons';
+import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import useEventListener from '-/utils/useEventListener';
+import { rgbToHex, useTheme } from '@mui/material/styles';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import fscreen from 'fscreen';
+import {
   MutableRefObject,
   useCallback,
   useEffect,
   useReducer,
   useRef,
 } from 'react';
-import { rgbToHex, useTheme } from '@mui/material/styles';
-import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
-import fscreen from 'fscreen';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import AppConfig from '-/AppConfig';
-import useEventListener from '-/utils/useEventListener';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useFullScreenContext } from '-/hooks/useFullScreenContext';
-import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import useFirstRender from '-/utils/useFirstRender';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 
 interface Props {
   fileViewer: MutableRefObject<HTMLIFrameElement>;
