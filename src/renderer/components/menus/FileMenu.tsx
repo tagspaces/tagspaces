@@ -16,59 +16,60 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef } from 'react';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ShareIcon from '@mui/icons-material/Share';
-import { Menu, MenuItem } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
-import OpenFileNatively from '@mui/icons-material/Launch';
-import { ParentFolderIcon, DownloadIcon } from '-/components/CommonIcons';
-import OpenFolderInternally from '@mui/icons-material/Folder';
-import MoveCopy from '@mui/icons-material/FileCopy';
-import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
-import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import DuplicateFile from '@mui/icons-material/PostAdd';
-import ImageIcon from '@mui/icons-material/Image';
-import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
 import AppConfig from '-/AppConfig';
 import {
-  extractContainingDirectoryPath,
-  extractParentDirectoryPath,
-  generateSharingLink,
-  extractTitle,
-} from '@tagspaces/tagspaces-common/paths';
+  DeleteIcon,
+  DownloadIcon,
+  LinkIcon,
+  OpenNewWindowIcon,
+  ParentFolderIcon,
+  TagIcon,
+} from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { Pro } from '-/pro';
+import { getKeyBindingObject } from '-/reducers/settings';
+import { supportedImgs } from '-/services/thumbsgenerator';
 import {
   createNewInstance,
   getRelativeEntryPath,
   openDirectoryMessage,
 } from '-/services/utils-io';
-import { getKeyBindingObject } from '-/reducers/settings';
-import { Pro } from '-/pro';
-import { useSelector } from 'react-redux';
-import { supportedImgs } from '-/services/thumbsgenerator';
-import {
-  OpenNewWindowIcon,
-  DeleteIcon,
-  LinkIcon,
-  TagIcon,
-} from '-/components/CommonIcons';
-import PropertiesIcon from '@mui/icons-material/Info';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
-import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
-import TsMenuList from '-/components/TsMenuList';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import MoveCopy from '@mui/icons-material/FileCopy';
+import OpenFolderInternally from '@mui/icons-material/Folder';
+import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
+import ImageIcon from '@mui/icons-material/Image';
+import PropertiesIcon from '@mui/icons-material/Info';
+import OpenFileNatively from '@mui/icons-material/Launch';
+import DuplicateFile from '@mui/icons-material/PostAdd';
+import ShareIcon from '@mui/icons-material/Share';
+import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
+import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
+import { Menu, MenuItem } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import {
+  extractContainingDirectoryPath,
+  extractParentDirectoryPath,
+  extractTitle,
+  generateSharingLink,
+} from '@tagspaces/tagspaces-common/paths';
+import { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   anchorEl: Element;
@@ -482,7 +483,11 @@ function FileMenu(props: Props) {
       );
     }
 
-    if (Pro && openShareFilesDialog) {
+    if (
+      Pro &&
+      currentLocation?.haveObjectStoreSupport() &&
+      openShareFilesDialog
+    ) {
       menuItems.push(
         <MenuItem
           key="fileMenuShareFile"
