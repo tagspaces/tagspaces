@@ -29,8 +29,8 @@ function EntryContainerNav(props: Props) {
       style={{
         zIndex: 1,
         position: 'absolute',
-        right: 0,
         top: 5,
+        right: 5,
         backgroundColor: theme.palette.background.default,
         display: 'flex',
         alignItems: 'center',

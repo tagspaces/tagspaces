@@ -351,6 +351,7 @@
   "toggleEntryProperties": "הצג/הסתר מאפייני רשומה",
   "closeEntry": "סגור רשומה",
   "saveFileBeforeClosingFile": "שמור קובץ לפני הסגירה",
+  "saveDescriptionOnClosing": "Description is changed do you want to save the changes?",
   "openDirectoryMenu": "תפריט תיקיות",
   "pleaseOpenLocation": "נא לפתוח מיקום",
   "thisIsStartupLocation": "זהו מיקום ההפעלה",
@@ -946,5 +947,12 @@
   "summaryLanguage": "Language for the generated summary",
   "tags": "תגים",
   "languages": "Language",
+  "folderDescription": "Folder description",
+  "doubleClickToEdit": "Double-click to edit",
+  "tsLinksHelp": "TagSpaces links begin with ts://? and are used for internal sharing of files and folders",
+  "pasteImageFromClipboard": "Paste an image from clipboard by pressing",
+  "parentFolder": "Parent folder",
+  "remove": "Remove",
+  "send": "Send",
   "-": "-"
 }
