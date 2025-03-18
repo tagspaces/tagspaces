@@ -109,6 +109,7 @@ export function generateThumbnailPromise(
   fileSize: number,
   loadTextFilePromise,
   getFileContentPromise,
+  getThumbPath,
   dirSeparator: string,
 ) {
   const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
@@ -175,13 +176,14 @@ export function generateThumbnailPromise(
       );
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
-    if (Pro) {
-      return Pro.ThumbsGenerator.generateVideoThumbnail(
-        fileURLEscaped,
-        maxSize,
-      );
+    if (getThumbPath) {
+      return getThumbPath(fileURL).then((url) => {
+        if (Pro) {
+          return Pro.ThumbsGenerator.generateVideoThumbnail(url, maxSize);
+        }
+        return generateVideoThumbnail(url);
+      });
     }
-    return generateVideoThumbnail(fileURLEscaped);
   }
   return generateDefaultThumbnail();
 }
@@ -442,6 +444,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
       const ctx = canvas.getContext('2d');
       let img: HTMLImageElement = new Image();
       let video: HTMLVideoElement = document.createElement('video');
+      video.crossOrigin = 'anonymous'; // Attempt to bypass CORS restrictions
       const captureTime = 1.5; // time in seconds at which to capture the image from the video
 
       video.onloadedmetadata = () => {
@@ -471,7 +474,9 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         console.log(`Error opening: ${fileURL} for tmb gen with: ${err} `);
         resolve('');
       };
-      video.src = fileURL.replace(/#/g, '%23');
+      video.src = fileURL.startsWith('http')
+        ? fileURL
+        : fileURL.replace(/#/g, '%23');
     } catch (e) {
       console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
       resolve('');
