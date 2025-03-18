@@ -34,7 +34,6 @@ import {
   TagIcon,
   UnSelectedIcon,
 } from '-/components/CommonIcons';
-import { ProTooltip } from '-/components/HelperComponents';
 import TsToolbarButton from '-/components/TsToolbarButton';
 import ZoomComponent from '-/components/ZoomComponent';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
@@ -227,16 +226,16 @@ function MainToolbar(props: Props) {
           </TsToolbarButton>
         )}
         {openShareFilesDialog && currentLocation?.haveObjectStoreSupport() && (
-          <ProTooltip tooltip={t('core:shareFiles')}>
-            <TsToolbarButton
-              aria-label={t('core:shareFiles')}
-              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-              onClick={openShareFilesDialog}
-              disabled={selectedEntries.length < 1}
-            >
-              <ShareIcon />
-            </TsToolbarButton>
-          </ProTooltip>
+          <TsToolbarButton
+            tooltip={t('core:shareFiles')}
+            title={t('core:shareFiles')}
+            aria-label={t('core:shareFiles')}
+            data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+            onClick={openShareFilesDialog}
+            disabled={selectedEntries.length < 1}
+          >
+            <ShareIcon />
+          </TsToolbarButton>
         )}
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>

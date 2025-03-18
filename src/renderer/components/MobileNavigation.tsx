@@ -65,6 +65,7 @@ import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getKeyBindingObject,
+  isDesktopMode,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
@@ -92,6 +93,7 @@ interface Props {
 function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
   const { setSelectedLocation, findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
@@ -476,7 +478,7 @@ function MobileNavigation(props: Props) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          marginTop: -12,
+          marginTop: desktopMode ? -10 : -25,
         }}
       >
         {showProTeaser && (
@@ -498,7 +500,7 @@ function MobileNavigation(props: Props) {
               backgroundColor:
                 currentOpenedPanel === 'locationManagerPanel'
                   ? theme.palette.primary.light
-                  : 'inherit',
+                  : theme.palette.background.default,
             }}
             data-tid="locationManager"
           >
@@ -514,7 +516,7 @@ function MobileNavigation(props: Props) {
               backgroundColor:
                 currentOpenedPanel === 'tagLibraryPanel'
                   ? theme.palette.primary.light
-                  : 'inherit',
+                  : theme.palette.background.default,
             }}
           >
             <TagLibraryIcon />
@@ -528,7 +530,7 @@ function MobileNavigation(props: Props) {
               backgroundColor:
                 currentOpenedPanel === 'searchPanel'
                   ? theme.palette.primary.light
-                  : 'inherit',
+                  : theme.palette.background.default,
             }}
           >
             <RecentThingsIcon />
@@ -542,7 +544,7 @@ function MobileNavigation(props: Props) {
               backgroundColor:
                 currentOpenedPanel === 'helpFeedbackPanel'
                   ? theme.palette.primary.light
-                  : 'inherit',
+                  : theme.palette.background.default,
             }}
           >
             <HelpIcon />
@@ -553,6 +555,9 @@ function MobileNavigation(props: Props) {
             data-tid="settings"
             onClick={() => {
               openSettingsDialog();
+            }}
+            style={{
+              backgroundColor: theme.palette.background.default,
             }}
             title={t('core:settings')}
           >
