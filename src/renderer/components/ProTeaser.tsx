@@ -16,12 +16,12 @@
  *
  */
 
+import { CloseDialogIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { openURLExternally } from '-/services/utils-io';
 import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
-import CloseIcon from '@mui/icons-material/Close';
 import MapTwoToneIcon from '@mui/icons-material/MapTwoTone';
 import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
 import { Box, ButtonGroup } from '@mui/material';
@@ -66,7 +66,7 @@ function ProTeaser(props: Props) {
               setShowTeaserBanner(false);
             }}
           >
-            <CloseIcon fontSize="small" />
+            <CloseDialogIcon fontSize="small" />
           </TsIconButton>
         </Typography>
         <br />

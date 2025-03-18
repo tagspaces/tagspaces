@@ -24,7 +24,7 @@ import {
   ImportIcon,
   LocalLocationIcon,
   MoreMenuIcon,
-  ReloadIcon,
+  UpdateIndexIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsIconButton from '-/components/TsIconButton';
@@ -32,7 +32,9 @@ import TsMenuList from '-/components/TsMenuList';
 import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
+import { Divider } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -42,7 +44,6 @@ import Links from 'assets/links';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pro } from '../../pro';
 
 interface Props {
   classes: any;
@@ -84,24 +85,9 @@ function LocationManagerMenu(props: Props) {
     );
   }
 
-  // menuItems.push(
-  //   <MenuItem
-  //     key="locationManagerMenuOpenLink"
-  //     data-tid="locationManagerMenuOpenLink"
-  //     onClick={() => {
-  //       setLocationManagerMenuAnchorEl(null);
-  //       openLinkDialog();
-  //     }}
-  //   >
-  //     <ListItemIcon>
-  //       <OpenLinkIcon />
-  //     </ListItemIcon>
-  //     <ListItemText primary={t('core:openLink')} />
-  //   </MenuItem>,
-  // );
-
   if (!AppConfig.locationsReadOnly) {
     // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+    menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         disabled={!Pro}
@@ -148,6 +134,7 @@ function LocationManagerMenu(props: Props) {
         />
       </MenuItem>,
     );
+    menuItems.push(<Divider />);
   }
 
   menuItems.push(
@@ -176,12 +163,12 @@ function LocationManagerMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <ReloadIcon />
+        <UpdateIndexIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:updateAllLocationIndexes')} />
     </MenuItem>,
   );
-
+  menuItems.push(<Divider />);
   menuItems.push(
     <MenuItem
       key="locationManagerMenuHelp"

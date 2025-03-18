@@ -17,7 +17,9 @@
  */
 
 import {
+  EditIcon,
   MoreMenuIcon,
+  SearchIcon,
   SmallArrowDownIcon,
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
@@ -40,8 +42,6 @@ import {
   getStoredSearchesVisible,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import EditIcon from '@mui/icons-material/Edit';
-import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import classNames from 'classnames';

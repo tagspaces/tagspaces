@@ -16,10 +16,9 @@
  *
  */
 
+import { ZoomInIcon, ZoomOutIcon } from '-/components/CommonIcons';
 import TsToolbarButton from '-/components/TsToolbarButton';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import ZoomInIcon from '@mui/icons-material/ControlPoint';
-import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';

@@ -16,37 +16,38 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-import Typography from '@mui/material/Typography';
+import {
+  AboutIcon,
+  CancelSubscriptionIcon,
+  ChangeLogIcon,
+  EmailIcon,
+  ForumIcon,
+  HelpIcon,
+  IssueIcon,
+  KeyShortcutsIcon,
+  NewFeatureIcon,
+  OnboardingIcon,
+  ProTeaserIcon,
+  TranslationIcon,
+  WebClipperIcon,
+  XIcon,
+} from '-/components/CommonIcons';
+import { SidePanel, classes } from '-/components/SidePanels.css';
+import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
+import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
+import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { Pro } from '-/pro';
+import { openURLExternally } from '-/services/utils-io';
+import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import AboutIcon from '@mui/icons-material/BlurOn';
-import ChangeLogIcon from '@mui/icons-material/ImportContacts';
-import OnboardingIcon from '@mui/icons-material/Explore';
-import WebClipperIcon from '@mui/icons-material/Transform';
-import EmailIcon from '@mui/icons-material/Email';
-import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
-import IssueIcon from '@mui/icons-material/BugReport';
-import TranslationIcon from '@mui/icons-material/Translate';
-import NewFeatureIcon from '@mui/icons-material/Gesture';
-import XIcon from '@mui/icons-material/X';
-import ForumIcon from '@mui/icons-material/Forum';
-import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
-import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
-import Links from 'assets/links';
-import { Pro } from '-/pro';
-import { openURLExternally } from '-/services/utils-io';
-import { classes, SidePanel } from '-/components/SidePanels.css';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+import Links from 'assets/links';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
-import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
-import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
-import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 
 interface Props {
   style?: any;

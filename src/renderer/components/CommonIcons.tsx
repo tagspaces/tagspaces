@@ -32,7 +32,7 @@ export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as FolderIcon } from '@mui/icons-material/FolderOutlined';
+export { default as FolderIcon } from '@mui/icons-material/FolderOpenOutlined';
 
 export { default as FolderOutlineIcon } from '@mui/icons-material/FolderOpen';
 
@@ -66,7 +66,7 @@ export { default as CloudLocationIcon } from '@mui/icons-material/CloudQueue';
 
 export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
-export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
+export { default as KeyShortcutsIcon } from '@mui/icons-material/KeyboardOutlined';
 
 export { default as CancelIcon } from '@mui/icons-material/Undo';
 
@@ -239,7 +239,7 @@ export { default as ArrowRightIcon } from '@mui/icons-material/ArrowCircleRightO
 
 export { default as PlayIcon } from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 
-export { default as FullScreenIcon } from '@mui/icons-material/ZoomOutMap';
+export { default as FullScreenIcon } from '@mui/icons-material/ScreenshotMonitor'; // ZoomOutMap
 
 export { default as FullWidthIcon } from '@mui/icons-material/SettingsEthernet';
 
@@ -260,3 +260,43 @@ export { default as EncryptedIcon } from '@mui/icons-material/HttpsOutlined';
 export { default as SizeIcon } from '@mui/icons-material/BubbleChartOutlined';
 
 export { default as CalendarIcon } from '@mui/icons-material/CalendarMonthOutlined';
+
+export { default as UpdateIndexIcon } from '@mui/icons-material/Rotate90DegreesCcw';
+
+export { default as FolderVisibilityOffIcon } from '@mui/icons-material/SnippetFolderOutlined';
+
+export { default as FolderVisibilityOnIcon } from '@mui/icons-material/SnippetFolderTwoTone';
+
+export { default as ToggleSubfoldersIcon } from '@mui/icons-material/RuleFolderOutlined';
+
+export { default as GeoPinIcon } from '@mui/icons-material/AddLocationOutlined';
+
+export { default as GeoTagIcon } from '@mui/icons-material/GpsFixedOutlined';
+
+export { default as AboutIcon } from '@mui/icons-material/BlurOn';
+
+export { default as IssueIcon } from '@mui/icons-material/BugReportOutlined';
+
+export { default as CancelSubscriptionIcon } from '@mui/icons-material/EventBusyOutlined';
+
+export { default as OnboardingIcon } from '@mui/icons-material/ExploreOutlined';
+
+export { default as ProTeaserIcon } from '@mui/icons-material/FlightTakeoff';
+
+export { default as ForumIcon } from '@mui/icons-material/ForumOutlined';
+
+export { default as NewFeatureIcon } from '@mui/icons-material/GestureOutlined';
+
+export { default as ChangeLogIcon } from '@mui/icons-material/MenuBookOutlined';
+
+export { default as WebClipperIcon } from '@mui/icons-material/Transform';
+
+export { default as TranslationIcon } from '@mui/icons-material/Translate';
+
+export { default as XIcon } from '@mui/icons-material/X';
+
+export { default as ChatIcon } from '@mui/icons-material/Chat';
+
+export { default as ZoomInIcon } from '@mui/icons-material/ControlPoint';
+
+export { default as ZoomOutIcon } from '@mui/icons-material/RemoveCircleOutline';

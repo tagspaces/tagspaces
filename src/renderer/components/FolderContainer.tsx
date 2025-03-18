@@ -39,7 +39,6 @@ import {
   getDesktopMode,
   getKeyBindingObject,
 } from '-/reducers/settings';
-import ChatIcon from '@mui/icons-material/Chat';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -51,6 +50,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
+  ChatIcon,
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,

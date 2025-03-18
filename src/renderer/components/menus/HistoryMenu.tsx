@@ -16,15 +16,13 @@
  *
  */
 
-import React from 'react';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import { Pro } from '-/pro';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -50,7 +48,7 @@ function HistoryMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <RefreshIcon />
+        <ReloadIcon />
       </ListItemIcon>
       <ListItemText primary={<>{t('core:refresh')}</>} />
     </MenuItem>,

@@ -18,11 +18,18 @@
 
 import WelcomeLogo from '-/assets/images/welcome-logo.png';
 import {
+  ChangeLogIcon,
   CreateFileIcon,
+  EmailIcon,
   HelpIcon,
+  IssueIcon,
   KeyShortcutsIcon,
   LocalLocationIcon,
+  NewFeatureIcon,
   OpenLinkIcon,
+  TranslationIcon,
+  WebClipperIcon,
+  XIcon,
 } from '-/components/CommonIcons';
 import HowToStart from '-/components/HowToStart';
 import RenderHistory from '-/components/RenderHistory';
@@ -35,13 +42,6 @@ import { Pro } from '-/pro';
 import { getDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import IssueIcon from '@mui/icons-material/BugReport';
-import EmailIcon from '@mui/icons-material/Email';
-import NewFeatureIcon from '@mui/icons-material/Gesture';
-import ChangeLogIcon from '@mui/icons-material/ImportContacts';
-import WebClipperIcon from '@mui/icons-material/Transform';
-import TranslationIcon from '@mui/icons-material/Translate';
-import XIcon from '@mui/icons-material/X';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid2';
