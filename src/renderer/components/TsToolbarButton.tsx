@@ -36,8 +36,9 @@ function TsToolbarButton(props: TSIconButtonProps) {
     children,
     keyBinding,
     tooltip,
-    title,
+    title = '‎',
     disabled,
+    style,
     // showTitle = false,
     ...restProps
   } = props;
@@ -48,7 +49,11 @@ function TsToolbarButton(props: TSIconButtonProps) {
     <IconButton
       size={desktopMode ? 'medium' : 'large'}
       disabled={disabled}
-      style={{ borderRadius: AppConfig.defaultCSSRadius, display: 'block' }}
+      style={{
+        borderRadius: AppConfig.defaultCSSRadius,
+        display: 'block',
+        ...style,
+      }}
       sx={{
         '& .MuiSvgIcon-root ': {
           width: showTitle ? '0.8em' : '1em',

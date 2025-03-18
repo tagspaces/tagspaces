@@ -704,12 +704,12 @@ function EntryProperties(props: Props) {
               slotProps={{
                 input: {
                   readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SizeIcon />
+                    </InputAdornment>
+                  ),
                   ...(!openedEntry.isFile && {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SizeIcon />
-                      </InputAdornment>
-                    ),
                     endAdornment: (
                       <TsButton
                         variant="text"
