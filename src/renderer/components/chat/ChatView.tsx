@@ -355,8 +355,10 @@ function ChatView() {
                   />
                   <TsIconButton
                     size="small"
-                    tooltip={t('core:removeFile')}
-                    onClick={() => removeImage(image.uuid)}
+                    tooltip={t('core:remove')}
+                    onClick={(e) => {
+                      removeImage(image.uuid);
+                    }}
                     sx={{
                       position: 'absolute',
                       top: 8,

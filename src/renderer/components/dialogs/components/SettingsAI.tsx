@@ -341,16 +341,18 @@ function SettingsAI(props: Props) {
               )}
             </TooltipTS>
             <TsIconButton
-              aria-label={t('core:deleteModel')}
-              onClick={() => {
+              aria-label="removeAIProvider"
+              tooltip={t('core:remove')}
+              onClick={(e) => {
+                e.stopPropagation();
                 const result = confirm(
-                  'Do you want to remove ' + provider.name + ' AI config?',
+                  'Do you want to remove "' + provider.name + '" AI config?',
                 );
                 if (result) {
                   dispatch(SettingsActions.removeAiProvider(provider.id));
                 }
               }}
-              data-tid="deleteModelTID"
+              data-tid="removeAIProviderTID"
             >
               <RemoveIcon />
             </TsIconButton>
