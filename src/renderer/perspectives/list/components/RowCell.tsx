@@ -27,6 +27,7 @@ import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsPreview from '-/components/TagsPreview';
 import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -40,7 +41,6 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
@@ -257,7 +257,7 @@ function RowCell(props: Props) {
 
   function generateExtension() {
     return selectionMode ? (
-      <IconButton
+      <TsIconButton
         style={{
           width: 35,
           height: 35,
@@ -265,15 +265,6 @@ function RowCell(props: Props) {
           paddingBottom: 2,
           alignSelf: 'center',
         }}
-        size="small"
-        // onMouseLeave={(e) => {
-        //   //@ts-ignore
-        //   e.target.style.opacity = selected ? 1 : 0.5;
-        // }}
-        // onMouseOver={(e) => {
-        //   //@ts-ignore
-        //   e.target.style.opacity = 1;
-        // }}
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
@@ -298,7 +289,7 @@ function RowCell(props: Props) {
             }}
           />
         )}
-      </IconButton>
+      </TsIconButton>
     ) : (
       <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
         <Typography
@@ -490,13 +481,12 @@ function RowCell(props: Props) {
             marginRight: 5,
           }}
         >
-          <IconButton
+          <TsIconButton
             aria-label="entry context menu"
-            size="small"
             onClick={(event) => handleGridContextMenu(event, fsEntry)}
           >
             <MoreMenuIcon />
-          </IconButton>
+          </TsIconButton>
         </Grid>
       </Grid>
     </RowPaper>

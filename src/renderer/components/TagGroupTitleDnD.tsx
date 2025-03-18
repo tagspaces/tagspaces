@@ -24,11 +24,11 @@ import {
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import { SidePanel, classes } from '-/components/SidePanels.css';
+import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
@@ -143,7 +143,7 @@ function TagGroupTitleDnD(props: Props) {
         style={{ flexWrap: 'nowrap' }}
       >
         <Grid size={2} style={{ maxWidth: 40 }}>
-          <IconButton
+          <TsIconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
             size="large"
@@ -153,7 +153,7 @@ function TagGroupTitleDnD(props: Props) {
             ) : (
               <SmallArrowRightIcon />
             )}
-          </IconButton>
+          </TsIconButton>
         </Grid>
         <Grid size={9} style={{ alignSelf: 'center' }}>
           <Typography
@@ -190,7 +190,7 @@ function TagGroupTitleDnD(props: Props) {
         </Grid>
         <Grid size={1} style={{ textAlign: 'end' }}>
           {!isReadOnly && (
-            <IconButton
+            <TsIconButton
               style={{ minWidth: 'auto', padding: 7 }}
               data-tid={
                 'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
@@ -199,7 +199,7 @@ function TagGroupTitleDnD(props: Props) {
               size="large"
             >
               <MoreMenuIcon />
-            </IconButton>
+            </TsIconButton>
           )}
         </Grid>
       </Grid>

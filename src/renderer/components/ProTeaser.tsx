@@ -17,6 +17,7 @@
  */
 
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { openURLExternally } from '-/services/utils-io';
 import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
@@ -26,7 +27,6 @@ import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
 import { Box, ButtonGroup } from '@mui/material';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
@@ -56,8 +56,8 @@ function ProTeaser(props: Props) {
           <span style={{ textTransform: 'lowercase' }}>
             {t('core:achieveMore')}
           </span>
-          <IconButton
-            style={{ right: 5, marginTop: -10, position: 'absolute' }}
+          <TsIconButton
+            style={{ right: 5, position: 'absolute' }}
             size="small"
             aria-label="close"
             onClick={(event) => {
@@ -67,7 +67,7 @@ function ProTeaser(props: Props) {
             }}
           >
             <CloseIcon fontSize="small" />
-          </IconButton>
+          </TsIconButton>
         </Typography>
         <br />
         <div

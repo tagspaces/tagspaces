@@ -28,6 +28,7 @@ import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsPreview from '-/components/TagsPreview';
 import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
@@ -49,7 +50,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -332,21 +332,11 @@ function GridCell(props: Props) {
 
   function generateExtension() {
     return selectionMode ? (
-      <IconButton
+      <TsIconButton
         style={{
           minWidth: 35,
-          padding: 4,
-          paddingBottom: 2,
         }}
         size="small"
-        // onMouseLeave={(e) => {
-        //   //@ts-ignore
-        //   e.target.style.opacity = selected ? 1 : 0.5;
-        // }}
-        // onMouseOver={(e) => {
-        //   //@ts-ignore
-        //   e.target.style.opacity = 1;
-        // }}
         onClick={(e) => {
           e.stopPropagation();
           if (selected) {
@@ -356,22 +346,8 @@ function GridCell(props: Props) {
           }
         }}
       >
-        {selected ? (
-          <SelectedIcon
-            style={{
-              borderRadius: 15,
-              // backgroundColor: '#d7d7d7',
-            }}
-          />
-        ) : (
-          <UnSelectedIcon
-            style={{
-              borderRadius: 15,
-              // backgroundColor: 'd7d7d7',
-            }}
-          />
-        )}
-      </IconButton>
+        {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+      </TsIconButton>
     ) : (
       <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
         <Typography
@@ -488,11 +464,6 @@ function GridCell(props: Props) {
             overflowX: 'clip',
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
-            //   display: '-webkit-box',
-            //   WebkitLineClamp: 2,
-            //   WebkitBoxOrient: 'vertical',
-            //   textOverflow: 'ellipsis',
-            //   overflow: 'hidden',
           }}
         >
           {entryTitle}
@@ -510,7 +481,6 @@ function GridCell(props: Props) {
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
             color: 'gray',
-            // wordBreak: 'break-word',
           }}
         >
           {description}
@@ -529,14 +499,14 @@ function GridCell(props: Props) {
           },
         }}
         action={
-          <IconButton
+          <TsIconButton
             aria-label="entry context menu"
             size="small"
             style={{ marginRight: 5 }}
             onClick={(event) => handleGridContextMenu(event, fsEntry)}
           >
             <MoreMenuIcon />
-          </IconButton>
+          </TsIconButton>
         }
         subheader={generateCardHeader()}
         avatar={generateExtension()}

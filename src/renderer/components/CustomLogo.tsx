@@ -16,20 +16,19 @@
  *
  */
 
-import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
-import { Pro } from '../pro';
-import TextLogoIcon from '-/assets/images/text-logo.svg';
 import LogoIcon from '-/assets/images/icon100x100.svg';
-import versionMeta from '../version.json';
-import { actions, isUpdateAvailable } from '-/reducers/app';
-import { useTranslation } from 'react-i18next';
-import { Badge, Typography } from '@mui/material';
+import TextLogoIcon from '-/assets/images/text-logo.svg';
+import Tooltip from '-/components/Tooltip';
+import TsIconButton from '-/components/TsIconButton';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
+import { isUpdateAvailable } from '-/reducers/app';
+import { Badge, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { Pro } from '../pro';
+import versionMeta from '../version.json';
 
 function CustomLogo() {
   const { t } = useTranslation();
@@ -59,22 +58,23 @@ function CustomLogo() {
       }}
     >
       <Tooltip title={t('core:aboutTitle')}>
-        <IconButton style={{ padding: 0 }}>
+        <TsIconButton style={{ padding: 0 }}>
           <img
             style={{
               width: 30,
               height: 30,
+              padding: 4,
               // @ts-ignore
               WebkitAppRegion: 'no-drag',
             }}
             src={LogoIcon}
             alt="TagSpaces Logo"
           />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <Tooltip title={t('core:aboutTitle')}>
-        <IconButton
-          style={{ height: 47, padding: 0 }}
+        <TsIconButton
+          style={{ height: 40, padding: 4 }}
           data-tid="aboutTagSpaces"
         >
           <img
@@ -87,7 +87,7 @@ function CustomLogo() {
             src={logo}
             alt="TagSpaces"
           />
-        </IconButton>
+        </TsIconButton>
       </Tooltip>
       <sup>
         <Tooltip title={updateAvailable ? t('core:newVersionAvailable') : ''}>

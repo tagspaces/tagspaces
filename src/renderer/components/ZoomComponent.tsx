@@ -92,16 +92,24 @@ export default function ZoomComponent(props: Props) {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <TsToolbarButton tooltip={t('core:zoomOut')} onClick={zoomOut}>
+      <TsToolbarButton
+        title={t('core:zoomOut')}
+        tooltip={t('core:zoomOut')}
+        onClick={zoomOut}
+      >
         <ZoomOutIcon />
       </TsToolbarButton>
       <Typography
         variant="overline"
-        style={{ color: theme.palette.text.primary, marginTop: 4 }}
+        style={{ color: theme.palette.text.primary, margin: 5 }}
       >
         {entrySizePercent}
       </Typography>
-      <TsToolbarButton tooltip={t('core:zoomIn')} onClick={zoomIn}>
+      <TsToolbarButton
+        title={t('core:zoomIn')}
+        tooltip={t('core:zoomIn')}
+        onClick={zoomIn}
+      >
         <ZoomInIcon />
       </TsToolbarButton>
     </Box>

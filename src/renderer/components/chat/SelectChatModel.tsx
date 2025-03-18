@@ -17,21 +17,21 @@
  */
 
 import { AIIcon, RemoveIcon } from '-/components/CommonIcons';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { useChatContext } from '-/hooks/useChatContext';
-import DownloadIcon from '@mui/icons-material/Download';
-import { ListItemIcon, MenuItem } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ModelResponse } from 'ollama';
-import { parseISO, format } from 'date-fns';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { getOllamaModels } from '-/components/chat/OllamaClient';
-import { useSelector } from 'react-redux';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useChatContext } from '-/hooks/useChatContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
+import DownloadIcon from '@mui/icons-material/Download';
+import { ListItemIcon, MenuItem } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+import { format, parseISO } from 'date-fns';
+import { ModelResponse } from 'ollama';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   id?: string;
@@ -221,14 +221,13 @@ function SelectChatModel(props: Props) {
           input: {
             endAdornment: chosenModel && (
               <InputAdornment position="end" sx={{ ml: -12 }}>
-                <IconButton
+                <TsIconButton
                   aria-label={t('core:deleteModel')}
                   onClick={handleRemoveModel}
                   data-tid="deleteModelTID"
-                  size="small"
                 >
                   <RemoveIcon />
-                </IconButton>
+                </TsIconButton>
               </InputAdornment>
             ),
           },

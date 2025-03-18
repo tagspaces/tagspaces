@@ -23,8 +23,9 @@ import {
   ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
-import { default as Tooltip, default as TooltipTS } from '-/components/Tooltip';
+import { default as TooltipTS } from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
@@ -56,7 +57,6 @@ import {
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -309,6 +309,9 @@ function SettingsAI(props: Props) {
             expandIcon={<ExpandIcon />}
             aria-controls={provider.id + 'content'}
             data-tid={provider.id + 'ollamaTID'}
+            sx={{
+              '& .MuiAccordionSummary-content': { alignItems: 'anchor-center' },
+            }}
           >
             <Typography>
               <OllamaIcon width={15} style={{ marginRight: 5 }} />
@@ -337,7 +340,7 @@ function SettingsAI(props: Props) {
                 />
               )}
             </TooltipTS>
-            <IconButton
+            <TsIconButton
               aria-label={t('core:deleteModel')}
               onClick={() => {
                 const result = confirm(
@@ -348,10 +351,9 @@ function SettingsAI(props: Props) {
                 }
               }}
               data-tid="deleteModelTID"
-              size="small"
             >
               <RemoveIcon />
-            </IconButton>
+            </TsIconButton>
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
@@ -392,16 +394,14 @@ function SettingsAI(props: Props) {
                     input: {
                       endAdornment: (
                         <InputAdornment position="end" style={{ height: 32 }}>
-                          <Tooltip title={t('core:refreshServiceStatus')}>
-                            <IconButton
-                              onClick={() => {
-                                checkOllamaAlive();
-                              }}
-                              size="large"
-                            >
-                              <ReloadIcon />
-                            </IconButton>
-                          </Tooltip>
+                          <TsIconButton
+                            tooltip={t('core:refreshServiceStatus')}
+                            onClick={() => {
+                              checkOllamaAlive();
+                            }}
+                          >
+                            <ReloadIcon />
+                          </TsIconButton>
                         </InputAdornment>
                       ),
                     },

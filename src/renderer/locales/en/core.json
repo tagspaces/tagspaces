@@ -952,5 +952,7 @@
   "tsLinksHelp": "TagSpaces links begin with ts://? and are used for internal sharing of files and folders",
   "pasteImageFromClipboard": "Paste an image from clipboard by pressing",
   "parentFolder": "Go to parent",
+  "removeFile": "Remove File",
+  "send": "Send",
   "-": "-"
 }

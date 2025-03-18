@@ -31,6 +31,7 @@ import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { saveAsTextFile } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
@@ -40,7 +41,6 @@ import { Box, Grid2 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
@@ -49,7 +49,6 @@ import React, { ChangeEvent, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 function ChatView() {
   const { t } = useTranslation();
@@ -354,8 +353,9 @@ function ChatView() {
                     alt={`Image ${index + 1}`}
                     style={{ maxHeight: 150, width: 'auto' }}
                   />
-                  <IconButton
+                  <TsIconButton
                     size="small"
+                    tooltip={t('core:removeFile')}
                     onClick={() => removeImage(image.uuid)}
                     sx={{
                       position: 'absolute',
@@ -366,7 +366,7 @@ function ChatView() {
                     }}
                   >
                     <CloseIcon fontSize="small" />
-                  </IconButton>
+                  </TsIconButton>
                 </Box>
               ))}
           </Grid2>
@@ -392,8 +392,14 @@ function ChatView() {
                     input: {
                       startAdornment: (
                         <InputAdornment position="start" style={{ height: 32 }}>
-                          <Tooltip title={aiDefaultProvider?.engine}>
-                            <OllamaIcon height={30} />
+                          <Tooltip
+                            title={
+                              aiDefaultProvider?.name +
+                              ' - ' +
+                              aiDefaultProvider?.engine
+                            }
+                          >
+                            <OllamaIcon height={25} />
                           </Tooltip>
                         </InputAdornment>
                       ),
@@ -404,25 +410,23 @@ function ChatView() {
                           )}
                           {isLoading.current && (
                             <Tooltip title="Cancel Message">
-                              <IconButton
+                              <TsIconButton
                                 onClick={() => {
                                   isLoading.current = false;
                                   cancelMessage();
                                 }}
-                                size="large"
                               >
                                 <CancelIcon />
-                              </IconButton>
+                              </TsIconButton>
                             </Tooltip>
                           )}
-                          <Tooltip title="Send Message">
-                            <IconButton
-                              onClick={handleChatMessage}
-                              size="large"
-                            >
-                              <SendIcon />
-                            </IconButton>
-                          </Tooltip>
+
+                          <TsIconButton
+                            tooltip={t('core:send')}
+                            onClick={handleChatMessage}
+                          >
+                            <SendIcon />
+                          </TsIconButton>
                           {/* <TsSelect
                             id="select-mode"
                             value={currentMode.current || ''}
