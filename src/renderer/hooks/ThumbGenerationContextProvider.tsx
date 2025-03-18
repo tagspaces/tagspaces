@@ -474,6 +474,7 @@ export const ThumbGenerationContextProvider = ({
       fileSize,
       location.loadTextFilePromise,
       location.getFileContentPromise,
+      location.getThumbPath,
       location.getDirSeparator(),
     )
       .then((dataURL) => {

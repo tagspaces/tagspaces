@@ -44,10 +44,13 @@ const initialize = () => {
   }
 
   protocol.handle(mediaProtocol, (request: any) => {
-    // list all files in the directory
-    const filepath = decodeURIComponent(
-      request.url.slice(`${mediaProtocol}://`.length).replace(/\/$/, ''),
-    ); // remove trailing slash
+    // Get the file path from the URL without the trailing slash
+    let filepath = request.url
+      .slice(`${mediaProtocol}://`.length)
+      .replace(/\/$/, '');
+    filepath = decodeURIComponent(filepath);
+    // Re-encode '#' characters to preserve them in the file URL
+    filepath = filepath.replace(/#/g, '%23');
     const pathname = normalize(fileURLToPath(`file://${filepath}`)); //pathToFileURL(filepath).toString();
     const asFileUrl = pathToFileURL(pathname).toString();
     console.log(

@@ -885,6 +885,7 @@ export const IOActionsContextProvider = ({
           fsEntry.size,
           location.loadTextFilePromise,
           location.getFileContentPromise,
+          location.getThumbPath,
           location?.getDirSeparator(),
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
@@ -1047,6 +1048,7 @@ export const IOActionsContextProvider = ({
                 fsEntry.size,
                 currentLocation.loadTextFilePromise,
                 currentLocation.getFileContentPromise,
+                currentLocation.getThumbPath,
                 currentLocation?.getDirSeparator(),
               )
                 .then((dataURL) => {
@@ -1267,6 +1269,7 @@ export const IOActionsContextProvider = ({
                   0,
                   currentLocation.loadTextFilePromise,
                   currentLocation.getFileContentPromise,
+                  currentLocation.getThumbPath,
                   currentLocation?.getDirSeparator(),
                 ).then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
