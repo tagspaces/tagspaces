@@ -1,16 +1,16 @@
-import * as React from 'react';
-import TsButton from '-/components/TsButton';
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Links from 'assets/links';
 import { ProSign } from '-/components/HelperComponents';
+import TsButton from '-/components/TsButton';
 import { openURLExternally } from '-/services/utils-io';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Step from '@mui/material/Step';
+import StepContent from '@mui/material/StepContent';
+import StepLabel from '@mui/material/StepLabel';
+import Stepper from '@mui/material/Stepper';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+import Links from 'assets/links';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 /*export const styles: any = (theme: any) => ({
@@ -350,6 +350,13 @@ function HowToStart() {
               <Box sx={{ mb: 2 }}>
                 <div>
                   <TsButton
+                    disabled={index === 0}
+                    onClick={handleBack}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    {t('core:goback')}
+                  </TsButton>
+                  <TsButton
                     // variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
@@ -357,13 +364,6 @@ function HowToStart() {
                     {index === steps.length - 1
                       ? t('core:finish')
                       : t('core:goforward')}
-                  </TsButton>
-                  <TsButton
-                    disabled={index === 0}
-                    onClick={handleBack}
-                    sx={{ mt: 1, mr: 1 }}
-                  >
-                    {t('core:goback')}
                   </TsButton>
                 </div>
               </Box>
