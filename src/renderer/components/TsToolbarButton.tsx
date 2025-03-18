@@ -51,13 +51,14 @@ function TsToolbarButton(props: TSIconButtonProps) {
       disabled={disabled}
       style={{
         borderRadius: AppConfig.defaultCSSRadius,
+        padding: 8,
         display: 'block',
         ...style,
       }}
       sx={{
         '& .MuiSvgIcon-root ': {
-          width: showTitle ? '0.8em' : '1em',
-          heigh: showTitle ? '0.8em' : '1em',
+          width: showTitle ? '0.9em' : '1em',
+          heigh: showTitle ? '0.9em' : '1em',
         },
         // border: '1px solid transparent',
         // '&:hover': {
@@ -69,7 +70,18 @@ function TsToolbarButton(props: TSIconButtonProps) {
     >
       {children}
       {showTitle && (
-        <Typography style={{ display: 'block', fontSize: 11, marginTop: -5 }}>
+        <Typography
+          style={{
+            display: 'block',
+            fontSize: 11,
+            marginTop: -5,
+            width: 45,
+            padding: 0,
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+          }}
+        >
           {title}
         </Typography>
       )}

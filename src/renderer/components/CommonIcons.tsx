@@ -54,7 +54,7 @@ export { default as RemoveIcon } from '@mui/icons-material/DeleteOutline';
 
 export { default as HistoryIcon } from '@mui/icons-material/History';
 
-export { default as SettingsIcon } from '@mui/icons-material/Settings';
+export { default as SettingsIcon } from '@mui/icons-material/SettingsOutlined';
 
 export { default as PerspectiveSettingsIcon } from '@mui/icons-material/DisplaySettings';
 

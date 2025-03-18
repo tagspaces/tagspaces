@@ -45,11 +45,9 @@ import LocationManager from '-/components/LocationManager';
 import ProTeaser from '-/components/ProTeaser';
 import StoredSearches from '-/components/StoredSearches';
 import TagLibrary from '-/components/TagLibrary';
-import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
-import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
-import UserDetailsPopover from '-/components/UserDetailsPopover';
+import TsToolbarButton from '-/components/TsToolbarButton';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useDownloadUrlDialogContext } from '-/components/dialogs/hooks/useDownloadUrlDialogContext';
@@ -70,7 +68,7 @@ import {
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { Divider } from '@mui/material';
+import { Divider, Popover } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grow from '@mui/material/Grow';
@@ -78,32 +76,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Popover from '@mui/material/Popover';
 import Popper from '@mui/material/Popper';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { alpha, styled, useTheme } from '@mui/material/styles';
-import classNames from 'classnames';
+import { alpha, useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-
-const PREFIX = 'MobileNavigation';
-
-const classes = {
-  button: `${PREFIX}-button`,
-  selectedButton: `${PREFIX}-selectedButton`,
-};
-
-const Root = styled(Box)(({ theme }) => ({
-  [`& .${classes.button}`]: {
-    padding: 8,
-    margin: 0,
-  },
-  [`& .${classes.selectedButton}`]: {
-    backgroundColor: theme.palette.primary.light,
-  },
-}));
+import TsIconButton from './TsIconButton';
+import UserDetailsPopover from './UserDetailsPopover';
 
 interface Props {
   hideDrawer?: () => void;
@@ -147,14 +126,12 @@ function MobileNavigation(props: Props) {
     ) {
       return;
     }
-
     setOpenCreateMenu(false);
   };
 
   return (
-    <Root
+    <Box
       style={{
-        // backgroundColor: theme.palette.background.default,
         background: alpha(theme.palette.background.default, 0.85),
         backdropFilter: 'blur(5px)',
         height: '100%',
@@ -166,7 +143,7 @@ function MobileNavigation(props: Props) {
       <Box
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 186px)' : 'calc(100% - 55px)',
+          height: showProTeaser ? 'calc(100% - 190px)' : 'calc(100% - 55px)',
         }}
       >
         <Box>
@@ -177,10 +154,10 @@ function MobileNavigation(props: Props) {
               aria-label="split button"
               style={{
                 textAlign: 'center',
+                marginRight: AppConfig.defaultSpaceBetweenButtons,
               }}
             >
               <TsButton
-                //tooltip={t('core:createNew')}
                 aria-controls={
                   openedCreateMenu ? 'split-button-menu' : undefined
                 }
@@ -231,6 +208,44 @@ function MobileNavigation(props: Props) {
                 </Box>
               </TsButton>
             </ButtonGroup>
+            {currentUser ? (
+              <>
+                <TsIconButton
+                  tooltip={t('core:userAccount')}
+                  data-tid="accountCircleIconTID"
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                    setAnchorUser(event.currentTarget)
+                  }
+                  title={t('core:userAccount')}
+                >
+                  <AccountIcon />
+                </TsIconButton>
+                <Popover
+                  open={Boolean(anchorUser)}
+                  anchorEl={anchorUser}
+                  onClose={() => setAnchorUser(null)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                >
+                  <UserDetailsPopover onClose={() => setAnchorUser(null)} />
+                </Popover>
+              </>
+            ) : (
+              <TsIconButton
+                tooltip={t('core:switchTheme')}
+                data-tid="switchTheme"
+                onClick={switchTheme}
+                title={t('core:switchTheme')}
+              >
+                <ThemingIcon />
+              </TsIconButton>
+            )}
           </Box>
         </Box>
 
@@ -444,7 +459,7 @@ function MobileNavigation(props: Props) {
           </Popper>
         </ClickAwayListener>
         <LocationManager
-          reduceHeightBy={140}
+          reduceHeightBy={150}
           show={currentOpenedPanel === 'locationManagerPanel'}
         />
         {currentOpenedPanel === 'tagLibraryPanel' && (
@@ -459,130 +474,93 @@ function MobileNavigation(props: Props) {
       </Box>
       <Box
         style={{
-          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          marginTop: -12,
         }}
       >
         {showProTeaser && (
           <ProTeaser setShowTeaserBanner={setShowTeaserBanner} />
         )}
-        <TsIconButton
-          tooltip={t('core:settings')}
-          id="verticalNavButton"
-          data-tid="settings"
-          onClick={() => {
-            openSettingsDialog();
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignSelf: 'anchor-center',
           }}
-          style={{ marginTop: -15, marginRight: 2 }}
-          size="large"
         >
-          <SettingsIcon />
-        </TsIconButton>
-        <ToggleButtonGroup exclusive>
-          <ToggleButton
+          <TsToolbarButton
+            title={t('core:locationManager')}
+            tooltip={t('core:locationManager')}
+            keyBinding={keyBindings['showLocationManager']}
             onClick={() => showPanel('locationManagerPanel')}
-            className={
-              currentOpenedPanel === 'locationManagerPanel'
-                ? classNames(classes.button, classes.selectedButton)
-                : classes.button
-            }
+            style={{
+              backgroundColor:
+                currentOpenedPanel === 'locationManagerPanel'
+                  ? theme.palette.primary.light
+                  : 'inherit',
+            }}
             data-tid="locationManager"
-            value="check"
           >
-            <Tooltip
-              title={t('core:locationManager')}
-              keyBinding={keyBindings['showLocationManager']}
-            >
-              <LocalLocationIcon />
-            </Tooltip>
-          </ToggleButton>
-          <ToggleButton
+            <LocalLocationIcon />
+          </TsToolbarButton>
+          <TsToolbarButton
             data-tid="tagLibrary"
+            title={t('core:tagLibrary')}
+            tooltip={t('core:tagLibrary')}
+            keyBinding={keyBindings['showTagLibrary']}
             onClick={() => showPanel('tagLibraryPanel')}
-            className={
-              currentOpenedPanel === 'tagLibraryPanel'
-                ? classNames(classes.button, classes.selectedButton)
-                : classes.button
-            }
-            value="check"
+            style={{
+              backgroundColor:
+                currentOpenedPanel === 'tagLibraryPanel'
+                  ? theme.palette.primary.light
+                  : 'inherit',
+            }}
           >
-            <Tooltip
-              title={t('core:tagLibrary')}
-              keyBinding={keyBindings['showTagLibrary']}
-            >
-              <TagLibraryIcon />
-            </Tooltip>
-          </ToggleButton>
-          <ToggleButton
+            <TagLibraryIcon />
+          </TsToolbarButton>
+          <TsToolbarButton
+            title={t('core:quickAccess')}
+            tooltip={t('core:quickAccess')}
             data-tid="quickAccessButton"
             onClick={() => showPanel('searchPanel')}
-            className={
-              currentOpenedPanel === 'searchPanel'
-                ? classNames(classes.button, classes.selectedButton)
-                : classes.button
-            }
-            value="check"
+            style={{
+              backgroundColor:
+                currentOpenedPanel === 'searchPanel'
+                  ? theme.palette.primary.light
+                  : 'inherit',
+            }}
           >
-            <Tooltip title={t('core:quickAccess')}>
-              <RecentThingsIcon />
-            </Tooltip>
-          </ToggleButton>
-          <ToggleButton
+            <RecentThingsIcon />
+          </TsToolbarButton>
+          <TsToolbarButton
+            tooltip={t('core:helpFeedback')}
+            title={t('core:help')}
             data-tid="helpFeedback"
             onClick={() => showPanel('helpFeedbackPanel')}
-            className={
-              currentOpenedPanel === 'helpFeedbackPanel'
-                ? classNames(classes.button, classes.selectedButton)
-                : classes.button
-            }
-            value="check"
+            style={{
+              backgroundColor:
+                currentOpenedPanel === 'helpFeedbackPanel'
+                  ? theme.palette.primary.light
+                  : 'inherit',
+            }}
           >
-            <Tooltip title={t('core:helpFeedback')}>
-              <HelpIcon />
-            </Tooltip>
-          </ToggleButton>
-        </ToggleButtonGroup>
-        {currentUser ? (
-          <>
-            <TsIconButton
-              tooltip={t('core:userAccount')}
-              data-tid="accountCircleIconTID"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                setAnchorUser(event.currentTarget)
-              }
-              style={{ marginTop: -15, marginRight: 2 }}
-              size="large"
-            >
-              <AccountIcon />
-            </TsIconButton>
-            <Popover
-              open={Boolean(anchorUser)}
-              anchorEl={anchorUser}
-              onClose={() => setAnchorUser(null)}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-            >
-              <UserDetailsPopover onClose={() => setAnchorUser(null)} />
-            </Popover>
-          </>
-        ) : (
-          <TsIconButton
-            tooltip={t('core:switchTheme')}
-            data-tid="switchTheme"
-            onClick={switchTheme}
-            style={{ marginTop: -15, marginRight: 2 }}
-            size="large"
+            <HelpIcon />
+          </TsToolbarButton>
+          <TsToolbarButton
+            tooltip={t('core:settings')}
+            id="verticalNavButton"
+            data-tid="settings"
+            onClick={() => {
+              openSettingsDialog();
+            }}
+            title={t('core:settings')}
           >
-            <ThemingIcon />
-          </TsIconButton>
-        )}
+            <SettingsIcon />
+          </TsToolbarButton>
+        </Box>
       </Box>
-    </Root>
+    </Box>
   );
 }
 export default MobileNavigation;

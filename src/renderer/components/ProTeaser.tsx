@@ -23,7 +23,7 @@ import CameraTwoToneIcon from '@mui/icons-material/CameraTwoTone';
 import CloseIcon from '@mui/icons-material/Close';
 import MapTwoToneIcon from '@mui/icons-material/MapTwoTone';
 import ViewKanbanTwoToneIcon from '@mui/icons-material/ViewKanbanTwoTone';
-import { ButtonGroup } from '@mui/material';
+import { Box, ButtonGroup } from '@mui/material';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
@@ -41,7 +41,7 @@ function ProTeaser(props: Props) {
 
   const { t } = useTranslation();
   return (
-    <>
+    <Box style={{ display: 'block', marginBottom: 0 }}>
       <CardContent
         style={{
           paddingLeft: 5,
@@ -121,7 +121,7 @@ function ProTeaser(props: Props) {
           </TsButton>
         </ButtonGroup>
       </CardActions>
-    </>
+    </Box>
   );
 }
 

@@ -179,7 +179,7 @@ function MainToolbar(props: Props) {
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
         {!readOnlyMode && (
           <TsToolbarButton
-            tooltip={t('core:tagSelectedEntries')}
+            tooltip={t('core:fileTags')}
             title={t('core:fileTags')}
             keyBinding={keyBindings['addRemoveTags']}
             aria-label={t('core:tagSelectedEntries')}
@@ -203,7 +203,9 @@ function MainToolbar(props: Props) {
         {!readOnlyMode && (
           <TsToolbarButton
             tooltip={t('core:copyMoveSelectedEntries')}
-            title={t('core:copyEntriesButton')}
+            title={
+              t('core:copyEntriesButton') + '/' + t('core:moveEntriesButton')
+            }
             keyBinding={keyBindings['copyMoveSelectedEntries']}
             aria-label={t('core:copyMoveSelectedEntries')}
             data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
@@ -282,7 +284,7 @@ function MainToolbar(props: Props) {
           onClick={() => {
             setNativeDragModeEnabled(!nativeDragModeEnabled);
           }}
-          title={t('Drag outside')}
+          title={t('core:dragMode')}
         >
           {nativeDragModeEnabled ? <DragOnIcon /> : <DragOffIcon />}
         </TsToolbarButton>
