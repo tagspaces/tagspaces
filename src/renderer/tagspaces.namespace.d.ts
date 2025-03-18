@@ -309,6 +309,16 @@ export namespace TS {
     closeKanBanImportDialog: () => void;
   };
 
+  type ThumbDialogContextData = {
+    openThumbsDialog: (fsEntry: TS.FileSystemEntry) => void;
+    closeThumbsDialog: () => void;
+  };
+
+  type BgndDialogContextData = {
+    openBgndDialog: (fsEntry: TS.FileSystemEntry) => void;
+    closeBgndDialog: () => void;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;

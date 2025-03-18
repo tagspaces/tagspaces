@@ -43,9 +43,10 @@ import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
+import { Pro } from '-/pro';
 
 interface Props {
   desktopMode: boolean;
@@ -89,10 +90,16 @@ function GridPagination(props: Props) {
     gridPageLimit,
   } = usePerspectiveSettingsContext();
   const { findLocation } = useCurrentLocationContext();
-  const { directoryMeta } = useDirectoryContentContext();
+  const { directoryMeta, getAllPropertiesPromise } =
+    useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   const { openEntry } = useOpenedEntryContext();
+  const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
+    ? useContext<TS.ThumbDialogContextData>(
+        Pro.contextProviders.ThumbDialogContext,
+      )
+    : undefined;
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
@@ -337,6 +344,14 @@ function GridPagination(props: Props) {
                     position: 'absolute',
                     top: 0,
                     right: 0,
+                  }}
+                  onClick={() => {
+                    if (Pro) {
+                      getAllPropertiesPromise(currentDirectoryPath).then(
+                        (fsEntry: TS.FileSystemEntry) =>
+                          thumbDialogContext.openThumbsDialog(fsEntry),
+                      );
+                    }
                   }}
                 />
               </div>

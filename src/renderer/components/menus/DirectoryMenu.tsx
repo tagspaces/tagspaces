@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Menu } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -102,6 +102,18 @@ function DirectoryMenu(props: Props) {
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
+
+  const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
+    ? useContext<TS.ThumbDialogContextData>(
+        Pro.contextProviders.ThumbDialogContext,
+      )
+    : undefined;
+  const bgndDialogContext = Pro?.contextProviders?.BgndDialogContext
+    ? useContext<TS.BgndDialogContextData>(
+        Pro.contextProviders.BgndDialogContext,
+      )
+    : undefined;
+
   const {
     open,
     onClose,
@@ -414,6 +426,12 @@ Do you want to continue?`)
       return openCurrentDirectory();
     }
   }
+  function changeFolderThumbnail() {
+    thumbDialogContext.openThumbsDialog(selectedEntries[0]);
+  }
+  function changeFolderBackground() {
+    bgndDialogContext.openBgndDialog(selectedEntries[0]);
+  }
 
   const menuItems = items
     ? items
@@ -442,6 +460,8 @@ Do you want to continue?`)
         cameraTakePicture,
         openAddRemoveTagsDialog,
         openInNewWindow,
+        changeFolderThumbnail,
+        changeFolderBackground,
       );
 
   return (

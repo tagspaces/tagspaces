@@ -87,6 +87,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import L from 'leaflet';
 import React, {
   ChangeEvent,
+  useContext,
   useEffect,
   useReducer,
   useRef,
@@ -110,12 +111,12 @@ const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   },
 }));
 
-const ThumbnailChooserDialog =
-  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
+/*const ThumbnailChooserDialog =
+  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;*/
 const CustomBackgroundDialog =
   Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
-const BgndImgChooserDialog =
-  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
+/*const BgndImgChooserDialog =
+  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;*/
 
 interface Props {
   tileServer: TS.MapTileServer;
@@ -173,6 +174,16 @@ function EntryProperties(props: Props) {
   const { addTagsToFsEntry, removeTagsFromEntry } = useTaggingActionsContext();
   const { findLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
+  const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
+    ? useContext<TS.ThumbDialogContextData>(
+        Pro.contextProviders.ThumbDialogContext,
+      )
+    : undefined;
+  const bgndDialogContext = Pro?.contextProviders?.BgndDialogContext
+    ? useContext<TS.BgndDialogContextData>(
+        Pro.contextProviders.BgndDialogContext,
+      )
+    : undefined;
 
   const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -192,12 +203,12 @@ function EntryProperties(props: Props) {
     useState<boolean>(false);
   const [isConfirmResetColorDialogOpened, setConfirmResetColorDialogOpened] =
     useState<boolean>(false);
-  const [isFileThumbChooseDialogOpened, setFileThumbChooseDialogOpened] =
-    useState<boolean>(false);
+  /* const [isFileThumbChooseDialogOpened, setFileThumbChooseDialogOpened] =
+    useState<boolean>(false);*/
   const [showSharingLinkDialog, setShowSharingLinkDialog] =
     useState<boolean>(false);
-  const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
-    useState<boolean>(false);
+  /* const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
+    useState<boolean>(false);*/
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
   const backgroundImage = useRef<string>('none');
@@ -259,7 +270,9 @@ function EntryProperties(props: Props) {
           openedEntry.meta?.lastUpdated,
         )
         .then((thumbPath) => {
-          const thbImage = thumbPath ? 'url("' + thumbPath + '")' : 'none';
+          const thbImage = thumbPath
+            ? 'url("' + thumbPath.replace(/#/g, '%23') + '")'
+            : 'none';
           if (thbImage !== thumbImage.current) {
             thumbImage.current = thbImage;
             forceUpdate();
@@ -324,23 +337,23 @@ function EntryProperties(props: Props) {
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
-  const toggleThumbFilesDialog = () => {
+  const openThumbFilesDialog = () => {
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!isEditMode && editName === undefined) {
-      setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
+    if (!isEditMode && editName === undefined && thumbDialogContext) {
+      thumbDialogContext.openThumbsDialog(openedEntry);
     }
   };
 
-  const toggleBgndImgDialog = () => {
+  const openBgndImgDialog = () => {
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (!isEditMode && editName === undefined) {
-      setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
+      bgndDialogContext.openBgndDialog(openedEntry);
     }
   };
 
@@ -996,7 +1009,7 @@ function EntryProperties(props: Props) {
                                 data-tid="changeThumbnailTID"
                                 fullWidth
                                 variant="text"
-                                onClick={toggleThumbFilesDialog}
+                                onClick={openThumbFilesDialog}
                               >
                                 {t('core:change')}
                               </TsButton>
@@ -1015,7 +1028,7 @@ function EntryProperties(props: Props) {
                             minWidth: 150,
                             marginBottom: 5,
                           }}
-                          onClick={toggleThumbFilesDialog}
+                          onClick={openThumbFilesDialog}
                         />
                       </Stack>
                     </InputAdornment>
@@ -1052,7 +1065,7 @@ function EntryProperties(props: Props) {
                                   data-tid="changeBackgroundImageTID"
                                   fullWidth
                                   variant="text"
-                                  onClick={toggleBgndImgDialog}
+                                  onClick={openBgndImgDialog}
                                 >
                                   {t('core:change')}
                                 </TsButton>
@@ -1072,7 +1085,7 @@ function EntryProperties(props: Props) {
                               minWidth: 150,
                               marginBottom: 5,
                             }}
-                            onClick={toggleBgndImgDialog}
+                            onClick={openBgndImgDialog}
                           />
                         </Stack>
                       </InputAdornment>
@@ -1163,26 +1176,26 @@ function EntryProperties(props: Props) {
           ]}
         />
       )}
-      {ThumbnailChooserDialog && (
+      {/*{ThumbnailChooserDialog && (
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           entry={openedEntry as TS.FileSystemEntry}
         />
-      )}
+      )}*/}
       {showSharingLinkDialog && (
         <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
         />
       )}
-      {BgndImgChooserDialog && (
+      {/*{BgndImgChooserDialog && (
         <BgndImgChooserDialog
           open={isBgndImgChooseDialogOpened}
           onClose={toggleBgndImgDialog}
           entry={openedEntry as TS.FileSystemEntry}
         />
-      )}
+      )}*/}
       {CustomBackgroundDialog && (
         <CustomBackgroundDialog
           color={openedEntry.meta?.color}

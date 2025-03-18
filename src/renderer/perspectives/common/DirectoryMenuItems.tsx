@@ -20,6 +20,7 @@ import {
   RenameIcon,
   TagIcon,
 } from '-/components/CommonIcons';
+import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
@@ -59,6 +60,8 @@ export function getDirectoryMenuItems(
   cameraTakePicture?: () => void,
   showAddRemoveTagsDialog?: () => void,
   openInNewWindow?: () => void,
+  changeFolderThumbnail?: () => void,
+  changeFolderBackground?: () => void,
 ) {
   const keyBindings = useSelector(getKeyBindingObject);
   const menuItems = [];
@@ -335,28 +338,58 @@ export function getDirectoryMenuItems(
       );
     }
   }
-  if (
-    Pro &&
-    !isReadOnlyMode &&
-    perspectiveMode &&
-    selectedEntriesLength < 2 &&
-    setFolderThumbnail
-  ) {
-    menuItems.push(
-      <MenuItem
-        key="setAsThumb"
-        data-tid="setAsThumbTID"
-        onClick={() => {
-          onClose();
-          setFolderThumbnail();
-        }}
-      >
-        <ListItemIcon>
-          <PictureIcon />
-        </ListItemIcon>
-        <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
-      </MenuItem>,
-    );
+  if (Pro && !isReadOnlyMode && perspectiveMode && selectedEntriesLength < 2) {
+    if (setFolderThumbnail) {
+      menuItems.push(
+        <MenuItem
+          key="setAsThumb"
+          data-tid="setAsThumbTID"
+          onClick={() => {
+            onClose();
+            setFolderThumbnail();
+          }}
+        >
+          <ListItemIcon>
+            <PictureIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
+        </MenuItem>,
+      );
+    }
+    if (changeFolderThumbnail) {
+      menuItems.push(
+        <MenuItem
+          key="changeThumb"
+          data-tid="changeThumbTID"
+          onClick={() => {
+            onClose();
+            changeFolderThumbnail();
+          }}
+        >
+          <ListItemIcon>
+            <PictureIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:changeThumbnail')} />
+        </MenuItem>,
+      );
+    }
+    if (changeFolderBackground) {
+      menuItems.push(
+        <MenuItem
+          key="changeThumb"
+          data-tid="changeThumbTID"
+          onClick={() => {
+            onClose();
+            changeFolderBackground();
+          }}
+        >
+          <ListItemIcon>
+            <SetBackgroundIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:changeBackground')} />
+        </MenuItem>,
+      );
+    }
   }
   if (selectedEntriesLength === 1 && copySharingLink) {
     menuItems.push(
