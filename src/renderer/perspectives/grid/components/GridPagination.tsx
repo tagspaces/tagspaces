@@ -235,7 +235,7 @@ function GridPagination(props: Props) {
         }}
       >
         <Grid container spacing={0}>
-          <Grid size={12} style={{ height: showDetails ? 70 : 50 }} />
+          <Grid size={12} style={{ height: 60 }} />
           {showDetails && (
             <Grid size={12}>
               <div
@@ -335,12 +335,13 @@ function GridPagination(props: Props) {
                   <Box
                     sx={{
                       ':hover': {
-                        border: '1px dashed gray',
+                        border: '1px dashed gray !important',
                       },
                     }}
                     data-tid="folderThumbTID"
                     style={{
                       borderRadius: AppConfig.defaultCSSRadius,
+                      border: '1px solid transparent',
                       height: 100,
                       width: 140,
                       backgroundImage: thumbImage.current,
@@ -348,7 +349,7 @@ function GridPagination(props: Props) {
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
                       position: 'absolute',
-                      top: 0,
+                      top: 10,
                       right: 0,
                       cursor: 'pointer',
                     }}
@@ -366,13 +367,6 @@ function GridPagination(props: Props) {
             </Grid>
           )}
           {showDescription && directoryMeta?.description && (
-            // <TooltipTS
-            //   title={
-            //     t('core:folderDescription') +
-            //     ' - ' +
-            //     t('core:doubleClickToEdit')
-            //   }
-            // >
             <Grid
               title={
                 t('core:folderDescription') +
@@ -385,7 +379,7 @@ function GridPagination(props: Props) {
               style={{
                 backgroundColor: theme.palette.background.default,
                 borderBottom: '1px solid ' + theme.palette.divider,
-                marginTop: showDetails ? 0 : 10,
+                marginTop: 10,
                 marginLeft: 8,
                 marginRight: 8,
                 borderTopLeftRadius: 10,
@@ -422,7 +416,6 @@ function GridPagination(props: Props) {
                 />
               </MilkdownProvider>
             </Grid>
-            // </TooltipTS>
           )}
         </Grid>
 
