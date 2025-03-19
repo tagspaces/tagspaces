@@ -23,11 +23,11 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { Identifier } from 'dnd-core';
 import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type DragItem = {
   files?: File[];
-  path?: string;
-  selectedEntries?: TS.FileSystemEntry[];
+  entry?: TS.FileSystemEntry;
   items: DataTransferItemList;
 };
 type DragProps = {
@@ -44,30 +44,33 @@ interface Props {
 function ChatDndTargetFile(props: Props) {
   const theme = useTheme();
   const { children, accepts, style } = props;
-  //const { findLocalLocation } = useCurrentLocationContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { setImages } = useChatContext();
 
   function isSupportedImageFormat(filePath: string) {
-    const aiSupportedImages = [
-      'jpeg',
-      'jpg',
-      'png',
-      'gif',
-      'bmp',
-      'tiff',
-      // 'avif', // currently not supported
-      // 'webp', // currently not supported
-    ];
-    return aiSupportedImages.some((ext) =>
-      filePath.toLowerCase().endsWith(ext),
-    );
+    if (filePath) {
+      const aiSupportedImages = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+        'bmp',
+        'tiff',
+        // 'avif', // currently not supported
+        // 'webp', // currently not supported
+      ];
+      return aiSupportedImages.some((ext) =>
+        filePath.toLowerCase().endsWith(ext),
+      );
+    }
+    return false;
   }
 
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
       accept: accepts,
       drop: (item, m) => {
-        const { files, path, selectedEntries } = item;
+        const { files, entry } = item;
         const didDrop = m.didDrop();
         if (didDrop || !AppConfig.isElectron) {
           return;
@@ -81,19 +84,21 @@ function ChatDndTargetFile(props: Props) {
             return file.path;
           });
           setImages(filePaths);
-        } else {
-          const arrPath = [];
-          if (selectedEntries && selectedEntries.length > 0) {
-            selectedEntries.map((entry) => {
-              if (isSupportedImageFormat(entry.path)) {
-                arrPath.push(entry.path);
-              }
-              return true;
-            });
-          } else if (isSupportedImageFormat(path)) {
-            arrPath.push(path);
+        } else if (entry) {
+          if (
+            selectedEntries &&
+            selectedEntries.length > 0 &&
+            selectedEntries.some((e) => e.path === entry.path)
+          ) {
+            const images = selectedEntries.filter((entry) =>
+              isSupportedImageFormat(entry.path),
+            );
+            if (images.length > 0) {
+              setImages(images.map((i) => i.path));
+            }
+          } else if (entry.isFile && isSupportedImageFormat(entry.path)) {
+            setImages([entry.path]);
           }
-          setImages(arrPath);
         }
       },
       collect: (m: DropTargetMonitor) => ({
@@ -102,7 +107,7 @@ function ChatDndTargetFile(props: Props) {
         isActive: m.isOver({ shallow: true }) && m.canDrop(),
       }),
     }),
-    [setImages],
+    [setImages, selectedEntries],
   );
 
   const { isActive, handlerId } = collectedProps;

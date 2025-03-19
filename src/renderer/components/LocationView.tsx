@@ -75,7 +75,7 @@ function LocationView(props: Props) {
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { setSelectedEntries } = useSelectedEntriesContext();
+  const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
@@ -128,16 +128,18 @@ function LocationView(props: Props) {
    */
   const handleFileMoveDrop = (item, monitor) => {
     if (item) {
-      const { path, selectedEntries } = item; //monitor.getItem();
-      const arrPath = [];
-      if (selectedEntries && selectedEntries.length > 0) {
-        selectedEntries.map((entry) => {
-          arrPath.push(entry.path);
-          return true;
-        });
-      } else {
-        arrPath.push(path);
+      const { entry } = item;
+      let arrPath = [];
+      if (
+        selectedEntries &&
+        selectedEntries.length > 0 &&
+        selectedEntries.some((e) => e.path === entry.path)
+      ) {
+        arrPath = selectedEntries.map((i) => i.path);
+      } else if (entry) {
+        arrPath.push(entry.path);
       }
+
       if (readOnlyMode) {
         showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
@@ -150,7 +152,7 @@ function LocationView(props: Props) {
 
       if (targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
-        console.log('Dropped files: ' + path);
+        console.log('Dropped files: ' + JSON.stringify(arrPath));
         if (targetLocation.type !== currentLocation.type) {
           //locationType.TYPE_CLOUD) {
           dispatch(AppActions.resetProgress());

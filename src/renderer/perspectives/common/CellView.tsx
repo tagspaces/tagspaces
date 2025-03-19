@@ -273,23 +273,27 @@ function CellView(props: Props) {
       return;
     }
     if (item) {
-      // const mItem = monitor.getItem();
+      const { entry } = item;
       let arrPath;
-      if (item.selectedEntries && item.selectedEntries.length > 0) {
-        const arrSelected = item.selectedEntries
+      if (
+        selectedEntries &&
+        selectedEntries.length > 0 &&
+        selectedEntries.some((e) => e.path === entry.path)
+      ) {
+        const arrSelected = selectedEntries
           .map((entry) => entry.path)
           // remove target folder selection
           .filter((epath) => epath !== item.targetPath);
         if (arrSelected.length > 0) {
           arrPath = arrSelected;
         } else {
-          arrPath = [item.path];
+          arrPath = [entry.path];
         }
-      } else {
-        arrPath = [item.path];
+      } else if (entry) {
+        arrPath = [entry.path];
       }
-      console.log('Dropped files: ' + item.path);
-      handleEntryExist(item.selectedEntries, item.targetPath).then((exist) => {
+      console.log('Dropped files: ' + JSON.stringify(arrPath));
+      handleEntryExist(selectedEntries, item.targetPath).then((exist) => {
         if (exist) {
           openEntryExistDialog(exist, () => {
             moveFiles(arrPath, item.targetPath, currentLocationId);

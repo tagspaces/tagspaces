@@ -26,21 +26,21 @@ interface Props {
   children: React.ReactNode;
 }
 interface ChildProps {
-  entryPath: string;
-  selectedEntries: TS.FileSystemEntry[];
+  entry: TS.FileSystemEntry;
+  //selectedEntries: TS.FileSystemEntry[];
 }
 
 const FileSourceDnd: React.FC<Props> = ({ children }) => {
   const childProps = children as React.ReactElement<ChildProps>;
-  const entryPath = childProps.props.entryPath;
-  const selectedEntries = childProps.props.selectedEntries || [];
-  let entries = !selectedEntries.some((entry) => entry.path === entryPath)
+  const entry = childProps.props.entry;
+  //const selectedEntries = childProps.props.selectedEntries || [];
+  /*let entries = !selectedEntries.some((entry) => entry.path === entryPath)
     ? [{ path: entryPath }]
-    : selectedEntries;
+    : selectedEntries;*/
 
   const [collected, drag, preview] = useDrag({
     type: DragItemTypes.FILE,
-    item: { path: entryPath, selectedEntries: entries },
+    item: { entry: entry },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
