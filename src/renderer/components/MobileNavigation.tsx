@@ -489,6 +489,7 @@ function MobileNavigation(props: Props) {
             display: 'flex',
             flexDirection: 'row',
             alignSelf: 'anchor-center',
+            backgroundColor: theme.palette.background.default,
           }}
         >
           <TsToolbarButton

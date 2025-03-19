@@ -16,10 +16,9 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { useSelector } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
+import { useSelector } from 'react-redux';
 
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { getTagColors } from '-/services/taglibrary-utils';
@@ -82,7 +81,8 @@ function TagsPreview(props: Props) {
           minWidth: 15,
           width: 18,
           height: 15,
-          marginLeft: 5,
+          marginLeft: 4,
+          marginRight: 4,
           borderRadius: 7,
           borderRight: moreThanOne ? 'white 1px solid' : 'initial',
           boxShadow: moreThanOne ? '4px 0px 0px 0px ' + secondTagColor : 'none',

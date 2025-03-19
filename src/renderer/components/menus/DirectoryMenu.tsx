@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Menu } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -69,6 +69,7 @@ interface Props {
   openAddRemoveTagsDialog?: () => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
+  switchPerspectives?: boolean;
   openRenameDirectoryDialog?: () => void;
   openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
@@ -94,6 +95,7 @@ function DirectoryMenu(props: Props) {
     currentDirectoryEntries,
     setManualDirectoryPerspective,
     openCurrentDirectory,
+    getAllPropertiesPromise,
   } = useDirectoryContentContext();
   const { generateThumbnails } = useThumbGenerationContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
@@ -102,6 +104,18 @@ function DirectoryMenu(props: Props) {
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
+
+  const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
+    ? useContext<TS.ThumbDialogContextData>(
+        Pro.contextProviders.ThumbDialogContext,
+      )
+    : undefined;
+  const bgndDialogContext = Pro?.contextProviders?.BgndDialogContext
+    ? useContext<TS.BgndDialogContextData>(
+        Pro.contextProviders.BgndDialogContext,
+      )
+    : undefined;
+
   const {
     open,
     onClose,
@@ -114,6 +128,7 @@ function DirectoryMenu(props: Props) {
     openRenameDirectoryDialog,
     switchPerspective,
     perspectiveMode,
+    switchPerspectives,
   } = props;
   const currentLocation = findLocation();
   const directoryPath = props.directoryPath || currentDirectoryPath;
@@ -414,6 +429,26 @@ Do you want to continue?`)
       return openCurrentDirectory();
     }
   }
+  function changeFolderThumbnail() {
+    if (selectedEntries.length === 1) {
+      thumbDialogContext.openThumbsDialog(selectedEntries[0]);
+    } else {
+      getAllPropertiesPromise(currentDirectoryPath).then(
+        (fsEntry: TS.FileSystemEntry) =>
+          thumbDialogContext.openThumbsDialog(fsEntry),
+      );
+    }
+  }
+  function changeFolderBackground() {
+    if (selectedEntries.length === 1) {
+      bgndDialogContext.openBgndDialog(selectedEntries[0]);
+    } else {
+      getAllPropertiesPromise(currentDirectoryPath).then(
+        (fsEntry: TS.FileSystemEntry) =>
+          bgndDialogContext.openBgndDialog(fsEntry),
+      );
+    }
+  }
 
   const menuItems = items
     ? items
@@ -437,11 +472,13 @@ Do you want to continue?`)
         setFolderThumbnail,
         copySharingLink,
         importMacTags,
-        perspectiveSwitch,
+        switchPerspectives ? perspectiveSwitch : undefined,
         showProperties,
         cameraTakePicture,
         openAddRemoveTagsDialog,
         openInNewWindow,
+        changeFolderThumbnail,
+        changeFolderBackground,
       );
 
   return (

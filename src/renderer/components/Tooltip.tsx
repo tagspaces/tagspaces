@@ -16,9 +16,8 @@
  *
  */
 
-import React from 'react';
-import Tooltip from '@mui/material/Tooltip';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Props {
   title: any;
@@ -41,7 +40,7 @@ interface Props {
 }
 
 function TooltipTS(props: Props) {
-  const { title, placement, keyBinding, children } = props;
+  const { title, placement = 'top', keyBinding, children } = props;
   let tooltipText = title;
   if (keyBinding) {
     tooltipText = title + ' (' + adjustKeyBinding(keyBinding) + ')';
@@ -52,7 +51,7 @@ function TooltipTS(props: Props) {
       arrow
       title={tooltipText}
       disableInteractive
-      placement="top"
+      placement={placement}
     />
   );
 }

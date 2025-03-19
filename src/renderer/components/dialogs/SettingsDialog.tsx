@@ -92,6 +92,7 @@ function SettingsDialog(props: Props) {
         overflowX: 'hidden',
         display: smallScreen ? 'block' : 'flex',
         flexGrow: 1,
+        padding: smallScreen ? 0 : '0 20px',
       }}
     >
       <Tabs
