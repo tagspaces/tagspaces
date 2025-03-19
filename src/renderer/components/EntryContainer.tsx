@@ -18,7 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { CancelIcon, CloseEditIcon, SaveIcon } from '-/components/CommonIcons';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import EditFileButton from '-/components/EditFileButton';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
@@ -31,6 +31,7 @@ import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolve
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -48,6 +49,7 @@ import { Switch, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { useTheme } from '@mui/material/styles';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import React, {
   MutableRefObject,
   useCallback,
@@ -59,8 +61,6 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import EditFileButton from '-/components/EditFileButton';
-import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -732,7 +732,7 @@ function EntryContainer() {
           <Box
             style={{
               paddingLeft: 0,
-              paddingRight: 50,
+              paddingRight: 55,
               paddingTop: 0,
               minHeight: 48,
               display: 'flex',
