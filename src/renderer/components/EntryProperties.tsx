@@ -592,7 +592,7 @@ function EntryProperties(props: Props) {
                 width: '99%',
                 margin: 2,
                 marginTop: 8,
-                borderRadius: 3,
+                borderRadius: AppConfig.defaultCSSRadius,
                 // border: '1px solid rgba(0, 0, 0, 0.38)',
               }}
               doubleClickZoom={true}
@@ -1023,7 +1023,7 @@ function EntryProperties(props: Props) {
                             backgroundRepeat: 'no-repeat',
                             backgroundImage: thumbImage.current,
                             backgroundPosition: 'center',
-                            borderRadius: 8,
+                            borderRadius: AppConfig.defaultCSSRadius,
                             minHeight: 150,
                             minWidth: 150,
                             marginBottom: 5,
@@ -1080,7 +1080,7 @@ function EntryProperties(props: Props) {
                               backgroundRepeat: 'no-repeat',
                               backgroundImage: backgroundImage.current,
                               backgroundPosition: 'center',
-                              borderRadius: 8,
+                              borderRadius: AppConfig.defaultCSSRadius,
                               minHeight: 150,
                               minWidth: 150,
                               marginBottom: 5,
