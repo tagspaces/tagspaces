@@ -57,7 +57,8 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = (props) => {
     switch (itemType) {
       case DragItemTypes.FILE:
         return (
-          <FilesDragPreview entries={item.selectedEntries} path={item.path} />
+          <FilesDragPreview /*entries={item.selectedEntries} path={item.path}*/
+          />
         );
       case DragItemTypes.TAG:
         return <TagDragPreview tag={item.tag} />;

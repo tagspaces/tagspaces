@@ -319,7 +319,12 @@ function GridPerspective(props: Props) {
 
     const selectionMode = selectedEntries.length > 1;
     return (
-      <TagDropContainer entry={fsEntry}>
+      <TagDropContainer
+        entry={fsEntry}
+        /*selectedEntries={
+          selectedEntries.length > 0 ? selectedEntries : [fsEntry]
+        }*/
+      >
         <GridCell
           selected={selected}
           fsEntry={fsEntry}
