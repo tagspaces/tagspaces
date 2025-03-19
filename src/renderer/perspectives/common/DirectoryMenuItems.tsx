@@ -2,8 +2,9 @@ import AppConfig from '-/AppConfig';
 import {
   AddExistingFileIcon,
   AudioRecordIcon,
-  ColorPaletteIcon,
+  ChangeBackgroundIcon,
   CopyMoveIcon,
+  CopyPictureIcon,
   DeleteIcon,
   EntryPropertiesIcon,
   HTMLFileIcon,
@@ -34,7 +35,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import { useSelector } from 'react-redux';
-import React from 'react';
 
 export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
@@ -351,7 +351,7 @@ export function getDirectoryMenuItems(
           }}
         >
           <ListItemIcon>
-            <PictureIcon />
+            <CopyPictureIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
         </MenuItem>,
@@ -385,9 +385,9 @@ export function getDirectoryMenuItems(
           }}
         >
           <ListItemIcon>
-            <ColorPaletteIcon />
+            <ChangeBackgroundIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:changeBackgroundImage')} />
+          <ListItemText primary={t('core:changeBackgroundColor')} />
         </MenuItem>,
       );
     }

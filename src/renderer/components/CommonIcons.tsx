@@ -96,6 +96,10 @@ export { default as DateIcon } from '@mui/icons-material/DateRange';
 
 export { default as PictureIcon } from '@mui/icons-material/PanoramaOutlined';
 
+export { default as CopyPictureIcon } from '@mui/icons-material/CollectionsOutlined';
+
+export { default as ChangeBackgroundIcon } from '@mui/icons-material/ImagesearchRollerOutlined';
+
 export { default as DocumentIcon } from '@mui/icons-material/PictureAsPdfOutlined';
 
 export { default as NoteIcon } from '@mui/icons-material/NoteOutlined';

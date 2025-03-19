@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import EntryIcon from '-/components/EntryIcon';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import { default as Tooltip } from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import LightMdEditor from '-/components/md/LigthMdEditor';
@@ -32,6 +32,7 @@ import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import CellView from '-/perspectives/common/CellView';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
 import { getDescriptionPreview } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -46,7 +47,6 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
-import { Pro } from '-/pro';
 
 interface Props {
   desktopMode: boolean;
@@ -269,7 +269,7 @@ function GridPagination(props: Props) {
                       color: theme.palette.text.primary,
                     }}
                   >
-                    <Tooltip title={t('core:renameDirectory')}>
+                    <TooltipTS title={t('core:renameDirectory')}>
                       <ButtonBase
                         data-tid={'currentDir_' + dataTidFormat(folderName)}
                         style={{
@@ -283,7 +283,7 @@ function GridPagination(props: Props) {
                       >
                         {folderName}
                       </ButtonBase>
-                    </Tooltip>
+                    </TooltipTS>
                     {showTags ? (
                       <span style={{ paddingLeft: 5 }}>
                         {directoryMeta?.tags?.map((tag: TS.Tag) => {
@@ -331,29 +331,37 @@ function GridPagination(props: Props) {
                       </Typography>
                     )}
                 </Box>
-                <div
-                  data-tid="folderThumbTID"
-                  style={{
-                    borderRadius: 10,
-                    height: 100,
-                    width: 140,
-                    backgroundImage: thumbImage.current,
-                    backgroundSize: 'cover', // cover contain
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center center',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                  }}
-                  onClick={() => {
-                    if (Pro) {
-                      getAllPropertiesPromise(currentDirectoryPath).then(
-                        (fsEntry: TS.FileSystemEntry) =>
-                          thumbDialogContext.openThumbsDialog(fsEntry),
-                      );
-                    }
-                  }}
-                />
+                <TooltipTS title={t('core:changeThumbnail')} placement="bottom">
+                  <Box
+                    sx={{
+                      ':hover': {
+                        border: '1px dashed gray',
+                      },
+                    }}
+                    data-tid="folderThumbTID"
+                    style={{
+                      borderRadius: AppConfig.defaultCSSRadius,
+                      height: 100,
+                      width: 140,
+                      backgroundImage: thumbImage.current,
+                      backgroundSize: 'cover', // cover contain
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center center',
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      if (Pro) {
+                        getAllPropertiesPromise(currentDirectoryPath).then(
+                          (fsEntry: TS.FileSystemEntry) =>
+                            thumbDialogContext.openThumbsDialog(fsEntry),
+                        );
+                      }
+                    }}
+                  />
+                </TooltipTS>
               </div>
             </Grid>
           )}
@@ -488,7 +496,7 @@ function GridPagination(props: Props) {
             )}
           </GridCellsContainer>
           {showPagination && (
-            <Tooltip title={folderSummary}>
+            <TooltipTS title={folderSummary}>
               <Pagination
                 style={{
                   left: 15,
@@ -505,7 +513,7 @@ function GridPagination(props: Props) {
                 page={page}
                 onChange={handleChange}
               />
-            </Tooltip>
+            </TooltipTS>
           )}
           {!showDetails && !showPagination && pageFiles.length > 0 && (
             <div style={{ padding: 15, bottom: 10 }}>
