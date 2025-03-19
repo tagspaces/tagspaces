@@ -46,7 +46,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import { styled } from '@mui/material/styles';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,16 +55,6 @@ import {
   TableVirtuoso,
   TableVirtuosoHandle,
 } from 'react-virtuoso';
-
-const PREFIX = 'SettingsFileTypes';
-
-const classes = {
-  fileExtRemove: `${PREFIX}-fileExtRemove`,
-};
-
-const Root = styled('div')(({ theme: any }) => ({
-  [`& .${classes.fileExtRemove}`]: {},
-}));
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
@@ -231,17 +220,17 @@ function SettingsFileTypes() {
 
   const columns: ColumnData[] = [
     {
-      width: '160px',
+      width: '130px',
       label: t('core:fileExtension'),
       dataKey: 'type',
     },
     {
-      width: '45%',
+      width: '170px',
       label: t('core:fileOpener'),
       dataKey: 'viewer',
     },
     {
-      width: '45%',
+      width: '170px',
       label: t('core:fileEditor'),
       dataKey: 'editor',
     },
@@ -314,7 +303,10 @@ function SettingsFileTypes() {
   function rowContent(_index: number, item: TS.FileTypes) {
     return (
       <React.Fragment>
-        <TableCell align={'left'} sx={{ padding: '0 5px 0px 5px' }}>
+        <TableCell
+          align={'left'}
+          sx={{ maxWidth: 160, padding: '0 5px 0px 5px' }}
+        >
           <FormControl
             error={
               (isValidationInProgress.current && item.type === '') ||
@@ -382,7 +374,7 @@ function SettingsFileTypes() {
         </TableCell>
         <TableCell
           align={'center'}
-          sx={{ minWith: 180, padding: '0 5px 0px 0' }}
+          sx={{ minWith: 150, padding: '0 5px 0px 0' }}
         >
           <FormControl
             error={isValidationInProgress.current && item.viewer === ''}
@@ -391,7 +383,7 @@ function SettingsFileTypes() {
               data-tid={'viewerTID' + item.type}
               error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
-              style={{ minWidth: 150, maxWidth: 190, marginTop: 0 }}
+              style={{ minWidth: 150, marginTop: 0 }}
               onChange={(event) => {
                 const extension: TS.Extension = extensions.find(
                   (ext) => ext.extensionId === event.target.value,
@@ -435,7 +427,7 @@ function SettingsFileTypes() {
         <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
           <TsSelect
             value={item.editor}
-            style={{ minWidth: 150, maxWidth: 190, marginTop: 0 }}
+            style={{ minWidth: 150, marginTop: 0 }}
             onChange={(event) =>
               updateItems(item, 'editor', event.target.value)
             }
@@ -520,8 +512,9 @@ function SettingsFileTypes() {
       )}
       <TableVirtuoso
         style={{
-          overflowX: 'hidden',
+          overflowX: 'auto',
           height: 'calc(100% - 50px)',
+          minWidth: 350,
           overflowY: 'auto',
           background: 'transparent',
         }}

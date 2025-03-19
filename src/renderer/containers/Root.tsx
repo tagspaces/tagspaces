@@ -106,9 +106,13 @@ export default function Root({ store, persistor }: RootType) {
                                                             <Pro.contextProviders.BookmarksContextProvider>
                                                               <Pro.contextProviders.HistoryContextProvider>
                                                                 <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                  <DialogsRoot>
-                                                                    <MainPage />
-                                                                  </DialogsRoot>
+                                                                  <Pro.contextProviders.ThumbDialogContextProvider>
+                                                                    <Pro.contextProviders.BgndDialogContextProvider>
+                                                                      <DialogsRoot>
+                                                                        <MainPage />
+                                                                      </DialogsRoot>
+                                                                    </Pro.contextProviders.BgndDialogContextProvider>
+                                                                  </Pro.contextProviders.ThumbDialogContextProvider>
                                                                 </Pro.contextProviders.KanBanImportDialogContextProvider>
                                                               </Pro.contextProviders.HistoryContextProvider>
                                                             </Pro.contextProviders.BookmarksContextProvider>

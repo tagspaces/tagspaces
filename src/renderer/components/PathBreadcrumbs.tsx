@@ -242,6 +242,7 @@ function PathBreadcrumbs(props: Props) {
         onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
         perspectiveMode={false}
+        switchPerspectives={true}
         directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
       />
