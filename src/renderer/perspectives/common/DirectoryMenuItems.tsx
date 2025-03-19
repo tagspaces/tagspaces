@@ -2,6 +2,7 @@ import AppConfig from '-/AppConfig';
 import {
   AddExistingFileIcon,
   AudioRecordIcon,
+  ColorPaletteIcon,
   CopyMoveIcon,
   DeleteIcon,
   EntryPropertiesIcon,
@@ -20,7 +21,6 @@ import {
   RenameIcon,
   TagIcon,
 } from '-/components/CommonIcons';
-import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
@@ -34,6 +34,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import { useSelector } from 'react-redux';
+import React from 'react';
 
 export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
@@ -338,8 +339,8 @@ export function getDirectoryMenuItems(
       );
     }
   }
-  if (Pro && !isReadOnlyMode && perspectiveMode && selectedEntriesLength < 2) {
-    if (setFolderThumbnail) {
+  if (Pro && !isReadOnlyMode && selectedEntriesLength < 2) {
+    if (setFolderThumbnail && perspectiveMode) {
       menuItems.push(
         <MenuItem
           key="setAsThumb"
@@ -376,17 +377,17 @@ export function getDirectoryMenuItems(
     if (changeFolderBackground) {
       menuItems.push(
         <MenuItem
-          key="changeThumb"
-          data-tid="changeThumbTID"
+          key="changeBackground"
+          data-tid="changeBackgroundTID"
           onClick={() => {
             onClose();
             changeFolderBackground();
           }}
         >
           <ListItemIcon>
-            <SetBackgroundIcon />
+            <ColorPaletteIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:changeBackground')} />
+          <ListItemText primary={t('core:changeBackgroundImage')} />
         </MenuItem>,
       );
     }
