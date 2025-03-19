@@ -400,7 +400,7 @@ function GridPagination(props: Props) {
                       .gridPagination .milkdown .ProseMirror h1 {
                           margin-top: 10px;
                       }
-                     .gridPagination .milkdown {
+                     .gridPagination .milkdown { 
                           border-top-left-radius: 10px;
                           border-top-right-radius: 10px;
                       }
