@@ -16,17 +16,17 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import TooltipTS from '-/components/Tooltip';
+import { isDesktopMode } from '-/reducers/settings';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button, {
   ButtonProps,
   ButtonPropsVariantOverrides,
 } from '@mui/material/Button';
 import { OverridableStringUnion } from '@mui/types';
-import TooltipTS from '-/components/Tooltip';
-import { isDesktopMode } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
-import LoadingButton from '@mui/lab/LoadingButton';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 export type TSButtonProps = ButtonProps & {
   tooltip?: string;
@@ -52,6 +52,12 @@ function TsButton(props: TSButtonProps) {
         {...rest}
         style={{
           borderRadius: AppConfig.defaultCSSRadius,
+          textTransform: 'none', // 'capitalize',
+          fontSize: 14,
+          fontWeight: 'normal',
+          // width: 100,
+          // textOverflow: 'ellipsis',
+          // overflow: 'hidden',
           ...style,
         }}
       >
@@ -66,8 +72,9 @@ function TsButton(props: TSButtonProps) {
         {...rest}
         style={{
           borderRadius: AppConfig.defaultCSSRadius,
-          // fontSize: 14,
-          // textTransform: 'capitalize',
+          textTransform: 'none', //'capitalize',
+          fontSize: 14,
+          fontWeight: 'normal',
           ...style,
         }}
       >
