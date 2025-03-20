@@ -230,7 +230,7 @@ function RowCell(props: Props) {
     return selectionMode ? (
       <TsIconButton
         style={{
-          width: 35,
+          width: 40,
           height: 35,
           padding: 4,
           paddingBottom: 2,
@@ -308,18 +308,27 @@ function RowCell(props: Props) {
       data-entry-id={fsEntry.uuid}
       style={{
         boxShadow: 'none',
-        borderLeft: '1px solid transparent',
-        borderRight: '1px solid transparent',
-        borderTop: '1px solid transparent',
+        borderLeft:
+          '1px solid ' +
+          (selected
+            ? theme.palette.primary.main + ' !important'
+            : 'transparent'),
+        borderRight:
+          '1px solid ' +
+          (selected
+            ? theme.palette.primary.main + ' !important'
+            : 'transparent'),
+        borderTop:
+          '1px solid ' +
+          (selected
+            ? theme.palette.primary.main + ' !important'
+            : 'transparent'),
         borderBottom: '1px solid ' + theme.palette.divider,
         margin: 0,
         marginTop: 0,
         minHeight: entryHeight,
         marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default,
-        border: selected
-          ? '1px solid' + theme.palette.primary.main + ' !important'
-          : 'inherit',
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={(event) => {
@@ -352,7 +361,8 @@ function RowCell(props: Props) {
             width: 45,
             height: 30,
             padding: 3,
-            marginRight: 5,
+            paddingLeft: 5,
+            marginRight: 10,
             textAlign: 'left',
             display: 'flex',
             alignSelf: 'center',
@@ -447,8 +457,6 @@ function RowCell(props: Props) {
               style={{
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
-                // borderRadius: 5,
-                // backgroundColor: 'red',
                 objectFit: thumbnailMode,
                 height: entryHeight - 5,
                 width: entryHeight - 5,
@@ -461,6 +469,7 @@ function RowCell(props: Props) {
             display: 'flex',
             alignItems: 'center',
             marginRight: 5,
+            paddingRight: 10,
           }}
         >
           <TsIconButton
