@@ -41,7 +41,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
-import classNames from 'classnames';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -187,11 +186,8 @@ function LocationManagerMenu(props: Props) {
 
   return (
     <>
-      <div className={classes.toolbar}>
-        <Typography
-          className={classNames(classes.panelTitle, classes.header)}
-          variant="subtitle1"
-        >
+      <div style={{ display: 'flex' }}>
+        <Typography className={classes.panelTitle} variant="subtitle1">
           {t('core:locationManager')}
         </Typography>
         <TsIconButton

@@ -16,20 +16,18 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List } from '@mui/material';
-import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { AppDispatch } from '-/reducers/app';
 import LocationView from '-/components/LocationView';
-import { Pro } from '-/pro';
-import { classes, SidePanel } from '-/components/SidePanels.css';
-import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import { SidePanel, classes } from '-/components/SidePanels.css';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import LocationContextMenu from '-/components/menus/LocationContextMenu';
+import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
+import { List } from '@mui/material';
+import { useRef, useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 
 /*const CreateEditLocationDialog = React.lazy(
   () =>
@@ -163,12 +161,13 @@ function LocationManager(props: Props) {
         />
       )}
       <List
-        className={classes.locationListArea}
         data-tid="locationList"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           width: 310,
           borderRadius: 5,
+          paddingTop: 0,
+          marginTop: 0,
           overflowY: 'auto',
         }}
       >

@@ -19,7 +19,7 @@
 import AppConfig from '-/AppConfig';
 import { CloseIcon, CreateFileIcon, EditIcon } from '-/components/CommonIcons';
 import EditSearchQuery from '-/components/EditSearchQuery';
-import { SidePanel, classes } from '-/components/SidePanels.css';
+import { SidePanel } from '-/components/SidePanels.css';
 import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -97,13 +97,12 @@ function SearchPopover(props: Props) {
         WebkitAppRegion: 'no-drag',
       }}
     >
-      <div className={classes.toolbar}>
+      <div style={{ display: 'flex' }}>
         <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
           {t('core:advancedSearch')}
         </Typography>
         <Typography
           variant="caption"
-          className={classes.header}
           style={{ flex: 1, margin: 'auto', paddingLeft: 10 }}
         >
           {indexStatus}

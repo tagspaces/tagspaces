@@ -109,7 +109,6 @@ const DirectoryTreeView = forwardRef(
               marginRight: 6,
               marginBottom: -8,
             }}
-            className={classes.icon}
           />
           {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
         </span>

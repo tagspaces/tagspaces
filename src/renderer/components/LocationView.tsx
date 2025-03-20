@@ -45,6 +45,7 @@ import { ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import React, { useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -79,6 +80,7 @@ function LocationView(props: Props) {
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
+  const theme = useTheme();
 
   const dispatch: AppDispatch = useDispatch();
   const currentLocation = findLocation();
@@ -214,7 +216,6 @@ function LocationView(props: Props) {
           paddingLeft: 5,
           paddingRight: 5,
         }}
-        className={classes.header}
         data-tid="locationTitleElement"
         noWrap
       >
@@ -223,6 +224,8 @@ function LocationView(props: Props) {
     </div>
   );
   const { FILE } = NativeTypes;
+  const isLocationSelected =
+    currentLocation && currentLocation.uuid === location.uuid;
   return (
     <SidePanel>
       <TargetFileBox
@@ -233,11 +236,14 @@ function LocationView(props: Props) {
         <CustomDragLayer />
         <ListItem
           data-tid={'location_' + location.name.replace(/ /g, '_')}
-          className={
-            currentLocation && currentLocation.uuid === location.uuid
-              ? classes.listItemSelected
-              : classes.listItem
-          }
+          style={{
+            padding: 0,
+            paddingRight: 15,
+            borderRadius: AppConfig.defaultCSSRadius,
+            backgroundColor: isLocationSelected
+              ? theme.palette.primary.light
+              : 'inherit',
+          }}
           onClick={handleLocationClick}
           onContextMenu={(event) =>
             handleLocationContextMenuClick(event, location)
@@ -255,15 +261,15 @@ function LocationView(props: Props) {
                 <CloudLocationIcon
                   style={{
                     cursor: 'pointer',
+                    margin: theme.spacing(1),
                   }}
-                  className={classes.icon}
                 />
               ) : (
                 <LocalLocationIcon
                   style={{
                     cursor: 'pointer',
+                    margin: theme.spacing(1),
                   }}
-                  className={classes.icon}
                 />
               )}
             </Tooltip>

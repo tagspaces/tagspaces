@@ -44,7 +44,6 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
-import classNames from 'classnames';
 import React, { useContext, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -156,9 +155,9 @@ function StoredSearches(props: Props) {
         marginRight: 0,
       }}
     >
-      <div className={classes.toolbar}>
+      <div style={{ display: 'flex' }}>
         <Typography
-          className={classNames(classes.panelTitle, classes.header)}
+          className={classes.panelTitle}
           variant="subtitle1"
           style={{ paddingLeft: 0 }}
         >
