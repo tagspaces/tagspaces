@@ -66,14 +66,14 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
         });
         return crepe;
       },
-      [currentFolder],
+      [currentFolder, chatHistoryItems],
     );
 
-    useEffect(() => {
+    /* useEffect(() => {
       const editor = get();
       if (loading || !editor || editor.status !== EditorStatus.Created) return;
       editor.action(replaceAll(formatChatItems(chatHistoryItems)));
-    }, [chatHistoryItems]);
+    }, [chatHistoryItems]);*/
 
     useEffect(() => {
       return () => {

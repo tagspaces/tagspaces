@@ -128,7 +128,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { openPanel, toggleProperties, marginRight, isPanelOpened } = props;
 
   const { t } = useTranslation();
-  const { initHistory } = useChatContext();
+  const { initHistory, checkOllamaModels } = useChatContext();
   const { getTabsArray } = useEntryPropsTabsContext();
   const { openedEntry } = useOpenedEntryContext();
   const theme = useTheme();
@@ -152,7 +152,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     if (tabsArray.current.length > 0) {
       const tab = tabsArray.current[newValue];
       if (tab && tab.name === TabNames.aiTab) {
-        initHistory();
+        checkOllamaModels().then(() => initHistory());
       }
       dispatch(SettingsActions.setEntryContainerTab(tab.name));
       openPanel();
