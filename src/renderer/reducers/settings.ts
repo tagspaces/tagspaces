@@ -153,6 +153,18 @@ export default (state: any = defaultSettings, action: any) => {
           state.supportedFileTypes,
           'type',
         ),
+        extensionsFound: defaultSettings.extensionsFound.map((ext) => {
+          const stateExtension = state.extensionsFound.find(
+            (ex) => ex.extensionId === ext.extensionId,
+          );
+          if (stateExtension) {
+            return {
+              ...ext,
+              extensionEnabled: stateExtension.extensionEnabled,
+            };
+          }
+          return ext;
+        }),
       };
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
