@@ -177,7 +177,6 @@
     "@tagspaces/tagspaces-common-cordova": "4.5.51",
     "@tagspaces/tagspaces-indexer": "4.5.51",
     "aws-amplify": "^4.3.8",
-    "classnames": "^2.3.1",
     "clone": "^2.1.2",
     "coordinate-parser": "^1.0.7",
     "crypto-js": "^4.1.1",
@@ -245,7 +244,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.124"
+    "@tagspacespro/tagspacespro": "5.0.125"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",

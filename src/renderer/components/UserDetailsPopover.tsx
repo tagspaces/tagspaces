@@ -16,50 +16,20 @@
  *
  */
 
-import React, { useState } from 'react';
-import classNames from 'classnames';
-import Typography from '@mui/material/Typography';
+import TsButton from '-/components/TsButton';
+import { useUserContext } from '-/hooks/useUserContext';
+import { Pro } from '-/pro';
+import { clearAllURLParams } from '-/utils/dom';
+import Auth from '@aws-amplify/auth';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Avatar from '@mui/material/Avatar';
-import TsButton from '-/components/TsButton';
-import Auth from '@aws-amplify/auth';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { clearAllURLParams } from '-/utils/dom';
-import { Pro } from '-/pro';
-import { styled, useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '-/hooks/useUserContext';
-
-const PREFIX = 'UserDetailsPopover';
-
-const classes = {
-  panelTitle: `${PREFIX}-panelTitle`,
-  header: `${PREFIX}-header`,
-  mainActionButton: `${PREFIX}-mainActionButton`,
-  leftIcon: `${PREFIX}-leftIcon`,
-};
-
-const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.panelTitle}`]: {
-    textTransform: 'uppercase',
-    flex: 1,
-    paddingLeft: 7,
-    paddingTop: 12,
-  },
-  [`& .${classes.header}`]: {
-    color: theme.palette.text.primary,
-  },
-  [`& .${classes.mainActionButton}`]: {
-    marginTop: 10,
-    marginLeft: 0,
-    paddingLeft: 8,
-  },
-  [`& .${classes.leftIcon}`]: {
-    marginRight: theme.spacing(1),
-  },
-}));
 
 interface Props {
   onClose: () => void;
@@ -96,14 +66,19 @@ function UserDetailsPopover(props: Props) {
   };
 
   return (
-    <Root
+    <div
       style={{
         maxWidth: 400,
         height: '100%',
       }}
     >
       <Typography
-        className={classNames(classes.panelTitle, classes.header)}
+        style={{
+          textTransform: 'uppercase',
+          flex: 1,
+          paddingLeft: 7,
+          paddingTop: 12,
+        }}
         variant="subtitle1"
       >
         User Profile
@@ -151,11 +126,15 @@ function UserDetailsPopover(props: Props) {
               <TsButton
                 tooltip={t('core:setupTOTPHelp')}
                 data-tid="setupTOTP"
-                className={classes.mainActionButton}
                 onClick={() => {
                   setSetupTOTPOpened(true);
                 }}
-                style={{ width: '95%' }}
+                style={{
+                  width: '95%',
+                  marginTop: 10,
+                  marginLeft: 0,
+                  paddingLeft: 8,
+                }}
               >
                 {t('core:setupTOTP')}
               </TsButton>
@@ -165,7 +144,6 @@ function UserDetailsPopover(props: Props) {
                   {t('core:TOTPEnabled')}
                 </Typography>
                 <TsButton
-                  className={classes.mainActionButton}
                   onClick={async () => {
                     try {
                       await Auth.setPreferredMFA(currentUser, 'NOMFA');
@@ -174,7 +152,12 @@ function UserDetailsPopover(props: Props) {
                       console.log(error);
                     }
                   }}
-                  style={{ width: '95%' }}
+                  style={{
+                    width: '95%',
+                    marginTop: 10,
+                    marginLeft: 0,
+                    paddingLeft: 8,
+                  }}
                 >
                   {t('core:disableTOTP')}
                 </TsButton>
@@ -192,16 +175,20 @@ function UserDetailsPopover(props: Props) {
           <TsButton
             data-tid="signOutTID"
             title={t('core:signOut')}
-            className={classes.mainActionButton}
             onClick={signOut}
-            style={{ width: '95%' }}
+            style={{
+              width: '95%',
+              marginTop: 10,
+              marginLeft: 0,
+              paddingLeft: 8,
+            }}
           >
-            <ExitToAppIcon className={classNames(classes.leftIcon)} />
+            <ExitToAppIcon style={{ marginRight: theme.spacing(1) }} />
             {t('core:signOut')}
           </TsButton>
         </Box>
       </Box>
-    </Root>
+    </div>
   );
 }
 

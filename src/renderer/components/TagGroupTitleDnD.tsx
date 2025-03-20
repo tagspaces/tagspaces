@@ -23,7 +23,7 @@ import {
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
-import { SidePanel, classes } from '-/components/SidePanels.css';
+import { SidePanel } from '-/components/SidePanels.css';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
@@ -158,7 +158,6 @@ function TagGroupTitleDnD(props: Props) {
         <Grid size={9} style={{ alignSelf: 'center' }}>
           <Typography
             variant="inherit"
-            className={classes.header}
             style={{ paddingLeft: 0 }}
             data-tid="locationTitleElement"
             noWrap

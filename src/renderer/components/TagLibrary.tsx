@@ -53,7 +53,6 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
-import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -300,9 +299,9 @@ function TagLibrary(props: Props) {
         flexDirection: 'column',
       }}
     >
-      <div className={classes.toolbar}>
+      <div style={{ display: 'flex' }}>
         <Typography
-          className={classNames(classes.panelTitle, classes.header)}
+          className={classes.panelTitle}
           title={
             'Your tag library contains ' +
             allTags.length +
@@ -398,6 +397,7 @@ function TagLibrary(props: Props) {
           showEditTagDialog={() => setIsEditTagDialogOpened(true)}
           showDeleteTagDialog={() => setIsDeleteTagDialogOpened(true)}
           selectedTag={selectedTag}
+          selectedTagGroupEntry={selectedTagGroupEntry}
         />
       )}
       {isEditTagDialogOpened && (

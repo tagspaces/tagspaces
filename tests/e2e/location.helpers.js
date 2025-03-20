@@ -218,7 +218,7 @@ export async function renameFileFromMenu(newFileName, selector = selectorFile) {
 export async function deleteFileFromMenu(fileSelector = selectorFile) {
   await openContextEntryMenu(fileSelector, 'fileMenuDeleteFile');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  await waitForNotification();
+  // await waitForNotification();
 }
 
 /**

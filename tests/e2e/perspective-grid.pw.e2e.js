@@ -5,7 +5,6 @@ import { test, expect } from './fixtures';
 import {
   defaultLocationPath,
   defaultLocationName,
-  deleteFileFromMenu,
   createPwMinioLocation,
   createPwLocation,
   createS3Location,

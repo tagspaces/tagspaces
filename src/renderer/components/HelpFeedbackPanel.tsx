@@ -46,7 +46,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -71,9 +70,9 @@ function HelpFeedbackPanel(props: Props) {
         marginLeft: 5,
       }}
     >
-      <div className={classes.toolbar}>
+      <div style={{ display: 'flex' }}>
         <Typography
-          className={classNames(classes.panelTitle, classes.header)}
+          className={classes.panelTitle}
           variant="subtitle1"
           style={{ paddingLeft: 0 }}
         >

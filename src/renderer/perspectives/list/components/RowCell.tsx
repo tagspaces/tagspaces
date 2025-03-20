@@ -43,7 +43,7 @@ import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
   formatDateTime,
   formatFileSize,
@@ -52,39 +52,10 @@ import {
   extractTagsAsObjects,
   extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
-import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { defaultSettings } from '../index';
-
-const PREFIX = 'RowStyles';
-export const classes = {
-  rowCell: `${PREFIX}-rowCell`,
-  rowHover: `${PREFIX}-rowHover`,
-  selectedRowCell: `${PREFIX}-selectedRowCell`,
-};
-
-export const RowPaper = styled(Paper)(({ theme }) => ({
-  [`& .${classes.rowCell}`]: {
-    boxShadow: 'none',
-    borderLeft: '1px solid transparent',
-    borderRight: '1px solid transparent',
-    borderTop: '1px solid transparent',
-    borderBottom: '1px solid ' + theme.palette.divider,
-    margin: 0,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  [`& .${classes.rowHover}`]: {
-    '&:hover': {
-      backgroundColor: theme.palette.divider + ' !important',
-    },
-  },
-  [`& .${classes.selectedRowCell}`]: {
-    border: '1px solid' + theme.palette.primary.main + ' !important',
-  },
-}));
 
 interface Props {
   selected: boolean;
@@ -332,17 +303,23 @@ function RowCell(props: Props) {
     : fileSystemEntryBgColor;
 
   return (
-    <RowPaper
+    <Paper
       elevation={2}
       data-entry-id={fsEntry.uuid}
-      className={classNames(
-        classes.rowCell,
-        selected && classes.selectedRowCell,
-      )}
       style={{
+        boxShadow: 'none',
+        borderLeft: '1px solid transparent',
+        borderRight: '1px solid transparent',
+        borderTop: '1px solid transparent',
+        borderBottom: '1px solid ' + theme.palette.divider,
+        margin: 0,
+        marginTop: 0,
         minHeight: entryHeight,
         marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default,
+        border: selected
+          ? '1px solid' + theme.palette.primary.main + ' !important'
+          : 'inherit',
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={(event) => {
@@ -361,8 +338,13 @@ function RowCell(props: Props) {
       <Grid
         container
         wrap="nowrap"
-        className={classes.rowHover}
-        sx={{ backgroundColor, borderRadius: '4px' }}
+        sx={{
+          backgroundColor,
+          borderRadius: '4px',
+          '&:hover': {
+            backgroundColor: theme.palette.divider + ' !important',
+          },
+        }}
       >
         <Grid
           style={{
@@ -489,7 +471,7 @@ function RowCell(props: Props) {
           </TsIconButton>
         </Grid>
       </Grid>
-    </RowPaper>
+    </Paper>
   );
 }
 
