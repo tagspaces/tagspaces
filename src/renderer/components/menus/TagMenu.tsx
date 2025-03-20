@@ -16,24 +16,23 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
-import ApplyTagIcon from '@mui/icons-material/LocalOfferOutlined';
-import Edit from '@mui/icons-material/Edit';
+import TsMenuList from '-/components/TsMenuList';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getMaxSearchResults } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
+import Edit from '@mui/icons-material/Edit';
+import ApplyTagIcon from '@mui/icons-material/LocalOfferOutlined';
+import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { getMaxSearchResults } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import TsMenuList from '-/components/TsMenuList';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useSelector } from 'react-redux';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -43,6 +42,7 @@ interface Props {
   open?: boolean;
   onClose: () => void;
   selectedTag?: TS.Tag;
+  selectedTagGroupEntry?: TS.TagGroup;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
 }
@@ -50,6 +50,7 @@ interface Props {
 function TagMenu(props: Props) {
   const {
     selectedTag,
+    selectedTagGroupEntry,
     onClose,
     showEditTagDialog,
     showDeleteTagDialog,
@@ -63,6 +64,7 @@ function TagMenu(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
   const { setSearchQuery } = useDirectoryContentContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
+  const tagGroupReadOnly = selectedTagGroupEntry?.readOnly;
 
   function showFilesWithThisTag() {
     if (selectedTag) {
@@ -119,7 +121,7 @@ function TagMenu(props: Props) {
               <ListItemText primary={t('core:applyTag')} />
             </MenuItem>
           )}
-          {!isSmartTag && !isTagLibraryReadOnly && (
+          {!tagGroupReadOnly && !isSmartTag && !isTagLibraryReadOnly && (
             <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
               <ListItemIcon>
                 <Edit />
@@ -127,7 +129,7 @@ function TagMenu(props: Props) {
               <ListItemText primary={t('core:editTag')} />
             </MenuItem>
           )}
-          {!isSmartTag && !isTagLibraryReadOnly && (
+          {!tagGroupReadOnly && !isSmartTag && !isTagLibraryReadOnly && (
             <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />
