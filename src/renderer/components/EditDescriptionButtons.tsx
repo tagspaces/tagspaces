@@ -125,6 +125,10 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
     <div
       style={{
         marginBottom: AppConfig.defaultSpaceBetweenButtons,
+        whiteSpace: 'nowrap',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        maxHeight: 46,
       }}
     >
       <ButtonGroup>
@@ -198,7 +202,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
       <TsIconButton
         tooltip={t('core:chatMore')}
         onClick={handleMoreClick}
-        style={{ float: 'right', marginTop: -5 }}
+        //style={{ float: 'right', marginTop: -5 }}
         data-tid="chatMoreTID"
         aria-label={t('core:chatMore')}
         aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
