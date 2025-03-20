@@ -82,6 +82,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import useFirstRender from '-/utils/useFirstRender';
 
 /*export type TimelineItem = {
   request: string;
@@ -241,6 +242,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
+  const firstRender = useFirstRender();
 
   /*
   useEffect(() => {
@@ -272,21 +274,24 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }, []);*/
 
   useEffect(() => {
-    if (defaultAiProvider) {
-      getOllamaClient(defaultAiProvider.url).then((client) => {
-        ollamaClient.current = client;
-        refreshOllamaModels();
-        //setOpenedEntryModel();
-      });
+    images.current = [];
+    if (
+      !firstRender &&
+      defaultAiProvider &&
+      openedEntry &&
+      !openedEntry.isFile &&
+      selectedTabName === TabNames.aiTab
+    ) {
+      checkOllamaModels().then(() => initHistory());
     }
-  }, [defaultAiProvider]);
+  }, [defaultAiProvider, openedEntry]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     //setOpenedEntryModel();
-    if (selectedTabName === TabNames.aiTab) {
-      initHistory();
+    if (selectedTabName === TabNames.aiTab && models.current.length===0) {
+      refreshOllamaModels().then(() => initHistory());
     }
-  }, [openedEntry]);
+  }, [selectedTabName]);*/
 
   function getGenerationSettings(
     option: generateOptionType = 'tags',
@@ -423,7 +428,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    */
   function checkOllamaModels(): Promise<boolean> {
     if (!models.current || models.current.length === 0) {
-      return refreshOllamaModels();
+      if (defaultAiProvider) {
+        return getOllamaClient(defaultAiProvider.url).then((client) => {
+          ollamaClient.current = client;
+          return refreshOllamaModels();
+        });
+      }
     }
     return Promise.resolve(true);
   }
@@ -505,6 +515,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           .getFileContentPromise(path, 'arraybuffer')
           .then((uint8Array) => {
             const base64Img = toBase64Image(uint8Array);
+            if (images.current.some((i) => i.base64 === base64Img)) return;
             const imageUuid = getUuid();
             const imageHistoryPath =
               imageUuid + '.' + extractFileExtension(path);
@@ -592,11 +603,24 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     });
   }
 
-  function changeCurrentModel(
+  async function changeCurrentModel(
     newModelName: string,
     confirmCallback?,
   ): Promise<boolean> {
-    const model = findModel(newModelName);
+    let model;
+    if (!ollamaClient.current) {
+      const client = await getOllamaClient(defaultAiProvider.url);
+      ollamaClient.current = client;
+      const m = await getOllamaModels(client);
+      if (m) {
+        models.current = m;
+        model = models.current.find(
+          (m) => m.name === newModelName || m.name === newModelName + ':latest',
+        );
+      }
+    } else {
+      model = findModel(newModelName);
+    }
     if (!model && defaultAiProvider) {
       // return setModel(model);
       // } else {
@@ -624,7 +648,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             );
           }
         };
-        pullOllamaModel(
+        return pullOllamaModel(
           ollamaClient.current,
           newModelName,
           onProgressHandler,
@@ -644,7 +668,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           });*/
       }
     }
-    return Promise.resolve(true);
+    return true; //Promise.resolve(true);
   }
 
   function addHistoryItem(txt: string, role: ChatRole) {
@@ -1167,38 +1191,49 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function descriptionGenerate(
     entry: TS.FileSystemEntry,
   ): Promise<TS.FileSystemEntry> {
-    const entryModel: ModelResponse = getEntryModel(
-      entry.name,
-      defaultAiProvider,
-    );
-    if (entryModel) {
-      const ext = extractFileExtension(entry.name).toLowerCase();
-      if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-        return generate('image', 'description', entryModel.name, entry).then(
-          (results) =>
-            handleGenDescResults(
-              entry,
-              results,
-              generationSettings.current.appendAnalysisToDescription,
-            ),
+    return checkOllamaModels().then((success) => {
+      if (success) {
+        const entryModel: ModelResponse = getEntryModel(
+          entry.name,
+          defaultAiProvider,
         );
-      } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-        return generate('text', 'description', entryModel.name, entry).then(
-          (results) =>
-            handleGenDescResults(
+        if (entryModel) {
+          const ext = extractFileExtension(entry.name).toLowerCase();
+          if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+            return generate(
+              'image',
+              'description',
+              entryModel.name,
               entry,
-              results,
-              generationSettings.current.appendToDescription,
-            ),
-        );
+            ).then((results) =>
+              handleGenDescResults(
+                entry,
+                results,
+                generationSettings.current.appendAnalysisToDescription,
+              ),
+            );
+          } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+            return generate('text', 'description', entryModel.name, entry).then(
+              (results) =>
+                handleGenDescResults(
+                  entry,
+                  results,
+                  generationSettings.current.appendToDescription,
+                ),
+            );
+          }
+        } else {
+          showNotification(
+            'Error: there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
+          );
+          return Promise.resolve(undefined);
+        }
+        return Promise.resolve(entry);
+      } else {
+        showNotification('Error No Models loaded');
+        return Promise.resolve(undefined);
       }
-    } else {
-      showNotification(
-        'Error No Model selected or there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
-      );
-      return Promise.resolve(undefined);
-    }
-    return Promise.resolve(entry);
+    });
   }
 
   /* function descriptionGenerateAll(
