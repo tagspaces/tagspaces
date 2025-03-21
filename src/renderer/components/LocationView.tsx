@@ -27,7 +27,7 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
-import { SidePanel, classes } from '-/components/SidePanels.css';
+import { SidePanel } from '-/components/SidePanels.css';
 import TargetFileBox from '-/components/TargetFileBox';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -310,7 +310,6 @@ function LocationView(props: Props) {
       <DirectoryTreeView
         key={'tree_' + location.uuid}
         ref={directoryTreeRef}
-        classes={classes}
         location={location}
         handleFileMoveDrop={handleFileMoveDrop}
       />

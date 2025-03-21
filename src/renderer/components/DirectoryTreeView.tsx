@@ -34,7 +34,7 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 
 interface Props {
-  classes: any;
+  //classes: any;
   location: CommonLocation;
   //data?: any;
   handleFileMoveDrop: (item, monitor) => void;
@@ -49,7 +49,7 @@ export interface DirectoryTreeViewRef {
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const theme = useTheme();
-    const { classes, location, handleFileMoveDrop } = props;
+    const { location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
     const { findLocation, changeLocation, getLocationPath } =
       useCurrentLocationContext();
@@ -84,7 +84,7 @@ const DirectoryTreeView = forwardRef(
         return (
           <TargetFileBox
             accepts={[FILE]}
-            directoryPath={props.location.path}
+            directoryPath={location.path}
             locationId={location.uuid}
           >
             <CustomDragLayer />
