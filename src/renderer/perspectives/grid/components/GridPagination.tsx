@@ -381,6 +381,7 @@ function GridPagination(props: Props) {
                 marginTop: 10,
                 marginLeft: 8,
                 marginRight: 8,
+                marginBottom: 5,
                 borderRadius: AppConfig.defaultCSSRadius,
               }}
               onDoubleClick={() =>
@@ -415,7 +416,6 @@ function GridPagination(props: Props) {
             </Grid>
           )}
         </Grid>
-
         <SelectionDragLayer />
         <SelectionArea onSelect={handleSelect}>
           <GridCellsContainer>
@@ -509,7 +509,8 @@ function GridPagination(props: Props) {
             <div style={{ padding: 15, bottom: 10 }}>
               <Typography
                 style={{
-                  fontSize: '0.9rem',
+                  fontSize: '0.8rem',
+                  filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
                   color: theme.palette.text.primary,
                 }}
               >

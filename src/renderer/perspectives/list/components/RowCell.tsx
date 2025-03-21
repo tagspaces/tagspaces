@@ -232,8 +232,6 @@ function RowCell(props: Props) {
         style={{
           width: 40,
           height: 35,
-          padding: 4,
-          paddingBottom: 2,
           alignSelf: 'center',
         }}
         onClick={(e) => {
@@ -245,21 +243,7 @@ function RowCell(props: Props) {
           }
         }}
       >
-        {selected ? (
-          <SelectedIcon
-            style={{
-              borderRadius: 15,
-              backgroundColor: '#d7d7d7',
-            }}
-          />
-        ) : (
-          <UnSelectedIcon
-            style={{
-              borderRadius: 15,
-              backgroundColor: 'd7d7d7',
-            }}
-          />
-        )}
+        {selected ? <SelectedIcon /> : <UnSelectedIcon />}
       </TsIconButton>
     ) : (
       <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
@@ -270,7 +254,7 @@ function RowCell(props: Props) {
             paddingLeft: 3,
             paddingRight: 3,
             fontSize: 13,
-            minWidth: 35,
+            minWidth: 40,
             color: 'white',
             borderRadius: 3,
             textAlign: 'center',
@@ -279,7 +263,6 @@ function RowCell(props: Props) {
             textShadow: '1px 1px #8f8f8f',
             textOverflow: 'unset',
             height: 15,
-            maxWidth: fsEntry.isFile ? 50 : 100,
             alignSelf: 'center',
           }}
           noWrap={true}
@@ -308,6 +291,7 @@ function RowCell(props: Props) {
       data-entry-id={fsEntry.uuid}
       style={{
         boxShadow: 'none',
+        borderRadius: AppConfig.defaultCSSRadius,
         borderLeft:
           '1px solid ' +
           (selected
@@ -347,9 +331,11 @@ function RowCell(props: Props) {
       <Grid
         container
         wrap="nowrap"
+        style={{
+          borderRadius: AppConfig.defaultCSSRadius,
+        }}
         sx={{
           backgroundColor,
-          borderRadius: '4px',
           '&:hover': {
             backgroundColor: theme.palette.divider + ' !important',
           },
@@ -358,7 +344,7 @@ function RowCell(props: Props) {
         <Grid
           style={{
             minHeight: entryHeight,
-            width: 45,
+            width: 50,
             height: 30,
             padding: 3,
             paddingLeft: 5,

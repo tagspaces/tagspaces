@@ -16,12 +16,12 @@
  *
  */
 
-import React, { createContext, CSSProperties, useMemo } from 'react';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import {
   calculateEntryHeight,
   calculateEntryWidth,
 } from '-/perspectives/grid/components/GridCell';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import React, { CSSProperties, createContext, useMemo } from 'react';
 
 type GridCellsStyleData = {
   cellsStyle: CSSProperties;
@@ -44,10 +44,13 @@ export const GridCellsStyleContextProvider = ({
     return {
       cellsStyle: {
         margin: 0,
+        marginTop: -5,
         display: 'grid',
         gridGap: '5px 5px',
         padding: 5,
+        paddingTop: 10,
         paddingBottom: 70,
+        // background: 'red',
         gridTemplateColumns:
           'repeat(auto-fit,minmax(' +
           calculateEntryWidth(entrySize) +
