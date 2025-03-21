@@ -209,7 +209,6 @@ function GridPagination(props: Props) {
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
       data-tid="backgroundTID"
       style={{
@@ -249,7 +248,7 @@ function GridPagination(props: Props) {
                     directoryMeta &&
                     directoryMeta.description
                       ? 150
-                      : 110,
+                      : 115,
                   position: 'relative',
                 }}
               >
@@ -382,8 +381,7 @@ function GridPagination(props: Props) {
                 marginTop: 10,
                 marginLeft: 8,
                 marginRight: 8,
-                borderTopLeftRadius: 10,
-                borderTopRightRadius: 10,
+                borderRadius: AppConfig.defaultCSSRadius,
               }}
               onDoubleClick={() =>
                 openEntry(currentDirectoryPath, TabNames.descriptionTab)
@@ -395,8 +393,7 @@ function GridPagination(props: Props) {
                           margin-top: 10px;
                       }
                      .gridPagination .milkdown { 
-                          border-top-left-radius: 10px;
-                          border-top-right-radius: 10px;
+                          border-radius: ${AppConfig.defaultCSSRadius}px;
                       }
                       .gridPagination .milkdown .ProseMirror {
                           padding: 10px;

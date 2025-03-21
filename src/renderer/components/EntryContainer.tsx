@@ -44,7 +44,6 @@ import {
   isRevisionsEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { Switch, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -614,13 +613,11 @@ function EntryContainer() {
                   ' + S)'
                 }
               >
-                <LoadingButton
+                <TsButton
                   disabled={false}
                   onClick={startSavingFile}
                   aria-label={t('core:saveFile')}
                   data-tid="fileContainerSaveFile"
-                  size="small"
-                  variant="outlined"
                   startIcon={desktopMode && <SaveIcon />}
                   loading={isSavingInProgress.current}
                   style={{
@@ -630,7 +627,7 @@ function EntryContainer() {
                   }}
                 >
                   {t('core:save')}
-                </LoadingButton>
+                </TsButton>
               </Tooltip>
             )}
           </ButtonGroup>
