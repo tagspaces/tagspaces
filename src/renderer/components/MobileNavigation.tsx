@@ -169,6 +169,7 @@ function MobileNavigation(props: Props) {
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
                 style={{
+                  marginLeft: 40,
                   borderRadius: 'unset',
                   borderTopLeftRadius: AppConfig.defaultCSSRadius,
                   borderBottomLeftRadius: AppConfig.defaultCSSRadius,
@@ -479,6 +480,7 @@ function MobileNavigation(props: Props) {
           display: 'flex',
           flexDirection: 'column',
           marginTop: desktopMode ? -10 : -25,
+          backgroundColor: theme.palette.background.default,
         }}
       >
         {showProTeaser && (

@@ -287,11 +287,10 @@ function RowCell(props: Props) {
 
   return (
     <Paper
-      elevation={2}
       data-entry-id={fsEntry.uuid}
       style={{
         boxShadow: 'none',
-        borderRadius: AppConfig.defaultCSSRadius,
+        borderRadius: 0, // AppConfig.defaultCSSRadius,
         borderLeft:
           '1px solid ' +
           (selected
@@ -310,9 +309,9 @@ function RowCell(props: Props) {
         borderBottom: '1px solid ' + theme.palette.divider,
         margin: 0,
         marginTop: 0,
+        paddingBottom: 5,
         minHeight: entryHeight,
         marginBottom: isLast ? 40 : 'auto',
-        backgroundColor: theme.palette.background.default,
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={(event) => {
