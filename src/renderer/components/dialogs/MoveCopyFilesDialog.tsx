@@ -142,6 +142,8 @@ function MoveCopyFilesDialog(props: Props) {
         targetPath,
         currentLocation.uuid,
         onUploadProgress,
+        true,
+        true,
       );
       setTargetPath('');
     }
