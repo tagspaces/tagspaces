@@ -51,7 +51,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import {
   formatDateTime,
   formatFileSize,
@@ -359,7 +359,7 @@ function GridCell(props: Props) {
             fontSize: 13,
             minWidth: 35,
             color: 'white',
-            borderRadius: 3,
+            borderRadius: 5,
             textAlign: 'center',
             display: 'inline',
             backgroundColor: fileSystemEntryColor,
@@ -392,10 +392,13 @@ function GridCell(props: Props) {
         maxHeight: maxHeight,
         maxWidth: 400,
         marginBottom: isLast ? 40 : 'auto',
+        borderRadius: AppConfig.defaultCSSRadius,
+        backgroundColor: alpha(theme.palette.divider, 0.7),
         border:
           '2px solid ' +
-          (selected ? theme.palette.primary.main : 'transparent'),
+          (selected ? theme.palette.primary.main : 'transparent'), // theme.palette.divider
         display: 'flex',
+        boxShadow: 'none',
         flexDirection: 'column',
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fsEntry)}
