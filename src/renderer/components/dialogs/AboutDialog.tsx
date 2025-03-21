@@ -244,7 +244,11 @@ function AboutDialog(props: Props) {
             {versionInfo}
           </TsButton>
         </span>
-        <TsButton data-tid="closeAboutDialog" onClick={onClose}>
+        <TsButton
+          data-tid="closeAboutDialog"
+          variant="contained"
+          onClick={onClose}
+        >
           {t('core:ok')}
         </TsButton>
       </TsDialogActions>
