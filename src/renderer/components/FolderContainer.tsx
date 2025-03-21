@@ -350,7 +350,7 @@ function FolderContainer(props: Props) {
           exclusive
           style={{
             bottom: -40,
-            right: 20,
+            right: 10,
             zIndex: 1000,
             // opacity: 0.9,
             position: 'absolute',
