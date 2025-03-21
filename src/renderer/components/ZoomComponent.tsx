@@ -100,7 +100,12 @@ export default function ZoomComponent(props: Props) {
       </TsToolbarButton>
       <Typography
         variant="overline"
-        style={{ color: theme.palette.text.primary, margin: 5 }}
+        style={{
+          color: theme.palette.text.primary,
+          margin: 3,
+          marginTop: 5,
+          fontSize: 11,
+        }}
       >
         {entrySizePercent}
       </Typography>

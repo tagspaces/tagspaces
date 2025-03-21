@@ -174,6 +174,17 @@ function MainToolbar(props: Props) {
       >
         <EntryPropertiesIcon />
       </TsToolbarButton>
+      <TsToolbarButton
+        tooltip={t('core:sort')}
+        aria-label={t('core:sort')}
+        title={t('core:sort')}
+        data-tid={prefixDataTID + 'PerspectiveSortMenu'}
+        onClick={(e) => {
+          handleSortingMenu(e);
+        }}
+      >
+        <SortingIcon />
+      </TsToolbarButton>
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
         {!readOnlyMode && (
@@ -239,17 +250,10 @@ function MainToolbar(props: Props) {
         )}
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
-      <TsToolbarButton
-        tooltip={t('core:sort')}
-        aria-label={t('core:sort')}
-        title={t('core:sort')}
-        data-tid={prefixDataTID + 'PerspectiveSortMenu'}
-        onClick={(e) => {
-          handleSortingMenu(e);
-        }}
-      >
-        <SortingIcon />
-      </TsToolbarButton>
+      <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+        <ZoomComponent preview={false} />
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      </Box>
       {showDownloadButton && (
         <TsToolbarButton
           tooltip={t('core:downloadFiles')}
@@ -271,11 +275,6 @@ function MainToolbar(props: Props) {
             <ExportIcon />
           </TsToolbarButton>
         )}
-      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
-      <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-        <ZoomComponent preview={false} />
-        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
-      </Box>
       {AppConfig.isElectron && !currentLocation?.haveObjectStoreSupport() && (
         <TsToolbarButton
           tooltip={t('core:dragMode')}
@@ -293,7 +292,9 @@ function MainToolbar(props: Props) {
         <TsToolbarButton
           tooltip={
             t('core:perspectiveSettingsTitle') +
-            (folderSettingsAvailable ? ' - folder specific' : '')
+            (folderSettingsAvailable
+              ? ' - ' + t('core:folderSpecificSettings')
+              : '')
           }
           title={t('core:setting')}
           data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}

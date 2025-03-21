@@ -52,6 +52,8 @@ function TsToolbarButton(props: TSIconButtonProps) {
       style={{
         borderRadius: AppConfig.defaultCSSRadius,
         padding: 8,
+        paddingLeft: 6,
+        paddingRight: 6,
         display: 'block',
         ...style,
       }}
