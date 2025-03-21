@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -24,12 +23,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import React from 'react';
 
 import AppConfig from '-/AppConfig';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import { openURLExternally } from '-/services/utils-io';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
@@ -131,23 +132,25 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
-        <TsButton
-          onClick={() => {
-            openURLExternally(Links.links.productsOverview, true);
-          }}
-        >
-          Compare & Upgrade
-        </TsButton>
-        {ctaTitle && (
+        <Box style={{ whiteSpace: 'nowrap' }}>
           <TsButton
             onClick={() => {
-              openURLExternally(ctaURL, true);
+              openURLExternally(Links.links.productsOverview, true);
             }}
-            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           >
-            {ctaTitle}
+            t('core:compareAndUpgrade')
           </TsButton>
-        )}
+          {ctaTitle && (
+            <TsButton
+              onClick={() => {
+                openURLExternally(ctaURL, true);
+              }}
+              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            >
+              {ctaTitle}
+            </TsButton>
+          )}
+        </Box>
       </div>
     </div>
   );
