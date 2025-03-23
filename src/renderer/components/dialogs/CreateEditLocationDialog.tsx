@@ -21,7 +21,6 @@ import { ExpandIcon, IDIcon, RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel, ProLabel, ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
-import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
@@ -64,7 +63,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
-import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -75,6 +73,7 @@ import CryptoJS from 'crypto-js';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
 
 interface Props {
@@ -911,71 +910,62 @@ function CreateEditLocationDialog(props: Props) {
                       size="small"
                       exclusive
                     >
-                      <ToggleButton
+                      <TsToggleButton
                         value={
                           persistTagsInSidecarFile !== null
                             ? persistTagsInSidecarFile
                             : false
                         }
+                        style={{
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                        tooltip={
+                          t('core:useDefaultTaggingType') +
+                          ': ' +
+                          (currentTagsSetting
+                            ? t('core:useSidecarFile')
+                            : t('core:renameFile'))
+                        }
                         data-tid="settingsSetPersistTagsDefault"
                         onClick={() => setPersistTagsInSidecarFile(null)}
                       >
-                        <Tooltip
-                          title={
-                            <Typography color="inherit">
-                              {t('core:useDefaultTaggingType')}:{' '}
-                              <b>
-                                {currentTagsSetting
-                                  ? t('core:useSidecarFile')
-                                  : t('core:renameFile')}
-                              </b>
-                            </Typography>
-                          }
-                        >
-                          <div style={{ display: 'flex' }}>
-                            {persistTagsInSidecarFile === null && <CheckIcon />}
-                            &nbsp;{t('core:defaultSetting')}&nbsp;&nbsp;
-                          </div>
-                        </Tooltip>
-                      </ToggleButton>
-                      <ToggleButton
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile === null && <CheckIcon />}
+                          &nbsp;{t('core:defaultSetting')}&nbsp;&nbsp;
+                        </div>
+                      </TsToggleButton>
+                      <TsToggleButton
                         value={false}
+                        style={{
+                          borderRadius: 0,
+                        }}
                         data-tid="locationSetPersistTagsInFileName"
+                        tooltip={t('core:tagsInFilenameExplanation')}
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
-                        <Tooltip
-                          title={
-                            <Typography color="inherit">
-                              {t('core:tagsInFilenameExplanation')}
-                            </Typography>
-                          }
-                        >
-                          <div style={{ display: 'flex' }}>
-                            {persistTagsInSidecarFile !== null &&
-                              !persistTagsInSidecarFile && <CheckIcon />}
-                            &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
-                          </div>
-                        </Tooltip>
-                      </ToggleButton>
-                      <ToggleButton
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile !== null &&
+                            !persistTagsInSidecarFile && <CheckIcon />}
+                          &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
+                        </div>
+                      </TsToggleButton>
+                      <TsToggleButton
                         value={true}
+                        style={{
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        }}
                         data-tid="locationSetPersistTagsInSidecarFile"
+                        tooltip={t('core:tagsInSidecarFileExplanation')}
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
-                        <Tooltip
-                          title={
-                            <Typography color="inherit">
-                              {t('core:tagsInSidecarFileExplanation')}
-                            </Typography>
-                          }
-                        >
-                          <div style={{ display: 'flex' }}>
-                            {persistTagsInSidecarFile !== null &&
-                              persistTagsInSidecarFile && <CheckIcon />}
-                            &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
-                          </div>
-                        </Tooltip>
-                      </ToggleButton>
+                        <div style={{ display: 'flex' }}>
+                          {persistTagsInSidecarFile !== null &&
+                            persistTagsInSidecarFile && <CheckIcon />}
+                          &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
+                        </div>
+                      </TsToggleButton>
                     </ToggleButtonGroup>
                   }
                   label={

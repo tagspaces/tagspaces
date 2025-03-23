@@ -20,11 +20,11 @@ import AppConfig from '-/AppConfig';
 import { BetaLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
-import Tooltip from '-/components/Tooltip';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
+import TsToggleButton from '-/components/TsToggleButton';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { PerspectiveIDs } from '-/perspectives';
@@ -43,7 +43,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
@@ -188,48 +187,42 @@ function SettingsGeneral() {
             size="small"
             exclusive
           >
-            <ToggleButton
+            <TsToggleButton
               value={false}
               data-tid="settingsSetPersistTagsInFileName"
+              style={{
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+              }}
+              tooltip={t('core:tagsInFilenameExplanation')}
               onClick={() =>
                 dispatch(SettingsActions.setPersistTagsInSidecarFile(false))
               }
             >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {t('core:tagsInFilenameExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex', textTransform: 'unset' }}>
-                  {!persistTagsInSidecarFile && <CheckIcon />}
-                  &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton
+              <div style={{ display: 'flex', textTransform: 'unset' }}>
+                {!persistTagsInSidecarFile && <CheckIcon />}
+                &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
+                <InfoMuiIcon />
+              </div>
+            </TsToggleButton>
+            <TsToggleButton
               value={true}
               data-tid="settingsSetPersistTagsInSidecarFile"
+              tooltip={t('core:tagsInSidecarFileExplanation')}
+              style={{
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+              }}
               onClick={() =>
                 dispatch(SettingsActions.setPersistTagsInSidecarFile(true))
               }
             >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {t('core:tagsInSidecarFileExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex', textTransform: 'unset' }}>
-                  {persistTagsInSidecarFile && <CheckIcon />}
-                  &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
+              <div style={{ display: 'flex' }}>
+                {persistTagsInSidecarFile && <CheckIcon />}
+                &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
+                <InfoMuiIcon />
+              </div>
+            </TsToggleButton>
           </ToggleButtonGroup>
         )}
       </ListItem>
@@ -241,48 +234,42 @@ function SettingsGeneral() {
             size="small"
             exclusive
           >
-            <ToggleButton
+            <TsToggleButton
               value={false}
               data-tid="fileNameBeginningTagTID"
+              tooltip={t('core:fileNameBeginTagPlaceExplanation')}
+              style={{
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+              }}
               onClick={() =>
                 dispatch(SettingsActions.setFileNameTagPlace(false))
               }
             >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {t('core:fileNameBeginTagPlaceExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex', textTransform: 'unset' }}>
-                  {!filenameTagPlacedAtEnd && <CheckIcon />}
-                  &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton
+              <div style={{ display: 'flex' }}>
+                {!filenameTagPlacedAtEnd && <CheckIcon />}
+                &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
+                <InfoMuiIcon />
+              </div>
+            </TsToggleButton>
+            <TsToggleButton
               value={true}
               data-tid="fileNameEndTagTID"
+              style={{
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+              }}
+              tooltip={t('core:fileNameEndTagPlaceExplanation')}
               onClick={() =>
                 dispatch(SettingsActions.setFileNameTagPlace(true))
               }
             >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {t('core:fileNameEndTagPlaceExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex', textTransform: 'unset' }}>
-                  {filenameTagPlacedAtEnd && <CheckIcon />}
-                  &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
+              <div style={{ display: 'flex' }}>
+                {filenameTagPlacedAtEnd && <CheckIcon />}
+                &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
+                <InfoMuiIcon />
+              </div>
+            </TsToggleButton>
           </ToggleButtonGroup>
         </ListItem>
       )}
