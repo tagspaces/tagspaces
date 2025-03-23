@@ -85,7 +85,7 @@ type PlatformFacadeContextData = {
     locationID: string,
     onProgress?,
     reflect?,
-  ) => Promise<any>;
+  ) => Promise<any[]>;
   moveFilePromise: (
     param: PlatformParms,
     newFilePath: string,
@@ -98,7 +98,7 @@ type PlatformFacadeContextData = {
     onProgress?,
     reflect?,
     force?,
-  ) => Promise<any>;
+  ) => Promise<any[]>;
   reflectMoveFiles: (moveJobs: Array<Array<string>>) => Promise<boolean>;
   renameDirectoryPromise: (
     param: PlatformParms,
@@ -349,6 +349,7 @@ export const PlatformFacadeContextProvider = ({
             progress(completed, path);
           }
           console.log('Promise ' + path + ' error:', err);
+          throw err; //return err;
         }),
     );
 
@@ -426,7 +427,7 @@ export const PlatformFacadeContextProvider = ({
     locationID: string = undefined,
     onProgress = undefined,
     reflect = true,
-  ): Promise<any> {
+  ): Promise<any[]> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
     const location = getLocation({ locationID });
@@ -440,7 +441,7 @@ export const PlatformFacadeContextProvider = ({
           );
         } catch (err) {
           console.log('Error rename file:', err);
-          return false;
+          return err; //false;
         }
       }),
     ).then((ret) => {
@@ -481,7 +482,7 @@ export const PlatformFacadeContextProvider = ({
     onProgress = undefined,
     reflect = true,
     force = false,
-  ): Promise<any> {
+  ): Promise<any[]> {
     const flatArray = renameJobs.flat();
     ignoreByWatcher(...flatArray);
     return executePromisesInBatches(
@@ -495,7 +496,7 @@ export const PlatformFacadeContextProvider = ({
           );
         } catch (err) {
           console.log('Error rename file:', err);
-          return undefined;
+          return err; //undefined;
         }
       }),
     ).then((ret) => {

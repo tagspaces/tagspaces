@@ -605,90 +605,101 @@ export const IOActionsContextProvider = ({
       force,
     )
       .then((moveArray) => {
-        if (moveArray !== undefined) {
-          showNotification(t('core:filesMovedSuccessful'));
-          const moveMetaJobs = [];
-          moveJobs.map((job) => {
-            // Move revisions
-            location
-              .loadFileMetaDataPromise(job[0])
-              .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-                if (fsEntryMeta.id) {
-                  const backupDir = getBackupFileDir(
-                    job[0],
-                    fsEntryMeta.id,
-                    location.getDirSeparator(),
-                  );
-                  const newBackupDir = getBackupFileDir(
-                    job[1],
-                    fsEntryMeta.id,
-                    location.getDirSeparator(),
-                  );
-                  return moveDirectoryPromise({ path: backupDir }, newBackupDir)
-                    .then(() => {
-                      console.log(
-                        'Moving revisions successful from ' +
-                          backupDir +
-                          ' to ' +
-                          newBackupDir,
-                      );
-                      return true;
-                    })
-                    .catch((err) => {
-                      console.log('Moving revisions failed ', err);
-                    });
-                }
+        if (moveArray !== undefined && moveArray.length > 0) {
+          const moveError = moveArray.find((err) => err instanceof Error);
+          if (!moveError) {
+            showNotification(t('core:filesMovedSuccessful'));
+            const moveMetaJobs = [];
+            moveJobs.map((job) => {
+              // Move revisions
+              location
+                .loadFileMetaDataPromise(job[0])
+                .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+                  if (fsEntryMeta.id) {
+                    const backupDir = getBackupFileDir(
+                      job[0],
+                      fsEntryMeta.id,
+                      location.getDirSeparator(),
+                    );
+                    const newBackupDir = getBackupFileDir(
+                      job[1],
+                      fsEntryMeta.id,
+                      location.getDirSeparator(),
+                    );
+                    return moveDirectoryPromise(
+                      { path: backupDir },
+                      newBackupDir,
+                    )
+                      .then(() => {
+                        console.log(
+                          'Moving revisions successful from ' +
+                            backupDir +
+                            ' to ' +
+                            newBackupDir,
+                        );
+                        return true;
+                      })
+                      .catch((err) => {
+                        console.log('Moving revisions failed ', err);
+                      });
+                  }
+                })
+                .catch((err) => {
+                  console.log('loadFileMetaDataPromise', err);
+                });
+
+              // move meta
+              moveMetaJobs.push([
+                getMetaFileLocationForFile(job[0], location.getDirSeparator()),
+                getMetaFileLocationForFile(job[1], location.getDirSeparator()),
+              ]);
+              // move thumb
+              moveMetaJobs.push([
+                getThumbFileLocationForFile(
+                  job[0],
+                  location.getDirSeparator(),
+                  false,
+                ),
+                getThumbFileLocationForFile(
+                  job[1],
+                  location.getDirSeparator(),
+                  false,
+                ),
+              ]);
+              // move pdf.txt
+              moveMetaJobs.push([
+                getMetaContentFileLocation(
+                  job[0],
+                  currentLocation?.getDirSeparator(),
+                ),
+                getMetaContentFileLocation(
+                  job[1],
+                  currentLocation?.getDirSeparator(),
+                ),
+              ]);
+              return true;
+            });
+            return moveFilesPromise(
+              moveMetaJobs,
+              location.uuid,
+              undefined,
+              false,
+              true,
+            )
+              .then(() => {
+                console.log('Moving meta and thumbs successful');
+                return reflect && reflectMoveFiles(moveJobs);
               })
               .catch((err) => {
-                console.log('loadFileMetaDataPromise', err);
+                console.log('At least one meta or thumb was not moved ', err);
+                return reflect && reflectMoveFiles(moveJobs);
               });
-
-            // move meta
-            moveMetaJobs.push([
-              getMetaFileLocationForFile(job[0], location.getDirSeparator()),
-              getMetaFileLocationForFile(job[1], location.getDirSeparator()),
-            ]);
-            // move thumb
-            moveMetaJobs.push([
-              getThumbFileLocationForFile(
-                job[0],
-                location.getDirSeparator(),
-                false,
-              ),
-              getThumbFileLocationForFile(
-                job[1],
-                location.getDirSeparator(),
-                false,
-              ),
-            ]);
-            // move pdf.txt
-            moveMetaJobs.push([
-              getMetaContentFileLocation(
-                job[0],
-                currentLocation?.getDirSeparator(),
-              ),
-              getMetaContentFileLocation(
-                job[1],
-                currentLocation?.getDirSeparator(),
-              ),
-            ]);
-            return true;
-          });
-          return moveFilesPromise(
-            moveMetaJobs,
-            location.uuid,
-            undefined,
-            false,
-            true,
-          )
-            .then(() => {
-              console.log('Moving meta and thumbs successful');
-              return reflect && reflectMoveFiles(moveJobs);
-            })
-            .catch((err) => {
-              console.log('At least one meta or thumb was not moved ', err);
-              return reflect && reflectMoveFiles(moveJobs);
-            });
+          } else {
+            showNotification(
+              t('core:copyingFilesFailed') + ' ' + moveError.message,
+            );
+            return false;
+          }
         } else {
           showNotification(t('core:copyingFilesFailed'));
           return false;
@@ -821,7 +832,7 @@ export const IOActionsContextProvider = ({
       })
       .catch((err) => {
         console.log('Copy files failed', err);
-        showNotification(t('core:copyingFilesFailed'));
+        showNotification(t('core:copyingFilesFailed') + ' ' + err.message);
         return false;
       });
   }
@@ -1594,7 +1605,7 @@ export const IOActionsContextProvider = ({
           return openDirectory(dirPath);
         })*/
         .catch((error) => {
-          showNotification('Error creating duplicate: ', error);
+          showNotification('Error creating duplicate: ' + error.message);
         });
     } else {
       showNotification('Unable to duplicate, no file selected');
