@@ -16,13 +16,12 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Box, FormControl } from '@mui/material';
+import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
 import React, { useEffect, useReducer, useState } from 'react';
@@ -143,14 +142,15 @@ function CreateFile(props: Props) {
           />
         </FormControl>
       ) : (
-        <Box style={{ margin: '0 auto' }}>
+        <ButtonGroup style={{ margin: '0 auto' }}>
           <TsButton
             tooltip={t('createMarkdownTitle')}
             onClick={() => createFile('md')}
             data-tid={tid('createMarkdownButton')}
             disabled={noSuitableLocation}
             style={{
-              marginRight: AppConfig.defaultSpaceBetweenButtons,
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
               fontWeight: 'bold',
             }}
           >
@@ -162,7 +162,7 @@ function CreateFile(props: Props) {
             data-tid={tid('createRichTextFileButton')}
             disabled={noSuitableLocation}
             style={{
-              marginRight: AppConfig.defaultSpaceBetweenButtons,
+              borderRadius: 0,
             }}
           >
             {t('createRichTextFile')}
@@ -172,10 +172,14 @@ function CreateFile(props: Props) {
             onClick={() => createFile('txt')}
             data-tid={tid('createTextFileButton')}
             disabled={noSuitableLocation}
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
           >
             {t('createTextFile')}
           </TsButton>
-        </Box>
+        </ButtonGroup>
       )}
     </Grid>
   );
