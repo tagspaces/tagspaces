@@ -68,6 +68,7 @@ function TsButton(props: TSButtonProps) {
     button = (
       <Button
         size={desktopMode ? 'small' : 'medium'}
+        {...(startIcon && { startIcon: startIcon })}
         variant="outlined" // text outlined contained
         {...rest}
         style={{

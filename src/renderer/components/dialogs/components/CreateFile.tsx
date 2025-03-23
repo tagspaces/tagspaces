@@ -16,17 +16,14 @@
  *
  */
 
-import Tooltip from '-/components/Tooltip';
+import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { FormControl } from '@mui/material';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -146,44 +143,42 @@ function CreateFile(props: Props) {
         </FormControl>
       ) : (
         <ButtonGroup style={{ margin: '0 auto' }}>
-          <Button
+          <TsButton
+            tooltip={t('createMarkdownTitle')}
             onClick={() => createFile('md')}
             data-tid={tid('createMarkdownButton')}
             disabled={noSuitableLocation}
+            style={{
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+              fontWeight: 'bold',
+            }}
           >
-            <Tooltip title={t('createMarkdownTitle')}>
-              <Typography
-                variant="button"
-                style={{ fontWeight: 'bold' }}
-                display="block"
-                gutterBottom
-              >
-                {t('createMarkdown')}
-              </Typography>
-            </Tooltip>
-          </Button>
-          <Button
+            {t('createMarkdown')}
+          </TsButton>
+          <TsButton
+            tooltip={t('createNoteTitle')}
             onClick={() => createFile('html')}
             data-tid={tid('createRichTextFileButton')}
             disabled={noSuitableLocation}
+            style={{
+              borderRadius: 0,
+            }}
           >
-            <Tooltip title={t('createNoteTitle')}>
-              <Typography variant="button" display="block" gutterBottom>
-                {t('createRichTextFile')}
-              </Typography>
-            </Tooltip>
-          </Button>
-          <Button
+            {t('createRichTextFile')}
+          </TsButton>
+          <TsButton
+            tooltip={t('createTextFileTitle')}
             onClick={() => createFile('txt')}
             data-tid={tid('createTextFileButton')}
             disabled={noSuitableLocation}
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
           >
-            <Tooltip title={t('createTextFileTitle')}>
-              <Typography variant="button" display="block" gutterBottom>
-                {t('createTextFile')}
-              </Typography>
-            </Tooltip>
-          </Button>
+            {t('createTextFile')}
+          </TsButton>
         </ButtonGroup>
       )}
     </Grid>

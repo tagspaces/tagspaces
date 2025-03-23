@@ -150,13 +150,21 @@ function MobileNavigation(props: Props) {
       >
         <Box>
           <CustomLogo />
-          <Box style={{ width: '100%', textAlign: 'center' }}>
+          <Box
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <ButtonGroup
               ref={anchorRef}
               aria-label="split button"
               style={{
                 textAlign: 'center',
-                marginRight: AppConfig.defaultSpaceBetweenButtons,
+                marginLeft: 5,
+                marginRight: 5,
               }}
             >
               <TsButton
@@ -169,7 +177,6 @@ function MobileNavigation(props: Props) {
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
                 style={{
-                  marginLeft: 40,
                   borderRadius: 'unset',
                   borderTopLeftRadius: AppConfig.defaultCSSRadius,
                   borderBottomLeftRadius: AppConfig.defaultCSSRadius,
@@ -490,7 +497,7 @@ function MobileNavigation(props: Props) {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            alignSelf: 'anchor-center',
+            alignSelf: 'center',
             backgroundColor: theme.palette.background.default,
           }}
         >

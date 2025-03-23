@@ -96,6 +96,7 @@ type IOActionsContextData = {
     locationID: string,
     onProgress?,
     reflect?: boolean,
+    force?: boolean,
   ) => Promise<boolean>;
   copyDirs: (
     dirPaths: Array<any>,
@@ -587,6 +588,7 @@ export const IOActionsContextProvider = ({
     locationID: string,
     onProgress = undefined,
     reflect = true,
+    force = false,
   ): Promise<boolean> {
     const location = findLocation(locationID);
     const moveJobs = paths.map((path) => [
@@ -600,6 +602,7 @@ export const IOActionsContextProvider = ({
       location.uuid,
       paths.length > 10 ? undefined : onProgress,
       false,
+      force,
     )
       .then((moveArray) => {
         if (moveArray !== undefined && moveArray.length > 0) {

@@ -310,7 +310,7 @@ function SettingsAI(props: Props) {
             aria-controls={provider.id + 'content'}
             data-tid={provider.id + 'ollamaTID'}
             sx={{
-              '& .MuiAccordionSummary-content': { alignItems: 'anchor-center' },
+              '& .MuiAccordionSummary-content': { alignItems: 'center' },
             }}
           >
             <Typography>

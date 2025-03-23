@@ -149,7 +149,7 @@ export const EntryPropsTabsContextProvider = ({
     if ((oEntry && !oEntry.isFile) || (devMode && Pro)) {
       const tab4: TabItem = {
         icon: <AIIcon />,
-        title: t('core:aiChatTab'),
+        title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
         name: TabNames.aiTab,
       };
       tabsArray.push(tab4);

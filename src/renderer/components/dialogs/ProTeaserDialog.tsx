@@ -69,6 +69,8 @@ function Slide(props: SlideProps) {
     pictureHeight,
     pictureShadow,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <div
       style={{
@@ -138,7 +140,7 @@ function Slide(props: SlideProps) {
               openURLExternally(Links.links.productsOverview, true);
             }}
           >
-            t('core:compareAndUpgrade')
+            {t('core:compareAndUpgrade')}
           </TsButton>
           {ctaTitle && (
             <TsButton

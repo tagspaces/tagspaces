@@ -342,13 +342,13 @@ function GridPagination(props: Props) {
                       borderRadius: AppConfig.defaultCSSRadius,
                       border: '1px solid transparent',
                       height: 100,
-                      width: 140,
+                      width: 100,
                       backgroundImage: thumbImage.current,
                       backgroundSize: 'cover', // cover contain
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
                       position: 'absolute',
-                      top: 10,
+                      top: 15,
                       right: 0,
                       cursor: 'pointer',
                     }}
