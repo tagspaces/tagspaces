@@ -202,7 +202,8 @@ function SearchPopover(props: Props) {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: 5,
+          padding: AppConfig.defaultSpaceBetweenButtons,
+          paddingTop: 0,
         }}
       >
         <TsButton
