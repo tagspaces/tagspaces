@@ -248,7 +248,7 @@ function GridPagination(props: Props) {
                     directoryMeta &&
                     directoryMeta.description
                       ? 150
-                      : 115,
+                      : 125,
                   position: 'relative',
                 }}
               >

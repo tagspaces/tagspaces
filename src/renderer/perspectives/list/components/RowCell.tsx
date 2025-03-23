@@ -281,35 +281,29 @@ function RowCell(props: Props) {
   const entryHeight = calculateEntryHeight(entrySize);
   const isSmall = entrySize === 'tiny'; // || entrySize === 'small';
 
+  let entryBackgroundColor = fileSystemEntryBgColor;
+  if (entryBackgroundColor === 'transparent') {
+    entryBackgroundColor = theme.palette.background.default;
+  }
+
   const backgroundColor = selected
     ? theme.palette.primary.light
-    : fileSystemEntryBgColor;
+    : entryBackgroundColor;
 
   return (
     <Paper
       data-entry-id={fsEntry.uuid}
       style={{
         boxShadow: 'none',
-        borderRadius: 0, // AppConfig.defaultCSSRadius,
-        borderLeft:
-          '1px solid ' +
-          (selected
-            ? theme.palette.primary.main + ' !important'
-            : 'transparent'),
-        borderRight:
-          '1px solid ' +
-          (selected
-            ? theme.palette.primary.main + ' !important'
-            : 'transparent'),
-        borderTop:
-          '1px solid ' +
-          (selected
-            ? theme.palette.primary.main + ' !important'
-            : 'transparent'),
+        borderRadius: 0,
+        borderLeft: '1px solid transparent',
+        borderRight: '1px solid transparent',
+        borderTop: '1px solid transparent',
         borderBottom: '1px solid ' + theme.palette.divider,
+        background: 'transparent',
         margin: 0,
-        marginTop: 0,
         paddingBottom: 5,
+        marginLeft: 5,
         minHeight: entryHeight,
         marginBottom: isLast ? 40 : 'auto',
       }}
