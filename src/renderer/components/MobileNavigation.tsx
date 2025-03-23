@@ -497,7 +497,7 @@ function MobileNavigation(props: Props) {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            alignSelf: 'anchor-center',
+            alignSelf: 'center',
             backgroundColor: theme.palette.background.default,
           }}
         >
