@@ -22,6 +22,7 @@ import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import Organize from '-/assets/images/organize.svg';
 import TsButton from '-/components/TsButton';
+import TsToggleButton from '-/components/TsToggleButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { AppDispatch } from '-/reducers/app';
 import {
@@ -38,7 +39,6 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -176,10 +176,25 @@ function OnboardingDialog(props: Props) {
                 onChange={(event, theme) => {
                   setCurrentTheme(theme);
                 }}
-                style={{ boxShadow: 'none' }}
               >
-                <ToggleButton value="light">Light</ToggleButton>
-                <ToggleButton value="dark">Dark</ToggleButton>
+                <TsToggleButton
+                  style={{
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }}
+                  value="light"
+                >
+                  Light
+                </TsToggleButton>
+                <TsToggleButton
+                  style={{
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
+                  value="dark"
+                >
+                  Dark
+                </TsToggleButton>
               </ToggleButtonGroup>
             </div>
           </div>

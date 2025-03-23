@@ -16,25 +16,24 @@
  *
  */
 
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import { useSelector, useDispatch } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import InfoIcon from '-/components/InfoIcon';
 import TsTextField from '-/components/TsTextField';
-import Switch from '@mui/material/Switch';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { isStr } from '@tagspaces/tagspaces-common/misc';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getKeyBindings,
   isGlobalKeyBindingEnabled,
 } from '-/reducers/settings';
 import DefaultSettings from '-/reducers/settings-default';
-import { AppDispatch } from '-/reducers/app';
-import { useTranslation } from 'react-i18next';
-import Typography from '@mui/material/Typography';
 import { setGlobalShortcuts } from '-/services/utils-io';
-import AppConfig from '-/AppConfig';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
+import { isStr } from '@tagspaces/tagspaces-common/misc';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 function SettingsKeyBindings() {
   const { t } = useTranslation();
@@ -70,7 +69,14 @@ function SettingsKeyBindings() {
       </Typography>
       {AppConfig.isElectron && (
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('core:enableGlobalKeyboardShortcuts')} />
+          <ListItemText
+            primary={
+              <>
+                {t('core:enableGlobalKeyboardShortcuts')}
+                <InfoIcon tooltip="Enables global shortcut for creating new files, file navigation, play/pause audio files or opening the search. Global shortcuts are working even if the app window is not currently in focus or visible." />
+              </>
+            }
+          />
           <Switch
             onClick={() => {
               setGlobalKeyBinding(!globalKeyBindingEnabled);
@@ -85,10 +91,9 @@ function SettingsKeyBindings() {
         )[0];
         return (
           <TsTextField
-            style={{ marginTop: 10, marginBottom: 10 }}
+            style={{ marginTop: 0, marginBottom: 10 }}
             key={keyBinding.name}
             autoComplete="off"
-            InputLabelProps={{ shrink: true }}
             onBlur={(event) =>
               setKeyBinding(keyBinding.name, event.target.value)
             }

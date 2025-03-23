@@ -35,8 +35,10 @@ import {
 import TagsSelect from '-/components/TagsSelect';
 import TooltipTS from '-/components/Tooltip';
 import TsDatePicker from '-/components/TsDatePicker';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
+import TsToggleButton from '-/components/TsToggleButton';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { isDesktopMode } from '-/reducers/settings';
@@ -46,7 +48,6 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
-import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -55,7 +56,6 @@ import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TsIconButton from './TsIconButton';
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -239,21 +239,35 @@ function EditSearchQuery(props: Props) {
           style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.searchBoxing}
         >
-          <ToggleButton value="location">
-            <TooltipTS title={t('searchPlaceholder')}>
-              <div>{t('location')}</div>
-            </TooltipTS>
-          </ToggleButton>
-          <ToggleButton value="folder">
-            <TooltipTS title={t('searchCurrentFolderWithSubFolders')}>
-              <div>{t('folder')}</div>
-            </TooltipTS>
-          </ToggleButton>
-          <ToggleButton value="global">
-            <TooltipTS title={t('searchInAllLocationTooltip')}>
-              <div>{t('globalSearch')}</div>
-            </TooltipTS>
-          </ToggleButton>
+          <TsToggleButton
+            style={{
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            }}
+            tooltip={t('searchPlaceholder')}
+            value="location"
+          >
+            {t('location')}
+          </TsToggleButton>
+          <TsToggleButton
+            style={{
+              borderRadius: 0,
+            }}
+            tooltip={t('searchCurrentFolderWithSubFolders')}
+            value="folder"
+          >
+            {t('folder')}
+          </TsToggleButton>
+          <TsToggleButton
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
+            tooltip={t('searchInAllLocationTooltip')}
+            value="global"
+          >
+            {t('globalSearch')}
+          </TsToggleButton>
         </ToggleButtonGroup>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
@@ -264,21 +278,38 @@ function EditSearchQuery(props: Props) {
           style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.searchType}
         >
-          <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
-            <TooltipTS title={t('searchTypeFuzzyTooltip')}>
-              <div>{t('searchTypeFuzzy')}</div>
-            </TooltipTS>
-          </ToggleButton>
-          <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-            <TooltipTS title={t('searchTypeSemiStrictTooltip')}>
-              <div>{t('searchTypeSemiStrict')}</div>
-            </TooltipTS>
-          </ToggleButton>
-          <ToggleButton value="strict" data-tid="strictSearchTID">
-            <TooltipTS title={t('searchTypeStrictTooltip')}>
-              <div>{t('searchTypeStrict')}</div>
-            </TooltipTS>
-          </ToggleButton>
+          <TsToggleButton
+            style={{
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            }}
+            tooltip={t('searchTypeFuzzyTooltip')}
+            value="fuzzy"
+            data-tid="fuzzySearchTID"
+          >
+            {t('searchTypeFuzzy')}
+          </TsToggleButton>
+          <TsToggleButton
+            style={{
+              borderRadius: 0,
+            }}
+            tooltip={t('searchTypeSemiStrictTooltip')}
+            value="semistrict"
+            data-tid="semiStrictSearchTID"
+          >
+            {t('searchTypeSemiStrict')}
+          </TsToggleButton>
+          <TsToggleButton
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
+            tooltip={t('searchTypeStrictTooltip')}
+            value="strict"
+            data-tid="strictSearchTID"
+          >
+            {t('searchTypeStrict')}
+          </TsToggleButton>
         </ToggleButtonGroup>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
@@ -293,16 +324,27 @@ function EditSearchQuery(props: Props) {
           style={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.forceIndexing}
         >
-          <ToggleButton value={false}>
-            <TooltipTS title={t('useCurrentIndexTooltip')}>
-              <div>{t('useCurrentIndex')}</div>
-            </TooltipTS>
-          </ToggleButton>
-          <ToggleButton value={true} data-tid="forceIndexingTID">
-            <TooltipTS title={t('forceReindexTooltip')}>
-              <div>{t('forceReindex')}</div>
-            </TooltipTS>
-          </ToggleButton>
+          <TsToggleButton
+            tooltip={t('useCurrentIndexTooltip')}
+            style={{
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            }}
+            value={false}
+          >
+            {t('useCurrentIndex')}
+          </TsToggleButton>
+          <TsToggleButton
+            tooltip={t('forceReindexTooltip')}
+            style={{
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+            }}
+            value={true}
+            data-tid="forceIndexingTID"
+          >
+            {t('forceReindex')}
+          </TsToggleButton>
         </ToggleButtonGroup>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
