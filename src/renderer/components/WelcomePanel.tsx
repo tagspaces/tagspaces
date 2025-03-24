@@ -16,7 +16,6 @@
  *
  */
 
-import WelcomeLogo from '-/assets/images/welcome-logo.png';
 import {
   ChangeLogIcon,
   CreateFileIcon,
@@ -115,14 +114,7 @@ function WelcomePanel() {
   function renderRecentItems() {
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography
-          variant="inherit"
-          style={{
-            paddingTop: 20,
-          }}
-          className={classes.recentTitle}
-          noWrap
-        >
+        <Typography variant="inherit" className={classes.recentTitle} noWrap>
           {t('core:fileOpenHistory')}
         </Typography>
         {fileOpenHistoryItems ? (
@@ -187,21 +179,13 @@ function WelcomePanel() {
         aria-label="useful link on welcome page"
         style={{
           height: 'calc(100% - 70px)',
-          marginTop: 15,
+          marginTop: 45,
           marginBottom: 15,
           overflowY: 'auto',
           overflowX: 'hidden',
           backgroundColor: theme.palette.background.default,
         }}
       >
-        <div
-          role="button"
-          aria-hidden="true"
-          tabIndex={0}
-          onClick={() => openAboutDialog()}
-        >
-          <img src={WelcomeLogo} alt="Organize your files" />
-        </div>
         <ListItem onClick={() => openNewFileDialog()}>
           <ListItemIcon>
             <CreateFileIcon />
@@ -372,7 +356,7 @@ function WelcomePanel() {
             <div
               style={{
                 margin: 'auto',
-                marginTop: 15,
+                marginTop: 55,
                 marginBottom: 15,
                 overflowY: 'auto',
                 height: 'calc(100% - 50px)',
