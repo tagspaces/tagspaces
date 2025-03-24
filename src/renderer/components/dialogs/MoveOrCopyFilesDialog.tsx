@@ -59,8 +59,7 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
-  const { handleEntryExist, openEntryExistDialog } =
-    useEntryExistDialogContext();
+  const { handleEntryExist } = useEntryExistDialogContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { findLocation } = useCurrentLocationContext();
   const { moveFiles, copyFiles } = useIOActionsContext();
@@ -82,7 +81,14 @@ function MoveOrCopyFilesDialog(props: Props) {
   }
 
   function handleMove(filePaths: string[]) {
-    moveFiles(filePaths, targetDir, targetLocation.uuid).then((success) => {
+    moveFiles(
+      filePaths,
+      targetDir,
+      targetLocation.uuid,
+      undefined,
+      true,
+      true,
+    ).then((success) => {
       if (success) {
         sendDirMessage('moveFiles', filePaths);
         generateThumbs(
@@ -163,16 +169,14 @@ function MoveOrCopyFilesDialog(props: Props) {
         <TsButton
           onClick={() => {
             if (selectedFiles) {
-              handleEntryExist(selectedFiles, targetDir, targetLocationId).then(
-                (exist) => {
-                  if (exist) {
-                    openEntryExistDialog(exist, () => {
-                      handleMove(selectedFiles.map((file) => file.path));
-                    });
-                  } else {
-                    handleMove(selectedFiles.map((file) => file.path));
-                  }
-                },
+              const confirmOverride = () => {
+                handleMove(selectedFiles.map((file) => file.path));
+              };
+              handleEntryExist(
+                selectedFiles,
+                targetDir,
+                targetLocationId,
+                confirmOverride,
               );
             }
             onClose();
@@ -185,16 +189,14 @@ function MoveOrCopyFilesDialog(props: Props) {
         <TsButton
           onClick={() => {
             if (selectedFiles) {
-              handleEntryExist(selectedFiles, targetDir, targetLocationId).then(
-                (exist) => {
-                  if (exist) {
-                    openEntryExistDialog(exist, () => {
-                      handleCopy(selectedFiles.map((file) => file.path));
-                    });
-                  } else {
-                    handleCopy(selectedFiles.map((file) => file.path));
-                  }
-                },
+              const confirmOverride = () => {
+                handleCopy(selectedFiles.map((file) => file.path));
+              };
+              handleEntryExist(
+                selectedFiles,
+                targetDir,
+                targetLocationId,
+                confirmOverride,
               );
             }
             onClose();

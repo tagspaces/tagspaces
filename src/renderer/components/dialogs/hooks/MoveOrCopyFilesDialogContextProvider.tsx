@@ -25,7 +25,7 @@ import AppConfig from '-/AppConfig';
 
 type MoveOrCopyFilesDialogContextData = {
   openMoveOrCopyFilesDialog: (
-    files: Array<File>,
+    files: File[] | TS.FileSystemEntry[],
     targetDirectory?: string,
     targetLocationId?: string,
   ) => void;
@@ -59,8 +59,12 @@ export const MoveOrCopyFilesDialogContextProvider = ({
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
+  function isFileArray(value: unknown): value is File[] {
+    return Array.isArray(value) && value.every((item) => item instanceof File);
+  }
+
   function openDialog(
-    selectedFiles: Array<File>,
+    selectedFiles: File[] | TS.FileSystemEntry[],
     targetDirectory?: string,
     targetLocationID?: string,
   ) {
@@ -70,18 +74,22 @@ export const MoveOrCopyFilesDialogContextProvider = ({
     open.current = true;
     targetDir.current = targetDirectory;
     targetLocationId.current = targetLocationID;
-    isDirs(selectedFiles).then((isDirsArray) => {
-      files.current = selectedFiles.map((file, index) => ({
-        uuid: getUuid(),
-        name: file.name,
-        path: file.path,
-        isFile: !isDirsArray[index],
-        extension: extractFileExtension(file.path),
-        size: file.size,
-        lmdt: file.lastModified,
-      }));
-      forceUpdate();
-    });
+    if (isFileArray(selectedFiles)) {
+      isDirs(selectedFiles).then((isDirsArray) => {
+        files.current = selectedFiles.map((file, index) => ({
+          uuid: getUuid(),
+          name: file.name,
+          path: file.path,
+          isFile: !isDirsArray[index],
+          extension: extractFileExtension(file.path),
+          size: file.size,
+          lmdt: file.lastModified,
+        }));
+        forceUpdate();
+      });
+    } else {
+      files.current = selectedFiles;
+    }
     forceUpdate();
   }
 

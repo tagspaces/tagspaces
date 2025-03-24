@@ -27,6 +27,7 @@ type EntryExistDialogContextData = {
     entries: TS.FileSystemEntry[],
     targetPath: string,
     targetLocationId?: string,
+    confirmCallback?: () => void,
   ) => Promise<string[]>;
   openEntryExistDialog: (
     existPath: string[],
@@ -58,6 +59,7 @@ export const EntryExistDialogContextProvider = ({
     entries: TS.FileSystemEntry[],
     targetPath: string,
     targetLocationId?: string,
+    confirmCallback?: () => void,
   ): Promise<string[]> {
     if (entries) {
       let arrExist = [];
@@ -88,8 +90,15 @@ export const EntryExistDialogContextProvider = ({
         }
       }
       if (arrExist.length > 0) {
+        if (confirmCallback) {
+          openDialog(arrExist, confirmCallback);
+        }
         return arrExist;
       }
+    }
+
+    if (confirmCallback) {
+      confirmCallback();
     }
     return Promise.resolve(undefined);
   }
@@ -122,27 +131,27 @@ export const EntryExistDialogContextProvider = ({
 
   return (
     <EntryExistDialogContext.Provider value={context}>
-      <ConfirmDialog
-        open={entriesExistPath.current.length > 0}
-        onClose={() => {
-          closeDialog();
-        }}
-        title={t('core:confirm')}
-        content={
-          formatFileExist(entriesExistPath.current) +
-          ' exist do you want to override it?'
-        }
-        confirmCallback={(result) => {
-          if (result) {
-            confirmOverride.current();
-          } else {
-            entriesExistPath.current = [];
+      {entriesExistPath.current.length > 0 && (
+        <ConfirmDialog
+          open={true}
+          onClose={() => {
+            closeDialog();
+          }}
+          title={t('core:confirm')}
+          content={
+            formatFileExist(entriesExistPath.current) +
+            ' exist do you want to override it?'
           }
-        }}
-        cancelDialogTID="cancelOverwriteByCopyMoveDialog"
-        confirmDialogTID="confirmOverwriteByCopyMoveDialog"
-        confirmDialogContentTID="confirmDialogContent"
-      />
+          confirmCallback={(result) => {
+            if (result) {
+              confirmOverride.current();
+            }
+          }}
+          cancelDialogTID="cancelOverwriteByCopyMoveDialog"
+          confirmDialogTID="confirmOverwriteByCopyMoveDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
+      )}
       {children}
     </EntryExistDialogContext.Provider>
   );
