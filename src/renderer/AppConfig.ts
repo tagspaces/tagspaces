@@ -1,9 +1,5 @@
 import { AppConfig } from '@tagspaces/tagspaces-common';
 
-AppConfig.aiSupportedFiletypes = {
-  text: ['pdf', 'txt', 'md', 'html'],
-  image: ['jpg', 'jpeg', 'png'],
-};
 AppConfig.editableFiles = [
   'txt',
   'md',
@@ -20,6 +16,8 @@ AppConfig.editableFiles = [
   'xml',
   'java',
   'js',
+  'ts',
+  'tsx',
   'json',
   'less',
   'php',
@@ -30,6 +28,11 @@ AppConfig.editableFiles = [
   'sh',
   'sql',
 ];
+
+AppConfig.aiSupportedFiletypes = {
+  text: ['pdf', ...AppConfig.editableFiles],
+  image: ['jpg', 'jpeg', 'png'],
+};
 AppConfig.SearchTypes = {
   any: 'any',
   images: 'images',
