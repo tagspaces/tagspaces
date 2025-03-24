@@ -16,7 +16,12 @@
  *
  */
 
-import { ExportIcon, HelpIcon, ImportIcon } from '-/components/CommonIcons';
+import {
+  ExportIcon,
+  HelpIcon,
+  ImportIcon,
+  CreateFileIcon,
+} from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
 import { Pro } from '-/pro';
@@ -27,6 +32,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 
 interface Props {
   classes?: any;
@@ -39,7 +45,31 @@ interface Props {
 
 function SearchMenu(props: Props) {
   const { t } = useTranslation();
+  const { openSaveSearchDialog } = useSearchQueryContext();
   const menuItems = [];
+  menuItems.push(
+    <MenuItem
+      disabled={!Pro}
+      key="openSavedSearch"
+      data-tid="openSavedSearchTID"
+      onClick={() => {
+        props.onClose();
+        openSaveSearchDialog();
+      }}
+    >
+      <ListItemIcon>
+        <CreateFileIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <>
+            {t('core:createNewSavedSearchTitle')}
+            <ProLabel />
+          </>
+        }
+      />
+    </MenuItem>,
+  );
   menuItems.push(
     <MenuItem
       disabled={!Pro}
