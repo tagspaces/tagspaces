@@ -363,7 +363,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   ): ModelResponse {
     if (fileName && aiProvider) {
       const ext = extractFileExtension(fileName).toLowerCase();
-      let model;
+      let model = aiProvider.defaultTextModel; // folders don't have Extension
       if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
         model = aiProvider.defaultTextModel;
       } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
@@ -1158,30 +1158,44 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     entry: TS.FileSystemEntry,
   ): Promise<string> {
     if (modelName) {
-      return currentLocation
-        .getFileContentPromise(
-          entry.path,
-          fileContent === 'text' && !entry.path.endsWith('.pdf')
-            ? 'text'
-            : 'arraybuffer',
-        )
-        .then((content) => getFileContent(entry, content))
-        .then((content) =>
-          newChatMessage(
-            fileContent === 'image' ? undefined : content,
-            false,
-            'user',
-            mode,
-            modelName, //openedEntryModel.current.name,
-            false,
-            getImageArray(fileContent, content),
-            false,
-          ),
-        )
-        .catch((e) => {
-          console.log('newOllamaMessage error:', e);
-          return undefined;
-        });
+      if (entry.isFile) {
+        return currentLocation
+          .getFileContentPromise(
+            entry.path,
+            fileContent === 'text' && !entry.path.endsWith('.pdf')
+              ? 'text'
+              : 'arraybuffer',
+          )
+          .then((content) => getFileContent(entry, content))
+          .then((content) =>
+            newChatMessage(
+              fileContent === 'image' ? undefined : content,
+              false,
+              'user',
+              mode,
+              modelName, //openedEntryModel.current.name,
+              false,
+              getImageArray(fileContent, content),
+              false,
+            ),
+          )
+          .catch((e) => {
+            console.log('newOllamaMessage error:', e);
+            return undefined;
+          });
+      } else {
+        // folder
+        return newChatMessage(
+          entry.name,
+          false,
+          'user',
+          mode,
+          modelName, //openedEntryModel.current.name,
+          false,
+          [],
+          false,
+        );
+      }
     } else {
       showNotification('Model not found, try pulling it first');
     }
@@ -1212,7 +1226,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
                 generationSettings.current.appendAnalysisToDescription,
               ),
             );
-          } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
+          } else if (
+            AppConfig.aiSupportedFiletypes.text.includes(ext) ||
+            ext === '' /*folders*/
+          ) {
             return generate('text', 'description', entryModel.name, entry).then(
               (results) =>
                 handleGenDescResults(
