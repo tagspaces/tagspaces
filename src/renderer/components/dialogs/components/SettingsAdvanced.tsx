@@ -48,19 +48,17 @@ import Switch from '@mui/material/Switch';
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
 
 interface Props {
   showResetSettings: (showDialog: boolean) => void;
 }
 
-const historyKeys = Pro ? Pro.keys.historyKeys : {};
-
 function SettingsAdvanced(props: Props) {
   const { showResetSettings } = props;
   const { t } = useTranslation();
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
-    : undefined;
+  const { delAllHistory } = useHistoryContext();
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const maxCollectedTag = useSelector(getMaxCollectedTag);
@@ -202,138 +200,132 @@ function SettingsAdvanced(props: Props) {
           }
         />
       </ListItem>
-      {Pro && (
-        <>
-          <ListItem>
-            <ListItemText primary={t('core:fileOpenHistory')} />
-            <ListItemIcon>
-              <TsIconButton
-                tooltip={t('clearHistory')}
-                aria-label={t('core:clearHistory')}
-                onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
-                data-tid="clearSearchTID"
-              >
-                <DeleteIcon />
-              </TsIconButton>
-            </ListItemIcon>
-            <TsSelect
-              data-tid="fileOpenTID"
-              fullWidth={false}
-              title={t('core:fileOpenHistoryTitle')}
-              value={settings[historyKeys.fileOpenKey]}
-              onChange={(event) =>
-                setHistory(historyKeys.fileOpenKey, event.target.value)
-              }
-            >
-              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TsSelect>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary={t('core:folderOpenHistory')} />
-            <ListItemIcon>
-              <TsIconButton
-                tooltip={t('clearHistory')}
-                aria-label={t('core:clearHistory')}
-                onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
-                data-tid="clearSearchTID"
-              >
-                <DeleteIcon />
-              </TsIconButton>
-            </ListItemIcon>
-            <TsSelect
-              data-tid="folderOpenTID"
-              fullWidth={false}
-              title={t('core:folderOpenHistoryTitle')}
-              value={settings[historyKeys.folderOpenKey]}
-              onChange={(event: any) =>
-                setHistory(historyKeys.folderOpenKey, event.target.value)
-              }
-            >
-              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TsSelect>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary={t('core:fileEditHistory')} />
-            <ListItemIcon>
-              <TsIconButton
-                tooltip={t('clearHistory')}
-                aria-label={t('core:clearHistory')}
-                onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
-                data-tid="clearSearchTID"
-              >
-                <DeleteIcon />
-              </TsIconButton>
-            </ListItemIcon>
-            <TsSelect
-              data-tid="fileEditTID"
-              fullWidth={false}
-              title={t('core:fileEditHistoryTitle')}
-              value={settings[historyKeys.fileEditKey]}
-              onChange={(event: any) =>
-                setHistory(historyKeys.fileEditKey, event.target.value)
-              }
-            >
-              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TsSelect>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary={t('core:searchHistory')} />
-            <ListItemIcon>
-              <TsIconButton
-                tooltip={t('clearHistory')}
-                aria-label={t('core:clearHistory')}
-                onClick={() =>
-                  setConfirmDialogKey(historyKeys.searchHistoryKey)
-                }
-                data-tid="clearSearchTID"
-              >
-                <DeleteIcon />
-              </TsIconButton>
-            </ListItemIcon>
-            <TsSelect
-              data-tid="searchHistoryTID"
-              fullWidth={false}
-              title={t('core:searchHistoryTitle')}
-              value={settings[historyKeys.searchHistoryKey]}
-              onChange={(event: any) =>
-                setHistory(historyKeys.searchHistoryKey, event.target.value)
-              }
-            >
-              <MenuItem value={0}>{t('core:disabled')}</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TsSelect>
-          </ListItem>
-          <ConfirmDialog
-            open={confirmDialogKey !== null}
-            onClose={() => {
-              setConfirmDialogKey(null);
-            }}
-            title="Confirm"
-            content={t('core:confirm' + confirmDialogKey + 'Deletion')}
-            confirmCallback={(result) => {
-              if (result) {
-                historyContext.delAllHistory(confirmDialogKey);
-              }
-            }}
-            cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
-            confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
-            confirmDialogContentTID={
-              'confirmDelete' + confirmDialogKey + 'DialogContent'
-            }
-          />
-        </>
-      )}
+      <ListItem>
+        <ListItemText primary={t('core:fileOpenHistory')} />
+        <ListItemIcon>
+          <TsIconButton
+            tooltip={t('clearHistory')}
+            aria-label={t('core:clearHistory')}
+            onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+            data-tid="clearSearchTID"
+          >
+            <DeleteIcon />
+          </TsIconButton>
+        </ListItemIcon>
+        <TsSelect
+          data-tid="fileOpenTID"
+          fullWidth={false}
+          title={t('core:fileOpenHistoryTitle')}
+          value={settings[historyKeys.fileOpenKey]}
+          onChange={(event) =>
+            setHistory(historyKeys.fileOpenKey, event.target.value)
+          }
+        >
+          <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </TsSelect>
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:folderOpenHistory')} />
+        <ListItemIcon>
+          <TsIconButton
+            tooltip={t('clearHistory')}
+            aria-label={t('core:clearHistory')}
+            onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
+            data-tid="clearSearchTID"
+          >
+            <DeleteIcon />
+          </TsIconButton>
+        </ListItemIcon>
+        <TsSelect
+          data-tid="folderOpenTID"
+          fullWidth={false}
+          title={t('core:folderOpenHistoryTitle')}
+          value={settings[historyKeys.folderOpenKey]}
+          onChange={(event: any) =>
+            setHistory(historyKeys.folderOpenKey, event.target.value)
+          }
+        >
+          <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </TsSelect>
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:fileEditHistory')} />
+        <ListItemIcon>
+          <TsIconButton
+            tooltip={t('clearHistory')}
+            aria-label={t('core:clearHistory')}
+            onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+            data-tid="clearSearchTID"
+          >
+            <DeleteIcon />
+          </TsIconButton>
+        </ListItemIcon>
+        <TsSelect
+          data-tid="fileEditTID"
+          fullWidth={false}
+          title={t('core:fileEditHistoryTitle')}
+          value={settings[historyKeys.fileEditKey]}
+          onChange={(event: any) =>
+            setHistory(historyKeys.fileEditKey, event.target.value)
+          }
+        >
+          <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </TsSelect>
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:searchHistory')} />
+        <ListItemIcon>
+          <TsIconButton
+            tooltip={t('clearHistory')}
+            aria-label={t('core:clearHistory')}
+            onClick={() => setConfirmDialogKey(historyKeys.searchHistoryKey)}
+            data-tid="clearSearchTID"
+          >
+            <DeleteIcon />
+          </TsIconButton>
+        </ListItemIcon>
+        <TsSelect
+          data-tid="searchHistoryTID"
+          fullWidth={false}
+          title={t('core:searchHistoryTitle')}
+          value={settings[historyKeys.searchHistoryKey]}
+          onChange={(event: any) =>
+            setHistory(historyKeys.searchHistoryKey, event.target.value)
+          }
+        >
+          <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </TsSelect>
+      </ListItem>
+      <ConfirmDialog
+        open={confirmDialogKey !== null}
+        onClose={() => {
+          setConfirmDialogKey(null);
+        }}
+        title="Confirm"
+        content={t('core:confirm' + confirmDialogKey + 'Deletion')}
+        confirmCallback={(result) => {
+          if (result) {
+            delAllHistory(confirmDialogKey);
+          }
+        }}
+        cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
+        confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
+        confirmDialogContentTID={
+          'confirmDelete' + confirmDialogKey + 'DialogContent'
+        }
+      />
       <ListItem>
         <ListItemText
           primary={
