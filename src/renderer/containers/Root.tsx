@@ -106,17 +106,15 @@ export default function Root({ store, persistor }: RootType) {
                                                           <HistoryContextProvider>
                                                             {Pro ? (
                                                               <Pro.contextProviders.BookmarksContextProvider>
-                                                                <Pro.contextProviders.HistoryContextProvider>
-                                                                  <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                    <Pro.contextProviders.ThumbDialogContextProvider>
-                                                                      <Pro.contextProviders.BgndDialogContextProvider>
-                                                                        <DialogsRoot>
-                                                                          <MainPage />
-                                                                        </DialogsRoot>
-                                                                      </Pro.contextProviders.BgndDialogContextProvider>
-                                                                    </Pro.contextProviders.ThumbDialogContextProvider>
-                                                                  </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                </Pro.contextProviders.HistoryContextProvider>
+                                                                <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                  <Pro.contextProviders.ThumbDialogContextProvider>
+                                                                    <Pro.contextProviders.BgndDialogContextProvider>
+                                                                      <DialogsRoot>
+                                                                        <MainPage />
+                                                                      </DialogsRoot>
+                                                                    </Pro.contextProviders.BgndDialogContextProvider>
+                                                                  </Pro.contextProviders.ThumbDialogContextProvider>
+                                                                </Pro.contextProviders.KanBanImportDialogContextProvider>
                                                               </Pro.contextProviders.BookmarksContextProvider>
                                                             ) : (
                                                               <DialogsRoot>
