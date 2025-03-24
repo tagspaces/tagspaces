@@ -37,7 +37,6 @@ import {
 } from '-/reducers/settings';
 import { setLanguage } from '-/services/utils-io';
 import CheckIcon from '@mui/icons-material/Check';
-import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -194,7 +193,6 @@ function SettingsGeneral() {
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
               }}
-              tooltip={t('core:tagsInFilenameExplanation')}
               onClick={() =>
                 dispatch(SettingsActions.setPersistTagsInSidecarFile(false))
               }
@@ -202,13 +200,12 @@ function SettingsGeneral() {
               <div style={{ display: 'flex', textTransform: 'unset' }}>
                 {!persistTagsInSidecarFile && <CheckIcon />}
                 &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
-                <InfoMuiIcon />
+                <InfoIcon tooltip={t('core:tagsInFilenameExplanation')} />
               </div>
             </TsToggleButton>
             <TsToggleButton
               value={true}
               data-tid="settingsSetPersistTagsInSidecarFile"
-              tooltip={t('core:tagsInSidecarFileExplanation')}
               style={{
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
@@ -220,7 +217,7 @@ function SettingsGeneral() {
               <div style={{ display: 'flex' }}>
                 {persistTagsInSidecarFile && <CheckIcon />}
                 &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
-                <InfoMuiIcon />
+                <InfoIcon tooltip={t('core:tagsInSidecarFileExplanation')} />
               </div>
             </TsToggleButton>
           </ToggleButtonGroup>
@@ -237,7 +234,6 @@ function SettingsGeneral() {
             <TsToggleButton
               value={false}
               data-tid="fileNameBeginningTagTID"
-              tooltip={t('core:fileNameBeginTagPlaceExplanation')}
               style={{
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
@@ -249,7 +245,9 @@ function SettingsGeneral() {
               <div style={{ display: 'flex' }}>
                 {!filenameTagPlacedAtEnd && <CheckIcon />}
                 &nbsp;{t('core:atTheBeginningOfFileName')}&nbsp;&nbsp;
-                <InfoMuiIcon />
+                <InfoIcon
+                  tooltip={t('core:fileNameBeginTagPlaceExplanation')}
+                />
               </div>
             </TsToggleButton>
             <TsToggleButton
@@ -259,7 +257,6 @@ function SettingsGeneral() {
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
               }}
-              tooltip={t('core:fileNameEndTagPlaceExplanation')}
               onClick={() =>
                 dispatch(SettingsActions.setFileNameTagPlace(true))
               }
@@ -267,7 +264,7 @@ function SettingsGeneral() {
               <div style={{ display: 'flex' }}>
                 {filenameTagPlacedAtEnd && <CheckIcon />}
                 &nbsp;{t('core:filenameTagPlacedAtEnd')}&nbsp;&nbsp;
-                <InfoMuiIcon />
+                <InfoIcon tooltip={t('core:fileNameEndTagPlaceExplanation')} />
               </div>
             </TsToggleButton>
           </ToggleButtonGroup>
