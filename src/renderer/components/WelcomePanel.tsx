@@ -32,15 +32,12 @@ import {
 } from '-/components/CommonIcons';
 import HowToStart from '-/components/HowToStart';
 import RenderHistory from '-/components/RenderHistory';
-import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
 import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
-import { Pro } from '-/pro';
 import { getDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import { TS } from '-/tagspaces.namespace';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid2';
@@ -51,9 +48,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
-import { useContext, useReducer } from 'react';
+import { useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
 
 const PREFIX = 'WelcomePanel';
 
@@ -87,26 +86,13 @@ function WelcomePanel() {
   const theme = useTheme();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
-  const { openAboutDialog } = useAboutDialogContext();
   const { openKeyboardDialog } = useKeyboardDialogContext();
   const { openLinkDialog } = useLinkDialogContext();
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
-    : undefined;
+  const { fileOpenHistory, fileEditHistory, folderOpenHistory } =
+    useHistoryContext();
   const desktopMode = useSelector(getDesktopMode);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
-  const historyKeys = Pro ? Pro.keys.historyKeys : {};
-  const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? historyContext.fileOpenHistory
-    : [];
-  const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-    ? historyContext.fileEditHistory
-    : [];
-  const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-    ? historyContext.folderOpenHistory
-    : [];
 
   const showDelete = false;
   const maxRecentItems = 5;
@@ -117,11 +103,11 @@ function WelcomePanel() {
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
           {t('core:fileOpenHistory')}
         </Typography>
-        {fileOpenHistoryItems ? (
+        {fileOpenHistory ? (
           <List>
             <RenderHistory
               historyKey={historyKeys.fileOpenKey}
-              items={fileOpenHistoryItems}
+              items={fileOpenHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
               showDelete={showDelete}
@@ -135,11 +121,11 @@ function WelcomePanel() {
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
           {t('core:fileEditHistory')}
         </Typography>
-        {fileEditHistoryItems ? (
+        {fileEditHistory ? (
           <List>
             <RenderHistory
               historyKey={historyKeys.fileEditKey}
-              items={fileEditHistoryItems}
+              items={fileEditHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
               showDelete={showDelete}
@@ -153,11 +139,11 @@ function WelcomePanel() {
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
           {t('core:folderOpenHistory')}
         </Typography>
-        {folderOpenHistoryItems ? (
+        {folderOpenHistory ? (
           <List>
             <RenderHistory
               historyKey={historyKeys.folderOpenKey}
-              items={folderOpenHistoryItems}
+              items={folderOpenHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
               showDelete={showDelete}
@@ -351,22 +337,20 @@ function WelcomePanel() {
             </div>
           </Grid>
         )}
-        {Pro && (
-          <Grid style={{ height: '100%', minWidth: 300 }}>
-            <div
-              style={{
-                margin: 'auto',
-                marginTop: 55,
-                marginBottom: 15,
-                overflowY: 'auto',
-                height: 'calc(100% - 50px)',
-                backgroundColor: theme.palette.background.default,
-              }}
-            >
-              {renderRecentItems()}
-            </div>
-          </Grid>
-        )}
+        <Grid style={{ height: '100%', minWidth: 300 }}>
+          <div
+            style={{
+              margin: 'auto',
+              marginTop: 55,
+              marginBottom: 15,
+              overflowY: 'auto',
+              height: 'calc(100% - 50px)',
+              backgroundColor: theme.palette.background.default,
+            }}
+          >
+            {renderRecentItems()}
+          </div>
+        </Grid>
       </Grid>
     </Root>
   );

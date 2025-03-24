@@ -49,7 +49,6 @@ function SearchMenu(props: Props) {
   const menuItems = [];
   menuItems.push(
     <MenuItem
-      disabled={!Pro}
       key="openSavedSearch"
       data-tid="openSavedSearchTID"
       onClick={() => {
@@ -60,14 +59,7 @@ function SearchMenu(props: Props) {
       <ListItemIcon>
         <CreateFileIcon />
       </ListItemIcon>
-      <ListItemText
-        primary={
-          <>
-            {t('core:createNewSavedSearchTitle')}
-            <ProLabel />
-          </>
-        }
-      />
+      <ListItemText primary={t('core:createNewSavedSearchTitle')} />
     </MenuItem>,
   );
   menuItems.push(

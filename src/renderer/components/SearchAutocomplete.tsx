@@ -72,6 +72,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 
 interface Props {
   style?: any;
@@ -107,11 +108,11 @@ function SearchAutocomplete(props: Props) {
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
   const { searches } = useSavedSearchesContext();
+  const { fileOpenHistory, fileEditHistory, folderOpenHistory, searchHistory } =
+    useHistoryContext();
+
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
-    : undefined;
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
@@ -588,23 +589,10 @@ function SearchAutocomplete(props: Props) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
 
-        const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? historyContext.fileOpenHistory
-          : [];
-        const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
-          ? historyContext.folderOpenHistory
-          : [];
-        const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
-          ? historyContext.fileEditHistory
-          : [];
-
         searchOptions.current = [
-          ...getHistoryOptions(fileOpenHistoryItems, t('core:fileOpenHistory')),
-          ...getHistoryOptions(
-            folderOpenHistoryItems,
-            t('core:folderOpenHistory'),
-          ),
-          ...getHistoryOptions(fileEditHistoryItems, t('core:fileEditHistory')),
+          ...getHistoryOptions(fileOpenHistory, t('core:fileOpenHistory')),
+          ...getHistoryOptions(folderOpenHistory, t('core:folderOpenHistory')),
+          ...getHistoryOptions(fileEditHistory, t('core:fileEditHistory')),
         ];
       }
     } else if (isAction(action, SearchActions.BOOK)) {
@@ -638,11 +626,8 @@ function SearchAutocomplete(props: Props) {
         );
       }
     } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
-      const searchHistoryItems: Array<TS.HistoryItem> = Pro
-        ? historyContext.searchHistory
-        : [];
       searchOptions.current = getHistoryOptions(
-        searchHistoryItems,
+        searchHistory,
         t('core:searchHistory'),
       );
     } else if (isAction(action, SearchActions.SEARCH)) {
@@ -920,7 +905,7 @@ function SearchAutocomplete(props: Props) {
               setSearchQuery(option.searchQuery);
             } else {
             }
-          } else if (Pro) {
+          } else {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,

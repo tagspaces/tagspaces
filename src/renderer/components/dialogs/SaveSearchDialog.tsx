@@ -53,11 +53,18 @@ function SaveSearchDialog(props: Props) {
   const { t } = useTranslation();
   const inputError = useRef<string>(undefined);
   const title = useRef<string>(getTitle());
+  const titleChanged = useRef<boolean>(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
+    titleChanged.current = false;
+  }, [open]);
+
+  useEffect(() => {
     if (tempSearchQuery) {
-      title.current = getTitle();
+      if (!titleChanged.current || !title.current) {
+        title.current = getTitle();
+      }
       if (tempSearchQuery.uuid === undefined) {
         handleValidation();
       } else if (inputError.current) {
@@ -161,6 +168,7 @@ function SaveSearchDialog(props: Props) {
             onChange={(event) => {
               const { target } = event;
               title.current = target.value;
+              titleChanged.current = true;
               handleValidation();
               forceUpdate();
             }}

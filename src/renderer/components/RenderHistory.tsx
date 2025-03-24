@@ -36,6 +36,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 
 interface Props {
   historyKey: string;
@@ -47,11 +48,9 @@ interface Props {
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
   const { openHistoryItem } = useBrowserHistoryContext();
+  const { delHistory } = useHistoryContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
-    : undefined;
-  const historyContext = Pro?.contextProviders?.HistoryContext
-    ? useContext<TS.HistoryContextData>(Pro.contextProviders.HistoryContext)
     : undefined;
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
@@ -95,7 +94,7 @@ function RenderHistory(props: Props) {
                     </span>
                   }
                 >
-                  {historyKey === Pro.keys.bookmarksKey ? (
+                  {historyKey === Pro?.keys.bookmarksKey ? (
                     <EntryBookmarkIcon />
                   ) : (
                     <HistoryIcon />
@@ -118,14 +117,11 @@ function RenderHistory(props: Props) {
                   tooltip={t('delete')}
                   aria-label={t('core:clearHistory')}
                   onClick={() => {
-                    if (historyKey === Pro.keys.bookmarksKey) {
+                    if (historyKey === Pro?.keys.bookmarksKey) {
                       //del bookmarks
                       bookmarksContext.delBookmark(item.path);
                     } else {
-                      historyContext.delHistory(
-                        historyKey,
-                        item.creationTimeStamp,
-                      );
+                      delHistory(historyKey, item.creationTimeStamp);
                     }
                     update();
                   }}
