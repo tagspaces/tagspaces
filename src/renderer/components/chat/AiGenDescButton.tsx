@@ -50,7 +50,7 @@ function AiGenDescButton(props: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //const openedEntryModel = getEntryModel(openedEntry?.name, defaultAiProvider);
-  if (!openedEntry) {
+  if (!openedEntry || !openedEntry.isFile) {
     //|| !openedEntryModel) {
     return null;
   }

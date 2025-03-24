@@ -61,11 +61,13 @@ function AiGenTagsButton(props: Props) {
     generateEntries = [openedEntry];
   }
 
-  const extensionSupported = generateEntries.every((entry) =>
-    [
-      ...AppConfig.aiSupportedFiletypes.text,
-      ...AppConfig.aiSupportedFiletypes.image,
-    ].includes(entry.extension),
+  const extensionSupported = generateEntries.every(
+    (entry) =>
+      !entry.isFile ||
+      [
+        ...AppConfig.aiSupportedFiletypes.text,
+        ...AppConfig.aiSupportedFiletypes.image,
+      ].includes(entry.extension),
   );
 
   if (!generateEntries || !defaultAiProvider || !extensionSupported) {
