@@ -16,26 +16,9 @@
  *
  */
 
-import React from 'react';
-import { useDrop } from 'react-dnd';
-import { TS } from '-/tagspaces.namespace';
-import { classes, DnD } from '-/components/DnD.css';
+import AppConfig from '-/AppConfig';
 import { CommonLocation } from '-/utils/CommonLocation';
-
-/*const styles: any = () => ({
-  dropzone: {
-    margin: 5,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#1dd19f40',
-    zIndex: 1,
-    border: '3px dashed white',
-    display: 'flex',
-  },
-});*/
+import { useDrop } from 'react-dnd';
 
 interface Props {
   accepts: string[];
@@ -72,9 +55,27 @@ const TargetMoveFileBox = (props: Props) => {
   return (
     <div ref={drop}>
       {canDrop && isOver && (
-        <DnD>
-          <div className={classes.dropzone}></div>
-        </DnD>
+        <div
+          style={{
+            borderRadius: AppConfig.defaultCSSRadius,
+            margin: 2,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#1dd19f40',
+            zIndex: 1000,
+            border: '3px dashed white',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            fontSize: '40px',
+            fontWeight: 'bold',
+            color: 'white',
+          }}
+        ></div>
       )}
       {children}
     </div>
