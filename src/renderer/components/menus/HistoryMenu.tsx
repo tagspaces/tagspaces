@@ -18,7 +18,6 @@
 
 import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
-import { Pro } from '-/pro';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -37,14 +36,14 @@ interface Props {
 function HistoryMenu(props: Props) {
   const { t } = useTranslation();
   const menuItems = [];
+  const { onClose, refreshHistory, clearAll, open, anchorEl } = props;
   menuItems.push(
     <MenuItem
-      disabled={!Pro}
       key="refreshHistoryTID"
       data-tid="refreshHistoryTID"
       onClick={() => {
-        props.onClose();
-        props.refreshHistory();
+        onClose();
+        refreshHistory();
       }}
     >
       <ListItemIcon>
@@ -55,12 +54,11 @@ function HistoryMenu(props: Props) {
   );
   menuItems.push(
     <MenuItem
-      disabled={!Pro}
       key="clearHistoryTID"
       data-tid="clearHistoryTID"
       onClick={() => {
-        props.onClose();
-        props.clearAll();
+        onClose();
+        clearAll();
       }}
     >
       <ListItemIcon>
@@ -72,7 +70,7 @@ function HistoryMenu(props: Props) {
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
     </div>
