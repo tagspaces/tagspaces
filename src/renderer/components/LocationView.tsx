@@ -54,6 +54,7 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
+import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 
 interface Props {
   location: CommonLocation;
@@ -64,7 +65,7 @@ interface Props {
 function LocationView(props: Props) {
   const { t } = useTranslation();
 
-  const { moveFiles, uploadFiles } = useIOActionsContext();
+  const { uploadFiles } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
     openLocation,
@@ -73,8 +74,7 @@ function LocationView(props: Props) {
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
-  const { handleEntryExist, openEntryExistDialog } =
-    useEntryExistDialogContext();
+  const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
   const { setActions } = usePerspectiveActionsContext();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
@@ -170,19 +170,10 @@ function LocationView(props: Props) {
             console.log('uploadFiles', error);
           });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          handleEntryExist(
-            selectedEntries,
-            targetPath,
-            targetLocation.uuid,
-          ).then((exist) => {
-            if (exist) {
-              openEntryExistDialog(exist, () => {
-                moveFiles(arrPath, targetPath, targetLocation.uuid);
-              });
-            } else {
-              moveFiles(arrPath, targetPath, targetLocation.uuid);
-            }
-          });
+          const entries =
+            selectedEntries.length > 0 ? selectedEntries : [entry];
+          openMoveOrCopyFilesDialog(entries, targetPath, targetLocation.uuid);
+          //moveFiles(arrPath, targetPath, targetLocation.uuid);
         } else {
           showNotification(t('Moving file not possible'), 'error', true);
           return;

@@ -50,7 +50,7 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
 }: DeleteMultipleEntriesDialogContextProviderProps) => {
   const { t } = useTranslation();
   const { deleteEntries } = useIOActionsContext();
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries } = useSelectedEntriesContext(); // todo don't use context provider here pass it like props in openDialog
   const { showNotification } = useNotificationContext();
   const open = useRef<boolean>(false);
 
