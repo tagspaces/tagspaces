@@ -82,7 +82,7 @@ export const ThumbGenerationContextProvider = ({
   const { saveBinaryFilePromise, createDirectoryPromise } =
     usePlatformFacadeContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { pageFiles } = usePaginationContext();
+  const { getResentPageFiles } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
@@ -151,6 +151,7 @@ export const ThumbGenerationContextProvider = ({
       }
       if (genThumbs) {
         let genEntries;
+        const pageFiles = getResentPageFiles();
         if (entries.length > 0) {
           genEntries = entries;
         } else if (pageFiles && pageFiles.length > 0) {

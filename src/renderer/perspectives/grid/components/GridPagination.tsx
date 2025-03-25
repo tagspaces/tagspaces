@@ -93,7 +93,7 @@ function GridPagination(props: Props) {
   const { directoryMeta, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
-  const { page, pageFiles, setCurrentPage } = usePaginationContext();
+  const { page, getResentPageFiles, setCurrentPage } = usePaginationContext();
   const { openEntry } = useOpenedEntryContext();
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
@@ -104,6 +104,7 @@ function GridPagination(props: Props) {
   const currentLocation = findLocation();
 
   const theme = useTheme();
+  const pageFiles = getResentPageFiles();
   const showPagination = sortedDirContent.length !== pageFiles.length;
   const paginationCount = showPagination
     ? Math.ceil(sortedDirContent.length / gridPageLimit)

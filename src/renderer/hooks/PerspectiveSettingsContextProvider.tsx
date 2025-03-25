@@ -108,7 +108,7 @@ export const PerspectiveSettingsContextProvider = ({
       settings.current = getSettings(getPerspective(), directoryMeta);
       forceUpdate();
     }
-  }, [currentDirectoryPath]); //, directoryMeta]);
+  }, [currentDirectoryPath, directoryMeta]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {

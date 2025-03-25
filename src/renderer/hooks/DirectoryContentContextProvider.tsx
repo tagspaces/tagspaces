@@ -799,20 +799,20 @@ export const DirectoryContentContextProvider = ({
 
     // Fetch directory metadata
     const meta = await getDirMeta(directoryPath, location);
-
+    // Update directory metadata
+    if (meta) {
+      directoryMeta.current = meta;
+      currentDirectoryDirs.current = meta.customOrder?.folders || [];
+      currentDirectoryFiles.current = meta.customOrder?.files || [];
+    }
     // Load directory content
     const entries = await loadDirectoryContentInt(
       directoryPath,
       location,
       showHiddenEntries,
     );
-
-    // Update directory metadata
-    if (meta) {
-      directoryMeta.current = meta;
-      currentDirectoryDirs.current = meta.customOrder?.folders || [];
-      currentDirectoryFiles.current = meta.customOrder?.files || [];
-    } else {
+    // set default directory metadata
+    if (!meta) {
       currentDirectoryFiles.current = [];
       // add defaultColumnsToShow
       const columnsToShow = entries
@@ -847,7 +847,6 @@ export const DirectoryContentContextProvider = ({
       }
     }
 
-    // Set current directory entries
     setCurrentDirectoryEntries(entries);
 
     return entries;
