@@ -612,9 +612,12 @@ export const DirectoryContentContextProvider = ({
     return defaultGridSettings;
   }
 
-  function setCurrentDirectoryEntries(dirEntries, reflect = true) {
-    currentDirectoryEntries.current = dirEntries;
-    if (reflect) {
+  function setCurrentDirectoryEntries(dirEntries: TS.FileSystemEntry[]) {
+    if (dirEntries && dirEntries.length > 0) {
+      currentDirectoryEntries.current = dirEntries; //[...dirEntries];
+      forceUpdate();
+    } else if (currentDirectoryEntries.current.length > 0) {
+      currentDirectoryEntries.current = [];
       forceUpdate();
     }
   }
@@ -799,20 +802,20 @@ export const DirectoryContentContextProvider = ({
 
     // Fetch directory metadata
     const meta = await getDirMeta(directoryPath, location);
-
+    // Update directory metadata
+    if (meta) {
+      directoryMeta.current = meta;
+      currentDirectoryDirs.current = meta.customOrder?.folders || [];
+      currentDirectoryFiles.current = meta.customOrder?.files || [];
+    }
     // Load directory content
     const entries = await loadDirectoryContentInt(
       directoryPath,
       location,
       showHiddenEntries,
     );
-
-    // Update directory metadata
-    if (meta) {
-      directoryMeta.current = meta;
-      currentDirectoryDirs.current = meta.customOrder?.folders || [];
-      currentDirectoryFiles.current = meta.customOrder?.files || [];
-    } else {
+    // set default directory metadata
+    if (!meta) {
       currentDirectoryFiles.current = [];
       // add defaultColumnsToShow
       const columnsToShow = entries
@@ -847,7 +850,6 @@ export const DirectoryContentContextProvider = ({
       }
     }
 
-    // Set current directory entries
     setCurrentDirectoryEntries(entries);
 
     return entries;
@@ -1530,7 +1532,6 @@ export const DirectoryContentContextProvider = ({
       isSearching,
       sendDirMessage,
       getPerspective,
-      setCurrentDirectoryEntries,
       updateCurrentDirEntry,
       setSearchQuery,
       loadDirectoryContent,

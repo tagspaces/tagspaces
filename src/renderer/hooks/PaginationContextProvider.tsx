@@ -26,13 +26,15 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type PaginationContextData = {
   page: number;
-  pageFiles: TS.FileSystemEntry[];
+  //pageFiles: TS.FileSystemEntry[];
+  getResentPageFiles: () => TS.FileSystemEntry[];
   setCurrentPage: (page?: number) => void;
 };
 
 export const PaginationContext = createContext<PaginationContextData>({
   page: 1,
-  pageFiles: [],
+  //pageFiles: [],
+  getResentPageFiles: undefined,
   setCurrentPage: undefined,
 });
 
@@ -63,11 +65,15 @@ export const PaginationContextProvider = ({
         console.debug('meta loaded')
       );
     }*/
-  }, [currentDirectoryPath, searchQuery]); //, isSearchMode isMetaFolderExist]);
+  }, [currentDirectoryPath, searchQuery, settings]); //, isSearchMode isMetaFolderExist]);
 
-  const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
+  /*const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     return getPageFiles(page, sortedDirContent);
-  }, [page, sortedDirContent, settings]);
+  }, [page, sortedDirContent, settings]);*/
+
+  function getResentPageFiles() {
+    return getPageFiles(page, sortedDirContent);
+  }
 
   function getPageFiles(currentPage: number, dirContent: TS.FileSystemEntry[]) {
     const gridPageLimit =
@@ -109,10 +115,10 @@ export const PaginationContextProvider = ({
   const context = useMemo(() => {
     return {
       page,
-      pageFiles,
+      getResentPageFiles,
       setCurrentPage,
     };
-  }, [page, pageFiles, currentDirectoryPath, settings]);
+  }, [page, currentDirectoryPath, sortedDirContent, settings]);
 
   return (
     <PaginationContext.Provider value={context}>
