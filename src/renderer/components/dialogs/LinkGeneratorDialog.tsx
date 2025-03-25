@@ -16,6 +16,7 @@
  *
  */
 
+import DraggablePaper from '-/components/DraggablePaper';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
@@ -27,6 +28,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { openUrl } from '-/services/utils-io';
 import { generateClipboardLink } from '-/utils/dom';
+import { Paper } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -80,15 +82,16 @@ function LinkGeneratorDialog(props: Props) {
       onClose={onClose}
       fullScreen={smallScreen}
       keepMounted
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       scroll="paper"
-      style={{ marginTop: 12 }}
     >
       <TsDialogTitle
         dialogTitle={t('core:downloadLink')}
         closeButtonTestId="closeLinkGeneratorTID"
         onClose={onClose}
       />
-      <DialogContent style={{ overflow: 'auto', height: 450 }}>
+      <DialogContent style={{ overflow: 'auto', minHeight: 510 }}>
         <TsSelect
           label={
             <>
@@ -181,7 +184,7 @@ function LinkGeneratorDialog(props: Props) {
           {t('help')}
         </TsButton>
         <TsButton data-tid="closeLinkTID" onClick={onClose}>
-          {t('core:close')}
+          {t('core:closeButton')}
         </TsButton>
       </TsDialogActions>
     </Dialog>
