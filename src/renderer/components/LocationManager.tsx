@@ -17,14 +17,13 @@
  */
 
 import LocationView from '-/components/LocationView';
-import { SidePanel, classes } from '-/components/SidePanels.css';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
-import { List } from '@mui/material';
+import { Box, List } from '@mui/material';
 import { useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
@@ -105,10 +104,13 @@ function LocationManager(props: Props) {
   const { reduceHeightBy, show } = props;
   const currentLocation = findLocation();
   return (
-    <SidePanel
+    <Box
       style={{
         display: show ? 'flex' : 'none',
         flexDirection: 'column',
+        height: '100%',
+        paddingLeft: 5,
+        paddingRight: 0,
       }}
     >
       {
@@ -147,9 +149,7 @@ function LocationManager(props: Props) {
         importLocations={() => {
           fileInputRef.current.click();
         }}
-        // importLocations={() => setImportLocationsDialogOpened(true)}
         exportLocations={() => setExportLocationsDialogOpened(true)}
-        classes={classes}
         showCreateLocationDialog={() => {
           setSelectedLocation(undefined);
           openCreateEditLocationDialog();
@@ -260,7 +260,7 @@ function LocationManager(props: Props) {
           locations={locations}
         />
       )}
-    </SidePanel>
+    </Box>
   );
 }
 

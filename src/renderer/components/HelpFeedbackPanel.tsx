@@ -32,13 +32,13 @@ import {
   WebClipperIcon,
   XIcon,
 } from '-/components/CommonIcons';
-import { SidePanel, classes } from '-/components/SidePanels.css';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
 import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
+import { Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -47,6 +47,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
+import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
   style?: any;
@@ -63,22 +64,17 @@ function HelpFeedbackPanel(props: Props) {
   const { reduceHeightBy } = props;
 
   return (
-    <SidePanel
+    <Box
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: 5,
+        //marginLeft: 5,
+        paddingLeft: 5,
+        paddingRight: 0,
+        height: '100%',
       }}
     >
-      <div style={{ display: 'flex' }}>
-        <Typography
-          className={classes.panelTitle}
-          variant="subtitle1"
-          style={{ paddingLeft: 0 }}
-        >
-          {t('core:helpFeedback')}
-        </Typography>
-      </div>
+      <SidePanelTitle title={t('core:helpFeedback')} />
       <List
         dense={false}
         component="nav"
@@ -234,7 +230,7 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
       </List>
-    </SidePanel>
+    </Box>
   );
 }
 

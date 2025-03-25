@@ -19,7 +19,6 @@
 import AppConfig from '-/AppConfig';
 import { CloseIcon, CreateFileIcon, EditIcon } from '-/components/CommonIcons';
 import EditSearchQuery from '-/components/EditSearchQuery';
-import { SidePanel } from '-/components/SidePanels.css';
 import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -89,10 +88,12 @@ function SearchPopover(props: Props) {
     ? '(' + getIndex().length + ' indexed entries)'
     : t('core:indexEmpty');
   return (
-    <SidePanel
+    <div
       style={{
         maxWidth: 400,
         height: '100%',
+        paddingLeft: 5,
+        paddingRight: 0,
         // @ts-ignore
         WebkitAppRegion: 'no-drag',
       }}
@@ -234,7 +235,7 @@ function SearchPopover(props: Props) {
           </TsButton>
         </div>
       </div>
-    </SidePanel>
+    </div>
   );
 }
 

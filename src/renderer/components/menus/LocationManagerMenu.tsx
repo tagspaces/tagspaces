@@ -39,25 +39,19 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import SidePanelTitle from '../SidePanelTitle';
 
 interface Props {
-  classes: any;
   exportLocations: () => void;
   importLocations: () => void;
   showCreateLocationDialog: () => void;
 }
 
 function LocationManagerMenu(props: Props) {
-  const {
-    classes,
-    exportLocations,
-    importLocations,
-    showCreateLocationDialog,
-  } = props;
+  const { exportLocations, importLocations, showCreateLocationDialog } = props;
   const { t } = useTranslation();
 
   const { createLocationsIndexes } = useLocationIndexContext();
@@ -186,19 +180,19 @@ function LocationManagerMenu(props: Props) {
 
   return (
     <>
-      <div style={{ display: 'flex' }}>
-        <Typography className={classes.panelTitle} variant="subtitle1">
-          {t('core:locationManager')}
-        </Typography>
-        <TsIconButton
-          data-tid="locationManagerMenu"
-          onClick={(event) =>
-            setLocationManagerMenuAnchorEl(event.currentTarget)
-          }
-        >
-          <MoreMenuIcon />
-        </TsIconButton>
-      </div>
+      <SidePanelTitle
+        title={t('core:locationManager')}
+        menuButton={
+          <TsIconButton
+            data-tid="locationManagerMenu"
+            onClick={(event) =>
+              setLocationManagerMenuAnchorEl(event.currentTarget)
+            }
+          >
+            <MoreMenuIcon />
+          </TsIconButton>
+        }
+      />
       <Menu
         anchorEl={locationManagerMenuAnchorEl}
         open={Boolean(locationManagerMenuAnchorEl)}

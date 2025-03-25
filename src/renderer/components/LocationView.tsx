@@ -27,12 +27,11 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
-import { SidePanel } from '-/components/SidePanels.css';
 import TargetFileBox from '-/components/TargetFileBox';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -41,7 +40,7 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { ListItemText } from '@mui/material';
+import { Box, ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
@@ -54,7 +53,6 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
-import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 
 interface Props {
   location: CommonLocation;
@@ -218,7 +216,13 @@ function LocationView(props: Props) {
   const isLocationSelected =
     currentLocation && currentLocation.uuid === location.uuid;
   return (
-    <SidePanel>
+    <Box
+      style={{
+        paddingLeft: 5,
+        paddingRight: 0,
+        height: '100%',
+      }}
+    >
       <TargetFileBox
         accepts={[FILE]}
         directoryPath={location.path}
@@ -304,7 +308,7 @@ function LocationView(props: Props) {
         location={location}
         handleFileMoveDrop={handleFileMoveDrop}
       />
-    </SidePanel>
+    </Box>
   );
 }
 

@@ -23,11 +23,11 @@ import {
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
-import { SidePanel } from '-/components/SidePanels.css';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import React, { useRef } from 'react';
@@ -126,11 +126,11 @@ function TagGroupTitleDnD(props: Props) {
   }
 
   const tagGroupTitle = (
-    <SidePanel
+    <Box
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
       style={{
         padding: 0,
-        paddingRight: 0,
+        height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
       }}
       title={'Number of tags in this tag group: ' + tagGroup.children.length}
@@ -202,7 +202,7 @@ function TagGroupTitleDnD(props: Props) {
           )}
         </Grid>
       </Grid>
-    </SidePanel>
+    </Box>
   );
   if (tagGroup.readOnly) {
     return tagGroupTitle;

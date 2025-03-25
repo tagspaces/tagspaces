@@ -18,7 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
-import { SidePanel, classes } from '-/components/SidePanels.css';
+import SidePanelTitle from '-/components/SidePanelTitle';
 import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagGroupContainer from '-/components/TagGroupContainer';
@@ -51,8 +51,8 @@ import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
+import { Box } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
-import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -293,35 +293,35 @@ function TagLibrary(props: Props) {
 
   const allTags = getAllTags(tagGroups);
   return (
-    <SidePanel
+    <Box
       style={{
+        height: '100%',
+        paddingLeft: 5,
+        paddingRight: 0,
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      <div style={{ display: 'flex' }}>
-        <Typography
-          className={classes.panelTitle}
-          title={
-            'Your tag library contains ' +
-            allTags.length +
-            ' tags \ndistributed in ' +
-            tagGroups.length +
-            ' tag groups'
-          }
-          variant="subtitle1"
-        >
-          {t('core:tagLibrary')}
-        </Typography>
-        {!isTagLibraryReadOnly && (
-          <TsIconButton
-            data-tid="tagLibraryMenu"
-            onClick={handleTagLibraryMenu}
-          >
-            <MoreMenuIcon />
-          </TsIconButton>
-        )}
-      </div>
+      <SidePanelTitle
+        title={t('core:tagLibrary')}
+        tooltip={
+          'Your tag library contains ' +
+          allTags.length +
+          ' tags \ndistributed in ' +
+          tagGroups.length +
+          ' tag groups'
+        }
+        menuButton={
+          !isTagLibraryReadOnly && (
+            <TsIconButton
+              data-tid="tagLibraryMenu"
+              onClick={handleTagLibraryMenu}
+            >
+              <MoreMenuIcon />
+            </TsIconButton>
+          )
+        }
+      />
       {isDeleteTagGroupDialogOpened && (
         <ConfirmDialog
           open={isDeleteTagGroupDialogOpened}
@@ -444,7 +444,7 @@ function TagLibrary(props: Props) {
         )}
         <div style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</div>
       </div>
-    </SidePanel>
+    </Box>
   );
 }
 

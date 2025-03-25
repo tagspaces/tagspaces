@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import {
   EditIcon,
   MoreMenuIcon,
@@ -24,12 +25,13 @@ import {
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
 import RenderHistory from '-/components/RenderHistory';
-import { SidePanel, classes } from '-/components/SidePanels.css';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import SearchMenu from '-/components/menus/SearchMenu';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import {
@@ -42,6 +44,7 @@ import {
   getStoredSearchesVisible,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import React, { useContext, useReducer, useRef, useState } from 'react';
@@ -49,8 +52,7 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Pro } from '../pro';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
-import { historyKeys } from '-/hooks/HistoryContextProvider';
+import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
   style?: any;
@@ -134,25 +136,18 @@ function StoredSearches(props: Props) {
     folderOpenHistory && folderOpenHistory.length > 0;
 
   return (
-    <SidePanel
+    <Box
       data-tid="quickAccessArea"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: 5,
+        height: '100%',
+        borderRadius: AppConfig.defaultCSSRadius,
         marginLeft: 5,
         marginRight: 0,
       }}
     >
-      <div style={{ display: 'flex' }}>
-        <Typography
-          className={classes.panelTitle}
-          variant="subtitle1"
-          style={{ paddingLeft: 0 }}
-        >
-          {t('core:quickAccess')}
-        </Typography>
-      </div>
+      <SidePanelTitle title={t('core:quickAccess')} />
       <div
         style={{
           paddingTop: 0,
@@ -515,7 +510,7 @@ function StoredSearches(props: Props) {
           searches={searches}
         />
       )}
-    </SidePanel>
+    </Box>
   );
 }
 
