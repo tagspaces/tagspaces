@@ -21,6 +21,7 @@ import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
@@ -31,7 +32,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -105,14 +105,12 @@ function AiGenTagsButton(props: Props) {
         loading={isLoading}
         disabled={isLoading || disabled}
         // tooltip="Uses currently configured AI model to generate tags for this file"
-        // startIcon={<AIIcon />}
         data-tid="generateTagsAITID"
         onClick={handleGeneration}
         variant={variant}
         style={{
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
-          paddingLeft: 28,
         }}
       >
         {t(

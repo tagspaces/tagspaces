@@ -84,12 +84,10 @@ function AiGenDescButton(props: Props) {
         loading={isLoading}
         disabled={isLoading || disabled}
         // tooltip="Uses currently configured AI model to generate description for this file"
-        // startIcon={<AIIcon />}
         data-tid="generateDescriptionAITID"
         style={{
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
-          paddingLeft: 28,
         }}
         onClick={() => {
           setIsLoading(true);
