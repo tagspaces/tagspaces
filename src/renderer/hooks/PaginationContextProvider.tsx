@@ -118,7 +118,7 @@ export const PaginationContextProvider = ({
       getResentPageFiles,
       setCurrentPage,
     };
-  }, [page, currentDirectoryPath, settings]);
+  }, [page, currentDirectoryPath, sortedDirContent, settings]);
 
   return (
     <PaginationContext.Provider value={context}>

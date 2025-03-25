@@ -612,9 +612,12 @@ export const DirectoryContentContextProvider = ({
     return defaultGridSettings;
   }
 
-  function setCurrentDirectoryEntries(dirEntries, reflect = true) {
-    currentDirectoryEntries.current = dirEntries;
-    if (reflect) {
+  function setCurrentDirectoryEntries(dirEntries: TS.FileSystemEntry[]) {
+    if (dirEntries && dirEntries.length > 0) {
+      currentDirectoryEntries.current = dirEntries; //[...dirEntries];
+      forceUpdate();
+    } else if (currentDirectoryEntries.current.length > 0) {
+      currentDirectoryEntries.current = [];
       forceUpdate();
     }
   }
@@ -1529,7 +1532,6 @@ export const DirectoryContentContextProvider = ({
       isSearching,
       sendDirMessage,
       getPerspective,
-      setCurrentDirectoryEntries,
       updateCurrentDirEntry,
       setSearchQuery,
       loadDirectoryContent,
