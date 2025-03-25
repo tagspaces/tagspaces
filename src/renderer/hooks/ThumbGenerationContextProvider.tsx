@@ -151,7 +151,7 @@ export const ThumbGenerationContextProvider = ({
       }
       if (genThumbs) {
         let genEntries;
-        const pageFiles = getResentPageFiles();
+        const pageFiles = getResentPageFiles ? getResentPageFiles() : undefined; //in KanBan PaginationContext is not injected
         if (entries.length > 0) {
           genEntries = entries;
         } else if (pageFiles && pageFiles.length > 0) {
