@@ -15,7 +15,7 @@
   },
   "win": {
     "target": ["nsis", "zip"],
-    "icon": "resources/icon.ico"
+    "icon": "assets/icon.ico"
   },
   "mac": {
     "target": ["zip", "dmg"],
@@ -23,12 +23,12 @@
     "gatekeeperAssess": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
-    "icon": "resources/icon.icns"
+    "icon": "assets/icon.icns"
   },
   "linux": {
     "target": ["deb", "tar.gz", "appImage"],
     "category": "Office",
-    "icon": "resources/icon.icns"
+    "icon": "assets/icon.icns"
   },
   "nsis": {
     "oneClick": false,
