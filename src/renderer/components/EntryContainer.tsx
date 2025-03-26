@@ -121,6 +121,12 @@ function EntryContainer() {
   const cLocation = findLocation(openedEntry.locationID);
 
   useEffect(() => {
+    if (openedEntry) {
+      isSavingInProgress.current = false;
+    }
+  }, [openedEntry]);
+
+  useEffect(() => {
     if (openedEntry && openedEntry.meta && openedEntry.meta.autoSave) {
       if (fileChanged) {
         timer.current = setInterval(() => {
@@ -805,6 +811,8 @@ function EntryContainer() {
             } else {
               closeFile();
               setSaveBeforeCloseConfirmDialogOpened(false);
+              isSavingInProgress.current = false;
+              setFileChanged(false);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
