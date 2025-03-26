@@ -989,6 +989,7 @@ function SearchAutocomplete(props: Props) {
             tagsAND,
             tagsOR,
             tagsNOT,
+            textQuery: '',
             executeSearch: false,
           });
           setTempSearchQuery({ textQuery: '' });
@@ -1129,7 +1130,9 @@ function SearchAutocomplete(props: Props) {
       const inputArr = valueArr.filter(
         (action) => !actionValues.current.some((v) => v.label === action),
       );
-      setTempSearchQuery({ textQuery: inputArr.join(' ') }, true);
+      const txtQuery = inputArr.join(' ');
+      setTempSearchQuery({ textQuery: txtQuery }, true);
+      searchQuery.textQuery = txtQuery;
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();
