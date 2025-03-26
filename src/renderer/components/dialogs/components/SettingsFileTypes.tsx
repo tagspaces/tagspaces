@@ -374,9 +374,10 @@ function SettingsFileTypes() {
         </TableCell>
         <TableCell
           align={'center'}
-          sx={{ minWith: 150, padding: '0 5px 0px 0' }}
+          sx={{ minWith: 150, padding: '0 5px 0px 25px' }}
         >
           <FormControl
+            fullWidth
             error={isValidationInProgress.current && item.viewer === ''}
           >
             <TsSelect
@@ -402,7 +403,6 @@ function SettingsFileTypes() {
                 updateItems(item, 'viewer', extension.extensionId);
               }}
             >
-              <MenuItem value="" />
               {extensions.map(
                 (extension) =>
                   (extension.extensionTypes.includes('viewer') ||
@@ -413,11 +413,9 @@ function SettingsFileTypes() {
                       )}
                       key={extension.extensionName}
                       value={extension.extensionId}
+                      title={'v' + extension.version}
                     >
-                      {extension.extensionName}{' '}
-                      <small style={{ marginLeft: 5 }}>
-                        v{extension.version}
-                      </small>
+                      {extension.extensionName}
                     </MenuItem>
                   ),
               )}
@@ -425,30 +423,32 @@ function SettingsFileTypes() {
           </FormControl>
         </TableCell>
         <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
-          <TsSelect
-            value={item.editor}
-            style={{ minWidth: 150, marginTop: 0 }}
-            onChange={(event) =>
-              updateItems(item, 'editor', event.target.value)
-            }
-          >
-            <MenuItem value="">{t('clearEditor')}</MenuItem>
-            {extensions
-              .filter(
-                (extension) =>
-                  extension.extensionTypes &&
-                  extension.extensionTypes.includes('editor'),
-              )
-              .map((extension) => (
-                <MenuItem
-                  key={extension.extensionName}
-                  value={extension.extensionId}
-                >
-                  {extension.extensionName}
-                  <small style={{ marginLeft: 5 }}>v{extension.version}</small>
-                </MenuItem>
-              ))}
-          </TsSelect>
+          <FormControl fullWidth error={isValidationInProgress.current}>
+            <TsSelect
+              value={item.editor}
+              style={{ minWidth: 150, marginTop: 0 }}
+              onChange={(event) =>
+                updateItems(item, 'editor', event.target.value)
+              }
+            >
+              <MenuItem value="">{t('clearEditor')}</MenuItem>
+              {extensions
+                .filter(
+                  (extension) =>
+                    extension.extensionTypes &&
+                    extension.extensionTypes.includes('editor'),
+                )
+                .map((extension) => (
+                  <MenuItem
+                    key={extension.extensionName}
+                    value={extension.extensionId}
+                    title={'v' + extension.version}
+                  >
+                    {extension.extensionName}
+                  </MenuItem>
+                ))}
+            </TsSelect>
+          </FormControl>
         </TableCell>
       </React.Fragment>
     );

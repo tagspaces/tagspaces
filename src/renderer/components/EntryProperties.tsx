@@ -778,7 +778,7 @@ function EntryProperties(props: Props) {
                             onClick={toggleMoveCopyFilesDialog}
                             variant="text"
                           >
-                            {t('core:move')}
+                            {t('core:moveFile')}
                           </TsButton>
                         )}
                     </InputAdornment>
@@ -971,11 +971,7 @@ function EntryProperties(props: Props) {
                           </ProTooltip>
                         </>
                       )}
-                      <InfoIcon
-                        tooltip={t(
-                          'The background color will not be visible if you have set a background image',
-                        )}
-                      />
+                      <InfoIcon tooltip={t('core:backgroundColorInfo')} />
                     </InputAdornment>
                   ),
                 },

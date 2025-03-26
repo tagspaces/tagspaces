@@ -957,5 +957,6 @@
   "folderSpecificSettings": "folder specific",
   "compareAndUpgrade": "Compare & Upgrade",
   "start": "Start",
+  "backgroundColorInfo": "The background color will not be visible if you have set a background image",
   "-": "-"
 }
