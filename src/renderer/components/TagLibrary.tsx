@@ -76,7 +76,7 @@ function TagLibrary(props: Props) {
   const { getTagGroups } = useTagGroupsLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { readOnlyMode, findLocation, locations } = useCurrentLocationContext();
-  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -219,6 +219,9 @@ function TagLibrary(props: Props) {
   };
 
   const renderTagGroup = (tagGroup, index) => {
+    if (!saveTagInLocation && tagGroup.locationId) {
+      return null;
+    }
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
       tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
