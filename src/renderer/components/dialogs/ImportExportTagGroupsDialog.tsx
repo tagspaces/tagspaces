@@ -16,27 +16,29 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import DraggablePaper from '-/components/DraggablePaper';
-import DialogContent from '@mui/material/DialogContent';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { exportTagGroups } from '-/services/taglibrary-utils';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
-import { isFunc } from '@tagspaces/tagspaces-common/misc';
-import TagGroupContainer from '../TagGroupContainer';
-import TagContainer from '../TagContainer';
-import { TS } from '-/tagspaces.namespace';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { exportTagGroups } from '-/services/taglibrary-utils';
+import { isFunc } from '@tagspaces/tagspaces-common/misc';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import Paper from '@mui/material/Paper';
+import TagContainer from '../TagContainer';
+import TagGroupContainer from '../TagGroupContainer';
 
 interface Props {
   open: boolean;
@@ -48,6 +50,7 @@ interface Props {
 
 function ImportExportTagGroupsDialog(props: Props) {
   const { importTagGroups } = useTaggingActionsContext();
+  const { findLocation } = useCurrentLocationContext();
   const { t } = useTranslation();
   const selectedAll = useRef(true);
   const [tagGroupList, setTagGroupList] = useState<Array<any>>(
@@ -97,6 +100,16 @@ function ImportExportTagGroupsDialog(props: Props) {
     }
   };
 
+  function getLocationName(locationId: string) {
+    if (locationId) {
+      const location: CommonLocation = findLocation(locationId);
+      if (location) {
+        return ' (' + location.name + ')';
+      }
+    }
+    return '';
+  }
+
   const renderTagGroups = (tagGroup, index) => (
     <div key={tagGroup.uuid || tagGroup.key}>
       <FormControl component="fieldset">
@@ -111,7 +124,7 @@ function ImportExportTagGroupsDialog(props: Props) {
                 name={tagGroup.title}
               />
             }
-            label={tagGroup.title}
+            label={tagGroup.title + getLocationName(tagGroup.locationId)}
           />
         </FormGroup>
       </FormControl>
