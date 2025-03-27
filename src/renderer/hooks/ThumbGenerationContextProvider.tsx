@@ -315,7 +315,6 @@ export const ThumbGenerationContextProvider = ({
     mainEntries: string[],
     location: CommonLocation,
   ): Promise<boolean> {
-    const maxExecutionTime = 9000;
     const promises = mainEntries.map((tmbPath) =>
       getThumbnailURLPromise(tmbPath, location),
     );
@@ -323,9 +322,11 @@ export const ThumbGenerationContextProvider = ({
       const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(
-            new Error('Maximum execution time exceeded' + maxExecutionTime),
+            new Error(
+              'Maximum execution time exceeded' + AppConfig.maxThumbGenTime,
+            ),
           );
-        }, maxExecutionTime);
+        }, AppConfig.maxThumbGenTime);
       });
 
       return Promise.race([promise, timeoutPromise]);
