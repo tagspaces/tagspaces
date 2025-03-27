@@ -65,9 +65,8 @@ function EditTagGroupDialog(props: Props) {
     useState<boolean>(false);
   const [inputError, setInputError] = useState<boolean>(false);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
-  const [locationId, setLocationId] = useState<string>(
-    selectedTagGroupEntry.locationId ?? defaultTagGroupLocation,
-  );
+  const [newLocationId, setNewLocationId] = useState<string>(undefined);
+  //selectedTagGroupEntry.locationId ?? defaultTagGroupLocation,
   const [title, setTitle] = useState<string>(selectedTagGroupEntry.title);
   const [color, setColor] = useState<string>(selectedTagGroupEntry.color);
   const [textcolor, setTextcolor] = useState<string>(
@@ -75,6 +74,10 @@ function EditTagGroupDialog(props: Props) {
   );
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    setNewLocationId(undefined);
+  }, [selectedTagGroupEntry]);
 
   useEffect(() => {
     handleValidation();
@@ -107,12 +110,15 @@ function EditTagGroupDialog(props: Props) {
     }
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
-      if (Pro && locationId !== selectedTagGroupEntry.locationId) {
-        const location: CommonLocation = findLocation(
-          selectedTagGroupEntry.locationId,
-        );
-        if (location) {
-          removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
+      if (Pro && newLocationId === undefined) {
+        // remove old location
+        if (selectedTagGroupEntry.locationId) {
+          const location: CommonLocation = findLocation(
+            selectedTagGroupEntry.locationId,
+          );
+          if (location) {
+            removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
+          }
         }
       }
       updateTagGroup({
@@ -120,7 +126,7 @@ function EditTagGroupDialog(props: Props) {
         title,
         color,
         textcolor,
-        locationId,
+        locationId: newLocationId,
         modified_date: new Date().getTime(),
         children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
@@ -175,9 +181,14 @@ function EditTagGroupDialog(props: Props) {
           </FormHelperText>
           <TsSelect
             fullWidth={false}
-            defaultValue={locationId}
+            defaultValue={
+              selectedTagGroupEntry.locationId || defaultTagGroupLocation
+            }
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setLocationId(event.target.value);
+              const locationId = event.target.value;
+              setNewLocationId(
+                locationId === defaultTagGroupLocation ? undefined : locationId,
+              );
             }}
           >
             <MenuItem
