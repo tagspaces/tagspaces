@@ -772,7 +772,7 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
     appVersion: versionMeta.version,
     description: '',
     lastUpdated: new Date().getTime(),
-    tags: [],
+    ...(!props.tagGroups && { tags: [] }),
     ...props,
     id: props.id || getUuid(),
   };

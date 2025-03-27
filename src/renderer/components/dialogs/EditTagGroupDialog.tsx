@@ -104,21 +104,30 @@ function EditTagGroupDialog(props: Props) {
 
   const disableConfirmButton = () => inputError;
 
-  const onConfirm = () => {
+  function isLocationChanged() {
+    return (
+      newLocationId !== undefined &&
+      newLocationId !== selectedTagGroupEntry.locationId
+    );
+  }
+
+  const onConfirm = async () => {
     if (disableConfirmButton()) {
       return;
     }
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
-      if (Pro && newLocationId === undefined) {
+      if (
+        Pro &&
+        isLocationChanged() &&
+        selectedTagGroupEntry.locationId !== undefined
+      ) {
         // remove old location
-        if (selectedTagGroupEntry.locationId) {
-          const location: CommonLocation = findLocation(
-            selectedTagGroupEntry.locationId,
-          );
-          if (location) {
-            removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
-          }
+        const location: CommonLocation = findLocation(
+          selectedTagGroupEntry.locationId,
+        );
+        if (location) {
+          await removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
         }
       }
       updateTagGroup({
@@ -126,7 +135,12 @@ function EditTagGroupDialog(props: Props) {
         title,
         color,
         textcolor,
-        locationId: newLocationId,
+        ...(isLocationChanged() && {
+          locationId:
+            newLocationId === defaultTagGroupLocation
+              ? undefined
+              : newLocationId,
+        }),
         modified_date: new Date().getTime(),
         children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
@@ -185,10 +199,7 @@ function EditTagGroupDialog(props: Props) {
               selectedTagGroupEntry.locationId || defaultTagGroupLocation
             }
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              const locationId = event.target.value;
-              setNewLocationId(
-                locationId === defaultTagGroupLocation ? undefined : locationId,
-              );
+              setNewLocationId(event.target.value);
             }}
           >
             <MenuItem
