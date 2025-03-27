@@ -3780,7 +3780,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.126
+ - @tagspacespro/tagspacespro@5.0.130
 
 This package contains the following license:
 
@@ -14644,16 +14644,16 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @mui/base@5.0.0-beta.69
- - @mui/core-downloads-tracker@6.4.7
- - @mui/icons-material@6.4.7
- - @mui/lab@6.0.0-beta.27
- - @mui/material@6.4.7
- - @mui/private-theming@6.4.6
- - @mui/styled-engine@6.4.6
- - @mui/system@6.4.7
- - @mui/types@7.2.21
- - @mui/utils@6.4.6
+ - @mui/base@5.0.0-beta.70
+ - @mui/core-downloads-tracker@6.4.8
+ - @mui/icons-material@6.4.8
+ - @mui/lab@6.0.0-beta.31
+ - @mui/material@6.4.8
+ - @mui/private-theming@6.4.8
+ - @mui/styled-engine@6.4.8
+ - @mui/system@6.4.8
+ - @mui/types@7.2.24
+ - @mui/utils@6.4.8
 
 These packages each contain the following license:
 
