@@ -234,7 +234,7 @@ function EntryProperties(props: Props) {
   useEffect(() => {
     reloadBackground();
     reloadThumbnails();
-  }, [location]);
+  }, [openedEntry]); //location]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0 && openedEntry) {
