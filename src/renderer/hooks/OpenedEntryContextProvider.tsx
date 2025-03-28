@@ -625,7 +625,7 @@ export const OpenedEntryContextProvider = ({
       );
       if (meta) {
         entryForOpening.uuid = meta.id;
-        entryForOpening.meta = { ...fsEntry.meta, ...meta };
+        entryForOpening.meta = { ...(fsEntry.meta || {}), ...meta };
       }
     }
 
