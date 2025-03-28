@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import { DeleteIcon } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
-import Tooltip from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
@@ -39,17 +39,25 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
-import { ListItemIcon } from '@mui/material';
+import { CircularProgress, ListItemIcon } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import React, { useContext, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { historyKeys } from '-/hooks/HistoryContextProvider';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { isWorkerAvailable } from '-/services/utils-io';
 
 interface Props {
   showResetSettings: (showDialog: boolean) => void;
@@ -66,6 +74,17 @@ function SettingsAdvanced(props: Props) {
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const [confirmDialogKey, setConfirmDialogKey] = useState<null | string>(null);
+  const wsAlive = useRef<boolean>(null);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (settings.enableWS) {
+      isWorkerAvailable().then((isWsAlive) => {
+        wsAlive.current = isWsAlive;
+        forceUpdate();
+      });
+    }
+  }, [settings.enableWS]);
 
   const handleEditTileServerClick = (event, tileServer, isDefault: boolean) => {
     event.preventDefault();
@@ -151,6 +170,27 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       <ListItem>
         <ListItemText primary={t('enableWS')} />
+        {AppConfig.isElectron && (
+          <TooltipTS
+            title={
+              t('core:serviceStatus') +
+              ': ' +
+              (wsAlive.current ? t('core:available') : t('core:notAvailable'))
+            }
+          >
+            {wsAlive.current === null ? (
+              <CircularProgress size={12} />
+            ) : (
+              <FiberManualRecordIcon
+                sx={{
+                  color: wsAlive.current ? 'green' : 'red',
+                  fontSize: 19,
+                  ml: 1,
+                }}
+              />
+            )}
+          </TooltipTS>
+        )}
         <Switch
           data-tid="settingsEnableWS"
           disabled={!AppConfig.isElectron}
@@ -422,12 +462,12 @@ function SettingsAdvanced(props: Props) {
                 <EditIcon />
               </TsIconButton>
               {index === 0 && (
-                <Tooltip title={t('core:serverIsDefaultHelp')}>
+                <TooltipTS title={t('core:serverIsDefaultHelp')}>
                   <CheckIcon
                     data-tid="tileServerDefaultIndication"
                     style={{ marginLeft: 10 }}
                   />
-                </Tooltip>
+                </TooltipTS>
               )}
             </ListItem>
           ))
