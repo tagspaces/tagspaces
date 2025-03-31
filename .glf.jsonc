@@ -1,0 +1,21 @@
+{
+  // Default config - can be passed in via config and/or CLI
+  "inputs": ["./package.json", "./release/app/package.json"],
+  "output": "./src/renderer/third-party.txt",
+
+  "overwrite": true,
+  // Paths to any file's whose content will be appended to the end of the generated file.
+  // "append": ["./additional-content.txt"],
+
+  // Substitute the given packages license with the content in the respective file.
+  // "replace": {
+  //   "replaced-package@4.33.1": "./bespoke-license.txt",
+  //   "another-replaced-package": "./bespoke-license-2.txt",
+  // },
+
+  // Exclude any packages from the output.
+  // "exclude": ["my-package@1.2.0"],
+
+  // Omit the version number in the output file
+  // "omitVersion": false,
+}
