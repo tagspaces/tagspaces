@@ -166,24 +166,6 @@ function EntryContainer() {
     }
   }, [theme.palette.mode]); //settings.currentTheme
 
-  /*  useEffect(() => {
-    // if (openedEntrys.length > 0) {
-    if (
-      !firstRender &&
-      // openedEntry.editMode &&
-      // openedEntry.changed &&
-      fileChanged.current
-      // openedEntry.shouldReload === false
-    ) {
-      setSaveBeforeReloadConfirmDialogOpened(true);
-    }
-  }, [openedEntryPath.current, readOnlyMode]);*/
-
-  // always open for dirs
-  /*const isPropPanelVisible = openedEntry.isFile
-    ? isPropertiesPanelVisible
-    : true;*/
-
   const editingSupported: boolean =
     cLocation &&
     !cLocation.isReadOnly &&
@@ -460,10 +442,6 @@ function EntryContainer() {
     saveFileOpen(openedEntry, fileContent).then((success) => {
       if (success) {
         setFileChanged(false);
-        // showNotification(
-        //   t('core:fileSavedSuccessfully'),
-        //   NotificationTypes.default
-        // );
       }
       // change state will not render DOT before file name too
       isSavingInProgress.current = false;
@@ -471,7 +449,6 @@ function EntryContainer() {
   }
 
   const editOpenedFile = () => {
-    // addToEntryContainer(openedEntry);
     setEditMode(true);
   };
 
@@ -516,30 +493,10 @@ function EntryContainer() {
     //window.dispatchEvent(new Event('previous-file'));
   };
 
-  /*const fileExtension =
-    openedEntry &&
-    extractFileExtension(openedEntry.path, cLocation?.getDirSeparator());
-  const isEditable =
-    !readOnlyMode &&
-    openedEntry &&
-    openedEntry.isFile &&
-    AppConfig.editableFiles.includes(fileExtension);*/
-
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
     if (Pro) {
       setAutoSave(openedEntry, autoSave, openedEntry.locationID);
-      /*switchLocationTypeByID(openedEntry.locationId).then(
-        (currentLocationId) => {
-          Pro.MetaOperations.saveFsEntryMeta(openedEntry.path, {
-            autoSave,
-          }).then((entryMeta) => {
-            updateOpenedFile(openedEntry.path, entryMeta).then(() =>
-              switchCurrentLocationType(),
-            );
-          });
-        },
-      );*/
     } else {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
     }

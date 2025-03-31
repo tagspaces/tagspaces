@@ -5,6 +5,8 @@ AppConfig.editableFiles = [
   'md',
   'markdown',
   'mdown',
+  'mmdown',
+  'mmd',
   'html',
   'htm',
   'coffee',
