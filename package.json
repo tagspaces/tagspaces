@@ -57,6 +57,7 @@
     "postinstall": "npx rimraf node_modules/canvas && ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "install-ext-node": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../.. && npm run generate-extensions",
     "install-ext-node-check": "npx cross-env PD_PLATFORM=node node scripts/checkWSinstalled.js",
+    "install-ext-node-win": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=win32 --arch=x64 && npm run generate-extensions",
     "install-ext-node-linux": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=linux --arch=x64 && npm run generate-extensions",
     "install-ext-node-mac": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=darwin --arch=x64 && npm run generate-extensions",
     "install-ext-node-mac-arm64": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=darwin --arch=arm64 && npm run generate-extensions",
@@ -87,8 +88,8 @@
     "package-pro": "rimraf app/node_modules && node scripts/enablepro.js && npm run install-ext-node && npm run build && npm run package-web-pro && npm run package-win-pro && npm run package-linux-pro && npm run package-web-pro && npm run package-mac-pro",
     "package-web": "npm run prepare-web && node scripts/packageWebZip.js ../builds/tagspaces-web.zip",
     "package-web-pro": "npm run prepare-web-pro && node scripts/packageWebZip.js ../builds/tagspaces-pro-web.zip",
-    "package-win": "ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --win --x64 --config resources/builder.json",
-    "package-win-pro": "ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --win --x64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
+    "package-win": "npm run install-ext-node-win && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --win --x64 --config resources/builder.json",
+    "package-win-pro": "npm run install-ext-node-win && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --win --x64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
     "paste-android-linux": "adb shell input text '$(xclip -selection c -o)'",
     "paste-android-macos": "adb shell input text \"'$(pbpaste)'\"",
     "playwright-show-trace": "npx playwright show-trace \"test-results/folder.pw.e2e.js-TST01---Folder-management-TST0102---Reload-folder-web-minio-electron-/trace.zip\"",
@@ -244,7 +245,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.130"
+    "@tagspacespro/tagspacespro": "5.0.131"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
@@ -285,7 +286,7 @@
     "detect-port": "^1.5.1",
     "dotenv-webpack": "^8.0.1",
     "electron": "^34.3.3",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.3",
     "eslint": "^8.49.0",
