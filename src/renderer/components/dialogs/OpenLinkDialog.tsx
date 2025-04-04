@@ -99,7 +99,7 @@ function OpenLinkDialog(props: Props) {
         WebkitAppRegion: 'no-drag',
       }}
     >
-      {t('core:open')}
+      {t('core:openLink')}
     </TsButton>
   );
 
