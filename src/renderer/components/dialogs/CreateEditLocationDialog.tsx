@@ -1010,6 +1010,9 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => {
                           setIgnorePatternDialogOpen(true);
                         }}
+                        style={{
+                          marginBottom: AppConfig.defaultSpaceBetweenButtons,
+                        }}
                       >
                         {t('addEntryTags')}
                       </TsButton>
