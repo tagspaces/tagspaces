@@ -391,7 +391,7 @@ function GridCell(props: Props) {
         minHeight: maxHeight,
         maxHeight: maxHeight,
         maxWidth: 400,
-        marginBottom: isLast ? 40 : 'auto',
+        marginBottom: 'auto', // isLast ? 40 : 'auto',
         borderRadius: AppConfig.defaultCSSRadius,
         backgroundColor: alpha(theme.palette.divider, 0.7),
         border:
