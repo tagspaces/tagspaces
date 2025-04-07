@@ -954,5 +954,7 @@
   "parentFolder": "Übergeordneter Ordner",
   "remove": "Entfernen",
   "send": "Senden",
+  "folderSpecificSettings": "ordnerspezifisch",
+  "compareAndUpgrade": "Vergleichen und Upgraden",
   "-": "-"
 }

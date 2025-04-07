@@ -954,5 +954,7 @@
   "parentFolder": "父資料夾",
   "remove": "移除",
   "send": "寄送",
+  "folderSpecificSettings": "folder specific",
+  "compareAndUpgrade": "Compare & Upgrade",
   "-": "-"
 }
