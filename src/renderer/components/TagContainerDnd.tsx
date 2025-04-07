@@ -98,19 +98,14 @@ const TagContainerDnd = (props: Props) => {
         // add from file DnD to tagGroup
         addTag(tag, dropResult.tagGroupId);
       }
-    } else if (dropResult && dropResult.entryPath) {
-      // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
+    } else if (dropResult && dropResult.entry) {
+      // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entry.path}!`);
       if (
-        selectedEntries.some((entry) => entry.path === dropResult.entryPath)
+        selectedEntries.some((entry) => entry.path === dropResult.entry.path)
       ) {
-        /*const selectedEntryPaths = [];
-        selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));*/
         addTags(selectedEntries, [item.tag]);
       } else {
-        addTags(
-          [currentLocation.toFsEntry(dropResult.entryPath, dropResult.isFile)],
-          [item.tag],
-        );
+        addTags([dropResult.entry], [item.tag]);
       }
     }
   };

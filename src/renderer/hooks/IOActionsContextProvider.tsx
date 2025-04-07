@@ -307,7 +307,11 @@ export const IOActionsContextProvider = ({
       for (const action of actions) {
         if (action.action === 'add') {
           // reflect visibility change on new KanBan column add
-          if (action.entry && !action.entry.isFile) {
+          if (
+            action.entry &&
+            !action.entry.isFile &&
+            action.entry.meta?.perspective === 'kanban'
+          ) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
@@ -325,7 +329,11 @@ export const IOActionsContextProvider = ({
           }
         } else if (action.action === 'update') {
           // reflect visibility change on renamed KanBan column
-          if (action.entry && !action.entry.isFile) {
+          if (
+            action.entry &&
+            !action.entry.isFile &&
+            action.entry.meta?.perspective === 'kanban'
+          ) {
             const dirPath = extractContainingDirectoryPath(
               action.entry.path,
               currentLocation?.getDirSeparator(),
