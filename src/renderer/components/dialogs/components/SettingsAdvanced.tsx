@@ -78,7 +78,7 @@ function SettingsAdvanced(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (settings.enableWS) {
+    if (AppConfig.isElectron) {
       isWorkerAvailable().then((isWsAlive) => {
         wsAlive.current = isWsAlive;
         forceUpdate();
