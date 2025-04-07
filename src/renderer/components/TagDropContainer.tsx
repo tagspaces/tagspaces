@@ -45,18 +45,16 @@ function TagDropContainer(props: Props) {
         handlerId: monitor.getHandlerId(),
         isActive,
         canDrop: monitor.canDrop(),
-        //selectedEntries: props.selectedEntries,
-        entryPath: entry?.path,
-        isFile: entry?.isFile,
+        //entryPath: entry?.path,
+        entry: entry,
       };
     },
     drop(item: DragItem, monitor: DropTargetMonitor) {
       // console.log('DROP: ', item);
       // console.log('DROP: ', monitor.canDrop());
       return {
-        //selectedEntries: collectedProps.selectedEntries,
-        entryPath: collectedProps.entryPath,
-        isFile: collectedProps.isFile,
+        // entryPath: collectedProps.entryPath,
+        entry: collectedProps.entry,
       };
     },
   });
