@@ -171,5 +171,9 @@ AppConfig.defaultFileColor = '#33b5be';
 AppConfig.defaultCSSRadius = 10;
 AppConfig.defaultSpaceBetweenButtons = 10;
 AppConfig.aiFolder = 'ai';
+AppConfig.defaultMapBounds = {
+  southWest: { lat: 56, lng: -13 },
+  northEast: { lat: 29, lng: 50 },
+};
 
 export default AppConfig;
