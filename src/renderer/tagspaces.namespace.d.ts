@@ -240,6 +240,8 @@ export namespace TS {
     lastUpdated?: number;
     customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
+    lat?: number;
+    lng?: number;
   }
 
   interface OpenedEntry extends FileSystemEntry {
