@@ -4055,11 +4055,11 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.131
+ - @tagspacespro/tagspacespro@5.0.134
 
 This package contains the following license:
 
-(c) Copyright 2015-present TagSpaces UG(haftungsbeschraenkt), all rights reserved.
+(c) Copyright 2015-present TagSpaces GmbH, all rights reserved.
 
 -----------
 
@@ -7716,7 +7716,7 @@ Apache-2.0
 
 The following npm package may be included in this product:
 
- - caniuse-lite@1.0.30001704
+ - caniuse-lite@1.0.30001711
 
 This package contains the following license:
 
