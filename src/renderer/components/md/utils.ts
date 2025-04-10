@@ -2,8 +2,7 @@ import AppConfig from '-/AppConfig';
 import { Crepe } from '@milkdown/crepe';
 import { Ctx } from '@milkdown/ctx';
 import { editorViewOptionsCtx } from '@milkdown/kit/core';
-import { linkSchema } from '@milkdown/preset-commonmark';
-import { EditorView } from 'prosemirror-view';
+import { imageBlockConfig } from '@milkdown/kit/component/image-block';
 
 export function createCrepeEditor(
   root: HTMLElement,
@@ -44,6 +43,15 @@ export function createCrepeEditor(
           }
           return originalURL;
         },
+        onUpload: async (file: File) => {
+          const base64String = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target?.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          return base64String;
+        },
       },
     },
   });
@@ -53,15 +61,21 @@ export function createCrepeEditor(
       attributes: {
         class: 'mx-auto full-height',
       },
-      handleClickOn: (view: EditorView, pos: number) => {
-        if (!view.editable) {
-          const href = getHref(ctx, view, pos);
-          if (href && openLink) {
-            openLink(href, { fullWidth: false });
-            return true;
+      handleDOMEvents: {
+        click: (view, event) => {
+          if (!view.editable) {
+            const target = event.target as HTMLElement;
+            if (target.tagName === 'A') {
+              const href = (target as HTMLAnchorElement).getAttribute('href');
+              if (href) {
+                event.preventDefault();
+                openLink(href, { fullWidth: false });
+                return true;
+              }
+            }
           }
-        }
-        return false;
+          return false;
+        },
       },
     }));
   });
@@ -89,11 +103,11 @@ export function createCrepeEditor(
   return crepe;
 }
 
-function getHref(ctx, view: EditorView, pos: number): string {
+/*function getHref(ctx, view: EditorView, pos: number): string {
   const found = view.state.tr.doc.nodeAt(pos);
   if (found && found.marks.length > 0) {
     const mark = found.marks.find(({ type }) => type === linkSchema.type(ctx));
     return mark?.attrs.href;
   }
   return undefined;
-}
+}*/
