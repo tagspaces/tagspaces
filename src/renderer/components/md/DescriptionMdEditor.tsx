@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useRef } from 'react';
+import React, { useRef, forwardRef } from 'react';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
 import { $useKeymap, $command } from '@milkdown/kit/utils';
@@ -33,7 +33,7 @@ interface CrepeMdEditorProps {
   onFocus?: () => void;
 }
 
-const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
+const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
   (props, ref) => {
     const { onChange, onFocus } = props;
     const { t } = useTranslation();
@@ -101,7 +101,7 @@ const DescriptionMdEditor = React.forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentDirectoryPath, isEditDescriptionMode, description],
+      [currentDirectoryPath, isEditDescriptionMode],
     );
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
