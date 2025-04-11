@@ -173,7 +173,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   }
 
   function getSelectedTabIndex() {
-    if (!isPanelOpened) {
+    if (!isPanelOpened && openedEntry.isFile) {
       return undefined;
     }
     /*if (selectedTab === 0 || selectedTab === undefined) {
