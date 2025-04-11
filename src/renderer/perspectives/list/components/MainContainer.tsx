@@ -51,6 +51,7 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import useFirstRender from '-/utils/useFirstRender';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import FileSourceDnd from '-/components/FileSourceDnd';
 
 interface Props {
   openRenameEntryDialog: () => void;
@@ -316,25 +317,27 @@ function ListPerspective(props: Props) {
 
     const selectionMode = selectedEntries.length > 1;
     return (
-      <TagDropContainer entry={fsEntry}>
-        <RowCell
-          selected={selected}
-          fsEntry={fsEntry}
-          isLast={isLast}
-          selectionMode={selectionMode}
-          handleTagMenu={handleTagMenu}
-          handleGridContextMenu={(
-            event: React.MouseEvent<HTMLDivElement>,
-            fsEntry: TS.FileSystemEntry,
-          ) => {
-            setMouseX(event.clientX);
-            setMouseY(event.clientY);
-            handleGridContextMenu(event, fsEntry);
-          }}
-          handleGridCellDblClick={handleGridCellDblClick}
-          handleGridCellClick={handleGridCellClick}
-        />
-      </TagDropContainer>
+      <FileSourceDnd entry={fsEntry}>
+        <TagDropContainer entry={fsEntry}>
+          <RowCell
+            selected={selected}
+            fsEntry={fsEntry}
+            isLast={isLast}
+            selectionMode={selectionMode}
+            handleTagMenu={handleTagMenu}
+            handleGridContextMenu={(
+              event: React.MouseEvent<HTMLDivElement>,
+              fsEntry: TS.FileSystemEntry,
+            ) => {
+              setMouseX(event.clientX);
+              setMouseY(event.clientY);
+              handleGridContextMenu(event, fsEntry);
+            }}
+            handleGridCellDblClick={handleGridCellDblClick}
+            handleGridCellClick={handleGridCellClick}
+          />
+        </TagDropContainer>
+      </FileSourceDnd>
     );
   };
 

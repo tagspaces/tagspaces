@@ -24,19 +24,12 @@ import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   children: React.ReactNode;
-}
-interface ChildProps {
   entry: TS.FileSystemEntry;
-  //selectedEntries: TS.FileSystemEntry[];
 }
 
-const FileSourceDnd: React.FC<Props> = ({ children }) => {
-  const childProps = children as React.ReactElement<ChildProps>;
-  const entry = childProps.props.entry;
-  //const selectedEntries = childProps.props.selectedEntries || [];
-  /*let entries = !selectedEntries.some((entry) => entry.path === entryPath)
-    ? [{ path: entryPath }]
-    : selectedEntries;*/
+const FileSourceDnd: React.FC<Props> = ({ entry, children }) => {
+  //const childProps = children as React.ReactElement<ChildProps>;
+  //const entry = childProps.props.entry;
 
   const [collected, drag, preview] = useDrag({
     type: DragItemTypes.FILE,
