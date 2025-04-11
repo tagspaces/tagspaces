@@ -73,6 +73,7 @@ declare interface Window {
   ExtSupportedFileTypes?: Array<any>;
   ExtExtensionsFound?: Array<any>;
   ExtSearchTypeGroups?: any;
+  ExtDefaultMapBounds?: any;
 }
 
 declare interface NodeModule {
