@@ -35,11 +35,9 @@ import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/Settin
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
 import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
-import {
-  DownloadUrlContextProvider,
-  DownloadUrlDialogContext,
-} from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
+import { DownloadUrlContextProvider } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
 import { AiGenerationDialogContextProvider } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
+import { DirectoryMenuContextProvider } from '-/components/dialogs/hooks/DirectoryMenuContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -67,7 +65,9 @@ function DialogsRoot({ children }: DialogsRootProps) {
                                       <SettingsDialogContextProvider>
                                         <ResolveConflictContextProvider>
                                           <DownloadUrlContextProvider>
-                                            {children}
+                                            <DirectoryMenuContextProvider>
+                                              {children}
+                                            </DirectoryMenuContextProvider>
                                           </DownloadUrlContextProvider>
                                         </ResolveConflictContextProvider>
                                       </SettingsDialogContextProvider>

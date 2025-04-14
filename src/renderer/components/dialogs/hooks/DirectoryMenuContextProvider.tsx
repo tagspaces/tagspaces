@@ -25,6 +25,7 @@ import React, {
 } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { TS } from '-/tagspaces.namespace';
 
 type DirectoryMenuContextData = {
   openDirectoryMenu: (
@@ -39,6 +40,10 @@ type DirectoryMenuContextData = {
   closeDirectoryMenu: () => void;
   openRenameEntryDialog: () => void;
   closeRenameEntryDialog: () => void;
+  openMoveCopyFilesDialog: (entries?: TS.FileSystemEntry[]) => void;
+  closeMoveCopyFilesDialog: () => void;
+  openAddRemoveTagsDialog: (entries?: TS.FileSystemEntry[]) => void;
+  closeAddRemoveTagsDialog: () => void;
 };
 
 export const DirectoryMenuContext = createContext<DirectoryMenuContextData>({
@@ -46,6 +51,10 @@ export const DirectoryMenuContext = createContext<DirectoryMenuContextData>({
   closeDirectoryMenu: undefined,
   openRenameEntryDialog: undefined,
   closeRenameEntryDialog: undefined,
+  openMoveCopyFilesDialog: undefined,
+  closeMoveCopyFilesDialog: undefined,
+  openAddRemoveTagsDialog: undefined,
+  closeAddRemoveTagsDialog: undefined,
 });
 
 export type DirectoryMenuContextProviderProps = {
@@ -62,15 +71,30 @@ const RenameEntryDialog = React.lazy(
       /* webpackChunkName: "DirectoryMenu" */ '../../dialogs/RenameEntryDialog'
     ),
 );
+const MoveCopyFilesDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "DirectoryMenu" */ '../../dialogs/MoveCopyFilesDialog'
+    ),
+);
+const AddRemoveTagsDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "DirectoryMenu" */ '../../dialogs/AddRemoveTagsDialog'
+    ),
+);
 
 export const DirectoryMenuContextProvider = ({
   children,
 }: DirectoryMenuContextProviderProps) => {
   // const { currentDirectoryPath } = useDirectoryContentContext();
-  const { setSelectedEntries } = useSelectedEntriesContext();
+  const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
+  const currentEntries = useRef<TS.FileSystemEntry[]>(undefined);
   const openRenameEntry = useRef<boolean>(false);
+  const openMoveCopyFiles = useRef<boolean>(false);
+  const openAddRemoveTags = useRef<boolean>(false);
   const perspectiveMode = useRef<boolean>(false);
   const switchPerspectives = useRef<boolean>(false);
   const directoryPath = useRef<string>(undefined);
@@ -116,8 +140,28 @@ export const DirectoryMenuContextProvider = ({
     forceUpdate();
   };
 
+  const openMoveCopyFilesDialog = (entries?: TS.FileSystemEntry[]) => {
+    openMoveCopyFiles.current = true;
+    currentEntries.current = entries;
+    forceUpdate();
+  };
+
+  const openAddRemoveTagsDialog = (entries?: TS.FileSystemEntry[]) => {
+    openAddRemoveTags.current = true;
+    currentEntries.current = entries;
+    forceUpdate();
+  };
+
   const closeRenameEntryDialog = () => {
     openRenameEntry.current = false;
+    forceUpdate();
+  };
+  const closeMoveCopyFilesDialog = () => {
+    openMoveCopyFiles.current = false;
+    forceUpdate();
+  };
+  const closeAddRemoveTagsDialog = () => {
+    openAddRemoveTags.current = false;
     forceUpdate();
   };
 
@@ -135,6 +179,20 @@ export const DirectoryMenuContextProvider = ({
       </React.Suspense>
     );
   }
+  function MoveCopyFilesDialogAsync(props) {
+    return (
+      <React.Suspense fallback={<LoadingLazy />}>
+        <MoveCopyFilesDialog {...props} />
+      </React.Suspense>
+    );
+  }
+  function AddRemoveTagsDialogAsync(props) {
+    return (
+      <React.Suspense fallback={<LoadingLazy />}>
+        <AddRemoveTagsDialog {...props} />
+      </React.Suspense>
+    );
+  }
 
   const context = useMemo(() => {
     return {
@@ -142,6 +200,10 @@ export const DirectoryMenuContextProvider = ({
       closeDirectoryMenu,
       openRenameEntryDialog,
       closeRenameEntryDialog,
+      openMoveCopyFilesDialog,
+      closeMoveCopyFilesDialog,
+      openAddRemoveTagsDialog,
+      closeAddRemoveTagsDialog,
     };
   }, []);
 
@@ -150,6 +212,20 @@ export const DirectoryMenuContextProvider = ({
       <RenameEntryDialogAsync
         open={openRenameEntry.current}
         onClose={closeRenameEntryDialog}
+      />
+      <MoveCopyFilesDialogAsync
+        open={openMoveCopyFiles.current}
+        onClose={closeMoveCopyFilesDialog}
+        entries={
+          currentEntries.current ? currentEntries.current : selectedEntries
+        }
+      />
+      <AddRemoveTagsDialogAsync
+        open={openAddRemoveTags.current}
+        onClose={closeAddRemoveTagsDialog}
+        selected={
+          currentEntries.current ? currentEntries.current : selectedEntries
+        }
       />
       <DirectoryMenuAsync
         open={Boolean(directoryContextMenuAnchorEl)}
