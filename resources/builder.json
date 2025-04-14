@@ -10,7 +10,7 @@
   "copyright": "Copyright © 2025 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "dmg": {
-    "sign": false
+    "sign": true
   },
   "win": {
     "target": ["nsis", "zip"],
