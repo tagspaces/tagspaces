@@ -80,7 +80,7 @@ function LocationManagerMenu(props: Props) {
 
   if (!AppConfig.locationsReadOnly) {
     // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-    menuItems.push(<Divider />);
+    menuItems.push(<Divider key="divider1" />);
     menuItems.push(
       <MenuItem
         disabled={!Pro}
@@ -127,7 +127,7 @@ function LocationManagerMenu(props: Props) {
         />
       </MenuItem>,
     );
-    menuItems.push(<Divider />);
+    menuItems.push(<Divider key="divider2" />);
   }
 
   menuItems.push(
@@ -161,7 +161,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemText primary={t('core:updateAllLocationIndexes')} />
     </MenuItem>,
   );
-  menuItems.push(<Divider />);
+  menuItems.push(<Divider key="divider3" />);
   menuItems.push(
     <MenuItem
       key="locationManagerMenuHelp"
