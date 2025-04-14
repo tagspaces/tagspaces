@@ -52,12 +52,11 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   prefixDataTID?: string;
   toggleSelectAllFiles: (event: any) => void;
-  openAddRemoveTagsDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
   handleSortingMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   openSettings: () => void;
@@ -68,14 +67,13 @@ function MainToolbar(props: Props) {
   const {
     prefixDataTID,
     toggleSelectAllFiles,
-    openAddRemoveTagsDialog,
-    openMoveCopyFilesDialog,
     handleSortingMenu,
     handleExportCsvMenu,
     openSettings,
     openShareFilesDialog,
   } = props;
 
+  const { openMoveCopyFilesDialog, openAddRemoveTagsDialog } = useMenuContext();
   const { haveLocalSetting } = usePerspectiveSettingsContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
   const { nativeDragModeEnabled, setNativeDragModeEnabled } =
@@ -194,7 +192,7 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['addRemoveTags']}
             aria-label={t('core:tagSelectedEntries')}
             data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-            onClick={openAddRemoveTagsDialog}
+            onClick={() => openAddRemoveTagsDialog(selectedEntries)}
           >
             <TagIcon />
           </TsToolbarButton>
@@ -219,7 +217,7 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['copyMoveSelectedEntries']}
             aria-label={t('core:copyMoveSelectedEntries')}
             data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
-            onClick={openMoveCopyFilesDialog}
+            onClick={() => openMoveCopyFilesDialog(selectedEntries)}
           >
             <CopyMoveIcon />
           </TsToolbarButton>

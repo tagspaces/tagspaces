@@ -70,6 +70,7 @@ import {
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   anchorEl: Element;
@@ -77,10 +78,7 @@ interface Props {
   mouseY?: number;
   open: boolean;
   onClose: () => void;
-  openRenameFileDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
-  openAddRemoveTagsDialog: () => void;
   /**
    * @deprecated use selectedEntries instead
    */
@@ -92,10 +90,7 @@ interface Props {
 
 function FileMenu(props: Props) {
   const {
-    openRenameFileDialog,
-    openMoveCopyFilesDialog,
     openShareFilesDialog,
-    openAddRemoveTagsDialog,
     reorderTop,
     reorderBottom,
     anchorEl,
@@ -108,6 +103,11 @@ function FileMenu(props: Props) {
 
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
+  const {
+    openAddRemoveTagsDialog,
+    openMoveCopyFilesDialog,
+    openRenameEntryDialog,
+  } = useMenuContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
@@ -194,7 +194,7 @@ function FileMenu(props: Props) {
 
   function showRenameFileDialog() {
     onClose();
-    openRenameFileDialog();
+    openRenameEntryDialog();
   }
 
   function showMoveCopyFilesDialog() {
@@ -318,9 +318,9 @@ function FileMenu(props: Props) {
 
   const menuItems = [];
 
-  const pathLowerCase = selectedFilePath.toLowerCase();
+  const pathLowerCase = selectedFilePath?.toLowerCase();
   const isImageFile = supportedImgs.some((ext) =>
-    pathLowerCase.endsWith('.' + ext),
+    pathLowerCase?.endsWith('.' + ext),
   );
 
   if (selectedEntries.length < 2) {

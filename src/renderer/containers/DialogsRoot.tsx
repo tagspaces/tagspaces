@@ -37,7 +37,7 @@ import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/Resol
 import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
 import { DownloadUrlContextProvider } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
 import { AiGenerationDialogContextProvider } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
-import { DirectoryMenuContextProvider } from '-/components/dialogs/hooks/DirectoryMenuContextProvider';
+import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -65,9 +65,9 @@ function DialogsRoot({ children }: DialogsRootProps) {
                                       <SettingsDialogContextProvider>
                                         <ResolveConflictContextProvider>
                                           <DownloadUrlContextProvider>
-                                            <DirectoryMenuContextProvider>
+                                            <MenuContextProvider>
                                               {children}
-                                            </DirectoryMenuContextProvider>
+                                            </MenuContextProvider>
                                           </DownloadUrlContextProvider>
                                         </ResolveConflictContextProvider>
                                       </SettingsDialogContextProvider>

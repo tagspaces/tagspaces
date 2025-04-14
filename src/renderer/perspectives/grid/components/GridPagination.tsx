@@ -47,6 +47,7 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   desktopMode: boolean;
@@ -60,14 +61,11 @@ interface Props {
     isLast?: boolean,
   ) => void;
   currentDirectoryPath: string;
-  onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
-  openRenameEntryDialog: () => void;
+  //onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
-  setFileContextMenuAnchorEl: (HTMLElement) => void;
-  setDirContextMenuAnchorEl: (HTMLElement) => void;
   clearSelection: () => void;
 }
 
@@ -76,12 +74,10 @@ function GridPagination(props: Props) {
   const {
     getCellContent,
     currentDirectoryPath,
-    openRenameEntryDialog,
-    setFileContextMenuAnchorEl,
-    setDirContextMenuAnchorEl,
     selectedEntries,
     setSelectedEntries,
   } = props;
+  const { openDirectoryMenu, openRenameEntryDialog } = useMenuContext();
   const {
     showDetails,
     showDescription,
@@ -220,7 +216,7 @@ function GridPagination(props: Props) {
       <div
         ref={containerEl}
         onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
-          props.onContextMenu(event)
+          openDirectoryMenu(event, currentDirectoryPath)
         }
         onClick={(event: React.MouseEvent<HTMLDivElement>) =>
           props.onClick(event)
@@ -426,8 +422,6 @@ function GridPagination(props: Props) {
                 fsEntry={entry}
                 index={index}
                 cellContent={getCellContent}
-                setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-                setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
                 isLast={index === dArray.length - 1}
               />
             ))}

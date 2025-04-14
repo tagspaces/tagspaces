@@ -65,7 +65,7 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl?: Element;
   items?: React.ReactNode;
-  directoryPath: string;
+  directoryPath?: string;
   openAddRemoveTagsDialog?: () => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;

@@ -45,6 +45,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import i18n from '-/services/i18n';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -61,23 +62,16 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean,
   ) => any;
-  setFileContextMenuAnchorEl;
-  setDirContextMenuAnchorEl;
   isLast?: boolean;
 }
 
 function CellView(props: Props) {
-  const {
-    fsEntry,
-    index,
-    cellContent,
-    setFileContextMenuAnchorEl,
-    setDirContextMenuAnchorEl,
-    isLast,
-  } = props;
+  const { fsEntry, index, cellContent, isLast } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const theme = useTheme();
+
+  const { openDirectoryMenu, openFileMenu } = useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -149,7 +143,7 @@ function CellView(props: Props) {
       } else {
         setSelectedEntries([fsEntry]);
       }
-      setFileContextMenuAnchorEl(event.currentTarget);
+      openFileMenu(event, lastSelectedEntryPath);
     } else {
       if (
         selectedEntries.length === 0 ||
@@ -165,9 +159,7 @@ function CellView(props: Props) {
       } else {
         setSelectedEntries([fsEntry]);
       }
-      if (setDirContextMenuAnchorEl) {
-        setDirContextMenuAnchorEl(event.currentTarget);
-      }
+      openDirectoryMenu(event, fsEntry.path); // lastSelectedEntryPath
     }
   };
 

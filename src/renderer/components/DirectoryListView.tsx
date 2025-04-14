@@ -67,7 +67,7 @@ function DirectoryListView(props: Props) {
 
   function getDirLocations() {
     const chosenLocation = findLocation(chosenLocationId.current);
-    if (chosenLocation.type !== locationType.TYPE_LOCAL) {
+    if (!chosenLocation || chosenLocation.type !== locationType.TYPE_LOCAL) {
       return null;
     }
     return (
