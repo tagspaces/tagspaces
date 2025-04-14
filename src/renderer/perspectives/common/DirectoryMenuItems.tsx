@@ -304,7 +304,7 @@ export function getDirectoryMenuItems(
       );
     }
     if (showCreateDirectoryDialog) {
-      menuItems.push(<Divider />);
+      menuItems.push(<Divider key="divider2" />);
       menuItems.push(
         <MenuItem
           key="newSubDirectory"
@@ -479,7 +479,7 @@ export function getDirectoryMenuItems(
     );
   }
   if (!perspectiveMode && switchPerspective) {
-    menuItems.push(<Divider key="divider2" />);
+    menuItems.push(<Divider key="divider3" />);
     AvailablePerspectives.forEach((perspective) => {
       let badge = <></>;
       // if (!Pro && perspective.pro) {
@@ -512,7 +512,7 @@ export function getDirectoryMenuItems(
   }
 
   if (selectedEntriesLength < 2 && showProperties) {
-    menuItems.push(<Divider key="divider3" />);
+    menuItems.push(<Divider key="divider4" />);
     menuItems.push(
       <MenuItem
         key="showProperties"

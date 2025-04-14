@@ -251,7 +251,6 @@ function MobileNavigation(props: Props) {
                 tooltip={t('core:switchTheme')}
                 data-tid="switchTheme"
                 onClick={switchTheme}
-                title={t('core:switchTheme')}
               >
                 <ThemingIcon />
               </TsIconButton>

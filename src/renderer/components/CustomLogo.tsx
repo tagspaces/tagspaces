@@ -57,38 +57,35 @@ function CustomLogo() {
         WebkitAppRegion: 'drag',
       }}
     >
-      <Tooltip title={t('core:aboutTitle')}>
-        <TsIconButton style={{ padding: 0 }}>
-          <img
-            style={{
-              width: 30,
-              height: 30,
-              padding: 4,
-              // @ts-ignore
-              WebkitAppRegion: 'no-drag',
-            }}
-            src={LogoIcon}
-            alt="TagSpaces Logo"
-          />
-        </TsIconButton>
-      </Tooltip>
-      <Tooltip title={t('core:aboutTitle')}>
-        <TsIconButton
-          style={{ height: 40, padding: 4 }}
-          data-tid="aboutTagSpaces"
-        >
-          <img
-            style={{
-              maxHeight: 26,
-              maxWidth: 200,
-              // @ts-ignore
-              WebkitAppRegion: 'no-drag',
-            }}
-            src={logo}
-            alt="TagSpaces"
-          />
-        </TsIconButton>
-      </Tooltip>
+      <TsIconButton tooltip={t('core:aboutTitle')} style={{ padding: 0 }}>
+        <img
+          style={{
+            width: 30,
+            height: 30,
+            padding: 4,
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
+          src={LogoIcon}
+          alt="TagSpaces Logo"
+        />
+      </TsIconButton>
+      <TsIconButton
+        tooltip={t('core:aboutTitle')}
+        style={{ height: 40, padding: 4 }}
+        data-tid="aboutTagSpaces"
+      >
+        <img
+          style={{
+            maxHeight: 26,
+            maxWidth: 200,
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
+          src={logo}
+          alt="Application Logo"
+        />
+      </TsIconButton>
       <sup>
         <Tooltip title={updateAvailable ? t('core:newVersionAvailable') : ''}>
           <Badge

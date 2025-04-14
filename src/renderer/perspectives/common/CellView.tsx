@@ -336,17 +336,15 @@ function CellView(props: Props) {
             </div>
           )}
 
-        <FileSourceDnd key={key}>
-          {cellContent(
-            fsEntry,
-            selectedEntries,
-            index,
-            handleGridContextMenu,
-            handleGridCellClick,
-            handleGridCellDblClick,
-            isLast,
-          )}
-        </FileSourceDnd>
+        {cellContent(
+          fsEntry,
+          selectedEntries,
+          index,
+          handleGridContextMenu,
+          handleGridCellClick,
+          handleGridCellDblClick,
+          isLast,
+        )}
       </div>
     );
   }
