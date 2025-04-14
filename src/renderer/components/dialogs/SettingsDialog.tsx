@@ -97,16 +97,12 @@ function SettingsDialog(props: Props) {
     >
       <Tabs
         value={currentTab}
-        centered
         onChange={handleTabClick}
         indicatorColor="primary"
         scrollButtons="auto"
         variant={smallScreen ? 'scrollable' : 'standard'}
         orientation={smallScreen ? 'horizontal' : 'vertical'}
         // allowScrollButtonsMobile
-        // style={{
-        //   width: fullScreen ? '100%' : '170px',
-        // }}
       >
         <Tab
           style={{
