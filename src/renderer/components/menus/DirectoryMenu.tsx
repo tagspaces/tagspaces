@@ -58,6 +58,7 @@ import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeas
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   open: boolean;
@@ -66,18 +67,20 @@ interface Props {
   anchorEl?: Element;
   items?: React.ReactNode;
   directoryPath?: string;
-  openAddRemoveTagsDialog?: () => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   switchPerspectives?: boolean;
-  openRenameDirectoryDialog?: () => void;
-  openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
   mouseY?: number;
 }
 
 function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
+  const {
+    openAddRemoveTagsDialog,
+    openMoveCopyFilesDialog,
+    openRenameEntryDialog,
+  } = useMenuContext();
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
@@ -123,9 +126,6 @@ function DirectoryMenu(props: Props) {
     mouseX,
     mouseY,
     items,
-    openAddRemoveTagsDialog,
-    openMoveCopyFilesDialog,
-    openRenameDirectoryDialog,
     switchPerspective,
     perspectiveMode,
     switchPerspectives,
@@ -459,7 +459,7 @@ Do you want to continue?`)
         t,
         openDir,
         reloadDirectory,
-        openRenameDirectoryDialog,
+        openRenameEntryDialog,
         openMoveCopyFilesDialog,
         showDeleteDirectoryDialog,
         showInFileManager,
