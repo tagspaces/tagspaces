@@ -70,8 +70,7 @@ function GridPerspective(props: Props) {
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
     useSortedDirContext();
   const desktopMode = useSelector(getDesktopMode);
-  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
-    useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
 
   // Create functions that dispatch actions
@@ -229,7 +228,7 @@ function GridPerspective(props: Props) {
       }
     },
     addRemoveTags: () => {
-      if (lastSelectedEntryPath) {
+      if (selectedEntries && selectedEntries.length > 1) {
         openAddRemoveTagsDialog();
       }
     },
@@ -380,38 +379,7 @@ function GridPerspective(props: Props) {
           onClose={() => setIsShareFilesDialogOpened(false)}
         />
       )}
-      {/*{Boolean(fileContextMenuAnchorEl) && (
-        <FileMenu
-          anchorEl={fileContextMenuAnchorEl}
-          mouseX={mouseX}
-          mouseY={mouseY}
-          open={Boolean(fileContextMenuAnchorEl)}
-          onClose={() => setFileContextMenuAnchorEl(null)}
-          openRenameFileDialog={openRenameEntryDialog}
-          openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-          openShareFilesDialog={openShareFilesDialog}
-          openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-          selectedFilePath={
-            lastSelectedEntryPath ? lastSelectedEntryPath : currentDirectoryPath
-          }
-        />
-      )}
-      <DirectoryMenu
-        open={Boolean(dirContextMenuAnchorEl)}
-        onClose={() => {
-          setDirContextMenuAnchorEl(null);
-          perspectiveMode.current = true;
-        }}
-        anchorEl={dirContextMenuAnchorEl}
-        mouseX={mouseX}
-        mouseY={mouseY}
-        directoryPath={lastSelectedEntryPath}
-        openRenameDirectoryDialog={openRenameEntryDialog}
-        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        perspectiveMode={perspectiveMode.current}
-        openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-      />*/}
-      {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
+      {/* TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu
         anchorEl={tagContextMenuAnchorEl}
         open={Boolean(tagContextMenuAnchorEl)}

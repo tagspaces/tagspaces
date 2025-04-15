@@ -82,7 +82,7 @@ interface Props {
   /**
    * @deprecated use selectedEntries instead
    */
-  selectedFilePath?: string;
+  // selectedFilePath?: string;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
@@ -98,7 +98,7 @@ function FileMenu(props: Props) {
     mouseY,
     open,
     onClose,
-    selectedFilePath,
+    // selectedFilePath,
   } = props;
 
   const keyBindings = useSelector(getKeyBindingObject);
@@ -108,8 +108,7 @@ function FileMenu(props: Props) {
     openMoveCopyFilesDialog,
     openRenameEntryDialog,
   } = useMenuContext();
-  const { selectedEntries, lastSelectedEntryPath } =
-    useSelectedEntriesContext();
+  const { selectedEntries, lastSelectedEntry } = useSelectedEntriesContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
   const {
@@ -135,13 +134,13 @@ function FileMenu(props: Props) {
   useEffect(() => {
     if (currentLocation?.haveObjectStoreSupport()) {
       currentLocation
-        .generateURLforPath(selectedFilePath, 86400)
+        .generateURLforPath(lastSelectedEntry.path, 86400)
         .then((url) => {
           downloadFileUrl.current = url;
           forceUpdate();
         });
     }
-  }, [currentLocationId, selectedFilePath]);
+  }, [currentLocationId, lastSelectedEntry]);
 
   function generateFileLink(): Promise<string> {
     const entryPath = selectedEntries[0].path;
@@ -210,11 +209,11 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(lastSelectedEntryPath) //selectedFilePath)
+    setFolderThumbnailPromise(lastSelectedEntry.path)
       .then((thumbPath: string) => {
         const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
           extractContainingDirectoryPath(
-            lastSelectedEntryPath,
+            lastSelectedEntry.path,
             currentLocation?.getDirSeparator(),
           ),
           false,
@@ -229,7 +228,7 @@ function FileMenu(props: Props) {
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
         console.log(
-          'Error setting Thumb for entry: ' + lastSelectedEntryPath,
+          'Error setting Thumb for entry: ' + lastSelectedEntry.path,
           error,
         );
         return true;
@@ -244,13 +243,16 @@ function FileMenu(props: Props) {
       (currentLocation.haveObjectStoreSupport() ||
         currentLocation.haveWebDavSupport())
     ) {
-      path = await currentLocation.generateURLforPath(selectedFilePath, 604800); // 7 days
+      path = await currentLocation.generateURLforPath(
+        lastSelectedEntry.path,
+        604800,
+      ); // 7 days
     } else {
-      path = selectedFilePath;
+      path = lastSelectedEntry.path;
     }
 
     const directoryPath = extractContainingDirectoryPath(
-      selectedFilePath,
+      lastSelectedEntry.path,
       currentLocation?.getDirSeparator(),
     );
 
@@ -264,7 +266,7 @@ function FileMenu(props: Props) {
       .catch((error) => {
         showNotification('Background creation failed.');
         console.log(
-          'Error setting Background for entry: ' + selectedFilePath,
+          'Error setting Background for entry: ' + lastSelectedEntry.path,
           error,
         );
         return true;
@@ -278,14 +280,18 @@ function FileMenu(props: Props) {
 
   function duplicateFileHandler() {
     onClose();
-    duplicateFile(selectedFilePath);
+    duplicateFile(lastSelectedEntry.path);
   }
 
   function openParentFolderInternally() {
     onClose();
-    if (selectedFilePath) {
+    if (lastSelectedEntry) {
+      const directoryPath = extractContainingDirectoryPath(
+        lastSelectedEntry.path,
+        currentLocation?.getDirSeparator(),
+      );
       const parentFolder = extractParentDirectoryPath(
-        selectedFilePath,
+        directoryPath,
         currentLocation?.getDirSeparator(),
       );
       return openDirectory(parentFolder);
@@ -294,8 +300,8 @@ function FileMenu(props: Props) {
 
   function openFile() {
     onClose();
-    if (lastSelectedEntryPath) {
-      return openEntry(lastSelectedEntryPath);
+    if (lastSelectedEntry) {
+      return openEntry(lastSelectedEntry.path);
     }
   }
 
@@ -312,14 +318,14 @@ function FileMenu(props: Props) {
 
   function openFileNativelyHandler() {
     onClose();
-    if (selectedFilePath) {
-      openFileNatively(selectedFilePath);
+    if (lastSelectedEntry) {
+      openFileNatively(lastSelectedEntry.path);
     }
   }
 
   const menuItems = [];
 
-  const pathLowerCase = selectedFilePath?.toLowerCase();
+  const pathLowerCase = lastSelectedEntry?.path.toLowerCase();
   const isImageFile = supportedImgs.some((ext) =>
     pathLowerCase?.endsWith('.' + ext),
   );
@@ -392,8 +398,8 @@ function FileMenu(props: Props) {
           data-tid="fileMenuOpenContainingFolder"
           onClick={() => {
             onClose();
-            if (selectedFilePath) {
-              openDirectoryMessage(selectedFilePath);
+            if (lastSelectedEntry) {
+              openDirectoryMessage(lastSelectedEntry.path);
             }
           }}
         >

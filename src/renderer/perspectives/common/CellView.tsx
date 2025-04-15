@@ -81,7 +81,7 @@ function CellView(props: Props) {
     selectedEntries,
     setSelectedEntries,
     addToSelection,
-    lastSelectedEntryPath,
+    lastSelectedEntry,
   } = useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
@@ -121,25 +121,13 @@ function CellView(props: Props) {
     if (event.ctrlKey) {
       addToSelection(fsEntry);
     } else {
-      if (fsEntry.isFile) {
-        if (
-          selectedEntries.length === 0 ||
-          !fileOperationsEnabled(selectedEntries) ||
-          !isEntryExist
-        ) {
-          setSelectedEntries([fsEntry]);
-        } else {
-          addToSelection(fsEntry);
-        }
+      const operationEnabled = fsEntry.isFile
+        ? fileOperationsEnabled(selectedEntries)
+        : folderOperationsEnabled(selectedEntries);
+      if (selectedEntries.length === 0 || !operationEnabled || !isEntryExist) {
+        setSelectedEntries([fsEntry]);
       } else {
-        if (
-          selectedEntries.length === 0 ||
-          !folderOperationsEnabled(selectedEntries)
-        ) {
-          setSelectedEntries([fsEntry]);
-        } else {
-          addToSelection(fsEntry);
-        }
+        addToSelection(fsEntry);
       }
       openMenu(event, fsEntry);
     }
@@ -165,9 +153,9 @@ function CellView(props: Props) {
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex = -1;
-      if (lastSelectedEntryPath) {
+      if (lastSelectedEntry) {
         lastSelectedIndex = sortedDirContent.findIndex(
-          (entry) => entry.path === lastSelectedEntryPath,
+          (entry) => entry.path === lastSelectedEntry.path,
         );
       }
       const currentSelectedIndex = sortedDirContent.findIndex(

@@ -30,7 +30,7 @@ import useFirstRender from '-/utils/useFirstRender';
 
 type SelectedEntryContextData = {
   selectedEntries: TS.FileSystemEntry[];
-  lastSelectedEntryPath: string;
+  lastSelectedEntry: TS.FileSystemEntry | undefined;
   setSelectedEntries(entries: TS.FileSystemEntry[]);
   addToSelection(entry: TS.FileSystemEntry);
   selectEntry(entry: TS.FileSystemEntry, select?: boolean);
@@ -38,7 +38,7 @@ type SelectedEntryContextData = {
 
 export const SelectedEntryContext = createContext<SelectedEntryContextData>({
   selectedEntries: undefined,
-  lastSelectedEntryPath: undefined,
+  lastSelectedEntry: undefined,
   setSelectedEntries: undefined,
   addToSelection: undefined,
   selectEntry: undefined,
@@ -109,9 +109,9 @@ export const SelectedEntryContextProvider = ({
     forceUpdate();
   };
 
-  const lastSelectedEntryPath = useMemo(() => {
+  const lastSelectedEntry = useMemo(() => {
     if (selectedEntries.current && selectedEntries.current.length > 0) {
-      return selectedEntries.current[selectedEntries.current.length - 1].path;
+      return selectedEntries.current[selectedEntries.current.length - 1];
     }
     return undefined;
   }, [selectedEntries.current]);
@@ -119,7 +119,7 @@ export const SelectedEntryContextProvider = ({
   const context = useMemo(() => {
     return {
       selectedEntries: selectedEntries.current,
-      lastSelectedEntryPath,
+      lastSelectedEntry,
       setSelectedEntries,
       addToSelection,
       selectEntry,
