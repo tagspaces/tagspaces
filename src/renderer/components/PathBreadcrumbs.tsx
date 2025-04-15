@@ -16,6 +16,7 @@
  *
  */
 
+import React from 'react';
 import AppConfig from '-/AppConfig';
 import {
   CloudLocationIcon,
@@ -34,9 +35,8 @@ import {
   extractShortDirectoryName,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DirectoryMenu from './menus/DirectoryMenu';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -76,32 +76,24 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
 
 interface Props {
   switchPerspective: (perspectiveId: string) => void;
-  openRenameDirectoryDialog: () => void;
   isDesktopMode: boolean;
 }
 
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
+  const { openDirectoryMenu } = useMenuContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
   const currentLocation = findLocation();
   let pathParts: Array<string> = [];
 
-  const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =
-    useState<null | HTMLElement>(null);
+  const { isDesktopMode } = props;
 
-  const { openRenameDirectoryDialog, isDesktopMode } = props;
-
-  const openDirectoryMenu = (event: React.MouseEvent<Element, MouseEvent>) => {
+  const openDirMenu = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     setSelectedEntries([]);
-    // @ts-ignore
-    setDirectoryContextMenuAnchorEl(event.currentTarget);
-  };
-
-  const closeDirectoryMenu = () => {
-    setDirectoryContextMenuAnchorEl(null);
+    openDirectoryMenu(event, currentDirectoryPath, false, true);
   };
 
   const normalizedCurrentDirPath = currentDirectoryPath
@@ -199,9 +191,9 @@ function PathBreadcrumbs(props: Props) {
             label={currentFolderName}
             icon={currentFolderChipIcon}
             deleteIcon={<MoreMenuIcon />}
-            onDelete={openDirectoryMenu}
-            onClick={openDirectoryMenu}
-            onContextMenu={openDirectoryMenu}
+            onDelete={openDirMenu}
+            onClick={openDirMenu}
+            onContextMenu={openDirMenu}
             style={{ marginRight: 2 }}
           />
         </Tooltip>
@@ -237,7 +229,7 @@ function PathBreadcrumbs(props: Props) {
       >
         {getBreadcrumbs()}
       </StyledBreadcrumbs>
-      <DirectoryMenu
+      {/*<DirectoryMenu
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
@@ -245,7 +237,7 @@ function PathBreadcrumbs(props: Props) {
         switchPerspectives={true}
         directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
-      />
+      />*/}
     </>
   );
 }

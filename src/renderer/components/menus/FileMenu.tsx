@@ -108,7 +108,8 @@ function FileMenu(props: Props) {
     openMoveCopyFilesDialog,
     openRenameEntryDialog,
   } = useMenuContext();
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, lastSelectedEntryPath } =
+    useSelectedEntriesContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
   const {
@@ -209,11 +210,11 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(selectedEntries[0].path) //selectedFilePath)
+    setFolderThumbnailPromise(lastSelectedEntryPath) //selectedFilePath)
       .then((thumbPath: string) => {
         const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
           extractContainingDirectoryPath(
-            selectedEntries[0].path,
+            lastSelectedEntryPath,
             currentLocation?.getDirSeparator(),
           ),
           false,
@@ -228,7 +229,7 @@ function FileMenu(props: Props) {
       .catch((error) => {
         showNotification('Thumbnail creation failed.');
         console.log(
-          'Error setting Thumb for entry: ' + selectedEntries[0].path,
+          'Error setting Thumb for entry: ' + lastSelectedEntryPath,
           error,
         );
         return true;
@@ -293,8 +294,8 @@ function FileMenu(props: Props) {
 
   function openFile() {
     onClose();
-    if (selectedFilePath) {
-      return openEntry(selectedFilePath);
+    if (lastSelectedEntryPath) {
+      return openEntry(lastSelectedEntryPath);
     }
   }
 

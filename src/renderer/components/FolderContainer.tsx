@@ -84,19 +84,11 @@ function FolderContainer(props: Props) {
     isSearchMode,
   } = useDirectoryContentContext();
 
-  const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] =
-    useState<boolean>(false);
-
   const isDesktopMode = useSelector(getDesktopMode);
   const progress = useSelector(getProgress);
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
-
-  const openRenameEntryDialog = useCallback(
-    () => setRenameEntryDialogOpened(true),
-    [],
-  );
 
   function CircularProgressWithLabel(prop) {
     return (
@@ -323,7 +315,6 @@ function FolderContainer(props: Props) {
             <PathBreadcrumbs
               switchPerspective={switchPerspective}
               isDesktopMode={isDesktopMode}
-              openRenameDirectoryDialog={() => setRenameEntryDialogOpened(true)}
             />
           </>
         )}
@@ -332,13 +323,7 @@ function FolderContainer(props: Props) {
         {/*<LoadingAnimation />*/}
         {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
         <a href="#" id="downloadFile" />
-        <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
-        {isRenameEntryDialogOpened && (
-          <RenameEntryDialog
-            open={isRenameEntryDialogOpened}
-            onClose={() => setRenameEntryDialogOpened(false)}
-          />
-        )}
+        <RenderPerspective />
       </div>
       {isDesktopMode && (
         <ToggleButtonGroup

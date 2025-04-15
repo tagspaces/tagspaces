@@ -32,6 +32,7 @@ type SelectedEntryContextData = {
   selectedEntries: TS.FileSystemEntry[];
   lastSelectedEntryPath: string;
   setSelectedEntries(entries: TS.FileSystemEntry[]);
+  addToSelection(entry: TS.FileSystemEntry);
   selectEntry(entry: TS.FileSystemEntry, select?: boolean);
 };
 
@@ -39,6 +40,7 @@ export const SelectedEntryContext = createContext<SelectedEntryContextData>({
   selectedEntries: undefined,
   lastSelectedEntryPath: undefined,
   setSelectedEntries: undefined,
+  addToSelection: undefined,
   selectEntry: undefined,
 });
 
@@ -68,6 +70,20 @@ export const SelectedEntryContextProvider = ({
     }
     return undefined;
   }*/
+  const addToSelection = (fsEntry: TS.FileSystemEntry) => {
+    const entries = selectedEntries.current;
+
+    // If the last entry is the same as fsEntry, do nothing.
+    if (entries.length && entries[entries.length - 1].path === fsEntry.path)
+      return;
+
+    // Otherwise, remove any previous occurrences of fsEntry and add it at the end.
+    setSelectedEntries([
+      ...entries.filter((entry) => entry.path !== fsEntry.path),
+      fsEntry,
+    ]);
+  };
+
   const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
     selectedEntries.current = entries ? entries : [];
     forceUpdate();
@@ -105,6 +121,7 @@ export const SelectedEntryContextProvider = ({
       selectedEntries: selectedEntries.current,
       lastSelectedEntryPath,
       setSelectedEntries,
+      addToSelection,
       selectEntry,
     };
   }, [selectedEntries.current]);

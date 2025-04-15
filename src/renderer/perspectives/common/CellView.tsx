@@ -71,14 +71,18 @@ function CellView(props: Props) {
     usePerspectiveSettingsContext();
   const theme = useTheme();
 
-  const { openDirectoryMenu, openFileMenu } = useMenuContext();
+  const { openMenu } = useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { readOnlyMode, currentLocationId, findLocation } =
     useCurrentLocationContext();
-  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
-    useSelectedEntriesContext();
+  const {
+    selectedEntries,
+    setSelectedEntries,
+    addToSelection,
+    lastSelectedEntryPath,
+  } = useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
@@ -111,55 +115,33 @@ function CellView(props: Props) {
   const handleGridContextMenu = (event, fsEntry: TS.FileSystemEntry) => {
     event.preventDefault();
     event.stopPropagation();
-    // setMouseX(event.clientX);
-    // setMouseY(event.clientY);
     const isEntryExist = selectedEntries.some(
       (entry) => entry.uuid === fsEntry.uuid,
     );
-    if (fsEntry.isFile) {
-      if (!desktopMode) {
-        if (!isEntryExist) {
-          if (selectedEntries.length > 0) {
-            setSelectedEntries([...selectedEntries, fsEntry]);
-          } else {
-            setSelectedEntries([fsEntry]);
-          }
-        }
-      } else if (
-        selectedEntries.length === 0 ||
-        !fileOperationsEnabled(selectedEntries)
-      ) {
-        setSelectedEntries([fsEntry]);
-      } else if (event.ctrlKey) {
-        if (!isEntryExist) {
-          setSelectedEntries([...selectedEntries, fsEntry]);
-        }
-      } else if (isEntryExist) {
-        // update selected entry
-        setSelectedEntries([
-          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
-          fsEntry,
-        ]);
-      } else {
-        setSelectedEntries([fsEntry]);
-      }
-      openFileMenu(event, lastSelectedEntryPath);
+    if (event.ctrlKey) {
+      addToSelection(fsEntry);
     } else {
-      if (
-        selectedEntries.length === 0 ||
-        !folderOperationsEnabled(selectedEntries)
-      ) {
-        setSelectedEntries([fsEntry]);
-      } else if (isEntryExist) {
-        // update selected entry
-        setSelectedEntries([
-          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
-          fsEntry,
-        ]);
+      if (fsEntry.isFile) {
+        if (
+          selectedEntries.length === 0 ||
+          !fileOperationsEnabled(selectedEntries) ||
+          !isEntryExist
+        ) {
+          setSelectedEntries([fsEntry]);
+        } else {
+          addToSelection(fsEntry);
+        }
       } else {
-        setSelectedEntries([fsEntry]);
+        if (
+          selectedEntries.length === 0 ||
+          !folderOperationsEnabled(selectedEntries)
+        ) {
+          setSelectedEntries([fsEntry]);
+        } else {
+          addToSelection(fsEntry);
+        }
       }
-      openDirectoryMenu(event, fsEntry.path); // lastSelectedEntryPath
+      openMenu(event, fsEntry);
     }
   };
 
