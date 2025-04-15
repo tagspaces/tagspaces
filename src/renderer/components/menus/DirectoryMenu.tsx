@@ -452,7 +452,7 @@ Do you want to continue?`)
     ? items
     : getDirectoryMenuItems(
         currentLocation,
-        selectedEntries.length,
+        selectedEntries,
         perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
         readOnlyMode,
         onClose,
