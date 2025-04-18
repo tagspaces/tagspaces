@@ -32,7 +32,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import clsx from 'clsx';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { HotKeys } from 'react-hotkeys';
+import { GlobalHotKeys } from 'react-hotkeys';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Split } from 'ts-react-splitter';
@@ -287,11 +287,7 @@ function MainPage(props: Props) {
 
   return (
     <Root>
-      <HotKeys
-        handlers={keyBindingHandlers}
-        keyMap={keyMap}
-        style={{ height: '100%' }}
-      >
+      <GlobalHotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
         <PageNotification />
         <div
           style={{
@@ -364,7 +360,7 @@ function MainPage(props: Props) {
             </>
           )}
         </div>
-      </HotKeys>
+      </GlobalHotKeys>
     </Root>
   );
 }
