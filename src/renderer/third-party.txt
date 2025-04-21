@@ -4055,7 +4055,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.134
+ - @tagspacespro/tagspacespro@5.0.136
 
 This package contains the following license:
 
@@ -9234,13 +9234,13 @@ The following npm packages may be included in this product:
  - prosemirror-dropcursor@1.8.1
  - prosemirror-gapcursor@1.3.2
  - prosemirror-history@1.4.1
- - prosemirror-inputrules@1.4.0
+ - prosemirror-inputrules@1.5.0
  - prosemirror-keymap@1.2.2
- - prosemirror-model@1.24.1
+ - prosemirror-model@1.25.0
  - prosemirror-schema-list@1.5.1
  - prosemirror-state@1.4.3
  - prosemirror-transform@1.10.3
- - prosemirror-view@1.38.1
+ - prosemirror-view@1.39.1
 
 These packages each contain the following license:
 
@@ -14065,6 +14065,36 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
+ - prosemirror-virtual-cursor@0.4.2
+
+This package contains the following license:
+
+MIT License
+
+Copyright (c) 2022 ocavue
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
+
  - ollama@0.5.14
 
 This package contains the following license:
@@ -17697,28 +17727,28 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @milkdown/components@7.6.4
- - @milkdown/core@7.6.4
- - @milkdown/crepe@7.6.4
- - @milkdown/ctx@7.6.4
- - @milkdown/exception@7.6.4
- - @milkdown/kit@7.6.4
- - @milkdown/plugin-block@7.6.4
- - @milkdown/plugin-clipboard@7.6.4
- - @milkdown/plugin-cursor@7.6.4
- - @milkdown/plugin-history@7.6.4
- - @milkdown/plugin-indent@7.6.4
- - @milkdown/plugin-listener@7.6.4
- - @milkdown/plugin-slash@7.6.4
- - @milkdown/plugin-tooltip@7.6.4
- - @milkdown/plugin-trailing@7.6.4
- - @milkdown/plugin-upload@7.6.4
- - @milkdown/preset-commonmark@7.6.4
- - @milkdown/preset-gfm@7.6.4
- - @milkdown/prose@7.6.4
- - @milkdown/react@7.6.4
- - @milkdown/transformer@7.6.4
- - @milkdown/utils@7.6.4
+ - @milkdown/components@7.8.0
+ - @milkdown/core@7.8.0
+ - @milkdown/crepe@7.8.0
+ - @milkdown/ctx@7.8.0
+ - @milkdown/exception@7.8.0
+ - @milkdown/kit@7.8.0
+ - @milkdown/plugin-block@7.8.0
+ - @milkdown/plugin-clipboard@7.8.0
+ - @milkdown/plugin-cursor@7.8.0
+ - @milkdown/plugin-history@7.8.0
+ - @milkdown/plugin-indent@7.8.0
+ - @milkdown/plugin-listener@7.8.0
+ - @milkdown/plugin-slash@7.8.0
+ - @milkdown/plugin-tooltip@7.8.0
+ - @milkdown/plugin-trailing@7.8.0
+ - @milkdown/plugin-upload@7.8.0
+ - @milkdown/preset-commonmark@7.8.0
+ - @milkdown/preset-gfm@7.8.0
+ - @milkdown/prose@7.8.0
+ - @milkdown/react@7.8.0
+ - @milkdown/transformer@7.8.0
+ - @milkdown/utils@7.8.0
 
 These packages each contain the following license:
 
@@ -18452,7 +18482,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.178
+ - @tagspaces/extensions@1.0.181
 
 This package contains the following license:
 
