@@ -9,31 +9,39 @@
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
   "copyright": "Copyright © 2025 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
-  "dmg": {
-    "sign": true
-  },
   "win": {
     "target": ["nsis", "zip"],
     "icon": "assets/icon.ico"
   },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "include": "resources/installer.nsh",
+    "license": "LICENSE.txt"
+  },
   "mac": {
-    "target": ["zip", "dmg"],
+    "target": ["pkg", "dmg"],
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
     "icon": "assets/icon.icns"
   },
+  "dmg": {
+    "sign": false
+  },
+  "pkg": {
+    "license": "LICENSE.txt"
+  },
   "linux": {
     "target": ["deb", "tar.gz", "appImage"],
     "category": "Office",
     "icon": "assets/icon.icns"
   },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "include": "resources/installer.nsh"
+  "appImage": {
+    "license": "LICENSE.txt"
   },
+
   "directories": {
     "app": "release/app",
     "buildResources": "assets",
