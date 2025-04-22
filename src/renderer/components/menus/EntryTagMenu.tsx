@@ -63,6 +63,7 @@ function EntryTagMenu(props: Props) {
 
   function showEditTagDialog() {
     onClose();
+    delete selectedTag.functionality;
     openEditEntryTagDialog([currentEntry], selectedTag);
   }
 
