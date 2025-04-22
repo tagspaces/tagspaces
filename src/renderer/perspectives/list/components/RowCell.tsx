@@ -337,11 +337,9 @@ function RowCell(props: Props) {
         <Grid
           style={{
             minHeight: entryHeight,
-            width: 50,
+            minWidth: 50,
             height: 30,
             padding: 3,
-            paddingLeft: 5,
-            marginRight: 10,
             textAlign: 'left',
             display: 'flex',
             alignSelf: 'center',
