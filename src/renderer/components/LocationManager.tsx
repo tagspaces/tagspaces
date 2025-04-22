@@ -53,7 +53,6 @@ function LocationManager(props: Props) {
   const {
     locations,
     findLocation,
-    addLocations,
     moveLocation,
     deleteLocation,
     selectedLocation,
@@ -248,7 +247,6 @@ function LocationManager(props: Props) {
         <ExportLocationsDialog
           open={isExportLocationsDialogOpened}
           onClose={() => setExportLocationsDialogOpened(false)}
-          locations={locations.filter((location) => !location.isNotEditable)}
         />
       )}
       {ImportLocationsDialog && importFile && (
@@ -256,8 +254,6 @@ function LocationManager(props: Props) {
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          addLocations={(loc) => addLocations(loc)}
-          locations={locations}
         />
       )}
     </Box>
