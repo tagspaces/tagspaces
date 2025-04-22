@@ -17,7 +17,7 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "include": "resources/installer.nsh",
-    "license": "LICENSE.txt"
+    "license": "assets/license_en.txt"
   },
   "mac": {
     "target": ["pkg", "dmg"],
@@ -31,7 +31,7 @@
     "sign": false
   },
   "pkg": {
-    "license": "LICENSE.txt"
+    "license": "assets/license_en.txt"
   },
   "linux": {
     "target": ["deb", "tar.gz", "appImage"],
@@ -39,7 +39,7 @@
     "icon": "assets/icon.icns"
   },
   "appImage": {
-    "license": "LICENSE.txt"
+    "license": "assets/license_en.txt"
   },
 
   "directories": {
