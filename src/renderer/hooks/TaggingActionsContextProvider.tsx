@@ -437,7 +437,7 @@ export const TaggingActionsContextProvider = ({
                   'Error adding tags for ' + entry.path + ' with ' + err,
                 );
                 showNotification(
-                  t('core:addingTagsFailed' as any) as string,
+                  t('core:addingTagsFailed') + ': ' + err.message,
                   'error',
                   true,
                 );

@@ -75,7 +75,7 @@ function TagLibrary(props: Props) {
   } = useTaggingActionsContext();
   const { getTagGroups } = useTagGroupsLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { readOnlyMode, findLocation, locations } = useCurrentLocationContext();
+  const { findLocation, locations } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
@@ -246,7 +246,7 @@ function TagLibrary(props: Props) {
               tagGroup.children.map((tag: TS.Tag, idx) => {
                 const isSmartTag =
                   tag.functionality && tag.functionality.length > 0;
-                if (readOnlyMode) {
+                /*if (readOnlyMode) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
@@ -256,7 +256,7 @@ function TagLibrary(props: Props) {
                       handleTagMenu={handleTagMenuCallback}
                     />
                   );
-                }
+                }*/
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
