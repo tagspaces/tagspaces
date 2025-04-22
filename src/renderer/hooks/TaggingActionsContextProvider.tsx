@@ -757,7 +757,7 @@ export const TaggingActionsContextProvider = ({
               tagGroup.children.findIndex((obj) => obj.title === tag.title) !==
               -1,
           ) === -1 &&
-          !/^(?:\d+~\d+|\d+)$/.test(tag.title) &&
+          !/^(?:\d{8}T\d{6}|\d+~\d+|\d+)$/.test(tag.title) &&
           !isGeoTag(tag.title),
       ); // skip adding of tag containing only digits or geo tags
 
