@@ -57,6 +57,7 @@ import {
   SearchIcon,
 } from './CommonIcons';
 import PathBreadcrumbs from './PathBreadcrumbs';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -69,13 +70,13 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
+  const { findLocation } = useCurrentLocationContext();
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
-    setSearchQuery,
     currentDirectoryEntries,
     currentDirectoryPath,
     getPerspective,
@@ -187,6 +188,7 @@ function FolderContainer(props: Props) {
 
   const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const readOnlyLocation = findLocation()?.isReadOnly;
 
   return (
     <div
@@ -360,12 +362,13 @@ function FolderContainer(props: Props) {
           {aiDefaultProvider && (
             <ToggleButton
               value=""
+              disabled={readOnlyLocation}
               aria-label="chat-label"
               data-tid="chatTID"
               style={{
                 marginLeft: 5,
                 borderColor: theme.palette.divider,
-                color: theme.palette.primary.main,
+                ...(!readOnlyLocation && { color: theme.palette.primary.main }),
                 backgroundColor: theme.palette.background.default,
               }}
               onClick={() => {

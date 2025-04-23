@@ -86,6 +86,16 @@ export const FilePropertiesContextProvider = ({
 
   useEffect(() => {
     if (openedEntry) {
+      const openedLocation = findLocation(openedEntry.locationID);
+      if (openedLocation) {
+        if (openedLocation.isReadOnly) {
+          if (isEditDescriptionMode) {
+            setIsEditDescriptionMode(false);
+          }
+        } else if (!isEditDescriptionMode) {
+          setIsEditDescriptionMode(true);
+        }
+      }
       if (isDescriptionChanged.current) {
         // handle not saved changes
         saveDescriptionConfirmOpened(true);

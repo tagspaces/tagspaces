@@ -118,7 +118,7 @@ export const EntryPropsTabsContextProvider = ({
   }
 
   async function getTabsArray(oEntry: TS.OpenedEntry): Promise<TabItem[]> {
-    //const location: CommonLocation = findLocation(oEntry.locationID);
+    const openedLocation: CommonLocation = findLocation(oEntry.locationID);
     const tab1: TabItem = {
       icon: <EntryPropertiesIcon />,
       title: t('core:details'),
@@ -147,12 +147,14 @@ export const EntryPropsTabsContextProvider = ({
     }
 
     if ((oEntry && !oEntry.isFile) || (devMode && Pro)) {
-      const tab4: TabItem = {
-        icon: <AIIcon />,
-        title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
-        name: TabNames.aiTab,
-      };
-      tabsArray.push(tab4);
+      if (!openedLocation.isReadOnly) {
+        const tab4: TabItem = {
+          icon: <AIIcon />,
+          title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
+          name: TabNames.aiTab,
+        };
+        tabsArray.push(tab4);
+      }
     }
     const tab5: TabItem = {
       icon: <LinkIcon />,

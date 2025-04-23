@@ -108,9 +108,6 @@ function TagLibrary(props: Props) {
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const firstRender = useFirstRender();
 
-  const isTagLibraryReadOnly =
-    window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
-
   useEffect(() => {
     if (Pro && saveTagInLocation && firstRender) {
       refreshTagsFromLocation();
@@ -227,7 +224,7 @@ function TagLibrary(props: Props) {
           handleTagGroupMenu={handleTagGroupMenu}
           toggleTagGroup={toggleTagGroupDispatch}
           tagGroupCollapsed={tagGroupCollapsed}
-          isReadOnly={tagGroup.readOnly || isTagLibraryReadOnly}
+          isReadOnly={tagGroup.readOnly}
         />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer taggroup={tagGroup}>
@@ -293,7 +290,7 @@ function TagLibrary(props: Props) {
           ' tag groups'
         }
         menuButton={
-          !isTagLibraryReadOnly && (
+          tagGroups.some((tg) => !tg.readOnly) && (
             <TsIconButton
               data-tid="tagLibraryMenu"
               onClick={handleTagLibraryMenu}

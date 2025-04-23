@@ -15,6 +15,7 @@ import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface ButtonsProps {
   getHtml: () => string;
@@ -29,6 +30,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
     isEditDescriptionMode,
     setEditDescriptionMode,
   } = useFilePropertiesContext();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
@@ -147,7 +149,11 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
         <ProTooltip tooltip={!isEditDescriptionMode && t('editDescription')}>
           <TsButton
             data-tid="editDescriptionTID"
-            disabled={!Pro || isEditMode}
+            disabled={
+              !Pro ||
+              isEditMode ||
+              findLocation(openedEntry.locationID)?.isReadOnly
+            }
             style={{
               borderTopLeftRadius: isEditDescriptionMode
                 ? 0

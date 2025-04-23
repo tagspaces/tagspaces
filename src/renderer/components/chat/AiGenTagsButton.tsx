@@ -32,6 +32,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -48,6 +49,7 @@ function AiGenTagsButton(props: Props) {
   const { fromDescription, variant, disabled, entries, generationCompleted } =
     props;
   const { t } = useTranslation();
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { tagsGenerate, checkOllamaModels } = useChatContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
@@ -70,7 +72,12 @@ function AiGenTagsButton(props: Props) {
       ].includes(entry.extension),
   );
 
-  if (!generateEntries || !defaultAiProvider || !extensionSupported) {
+  if (
+    !generateEntries ||
+    !defaultAiProvider ||
+    !extensionSupported ||
+    findLocation(openedEntry?.locationID)?.isReadOnly
+  ) {
     return null;
   }
 
