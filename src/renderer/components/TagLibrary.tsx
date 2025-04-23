@@ -19,7 +19,6 @@
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
 import SidePanelTitle from '-/components/SidePanelTitle';
-import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagGroupContainer from '-/components/TagGroupContainer';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
@@ -81,7 +80,6 @@ function TagLibrary(props: Props) {
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
 
   const toggleTagGroupDispatch = (uuid) =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
@@ -156,11 +154,6 @@ function TagLibrary(props: Props) {
   ) => {
     setTagGroupMenuAnchorEl(event.currentTarget);
     setSelectedTagGroupEntry(tagGroup);
-    /* this.setState({
-      tagGroupMenuOpened: true,
-      tagGroupMenuAnchorEl: event.currentTarget,
-      selectedTagGroupEntry: tagGroup
-    }); */
   };
 
   const handleTagMenuCallback = useCallback(
@@ -192,10 +185,6 @@ function TagLibrary(props: Props) {
 
   const handleTagLibraryMenu = (event: any) => {
     setTagLibraryMenuAnchorEl(event.currentTarget);
-    /* this.setState({
-      tagLibraryMenuOpened: true,
-      tagLibraryMenuAnchorEl: event.currentTarget
-    }); */
   };
 
   const showCreateTagGroupDialog = () => {
@@ -246,17 +235,6 @@ function TagLibrary(props: Props) {
               tagGroup.children.map((tag: TS.Tag, idx) => {
                 const isSmartTag =
                   tag.functionality && tag.functionality.length > 0;
-                /*if (readOnlyMode) {
-                  return (
-                    <TagContainer
-                      key={tagGroup.uuid + tag.title}
-                      tag={tag}
-                      tagGroup={tagGroup}
-                      tagMode={isSmartTag ? 'display' : 'default'}
-                      handleTagMenu={handleTagMenuCallback}
-                    />
-                  );
-                }*/
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
