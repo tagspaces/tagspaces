@@ -1261,6 +1261,14 @@ export const TaggingActionsContextProvider = ({
         indexToGroup = index;
       }
     });
+    if (tagGroups[indexToGroup] && tagGroups[indexToGroup].readOnly) {
+      showNotification(
+        'Error move tag. Read only Tag Group: ' + tagGroups[indexToGroup].title,
+        'error',
+        true,
+      );
+      return;
+    }
     if (indexFromGroup >= 0 && tagGroups[indexFromGroup].children) {
       tagIndexForRemoving = tagGroups[indexFromGroup].children.findIndex(
         (tag) => tag.title === tagTitle,
@@ -1276,16 +1284,18 @@ export const TaggingActionsContextProvider = ({
       );
       if (!found) {
         newTagLibrary[indexToGroup].children.push(tag);
-        newTagLibrary[indexFromGroup].children = [
-          ...newTagLibrary[indexFromGroup].children.slice(
-            0,
-            tagIndexForRemoving,
-          ),
-          ...newTagLibrary[indexFromGroup].children.slice(
-            tagIndexForRemoving + 1,
-          ),
-        ];
-        return saveTagLibrary(newTagLibrary);
+        if (!newTagLibrary[indexFromGroup].readOnly) {
+          newTagLibrary[indexFromGroup].children = [
+            ...newTagLibrary[indexFromGroup].children.slice(
+              0,
+              tagIndexForRemoving,
+            ),
+            ...newTagLibrary[indexFromGroup].children.slice(
+              tagIndexForRemoving + 1,
+            ),
+          ];
+        }
+        saveTagLibrary(newTagLibrary);
       }
       console.log('Tag with this title already exists in the target tag group');
     }
