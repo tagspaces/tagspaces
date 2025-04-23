@@ -17,7 +17,6 @@
  */
 
 import { MoreMenuIcon, RemoveIcon } from '-/components/CommonIcons';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -28,11 +27,11 @@ interface Props {
 }
 
 function TagContainerMenu(props: Props) {
-  const { readOnlyMode } = useCurrentLocationContext();
+  //const { readOnlyMode } = useCurrentLocationContext();
   const { deleteIcon, tag, handleRemoveTag, tagMode } = props;
-  if (readOnlyMode) {
+  /*if (readOnlyMode) {
     return <div style={{ width: 10 }} />;
-  }
+  }*/
   if (tagMode === 'display') {
     return <div style={{ width: 10 }} />;
   }
