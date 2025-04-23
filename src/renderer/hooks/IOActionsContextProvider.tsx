@@ -1544,7 +1544,7 @@ export const IOActionsContextProvider = ({
       .catch((error) => {
         console.log(`Error while renaming file ${filePath}`, error);
         showNotification(
-          `Error while renaming file ${filePath}`,
+          `Error while renaming file ${filePath}: ` + error.message,
           'error',
           true,
         );
