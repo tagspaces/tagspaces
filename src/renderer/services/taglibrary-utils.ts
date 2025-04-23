@@ -11,7 +11,10 @@ export const tagLibraryKey = 'tsTagLibrary';
 
 export function getTagLibrary(): TS.TagGroup[] {
   if (window.ExtTagLibrary) {
-    return window.ExtTagLibrary;
+    return window.ExtTagLibrary.map((tagGroup) => ({
+      ...tagGroup,
+      readOnly: true,
+    }));
   }
   const item = localStorage.getItem(tagLibraryKey);
   if (item) {

@@ -909,6 +909,8 @@
   "engineName": "AI Engine Name",
   "maxCollectedTag": "Max Collected Tag",
   "aiChatTab": "AI Chat",
+  "aiChatForFolder": "AI Chat for this folder",
+  "aiChatForFolderDisabled": "AI Chat disabled for read-only folders",
   "yourMessageForAI": "Your message for the AI",
   "links": "Links",
   "outgoingLinks": "Outgoing Links",

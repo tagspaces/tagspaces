@@ -125,6 +125,8 @@ function TagGroupTitleDnD(props: Props) {
     return '';
   }
 
+  const readOnly = tagGroup.readOnly ? 'read-only ' : '';
+
   const tagGroupTitle = (
     <Box
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
@@ -133,7 +135,12 @@ function TagGroupTitleDnD(props: Props) {
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
       }}
-      title={'Number of tags in this tag group: ' + tagGroup.children.length}
+      title={
+        'Number of tags in this ' +
+        readOnly +
+        'tag group: ' +
+        tagGroup.children.length
+      }
     >
       <Grid
         container

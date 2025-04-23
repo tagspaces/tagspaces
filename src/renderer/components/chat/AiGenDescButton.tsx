@@ -32,6 +32,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type Props = TSButtonProps & {};
 
@@ -40,6 +41,7 @@ function AiGenDescButton(props: Props) {
   const { disabled } = props;
   const dispatch: AppDispatch = useDispatch();
   //const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { setDescriptionChange } = useIOActionsContext();
   const { descriptionGenerate } = useChatContext();
@@ -50,7 +52,11 @@ function AiGenDescButton(props: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //const openedEntryModel = getEntryModel(openedEntry?.name, defaultAiProvider);
-  if (!openedEntry || !openedEntry.isFile) {
+  if (
+    !openedEntry ||
+    !openedEntry.isFile ||
+    findLocation(openedEntry.locationID)?.isReadOnly
+  ) {
     //|| !openedEntryModel) {
     return null;
   }
