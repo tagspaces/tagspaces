@@ -179,6 +179,7 @@ export const SearchQueryContextProvider = ({
       <SaveSearchDialog
         open={saveSearchDialogOpened}
         onClose={() => {
+          tempSearchQuery.current = {};
           setSaveSearchDialogOpened(false);
         }}
       />
