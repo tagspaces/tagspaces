@@ -20,7 +20,6 @@ import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { MilkdownProvider } from '@milkdown/react';
 import { useTheme } from '@mui/material/styles';
@@ -28,8 +27,7 @@ import React, { useEffect, useRef } from 'react';
 
 function EditDescription() {
   const theme = useTheme();
-  const { openedEntry } = useOpenedEntryContext();
-  const { setDescription, setEditDescriptionMode } = useFilePropertiesContext();
+  const { setEditDescriptionMode } = useFilePropertiesContext();
 
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const fileDescriptionRef = useRef<CrepeRef>(null);
@@ -39,20 +37,6 @@ function EditDescription() {
       fileDescriptionRef.current?.destroy();
     };
   }, []);
-
-  const milkdownListener = React.useCallback(
-    (markdown: string) => {
-      if (markdown !== openedEntry.meta?.description) {
-        // description) {
-        //descriptionFocus.current &&
-        setDescription(markdown);
-        /*if (descriptionButtonsRef.current) {
-        descriptionButtonsRef.current.setDescriptionChanged(true);
-      }*/
-      }
-    },
-    [openedEntry],
-  );
 
   //const noDescription = !description || description.length < 1;
 
@@ -94,10 +78,7 @@ function EditDescription() {
           }`}
         </style>
         <MilkdownProvider>
-          <DescriptionMdEditor
-            ref={fileDescriptionRef}
-            onChange={milkdownListener}
-          />
+          <DescriptionMdEditor ref={fileDescriptionRef} />
         </MilkdownProvider>
       </div>
     </div>

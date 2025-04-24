@@ -15,10 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useRef, forwardRef } from 'react';
+import React, { useRef, forwardRef, useEffect } from 'react';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
-import { $useKeymap, $command } from '@milkdown/kit/utils';
+import { getMarkdown, $useKeymap, $command } from '@milkdown/kit/utils';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { createCrepeEditor } from '-/components/md/utils';
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
@@ -27,20 +27,26 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { replaceAll } from '@milkdown/utils';
 
 interface CrepeMdEditorProps {
-  onChange?: (markdown: string, prevMarkdown: string) => void;
+  //onChange?: (markdown: string, prevMarkdown: string) => void;
   onFocus?: () => void;
 }
 
 const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
   (props, ref) => {
-    const { onChange, onFocus } = props;
+    const { onFocus } = props;
     const { t } = useTranslation();
     const { currentDirectoryPath } = useDirectoryContentContext();
-    const { saveDescription, isEditDescriptionMode, description } =
-      useFilePropertiesContext();
-    const { openLink } = useOpenedEntryContext();
+    const {
+      saveDescription,
+      isEditDescriptionMode,
+      isDescriptionChanged,
+      description,
+      setDescription,
+    } = useFilePropertiesContext();
+    const { openedEntry, openLink } = useOpenedEntryContext();
     const crepeInstanceRef = useRef<Crepe>(undefined);
 
     const { get, loading } = useEditor(
@@ -48,6 +54,9 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
         /*if (crepeInstanceRef.current) {
           return crepeInstanceRef.current;
         }*/
+        const milkdownListener = (markdown: string) => {
+          setDescription(markdown);
+        };
         const placeholder = isEditDescriptionMode
           ? undefined
           : t(
@@ -63,7 +72,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
           placeholder,
           currentDirectoryPath,
           openLink,
-          onChange,
+          milkdownListener,
           onFocus,
         );
 
@@ -103,6 +112,22 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
       },
       [currentDirectoryPath, isEditDescriptionMode],
     );
+
+    useEffect(() => {
+      if (!isDescriptionChanged) {
+        const editor = get();
+        if (!loading && editor && editor.status === EditorStatus.Created) {
+          try {
+            const markdown = editor.action(getMarkdown());
+            if (markdown !== openedEntry.meta?.description) {
+              editor.action(replaceAll(openedEntry.meta?.description, true));
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
+    }, [openedEntry]);
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
 
