@@ -400,6 +400,7 @@
   "forceReindexing": "Force reindexing",
   "indexEmpty": "index is empty",
   "readonlyModeSwitch": "Open this location in read-only mode",
+  "readonlyModeSave": "Can't save in read-only mode",
   "persistIndexSwitch": "Switch to manual index creation with persisted search index",
   "disableIndexing": "Disable Indexing",
   "disableThumbnailGeneration": "Disable Thumbnail Generation",

@@ -112,13 +112,17 @@ export const FilePropertiesContextProvider = ({
       }
       //lastOpenedFile.current = undefined;
     }
+    isDescriptionChanged.current = false;
   }, [openedEntry]);
 
   function saveDescription(): Promise<boolean> {
     if (!lastOpenedFile.current) return Promise.resolve(false);
 
     const location = findLocation(lastOpenedFile.current.locationID);
-    if (!location || location.isReadOnly) return Promise.resolve(false);
+    if (!location || location.isReadOnly) {
+      showNotification(t('core:readonlyModeSave'));
+      return Promise.resolve(false);
+    }
 
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
