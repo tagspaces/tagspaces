@@ -72,11 +72,11 @@ export const SearchQueryContextProvider = ({
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery && Object.keys(searchQuery).length > 0) {
       tempSearchQuery.current = { ...searchQuery };
-    } else {
+    } /* else {
       tempSearchQuery.current = {};
-    }
+    }*/
     forceUpdate();
   }, [searchQuery]);
 
@@ -98,7 +98,7 @@ export const SearchQueryContextProvider = ({
 
   function clearSearch() {
     openCurrentDirectory().then(() => {
-      tempSearchQuery.current = {}; //...searchQuery };
+      //tempSearchQuery.current = {}; //...searchQuery };
       setSearchQuery({});
       exitSearchMode();
     });
@@ -150,6 +150,9 @@ export const SearchQueryContextProvider = ({
       );
       if (savedSearch) {
         setTempSearchQuery({ ...savedSearch }, true);
+      } else {
+        setTempSearchQuery({ uuid: undefined });
+        exitSearchMode();
       }
     } else {
       setTempSearchQuery({ uuid: undefined }, true);
