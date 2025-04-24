@@ -34,9 +34,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-const isTagLibraryReadOnly =
-  window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
-
 interface Props {
   anchorEl?: Element;
   open?: boolean;
@@ -121,7 +118,7 @@ function TagMenu(props: Props) {
               <ListItemText primary={t('core:applyTag')} />
             </MenuItem>
           )}
-          {!tagGroupReadOnly && !isSmartTag && !isTagLibraryReadOnly && (
+          {!tagGroupReadOnly && !isSmartTag && (
             <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
               <ListItemIcon>
                 <Edit />
@@ -129,7 +126,7 @@ function TagMenu(props: Props) {
               <ListItemText primary={t('core:editTag')} />
             </MenuItem>
           )}
-          {!tagGroupReadOnly && !isSmartTag && !isTagLibraryReadOnly && (
+          {!tagGroupReadOnly && !isSmartTag && (
             <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
               <ListItemIcon>
                 <DeleteIcon />

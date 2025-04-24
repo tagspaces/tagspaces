@@ -19,7 +19,6 @@
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
 import SidePanelTitle from '-/components/SidePanelTitle';
-import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagGroupContainer from '-/components/TagGroupContainer';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
@@ -75,13 +74,12 @@ function TagLibrary(props: Props) {
   } = useTaggingActionsContext();
   const { getTagGroups } = useTagGroupsLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { readOnlyMode, findLocation, locations } = useCurrentLocationContext();
+  const { findLocation, locations } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
 
   const toggleTagGroupDispatch = (uuid) =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
@@ -109,9 +107,6 @@ function TagLibrary(props: Props) {
     useState<boolean>(false);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const firstRender = useFirstRender();
-
-  const isTagLibraryReadOnly =
-    window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
 
   useEffect(() => {
     if (Pro && saveTagInLocation && firstRender) {
@@ -156,11 +151,6 @@ function TagLibrary(props: Props) {
   ) => {
     setTagGroupMenuAnchorEl(event.currentTarget);
     setSelectedTagGroupEntry(tagGroup);
-    /* this.setState({
-      tagGroupMenuOpened: true,
-      tagGroupMenuAnchorEl: event.currentTarget,
-      selectedTagGroupEntry: tagGroup
-    }); */
   };
 
   const handleTagMenuCallback = useCallback(
@@ -192,10 +182,6 @@ function TagLibrary(props: Props) {
 
   const handleTagLibraryMenu = (event: any) => {
     setTagLibraryMenuAnchorEl(event.currentTarget);
-    /* this.setState({
-      tagLibraryMenuOpened: true,
-      tagLibraryMenuAnchorEl: event.currentTarget
-    }); */
   };
 
   const showCreateTagGroupDialog = () => {
@@ -238,7 +224,7 @@ function TagLibrary(props: Props) {
           handleTagGroupMenu={handleTagGroupMenu}
           toggleTagGroup={toggleTagGroupDispatch}
           tagGroupCollapsed={tagGroupCollapsed}
-          isReadOnly={tagGroup.readOnly || isTagLibraryReadOnly}
+          isReadOnly={tagGroup.readOnly}
         />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer taggroup={tagGroup}>
@@ -246,17 +232,6 @@ function TagLibrary(props: Props) {
               tagGroup.children.map((tag: TS.Tag, idx) => {
                 const isSmartTag =
                   tag.functionality && tag.functionality.length > 0;
-                if (readOnlyMode) {
-                  return (
-                    <TagContainer
-                      key={tagGroup.uuid + tag.title}
-                      tag={tag}
-                      tagGroup={tagGroup}
-                      tagMode={isSmartTag ? 'display' : 'default'}
-                      handleTagMenu={handleTagMenuCallback}
-                    />
-                  );
-                }
                 return (
                   <TagContainerDnd
                     key={tagGroup.uuid + tag.title}
@@ -315,7 +290,7 @@ function TagLibrary(props: Props) {
           ' tag groups'
         }
         menuButton={
-          !isTagLibraryReadOnly && (
+          tagGroups.some((tg) => !tg.readOnly) && (
             <TsIconButton
               data-tid="tagLibraryMenu"
               onClick={handleTagLibraryMenu}

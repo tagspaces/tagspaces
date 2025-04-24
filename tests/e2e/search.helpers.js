@@ -102,8 +102,7 @@ export async function createSavedSearch(searchQuery) {
   await expectElementExist('#searchTerm');
   await global.client.dblclick('#searchTerm');
   await typeInputValue('#searchTerm', searchQuery.textQuery, 0);
-  //await typeInputValue('#textQuery', searchQuery.textQuery, 10);
-  //await clickOn('#searchButton');
+
   await clickOn('#searchButtonAdvTID');
   await clickOn('[data-tid=advancedSearch]');
   await clickOn('[data-tid=addSearchBtnTID]');
@@ -111,7 +110,7 @@ export async function createSavedSearch(searchQuery) {
   await global.client.dblclick('[data-tid=savedSearchTID]');
   await typeInputValue('[data-tid=savedSearchTID] input', searchQuery.title, 0);
   await clickOn('[data-tid=confirmSavedSearchTID]');
-  await clickOn('[data-tid=closeSearchTID]');
+  //await clickOn('[data-tid=closeSearchTID]');
 }
 
 export async function addRemoveTagsInSearchResults(

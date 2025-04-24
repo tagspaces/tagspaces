@@ -29,6 +29,7 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
@@ -69,13 +70,13 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
+  const { findLocation } = useCurrentLocationContext();
   const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
-    setSearchQuery,
     currentDirectoryEntries,
     currentDirectoryPath,
     getPerspective,
@@ -179,6 +180,7 @@ function FolderContainer(props: Props) {
 
   const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const readOnlyLocation = findLocation()?.isReadOnly;
 
   return (
     <div
@@ -343,24 +345,34 @@ function FolderContainer(props: Props) {
         >
           {perspectiveToggleButtons}
           {aiDefaultProvider && (
-            <ToggleButton
-              value=""
-              aria-label="chat-label"
-              data-tid="chatTID"
-              style={{
-                marginLeft: 5,
-                borderColor: theme.palette.divider,
-                color: theme.palette.primary.main,
-                backgroundColor: theme.palette.background.default,
-              }}
-              onClick={() => {
-                openEntry(currentDirectoryPath, TabNames.aiTab);
-              }}
+            <Tooltip
+              title={
+                readOnlyLocation
+                  ? t('core:aiChatForFolderDisabled')
+                  : t('core:aiChatForFolder')
+              }
             >
-              <Tooltip title="AI Chat for this folder">
+              <ToggleButton
+                value=""
+                // disabled={readOnlyLocation}
+                aria-label="chat-label"
+                data-tid="chatTID"
+                style={{
+                  marginLeft: 5,
+                  borderColor: theme.palette.divider,
+                  ...(!readOnlyLocation && {
+                    color: theme.palette.primary.main,
+                  }),
+                  backgroundColor: theme.palette.background.default,
+                }}
+                onClick={() => {
+                  if (readOnlyLocation) return;
+                  openEntry(currentDirectoryPath, TabNames.aiTab);
+                }}
+              >
                 <ChatIcon />
-              </Tooltip>
-            </ToggleButton>
+              </ToggleButton>
+            </Tooltip>
           )}
         </ToggleButtonGroup>
       )}

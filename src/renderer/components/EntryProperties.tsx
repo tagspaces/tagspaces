@@ -391,8 +391,10 @@ function EntryProperties(props: Props) {
       color = 'transparent';
     }
     //openedEntry.color = color;
-    setBackgroundColorChange(openedEntry, color).then(() => {
-      openedEntry.meta = { ...openedEntry.meta, color };
+    setBackgroundColorChange(openedEntry, color).then((success) => {
+      if (success) {
+        openedEntry.meta = { ...openedEntry.meta, color };
+      }
     });
   };
 

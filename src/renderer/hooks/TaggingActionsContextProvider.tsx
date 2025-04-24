@@ -372,6 +372,91 @@ export const TaggingActionsContextProvider = ({
     return Promise.resolve(true);
   }
 
+  function saveMataDataTags(
+    entry: TS.FileSystemEntry,
+    updatedFsEntryMeta: TS.FileSystemEntryMeta,
+    reflect = true,
+  ): Promise<TS.FileSystemEntry> {
+    return saveMetaDataPromise(entry, updatedFsEntryMeta)
+      .then((meta) => {
+        if (reflect) {
+          reflectUpdateMeta({ ...entry, meta });
+        }
+        return { ...entry, meta };
+      })
+      .catch((err) => {
+        console.log('Error adding tags for ' + entry.path + ' with ' + err);
+        showNotification(
+          t('core:addingTagsFailed') + ': ' + err.message,
+          'error',
+          true,
+        );
+        return entry;
+      });
+  }
+
+  function renameFileTags(
+    entry: TS.FileSystemEntry,
+    newFilePath: string,
+    reflect = true,
+  ): Promise<TS.FileSystemEntry> {
+    return renameFile(entry.path, newFilePath, entry.locationID, reflect)
+      .then((success) => {
+        return success
+          ? {
+              ...entry,
+              tags: extractTagsAsObjects(
+                newFilePath,
+                tagDelimiter,
+                currentLocation?.getDirSeparator(),
+              ),
+              name: extractFileName(
+                newFilePath,
+                currentLocation?.getDirSeparator(),
+              ),
+              path: newFilePath,
+            }
+          : undefined;
+      })
+      .catch((err) => {
+        console.log('Error adding tags for ' + entry.path + ' with ' + err);
+        showNotification(
+          t('core:addingTagsFailed') + ': ' + err.message,
+          'error',
+          true,
+        );
+        return entry;
+      });
+  }
+
+  function getNonExistingTags(
+    newTagsArray: Array<TS.Tag>,
+    fileTagsArray: string[],
+    sideCarTagsArray: Array<TS.Tag>,
+  ): TS.Tag[] {
+    const newTags = [];
+    if (newTagsArray) {
+      for (let i = 0; i < newTagsArray.length; i += 1) {
+        // check if tag is already in the fileTagsArray
+        if (
+          !fileTagsArray ||
+          fileTagsArray.indexOf(newTagsArray[i].title) === -1
+        ) {
+          // check if tag is already in the sideCarTagsArray
+          if (
+            !sideCarTagsArray ||
+            sideCarTagsArray.findIndex(
+              (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
+            ) === -1
+          ) {
+            newTags.push(newTagsArray[i]);
+          }
+        }
+      }
+    }
+    return newTags;
+  }
+
   /**
    * @param entry: TS.FileSystemEntry
    * @param tags
@@ -389,14 +474,6 @@ export const TaggingActionsContextProvider = ({
       if (collectTags) {
         collectTagsToLibrary(tags);
       }
-      /*let fsEntryMeta;
-      try {
-        fsEntryMeta = entry.isFile
-          ? await currentLocation.loadFileMetaDataPromise(entry.path)
-          : await currentLocation.loadDirMetaDataPromise(entry.path);
-      } catch (error) {
-        console.log('No sidecar found ' + error);
-      }*/
 
       if (!entry.isFile || persistTagsInSidecarFile) {
         // Handling adding tags in sidecar
@@ -425,45 +502,14 @@ export const TaggingActionsContextProvider = ({
               ...entry.meta,
               tags: newTags,
             };
-            return saveMetaDataPromise(entry, updatedFsEntryMeta)
-              .then(() => {
-                if (reflect) {
-                  reflectUpdateMeta({ ...entry, meta: updatedFsEntryMeta });
-                }
-                return { ...entry, meta: updatedFsEntryMeta };
-              })
-              .catch((err) => {
-                console.log(
-                  'Error adding tags for ' + entry.path + ' with ' + err,
-                );
-                showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true,
-                );
-                return entry;
-              });
+            return saveMataDataTags(entry, updatedFsEntryMeta, reflect);
           }
         } else {
-          const newFsEntryMeta = { tags };
-          return saveMetaDataPromise(entry, newFsEntryMeta)
-            .then((meta) => {
-              if (reflect) {
-                reflectUpdateMeta({ ...entry, meta });
-              }
-              return { ...entry, meta };
-            })
-            .catch((error) => {
-              console.log(
-                'Error adding tags for ' + entry.path + ' with ' + error,
-              );
-              showNotification(
-                t('core:addingTagsFailed' as any) as string,
-                'error',
-                true,
-              );
-              return entry;
-            });
+          const newFsEntryMeta: TS.FileSystemEntryMeta = {
+            id: getUuid(),
+            tags,
+          };
+          return saveMataDataTags(entry, newFsEntryMeta, reflect);
         }
       } else if (entry.meta) {
         // Handling tags in filename by existing sidecar
@@ -483,28 +529,7 @@ export const TaggingActionsContextProvider = ({
             uniqueTags.map((tag) => tag.title),
           );
           if (entry.path !== newFilePath) {
-            return renameFile(
-              entry.path,
-              newFilePath,
-              entry.locationID,
-              reflect,
-            ).then((success) => {
-              return success
-                ? {
-                    ...entry,
-                    tags: extractTagsAsObjects(
-                      newFilePath,
-                      tagDelimiter,
-                      currentLocation?.getDirSeparator(),
-                    ),
-                    name: extractFileName(
-                      newFilePath,
-                      currentLocation?.getDirSeparator(),
-                    ),
-                    path: newFilePath,
-                  }
-                : undefined;
-            });
+            return renameFileTags(entry, newFilePath, reflect);
           }
         }
       } else {
@@ -514,59 +539,10 @@ export const TaggingActionsContextProvider = ({
           tags.map((tag) => tag.title),
         );
         if (entry.path !== newFilePath) {
-          return renameFile(
-            entry.path,
-            newFilePath,
-            entry.locationID,
-            reflect,
-          ).then((success) => {
-            return success
-              ? {
-                  ...entry,
-                  tags: extractTagsAsObjects(
-                    newFilePath,
-                    tagDelimiter,
-                    currentLocation?.getDirSeparator(),
-                  ),
-                  name: extractFileName(
-                    newFilePath,
-                    currentLocation?.getDirSeparator(),
-                  ),
-                  path: newFilePath,
-                }
-              : undefined;
-          });
+          return renameFileTags(entry, newFilePath, reflect);
         }
       }
       return Promise.resolve(entry);
-
-      function getNonExistingTags(
-        newTagsArray: Array<TS.Tag>,
-        fileTagsArray: string[],
-        sideCarTagsArray: Array<TS.Tag>,
-      ): TS.Tag[] {
-        const newTags = [];
-        if (newTagsArray) {
-          for (let i = 0; i < newTagsArray.length; i += 1) {
-            // check if tag is already in the fileTagsArray
-            if (
-              !fileTagsArray ||
-              fileTagsArray.indexOf(newTagsArray[i].title) === -1
-            ) {
-              // check if tag is already in the sideCarTagsArray
-              if (
-                !sideCarTagsArray ||
-                sideCarTagsArray.findIndex(
-                  (sideCarTag) => sideCarTag.title === newTagsArray[i].title,
-                ) === -1
-              ) {
-                newTags.push(newTagsArray[i]);
-              }
-            }
-          }
-        }
-        return newTags;
-      }
     }
     return Promise.resolve(undefined);
   }
@@ -757,7 +733,7 @@ export const TaggingActionsContextProvider = ({
               tagGroup.children.findIndex((obj) => obj.title === tag.title) !==
               -1,
           ) === -1 &&
-          !/^(?:\d+~\d+|\d+)$/.test(tag.title) &&
+          !/^(?:\d{8}T\d{6}|\d+~\d+|\d+)$/.test(tag.title) &&
           !isGeoTag(tag.title),
       ); // skip adding of tag containing only digits or geo tags
 
@@ -1261,6 +1237,14 @@ export const TaggingActionsContextProvider = ({
         indexToGroup = index;
       }
     });
+    if (tagGroups[indexToGroup] && tagGroups[indexToGroup].readOnly) {
+      showNotification(
+        'Error move tag. Read only Tag Group: ' + tagGroups[indexToGroup].title,
+        'error',
+        true,
+      );
+      return;
+    }
     if (indexFromGroup >= 0 && tagGroups[indexFromGroup].children) {
       tagIndexForRemoving = tagGroups[indexFromGroup].children.findIndex(
         (tag) => tag.title === tagTitle,
@@ -1276,16 +1260,18 @@ export const TaggingActionsContextProvider = ({
       );
       if (!found) {
         newTagLibrary[indexToGroup].children.push(tag);
-        newTagLibrary[indexFromGroup].children = [
-          ...newTagLibrary[indexFromGroup].children.slice(
-            0,
-            tagIndexForRemoving,
-          ),
-          ...newTagLibrary[indexFromGroup].children.slice(
-            tagIndexForRemoving + 1,
-          ),
-        ];
-        return saveTagLibrary(newTagLibrary);
+        if (!newTagLibrary[indexFromGroup].readOnly) {
+          newTagLibrary[indexFromGroup].children = [
+            ...newTagLibrary[indexFromGroup].children.slice(
+              0,
+              tagIndexForRemoving,
+            ),
+            ...newTagLibrary[indexFromGroup].children.slice(
+              tagIndexForRemoving + 1,
+            ),
+          ];
+        }
+        saveTagLibrary(newTagLibrary);
       }
       console.log('Tag with this title already exists in the target tag group');
     }

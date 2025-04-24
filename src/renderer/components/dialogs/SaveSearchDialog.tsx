@@ -37,6 +37,10 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import EditSearchQuery from '-/components/EditSearchQuery';
+import { usePanelsContext } from '-/hooks/usePanelsContext';
+import { AppDispatch } from '-/reducers/app';
+import { useDispatch } from 'react-redux';
+import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
@@ -47,6 +51,7 @@ function SaveSearchDialog(props: Props) {
   const { open, onClose } = props;
   const { searches, addSearch, editSearch, removeSearch } =
     useSavedSearchesContext();
+  const { showPanel } = usePanelsContext();
   const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -54,6 +59,7 @@ function SaveSearchDialog(props: Props) {
   const inputError = useRef<string>(undefined);
   const title = useRef<string>(getTitle());
   const titleChanged = useRef<boolean>(false);
+  const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -97,6 +103,9 @@ function SaveSearchDialog(props: Props) {
         addSearch(searchQuery);
         onClose();
       }
+
+      showPanel('searchPanel');
+      dispatch(SettingsActions.setStoredSearchesVisible(true));
     }
   }
 

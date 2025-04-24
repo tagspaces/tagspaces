@@ -188,7 +188,7 @@ function SearchPopover(props: Props) {
               <TsIconButton
                 tooltip={t('createNewSavedSearchTitle')}
                 data-tid="addSearchBtnTID"
-                onClick={() => openSaveSearchDialog()}
+                onClick={() => openSaveSearchDialog('new_from_search')}
               >
                 <CreateFileIcon />
               </TsIconButton>

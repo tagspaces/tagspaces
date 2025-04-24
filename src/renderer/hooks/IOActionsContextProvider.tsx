@@ -1544,7 +1544,7 @@ export const IOActionsContextProvider = ({
       .catch((error) => {
         console.log(`Error while renaming file ${filePath}`, error);
         showNotification(
-          `Error while renaming file ${filePath}`,
+          `Error while renaming file ${filePath}: ` + error.message,
           'error',
           true,
         );
@@ -1687,12 +1687,18 @@ export const IOActionsContextProvider = ({
         { path: metaFilePath, locationID: entry.locationID },
         content,
         true,
-      ).then((success) => {
-        if (success) {
-          reflectUpdateSidecarMeta(entry.path, meta);
-        }
-        return meta;
-      });
+      )
+        .then((success) => {
+          if (success) {
+            reflectUpdateSidecarMeta(entry.path, meta);
+          }
+          return meta;
+        })
+        .catch((err) => {
+          console.log('Error ' + entry.path + ' with ' + err);
+          showNotification('Error: ' + err.message, 'error', true);
+          return undefined;
+        });
     }
     return Promise.reject(new Error('file not found' + entry.path));
   }

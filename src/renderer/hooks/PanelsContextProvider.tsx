@@ -65,8 +65,10 @@ export const PanelsContextProvider = ({
   }, []);
 
   function showPanel(panel: PanelType) {
-    currentOpenedPanel.current = panel;
-    forceUpdate();
+    if (currentOpenedPanel.current !== panel) {
+      currentOpenedPanel.current = panel;
+      forceUpdate();
+    }
   }
 
   const context = useMemo(() => {

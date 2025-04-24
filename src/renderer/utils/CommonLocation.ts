@@ -551,6 +551,9 @@ export class CommonLocation implements TS.Location {
     onProgress = undefined,
     force = false,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.renameFilePromise(
@@ -581,6 +584,9 @@ export class CommonLocation implements TS.Location {
     dirPath: string,
     newDirName: string,
   ): Promise<any> => {
+    if (this.isReadOnly) {
+      return Promise.reject(new Error('read only Location'));
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.renameDirectoryPromise(
