@@ -74,6 +74,7 @@ declare interface Window {
   ExtExtensionsFound?: Array<any>;
   ExtSearchTypeGroups?: any;
   ExtDefaultMapBounds?: any;
+  ExtUseOnlyTagsFromTagLibrary?: boolean;
 }
 
 declare interface NodeModule {

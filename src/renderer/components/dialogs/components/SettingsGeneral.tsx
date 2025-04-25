@@ -312,6 +312,31 @@ function SettingsGeneral() {
           checked={settings.addTagsToLibrary}
         />
       </ListItem>
+      <ListItem
+        title={
+          window.ExtUseOnlyTagsFromTagLibrary !== undefined
+            ? t('core:settingExternallyConfigured')
+            : ''
+        }
+      >
+        <ListItemText primary={t('core:useOnlyTagsFromTagLibrary')} />
+        <Switch
+          disabled={window.ExtUseOnlyTagsFromTagLibrary !== undefined}
+          data-tid="useOnlyTagsFromTagLibraryTID"
+          onClick={() =>
+            dispatch(
+              SettingsActions.setUseOnlyTagsFromTagLibrary(
+                !settings.useOnlyTagsFromTagLibrary,
+              ),
+            )
+          }
+          checked={
+            window.ExtUseOnlyTagsFromTagLibrary !== undefined
+              ? window.ExtUseOnlyTagsFromTagLibrary
+              : settings.useOnlyTagsFromTagLibrary
+          }
+        />
+      </ListItem>
       <ListItem>
         <ListItemText primary={t('core:useGenerateThumbnails')} />
         <Switch
