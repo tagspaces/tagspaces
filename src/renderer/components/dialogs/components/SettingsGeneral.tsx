@@ -312,10 +312,16 @@ function SettingsGeneral() {
           checked={settings.addTagsToLibrary}
         />
       </ListItem>
-      <ListItem>
+      <ListItem
+        title={
+          window.ExtUseOnlyTagsFromTagLibrary !== undefined
+            ? t('core:settingExternallyConfigured')
+            : ''
+        }
+      >
         <ListItemText primary={t('core:useOnlyTagsFromTagLibrary')} />
         <Switch
-          disabled={AppConfig.useOnlyTagsFromTagLibrary !== undefined}
+          disabled={window.ExtUseOnlyTagsFromTagLibrary !== undefined}
           data-tid="useOnlyTagsFromTagLibraryTID"
           onClick={() =>
             dispatch(
@@ -325,8 +331,8 @@ function SettingsGeneral() {
             )
           }
           checked={
-            AppConfig.useOnlyTagsFromTagLibrary !== undefined
-              ? AppConfig.useOnlyTagsFromTagLibrary
+            window.ExtUseOnlyTagsFromTagLibrary !== undefined
+              ? window.ExtUseOnlyTagsFromTagLibrary
               : settings.useOnlyTagsFromTagLibrary
           }
         />
