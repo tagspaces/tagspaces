@@ -25,7 +25,7 @@ import {
   getTagColor,
   getTagTextColor,
   isDesktopMode,
-  freeSoloTags,
+  useOnlyTagsFromTagLibrary,
 } from '-/reducers/settings';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { tagsValidation } from '-/services/utils-io';
@@ -56,7 +56,7 @@ function TagsSelect(props: Props) {
   const { t } = useTranslation();
   const { readOnlyMode } = useCurrentLocationContext();
   const desktopMode = useSelector(isDesktopMode);
-  const freeSolo = useSelector(freeSoloTags);
+  const isUseOnlyTagsFromTagLibrary = useSelector(useOnlyTagsFromTagLibrary);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null,
   );
@@ -180,7 +180,7 @@ function TagsSelect(props: Props) {
         multiple
         options={!readOnlyMode ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
-        freeSolo={!freeSolo}
+        freeSolo={!isUseOnlyTagsFromTagLibrary}
         disableClearable={true}
         autoSelect
         autoComplete

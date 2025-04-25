@@ -318,12 +318,16 @@ function SettingsGeneral() {
           disabled={AppConfig.useOnlyTagsFromTagLibrary !== undefined}
           data-tid="useOnlyTagsFromTagLibraryTID"
           onClick={() =>
-            dispatch(SettingsActions.setFreeSoloTags(!settings.freeSoloTags))
+            dispatch(
+              SettingsActions.setUseOnlyTagsFromTagLibrary(
+                !settings.useOnlyTagsFromTagLibrary,
+              ),
+            )
           }
           checked={
             AppConfig.useOnlyTagsFromTagLibrary !== undefined
               ? AppConfig.useOnlyTagsFromTagLibrary
-              : settings.freeSoloTags
+              : settings.useOnlyTagsFromTagLibrary
           }
         />
       </ListItem>
