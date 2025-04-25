@@ -74,7 +74,6 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
-import { useEditedKanBanMetaContext } from '-/hooks/useEditedKanBanMetaContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import useFirstRender from '-/utils/useFirstRender';
@@ -289,9 +288,12 @@ export const IOActionsContextProvider = ({
   } = usePlatformFacadeContext();
   const { actions, setReflectActions } = useEditedEntryContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
-  const { setReflectKanBanActions } = useEditedKanBanMetaContext();
-  const { currentDirectoryPath, openDirectory, getAllPropertiesPromise } =
-    useDirectoryContentContext();
+  const {
+    currentDirectoryPath,
+    openDirectory,
+    getAllPropertiesPromise,
+    setCurrentDirectoryDirs,
+  } = useDirectoryContentContext();
   const { findLocation, getFirstRWLocation } = useCurrentLocationContext();
   const { reflectUpdateSidecarMeta } = useLocationIndexContext();
   const warningOpeningFilesExternally = useSelector(
@@ -2084,11 +2086,15 @@ export const IOActionsContextProvider = ({
           if (updatedFsEntryMeta) {
             saveCurrentLocationMetaData(currentDirPath, updatedFsEntryMeta)
               .then(() => {
-                const action: TS.KanBanMetaActions = {
+                const folders = updatedFsEntryMeta.customOrder?.folders;
+                if (folders) {
+                  setCurrentDirectoryDirs(folders);
+                }
+                /* const action: TS.KanBanMetaActions = {
                   action: 'directoryVisibilityChange',
                   meta: updatedFsEntryMeta,
                 };
-                setReflectKanBanActions(action);
+                setReflectKanBanActions(action);*/
               })
               .catch((err) => {
                 console.log(
@@ -2184,11 +2190,15 @@ export const IOActionsContextProvider = ({
 
             saveCurrentLocationMetaData(parentDirectory, updatedFsEntryMeta)
               .then(() => {
-                const action: TS.KanBanMetaActions = {
+                const folders = updatedFsEntryMeta.customOrder?.folders;
+                if (folders) {
+                  setCurrentDirectoryDirs(folders);
+                }
+                /*const action: TS.KanBanMetaActions = {
                   action: 'directoryVisibilityChange',
                   meta: updatedFsEntryMeta,
                 };
-                setReflectKanBanActions(action);
+                setReflectKanBanActions(action);*/
               })
               .catch((err) => {
                 console.log(

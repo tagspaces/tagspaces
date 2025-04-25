@@ -142,10 +142,10 @@ export namespace TS {
     action: 'openNext' | 'openPrevious' | 'reload';
   }
 
-  interface KanBanMetaActions {
+  /*  interface KanBanMetaActions {
     action: 'directoryVisibilityChange';
     meta: TS.FileSystemEntryMeta;
-  }
+  }*/
 
   interface Tag {
     title?: string;

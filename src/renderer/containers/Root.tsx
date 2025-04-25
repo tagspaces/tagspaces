@@ -42,7 +42,6 @@ import { DndProvider } from 'react-dnd';
 import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
 import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
 import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
-import { EditedKanBanMetaContextProvider } from '-/hooks/EditedKanBanMetaContextProvider';
 import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
 import { Pro } from '-/pro';
 import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
@@ -83,65 +82,63 @@ export default function Root({ store, persistor }: RootType) {
             <EditedEntryMetaContextProvider>
               <EditedTagLibraryContextProvider>
                 <PerspectiveActionsContextProvider>
-                  <EditedKanBanMetaContextProvider>
-                    <SelectedEntryContextProvider>
-                      <DirectoryContentContextProvider>
-                        <FSWatcherContextProvider>
-                          <PlatformFacadeContextProvider>
-                            <LocationIndexContextProvider>
-                              <IOActionsContextProvider>
-                                <EntryPropsTabsContextProvider>
-                                  <OpenedEntryContextProvider>
-                                    <TagGroupsLocationContextProvider>
-                                      <TaggingActionsContextProvider>
-                                        <DndProvider backend={HTML5Backend}>
-                                          <ExtensionsContextProvider>
-                                            <PanelsContextProvider>
-                                              <UserContextProvider>
-                                                <SavedSearchesContextProvider>
-                                                  <SearchQueryContextProvider>
-                                                    <BrowserHistoryContextProvider>
-                                                      <FileUploadDialogContextProvider>
-                                                        <ChatContextProvider>
-                                                          <HistoryContextProvider>
-                                                            {Pro ? (
-                                                              <Pro.contextProviders.BookmarksContextProvider>
-                                                                <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                  <Pro.contextProviders.ThumbDialogContextProvider>
-                                                                    <Pro.contextProviders.BgndDialogContextProvider>
-                                                                      <DialogsRoot>
-                                                                        <MainPage />
-                                                                      </DialogsRoot>
-                                                                    </Pro.contextProviders.BgndDialogContextProvider>
-                                                                  </Pro.contextProviders.ThumbDialogContextProvider>
-                                                                </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                              </Pro.contextProviders.BookmarksContextProvider>
-                                                            ) : (
-                                                              <DialogsRoot>
-                                                                <MainPage />
-                                                              </DialogsRoot>
-                                                            )}
-                                                          </HistoryContextProvider>
-                                                        </ChatContextProvider>
-                                                      </FileUploadDialogContextProvider>
-                                                    </BrowserHistoryContextProvider>
-                                                  </SearchQueryContextProvider>
-                                                </SavedSearchesContextProvider>
-                                              </UserContextProvider>
-                                            </PanelsContextProvider>
-                                          </ExtensionsContextProvider>
-                                        </DndProvider>
-                                      </TaggingActionsContextProvider>
-                                    </TagGroupsLocationContextProvider>
-                                  </OpenedEntryContextProvider>
-                                </EntryPropsTabsContextProvider>
-                              </IOActionsContextProvider>
-                            </LocationIndexContextProvider>
-                          </PlatformFacadeContextProvider>
-                        </FSWatcherContextProvider>
-                      </DirectoryContentContextProvider>
-                    </SelectedEntryContextProvider>
-                  </EditedKanBanMetaContextProvider>
+                  <SelectedEntryContextProvider>
+                    <DirectoryContentContextProvider>
+                      <FSWatcherContextProvider>
+                        <PlatformFacadeContextProvider>
+                          <LocationIndexContextProvider>
+                            <IOActionsContextProvider>
+                              <EntryPropsTabsContextProvider>
+                                <OpenedEntryContextProvider>
+                                  <TagGroupsLocationContextProvider>
+                                    <TaggingActionsContextProvider>
+                                      <DndProvider backend={HTML5Backend}>
+                                        <ExtensionsContextProvider>
+                                          <PanelsContextProvider>
+                                            <UserContextProvider>
+                                              <SavedSearchesContextProvider>
+                                                <SearchQueryContextProvider>
+                                                  <BrowserHistoryContextProvider>
+                                                    <FileUploadDialogContextProvider>
+                                                      <ChatContextProvider>
+                                                        <HistoryContextProvider>
+                                                          {Pro ? (
+                                                            <Pro.contextProviders.BookmarksContextProvider>
+                                                              <Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                                <Pro.contextProviders.ThumbDialogContextProvider>
+                                                                  <Pro.contextProviders.BgndDialogContextProvider>
+                                                                    <DialogsRoot>
+                                                                      <MainPage />
+                                                                    </DialogsRoot>
+                                                                  </Pro.contextProviders.BgndDialogContextProvider>
+                                                                </Pro.contextProviders.ThumbDialogContextProvider>
+                                                              </Pro.contextProviders.KanBanImportDialogContextProvider>
+                                                            </Pro.contextProviders.BookmarksContextProvider>
+                                                          ) : (
+                                                            <DialogsRoot>
+                                                              <MainPage />
+                                                            </DialogsRoot>
+                                                          )}
+                                                        </HistoryContextProvider>
+                                                      </ChatContextProvider>
+                                                    </FileUploadDialogContextProvider>
+                                                  </BrowserHistoryContextProvider>
+                                                </SearchQueryContextProvider>
+                                              </SavedSearchesContextProvider>
+                                            </UserContextProvider>
+                                          </PanelsContextProvider>
+                                        </ExtensionsContextProvider>
+                                      </DndProvider>
+                                    </TaggingActionsContextProvider>
+                                  </TagGroupsLocationContextProvider>
+                                </OpenedEntryContextProvider>
+                              </EntryPropsTabsContextProvider>
+                            </IOActionsContextProvider>
+                          </LocationIndexContextProvider>
+                        </PlatformFacadeContextProvider>
+                      </FSWatcherContextProvider>
+                    </DirectoryContentContextProvider>
+                  </SelectedEntryContextProvider>
                 </PerspectiveActionsContextProvider>
               </EditedTagLibraryContextProvider>
             </EditedEntryMetaContextProvider>
