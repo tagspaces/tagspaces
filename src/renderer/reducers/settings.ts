@@ -42,6 +42,7 @@ export const types = {
   SET_ENTRY_CONTAINER_TAB: 'SETTINGS/SET_ENTRY_CONTAINER_TAB',
   //SET_SHOW_DETAILS: 'SETTINGS/SET_SHOW_DETAILS',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_FREESOLOTAGS: 'SETTINGS/SET_FREESOLOTAGS',
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
   SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
@@ -184,6 +185,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_FREESOLOTAGS: {
+      return { ...state, freeSoloTags: action.freeSoloTags };
     }
     case types.SET_DEVMODE: {
       return { ...state, devMode: action.devMode };
@@ -614,6 +618,10 @@ export const actions = {
   setDesktopMode: (desktopMode: boolean) => ({
     type: types.SET_DESKTOPMODE,
     desktopMode,
+  }),
+  setFreeSoloTags: (freeSoloTags: boolean) => ({
+    type: types.SET_FREESOLOTAGS,
+    freeSoloTags,
   }),
   setDevMode: (devMode: boolean) => ({
     type: types.SET_DEVMODE,
@@ -1061,6 +1069,7 @@ export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
 export const isDesktopMode = (state: any) => state.settings.desktopMode;
+export const freeSoloTags = (state: any) => state.settings.freeSoloTags;
 export const getStoredSearchesVisible = (state: any) =>
   state.settings.storedSearchesVisible;
 export const getShowBookmarks = (state: any) => state.settings.showBookmarks;

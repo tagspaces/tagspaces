@@ -313,6 +313,21 @@ function SettingsGeneral() {
         />
       </ListItem>
       <ListItem>
+        <ListItemText primary={t('core:useOnlyTagsFromTagLibrary')} />
+        <Switch
+          disabled={AppConfig.useOnlyTagsFromTagLibrary !== undefined}
+          data-tid="useOnlyTagsFromTagLibraryTID"
+          onClick={() =>
+            dispatch(SettingsActions.setFreeSoloTags(!settings.freeSoloTags))
+          }
+          checked={
+            AppConfig.useOnlyTagsFromTagLibrary !== undefined
+              ? AppConfig.useOnlyTagsFromTagLibrary
+              : settings.freeSoloTags
+          }
+        />
+      </ListItem>
+      <ListItem>
         <ListItemText primary={t('core:useGenerateThumbnails')} />
         <Switch
           disabled={AppConfig.useGenerateThumbnails !== undefined}
