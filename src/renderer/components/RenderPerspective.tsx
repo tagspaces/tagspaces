@@ -150,12 +150,9 @@ function WelcomePanelAsync(props) {
   );
 }
 
-interface Props {
-  openRenameEntryDialog: () => void;
-}
+interface Props {}
 
 function RenderPerspective(props: Props) {
-  const { openRenameEntryDialog } = props;
   const { currentLocationId } = useCurrentLocationContext();
   const { getPerspective } = useDirectoryContentContext();
   const { metaActions } = useEditedEntryMetaContext();
@@ -182,9 +179,7 @@ function RenderPerspective(props: Props) {
   function getPerspectiveComponent() {
     const perspective = getPerspective();
     if (perspective === PerspectiveIDs.LIST) {
-      return (
-        <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-      );
+      return <ListPerspectiveAsync />;
     }
     if (Pro && perspective === PerspectiveIDs.GALLERY) {
       return <GalleryPerspectiveAsync />;
@@ -193,17 +188,13 @@ function RenderPerspective(props: Props) {
       return <MapiquePerspectiveAsync />;
     }
     if (Pro && perspective === PerspectiveIDs.KANBAN) {
-      return (
-        <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-      );
+      return <KanBanPerspectiveAsync />;
     }
     if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
       return <FolderVizPerspectiveAsync />;
     }
 
-    return (
-      <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
+    return <GridPerspectiveAsync />;
   }
   const { FILE } = NativeTypes;
   return (

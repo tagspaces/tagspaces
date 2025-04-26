@@ -38,7 +38,7 @@ import { useSelector } from 'react-redux';
 
 export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
-  selectedEntriesLength: number,
+  selectedEntries: TS.FileSystemEntry[],
   perspectiveMode: boolean,
   isReadOnlyMode: boolean,
   onClose: () => void,
@@ -46,7 +46,7 @@ export function getDirectoryMenuItems(
   openDirectory?: () => void,
   reloadDirectory?: () => void,
   showRenameDirectoryDialog?: () => void,
-  openMoveCopyDialog?: () => void,
+  openMoveCopyDialog?: (entries?: TS.FileSystemEntry[]) => void,
   showDeleteDirectoryDialog?: () => void,
   showInFileManager?: () => void,
   createNewFile?: (fileType?: TS.FileType) => void,
@@ -66,7 +66,7 @@ export function getDirectoryMenuItems(
 ) {
   const keyBindings = useSelector(getKeyBindingObject);
   const menuItems = [];
-  if (selectedEntriesLength < 2) {
+  if (selectedEntries.length < 2) {
     if (perspectiveMode) {
       if (openDirectory) {
         menuItems.push(
@@ -153,7 +153,7 @@ export function getDirectoryMenuItems(
         data-tid="fileMenuMoveCopyDirectoryTID"
         onClick={() => {
           onClose();
-          openMoveCopyDialog();
+          openMoveCopyDialog(selectedEntries);
         }}
       >
         <ListItemIcon>
@@ -186,7 +186,7 @@ export function getDirectoryMenuItems(
 
   if (
     currentLocation &&
-    selectedEntriesLength < 2 &&
+    selectedEntries.length < 2 &&
     !(
       currentLocation.haveObjectStoreSupport() ||
       currentLocation.haveWebDavSupport() ||
@@ -339,7 +339,7 @@ export function getDirectoryMenuItems(
       );
     }
   }
-  if (Pro && !isReadOnlyMode && selectedEntriesLength < 2) {
+  if (Pro && !isReadOnlyMode && selectedEntries.length < 2) {
     if (setFolderThumbnail && perspectiveMode) {
       menuItems.push(
         <MenuItem
@@ -392,7 +392,7 @@ export function getDirectoryMenuItems(
       );
     }
   }
-  if (selectedEntriesLength === 1 && copySharingLink) {
+  if (selectedEntries.length === 1 && copySharingLink) {
     menuItems.push(
       <MenuItem
         key="copySharingLink"
@@ -430,7 +430,7 @@ export function getDirectoryMenuItems(
   }
 
   if (
-    selectedEntriesLength < 2 &&
+    selectedEntries.length < 2 &&
     AppConfig.isElectron &&
     AppConfig.isMacLike &&
     importMacTags
@@ -511,7 +511,7 @@ export function getDirectoryMenuItems(
     });
   }
 
-  if (selectedEntriesLength < 2 && showProperties) {
+  if (selectedEntries.length < 2 && showProperties) {
     menuItems.push(<Divider key="divider4" />);
     menuItems.push(
       <MenuItem
