@@ -45,6 +45,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import i18n from '-/services/i18n';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -61,30 +62,27 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean,
   ) => any;
-  setFileContextMenuAnchorEl;
-  setDirContextMenuAnchorEl;
   isLast?: boolean;
 }
 
 function CellView(props: Props) {
-  const {
-    fsEntry,
-    index,
-    cellContent,
-    setFileContextMenuAnchorEl,
-    setDirContextMenuAnchorEl,
-    isLast,
-  } = props;
+  const { fsEntry, index, cellContent, isLast } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const theme = useTheme();
+
+  const { openMenu } = useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
   const { readOnlyMode, currentLocationId, findLocation } =
     useCurrentLocationContext();
-  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
-    useSelectedEntriesContext();
+  const {
+    selectedEntries,
+    setSelectedEntries,
+    addToSelection,
+    lastSelectedEntry,
+  } = useSelectedEntriesContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
@@ -117,57 +115,21 @@ function CellView(props: Props) {
   const handleGridContextMenu = (event, fsEntry: TS.FileSystemEntry) => {
     event.preventDefault();
     event.stopPropagation();
-    // setMouseX(event.clientX);
-    // setMouseY(event.clientY);
     const isEntryExist = selectedEntries.some(
       (entry) => entry.uuid === fsEntry.uuid,
     );
-    if (fsEntry.isFile) {
-      if (!desktopMode) {
-        if (!isEntryExist) {
-          if (selectedEntries.length > 0) {
-            setSelectedEntries([...selectedEntries, fsEntry]);
-          } else {
-            setSelectedEntries([fsEntry]);
-          }
-        }
-      } else if (
-        selectedEntries.length === 0 ||
-        !fileOperationsEnabled(selectedEntries)
-      ) {
-        setSelectedEntries([fsEntry]);
-      } else if (event.ctrlKey) {
-        if (!isEntryExist) {
-          setSelectedEntries([...selectedEntries, fsEntry]);
-        }
-      } else if (isEntryExist) {
-        // update selected entry
-        setSelectedEntries([
-          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
-          fsEntry,
-        ]);
-      } else {
-        setSelectedEntries([fsEntry]);
-      }
-      setFileContextMenuAnchorEl(event.currentTarget);
+    if (event.ctrlKey) {
+      addToSelection(fsEntry);
     } else {
-      if (
-        selectedEntries.length === 0 ||
-        !folderOperationsEnabled(selectedEntries)
-      ) {
+      const operationEnabled = fsEntry.isFile
+        ? fileOperationsEnabled(selectedEntries)
+        : folderOperationsEnabled(selectedEntries);
+      if (selectedEntries.length === 0 || !operationEnabled || !isEntryExist) {
         setSelectedEntries([fsEntry]);
-      } else if (isEntryExist) {
-        // update selected entry
-        setSelectedEntries([
-          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
-          fsEntry,
-        ]);
       } else {
-        setSelectedEntries([fsEntry]);
+        addToSelection(fsEntry);
       }
-      if (setDirContextMenuAnchorEl) {
-        setDirContextMenuAnchorEl(event.currentTarget);
-      }
+      openMenu(event, fsEntry);
     }
   };
 
@@ -191,9 +153,9 @@ function CellView(props: Props) {
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex = -1;
-      if (lastSelectedEntryPath) {
+      if (lastSelectedEntry) {
         lastSelectedIndex = sortedDirContent.findIndex(
-          (entry) => entry.path === lastSelectedEntryPath,
+          (entry) => entry.path === lastSelectedEntry.path,
         );
       }
       const currentSelectedIndex = sortedDirContent.findIndex(

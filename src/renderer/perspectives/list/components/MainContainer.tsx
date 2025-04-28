@@ -20,11 +20,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import FileMenu from '-/components/menus/FileMenu';
-import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
-import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import RowCell from '-/perspectives/list/components/RowCell';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
@@ -52,14 +48,16 @@ import useFirstRender from '-/utils/useFirstRender';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import FileSourceDnd from '-/components/FileSourceDnd';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
-interface Props {
-  openRenameEntryDialog: () => void;
-}
+interface Props {}
 
 function ListPerspective(props: Props) {
-  const { openRenameEntryDialog } = props;
-
+  const {
+    openRenameEntryDialog,
+    openAddRemoveTagsDialog,
+    openMoveCopyFilesDialog,
+  } = useMenuContext();
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const { actions } = usePerspectiveActionsContext();
   const { showDirectories } = usePerspectiveSettingsContext();
@@ -72,8 +70,7 @@ function ListPerspective(props: Props) {
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
     useSortedDirContext();
   const desktopMode = useSelector(getDesktopMode);
-  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
-    useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
 
   // Create functions that dispatch actions
@@ -90,11 +87,7 @@ function ListPerspective(props: Props) {
   const [mouseY, setMouseY] = useState<number>(undefined);
   const selectedEntry = useRef<TS.FileSystemEntry>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
-  const perspectiveMode = useRef<boolean>(true);
-  const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
-    useState<null | HTMLElement>(null);
-  const [dirContextMenuAnchorEl, setDirContextMenuAnchorEl] =
-    useState<null | HTMLElement>(null);
+  //const perspectiveMode = useRef<boolean>(true);
   const [tagContextMenuAnchorEl, setTagContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [sortingContextMenuAnchorEl, setSortingContextMenuAnchorEl] =
@@ -103,11 +96,7 @@ function ListPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
-    useState<boolean>(false);
   const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
-    useState<boolean>(false);
-  const [isAddRemoveTagsDialogOpened, setIsAddRemoveTagsDialogOpened] =
     useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
@@ -189,19 +178,11 @@ function ListPerspective(props: Props) {
     setOptionsContextMenuAnchorEl(null);
   };
 
-  const openMoveCopyFilesDialog = () => {
-    setIsMoveCopyFilesDialogOpened(true);
-  };
-
   const openShareFilesDialog = () => {
     const currentLocation = findLocation();
     if (currentLocation && currentLocation.haveObjectStoreSupport()) {
       setIsShareFilesDialogOpened(true);
     }
-  };
-
-  const openAddRemoveTagsDialog = () => {
-    setIsAddRemoveTagsDialogOpened(true);
   };
 
   const keyMap = {
@@ -219,7 +200,7 @@ function ListPerspective(props: Props) {
     reloadDocument: keyBindings.reloadDocument,
   };
 
-  const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+  /*const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setMouseX(event.clientX);
     setMouseY(event.clientY);
@@ -228,7 +209,7 @@ function ListPerspective(props: Props) {
     }
     perspectiveMode.current = false;
     setDirContextMenuAnchorEl(event.currentTarget);
-  };
+  };*/
 
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -247,7 +228,7 @@ function ListPerspective(props: Props) {
       }
     },
     addRemoveTags: () => {
-      if (lastSelectedEntryPath) {
+      if (selectedEntries && selectedEntries.length > 1) {
         openAddRemoveTagsDialog();
       }
     },
@@ -351,8 +332,6 @@ function ListPerspective(props: Props) {
       <MainToolbar
         prefixDataTID={'list'}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
@@ -367,26 +346,16 @@ function ListPerspective(props: Props) {
           <GridPagination
             //directories={sortedDirectories}
             desktopMode={desktopMode}
-            openRenameEntryDialog={openRenameEntryDialog}
             //files={sortedFiles}
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}
-            onContextMenu={onContextMenu}
             selectedEntries={selectedEntries}
             setSelectedEntries={handleSetSelectedEntries}
-            setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
-            setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
             clearSelection={clearSelection}
           />
         </ListCellsStyleContextProvider>
       </GlobalHotKeys>
-      {isAddRemoveTagsDialogOpened && (
-        <AddRemoveTagsDialog
-          open={isAddRemoveTagsDialogOpened}
-          onClose={() => setIsAddRemoveTagsDialogOpened(false)}
-        />
-      )}
       {isAddTagDialogOpened !== undefined && (
         <AddTagToTagGroupDialog
           open={true}
@@ -404,50 +373,13 @@ function ListPerspective(props: Props) {
           handleSortingMenu={handleSortingMenu}
         />
       )}
-      {isMoveCopyFilesDialogOpened && (
-        <MoveCopyFilesDialog
-          open={isMoveCopyFilesDialogOpened}
-          onClose={() => setIsMoveCopyFilesDialogOpened(false)}
-        />
-      )}
       {isShareFilesDialogOpened && Pro && (
         <ShareFilesDialog
           open={isShareFilesDialogOpened}
           onClose={() => setIsShareFilesDialogOpened(false)}
         />
       )}
-      {Boolean(fileContextMenuAnchorEl) && (
-        <FileMenu
-          anchorEl={fileContextMenuAnchorEl}
-          mouseX={mouseX}
-          mouseY={mouseY}
-          open={Boolean(fileContextMenuAnchorEl)}
-          onClose={() => setFileContextMenuAnchorEl(null)}
-          openRenameFileDialog={openRenameEntryDialog}
-          openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-          openShareFilesDialog={openShareFilesDialog}
-          openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-          selectedFilePath={
-            lastSelectedEntryPath ? lastSelectedEntryPath : currentDirectoryPath
-          }
-        />
-      )}
-      <DirectoryMenu
-        open={Boolean(dirContextMenuAnchorEl)}
-        onClose={() => {
-          setDirContextMenuAnchorEl(null);
-          perspectiveMode.current = true;
-        }}
-        anchorEl={dirContextMenuAnchorEl}
-        mouseX={mouseX}
-        mouseY={mouseY}
-        directoryPath={lastSelectedEntryPath}
-        openRenameDirectoryDialog={openRenameEntryDialog}
-        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        perspectiveMode={perspectiveMode.current}
-        openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-      />
-      {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
+      {/* TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu
         anchorEl={tagContextMenuAnchorEl}
         open={Boolean(tagContextMenuAnchorEl)}

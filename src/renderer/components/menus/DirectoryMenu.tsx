@@ -58,6 +58,7 @@ import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeas
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   open: boolean;
@@ -65,19 +66,21 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl?: Element;
   items?: React.ReactNode;
-  directoryPath: string;
-  openAddRemoveTagsDialog?: () => void;
+  directoryPath?: string;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   switchPerspectives?: boolean;
-  openRenameDirectoryDialog?: () => void;
-  openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
   mouseY?: number;
 }
 
 function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
+  const {
+    openAddRemoveTagsDialog,
+    openMoveCopyFilesDialog,
+    openRenameEntryDialog,
+  } = useMenuContext();
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
@@ -123,9 +126,6 @@ function DirectoryMenu(props: Props) {
     mouseX,
     mouseY,
     items,
-    openAddRemoveTagsDialog,
-    openMoveCopyFilesDialog,
-    openRenameDirectoryDialog,
     switchPerspective,
     perspectiveMode,
     switchPerspectives,
@@ -146,19 +146,17 @@ function DirectoryMenu(props: Props) {
     return getLocationPath(tmpLoc).then((locationPath) => {
       const relativePath = getRelativeEntryPath(locationPath, entryPath);
       const folderName = extractDirectoryName(
-        selectedEntries[0].name,
+        selectedEntries[0] ? selectedEntries[0].name : currentDirectoryPath,
         currentLocation?.getDirSeparator(),
       );
-      return getMetadataID(
-        selectedEntries[0].path,
-        selectedEntries[0].uuid,
-        tmpLoc,
-      ).then((id) => {
-        return {
-          url: generateSharingLink(locationID, undefined, relativePath, id),
-          name: folderName,
-        };
-      });
+      return getMetadataID(entryPath, selectedEntries[0]?.uuid, tmpLoc).then(
+        (id) => {
+          return {
+            url: generateSharingLink(locationID, undefined, relativePath, id),
+            name: folderName,
+          };
+        },
+      );
     });
   }
 
@@ -454,14 +452,14 @@ Do you want to continue?`)
     ? items
     : getDirectoryMenuItems(
         currentLocation,
-        selectedEntries.length,
+        selectedEntries,
         perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
         readOnlyMode,
         onClose,
         t,
         openDir,
         reloadDirectory,
-        openRenameDirectoryDialog,
+        openRenameEntryDialog,
         openMoveCopyFilesDialog,
         showDeleteDirectoryDialog,
         showInFileManager,

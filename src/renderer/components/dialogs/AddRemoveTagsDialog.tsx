@@ -21,7 +21,6 @@ import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { TS } from '-/tagspaces.namespace';
 import FolderIcon from '@mui/icons-material/FolderOpen';
@@ -46,13 +45,12 @@ import TagsSelect from '../TagsSelect';
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  selected?: TS.FileSystemEntry[];
+  selected: TS.FileSystemEntry[];
 }
 
 function AddRemoveTagsDialog(props: Props) {
   const { t } = useTranslation();
-  const { selectedEntries } = useSelectedEntriesContext();
-  const selected = props.selected ? props.selected : selectedEntries;
+  const { open, selected } = props;
 
   const { findLocation } = useCurrentLocationContext();
   const { addTagsToFsEntries, removeTags } = useTaggingActionsContext();
@@ -127,7 +125,6 @@ function AddRemoveTagsDialog(props: Props) {
     onCloseDialog(true);
   };
 
-  const { open } = props;
   const disabledButtons =
     (!newlyAddedTags && !inputTags.current) ||
     (newlyAddedTags.length < 1 && inputTags.current.length < 1) ||

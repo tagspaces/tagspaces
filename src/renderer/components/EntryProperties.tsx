@@ -104,6 +104,7 @@ import {
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -160,9 +161,10 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const desktopMode = useSelector(isDesktopMode);
+  //const desktopMode = useSelector(isDesktopMode);
   const { openedEntry, sharingLink, getOpenedDirProps } =
     useOpenedEntryContext();
+  const { openMoveCopyFilesDialog } = useMenuContext();
   const { isEditMode } = useFilePropertiesContext();
   const {
     renameDirectory,
@@ -199,8 +201,6 @@ function EntryProperties(props: Props) {
     : '';
 
   const [editName, setEditName] = useState<string>(undefined);
-  const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] =
-    useState<boolean>(false);
   const [isConfirmResetColorDialogOpened, setConfirmResetColorDialogOpened] =
     useState<boolean>(false);
   /* const [isFileThumbChooseDialogOpened, setFileThumbChooseDialogOpened] =
@@ -334,7 +334,15 @@ function EntryProperties(props: Props) {
   };
 
   const toggleMoveCopyFilesDialog = () => {
-    setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
+    openMoveCopyFilesDialog([
+      {
+        ...openedEntry,
+        isFile: openedEntry.isFile,
+        name: entryName,
+        tags: [],
+      },
+    ]);
+    //setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
   const openThumbFilesDialog = () => {
@@ -1159,7 +1167,7 @@ function EntryProperties(props: Props) {
           confirmDialogContentTID="confirmResetColorDialogContent"
         />
       )}
-      {isMoveCopyFilesDialogOpened && (
+      {/*{isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
           key={getUuid()}
           open={isMoveCopyFilesDialogOpened}
@@ -1173,7 +1181,7 @@ function EntryProperties(props: Props) {
             },
           ]}
         />
-      )}
+      )}*/}
       {/*{ThumbnailChooserDialog && (
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}

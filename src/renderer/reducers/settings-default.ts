@@ -36,6 +36,10 @@ let filenameTagPlacedAtEnd = true;
 if (window.ExtFilenameTagPlacedAtEnd !== undefined) {
   filenameTagPlacedAtEnd = window.ExtFilenameTagPlacedAtEnd;
 }
+let useOnlyTagsFromTagLibrary = false;
+if (window.ExtUseOnlyTagsFromTagLibrary !== undefined) {
+  useOnlyTagsFromTagLibrary = window.ExtUseOnlyTagsFromTagLibrary;
+}
 
 export default {
   //isLoading: false,
@@ -80,6 +84,7 @@ export default {
   useOCR: false,
   useTextExtraction: false,
   useGenerateThumbnails: true,
+  useOnlyTagsFromTagLibrary,
   tagTextColor: 'white',
   tagBackgroundColor: '#61DD61',
   currentTheme: 'light',

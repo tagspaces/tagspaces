@@ -10,7 +10,6 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDirProperties } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -33,7 +32,7 @@ interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   // force to move/copy different entries from selected
-  entries?: Array<TS.FileSystemEntry>;
+  entries: TS.FileSystemEntry[];
 }
 
 function MoveCopyFilesDialog(props: Props) {
@@ -44,7 +43,6 @@ function MoveCopyFilesDialog(props: Props) {
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
-  const { selectedEntries } = useSelectedEntriesContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
 
   const [targetPath, setTargetPath] = useState(
@@ -55,26 +53,19 @@ function MoveCopyFilesDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, entries, onClose } = props;
 
-  const allEntries = useRef<TS.FileSystemEntry[]>(
-    entries && entries.length > 0 ? entries : selectedEntries,
-  );
   const currentLocation = findLocation();
 
-  const selectedFiles = allEntries.current
-    ? allEntries.current
-        .filter((fsEntry) => fsEntry.isFile)
-        .map((fsentry) => fsentry.path)
+  const selectedFiles = entries
+    ? entries.filter((fsEntry) => fsEntry.isFile).map((fsentry) => fsentry.path)
     : [];
 
-  const selectedDirs = allEntries.current
-    ? allEntries.current
+  const selectedDirs = entries
+    ? entries
         .filter((fsEntry) => !fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
 
   useEffect(() => {
-    allEntries.current =
-      entries && entries.length > 0 ? entries : selectedEntries;
     // getDirProperties have Electron impl only
     if (
       selectedDirs.length > 0 &&
@@ -161,7 +152,7 @@ function MoveCopyFilesDialog(props: Props) {
   }
 
   function copyMove(copy: boolean) {
-    handleEntryExist(allEntries.current, targetPath).then((exist) => {
+    handleEntryExist(entries, targetPath).then((exist) => {
       if (exist) {
         openEntryExistDialog(exist, () => {
           if (copy) {
@@ -209,8 +200,8 @@ function MoveCopyFilesDialog(props: Props) {
             maxHeight: 200,
           }}
         >
-          {allEntries.current.length > 0 &&
-            allEntries.current.map((entry) => (
+          {entries.length > 0 &&
+            entries.map((entry) => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
