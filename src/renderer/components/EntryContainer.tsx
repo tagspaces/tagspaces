@@ -109,8 +109,6 @@ function EntryContainer() {
     isSaveBeforeReloadConfirmDialogOpened,
     setSaveBeforeReloadConfirmDialogOpened,
   ] = useState<boolean>(false);
-  const [isEditTagsModalOpened, setEditTagsModalOpened] =
-    useState<boolean>(false);
   const isSavingInProgress = useRef<boolean>(false);
   const [entryPropertiesHeight, setEntryPropertiesHeight] =
     useState<number>(100);
@@ -797,17 +795,6 @@ function EntryContainer() {
           cancelDialogTID="cancelSaveBeforeCloseDialog"
           confirmDialogTID="confirmSaveBeforeCloseDialog"
           confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
-      {isEditTagsModalOpened && (
-        <AddRemoveTagsDialog
-          open={isEditTagsModalOpened}
-          onClose={() => setEditTagsModalOpened(false)}
-          selected={
-            openedEntry
-              ? [cLocation.toFsEntry(openedEntry.path, openedEntry.isFile)]
-              : []
-          }
         />
       )}
     </GlobalHotKeys>

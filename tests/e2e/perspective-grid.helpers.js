@@ -1,4 +1,4 @@
-import { clickOn, isDisplayed, setInputKeys } from './general.helpers';
+import { clickOn, typeInputValue } from './general.helpers';
 import {
   cleanFileName,
   extractFileExtension,
@@ -27,7 +27,8 @@ export async function AddRemoveTagsToSelectedFiles(
 
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];
-    await setInputKeys('AddRemoveTagsSelectTID', tagName);
+    await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
+    //await setInputKeys('AddRemoveTagsSelectTID', tagName);
     await global.client.keyboard.press('Enter');
   }
 
