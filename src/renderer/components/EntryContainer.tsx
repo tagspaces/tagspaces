@@ -25,7 +25,6 @@ import EntryContainerTitle from '-/components/EntryContainerTitle';
 import FileView from '-/components/FileView';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
-import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';

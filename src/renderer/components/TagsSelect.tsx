@@ -143,7 +143,7 @@ function TagsSelect(props: Props) {
 
   function handleInputChange(event: any, value: string, reason: string) {
     tagsError.current = false;
-    if (reason === 'input') {
+    if (reason === 'input' && !isUseOnlyTagsFromTagLibrary) {
       const newTags = parseTagsInput(value);
       if (handleNewTags) {
         handleNewTags(newTags);
