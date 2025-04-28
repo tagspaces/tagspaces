@@ -125,11 +125,9 @@ function FileMenu(props: Props) {
     useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { setFolderThumbnailPromise } = usePlatformFacadeContext();
-  const { currentLocationId, findLocation, readOnlyMode } =
-    useCurrentLocationContext();
+  const { currentLocationId, currentLocation } = useCurrentLocationContext();
   const downloadFileUrl = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const currentLocation = findLocation();
 
   useEffect(() => {
     if (currentLocation?.haveObjectStoreSupport() && lastSelectedEntry) {
@@ -412,7 +410,7 @@ function FileMenu(props: Props) {
     }
     menuItems.push(<Divider key="fmDivider" />);
   }
-  if (!readOnlyMode) {
+  if (!currentLocation?.isReadOnly) {
     menuItems.push(
       <MenuItem
         key="fileMenuAddRemoveTags"

@@ -174,7 +174,7 @@ function EntryProperties(props: Props) {
   } = useIOActionsContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { addTagsToFsEntry, removeTagsFromEntry } = useTaggingActionsContext();
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
@@ -318,7 +318,7 @@ function EntryProperties(props: Props) {
   };
 
   const activateEditNameField = () => {
-    if (readOnlyMode) {
+    if (location.isReadOnly) {
       setEditName(undefined);
       return;
     }
@@ -375,7 +375,7 @@ function EntryProperties(props: Props) {
   };
 
   const toggleBackgroundColorPicker = () => {
-    if (readOnlyMode) {
+    if (location.isReadOnly) {
       return;
     }
     if (!Pro) {
@@ -517,7 +517,7 @@ function EntryProperties(props: Props) {
                 readOnly: editName === undefined,
                 endAdornment: (
                   <InputAdornment position="end">
-                    {!readOnlyMode && !isEditMode && (
+                    {!location.isReadOnly && !isEditMode && (
                       <div style={{ textAlign: 'right' }}>
                         {editName !== undefined ? (
                           <div>
@@ -780,7 +780,7 @@ function EntryProperties(props: Props) {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      {!readOnlyMode &&
+                      {!location.isReadOnly &&
                         !isEditMode &&
                         editName === undefined && (
                           <TsButton
@@ -1007,7 +1007,7 @@ function EntryProperties(props: Props) {
                         spacing={0}
                         style={{ alignItems: 'center' }}
                       >
-                        {!readOnlyMode &&
+                        {!location.isReadOnly &&
                           !isEditMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeThumbnail')}>
@@ -1063,7 +1063,7 @@ function EntryProperties(props: Props) {
                           spacing={0}
                           style={{ alignItems: 'center' }}
                         >
-                          {!readOnlyMode &&
+                          {!location.isReadOnly &&
                             !isEditMode &&
                             editName === undefined && (
                               <ProTooltip tooltip={t('changeBackgroundImage')}>

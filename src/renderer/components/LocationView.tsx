@@ -67,8 +67,7 @@ function LocationView(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
     openLocation,
-    findLocation,
-    readOnlyMode,
+    currentLocation,
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
@@ -81,7 +80,6 @@ function LocationView(props: Props) {
   const theme = useTheme();
 
   const dispatch: AppDispatch = useDispatch();
-  const currentLocation = findLocation();
   const { location, hideDrawer } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
@@ -140,7 +138,7 @@ function LocationView(props: Props) {
         arrPath.push(entry.path);
       }
 
-      if (readOnlyMode) {
+      if (currentLocation?.isReadOnly) {
         showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }

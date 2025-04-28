@@ -39,6 +39,7 @@ export class CommonLocation implements TS.Location {
   isNotEditable?: boolean;
   watchForChanges?: boolean;
   disableIndexing?: boolean;
+  reloadOnFocus?: boolean;
   disableThumbnailGeneration?: boolean;
   fullTextIndex?: boolean;
   maxIndexAge?: number;
@@ -77,6 +78,7 @@ export class CommonLocation implements TS.Location {
     this.isNotEditable = location.isNotEditable;
     this.watchForChanges = location.watchForChanges;
     this.disableIndexing = location.disableIndexing;
+    this.reloadOnFocus = location.reloadOnFocus;
     this.disableThumbnailGeneration = location.disableThumbnailGeneration;
     this.fullTextIndex = Pro && location.fullTextIndex;
     this.maxIndexAge = location.maxIndexAge;

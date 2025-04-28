@@ -58,7 +58,7 @@ function EntryTagMenu(props: Props) {
   const { setSearchQuery } = useDirectoryContentContext();
   const { removeTagsFromEntry, openEditEntryTagDialog } =
     useTaggingActionsContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
 
   function showEditTagDialog() {
@@ -105,7 +105,7 @@ function EntryTagMenu(props: Props) {
       <ListItemText primary={t('core:showFilesWithThisTag')} />
     </MenuItem>,
   ];
-  if (!readOnlyMode) {
+  if (!currentLocation?.isReadOnly) {
     if (setIsAddTagDialogOpened) {
       menuItems.push(
         <MenuItem

@@ -86,10 +86,9 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
-  const currentLocation = findLocation();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, TabNames.propertiesTab);
@@ -185,7 +184,7 @@ function MainToolbar(props: Props) {
       </TsToolbarButton>
       <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1.5 }} />
       <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
-        {!readOnlyMode && (
+        {!currentLocation?.isReadOnly && (
           <TsToolbarButton
             tooltip={t('core:fileTags')}
             title={t('core:fileTags')}
@@ -197,7 +196,7 @@ function MainToolbar(props: Props) {
             <TagIcon />
           </TsToolbarButton>
         )}
-        {!readOnlyMode && (
+        {!currentLocation?.isReadOnly && (
           <TsToolbarButton
             tooltip={t('core:aiGenSelectedEntries')}
             title={t('core:aiSettingsTab')}
@@ -208,7 +207,7 @@ function MainToolbar(props: Props) {
             <AIIcon />
           </TsToolbarButton>
         )}
-        {!readOnlyMode && (
+        {!currentLocation?.isReadOnly && (
           <TsToolbarButton
             tooltip={t('core:copyMoveSelectedEntries')}
             title={
@@ -222,7 +221,7 @@ function MainToolbar(props: Props) {
             <CopyMoveIcon />
           </TsToolbarButton>
         )}
-        {!readOnlyMode && (
+        {!currentLocation?.isReadOnly && (
           <TsToolbarButton
             tooltip={t('core:deleteSelectedEntries')}
             title={t('core:delete')}

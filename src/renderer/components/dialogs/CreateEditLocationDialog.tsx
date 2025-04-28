@@ -172,6 +172,9 @@ function CreateEditLocationDialog(props: Props) {
   const [disableIndexing, setIndexDisable] = useState<boolean>(
     selectedLocation ? selectedLocation.disableIndexing : false,
   );
+  const [reloadOnFocus, setReloadOnFocus] = useState<boolean>(
+    selectedLocation ? selectedLocation.reloadOnFocus : false,
+  );
   const [disableThumbnailGeneration, setDisableThumbnailGeneration] =
     useState<boolean>(
       selectedLocation ? selectedLocation.disableThumbnailGeneration : false,
@@ -403,6 +406,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
@@ -423,6 +427,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges,
@@ -447,6 +452,7 @@ function CreateEditLocationDialog(props: Props) {
           isDefault,
           isReadOnly,
           disableIndexing,
+          reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
           watchForChanges: false,
@@ -832,6 +838,27 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:disableIndexing')}
+                    <ProLabel />
+                  </>
+                }
+              />
+              <FormControlLabel
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="reloadOnFocusTID"
+                    name="reloadOnFocus"
+                    checked={reloadOnFocus}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setReloadOnFocus(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {t('core:reloadOnFocus')}
                     <ProLabel />
                   </>
                 }

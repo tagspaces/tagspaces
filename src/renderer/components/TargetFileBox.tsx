@@ -52,7 +52,7 @@ function TargetFileBox(props: Props) {
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
-  const { readOnlyMode, findLocalLocation, findLocation } =
+  const { currentLocation, findLocalLocation, findLocation } =
     useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -68,7 +68,7 @@ function TargetFileBox(props: Props) {
   };
 
   const handleCopyFiles = (files: Array<File>) => {
-    if (readOnlyMode) {
+    if (currentLocation?.isReadOnly) {
       showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
       return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }

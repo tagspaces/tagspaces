@@ -1193,6 +1193,9 @@ export function toTsLocation(location: CommonLocation): TS.S3Location {
     ...(location.disableIndexing && {
       disableIndexing: location.disableIndexing,
     }),
+    ...(location.reloadOnFocus && {
+      reloadOnFocus: location.reloadOnFocus,
+    }),
     ...(location.disableThumbnailGeneration && {
       disableThumbnailGeneration: location.disableThumbnailGeneration,
     }),
