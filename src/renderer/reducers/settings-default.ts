@@ -135,7 +135,7 @@ export default {
     },
     {
       iso: 'zh_CN',
-      title: '中国的 (Chinese)',
+      title: '简体中文 (Chinese)',
     },
     {
       iso: 'bg',
@@ -143,7 +143,7 @@ export default {
     },
     {
       iso: 'ja',
-      title: '日本の (Japanese)',
+      title: '日本語 (Japanese)',
     },
     {
       iso: 'pt_BR',
@@ -203,7 +203,7 @@ export default {
     },
     {
       iso: 'zh_TW',
-      title: '台灣 (Chinese Taiwan)',
+      title: '繁体中文（台灣） (Chinese Taiwan)',
     },
     {
       iso: 'hu',
@@ -227,7 +227,7 @@ export default {
     },
     {
       iso: 'zh_HK',
-      title: '漢語 (Chinese Hong Kong)',
+      title: '繁体中文（香港） (Chinese Hong Kong)',
     },
     {
       iso: 'he',
