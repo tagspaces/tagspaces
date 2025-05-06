@@ -58,7 +58,7 @@ function TagMenu(props: Props) {
   const { t } = useTranslation();
   const { selectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { setSearchQuery } = useDirectoryContentContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const tagGroupReadOnly = selectedTagGroupEntry?.readOnly;
@@ -110,14 +110,16 @@ function TagMenu(props: Props) {
             </MenuItem>
           )}
 
-          {selectedEntries && selectedEntries.length > 0 && !readOnlyMode && (
-            <MenuItem data-tid="applyTagTID" onClick={applyTag}>
-              <ListItemIcon>
-                <ApplyTagIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('core:applyTag')} />
-            </MenuItem>
-          )}
+          {selectedEntries &&
+            selectedEntries.length > 0 &&
+            !currentLocation?.isReadOnly && (
+              <MenuItem data-tid="applyTagTID" onClick={applyTag}>
+                <ListItemIcon>
+                  <ApplyTagIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('core:applyTag')} />
+              </MenuItem>
+            )}
           {!tagGroupReadOnly && !isSmartTag && (
             <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
               <ListItemIcon>

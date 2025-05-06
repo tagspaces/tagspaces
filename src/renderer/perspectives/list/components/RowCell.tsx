@@ -109,10 +109,10 @@ function RowCell(props: Props) {
   const { entrySize, showTags, thumbnailMode } =
     usePerspectiveSettingsContext();
   const { addTag, editTagForEntry } = useTaggingActionsContext();
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
-  const rowCellLocation = findLocation(fsEntry.locationID);
+  //const rowCellLocation = findLocation(fsEntry.locationID);
 
   // You can use the dispatch function to dispatch actions
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
@@ -131,7 +131,7 @@ function RowCell(props: Props) {
   const entryTitle = extractTitle(
     fsEntry.name,
     !fsEntry.isFile,
-    rowCellLocation?.getDirSeparator(),
+    currentLocation?.getDirSeparator(),
   );
 
   let description;
@@ -160,7 +160,7 @@ function RowCell(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
       AppConfig.tagDelimiter,
-      rowCellLocation?.getDirSeparator(),
+      currentLocation?.getDirSeparator(),
     );
   }
 
@@ -198,7 +198,7 @@ function RowCell(props: Props) {
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = readOnlyMode ? (
+      const tagContainer = currentLocation.isReadOnly ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -224,7 +224,7 @@ function RowCell(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
+  }, [entryTags, currentLocation.isReadOnly, reorderTags, entryPath]);
 
   function generateExtension() {
     return selectionMode ? (
@@ -422,8 +422,8 @@ function RowCell(props: Props) {
                 fsEntry.meta?.thumbPath +
                 (fsEntry.meta &&
                 fsEntry.meta.thumbPath &&
-                !rowCellLocation.haveObjectStoreSupport() &&
-                !rowCellLocation.haveWebDavSupport()
+                !currentLocation.haveObjectStoreSupport() &&
+                !currentLocation.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.meta?.thumbPath) +
                     fsEntry.meta.lastUpdated
                   : '')

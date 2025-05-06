@@ -23,27 +23,32 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import Typography from '@mui/material/Typography';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
   currentDirectoryPath?: string;
 }
-function DirectoryListView(props: Props) {
-  const { currentDirectoryPath, setTargetDir } = props;
+
+const DirectoryListView: React.FC<Props> = ({
+  currentDirectoryPath,
+  setTargetDir,
+}) => {
   const { t } = useTranslation();
-  const { findLocation, locations } = useCurrentLocationContext();
+  const { currentLocation, findLocation, locations } =
+    useCurrentLocationContext();
+  const { currentDirectoryEntries } = useDirectoryContentContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
-  const currentLocation = findLocation();
   const chosenLocationId = useRef<string>(
     currentLocation ? currentLocation.uuid : undefined,
   );
   const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
-  >([]);
+  >(currentDirectoryEntries.filter((entry) => !entry.isFile));
 
-  useEffect(() => {
+  /*useEffect(() => {
     const chosenLocation = findLocation(chosenLocationId.current);
     if (chosenLocation) {
       const path =
@@ -54,7 +59,7 @@ function DirectoryListView(props: Props) {
           : chosenLocation.path;
       listDirectory(path);
     }
-  }, [chosenLocationId.current]);
+  }, [chosenLocationId.current]);*/
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
@@ -202,6 +207,6 @@ function DirectoryListView(props: Props) {
       </List>
     </div>
   );
-}
+};
 
 export default DirectoryListView;

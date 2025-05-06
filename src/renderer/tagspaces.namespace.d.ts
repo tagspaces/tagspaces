@@ -39,6 +39,7 @@ export namespace TS {
     isNotEditable?: boolean;
     watchForChanges?: boolean;
     disableIndexing?: boolean;
+    reloadOnFocus?: boolean;
     disableThumbnailGeneration?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
@@ -142,10 +143,10 @@ export namespace TS {
     action: 'openNext' | 'openPrevious' | 'reload';
   }
 
-  interface KanBanMetaActions {
+  /*  interface KanBanMetaActions {
     action: 'directoryVisibilityChange';
     meta: TS.FileSystemEntryMeta;
-  }
+  }*/
 
   interface Tag {
     title?: string;

@@ -1,4 +1,4 @@
-/**
+/*
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2023-present TagSpaces GmbH
  *
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+/*
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { TS } from '-/tagspaces.namespace';
 
@@ -59,3 +59,4 @@ export const EditedKanBanMetaContextProvider = ({
     </EditedKanBanMetaContext.Provider>
   );
 };
+*/

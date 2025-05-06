@@ -75,8 +75,7 @@ function CellView(props: Props) {
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
-  const { readOnlyMode, currentLocationId, findLocation } =
-    useCurrentLocationContext();
+  const { currentLocationId, currentLocation } = useCurrentLocationContext();
   const {
     selectedEntries,
     setSelectedEntries,
@@ -226,7 +225,7 @@ function CellView(props: Props) {
   };
 
   const handleFileMoveDrop = (item, monitor) => {
-    if (readOnlyMode) {
+    if (currentLocation?.isReadOnly) {
       showNotification(
         'Importing files is disabled because the location is in read-only mode.',
         'error',
@@ -270,7 +269,6 @@ function CellView(props: Props) {
   const key = fsEntry.path;
 
   if (fsEntry.isFile) {
-    const currentLocation = findLocation();
     return (
       <div>
         {nativeDragModeEnabled &&

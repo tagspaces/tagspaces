@@ -69,7 +69,7 @@ function EntryContainerMenu(props: Props) {
     sharingParentFolderLink,
   } = useOpenedEntryContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { deleteFile, downloadFsEntry } = useIOActionsContext();
   //const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
@@ -78,7 +78,6 @@ function EntryContainerMenu(props: Props) {
   );
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] =
     useState<boolean>(false);
-  const currentLocation = findLocation();
 
   const navigateToFolder = () => {
     if (openedEntry.isFile) {
@@ -209,7 +208,7 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>,
       );
     }
-    if (!readOnlyMode) {
+    if (!currentLocation?.isReadOnly) {
       menuItems.push(<Divider key={'divider3'} />);
       menuItems.push(
         <MenuItem
@@ -388,7 +387,7 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>,
       );
     }
-    if (!readOnlyMode) {
+    if (!currentLocation?.isReadOnly) {
       menuItems.push(<Divider key={'divider4'} />);
       menuItems.push(
         <MenuItem

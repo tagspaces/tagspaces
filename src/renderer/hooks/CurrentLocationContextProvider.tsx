@@ -18,6 +18,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -45,9 +46,9 @@ import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
   locations: CommonLocation[];
-  //currentLocation: CommonLocation;
+  currentLocation: CommonLocation;
   currentLocationId: string;
-  readOnlyMode: boolean;
+  //readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
@@ -88,9 +89,9 @@ type CurrentLocationContextData = {
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     locations: undefined,
-    //currentLocation: undefined,
+    currentLocation: undefined,
     currentLocationId: undefined,
-    readOnlyMode: false,
+    //readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
@@ -254,6 +255,24 @@ export const CurrentLocationContextProvider = ({
     return Promise.resolve(locationPath);
   }
 
+  // Build a map of locations by ID. Rebuilt only when `locations` array changes.
+  const locationsById = useMemo(() => {
+    const map: Record<string, CommonLocation> = {};
+    for (const loc of allLocations.current) {
+      map[loc.uuid] = loc;
+    }
+    return map;
+  }, [allLocations.current]);
+
+  // Return the specific location, recomputing only when that entry or the ID changes.
+  const currentLocation = useMemo(
+    () => locationsById[currentLocationId.current],
+    [locationsById[currentLocationId.current], currentLocationId.current],
+  );
+
+  /**
+   * @param locationID
+   */
   function findLocation(
     locationID: string = undefined,
   ): CommonLocation | undefined {
@@ -513,18 +532,13 @@ export const CurrentLocationContextProvider = ({
     return foundLocation;
   }
 
-  /*const location: CommonLocation = useMemo(
-    () => findLocation(),
-    [currentLocation.current, allLocations.current],
-  );*/
-
-  const readOnlyMode: boolean = useMemo(() => {
+  /*const readOnlyMode: boolean = useMemo(() => {
     if (currentLocationId.current) {
       const location = findLocation();
       return location?.isReadOnly;
     }
     return false;
-  }, [currentLocationId.current]);
+  }, [currentLocationId.current]);*/
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
     const location = findLocation();
@@ -619,9 +633,9 @@ export const CurrentLocationContextProvider = ({
   const context = useMemo(() => {
     return {
       locations: allLocations.current,
-      //currentLocation: location,
+      currentLocation,
       currentLocationId: currentLocationId.current,
-      readOnlyMode,
+      //readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
       getLocationPath,

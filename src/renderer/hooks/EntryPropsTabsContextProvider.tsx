@@ -81,8 +81,8 @@ export const EntryPropsTabsContextProvider = ({
 }: EntryPropsTabsContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
-  const dispatch: AppDispatch = useDispatch();
+  const { findLocation } = useCurrentLocationContext();
+  // const dispatch: AppDispatch = useDispatch();
   const devMode: boolean = useSelector(isDevMode);
 
   //const haveRevisions = useRef<boolean>(isEditable());
@@ -108,8 +108,9 @@ export const EntryPropsTabsContextProvider = ({
         openedEntry.path,
         currentLocation?.getDirSeparator(),
       );*/
+      const location: CommonLocation = findLocation(openedEntry.locationID);
       return (
-        !readOnlyMode &&
+        !location.isReadOnly &&
         openedEntry.isFile &&
         AppConfig.editableFiles.includes(openedEntry.extension)
       );

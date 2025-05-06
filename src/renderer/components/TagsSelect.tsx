@@ -54,7 +54,7 @@ interface Props {
 
 function TagsSelect(props: Props) {
   const { t } = useTranslation();
-  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const desktopMode = useSelector(isDesktopMode);
   const isUseOnlyTagsFromTagLibrary = useSelector(useOnlyTagsFromTagLibrary);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
@@ -85,7 +85,7 @@ function TagsSelect(props: Props) {
     reason: string,
   ) {
     tagsError.current = false;
-    if (!readOnlyMode) {
+    if (!currentLocation?.isReadOnly) {
       if (reason === 'blur') {
         if (handleNewTags) {
           handleNewTags(undefined);
@@ -176,9 +176,9 @@ function TagsSelect(props: Props) {
     <Box sx={{ flexGrow: 1 }}>
       <Autocomplete
         data-tid={props.dataTid}
-        disabled={readOnlyMode}
+        disabled={currentLocation?.isReadOnly}
         multiple
-        options={!readOnlyMode ? allTags.current : []}
+        options={!currentLocation?.isReadOnly ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
         freeSolo={!isUseOnlyTagsFromTagLibrary}
         disableClearable={true}

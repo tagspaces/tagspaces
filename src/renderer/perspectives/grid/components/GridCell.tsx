@@ -136,8 +136,8 @@ function GridCell(props: Props) {
     usePerspectiveSettingsContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { selectedEntries, selectEntry } = useSelectedEntriesContext();
-  const { addTags, addTag, editTagForEntry } = useTaggingActionsContext();
-  const { findLocation, readOnlyMode } = useCurrentLocationContext();
+  const { addTag, editTagForEntry } = useTaggingActionsContext();
+  const { findLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   const thumbPath = useRef<string>(undefined);
@@ -302,7 +302,7 @@ function GridCell(props: Props) {
   const renderTags = () => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = readOnlyMode ? (
+      const tagContainer = gridCellLocation.isReadOnly ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -328,7 +328,7 @@ function GridCell(props: Props) {
       }
       return tagContainer;
     });
-  }; //, [entryTags, readOnlyMode, reorderTags, entryPath]);
+  };
 
   function generateExtension() {
     return selectionMode ? (

@@ -40,6 +40,7 @@ export function getDirectoryMenuItems(
   currentLocation: CommonLocation,
   selectedEntries: TS.FileSystemEntry[],
   perspectiveMode: boolean,
+  // todo remove this is param in currentLocation
   isReadOnlyMode: boolean,
   onClose: () => void,
   t: (txt: string) => string,
