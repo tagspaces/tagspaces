@@ -1355,7 +1355,7 @@ export const DirectoryContentContextProvider = ({
 
   function getThumbs(
     pageFiles: TS.FileSystemEntry[],
-    meta: Array<any>,
+    meta?: Array<any>,
   ): Promise<TS.FileSystemEntry>[] {
     return pageFiles.map((entry) =>
       Promise.resolve(setThumbForEntry(entry, meta)),
@@ -1364,7 +1364,7 @@ export const DirectoryContentContextProvider = ({
 
   async function setThumbForEntry(
     entry: TS.FileSystemEntry,
-    meta: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
+    meta?: Array<any>, //TS.FileSystemEntryMeta[], -> todo extra path in meta
   ): Promise<TS.FileSystemEntry> {
     const thumbEntry = { ...entry, tags: [] };
     let thumbPath = getThumbFileLocationForFile(
@@ -1372,20 +1372,35 @@ export const DirectoryContentContextProvider = ({
       currentLocation?.getDirSeparator(),
       false,
     );
-    const metaFile = meta.find((m) => thumbPath && thumbPath.endsWith(m.path));
-    if (thumbPath && metaFile) {
-      thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
+
+    if (thumbPath) {
       if (
         currentLocation?.haveObjectStoreSupport() ||
         currentLocation?.haveWebDavSupport()
       ) {
-        if (thumbPath && thumbPath.startsWith('/')) {
-          thumbPath = thumbPath.substring(1);
-        }
+        const metaFile =
+          meta && meta.length < 999
+            ? meta.find((m) => thumbPath && thumbPath.endsWith(m.path))
+            : true;
+        if (metaFile) {
+          if (thumbPath && thumbPath.startsWith('/')) {
+            thumbPath = thumbPath.substring(1);
+          }
 
-        thumbPath = await currentLocation.generateURLforPath(thumbPath, 604800);
-        if (thumbPath) {
-          thumbEntry.meta = { id: getUuid(), thumbPath };
+          thumbPath = await currentLocation.generateURLforPath(
+            thumbPath,
+            604800,
+          );
+          if (thumbPath) {
+            thumbEntry.meta = { id: getUuid(), thumbPath };
+          }
+        }
+      } else {
+        const metaFile = meta?.find(
+          (m) => thumbPath && thumbPath.endsWith(m.path),
+        );
+        if (metaFile) {
+          thumbEntry.meta = { id: getUuid(), thumbPath }; //{ ...metaFile, thumbPath };
         }
       }
     }
