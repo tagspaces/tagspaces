@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import mgrs from 'mgrs';
 import { Pro } from '-/pro';
@@ -165,6 +165,19 @@ const EditEntryTagDialog = React.lazy(
     ),
 );
 
+const EditEntryTagDialogAsync = React.memo(
+  (props: {
+    open: boolean;
+    onClose: () => void;
+    tag: TS.Tag;
+    entries: TS.FileSystemEntry[];
+  }) => (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <EditEntryTagDialog {...props} />
+    </React.Suspense>
+  ),
+);
+
 export const TaggingActionsContextProvider = ({
   children,
 }: TaggingActionsContextProviderProps) => {
@@ -186,9 +199,14 @@ export const TaggingActionsContextProvider = ({
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
   const { showNotification } = useNotificationContext();
 
-  const open = useRef<boolean>(false);
+  const [dialogState, setDialogState] = useState<{
+    open: boolean;
+    tag?: TS.Tag;
+    entries?: TS.FileSystemEntry[];
+  }>({ open: false });
+  /*const open = useRef<boolean>(false);
   const selectedTag = useRef<TS.Tag>(undefined);
-  const selectedEntries = useRef<TS.FileSystemEntry[]>(undefined);
+  const selectedEntries = useRef<TS.FileSystemEntry[]>(undefined);*/
 
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const maxCollectedTag = useSelector(getMaxCollectedTag);
@@ -200,7 +218,7 @@ export const TaggingActionsContextProvider = ({
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  //const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
   function addTagsToFilePath(path: string, tags: string[]) {
@@ -1429,25 +1447,16 @@ export const TaggingActionsContextProvider = ({
     saveTagLibrary(arr);
   }
 
-  function openEditEntryTagDialog(entries: TS.FileSystemEntry[], tag: TS.Tag) {
-    open.current = true;
-    selectedEntries.current = entries;
-    selectedTag.current = tag;
-    forceUpdate();
-  }
+  const openEditEntryTagDialog = useCallback(
+    (entries: TS.FileSystemEntry[], tag: TS.Tag) => {
+      setDialogState({ open: true, entries, tag });
+    },
+    [],
+  );
 
-  function closeEditEntryTagDialog() {
-    open.current = false;
-    forceUpdate();
-  }
-
-  function EditEntryTagDialogAsync(props) {
-    return (
-      <React.Suspense fallback={<LoadingLazy />}>
-        <EditEntryTagDialog {...props} />
-      </React.Suspense>
-    );
-  }
+  const closeEditEntryTagDialog = useCallback(() => {
+    setDialogState({ open: false });
+  }, []);
 
   const context = useMemo(() => {
     return {
@@ -1488,10 +1497,10 @@ export const TaggingActionsContextProvider = ({
   return (
     <TaggingActionsContext.Provider value={context}>
       <EditEntryTagDialogAsync
-        open={open.current}
+        open={dialogState.open}
         onClose={closeEditEntryTagDialog}
-        tag={selectedTag.current}
-        entries={selectedEntries.current}
+        tag={dialogState.tag}
+        entries={dialogState.entries}
       />
       {children}
     </TaggingActionsContext.Provider>

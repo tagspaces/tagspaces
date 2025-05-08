@@ -35,13 +35,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -60,7 +54,7 @@ function EditEntryTagDialog(props: Props) {
   const { addTagsToFsEntries, editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(tag && tag.title);
-  const titleRef = useRef<HTMLInputElement>(null);
+  // const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
     if (title && title.indexOf('-') > -1) {
@@ -77,17 +71,28 @@ function EditEntryTagDialog(props: Props) {
       }
     } else showDatePeriodEditor = isDateTimeTag(title);
     return DateTagEditor && showDatePeriodEditor;
-  }, []);
+  }, [title]);
+
   const [editDisabled, setEditDisabled] = useState<boolean>(
     isShowDatePeriodEditor,
   );
   const { setError, haveError } = useValidation();
 
   useEffect(() => {
+    if (tag) {
+      setTitle(tag.title);
+    }
+  }, [tag]);
+
+  useEffect(() => {
+    setEditDisabled(isShowDatePeriodEditor);
+  }, [isShowDatePeriodEditor]);
+
+  /*useEffect(() => {
     if (titleRef && titleRef.current) {
       titleRef.current.value = title;
     }
-  }, [title]);
+  }, [title]);*/
 
   function handleValidation(tagTitle: string) {
     // Tags should be at least 1 character long and should not contain: spaces, \, / #
@@ -128,7 +133,6 @@ function EditEntryTagDialog(props: Props) {
           <TsTextField
             error={haveError('tag')}
             disabled={editDisabled}
-            inputRef={titleRef}
             name="title"
             autoFocus
             updateValue={(value) => {
@@ -141,7 +145,7 @@ function EditEntryTagDialog(props: Props) {
               handleValidation(target.value);
               setTitle(target.value);
             }}
-            defaultValue={title}
+            value={title}
             data-tid="editTagEntryDialog_input"
             slotProps={{
               input: {

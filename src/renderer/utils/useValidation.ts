@@ -1,34 +1,35 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 export default function useValidation() {
-  const [errorInput, setErrorInput] = useState<Array<string>>([]);
+  // Use a Set for fast add/remove/has
+  const [errors, setErrors] = useState<Set<string>>(() => new Set());
 
-  /**
-   * @param errorKey
-   * @param add; if false = remove it
-   */
-  const setError = (errorKey: string, add = true): void => {
-    if (add) {
-      if (errorInput.length === 0) {
-        setErrorInput([errorKey]);
-      } else if (errorInput.indexOf(errorKey) === -1) {
-        setErrorInput([...errorInput, errorKey]);
+  // Stable handler to add/remove an error key
+  const setError = useCallback((errorKey: string, add: boolean = true) => {
+    setErrors((prev) => {
+      const next = new Set(prev);
+      if (add) {
+        next.add(errorKey);
+      } else {
+        next.delete(errorKey);
       }
-    } else if (errorInput.indexOf(errorKey) > -1) {
-      setErrorInput(errorInput.filter((err) => err !== errorKey));
-    }
-  };
+      return next;
+    });
+  }, []);
 
   /**
    * @param errorKey - if have error for the specified key
    * if not set errorKey return if its have errors at general
    */
-  const haveError = (errorKey?: string): boolean => {
-    if (errorKey) {
-      return errorInput.some((err) => err === errorKey);
-    }
-    return errorInput.length > 0;
-  };
+  const haveError = useCallback(
+    (errorKey?: string): boolean => {
+      if (errorKey) {
+        return errors.has(errorKey);
+      }
+      return errors.size > 0;
+    },
+    [errors],
+  );
 
-  return { setError, haveError };
+  return useMemo(() => ({ setError, haveError }), [setError, haveError]);
 }
