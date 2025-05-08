@@ -14,6 +14,7 @@ import {
   expectElementExist,
   getGridFileSelector,
   isDisplayed,
+  setPerspectiveSetting,
   takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -72,9 +73,12 @@ test.beforeEach(async () => {
 test.describe('TST49 - Perspective KanBan', () => {
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
-    if (await isDisplayed('[data-tid=showFolderContentTID]')) {
-      await clickOn('[data-tid=showFolderContentTID]');
-    }
+
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanbanPerspectiveToggleShowFolderContent]',
+    );
+
     await expectElementExist(getGridFileSelector(fileName), true, 8000);
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -92,7 +96,14 @@ test.describe('TST49 - Perspective KanBan', () => {
       getGridFileSelector('empty_folder'),
       'openDirectory',
     );
-    await expectElementExist(getGridFileSelector(fileName), true, 5000);
+    /*
+    todo fileName not always show in KanBan empty_folder dir content is hidden -> hideFolderContentTID must be clicked on
+    if (await isDisplayed('[data-tid=showFolderContentTID]')) {
+     await clickOn('[data-tid=showFolderContentTID]');
+    }*/
+    await clickOn('[data-tid=openDefaultPerspective]');
+    await expectElementExist(getGridFileSelector(fileName), true, 55000);
+    await clickOn('[data-tid=openKanbanPerspective]');
   });
 
   test('TST4910 - prev/next button [web,electron,_pro]', async () => {

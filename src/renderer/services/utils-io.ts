@@ -108,7 +108,12 @@ export function orderDirectories(
 ) {
   // if (sortBy === 'custom') {
   try {
-    if (metaArray && metaArray.length > 0) {
+    if (
+      directories &&
+      directories.length > 0 &&
+      metaArray &&
+      metaArray.length > 0
+    ) {
       const arrLength = directories.length;
       directories.sort((a, b) => {
         let indexA = metaArray.findIndex(

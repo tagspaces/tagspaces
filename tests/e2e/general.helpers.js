@@ -887,6 +887,27 @@ export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
+export async function setPerspectiveSetting(
+  perspective,
+  selector,
+  isChecked = true,
+  isDefault = true,
+) {
+  await clickOn('[data-tid=' + perspective + 'SettingsDialogOpenTID]');
+  if (isChecked) {
+    await global.client.check(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
+  } else {
+    await global.client.uncheck(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).not.toBeTruthy();
+  }
+  if (isDefault) {
+    await clickOn('[data-tid=defaultSettings]');
+  } else {
+    await clickOn('[data-tid=directorySettings]');
+  }
+}
+
 export async function checkSettings(
   selector,
   isChecked = true,
