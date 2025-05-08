@@ -1683,8 +1683,8 @@ export const IOActionsContextProvider = ({
           location.getDirSeparator(),
         );
       }
-      const meta = cleanMetaData(mergeFsEntryMeta(metaData));
-      const content = JSON.stringify(meta);
+      const meta = mergeFsEntryMeta(metaData);
+      const content = JSON.stringify(cleanMetaData(meta));
       return saveTextFilePromise(
         { path: metaFilePath, locationID: entry.locationID },
         content,
