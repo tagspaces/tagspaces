@@ -54,7 +54,6 @@ function EditEntryTagDialog(props: Props) {
   const { addTagsToFsEntries, editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(tag && tag.title);
-  // const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
     let showDatePeriodEditor = false;
     if (title && title.indexOf('-') > -1) {
@@ -87,12 +86,6 @@ function EditEntryTagDialog(props: Props) {
   useEffect(() => {
     setEditDisabled(isShowDatePeriodEditor);
   }, [isShowDatePeriodEditor]);
-
-  /*useEffect(() => {
-    if (titleRef && titleRef.current) {
-      titleRef.current.value = title;
-    }
-  }, [title]);*/
 
   function handleValidation(tagTitle: string) {
     // Tags should be at least 1 character long and should not contain: spaces, \, / #
