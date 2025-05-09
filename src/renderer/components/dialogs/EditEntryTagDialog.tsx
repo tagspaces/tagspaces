@@ -169,7 +169,7 @@ function EditEntryTagDialog(props: Props) {
             setError={setError}
           />
         )}
-        {editDisabled && isShowDatePeriodEditor && (
+        {editDisabled && isShowDatePeriodEditor && tag && (
           <DateTagEditor datePeriodTag={tag && tag.title} onChange={setTitle} />
         )}
       </DialogContent>
