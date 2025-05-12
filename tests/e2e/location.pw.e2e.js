@@ -29,11 +29,11 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  await startTestingApp('extconfig-without-locations.js');
+  await startTestingApp({ isWeb, isS3 }, 'extconfig-without-locations.js');
   //await clearDataStorage();
 });
 
@@ -50,10 +50,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ isMinio, isS3 }) => {
   testLocationName = '' + new Date().getTime();
 
-  if (global.isMinio || global.isS3) {
+  if (isMinio || isS3) {
     await createPwMinioLocation('', testLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, testLocationName, true);
@@ -123,12 +123,16 @@ test.describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  test('TST0307 - Move location Up and Down [web,electron]', async () => {
-    if (global.isWeb) {
+  test('TST0307 - Move location Up and Down [web,electron]', async ({
+    isWeb,
+    isMinio,
+    isS3,
+  }) => {
+    if (isWeb) {
       // in web there is no other locations
-      if (global.isMinio) {
+      if (isMinio) {
         await createPwMinioLocation('', 'dummyLocation', false);
-      } else if (global.isS3) {
+      } else if (isS3) {
         await createS3Location('empty_folder');
       }
     }

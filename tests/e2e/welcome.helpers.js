@@ -1,7 +1,7 @@
 import { clearStorage } from './clearstorage.helpers';
 
-export async function clearDataStorage() {
-  if (global.isWeb) {
+export async function clearDataStorage(isWeb) {
+  if (isWeb) {
     //await global.context.clearCookies();
     //await global.context.clearStorageState();
     await global.client.evaluate(() => {

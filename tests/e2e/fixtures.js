@@ -5,8 +5,12 @@ import { removeExtConfig } from './hook';
 
 // Extend base test with a fixture for the S3 server
 const test = base.extend({
-  webServer: async ({}, use) => {
-    if (global.isWeb) {
+  isWeb: [false, { option: true }],
+  isS3: [false, { option: true }],
+  isMinio: [false, { option: true }],
+  isWin: [false, { option: true }],
+  webServer: async ({ isWeb }, use) => {
+    if (isWeb) {
       await removeExtConfig();
       const webserver = await startWebServer();
       await use(webserver);
@@ -15,8 +19,8 @@ const test = base.extend({
       await use(null);
     }
   },
-  s3Server: async ({}, use, testInfo) => {
-    if (global.isS3) {
+  s3Server: async ({ isS3 }, use, testInfo) => {
+    if (isS3) {
       //testInfo.title.includes('web')) {
       const s3Server = await runS3Server();
       await uploadTestDirectory();
@@ -27,9 +31,9 @@ const test = base.extend({
       await use(null);
     }
   },
-  minioServer: async ({}, use, testInfo) => {
-    if (global.isMinio) {
-      const minioProcess = await startMinio();
+  minioServer: async ({ isMinio, isWin }, use, testInfo) => {
+    if (isMinio) {
+      const minioProcess = await startMinio(isWin);
       await use(minioProcess);
     } else {
       // If the test does not require the S3 server, just use a dummy value

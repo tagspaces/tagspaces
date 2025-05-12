@@ -20,15 +20,15 @@ let minioServerInstance;
 const testFileName = 'sample.pdf';
 const isMac = /^darwin/.test(process.platform);
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 

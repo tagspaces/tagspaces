@@ -16,11 +16,11 @@ export async function globalSetup() {
   sh.cd(extensionDir);
 }
 
-export async function startMinio() {
+export async function startMinio(isWin) {
   const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
   const unixMinio = pathLib.resolve(__dirname, './bin/minio');
 
-  const command = global.isWin ? winMinio : unixMinio;
+  const command = isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
     pathLib.resolve(__dirname, './testdata-tmp/file-structure'),
@@ -88,10 +88,10 @@ export async function startWebServer() {
       index: ['index.html'],
     }),
   );
-  if (global.isMac) {
-    //todo copyfiles do not work for MacOS
-    // await app.use(serveStatic('../app'));
-  }
+  //if (isMac) {
+  //todo copyfiles do not work for MacOS
+  // await app.use(serveStatic('../app'));
+  //}
   app.server = app.listen(port);
   console.log('Webserver listining on http://127.0.0.1:' + port);
   return app;

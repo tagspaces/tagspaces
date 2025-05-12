@@ -37,15 +37,15 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
   // await clearDataStorage();
 });
@@ -63,10 +63,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  if (global.isMinio) {
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -81,9 +81,13 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST02 - Folder properties', () => {
-  test('TST0201 - Open in main area [web,electron]', async () => {
+  test('TST0201 - Open in main area [web,electron]', async ({ isS3 }) => {
     const testFile = 'file_in_empty_folder.txt';
-    await createFile(testFile);
+    if (isS3) {
+      await createFileS3(testFile);
+    } else {
+      await createFile(testFile);
+    }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInMainAreaTID]');
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
@@ -109,7 +113,15 @@ test.describe('TST02 - Folder properties', () => {
       ],
       id: '73e839b38d034a4a807971e755c17091',
     };
-    await createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
+    if (isS3) {
+      await createFileS3(
+        'tsm.json',
+        JSON.stringify(tsmJson),
+        'empty_folder/.ts',
+      );
+    } else {
+      await createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
+    }
 
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadFolderTID]');
@@ -317,7 +329,9 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async () => {
+  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async ({
+    isWeb,
+  }) => {
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties',
@@ -351,7 +365,7 @@ test.describe('TST02 - Folder properties', () => {
       'style',
     );
 
-    if (!global.isWeb) {
+    if (!isWeb) {
       //todo screenshots are diff in web
       const bgnRemovedScreenshot = await getElementScreenshot(
         '[data-tid=perspectiveGridFileTable]',
@@ -360,7 +374,10 @@ test.describe('TST02 - Folder properties', () => {
     }
   });
 
-  test('TST0219 - Set and remove predefined folder thumbnail [web,electron,_pro]', async () => {
+  test('TST0219 - Set and remove predefined folder thumbnail [web,electron,_pro]', async ({
+    isWeb,
+    isWin,
+  }) => {
     const screenshotSelector = '[data-tid=fsEntryName_empty_folder]'; // > div
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
@@ -386,7 +403,7 @@ test.describe('TST02 - Folder properties', () => {
 
     const thumbRemovedScreenshot =
       await getElementScreenshot(screenshotSelector);
-    if (!global.isWeb && !global.isWin) {
+    if (!isWeb && !isWin) {
       // thumbnails are visual equal on windows but with diff base64 screenshots
       expect(initScreenshot).toBe(thumbRemovedScreenshot);
     }

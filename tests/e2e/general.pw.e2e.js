@@ -47,15 +47,15 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 
@@ -72,11 +72,11 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  if (global.isMinio) {
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
     await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await closeWelcomePlaywright();
     await createS3Location('', defaultLocationName, true);
   } else {
@@ -177,8 +177,11 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist(metaFiles);
   });
 
-  test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async () => {
-    if (!global.isWin || !global.isWeb) {
+  test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async ({
+    isWin,
+    isWeb,
+  }) => {
+    if (!isWin || !isWeb) {
       //todo not work on web windows
       const fileName = 'sample_exif[iptc].jpg';
       await clickOn(getGridFileSelector(fileName));
@@ -228,8 +231,10 @@ test.describe('TST51 - Perspective Grid', () => {
     }
   });
 
-  test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
-    if (global.isWin) {
+  test('TST0511 - Generate thumbnail from Videos [electron]', async ({
+    isWin,
+  }) => {
+    if (isWin) {
       // todo in github thumbnails not generated for videos on MacOS
       //todo thumbnails not generated for ogv
       const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video

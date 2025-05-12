@@ -28,15 +28,15 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig-objectstore-location.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig-objectstore-location.js');
   }
   //await clearDataStorage();
 });
@@ -54,8 +54,8 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  if (global.isS3) {
+test.beforeEach(async ({ isS3 }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await closeWelcomePlaywright();

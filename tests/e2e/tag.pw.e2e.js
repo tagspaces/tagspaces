@@ -38,15 +38,15 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 
@@ -285,19 +285,26 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0420 - Load tag groups from location [web,electron, _pro]', async () => {
+  test('TST0420 - Load tag groups from location [web,electron, _pro]', async ({
+    isS3,
+    isMinio,
+  }) => {
     const tslContent =
       '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
-    await createFile('tsl.json', tslContent, '.ts');
+    if (isS3) {
+      await createFileS3('tsl.json', tslContent);
+    } else {
+      await createFile('tsl.json', tslContent, '.ts');
+    }
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
       '[data-tid=advancedSettingsDialogTID]',
     );
     await clickOn('[data-tid=locationManager]');
-    if (global.isMinio) {
+    if (isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);
-    } else if (global.isS3) {
+    } else if (isS3) {
       await createS3Location('', defaultLocationName, true);
     } else {
       await createPwLocation(defaultLocationPath, defaultLocationName, true);

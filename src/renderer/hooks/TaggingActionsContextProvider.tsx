@@ -204,9 +204,6 @@ export const TaggingActionsContextProvider = ({
     tag?: TS.Tag;
     entries?: TS.FileSystemEntry[];
   }>({ open: false });
-  /*const open = useRef<boolean>(false);
-  const selectedTag = useRef<TS.Tag>(undefined);
-  const selectedEntries = useRef<TS.FileSystemEntry[]>(undefined);*/
 
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const maxCollectedTag = useSelector(getMaxCollectedTag);

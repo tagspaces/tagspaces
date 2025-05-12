@@ -26,12 +26,12 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
 
-  await startTestingApp();
+  await startTestingApp({ isWeb, isS3 });
   await closeWelcomePlaywright();
 });
 
@@ -46,10 +46,10 @@ test.afterAll(async () => {
     await takeScreenshot(testInfo);
   }
 });*/
-test.beforeEach(async () => {
-  if (global.isMinio) {
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -72,8 +72,8 @@ test.describe('TST59 - Media player', () => {
   /**
    * http://localhost:63342/test-artifacts/playwright-report/trace/manifest.webmanifest?_ijt=eojod6f91jej1donf3vd1jp8ju
    */
-  test('TST5902 - Play ogv file [web,minio,electron]', async () => {
-    if (!global.isWin) {
+  test('TST5902 - Play ogv file [web,minio,electron]', async ({ isWin }) => {
+    if (!isWin) {
       await openContextEntryMenu(
         getGridFileSelector('sample.ogv'),
         'fileMenuOpenFile',

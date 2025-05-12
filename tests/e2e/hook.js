@@ -48,13 +48,13 @@ export function checkFileExist(filePath) {
   return hasPlaywright;
 };*/
 
-export async function clearLocalStorage() {
+export async function clearLocalStorage(isWeb) {
   /*if (!(await clearStorage())) {
     // TODO session is not implemented https://github.com/electron-userland/spectron/issues/117
     // await global.app.webContents.session.clearStorageData();
     global.app.webContents.reload();
   }*/
-  if (global.isWeb) {
+  if (isWeb) {
     const windowHandle = await global.client.evaluateHandle(() => window);
     const title = await global.client.evaluateHandle(() => document.title);
     windowHandle.history.pushState('', title, windowHandle.location.pathname);
@@ -69,15 +69,18 @@ export async function clearLocalStorage() {
   // global.app.client.reload(false);
 }
 
-export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
+export async function copyExtConfig(
+  { isWeb, isS3 },
+  extconfig = 'extconfig-with-welcome.js',
+) {
   let srcDir;
-  if (global.isWeb) {
+  if (isWeb) {
     srcDir = pathLib.join(
       __dirname,
       '..',
       '..',
       'scripts',
-      'web' + (global.isS3 ? 's3' : '') + extconfig,
+      'web' + (isS3 ? 's3' : '') + extconfig,
     );
 
     if (!fse.existsSync(srcDir)) {
@@ -86,7 +89,7 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
         '..',
         '..',
         'scripts',
-        (global.isS3 ? 's3' : '') + extconfig,
+        (isS3 ? 's3' : '') + extconfig,
       );
     }
     if (!fse.existsSync(srcDir)) {
@@ -98,7 +101,7 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
       '..',
       '..',
       'scripts',
-      (global.isS3 ? 's3' : '') + extconfig,
+      (isS3 ? 's3' : '') + extconfig,
     );
     if (!fse.existsSync(srcDir)) {
       srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
@@ -108,20 +111,20 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
     __dirname,
     '..',
     '..',
-    global.isWeb ? 'web' : 'release/app/dist/renderer',
+    isWeb ? 'web' : 'release/app/dist/renderer',
     'extconfig.js',
   );
   await fse.copy(srcDir, destDir);
 }
 
-export async function removeExtConfig() {
-  if (!global.isWeb) {
+export async function removeExtConfig(isWeb) {
+  if (!isWeb) {
     await fse.remove(
       pathLib.join(
         __dirname,
         '..',
         '..',
-        global.isWeb ? 'web' : 'release/app/dist/renderer',
+        isWeb ? 'web' : 'release/app/dist/renderer',
         'extconfig.js',
       ),
     );
@@ -140,9 +143,9 @@ const waitForAppLoaded = async (electronApp) => {
   await waitForMainMessage(electronApp, 'startup-finished');
 };
 
-export async function startTestingApp(extconfig) {
+export async function startTestingApp({ isWeb, isS3 }, extconfig) {
   if (extconfig) {
-    await copyExtConfig(extconfig);
+    await copyExtConfig({ isWeb, isS3 }, extconfig);
   } else {
     await removeExtConfig();
   }
@@ -154,14 +157,17 @@ export async function startTestingApp(extconfig) {
     '--disable-extensions',
     '--window-size=1920,1080',
   ];
-  if (global.isHeadlessMode) {
+  if (process.env.HEADLESS_MODE) {
     chromeDriverArgs.push('--headless');
   }
 
-  if (global.isWeb) {
+  if (isWeb) {
     const { webkit, chromium } = require('playwright');
     global.app = await chromium.launch({
-      headless: global.isHeadlessMode,
+      headless:
+        process.env.HEADLESS_MODE !== undefined
+          ? process.env.HEADLESS_MODE
+          : false,
       slowMo: 50,
     }); //browser
 
@@ -235,8 +241,8 @@ export async function startTestingApp(extconfig) {
   }
 }
 
-export async function stopApp() {
-  if (global.isWeb) {
+export async function stopApp(isWeb) {
+  if (isWeb) {
     await global.context.close();
     // await global.client.closeWindow();
   } else if (global.app) {
@@ -245,8 +251,8 @@ export async function stopApp() {
   }
 }
 
-export async function testDataRefresh(s3ServerInstance) {
-  if (global.isS3) {
+export async function testDataRefresh(isS3, s3ServerInstance) {
+  if (isS3) {
     /*if(s3ServerInstance) {
       s3ServerInstance.reset();
      await uploadTestDirectory();
@@ -278,6 +284,12 @@ export async function deleteTestData() {
   );
 }
 
+export async function createFileS3(
+  fileName = 'empty_file.html',
+  fileContent = undefined,
+) {
+  await uploadFile(filePath, fileContent || 'test content');
+}
 export async function createFile(
   fileName = 'empty_file.html',
   fileContent = undefined,
@@ -292,18 +304,14 @@ export async function createFile(
     rootFolder,
     fileName,
   );
-  if (global.isS3) {
-    await uploadFile(filePath, fileContent || 'test content');
-  } else {
-    try {
-      if (fileContent) {
-        await fse.outputFile(filePath, fileContent);
-      } else {
-        await fse.createFile(filePath);
-        console.log('Empty file created!');
-      }
-    } catch (err) {
-      console.error(err);
+  try {
+    if (fileContent) {
+      await fse.outputFile(filePath, fileContent);
+    } else {
+      await fse.createFile(filePath);
+      console.log('Empty file created!');
     }
+  } catch (err) {
+    console.error(err);
   }
 }
