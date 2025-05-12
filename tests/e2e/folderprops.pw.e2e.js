@@ -24,7 +24,13 @@ import {
   waitUntilChanged,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   AddRemovePropertiesTags,
@@ -93,7 +99,9 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
   });
 
-  test('TST0204 - Reload folder from toolbar [web,electron]', async () => {
+  test('TST0204 - Reload folder from toolbar [web,electron]', async ({
+    isS3,
+  }) => {
     let propsTags = await getPropertiesTags();
     expect(propsTags).toHaveLength(0);
     const tagTitle = 'test-tag';

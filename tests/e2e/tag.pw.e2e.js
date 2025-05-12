@@ -11,7 +11,13 @@ import {
   setInputValue,
   takeScreenshot,
 } from './general.helpers';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
@@ -292,7 +298,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     const tslContent =
       '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
     if (isS3) {
-      await createFileS3('tsl.json', tslContent);
+      await createFileS3('tsl.json', tslContent, '.ts');
     } else {
       await createFile('tsl.json', tslContent, '.ts');
     }

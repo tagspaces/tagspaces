@@ -284,7 +284,17 @@ export async function deleteTestData() {
 export async function createFileS3(
   fileName = 'empty_file.html',
   fileContent = undefined,
+  rootFolder = 'empty_folder',
 ) {
+  const filePath = pathLib.join(
+    __dirname,
+    '..',
+    'testdata-tmp',
+    'file-structure',
+    'supported-filestypes',
+    rootFolder,
+    fileName,
+  );
   await uploadFile(filePath, fileContent || 'test content');
 }
 export async function createFile(

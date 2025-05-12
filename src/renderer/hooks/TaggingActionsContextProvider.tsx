@@ -165,6 +165,11 @@ const EditEntryTagDialog = React.lazy(
     ),
 );
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.open === prevProp.open &&
+  JSON.stringify(nextProp.tag) === JSON.stringify(prevProp.tag) &&
+  JSON.stringify(nextProp.entries) === JSON.stringify(prevProp.entries);
+
 const EditEntryTagDialogAsync = React.memo(
   (props: {
     open: boolean;
@@ -176,6 +181,7 @@ const EditEntryTagDialogAsync = React.memo(
       <EditEntryTagDialog {...props} />
     </React.Suspense>
   ),
+  areEqual,
 );
 
 export const TaggingActionsContextProvider = ({
@@ -1493,12 +1499,15 @@ export const TaggingActionsContextProvider = ({
 
   return (
     <TaggingActionsContext.Provider value={context}>
-      <EditEntryTagDialogAsync
-        open={dialogState.open}
-        onClose={closeEditEntryTagDialog}
-        tag={dialogState.tag}
-        entries={dialogState.entries}
-      />
+      {dialogState.open && (
+        <EditEntryTagDialogAsync
+          open={true}
+          onClose={closeEditEntryTagDialog}
+          tag={dialogState.tag}
+          entries={dialogState.entries}
+        />
+      )}
+
       {children}
     </TaggingActionsContext.Provider>
   );

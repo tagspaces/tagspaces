@@ -360,7 +360,7 @@ test.describe('TST08 - File folder properties', () => {
 
     const newFileContent = 'testing_file_content';
     if (isS3) {
-      await createFileS3('sample.txt', newFileContent);
+      await createFileS3('sample.txt', newFileContent, '.');
     } else {
       await createFile('sample.txt', newFileContent, '.');
     }

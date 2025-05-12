@@ -29,7 +29,13 @@ import {
   getAttribute,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
