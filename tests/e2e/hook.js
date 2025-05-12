@@ -157,17 +157,14 @@ export async function startTestingApp({ isWeb, isS3 }, extconfig) {
     '--disable-extensions',
     '--window-size=1920,1080',
   ];
-  if (process.env.HEADLESS_MODE) {
+  if (process.env.HEADLESS_MODE === 'true') {
     chromeDriverArgs.push('--headless');
   }
 
   if (isWeb) {
     const { webkit, chromium } = require('playwright');
     global.app = await chromium.launch({
-      headless:
-        process.env.HEADLESS_MODE !== undefined
-          ? process.env.HEADLESS_MODE
-          : false,
+      headless: process.env.HEADLESS_MODE === 'true',
       slowMo: 50,
     }); //browser
 

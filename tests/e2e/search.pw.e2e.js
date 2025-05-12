@@ -9,7 +9,13 @@ import {
   selectorFile,
   setSettings,
 } from './general.helpers';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import {
   closeFileProperties,
   closeLocation,

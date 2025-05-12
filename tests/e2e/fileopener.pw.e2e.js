@@ -34,7 +34,13 @@ import {
   getPropertiesTags,
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { stopServices } from '../setup-functions';
