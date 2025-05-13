@@ -68,11 +68,7 @@ test.beforeEach(async ({ isMinio, isS3 }) => {
 test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1311 - Test show search [electron]', async () => {
     await clickOn(selectorFile);
-    if (isMac) {
-      await global.client.keyboard.press('Meta+KeyK');
-    } else {
-      await global.client.keyboard.press('Control+KeyK');
-    }
+    await global.client.keyboard.press('ControlOrMeta+KeyF'); //('ControlOrMeta+KeyK');
     await expectElementExist('#textQuery', true, 2000);
   });
 

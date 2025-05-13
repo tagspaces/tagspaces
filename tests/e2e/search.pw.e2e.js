@@ -258,6 +258,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const tags2 = ['test-tag1', 'test-tag2'];
     const tags3 = ['test-tag2', 'test-tag3'];
     await clickOn(getGridFileSelector('sample.' + file1));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file1) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags1, true);
 
     await expectElementSelected(
@@ -268,6 +273,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     const file2 = 'jpg';
     await clickOn(getGridFileSelector('sample.' + file2));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file2) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags2, true);
 
     await expectElementSelected(
@@ -277,6 +287,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     const file3 = 'gif';
     await clickOn(getGridFileSelector('sample.' + file3));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file3) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags3, true);
 
     await expectElementSelected(

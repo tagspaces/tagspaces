@@ -109,7 +109,7 @@ export async function getAttribute(selector, attribute = 'style') {
   return await element.getAttribute(attribute);
 }
 export async function setInputValue(selector, value) {
-  global.client.fill(selector, value);
+  await global.client.locator(selector).fill(value);
 }
 
 /**

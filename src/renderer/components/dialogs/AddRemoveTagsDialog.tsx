@@ -92,9 +92,9 @@ function AddRemoveTagsDialog(props: Props) {
     }, []);
   }
 
-  const onClose = () => {
+  /*const onClose = () => {
     onCloseDialog();
-  };
+  };*/
 
   const onCloseDialog = (clearSelection?: boolean) => {
     setNewlyAddedTags([]);
@@ -136,7 +136,7 @@ function AddRemoveTagsDialog(props: Props) {
     <Dialog
       open={open}
       fullScreen={smallScreen}
-      onClose={onClose}
+      onClose={onCloseDialog}
       keepMounted
       scroll="paper"
       PaperComponent={smallScreen ? Paper : DraggablePaper}
@@ -145,7 +145,7 @@ function AddRemoveTagsDialog(props: Props) {
       <TsDialogTitle
         dialogTitle={t('core:tagOperationTitle')}
         closeButtonTestId="closeAddRemoveTagsTID"
-        onClose={onClose}
+        onClose={onCloseDialog}
       />
       <DialogContent
         style={{

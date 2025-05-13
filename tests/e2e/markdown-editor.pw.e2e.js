@@ -122,7 +122,7 @@ test.describe('TST69 - Markdown editor', () => {
   test('TST6903 - Save text [web,s3,electron]', async () => {
     // open fileProperties
     const fileName = 'sample.md';
-    const newFileContent = 'etete&5435 new text saved';
+    const newFileContent = 'etete&5435_new_text_saved';
     await clickOn(getGridFileSelector(fileName));
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',

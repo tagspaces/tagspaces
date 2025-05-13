@@ -32,10 +32,9 @@ export async function AddRemoveTagsToSelectedFiles(
   await expectElementExist('[data-tid=AddRemoveTagsSelectTID]', true, 5000);
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];
-    /* if (isWin) {
-      await setInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName);
-    } else {*/
-    await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
+    // if (isWin) {
+    await setInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName);
+    //await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
     //await setInputKeys('AddRemoveTagsSelectTID', tagName);
     await global.client.keyboard.press('Enter');
   }
