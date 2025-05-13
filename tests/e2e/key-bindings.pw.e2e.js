@@ -2,7 +2,13 @@
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
 import { test, expect } from './fixtures';
-import { defaultLocationName } from './location.helpers';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+  defaultLocationPath,
+} from './location.helpers';
 import {
   clickOn,
   expectElementExist,
@@ -45,12 +51,14 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  // if (global.isMinio) {
-  //   await createPwMinioLocation('', defaultLocationName, true);
-  // } else {
-  //   await createPwLocation(defaultLocationPath, defaultLocationName, true);
-  // }
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else if (isS3) {
+    await createS3Location('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
