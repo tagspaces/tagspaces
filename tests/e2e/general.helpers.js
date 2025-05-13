@@ -792,7 +792,8 @@ export async function writeTextInIframeInput(txt) {
   const fLocator = await frameLocator();
   const monacoEditor = await fLocator.locator('#monaco_editor');
   await monacoEditor.click();
-  await global.client.keyboard.press('Meta+KeyA');
+  //await monacoEditor.fill(txt);
+  await global.client.keyboard.press('ControlOrMeta+KeyA'); //'Meta+KeyA');
   await monacoEditor.type(txt);
 }
 
@@ -805,6 +806,7 @@ export async function expectFileContain(
       async () => {
         const fLocator = await frameLocator('iframe[allowfullscreen]');
         const bodyTxt = await fLocator.locator('body').innerText();
+        //console.log(bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
       },
       {
