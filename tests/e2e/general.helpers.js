@@ -788,13 +788,16 @@ export async function expectMetaFilesExist(
   }
 }
 
-export async function writeTextInIframeInput(txt) {
+export async function writeTextInIframeInput(
+  txt,
+  editorSelector = '#monaco_editor',
+) {
   const fLocator = await frameLocator();
-  const monacoEditor = await fLocator.locator('#monaco_editor');
-  await monacoEditor.click();
+  const editor = await fLocator.locator(editorSelector);
+  await editor.click();
   //await monacoEditor.fill(txt);
   await global.client.keyboard.press('ControlOrMeta+KeyA'); //'Meta+KeyA');
-  await monacoEditor.type(txt);
+  await editor.type(txt);
 }
 
 export async function expectFileContain(

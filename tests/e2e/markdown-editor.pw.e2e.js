@@ -12,15 +12,18 @@ import {
 import {
   clickOn,
   expectElementExist,
+  expectFileContain,
   frameLocator,
   getGridFileSelector,
   isDisplayed,
   takeScreenshot,
+  writeTextInIframeInput,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 let s3ServerInstance;
 let webServerInstance;
@@ -114,5 +117,27 @@ test.describe('TST69 - Markdown editor', () => {
       frame,
     );
     expect(settingsExists).toBeTruthy();
+  });
+
+  test('TST6903 - Save text [web,s3,electron]', async () => {
+    // open fileProperties
+    const fileName = 'sample.md';
+    const newFileContent = 'etete&5435 new text saved';
+    await clickOn(getGridFileSelector(fileName));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      8000,
+    );
+    await clickOn('[data-tid=fileContainerEditFile]');
+    await writeTextInIframeInput(
+      newFileContent,
+      '.milkdown div[contenteditable=true]',
+    );
+    await clickOn('[data-tid=fileContainerSaveFile]');
+    await clickOn('[data-tid=cancelEditingTID]');
+    await clickOn('[data-tid=propsActionsMenuTID]');
+    await clickOn('[data-tid=reloadPropertiesTID]');
+    await expectFileContain(newFileContent, 10000);
   });
 });

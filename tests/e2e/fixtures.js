@@ -9,6 +9,19 @@ const test = base.extend({
   isS3: [false, { option: true }],
   isMinio: [false, { option: true }],
   isWin: [false, { option: true }],
+  /* TODO
+  // 1) Launch Electron once per test (or per worker if you prefer beforeAll)
+  electronApp: async ({}, use) => {
+    const app = await electron.launch({ args: ['.'] });
+    await use(app);
+    await app.close();
+  },
+
+  // 2) Override the default `page` to be the first Electron window
+  page: async ({ electronApp }, use) => {
+    const window = await electronApp.firstWindow();
+    await use(window);
+  },*/
   webServer: async ({ isWeb }, use) => {
     if (isWeb) {
       await removeExtConfig();
