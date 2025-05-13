@@ -4055,7 +4055,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.136
+ - @tagspacespro/tagspacespro@5.0.150
 
 This package contains the following license:
 
@@ -10978,11 +10978,12 @@ terms above.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - dompurify@3.2.4
+ - dompurify@3.2.5
 
-This package contains the following license:
+These packages each contain the following license:
 
 DOMPurify
 Copyright 2025 Dr.-Ing. Mario Heiderich, Cure53
@@ -18482,7 +18483,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.181
+ - @tagspaces/extensions@1.0.184
 
 This package contains the following license:
 
