@@ -49,8 +49,6 @@ Check out the full [changelog](https://www.tagspaces.org/whatsnew/) for recent u
 - **Desktop App Framework:** [Electron](https://electron.atom.io/)
 - **Boilerplate:** [Electron React Boilerplate](https://github.com/chentsulin/electron-react-boilerplate)
 
----
-
 ### 📁 Project Structure
 
 ```text
@@ -113,9 +111,9 @@ This will start a development server in background, which watches for changes in
 Run unit and integration tests:
 
 ```bash
-    npm run test-unit
-    npm run test-playwright
-    npm run test-playwright-web
+npm run test-unit
+npm run test-playwright
+npm run test-playwright-web
 
 ```
 
@@ -124,10 +122,10 @@ Run unit and integration tests:
 Build native apps for each platform:
 
 ```bash
-    npm run package-win
-    npm run package-linux
-    npm run package-mac
-    npm run package-mac-arm64
+npm run package-win
+npm run package-linux
+npm run package-mac
+npm run package-mac-arm64
 ```
 
 The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively.
@@ -136,9 +134,11 @@ The commands will create packages for Windows, Linux, Mac OS and Mac OS with the
 
 ### 📱 Android Build (Deprecated)
 
-    npm run version-meta
-    npm run prepare-cordova
-    npm run package-android
+```bash
+npm run version-meta
+npm run prepare-cordova
+npm run package-android
+```
 
 ### 🌐 Web Version
 
