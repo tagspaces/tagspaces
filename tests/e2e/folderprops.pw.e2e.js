@@ -356,6 +356,7 @@ test.describe('TST02 - Folder properties', () => {
       '[data-tid=backgroundTID]',
       'height: 100%; background: rgba(0, 0, 0, 0.267);',
       'style',
+      10000,
     );
 
     const withBgnColorScreenshot = await getElementScreenshot(
@@ -371,6 +372,7 @@ test.describe('TST02 - Folder properties', () => {
       '[data-tid=backgroundTID]',
       'height: 100%; background: transparent;',
       'style',
+      10000,
     );
 
     if (!isWeb) {

@@ -1,8 +1,14 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import pwConfig from './playwright.config.common';
 
 const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 //const isHeadlessMode = process.env.HEADLESS_MODE === 'true';
+
+function projectTagGrep(name) {
+  // \b ensures we match whole words (so “web” doesn’t match “webhook”)
+  return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
+  //return new RegExp('TST0808'); ;
+}
 
 export default defineConfig({
   ...pwConfig,
@@ -42,7 +48,7 @@ export default defineConfig({
     },
     {
       name: 'web-s3',
-      grep: /\bweb\b/,
+      grep: projectTagGrep('web'),
       use: {
         isElectron: false,
         isWeb: true,
@@ -50,11 +56,12 @@ export default defineConfig({
         isMinio: false,
         isS3: true,
         isWin,
+        ...devices['Desktop Chrome'],
       },
     },
     {
       name: 'web-minio',
-      grep: /\bweb\b/,
+      grep: projectTagGrep('web'),
       use: {
         isElectron: false,
         isWeb: true,
