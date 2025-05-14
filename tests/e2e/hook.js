@@ -270,15 +270,20 @@ export async function testDataRefresh(isS3, s3ServerInstance) {
 }
 
 export async function deleteTestData() {
-  await fse.emptyDir(
-    pathLib.join(
-      __dirname,
-      '..',
-      'testdata-tmp',
-      'file-structure',
-      'supported-filestypes',
-    ),
+  const testDataDir = pathLib.join(
+    __dirname,
+    '..',
+    'testdata-tmp',
+    'file-structure',
+    'supported-filestypes',
   );
+  await fse.rm(testDataDir, {
+    recursive: true,
+    force: true,
+    maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
+    retryDelay: 100, // optional back‑off in ms
+  });
+  // await fse.emptyDir(testDataDir);
 }
 
 export async function createFileS3(
