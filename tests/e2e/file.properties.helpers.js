@@ -34,7 +34,7 @@ export async function getPropertiesTags() {
  */
 export async function AddRemovePropertiesTags(
   tagNames = ['test-props-tag'], // TODO fix camelCase tag name
-  options = { add: true, remove: true },
+  options = { add: true, remove: true, expectProp: false },
 ) {
   if (options.add) {
     for (let i = 0; i < tagNames.length; i++) {
@@ -51,7 +51,7 @@ export async function AddRemovePropertiesTags(
         8000,
         '[data-tid=perspectiveGridFileTable]',
       );
-      if (!global.isWeb) {
+      if (options.expectProp) {
         // todo selecting by parent PropertiesTagsSelectTID not work for web..
         await expectElementExist(
           '[data-tid=tagContainer_' + tagName + ']',

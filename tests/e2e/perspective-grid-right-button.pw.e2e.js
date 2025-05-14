@@ -48,15 +48,15 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 
@@ -73,10 +73,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  if (global.isMinio) {
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -310,8 +310,8 @@ test.describe('TST50** - Right button on a file', () => {
     // await expectTagsExistBySelector(selectorFile, tags, false);
   });
 
-  test('TST5026 - Open file natively [electron]', async () => {
-    if (!global.isMinio) {
+  test('TST5026 - Open file natively [electron]', async ({ isMinio }) => {
+    if (!isMinio) {
       // Open file natively option is missing for Minio Location
       await searchEngine('txt');
       await openContextEntryMenu(selectorFile, 'fileMenuOpenFileNatively');
@@ -319,8 +319,10 @@ test.describe('TST50** - Right button on a file', () => {
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [web,electron]', async () => {
-    if (!global.isMinio) {
+  test('TST5027 - Open containing folder [web,electron]', async ({
+    isMinio,
+  }) => {
+    if (!isMinio) {
       // Show in File Manager option is missing for Minio Location
       await searchEngine('txt');
       await openContextEntryMenu(selectorFile, 'fileMenuOpenContainingFolder');

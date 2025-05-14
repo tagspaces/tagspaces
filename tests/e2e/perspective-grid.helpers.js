@@ -1,4 +1,9 @@
-import { clickOn, typeInputValue } from './general.helpers';
+import {
+  clickOn,
+  expectElementExist,
+  setInputValue,
+  typeInputValue,
+} from './general.helpers';
 import {
   cleanFileName,
   extractFileExtension,
@@ -24,10 +29,12 @@ export async function AddRemoveTagsToSelectedFiles(
   addTag = true,
 ) {
   await clickOn('[data-tid=' + perspective + 'PerspectiveAddRemoveTags]');
-
+  await expectElementExist('[data-tid=AddRemoveTagsSelectTID]', true, 5000);
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];
-    await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
+    // if (isWin) {
+    await setInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName);
+    //await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
     //await setInputKeys('AddRemoveTagsSelectTID', tagName);
     await global.client.keyboard.press('Enter');
   }

@@ -29,7 +29,13 @@ import {
   getAttribute,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
@@ -40,16 +46,16 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
 
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 
@@ -66,10 +72,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  if (global.isMinio) {
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
     await closeWelcomePlaywright();
   } else {
@@ -176,8 +182,12 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  test('TST0108 - Move folder [web,electron]', async () => {
-    await createFile('file_to_move.txt', 'testing file content');
+  test('TST0108 - Move folder [web,electron]', async ({ isS3 }) => {
+    if (isS3) {
+      await createFileS3('file_to_move.txt', 'testing file content');
+    } else {
+      await createFile('file_to_move.txt', 'testing file content');
+    }
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'fileMenuMoveCopyDirectoryTID',
@@ -196,8 +206,12 @@ test.describe('TST01 - Folder management', () => {
     await testDataRefresh(s3ServerInstance);
   });
 
-  test('TST0109 - Copy folder [web,electron]', async () => {
-    await createFile('file_to_copy.txt', 'testing file content');
+  test('TST0109 - Copy folder [web,electron]', async ({ isS3 }) => {
+    if (isS3) {
+      await createFileS3('file_to_copy.txt', 'testing file content');
+    } else {
+      await createFile('file_to_copy.txt', 'testing file content');
+    }
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'fileMenuMoveCopyDirectoryTID',
@@ -253,8 +267,11 @@ test.describe('TST01 - Folder management', () => {
   /**
    * in old minio preSigned URL for thumbnails cannot be opened SignatureDoesNotMatch error
    */
-  test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async () => {
-    if (!global.isMinio || !global.isWeb) {
+  test('TST0114 - Use as thumbnail for parent folder [web,minio,electron,_pro]', async ({
+    isMinio,
+    isWeb,
+  }) => {
+    if (!isMinio || !isWeb) {
       // on Windows + Minio thumbnails is not displayed -> CORS
       //await global.client.waitForTimeout(10000000);
       const fileName = 'sample.png';

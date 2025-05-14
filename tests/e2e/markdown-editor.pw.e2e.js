@@ -12,25 +12,28 @@ import {
 import {
   clickOn,
   expectElementExist,
+  expectFileContain,
   frameLocator,
   getGridFileSelector,
   isDisplayed,
   takeScreenshot,
+  writeTextInIframeInput,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { stopServices } from '../setup-functions';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  await startTestingApp();
+  await startTestingApp({ isWeb, isS3 });
   // await clearDataStorage();
 });
 
@@ -47,11 +50,11 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ isMinio, isS3 }) => {
   await closeWelcomePlaywright();
-  if (global.isMinio) {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -114,5 +117,27 @@ test.describe('TST69 - Markdown editor', () => {
       frame,
     );
     expect(settingsExists).toBeTruthy();
+  });
+
+  test('TST6903 - Save text [web,s3,electron]', async () => {
+    // open fileProperties
+    const fileName = 'sample.md';
+    const newFileContent = 'etete&5435_new_text_saved';
+    await clickOn(getGridFileSelector(fileName));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      8000,
+    );
+    await clickOn('[data-tid=fileContainerEditFile]');
+    await writeTextInIframeInput(
+      newFileContent,
+      '.milkdown div[contenteditable=true]',
+    );
+    await clickOn('[data-tid=fileContainerSaveFile]');
+    await clickOn('[data-tid=cancelEditingTID]');
+    await clickOn('[data-tid=propsActionsMenuTID]');
+    await clickOn('[data-tid=reloadPropertiesTID]');
+    await expectFileContain(newFileContent, 10000);
   });
 });

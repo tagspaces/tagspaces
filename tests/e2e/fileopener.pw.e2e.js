@@ -34,7 +34,13 @@ import {
   getPropertiesTags,
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { stopServices } from '../setup-functions';
@@ -62,14 +68,15 @@ test.afterEach(async ({ page }, testInfo) => {
   await stopApp();
 });
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ isMinio, isS3, isWeb }) => {
   await startTestingApp(
-    global.isMinio || global.isS3 ? undefined : 'extconfig.js',
+    { isWeb, isS3 },
+    isMinio || isS3 ? undefined : 'extconfig.js',
   );
-  if (global.isMinio) {
+  if (isMinio) {
     await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await closeWelcomePlaywright();
     await createS3Location('', defaultLocationName, true);
   } else {
@@ -343,7 +350,7 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * reload file button failed on web windows only but the problem is in test only
    */
-  test('TST0812 - Reload file [electron]', async () => {
+  test('TST0812 - Reload file [electron]', async ({ isS3 }) => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
@@ -352,13 +359,20 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain();
 
     const newFileContent = 'testing_file_content';
-    await createFile('sample.txt', newFileContent, '.');
+    if (isS3) {
+      await createFileS3('sample.txt', newFileContent, '.');
+    } else {
+      await createFile('sample.txt', newFileContent, '.');
+    }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
     await expectFileContain(newFileContent, 15000);
   });
 
-  test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async () => {
+  test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async ({
+    isMinio,
+    isS3,
+  }) => {
     const fileName = 'new_file.svg';
     const svg = `<svg
       xmlns="http://www.w3.org/2000/svg"
@@ -370,7 +384,11 @@ test.describe('TST08 - File folder properties', () => {
     ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
     </svg>`;
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
-    await createFile(fileName, svg);
+    if (isS3) {
+      await createFileS3(fileName, svg);
+    } else {
+      await createFile(fileName, svg);
+    }
     await openFolder('empty_folder');
     await expectElementExist(getGridFileSelector(fileName));
     //await clickOn(getGridFileSelector(fileName));
@@ -379,7 +397,7 @@ test.describe('TST08 - File folder properties', () => {
       'showPropertiesTID', //'fileMenuOpenFile'
     );
 
-    const tags = global.isMinio ? ['test-tag1'] : ['test-tag1', 'test-tag2'];
+    const tags = isMinio ? ['test-tag1'] : ['test-tag1', 'test-tag2'];
     // add meta json to file
     await AddRemovePropertiesTags(tags, {
       add: true,
@@ -430,8 +448,10 @@ test.describe('TST08 - File folder properties', () => {
    * TODO dont work on web tests https://trello.com/c/93iEURf4/731-migrate-fullscreen-to-https-githubcom-snakesilk-react-fullscreen
    * dont work on electron Mac https://github.com/microsoft/playwright/issues/1086
    */
-  test('TST0814 - Open file fullscreen and exit with close button [electron]', async () => {
-    if (global.isWin) {
+  test('TST0814 - Open file fullscreen and exit with close button [electron]', async ({
+    isWin,
+  }) => {
+    if (isWin) {
       // open fileProperties
       await clickOn(getGridFileSelector('sample.mp4'));
       await clickOn('[data-tid=propsActionsMenuTID]');

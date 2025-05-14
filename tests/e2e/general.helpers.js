@@ -109,7 +109,7 @@ export async function getAttribute(selector, attribute = 'style') {
   return await element.getAttribute(attribute);
 }
 export async function setInputValue(selector, value) {
-  global.client.fill(selector, value);
+  await global.client.locator(selector).fill(value);
 }
 
 /**
@@ -142,10 +142,10 @@ export async function typeInputValue(inputSelector, value, delay = 0) {
   await global.client.type(inputSelector, value, {
     delay,
   });
-  if (global.isWin) {
+  /*if (global.isWin) {
     // todo on windows not always wait for typing value
     await global.client.waitForTimeout(1000);
-  }
+  }*/
   return oldValue;
 }
 
@@ -788,12 +788,16 @@ export async function expectMetaFilesExist(
   }
 }
 
-export async function writeTextInIframeInput(txt) {
+export async function writeTextInIframeInput(
+  txt,
+  editorSelector = '#monaco_editor',
+) {
   const fLocator = await frameLocator();
-  const monacoEditor = await fLocator.locator('#monaco_editor');
-  await monacoEditor.click();
-  await global.client.keyboard.press('Meta+KeyA');
-  await monacoEditor.type(txt);
+  const editor = await fLocator.locator(editorSelector);
+  await editor.click();
+  //await monacoEditor.fill(txt);
+  await global.client.keyboard.press('ControlOrMeta+KeyA'); //'Meta+KeyA');
+  await editor.type(txt);
 }
 
 export async function expectFileContain(
@@ -805,6 +809,7 @@ export async function expectFileContain(
       async () => {
         const fLocator = await frameLocator('iframe[allowfullscreen]');
         const bodyTxt = await fLocator.locator('body').innerText();
+        //console.log(bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
       },
       {

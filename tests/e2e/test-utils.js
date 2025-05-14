@@ -32,11 +32,7 @@ export async function checkFilenameForExist(filename, selector) {
 }
 
 export function toContainTID(text, tids = ['etete&5435']) {
-  let pass = false;
-  tids.forEach((tid) => {
-    pass = text.indexOf(tid) !== -1;
-  });
-  return pass;
+  return tids.every((tid) => text.indexOf(tid) !== -1);
 }
 
 export async function renameFolder() {

@@ -2,7 +2,13 @@
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
 import { test, expect } from './fixtures';
-import { defaultLocationName } from './location.helpers';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+  defaultLocationPath,
+} from './location.helpers';
 import {
   clickOn,
   expectElementExist,
@@ -20,15 +26,15 @@ let minioServerInstance;
 const testFileName = 'sample.pdf';
 const isMac = /^darwin/.test(process.platform);
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  if (global.isS3) {
-    await startTestingApp();
+  if (isS3) {
+    await startTestingApp({ isWeb, isS3 });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp('extconfig.js');
+    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
   }
 });
 
@@ -45,12 +51,14 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
-  // if (global.isMinio) {
-  //   await createPwMinioLocation('', defaultLocationName, true);
-  // } else {
-  //   await createPwLocation(defaultLocationPath, defaultLocationName, true);
-  // }
+test.beforeEach(async ({ isMinio, isS3 }) => {
+  if (isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else if (isS3) {
+    await createS3Location('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // If its have opened file
@@ -60,11 +68,7 @@ test.beforeEach(async () => {
 test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1311 - Test show search [electron]', async () => {
     await clickOn(selectorFile);
-    if (isMac) {
-      await global.client.keyboard.press('Meta+KeyK');
-    } else {
-      await global.client.keyboard.press('Control+KeyK');
-    }
+    await global.client.keyboard.press('ControlOrMeta+KeyF'); //('ControlOrMeta+KeyK');
     await expectElementExist('#textQuery', true, 2000);
   });
 

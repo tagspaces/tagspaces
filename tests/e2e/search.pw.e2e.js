@@ -9,7 +9,13 @@ import {
   selectorFile,
   setSettings,
 } from './general.helpers';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
 import {
   closeFileProperties,
   closeLocation,
@@ -38,14 +44,18 @@ let s3ServerInstance;
 let webServerInstance;
 let minioServerInstance;
 
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
+test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
   s3ServerInstance = s3Server;
   webServerInstance = webServer;
   minioServerInstance = minioServer;
-  await startTestingApp('extconfig-two-locations.js');
+  await startTestingApp({ isWeb, isS3 }, 'extconfig-two-locations.js');
   // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
-  await createFile();
+  if (isS3) {
+    await createFileS3();
+  } else {
+    await createFile();
+  }
 });
 
 test.afterAll(async () => {
@@ -68,11 +78,11 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ isMinio, isS3 }) => {
   // await closeWelcomePlaywright();
-  if (global.isMinio) {
+  if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
-  } else if (global.isS3) {
+  } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(defaultLocationPath, defaultLocationName, true);
@@ -141,8 +151,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
-    if (!global.isWin || !global.isWeb) {
+  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async ({
+    isWin,
+    isWeb,
+  }) => {
+    if (!isWin || !isWeb) {
       //todo on web windows only test not work
       await global.client.waitForSelector('img[alt="thumbnail image"]', {
         visible: true,
@@ -245,6 +258,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const tags2 = ['test-tag1', 'test-tag2'];
     const tags3 = ['test-tag2', 'test-tag3'];
     await clickOn(getGridFileSelector('sample.' + file1));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file1) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags1, true);
 
     await expectElementSelected(
@@ -255,6 +273,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     const file2 = 'jpg';
     await clickOn(getGridFileSelector('sample.' + file2));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file2) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags2, true);
 
     await expectElementSelected(
@@ -264,6 +287,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     const file3 = 'gif';
     await clickOn(getGridFileSelector('sample.' + file3));
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat('sample.' + file3) + ']',
+      true,
+      5000,
+    );
     await AddRemoveTagsToSelectedFiles('grid', tags3, true);
 
     await expectElementSelected(
@@ -342,9 +370,16 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
   });
 
-  test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
-    await createFile('n1ote.txt');
-    await createFile('note.txt');
+  test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async ({
+    isS3,
+  }) => {
+    if (isS3) {
+      await createFileS3('n1ote.txt');
+      await createFileS3('note.txt');
+    } else {
+      await createFile('n1ote.txt');
+      await createFile('note.txt');
+    }
     // fuzzy
     await addSearchCommand('a:', false);
     await clickOn('#textQuery-option-0');
@@ -412,8 +447,14 @@ test.describe('TST06 - Test Search in file structure:', () => {
   /**
    * for web fulltext index is not created in tsi.json
    */
-  test('TST0636 - Search q. fulltext in content [electron,_pro]', async () => {
-    await createFile('fulltext.txt', 'testing fulltext');
+  test('TST0636 - Search q. fulltext in content [electron,_pro]', async ({
+    isS3,
+  }) => {
+    if (isS3) {
+      await createFileS3('fulltext.txt', 'testing fulltext');
+    } else {
+      await createFile('fulltext.txt', 'testing fulltext');
+    }
 
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-2');
@@ -430,11 +471,20 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 
-  test('TST0646 - Open directory from search results [web,electron]', async () => {
-    await createFile(
-      'text_file.txt',
-      'testing open subfolder from search results',
-    );
+  test('TST0646 - Open directory from search results [web,electron]', async ({
+    isS3,
+  }) => {
+    if (isS3) {
+      await createFileS3(
+        'text_file.txt',
+        'testing open subfolder from search results',
+      );
+    } else {
+      await createFile(
+        'text_file.txt',
+        'testing open subfolder from search results',
+      );
+    }
     await addSearchCommand('empty_folder', true);
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await openContextEntryMenu(
