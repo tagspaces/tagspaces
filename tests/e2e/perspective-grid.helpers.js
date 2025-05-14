@@ -53,16 +53,16 @@ export async function AddRemoveTagsToSelectedFiles(
   }*/
 }
 
-export async function getDirEntries(sortCriteria, sortAsc) {
-  const path = require('path');
+export async function getDirEntries(testDir, sortCriteria, sortAsc) {
+  // const path = require('path');
   const fs = require('fs-extra');
-  const testDir = path.join(
+  /*const testDir = path.join(
     __dirname,
     '..',
     'testdata-tmp',
     'file-structure',
     'supported-filestypes',
-  );
+  );*/
   const dirEntries = (await fs.readdir(testDir, { withFileTypes: true }))
     .filter((item) => !item.isDirectory() && !item.name.startsWith('.'))
     .map((item) => {

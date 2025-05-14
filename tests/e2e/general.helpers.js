@@ -5,8 +5,7 @@ import { dataTidFormat } from '../../src/renderer/services/test';
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 
-export const defaultLocationPath =
-  './testdata-tmp/file-structure/supported-filestypes';
+// export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -485,7 +484,7 @@ export async function createLocation(
   const locationPathInput = await global.client.$(
     '[data-tid=locationPath] input',
   );
-  await locationPathInput.keys(locationPath || defaultLocationPath);
+  await locationPathInput.keys(locationPath); // || defaultLocationPath);
   // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
   const lName = await global.client.$('[data-tid=locationName]');
   await lName.click();

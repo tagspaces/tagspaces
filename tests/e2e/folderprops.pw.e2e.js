@@ -3,7 +3,6 @@
  */
 import { test, expect } from './fixtures';
 import {
-  defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
@@ -37,28 +36,21 @@ import {
   getPropertiesFileName,
   getPropertiesTags,
 } from './file.properties.helpers';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
   // await clearDataStorage();
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -69,13 +61,13 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -87,12 +79,15 @@ test.beforeEach(async ({ isMinio, isS3 }) => {
 });
 
 test.describe('TST02 - Folder properties', () => {
-  test('TST0201 - Open in main area [web,electron]', async ({ isS3 }) => {
+  test('TST0201 - Open in main area [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const testFile = 'file_in_empty_folder.txt';
     if (isS3) {
       await createFileS3(testFile);
     } else {
-      await createFile(testFile);
+      await createFile(testDataDir, testFile);
     }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInMainAreaTID]');
@@ -128,7 +123,12 @@ test.describe('TST02 - Folder properties', () => {
         'empty_folder/.ts',
       );
     } else {
-      await createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
+      await createFile(
+        testDataDir,
+        'tsm.json',
+        JSON.stringify(tsmJson),
+        'empty_folder/.ts',
+      );
     }
 
     await clickOn('[data-tid=propsActionsMenuTID]');
@@ -155,16 +155,22 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test('TST0205 - Delete folder from toolbar [web,electron]', async () => {
+  test('TST0205 - Delete folder from toolbar [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteFolderTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await expectElementExist('OpenedTIDempty_folder', false, 5000);
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
-    await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0206 - Rename folder [web,electron]', async () => {
+  test('TST0206 - Rename folder [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const newTile = 'folderRenamed';
 
     const propsFolderName = await getPropertiesFileName();
@@ -177,7 +183,7 @@ test.describe('TST02 - Folder properties', () => {
     );
     const propsNewFolderName = await getPropertiesFileName();
     expect(propsFolderName).not.toBe(propsNewFolderName);
-    await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
 
     //turn folderName back
     /*await clickOn('[data-tid=fileNameProperties] input');
@@ -193,7 +199,10 @@ test.describe('TST02 - Folder properties', () => {
     expect(propsOldFileName).toEqual(propsFolderName);*/
   });
 
-  test('TST0207 - Move folder [web,electron]', async () => {
+  test('TST0207 - Move folder [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const targetFolder = 'empty_folder';
     const newFolder = await createNewDirectory('srcFolder');
     // select folder to move
@@ -206,7 +215,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector(newFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + targetFolder + ']');
     await expectElementExist(getGridFileSelector(newFolder), true, 5000);
-    //await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
   });
 
   test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {

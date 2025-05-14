@@ -11,20 +11,13 @@ import {
   setInputValue,
   takeScreenshot,
 } from './general.helpers';
-import {
-  createFile,
-  createFileS3,
-  startTestingApp,
-  stopApp,
-  testDataRefresh,
-} from './hook';
+import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
   createPwMinioLocation,
   createS3Location,
   defaultLocationName,
-  defaultLocationPath,
 } from './location.helpers';
 import {
   addTags,
@@ -38,27 +31,20 @@ import {
   testTagName,
 } from './tag.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -294,13 +280,14 @@ test.describe('TST04 - Testing the tag library:', () => {
   test('TST0420 - Load tag groups from location [web,electron, _pro]', async ({
     isS3,
     isMinio,
+    testDataDir,
   }) => {
     const tslContent =
       '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
     } else {
-      await createFile('tsl.json', tslContent, '.ts');
+      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
     }
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
@@ -313,7 +300,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     } else if (isS3) {
       await createS3Location('', defaultLocationName, true);
     } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
+      await createPwLocation(testDataDir, defaultLocationName, true);
     }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await clickOn('[data-tid=tagLibrary]');

@@ -1,6 +1,8 @@
 import pathLib from 'path';
 import fs from 'fs';
 import sh from 'shelljs';
+import express from 'express';
+import serveStatic from 'serve-static';
 const S3rver = require('s3rver');
 //const corsConfig = require.resolve('./s3rver/cors.xml');
 
@@ -16,14 +18,14 @@ export async function globalSetup() {
   sh.cd(extensionDir);
 }
 
-export async function startMinio(isWin) {
+export async function startMinio(isWin, testDataDir) {
   const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
   const unixMinio = pathLib.resolve(__dirname, './bin/minio');
 
   const command = isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve(__dirname, './testdata-tmp/file-structure'),
+    pathLib.resolve(__dirname, testDataDir, 'file-structure'),
   ]);
 
   minioProcess.on('exit', function (code) {
@@ -42,14 +44,14 @@ export async function startMinio(isWin) {
   });
   return minioProcess;
 }
-export function stopMinio(process) {
+/*export function stopMinio(process) {
   if (process) {
     // Send SIGHUP to process.
     console.log('stopMinio');
     process.stdin.pause();
     process.kill(); //'SIGHUP');
   }
-}
+}*/
 
 export async function startChromeDriver() {
   //const childProcess = await require('child_process');
@@ -76,54 +78,61 @@ export async function stopChromeDriver(chromeDriver) {
   process.kill(); //'SIGHUP');*/
 }
 
-export async function startWebServer() {
-  const express = await require('express');
-  const serveStatic = await require('serve-static');
-
-  const port = 8000;
+/**
+ * Start a static file server on a free port.
+ *
+ * @param {number} [preferredPort=0]  Pass 0 to let the OS pick an available port.
+ * @returns {Promise<{ app: import('express').Express, port: number, server: import('http').Server }>}
+ */
+export async function startWebServer(preferredPort = 0) {
   const app = express();
 
-  await app.use(
+  // Serve the contents of ../web with index.html as the default
+  app.use(
     serveStatic(pathLib.resolve(__dirname, '../web'), {
       index: ['index.html'],
     }),
   );
-  //if (isMac) {
-  //todo copyfiles do not work for MacOS
-  // await app.use(serveStatic('../app'));
-  //}
-  app.server = app.listen(port);
-  console.log('Webserver listining on http://127.0.0.1:' + port);
-  return app;
+
+  return new Promise((resolve, reject) => {
+    // Listen on 0 to let the OS assign a free port
+    const server = app.listen(preferredPort, '127.0.0.1', () => {
+      const { port } = server.address();
+      console.log(`Webserver listening at http://127.0.0.1:${port}`);
+      resolve({ app, port, server });
+    });
+
+    server.on('error', reject);
+  });
 }
 
-export async function stopServices(s3Server, webServer, minioServer) {
+/*export async function stopServices(s3Server, webServer, minioServer) {
   await stopS3Server(s3Server);
   await stopWebServer(webServer);
   await stopMinio(minioServer);
-}
+}*/
 
-export async function stopWebServer(app) {
+/*export async function stopWebServer(app) {
   if (app) {
     await app.server.close();
     app = null;
   }
-}
+}*/
 
-export async function stopS3Server(server) {
+/*export async function stopS3Server(server) {
   if (server) {
     await server.close();
     server = null;
   }
-}
+}*/
 
-export async function runS3Server(silent = true) {
+export async function runS3Server(folder, silent = true) {
   // Set NODE_OPTIONS environment variable to use openssl-legacy-provider
   process.env.NODE_OPTIONS = '--openssl-legacy-provider';
 
   const directoryTargetPath = pathLib.resolve(
     __dirname,
-    'testdata-tmp',
+    folder, //'testdata-tmp',
     'file-structure',
   );
   const corsConfig = pathLib.resolve(__dirname, 's3rver', 'cors.xml');
@@ -143,6 +152,7 @@ export async function runS3Server(silent = true) {
   });
   try {
     await instance.run();
+    console.log('S3rver running for folder:' + directoryTargetPath);
   } catch (e) {
     console.log('S3rver run', e);
   }

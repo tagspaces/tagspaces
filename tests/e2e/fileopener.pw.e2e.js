@@ -4,7 +4,6 @@ import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
-  defaultLocationPath,
   createS3Location,
 } from './location.helpers';
 import {
@@ -18,6 +17,7 @@ import {
   getGridFileSelector,
   getRevision,
   isDisplayed,
+  openFile,
   openFolder,
   selectorFile,
   selectorFolder,
@@ -31,7 +31,6 @@ import {
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
-  getPropertiesTags,
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import {
@@ -43,50 +42,38 @@ import {
 } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-});
-
-test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-});
-
-test.afterEach(async ({ page }, testInfo) => {
+test.afterEach(async ({ isS3, testDataDir }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }*/
-  await testDataRefresh(s3ServerInstance);
+
+  await testDataRefresh(isS3, testDataDir);
   await clearDataStorage();
   await stopApp();
 });
 
-test.beforeEach(async ({ isMinio, isS3, isWeb }) => {
-  await startTestingApp(
-    { isWeb, isS3 },
-    isMinio || isS3 ? undefined : 'extconfig.js',
-  );
-  if (isMinio) {
-    await closeWelcomePlaywright();
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
-    await closeWelcomePlaywright();
-    await createS3Location('', defaultLocationName, true);
-  } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
-  }
-  await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
-  // If its have opened file
-  // await closeFileProperties();
-});
+test.beforeEach(
+  async ({ isMinio, isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      isMinio || isS3 ? undefined : 'extconfig.js',
+    );
+    if (isMinio) {
+      await closeWelcomePlaywright();
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await closeWelcomePlaywright();
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    // If its have opened file
+    // await closeFileProperties();
+  },
+);
 
 test.describe('TST08 - File folder properties', () => {
   test('TST0801 - Arrow keys select next prev file (keybindings) [web,s3,electron]', async () => {
@@ -197,21 +184,14 @@ test.describe('TST08 - File folder properties', () => {
     // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
-  test('TST0805 - Rename opened file [web,electron]', async () => {
+  test('TST0805 - Rename opened file [web,electron]', async ({}) => {
     const fileName = 'sample.svg';
     const newTitle = 'renamed.svg';
     // set setting PersistTagsInSidecarFile in order to add meta json file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
 
     // open fileProperties
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID',
-    );
-    //await clickOn(getGridFileSelector(fileName));
-
-    //Toggle Properties
-    //await clickOn('[data-tid=detailsTabTID]');
+    await openFile(fileName, 'showPropertiesTID');
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
@@ -237,6 +217,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectMetaFilesExist(arrayMeta);
 
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    //await testDataRefresh(isS3, testDataDir);
     //turn fileName back
     /*await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
@@ -253,12 +234,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0808 - Add and remove tags to a file (file names) [web,electron]', async () => {
     // open fileProperties
     const fileName = 'sample.epub'; //'sample.svg';
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID',
-    );
-    /*await clickOn(selectorFile);
-    await clickOn('[data-tid=detailsTabTID]');*/
+    await openFile(fileName, 'showPropertiesTID');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
@@ -267,10 +243,7 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     // open fileProperties
     const fileName = 'sample.bmp';
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID',
-    );
+    await openFile(fileName, 'showPropertiesTID');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
   });
@@ -280,7 +253,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=tagLibrary]');
     await dnd(
       '[data-tid=tagContainer_' + tagName + ']',
-      getGridFileSelector('sample.txt'),
+      getGridFileSelector('sample.ico'),
     );
     await expectElementExist(
       '[data-tid=tagContainer_' + tagName + ']',
@@ -290,7 +263,7 @@ test.describe('TST08 - File folder properties', () => {
     );
 
     await openContextEntryMenu(
-      getGridFileSelector('sample[' + tagName + '].txt'),
+      getGridFileSelector('sample[' + tagName + '].ico'),
       'showPropertiesTID',
     );
 
@@ -350,7 +323,7 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * reload file button failed on web windows only but the problem is in test only
    */
-  test('TST0812 - Reload file [electron]', async ({ isS3 }) => {
+  test('TST0812 - Reload file [electron]', async ({ isS3, testDataDir }) => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
@@ -362,7 +335,7 @@ test.describe('TST08 - File folder properties', () => {
     if (isS3) {
       await createFileS3('sample.txt', newFileContent, '.');
     } else {
-      await createFile('sample.txt', newFileContent, '.');
+      await createFile(testDataDir, 'sample.txt', newFileContent, '.');
     }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
@@ -372,6 +345,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async ({
     isMinio,
     isS3,
+    testDataDir,
   }) => {
     const fileName = 'new_file.svg';
     const svg = `<svg
@@ -387,15 +361,11 @@ test.describe('TST08 - File folder properties', () => {
     if (isS3) {
       await createFileS3(fileName, svg);
     } else {
-      await createFile(fileName, svg);
+      await createFile(testDataDir, fileName, svg);
     }
     await openFolder('empty_folder');
     await expectElementExist(getGridFileSelector(fileName));
-    //await clickOn(getGridFileSelector(fileName));
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID', //'fileMenuOpenFile'
-    );
+    await openFile(fileName, 'showPropertiesTID');
 
     const tags = isMinio ? ['test-tag1'] : ['test-tag1', 'test-tag2'];
     // add meta json to file
@@ -421,7 +391,8 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0813a - Delete file and check revisions deleted [web,electron,_pro]', async () => {
     const fileName = 'sample.txt';
-    await clickOn(getGridFileSelector(fileName));
+    // await clickOn(getGridFileSelector(fileName));
+    openFile(fileName);
     await clickOn('[data-tid=fileContainerEditFile]');
     await writeTextInIframeInput('txt');
     await clickOn('[data-tid=fileContainerSaveFile]');
@@ -485,13 +456,7 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0827 - Link for internal sharing + copy [web,electron]', async () => {
     const fileName = 'sample.jpg';
-    //await clickOn(getGridFileSelector(fileName));
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID',
-    );
-    //await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
-    //await clickOn('[data-tid=detailsTabTID]');
+    await openFile(fileName, 'showPropertiesTID');
 
     const sharingLinkValue = await global.client.inputValue(
       '[data-tid=sharingLinkTID] input',

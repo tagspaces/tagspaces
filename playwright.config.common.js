@@ -18,8 +18,8 @@ const pwConfig = {
   retries: process.env.CI ? 2 : 0,
   // The maximum number of test failures for the whole test suite run. After reaching this number, testing will stop and exit with an error
   maxFailures: 0, // process.env.CI ? 20 : 0,
-  globalSetup: './tests/global-setup.js',
-  globalTeardown: './tests/global-teardown.js',
+  //globalSetup: './tests/global-setup.js',
+  //globalTeardown: './tests/global-teardown.js',
   /*use: {
     screenshot: {
       mode: 'only-on-failure',

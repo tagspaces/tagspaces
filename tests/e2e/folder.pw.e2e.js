@@ -3,7 +3,6 @@
  */
 import { test, expect } from './fixtures';
 import {
-  defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
@@ -40,28 +39,20 @@ import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -72,14 +63,14 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
     await closeWelcomePlaywright();
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -182,11 +173,14 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  test('TST0108 - Move folder [web,electron]', async ({ isS3 }) => {
+  test('TST0108 - Move folder [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     if (isS3) {
       await createFileS3('file_to_move.txt', 'testing file content');
     } else {
-      await createFile('file_to_move.txt', 'testing file content');
+      await createFile(testDataDir, 'file_to_move.txt', 'testing file content');
     }
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
@@ -203,14 +197,17 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0109 - Copy folder [web,electron]', async ({ isS3 }) => {
+  test('TST0109 - Copy folder [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     if (isS3) {
       await createFileS3('file_to_copy.txt', 'testing file content');
     } else {
-      await createFile('file_to_copy.txt', 'testing file content');
+      await createFile(testDataDir, 'file_to_copy.txt', 'testing file content');
     }
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
@@ -227,7 +224,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await global.client.dblclick(getGridFileSelector(folderToCopy));
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
-    await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
   });
 
   test('TST0110 - Tag folder [web,electron]', async () => {

@@ -5,16 +5,27 @@ const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 //const isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 
 function projectTagGrep(name) {
+  name = 'TST08';
+  //return new RegExp(`${name}.*`);
   // \b ensures we match whole words (so “web” doesn’t match “webhook”)
   return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
-  //return new RegExp('TST5706');
+  //return new RegExp('TST0812');
 }
 
 export default defineConfig({
   ...pwConfig,
   projects: [
     {
+      name: 'electron-light',
+      grep: new RegExp('^(?!.*\\b_pro\\b).*\\belectron\\b.*'),
+      use: {
+        isElectron: true,
+        isWin,
+      },
+    },
+    {
       name: 'electron',
+      grep: projectTagGrep('electron'),
       use: {
         isElectron: true,
         isWeb: false,
@@ -26,6 +37,7 @@ export default defineConfig({
     },
     {
       name: 'electron-s3',
+      grep: projectTagGrep('s3'),
       use: {
         isElectron: true,
         isWeb: false,
@@ -37,6 +49,7 @@ export default defineConfig({
     },
     {
       name: 'electron-minio',
+      grep: projectTagGrep('minio'),
       use: {
         isElectron: true,
         isWeb: false,

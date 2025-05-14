@@ -110,13 +110,13 @@ function uploadFile(filePath, content = undefined) {
   }
 }
 
-function uploadTestDirectory() {
+function uploadTestDirectory(dirPath) {
   try {
-    const files = getFilesRecursive(directoryPath);
-    console.log(`All files in ${directoryPath} uploaded to ${bucketName}`);
+    const files = getFilesRecursive(dirPath);
+    console.log(`All files in ${dirPath} uploaded to ${bucketName}`);
     return Promise.all(files.map((file) => uploadFile(file)));
   } catch (err) {
-    console.error(`Error uploading directory ${directoryPath}:`, err);
+    console.error(`Error uploading directory ${dirPath}:`, err);
   }
 }
 
@@ -127,6 +127,6 @@ async function refreshS3testData() {
 
 module.exports = {
   uploadTestDirectory,
-  //refreshS3testData,
+  refreshS3testData,
   uploadFile,
 };

@@ -12,8 +12,7 @@ import {
   waitForNotification,
 } from './general.helpers';
 
-export const defaultLocationPath =
-  './tests/testdata-tmp/file-structure/supported-filestypes';
+// export const defaultLocationPath = './tests/testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -114,7 +113,7 @@ export async function createPwLocation(
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuCreateLocation]');
     //   await global.client.click('[data-tid=locationPath]');
-    await setInputKeys('locationPath', locationPath || defaultLocationPath, 20);
+    await setInputKeys('locationPath', locationPath, 20); // || defaultLocationPath
     await setInputKeys(
       'locationName',
       locationName || 'Test Location' + new Date().getTime(),
