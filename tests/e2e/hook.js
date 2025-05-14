@@ -282,7 +282,8 @@ export async function stopApp(isWeb) {
 
 export async function testDataRefresh(isS3, testDataDir) {
   if (isS3) {
-    await refreshS3testData();
+    //console.log('testDataDir:'+testDataDir);
+    await refreshS3testData(testDataDir);
   } else {
     await fse.rm(testDataDir, {
       recursive: true,

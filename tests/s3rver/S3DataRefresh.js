@@ -120,9 +120,9 @@ function uploadTestDirectory(dirPath) {
   }
 }
 
-async function refreshS3testData() {
+async function refreshS3testData(testDataDir) {
   await deleteAllObjects('supported-filestypes');
-  await uploadTestDirectory();
+  await uploadTestDirectory(testDataDir);
 }
 
 module.exports = {

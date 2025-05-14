@@ -114,7 +114,15 @@ const test = base.extend({
           retryDelay: 100, // optional back‑off in ms
         });
       } else {
-        await use('');
+        await use(
+          pathLib.join(
+            __dirname,
+            '..',
+            `testdata-${testInfo.workerIndex}`,
+            'file-structure',
+            'supported-filestypes',
+          ),
+        );
       }
     },
     { scope: 'worker', auto: true },
