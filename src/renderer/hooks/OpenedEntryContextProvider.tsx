@@ -470,6 +470,7 @@ export const OpenedEntryContextProvider = ({
   function closeOpenedEntries() {
     setSharedLinks().then(() => {
       currentEntry.current = undefined;
+      fileChanged.current = false;
       forceUpdate();
     });
   }

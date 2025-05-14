@@ -859,6 +859,11 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:reloadOnFocus')}
+                    <InfoIcon
+                      tooltip={t(
+                        'Kanban only - reloads the current folder, when the app regains focus in order to show changes which may have happened in the background.',
+                      )}
+                    />
                     <ProLabel />
                   </>
                 }
