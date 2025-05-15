@@ -137,7 +137,7 @@ async function searchAndReplaceInFile(filePath, searchValue, replaceValue) {
     // 3. Write it back
     await fse.writeFile(filePath, updated, 'utf8');
 
-    console.log(`✓ Updated ${filePath}`);
+    // console.log(`✓ Updated ${filePath}`);
   } catch (err) {
     console.error(`✗ Error processing file:`, err);
   }
