@@ -7,7 +7,7 @@ const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 function projectTagGrep(name) {
   // \b ensures we match whole words (so “web” doesn’t match “webhook”)
   return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
-  //return new RegExp('(?:TST0646|TST5505|TST5905)'); //new RegExp(`TST08.*`);
+  //return new RegExp('(?:TST0206|TST0210|TST0211)'); //new RegExp(`TST02.*`);
 }
 
 export default defineConfig({

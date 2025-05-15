@@ -37,7 +37,7 @@ import {
   getPropertiesTags,
 } from './file.properties.helpers';
 
-test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
+/*test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
     await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
@@ -48,35 +48,47 @@ test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
     );
   }
   // await clearDataStorage();
-});
+});*/
 
-test.afterAll(async () => {
+/*test.afterAll(async () => {
   await stopApp();
-});
+});*/
 
 test.afterEach(async ({ page }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }*/
   await clearDataStorage();
+  await stopApp();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
-    await createS3Location('', defaultLocationName, true);
-  } else {
-    await createPwLocation(testDataDir, defaultLocationName, true);
-  }
-  await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+test.beforeEach(
+  async ({ isMinio, isS3, testDataDir, isWeb, webServerPort }, testInfo) => {
+    if (isS3) {
+      await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
+      await closeWelcomePlaywright();
+    } else {
+      await startTestingApp(
+        { isWeb, isS3, webServerPort, testInfo },
+        'extconfig.js',
+      );
+    }
+    if (isMinio) {
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
 
-  await openContextEntryMenu(
-    '[data-tid=fsEntryName_empty_folder]',
-    'showProperties',
-  );
-});
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'showProperties',
+    );
+  },
+);
 
 test.describe('TST02 - Folder properties', () => {
   test('TST0201 - Open in main area [web,electron]', async ({
@@ -174,6 +186,7 @@ test.describe('TST02 - Folder properties', () => {
   }) => {
     const newTile = 'folderRenamed';
 
+    await openFolder('empty_folder');
     const propsFolderName = await getPropertiesFileName();
     await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', newTile);
@@ -184,20 +197,20 @@ test.describe('TST02 - Folder properties', () => {
     );
     const propsNewFolderName = await getPropertiesFileName();
     expect(propsFolderName).not.toBe(propsNewFolderName);
-    await testDataRefresh(isS3, testDataDir);
+    //await testDataRefresh(isS3, testDataDir);
 
     //turn folderName back
-    /*await clickOn('[data-tid=fileNameProperties] input');
+    //await clickOn('[data-tid=fileNameProperties] input');
     await clickOn('[data-tid=startRenameEntryTID]');
     await clickOn('[data-tid=fileNameProperties] input');
     await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     // await waitForNotification();
     await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]'
+      '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]',
     );
     const propsOldFileName = await getPropertiesFileName();
-    expect(propsOldFileName).toEqual(propsFolderName);*/
+    expect(propsOldFileName).toBe(propsFolderName);
   });
 
   test('TST0207 - Move folder [web,electron]', async ({
@@ -222,7 +235,10 @@ test.describe('TST02 - Folder properties', () => {
   test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
-  test('TST0211 - Add tag folder with DnD from tag library [web,electron]', async () => {
+  test('TST0211 - Add tag folder with DnD from tag library [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
     await dnd(
@@ -243,6 +259,7 @@ test.describe('TST02 - Folder properties', () => {
     );
 
     await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
+    await testDataRefresh(isS3, testDataDir);
     //await clickOn('[data-tid=locationManager]');
     //const propsTags = await getPropertiesTags();
     //expect(propsTags).toContain(tagName);
