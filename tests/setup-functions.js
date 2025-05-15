@@ -18,14 +18,14 @@ export async function globalSetup() {
   sh.cd(extensionDir);
 }
 
-export async function startMinio(isWin, testDataDir) {
+export async function startMinio(isWin, testWorkerDir) {
   const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
   const unixMinio = pathLib.resolve(__dirname, './bin/minio');
 
   const command = isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve(__dirname, testDataDir, 'file-structure'),
+    pathLib.resolve(__dirname, testWorkerDir, 'file-structure'),
   ]);
 
   minioProcess.on('exit', function (code) {

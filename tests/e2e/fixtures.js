@@ -73,9 +73,12 @@ const test = base.extend({
     { scope: 'worker', auto: true },
   ],
   minioServer: [
-    async ({ isMinio, isWin, testDataDir }, use, testInfo) => {
+    async ({ isMinio, isWin }, use, testInfo) => {
       if (isMinio) {
-        const minioProcess = await startMinio(isWin, testDataDir);
+        const minioProcess = await startMinio(
+          isWin,
+          `testdata-${testInfo.workerIndex}`,
+        );
         await use(minioProcess);
         minioProcess.stdin.pause();
         minioProcess.kill();

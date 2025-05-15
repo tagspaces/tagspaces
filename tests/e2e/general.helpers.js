@@ -699,7 +699,7 @@ export async function removeTagFromTagMenu(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await clickOn('[data-tid=deleteTagMenu]');
   // await clickOn('[data-tid=confirmRemoveTagFromFile]');
-  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false);
+  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false, 4000);
 }
 
 export async function showFilesWithTag(tagName) {

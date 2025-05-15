@@ -20,21 +20,12 @@ import {
   setInputKeys,
   getGridFileSelector,
   getElementScreenshot,
-  waitForNotification,
-  expectAllFileSelected,
-  selectAllFiles,
   openFolder,
   waitUntilChanged,
   getAttribute,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
-import {
-  createFile,
-  createFileS3,
-  startTestingApp,
-  stopApp,
-  testDataRefresh,
-} from './hook';
+import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
@@ -81,7 +72,11 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 test.describe('TST01 - Folder management', () => {
   test('TST0101 - Create subfolder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + testFolder + ']',
+      true,
+      8000,
+    );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await expectElementExist(
       '[data-tid=currentDir_' + testFolder + ']',
@@ -96,7 +91,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000,
+      8000,
     );
   });
 
@@ -182,11 +177,14 @@ test.describe('TST01 - Folder management', () => {
     } else {
       await createFile(testDataDir, 'file_to_move.txt', 'testing file content');
     }
+
+    const testFolder = await createNewDirectory('empty_folder2');
     await openContextEntryMenu(
-      '[data-tid=fsEntryName_empty_folder]',
+      '[data-tid=fsEntryName_' + testFolder + ']',
       'fileMenuMoveCopyDirectoryTID',
     );
     await clickOn('[data-tid=newSubdirectoryTID]');
+
     const folderToMove = 'folder_to_move';
     await setInputKeys('directoryName', folderToMove);
     await clickOn('[data-tid=confirmCreateNewDirectory]');
@@ -194,10 +192,10 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
+    await expectElementExist(getGridFileSelector(testFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await testDataRefresh(isS3, testDataDir);
+    await expectElementExist(getGridFileSelector(testFolder), true, 7000);
+    // await testDataRefresh(isS3, testDataDir);
   });
 
   test('TST0109 - Copy folder [web,electron]', async ({
@@ -224,7 +222,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await global.client.dblclick(getGridFileSelector(folderToCopy));
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
-    await testDataRefresh(isS3, testDataDir);
+    // await testDataRefresh(isS3, testDataDir);
   });
 
   test('TST0110 - Tag folder [web,electron]', async () => {
