@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
+import os from 'os';
 import { refreshS3testData, uploadFile } from '../s3rver/S3DataRefresh';
 
 // Spectron API https://github.com/electron/spectron
@@ -211,6 +212,11 @@ export async function startTestingApp(
   } else {
     //if (global.isPlaywright) {
     const { _electron: electron } = require('playwright');
+    // 1. Create a unique temporary directory for user data
+    const userDataDir = fse.mkdtempSync(
+      pathLib.join(os.tmpdir(), `electron-user-data-${testInfo.workerIndex}`),
+    ); // :contentReference[oaicite:1]{index=1}
+
     // Launch Electron app.
     global.app = await electron.launch({
       args: [
@@ -224,7 +230,7 @@ export async function startTestingApp(
           'main',
           'main.js',
         ),
-        // `--user-data-dir=${tempDir.path}`,
+        `--user-data-dir=${userDataDir}`,
         '--integration-testing',
         '--no-sandbox',
         '--whitelisted-ips',
@@ -298,8 +304,9 @@ export async function testDataRefresh(isS3, testDataDir) {
       'file-structure',
       'supported-filestypes',
     );
-    let newPath = pathLib.join(testDataDir, pathLib.basename(src));
-    await fse.copy(src, newPath); //, { overwrite: true });
+    //let newPath = pathLib.join(testDataDir, pathLib.basename(src));
+    //console.log('newPath:'+testDataDir);
+    await fse.copy(src, testDataDir); //, { overwrite: true });
   }
 }
 

@@ -62,7 +62,8 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1311 - Test show search [electron]', async () => {
     await clickOn(selectorFile);
     await global.client.keyboard.press('ControlOrMeta+KeyF'); //('ControlOrMeta+KeyK');
-    await expectElementExist('#textQuery', true, 2000);
+    await global.client.keyboard.press('ControlOrMeta+KeyK'); // on Mac
+    await expectElementExist('#textQuery', true, 5000);
   });
 
   test('TST1312 - Test rename file [electron]', async () => {

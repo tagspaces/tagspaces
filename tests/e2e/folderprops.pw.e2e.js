@@ -96,6 +96,7 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0204 - Reload folder from toolbar [web,electron]', async ({
     isS3,
+    testDataDir,
   }) => {
     let propsTags = await getPropertiesTags();
     expect(propsTags).toHaveLength(0);
@@ -242,12 +243,13 @@ test.describe('TST02 - Folder properties', () => {
     );
 
     await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
+    //await clickOn('[data-tid=locationManager]');
     //const propsTags = await getPropertiesTags();
     //expect(propsTags).toContain(tagName);
   });
 
   test('TST0213 - Add description to folder [web,electron,_pro]', async () => {
-    const desc = 'test description';
+    const desc = 'testDescription';
 
     await clickOn('[data-tid=descriptionTabTID]');
     //await clickOn('[data-tid=editDescriptionTID]');
@@ -262,6 +264,8 @@ test.describe('TST02 - Folder properties', () => {
     const editorContent = await editor.innerText();
     await expect(editorContent).toBe(desc);
     */
+    await clickOn('[data-tid=editDescriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
     await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(
       '[data-tid=gridCellDescription]',

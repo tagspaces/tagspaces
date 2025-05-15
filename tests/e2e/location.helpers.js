@@ -107,6 +107,7 @@ export async function createPwLocation(
   locationName,
   isDefault = false,
 ) {
+  //await clickOn('[data-tid=locationManager]');
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {

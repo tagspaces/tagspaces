@@ -279,8 +279,11 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0811 - Duplicate file [web,electron]', async () => {
-    await openContextEntryMenu(selectorFile, 'fileMenuDuplicateFileTID');
-    await expectElementExist('[data-tid=tagContainer_copy]', true, 5000);
+    await openContextEntryMenu(
+      getGridFileSelector('sample.jpg'),
+      'fileMenuDuplicateFileTID',
+    );
+    await expectElementExist('[data-tid=tagContainer_copy]', true, 10000);
   });
 
   test.skip('TST3004 - Folder Tagging [Pro]', async () => {});

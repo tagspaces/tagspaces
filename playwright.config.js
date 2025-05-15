@@ -5,11 +5,9 @@ const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 //const isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 
 function projectTagGrep(name) {
-  //name = 'TST08';
-  //return new RegExp(`${name}.*`);
   // \b ensures we match whole words (so “web” doesn’t match “webhook”)
   return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
-  //return new RegExp('TST0812');
+  //return new RegExp('(?:TST0646|TST5505|TST5905)'); //new RegExp(`TST08.*`);
 }
 
 export default defineConfig({

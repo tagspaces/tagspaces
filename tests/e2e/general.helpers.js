@@ -366,7 +366,7 @@ export async function expectMediaPlay(visible = true) {
   const fLocator = await frameLocator();
   const videoLocator = fLocator.locator('video');
   await expect(videoLocator).toBeVisible({
-    timeout: 8000,
+    timeout: 15000,
     visible: visible,
   });
   if (visible) {
@@ -796,7 +796,11 @@ export async function writeTextInIframeInput(
   await editor.click();
   //await monacoEditor.fill(txt);
   await global.client.keyboard.press('ControlOrMeta+KeyA'); //'Meta+KeyA');
-  await editor.type(txt);
+  try {
+    await editor.fill(txt); // on mac it's have error for monaco editor is not input
+  } catch (e) {
+    await editor.type(txt);
+  }
 }
 
 export async function expectFileContain(

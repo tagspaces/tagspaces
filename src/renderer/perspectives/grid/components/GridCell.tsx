@@ -471,23 +471,25 @@ function GridCell(props: Props) {
         >
           {entryTitle}
         </Typography>
-        <Typography
-          title={description}
-          data-tid="gridCellDescription"
-          variant="caption"
-          display="block"
-          gutterBottom
-          style={{
-            lineHeight: '12px',
-            paddingRight: 4,
-            overflowX: 'clip',
-            textWrap: 'nowrap',
-            whiteSpace: 'nowrap',
-            color: 'gray',
-          }}
-        >
-          {description}
-        </Typography>
+        {description && (
+          <Typography
+            title={description}
+            data-tid="gridCellDescription"
+            variant="caption"
+            display="block"
+            gutterBottom
+            style={{
+              lineHeight: '12px',
+              paddingRight: 4,
+              overflowX: 'clip',
+              textWrap: 'nowrap',
+              whiteSpace: 'nowrap',
+              color: 'gray',
+            }}
+          >
+            {description}
+          </Typography>
+        )}
       </CardContent>
       <CardHeader
         style={{ padding: 2 }}
