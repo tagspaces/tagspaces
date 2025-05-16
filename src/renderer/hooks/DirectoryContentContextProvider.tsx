@@ -43,7 +43,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
-import { useCancelable } from '-/utils/useCancelable';
+import { makeCancelable, useCancelable } from '-/utils/useCancelable';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   cleanFrontDirSeparator,
@@ -215,7 +215,7 @@ export const DirectoryContentContextProvider = ({
   const { t } = useTranslation();
   const {
     closeAllLocations,
-    currentLocationId,
+    currentLocation,
     findLocation,
     skipInitialDirList,
     getLocationPath,
@@ -253,7 +253,6 @@ export const DirectoryContentContextProvider = ({
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
   const defaultColumnsToShow = 3;
-  const currentLocation = findLocation();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -333,7 +332,7 @@ export const DirectoryContentContextProvider = ({
       clearDirectoryContent();
       exitSearchMode();
     }
-  }, [currentLocationId]);
+  }, [currentLocation]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
@@ -909,9 +908,9 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation,
     showHiddenEntries = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    const uploadCancelled = new Promise((_resolve, reject) => {
+    /*const uploadCancelled = new Promise((_resolve, reject) => {
       signal.addEventListener('abort', () => reject());
-    });
+    });*/
 
     showNotification(t('core:loading'), 'info', false);
     const resultsLimit = {
@@ -950,12 +949,26 @@ export const DirectoryContentContextProvider = ({
         // console.timeEnd('listDirectoryPromise');
         return loadDirectoryFailure(error);
       });
-    return Promise.race([promise, uploadCancelled]).then(() => {
+    const cancelableFetch = makeCancelable(promise, signal);
+
+    return cancelableFetch
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          console.log('Upload was canceled');
+        } else {
+          console.error('Other error:', err);
+        }
+        return [];
+      });
+    /* return Promise.race([promise, uploadCancelled]).then(() => {
       // useCancelable will call abort when unmounted. After listDirectoryPromise succeeded,
       // we no longer care about that method of cancellation. Catch here to avoid an unhandled promise rejection.
       uploadCancelled.catch(() => {});
       return promise;
-    });
+    });*/
   }
 
   function clearDirectoryContent() {
