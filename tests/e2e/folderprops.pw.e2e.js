@@ -21,6 +21,7 @@ import {
   checkSettings,
   openFolder,
   waitUntilChanged,
+  openFolderProp,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import {
@@ -83,10 +84,7 @@ test.beforeEach(
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
 
-    await openContextEntryMenu(
-      '[data-tid=fsEntryName_empty_folder]',
-      'showProperties',
-    );
+    await openFolderProp('empty_folder');
   },
 );
 
@@ -180,10 +178,7 @@ test.describe('TST02 - Folder properties', () => {
     await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0206 - Rename folder [web,electron]', async ({
-    isS3,
-    testDataDir,
-  }) => {
+  test('TST0206 - Rename folder [web,electron]', async () => {
     const newTile = 'folderRenamed';
 
     await openFolder('empty_folder');
@@ -337,10 +332,7 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
 
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'showProperties',
-    );
+    //await openFolder('empty_folder','showProperties');
 
     await clickOn('[data-tid=changePerspectiveTID]', {
       // force: true,
@@ -370,10 +362,6 @@ test.describe('TST02 - Folder properties', () => {
   test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async ({
     isWeb,
   }) => {
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'showProperties',
-    );
     await openFolder('empty_folder');
     await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
     const initScreenshot = await getElementScreenshot(

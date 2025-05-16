@@ -273,8 +273,7 @@ test.describe('TST50** - Right button on a file', () => {
     // await searchEngine('desktop');
     const fileName = 'sample.desktop';
     const tags = [testTagName, testTagName + '2'];
-    // select file
-    await clickOn(getGridFileSelector(fileName));
+    await openFile(fileName);
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(

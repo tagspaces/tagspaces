@@ -310,6 +310,8 @@ test.describe('TST08 - File folder properties', () => {
     });
 
     await clickOn('[data-tid=editDescriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(
       '[data-tid=gridCellDescription]',
       true,

@@ -866,6 +866,18 @@ export async function openFolder(folderName) {
   );
 }
 
+export async function openFolderProp(
+  folderName,
+  menuOption = 'showProperties',
+) {
+  await openContextEntryMenu(getGridFileSelector(folderName), menuOption);
+  await expectElementExist(
+    '[data-tid=OpenedTID' + dataTidFormat(folderName) + ']',
+    true,
+    8000,
+  );
+}
+
 export async function openFile(fileName, menuOption = 'fileMenuOpenFile') {
   await openContextEntryMenu(
     getGridFileSelector(fileName), // perspectiveGridTable + firstFile,
