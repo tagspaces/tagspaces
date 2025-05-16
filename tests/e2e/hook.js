@@ -145,17 +145,17 @@ async function searchAndReplaceInFile(filePath, searchValue, replaceValue) {
 }
 
 export async function removeExtConfig(isWeb) {
-  if (!isWeb) {
-    await fse.remove(
-      pathLib.join(
-        __dirname,
-        '..',
-        '..',
-        isWeb ? 'web' : 'release/app/dist/renderer',
-        'extconfig.js',
-      ),
-    );
-  }
+  //if (!isWeb) {
+  await fse.remove(
+    pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      isWeb ? 'web' : 'release/app/dist/renderer',
+      'extconfig.js',
+    ),
+  );
+  //  }
 }
 
 const waitForMainMessage = (electronApp, messageId) => {
@@ -180,7 +180,7 @@ export async function startTestingApp(
       extconfig,
     );
   } else {
-    await removeExtConfig();
+    await removeExtConfig(isWeb);
   }
   const chromeDriverArgs = [
     // '--disable-gpu',

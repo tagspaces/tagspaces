@@ -33,7 +33,7 @@ const test = base.extend({
         await use(port);
         // teardown
         await new Promise((f) => server.close(f));
-        await removeExtConfig();
+        await removeExtConfig(isWeb);
       } else {
         // If the test does not require the S3 server, just use a dummy value
         await use(null);
@@ -73,7 +73,7 @@ const test = base.extend({
     { scope: 'worker', auto: true },
   ],
   minioServer: [
-    async ({ isMinio, isWin }, use, testInfo) => {
+    async ({ isMinio, isWin, testDataDir }, use, testInfo) => {
       if (isMinio) {
         const minioProcess = await startMinio(
           isWin,
