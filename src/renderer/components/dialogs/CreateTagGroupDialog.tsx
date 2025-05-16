@@ -214,7 +214,7 @@ function CreateTagGroupDialog(props: Props) {
               <MenuItem
                 key={defaultTagGroupLocation}
                 value={defaultTagGroupLocation}
-                data-tid={'tagLibraryTID'}
+                data-tid="tagLibraryTID"
               >
                 {t('tagLibrary')}
               </MenuItem>

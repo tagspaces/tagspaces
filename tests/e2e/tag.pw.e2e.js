@@ -263,7 +263,21 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
 
-  test('TST0419 - Create location based tag group [web,electron, _pro]', async () => {
+  test('TST0419 - Create location based tag group [web,electron, _pro]', async ({
+    isS3,
+    isMinio,
+    testDataDir,
+  }) => {
+    await clickOn('[data-tid=locationManager]');
+    if (isMinio) {
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await clickOn('[data-tid=tagLibrary]');
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
