@@ -395,7 +395,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0813a - Delete file and check revisions deleted [web,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     // await clickOn(getGridFileSelector(fileName));
-    openFile(fileName);
+    await openFile(fileName);
     await clickOn('[data-tid=fileContainerEditFile]');
     await writeTextInIframeInput('txt');
     await clickOn('[data-tid=fileContainerSaveFile]');
