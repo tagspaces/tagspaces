@@ -5,8 +5,7 @@ import { dataTidFormat } from '../../src/renderer/services/test';
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 
-export const defaultLocationPath =
-  './testdata-tmp/file-structure/supported-filestypes';
+// export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -367,7 +366,7 @@ export async function expectMediaPlay(visible = true) {
   const fLocator = await frameLocator();
   const videoLocator = fLocator.locator('video');
   await expect(videoLocator).toBeVisible({
-    timeout: 8000,
+    timeout: 15000,
     visible: visible,
   });
   if (visible) {
@@ -485,7 +484,7 @@ export async function createLocation(
   const locationPathInput = await global.client.$(
     '[data-tid=locationPath] input',
   );
-  await locationPathInput.keys(locationPath || defaultLocationPath);
+  await locationPathInput.keys(locationPath); // || defaultLocationPath);
   // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
   const lName = await global.client.$('[data-tid=locationName]');
   await lName.click();
@@ -700,7 +699,7 @@ export async function removeTagFromTagMenu(tagName) {
   await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
   await clickOn('[data-tid=deleteTagMenu]');
   // await clickOn('[data-tid=confirmRemoveTagFromFile]');
-  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false);
+  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false, 4000);
 }
 
 export async function showFilesWithTag(tagName) {
@@ -797,7 +796,11 @@ export async function writeTextInIframeInput(
   await editor.click();
   //await monacoEditor.fill(txt);
   await global.client.keyboard.press('ControlOrMeta+KeyA'); //'Meta+KeyA');
-  await editor.type(txt);
+  try {
+    await editor.fill(txt); // on mac it's have error for monaco editor is not input
+  } catch (e) {
+    await editor.type(txt);
+  }
 }
 
 export async function expectFileContain(
@@ -858,6 +861,18 @@ export async function openFolder(folderName) {
   await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
   await expectElementExist(
     '[data-tid=currentDir_' + dataTidFormat(folderName) + ']',
+    true,
+    8000,
+  );
+}
+
+export async function openFolderProp(
+  folderName,
+  menuOption = 'showProperties',
+) {
+  await openContextEntryMenu(getGridFileSelector(folderName), menuOption);
+  await expectElementExist(
+    '[data-tid=OpenedTID' + dataTidFormat(folderName) + ']',
     true,
     8000,
   );

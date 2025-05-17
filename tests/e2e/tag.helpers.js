@@ -22,7 +22,7 @@ export async function createTagGroup(tagGroupName, locationName = undefined) {
     await clickOn('[data-tid=createTagGroupConfirmButton]');
   }
   await expectElementExist(
-    '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
+    '[data-tid=tagLibraryTagGroupTitle_' + tagGroupName + ']',
     true,
   );
 }

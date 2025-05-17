@@ -1,7 +1,8 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import pathLib from 'path';
 import fse from 'fs-extra';
-import { uploadFile } from '../s3rver/S3DataRefresh';
+import os from 'os';
+import { refreshS3testData, uploadFile } from '../s3rver/S3DataRefresh';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -70,7 +71,7 @@ export async function clearLocalStorage(isWeb) {
 }
 
 export async function copyExtConfig(
-  { isWeb, isS3 },
+  { isWeb, isS3, testDataDir },
   extconfig = 'extconfig-with-welcome.js',
 ) {
   let srcDir;
@@ -115,20 +116,46 @@ export async function copyExtConfig(
     'extconfig.js',
   );
   await fse.copy(srcDir, destDir);
+  if (testDataDir) {
+    await searchAndReplaceInFile(destDir, 'testdata-tmp', testDataDir);
+  }
+}
+
+async function searchAndReplaceInFile(filePath, searchValue, replaceValue) {
+  try {
+    // 1. Read file as UTF‑8 text
+    let content = await fse.readFile(filePath, 'utf8');
+
+    // 2. Replace: if searchValue is a string, only first occurrence;
+    //    use RegExp with global flag to replace all occurrences
+    const updated = content.replace(
+      typeof searchValue === 'string'
+        ? new RegExp(searchValue, 'g')
+        : searchValue, // assume user passed a RegExp
+      replaceValue,
+    );
+
+    // 3. Write it back
+    await fse.writeFile(filePath, updated, 'utf8');
+
+    // console.log(`✓ Updated ${filePath}`);
+  } catch (err) {
+    console.error(`✗ Error processing file:`, err);
+  }
 }
 
 export async function removeExtConfig(isWeb) {
-  if (!isWeb) {
-    await fse.remove(
-      pathLib.join(
-        __dirname,
-        '..',
-        '..',
-        isWeb ? 'web' : 'release/app/dist/renderer',
-        'extconfig.js',
-      ),
-    );
-  }
+  //if (!isWeb) {
+  await fse.remove(
+    pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      isWeb ? 'web' : 'release/app/dist/renderer',
+      'extconfig.js',
+    ),
+  );
+  //  }
 }
 
 const waitForMainMessage = (electronApp, messageId) => {
@@ -143,11 +170,17 @@ const waitForAppLoaded = async (electronApp) => {
   await waitForMainMessage(electronApp, 'startup-finished');
 };
 
-export async function startTestingApp({ isWeb, isS3 }, extconfig) {
+export async function startTestingApp(
+  { isWeb, isS3, webServerPort, testInfo },
+  extconfig,
+) {
   if (extconfig) {
-    await copyExtConfig({ isWeb, isS3 }, extconfig);
+    await copyExtConfig(
+      { isWeb, isS3, testDataDir: `testdata-${testInfo.workerIndex}` },
+      extconfig,
+    );
   } else {
-    await removeExtConfig();
+    await removeExtConfig(isWeb);
   }
   const chromeDriverArgs = [
     // '--disable-gpu',
@@ -173,12 +206,17 @@ export async function startTestingApp({ isWeb, isS3 }, extconfig) {
     });
 
     global.client = await global.context.newPage(); //page
-    await global.client.goto('http://localhost:8000');
+    await global.client.goto('http://localhost:' + webServerPort);
     // await global.client.screenshot({ path: `example.png` });
     // await global.client.close();
   } else {
     //if (global.isPlaywright) {
     const { _electron: electron } = require('playwright');
+    // 1. Create a unique temporary directory for user data
+    const userDataDir = fse.mkdtempSync(
+      pathLib.join(os.tmpdir(), `electron-user-data-${testInfo.workerIndex}`),
+    ); // :contentReference[oaicite:1]{index=1}
+
     // Launch Electron app.
     global.app = await electron.launch({
       args: [
@@ -192,7 +230,7 @@ export async function startTestingApp({ isWeb, isS3 }, extconfig) {
           'main',
           'main.js',
         ),
-        // `--user-data-dir=${tempDir.path}`,
+        `--user-data-dir=${userDataDir}`,
         '--integration-testing',
         '--no-sandbox',
         '--whitelisted-ips',
@@ -248,14 +286,17 @@ export async function stopApp(isWeb) {
   }
 }
 
-export async function testDataRefresh(isS3, s3ServerInstance) {
+export async function testDataRefresh(isS3, testDataDir) {
   if (isS3) {
-    /*if(s3ServerInstance) {
-      s3ServerInstance.reset();
-     await uploadTestDirectory();
-    }*/
+    //console.log('testDataDir:'+testDataDir);
+    await refreshS3testData(testDataDir);
   } else {
-    await deleteTestData();
+    await fse.rm(testDataDir, {
+      recursive: true,
+      force: true,
+      maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
+      retryDelay: 100, // optional back‑off in ms
+    });
     const src = pathLib.join(
       __dirname,
       '..',
@@ -263,13 +304,13 @@ export async function testDataRefresh(isS3, s3ServerInstance) {
       'file-structure',
       'supported-filestypes',
     );
-    const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
-    let newPath = pathLib.join(dst, pathLib.basename(src));
-    await fse.copy(src, newPath); //, { overwrite: true });
+    //let newPath = pathLib.join(testDataDir, pathLib.basename(src));
+    //console.log('newPath:'+testDataDir);
+    await fse.copy(src, testDataDir); //, { overwrite: true });
   }
 }
 
-export async function deleteTestData() {
+/*export async function deleteTestData() {
   const testDataDir = pathLib.join(
     __dirname,
     '..',
@@ -284,7 +325,7 @@ export async function deleteTestData() {
     retryDelay: 100, // optional back‑off in ms
   });
   // await fse.emptyDir(testDataDir);
-}
+}*/
 
 export async function createFileS3(
   fileName = 'empty_file.html',
@@ -294,7 +335,7 @@ export async function createFileS3(
   const filePath = pathLib.join(
     __dirname,
     '..',
-    'testdata-tmp',
+    'testdata',
     'file-structure',
     'supported-filestypes',
     rootFolder,
@@ -303,22 +344,16 @@ export async function createFileS3(
   await uploadFile(filePath, fileContent || 'test content');
 }
 export async function createFile(
+  testDataDir,
   fileName = 'empty_file.html',
   fileContent = undefined,
   rootFolder = 'empty_folder',
 ) {
-  const filePath = pathLib.join(
-    __dirname,
-    '..',
-    'testdata-tmp',
-    'file-structure',
-    'supported-filestypes',
-    rootFolder,
-    fileName,
-  );
+  const filePath = pathLib.join(testDataDir, rootFolder, fileName);
   try {
     if (fileContent) {
       await fse.outputFile(filePath, fileContent);
+      console.log('file override:' + filePath);
     } else {
       await fse.createFile(filePath);
       console.log('Empty file created!');

@@ -1,14 +1,16 @@
 import { test as base, expect } from '@playwright/test';
 import { runS3Server, startMinio, startWebServer } from '../setup-functions';
 import { uploadTestDirectory } from '../s3rver/S3DataRefresh';
-import { removeExtConfig } from './hook';
+import { copyExtConfig, removeExtConfig } from './hook';
+import pathLib from 'path';
+import fse from 'fs-extra';
 
 // Extend base test with a fixture for the S3 server
 const test = base.extend({
-  isWeb: [false, { option: true }],
-  isS3: [false, { option: true }],
-  isMinio: [false, { option: true }],
-  isWin: [false, { option: true }],
+  isWeb: [false, { option: true, scope: 'worker' }],
+  isS3: [false, { option: true, scope: 'worker' }],
+  isMinio: [false, { option: true, scope: 'worker' }],
+  isWin: [false, { option: true, scope: 'worker' }],
   /* TODO
   // 1) Launch Electron once per test (or per worker if you prefer beforeAll)
   electronApp: async ({}, use) => {
@@ -22,37 +24,112 @@ const test = base.extend({
     const window = await electronApp.firstWindow();
     await use(window);
   },*/
-  webServer: async ({ isWeb }, use) => {
-    if (isWeb) {
-      await removeExtConfig();
-      const webserver = await startWebServer();
-      await use(webserver);
-    } else {
-      // If the test does not require the S3 server, just use a dummy value
-      await use(null);
-    }
-  },
-  s3Server: async ({ isS3 }, use, testInfo) => {
-    if (isS3) {
-      //testInfo.title.includes('web')) {
-      const s3Server = await runS3Server();
-      await uploadTestDirectory();
-      await use(s3Server);
-      //await s3Server.close();
-    } else {
-      // If the test does not require the S3 server, just use a dummy value
-      await use(null);
-    }
-  },
-  minioServer: async ({ isMinio, isWin }, use, testInfo) => {
-    if (isMinio) {
-      const minioProcess = await startMinio(isWin);
-      await use(minioProcess);
-    } else {
-      // If the test does not require the S3 server, just use a dummy value
-      await use(null);
-    }
-  },
+  webServerPort: [
+    async ({ isWeb, isS3 }, use, testInfo) => {
+      if (isWeb) {
+        await copyExtConfig({ isWeb, isS3 }, 'extconfig-s3-location.js');
+        const { app, port, server } = await startWebServer();
+        // make port and server available to tests
+        await use(port);
+        // teardown
+        await new Promise((f) => server.close(f));
+        await removeExtConfig(isWeb);
+      } else {
+        // If the test does not require the S3 server, just use a dummy value
+        await use(null);
+      }
+    },
+    { scope: 'worker', auto: true },
+  ],
+  s3Server: [
+    async ({ isS3 }, use, testInfo) => {
+      if (isS3) {
+        //testInfo.title.includes('web')) {
+        const s3Server = await runS3Server(`testdata-${testInfo.workerIndex}`);
+        const src = pathLib.join(
+          __dirname,
+          '..',
+          'testdata',
+          'file-structure',
+          'supported-filestypes',
+        );
+        await uploadTestDirectory(src);
+        await use(s3Server);
+        await s3Server.close();
+        await fse.rm(
+          pathLib.join(__dirname, '..', `testdata-${testInfo.workerIndex}`),
+          {
+            recursive: true,
+            force: true,
+            maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
+            retryDelay: 100, // optional back‑off in ms
+          },
+        );
+      } else {
+        // If the test does not require the S3 server, just use a dummy value
+        await use(null);
+      }
+    },
+    { scope: 'worker', auto: true },
+  ],
+  minioServer: [
+    async ({ isMinio, isWin, testDataDir }, use, testInfo) => {
+      if (isMinio) {
+        const minioProcess = await startMinio(
+          isWin,
+          `testdata-${testInfo.workerIndex}`,
+        );
+        await use(minioProcess);
+        minioProcess.stdin.pause();
+        minioProcess.kill();
+      } else {
+        // If the test does not require the S3 server, just use a dummy value
+        await use(null);
+      }
+    },
+    { scope: 'worker', auto: true },
+  ],
+  testDataDir: [
+    async ({ isS3 }, use, testInfo) => {
+      if (!isS3) {
+        const src = pathLib.join(
+          __dirname,
+          '..',
+          'testdata',
+          'file-structure',
+          'supported-filestypes',
+        );
+
+        const testdata = pathLib.join(
+          __dirname,
+          '..',
+          `testdata-${testInfo.workerIndex}`,
+        );
+        const dst = pathLib.join(testdata, 'file-structure');
+        let newPath = pathLib.join(dst, pathLib.basename(src));
+        await fse.copy(src, newPath);
+
+        await use(newPath);
+        await fse.rm(testdata, {
+          recursive: true,
+          force: true,
+          maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
+          retryDelay: 100, // optional back‑off in ms
+        });
+      } else {
+        await use(
+          pathLib.join(
+            __dirname,
+            '..',
+            `testdata-${testInfo.workerIndex}`,
+            'file-structure',
+            'supported-filestypes',
+          ),
+        );
+      }
+    },
+    { scope: 'worker', auto: true },
+  ],
 });
 
 const extendedExpect = expect.extend({

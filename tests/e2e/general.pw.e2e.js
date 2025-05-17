@@ -4,7 +4,6 @@
 import { test, expect } from './fixtures';
 import AppConfig from '../../src/renderer/AppConfig';
 import {
-  defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
@@ -27,41 +26,35 @@ import {
   frameLocator,
   dnd,
   setSettings,
+  openFile,
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { stopServices } from '../setup-functions';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-const subFolderName = '/test-perspective-grid';
+/*const subFolderName = '/test-perspective-grid';
 const subFolderContentExtractionPath =
   defaultLocationPath + '/content-extraction';
-const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
+const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';*/
 const testFolder = 'testFolder';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  //await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -72,7 +65,7 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await closeWelcomePlaywright();
     await createPwMinioLocation('', defaultLocationName, true);
@@ -80,7 +73,7 @@ test.beforeEach(async ({ isMinio, isS3 }) => {
     await closeWelcomePlaywright();
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -279,10 +272,7 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0529 - Import EXIF information as Tags [web,minio,electron,_pro]', async () => {
-    await openContextEntryMenu(
-      getGridFileSelector('sample_exif[iptc].jpg'),
-      'showPropertiesTID',
-    );
+    await openFile('sample_exif[iptc].jpg', 'showPropertiesTID');
 
     await clickOn('[data-tid=openGalleryPerspective]');
     await expectElementExist(

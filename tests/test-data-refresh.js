@@ -1,4 +1,4 @@
-import pathLib from 'path';
+/*import pathLib from 'path';
 
 const fse = require('fs-extra');
 
@@ -12,4 +12,4 @@ const dst = pathLib.join(__dirname, 'testdata-tmp', 'file-structure');
 
 let newPath = pathLib.join(dst, pathLib.basename(src));
 // fse.emptyDirSync(newPath);
-fse.copySync(src, newPath); //, { overwrite: true });
+fse.copySync(src, newPath); //, { overwrite: true });*/
