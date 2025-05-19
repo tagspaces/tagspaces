@@ -4,7 +4,6 @@
 
 import { test, expect } from './fixtures';
 import {
-  defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
@@ -17,42 +16,27 @@ import {
   getGridFileSelector,
   isDisplayed,
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp } from './hook';
 import { openContextEntryMenu } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-
-  await startTestingApp({ isWeb, isS3 });
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
+  await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
   await closeWelcomePlaywright();
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
   await stopApp();
 });
-/*test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
-    await takeScreenshot(testInfo);
-  }
-});*/
-test.beforeEach(async ({ isMinio, isS3 }) => {
+
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -125,13 +109,13 @@ test.describe('TST59 - Media player', () => {
   /**
    * for mp4 codecs missing web on Chromium browser
    */
-  test('TST5905 - Play webm [web,minio,electron]', async () => {
+  test('TST5905 - Play webm [web,minio,electron]', async ({ isWeb }) => {
     await openContextEntryMenu(
       getGridFileSelector('sample.webm'),
       'fileMenuOpenFile',
     );
 
-    await expectMediaPlay(false);
+    await expectMediaPlay(isWeb ? false : true);
 
     // Access the iframe
     /*const iframeElement = await global.client.waitForSelector('iframe');

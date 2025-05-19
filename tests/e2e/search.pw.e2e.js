@@ -9,13 +9,7 @@ import {
   selectorFile,
   setSettings,
 } from './general.helpers';
-import {
-  createFile,
-  createFileS3,
-  startTestingApp,
-  stopApp,
-  testDataRefresh,
-} from './hook';
+import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
 import {
   closeFileProperties,
   closeLocation,
@@ -23,7 +17,6 @@ import {
   createPwMinioLocation,
   createS3Location,
   defaultLocationName,
-  defaultLocationPath,
 } from './location.helpers';
 import {
   emptyFolderName,
@@ -37,30 +30,25 @@ import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { stopServices } from '../setup-functions';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-  await startTestingApp({ isWeb, isS3 }, 'extconfig-two-locations.js');
-  // await startTestingApp('extconfig-without-locations.js');
-  // await clearDataStorage();
-  if (isS3) {
-    await createFileS3();
-  } else {
-    await createFile();
-  }
-});
+test.beforeAll(
+  async ({ isWeb, isS3, webServerPort, testDataDir }, testInfo) => {
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig-two-locations.js',
+    );
+    // await startTestingApp('extconfig-without-locations.js');
+    // await clearDataStorage();
+    if (isS3) {
+      await createFileS3();
+    } else {
+      await createFile(testDataDir);
+    }
+  },
+);
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -78,14 +66,14 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   // await closeWelcomePlaywright();
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -372,13 +360,14 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
   test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async ({
     isS3,
+    testDataDir,
   }) => {
     if (isS3) {
       await createFileS3('n1ote.txt');
       await createFileS3('note.txt');
     } else {
-      await createFile('n1ote.txt');
-      await createFile('note.txt');
+      await createFile(testDataDir, 'n1ote.txt');
+      await createFile(testDataDir, 'note.txt');
     }
     // fuzzy
     await addSearchCommand('a:', false);
@@ -449,11 +438,12 @@ test.describe('TST06 - Test Search in file structure:', () => {
    */
   test('TST0636 - Search q. fulltext in content [electron,_pro]', async ({
     isS3,
+    testDataDir,
   }) => {
     if (isS3) {
       await createFileS3('fulltext.txt', 'testing fulltext');
     } else {
-      await createFile('fulltext.txt', 'testing fulltext');
+      await createFile(testDataDir, 'fulltext.txt', 'testing fulltext');
     }
 
     await addSearchCommand('sc:', false);
@@ -473,6 +463,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
   test('TST0646 - Open directory from search results [web,electron]', async ({
     isS3,
+    testDataDir,
   }) => {
     if (isS3) {
       await createFileS3(
@@ -481,6 +472,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
       );
     } else {
       await createFile(
+        testDataDir,
         'text_file.txt',
         'testing open subfolder from search results',
       );

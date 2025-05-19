@@ -7,7 +7,6 @@ import {
   createPwMinioLocation,
   createS3Location,
   defaultLocationName,
-  defaultLocationPath,
 } from './location.helpers';
 import {
   clickOn,
@@ -16,31 +15,25 @@ import {
   selectorFile,
   setInputValue,
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { stopServices } from '../setup-functions';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
 const testFileName = 'sample.pdf';
 const isMac = /^darwin/.test(process.platform);
 
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -51,13 +44,13 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -69,7 +62,8 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1311 - Test show search [electron]', async () => {
     await clickOn(selectorFile);
     await global.client.keyboard.press('ControlOrMeta+KeyF'); //('ControlOrMeta+KeyK');
-    await expectElementExist('#textQuery', true, 2000);
+    await global.client.keyboard.press('ControlOrMeta+KeyK'); // on Mac
+    await expectElementExist('#textQuery', true, 5000);
   });
 
   test('TST1312 - Test rename file [electron]', async () => {

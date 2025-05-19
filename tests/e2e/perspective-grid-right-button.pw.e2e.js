@@ -5,7 +5,6 @@
 import { test, expect } from './fixtures';
 import { generateFileName } from '@tagspaces/tagspaces-common/paths';
 import {
-  defaultLocationPath,
   defaultLocationName,
   renameFileFromMenu,
   deleteFileFromMenu,
@@ -40,29 +39,22 @@ import {
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { stopServices } from '../setup-functions';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -73,13 +65,13 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
@@ -153,7 +145,10 @@ test.describe('TST50** - Right button on a file', () => {
     expect(firstFileName).toBe(undefined); */
   });
 
-  test('TST5019 - Rename tag in file [web,electron]', async () => {
+  test('TST5019 - Rename tag in file [web,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
@@ -185,7 +180,7 @@ test.describe('TST50** - Right button on a file', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]',
     );
-    await testDataRefresh(s3ServerInstance);
+    await testDataRefresh(isS3, testDataDir);
     // cleanup
     /*await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles('grid', [testTagName + 'Edited'], false);
@@ -278,8 +273,7 @@ test.describe('TST50** - Right button on a file', () => {
     // await searchEngine('desktop');
     const fileName = 'sample.desktop';
     const tags = [testTagName, testTagName + '2'];
-    // select file
-    await clickOn(getGridFileSelector(fileName));
+    await openFile(fileName);
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(

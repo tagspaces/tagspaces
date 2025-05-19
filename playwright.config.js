@@ -7,42 +7,43 @@ const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 function projectTagGrep(name) {
   // \b ensures we match whole words (so “web” doesn’t match “webhook”)
   return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
-  //return new RegExp('TST5706');
+  //return new RegExp('(?:TST0108|TST0109|TST0114|TST5025|TST0419|TST0216|TST0218)'); // return new RegExp(`TST01.*`);
 }
 
 export default defineConfig({
   ...pwConfig,
   projects: [
     {
-      name: 'electron',
+      name: 'electron-light',
+      grep: new RegExp('^(?!.*\\b_pro\\b).*\\belectron\\b.*'),
       use: {
         isElectron: true,
-        isWeb: false,
-        isUnitTest: false,
-        isMinio: false,
-        isS3: false,
+        isWin,
+      },
+    },
+    {
+      name: 'electron',
+      grep: projectTagGrep('electron'),
+      use: {
+        isElectron: true,
         isWin,
       },
     },
     {
       name: 'electron-s3',
+      grep: projectTagGrep('minio'),
       use: {
         isElectron: true,
-        isWeb: false,
-        isUnitTest: false,
-        isMinio: false,
         isS3: true,
         isWin,
       },
     },
     {
       name: 'electron-minio',
+      grep: projectTagGrep('minio'),
       use: {
         isElectron: true,
-        isWeb: false,
-        isUnitTest: false,
         isMinio: true,
-        isS3: false,
         isWin,
       },
     },
@@ -50,24 +51,18 @@ export default defineConfig({
       name: 'web-s3',
       grep: projectTagGrep('web'),
       use: {
-        isElectron: false,
         isWeb: true,
-        isUnitTest: false,
-        isMinio: false,
         isS3: true,
         isWin,
-        ...devices['Desktop Chrome'],
+        // ...devices['Desktop Chrome'],
       },
     },
     {
       name: 'web-minio',
       grep: projectTagGrep('web'),
       use: {
-        isElectron: false,
         isWeb: true,
-        isUnitTest: false,
         isMinio: true,
-        isS3: false,
         isWin,
       },
     },

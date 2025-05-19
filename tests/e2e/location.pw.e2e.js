@@ -1,14 +1,12 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { test, expect } from './fixtures';
 import {
-  defaultLocationPath,
   openLocationMenu,
   startupLocation,
   getPwLocationTid,
   createPwMinioLocation,
   createPwLocation,
   createS3Location,
-  defaultLocationName,
 } from './location.helpers';
 import {
   clickOn,
@@ -16,30 +14,23 @@ import {
   setInputKeys,
   takeScreenshot,
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp } from './hook';
 import { clearDataStorage } from './welcome.helpers';
-import { stopServices } from '../setup-functions';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
 
 let testLocationName;
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-  await startTestingApp({ isWeb, isS3 }, 'extconfig-without-locations.js');
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
+  await startTestingApp(
+    { isWeb, isS3, webServerPort, testInfo },
+    'extconfig-without-locations.js',
+  );
   //await clearDataStorage();
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-  await testDataRefresh(s3ServerInstance);
   await stopApp();
 });
 
@@ -50,13 +41,13 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   testLocationName = '' + new Date().getTime();
 
   if (isMinio || isS3) {
     await createPwMinioLocation('', testLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, testLocationName, true);
+    await createPwLocation(testDataDir, testLocationName, true);
   }
   await clickOn('[data-tid=location_' + testLocationName + ']');
   // await delay(500);

@@ -32,11 +32,20 @@ export async function AddRemoveTagsToSelectedFiles(
   await expectElementExist('[data-tid=AddRemoveTagsSelectTID]', true, 5000);
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];
-    // if (isWin) {
-    await setInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName);
-    //await typeInputValue('[data-tid=AddRemoveTagsSelectTID] input', tagName, 0);
-    //await setInputKeys('AddRemoveTagsSelectTID', tagName);
-    await global.client.keyboard.press('Enter');
+    const input = global.client.locator(
+      '[data-tid=AddRemoveTagsSelectTID] input',
+    );
+
+    // try to fill, fallback to typing
+    try {
+      await input.fill(tagName);
+    } catch {
+      await input.click(); // ensure focus
+      await global.client.keyboard.type(tagName);
+    }
+
+    // hit Enter to commit this tag
+    await input.press('Enter');
   }
 
   if (addTag) {
@@ -53,16 +62,16 @@ export async function AddRemoveTagsToSelectedFiles(
   }*/
 }
 
-export async function getDirEntries(sortCriteria, sortAsc) {
-  const path = require('path');
+export async function getDirEntries(testDir, sortCriteria, sortAsc) {
+  // const path = require('path');
   const fs = require('fs-extra');
-  const testDir = path.join(
+  /*const testDir = path.join(
     __dirname,
     '..',
     'testdata-tmp',
     'file-structure',
     'supported-filestypes',
-  );
+  );*/
   const dirEntries = (await fs.readdir(testDir, { withFileTypes: true }))
     .filter((item) => !item.isDirectory() && !item.name.startsWith('.'))
     .map((item) => {

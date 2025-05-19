@@ -3,7 +3,6 @@
  */
 import { test, expect } from './fixtures';
 import {
-  defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation,
@@ -15,16 +14,10 @@ import {
   expectElementExist,
   expectElementSelected,
   expectMetaFilesExist,
-  getGridCellClass,
-  getGridFileName,
   getGridFileSelector,
   openFile,
   selectAllFiles,
-  selectFilesByID,
-  selectorFile,
-  selectorFolder,
   selectRowFiles,
-  setInputKeys,
   setSettings,
   takeScreenshot,
 } from './general.helpers';
@@ -33,30 +26,23 @@ import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
 } from './file.properties.helpers';
-import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
+import { createFile, startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { stopServices } from '../setup-functions';
-import { dataTidFormat } from '../../src/renderer/services/test';
 
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ isWeb, isS3, s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
-    await startTestingApp({ isWeb, isS3 });
+    await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
   } else {
-    await startTestingApp({ isWeb, isS3 }, 'extconfig.js');
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      'extconfig.js',
+    );
   }
 });
 
 test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
   await stopApp();
 });
 
@@ -64,17 +50,16 @@ test.afterEach(async ({ page }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }*/
-  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
 
@@ -208,10 +193,7 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5010 - Move file [web,electron]', async () => {
     const fileName = 'sample.svg';
     //Toggle Properties
-    await openContextEntryMenu(
-      getGridFileSelector(fileName),
-      'showPropertiesTID',
-    );
+    await openFile(fileName, 'showPropertiesTID');
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {

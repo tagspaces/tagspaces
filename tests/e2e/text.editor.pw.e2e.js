@@ -3,7 +3,6 @@ import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
-  defaultLocationPath,
   createS3Location,
 } from './location.helpers';
 import {
@@ -13,53 +12,39 @@ import {
   getGridFileSelector,
   writeTextInIframeInput,
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
-import { stopServices } from '../setup-functions';
-
-let s3ServerInstance;
-let webServerInstance;
-let minioServerInstance;
-
-test.beforeAll(async ({ s3Server, webServer, minioServer }) => {
-  s3ServerInstance = s3Server;
-  webServerInstance = webServer;
-  minioServerInstance = minioServer;
-});
-
-test.afterAll(async () => {
-  await stopServices(s3ServerInstance, webServerInstance, minioServerInstance);
-});
 
 test.afterEach(async ({ page }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }*/
-  await testDataRefresh(s3ServerInstance);
   await clearDataStorage();
   await stopApp();
 });
 
-test.beforeEach(async ({ isMinio, isS3, isWeb }) => {
-  await startTestingApp(
-    { isWeb, isS3 },
-    isMinio || isS3 ? undefined : 'extconfig.js',
-  );
-  if (isMinio) {
-    await closeWelcomePlaywright();
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
-    await closeWelcomePlaywright();
-    await createS3Location('', defaultLocationName, true);
-  } else {
-    await createPwLocation(defaultLocationPath, defaultLocationName, true);
-  }
-  await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
-  // If its have opened file
-  // await closeFileProperties();
-});
+test.beforeEach(
+  async ({ isMinio, isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
+    await startTestingApp(
+      { isWeb, isS3, webServerPort, testInfo },
+      isMinio || isS3 ? undefined : 'extconfig.js',
+    );
+    if (isMinio) {
+      await closeWelcomePlaywright();
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await closeWelcomePlaywright();
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    // If its have opened file
+    // await closeFileProperties();
+  },
+);
 
 test.describe('TST55 - Text viewer/editor', () => {
   test('TST5505 - Save text [web,s3,electron]', async () => {
