@@ -43,7 +43,7 @@ test.beforeEach(async ({ isS3 }) => {
   } else {
     await closeWelcomePlaywright();
     await clickOn('[data-tid=locationManager]');
-    await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
+    await clickOn('[data-tid=location_' + defaultLocationName + ']'); // + '-s3]');
   }
 });
 

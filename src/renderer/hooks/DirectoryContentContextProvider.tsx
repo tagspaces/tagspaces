@@ -908,10 +908,6 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation,
     showHiddenEntries = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    /*const uploadCancelled = new Promise((_resolve, reject) => {
-      signal.addEventListener('abort', () => reject());
-    });*/
-
     showNotification(t('core:loading'), 'info', false);
     const resultsLimit = {
       maxLoops:
