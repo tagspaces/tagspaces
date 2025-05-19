@@ -499,11 +499,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function editLocationInt(location: CommonLocation, openAfterEdit = false) {
-    allLocations.current = allLocations.current.map((l) =>
-      l.uuid === location.uuid ? location : l,
-    );
     dispatch(LocationActions.changeLocation(location));
-    forceUpdate();
     if (openAfterEdit) {
       currentLocationId.current = location.uuid;
       /*

@@ -33,7 +33,8 @@ const test = base.extend({
         await use(port);
         // teardown
         await new Promise((f) => server.close(f));
-        await removeExtConfig(isWeb);
+        //await removeExtConfig(isWeb);
+        await copyExtConfig({ isWeb }, 'extconfig-default.js');
       } else {
         // If the test does not require the S3 server, just use a dummy value
         await use(null);

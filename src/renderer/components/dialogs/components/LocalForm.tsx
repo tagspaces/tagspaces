@@ -46,15 +46,17 @@ function LocalForm(props: Props) {
   const openDirectory = () => {
     selectDirectoryDialog()
       .then((selectedPaths) => {
-        const selectedPath = decodeURI(selectedPaths[0]);
-        setPath(selectedPath);
-        if (name.length < 1 && selectedPath.length > 0) {
-          const currentLocation = findLocation();
-          const dirName = extractDirectoryName(
-            selectedPath,
-            currentLocation?.getDirSeparator(),
-          );
-          setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
+        if (selectedPaths && selectedPaths.length > 0) {
+          const selectedPath = decodeURI(selectedPaths[0]);
+          setPath(selectedPath);
+          if (name.length < 1 && selectedPath.length > 0) {
+            const currentLocation = findLocation();
+            const dirName = extractDirectoryName(
+              selectedPath,
+              currentLocation?.getDirSeparator(),
+            );
+            setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
+          }
         }
         return true;
       })
