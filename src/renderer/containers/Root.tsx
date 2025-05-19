@@ -80,17 +80,17 @@ export default function Root({ store, persistor }: RootType) {
         <CurrentLocationContextProvider>
           <EditedEntryContextProvider>
             <EditedEntryMetaContextProvider>
-              <EditedTagLibraryContextProvider>
-                <PerspectiveActionsContextProvider>
-                  <SelectedEntryContextProvider>
-                    <DirectoryContentContextProvider>
-                      <FSWatcherContextProvider>
-                        <PlatformFacadeContextProvider>
-                          <LocationIndexContextProvider>
-                            <IOActionsContextProvider>
-                              <EntryPropsTabsContextProvider>
-                                <OpenedEntryContextProvider>
-                                  <TagGroupsLocationContextProvider>
+              <PerspectiveActionsContextProvider>
+                <SelectedEntryContextProvider>
+                  <DirectoryContentContextProvider>
+                    <FSWatcherContextProvider>
+                      <PlatformFacadeContextProvider>
+                        <LocationIndexContextProvider>
+                          <IOActionsContextProvider>
+                            <EntryPropsTabsContextProvider>
+                              <OpenedEntryContextProvider>
+                                <TagGroupsLocationContextProvider>
+                                  <EditedTagLibraryContextProvider>
                                     <TaggingActionsContextProvider>
                                       <DndProvider backend={HTML5Backend}>
                                         <ExtensionsContextProvider>
@@ -130,17 +130,17 @@ export default function Root({ store, persistor }: RootType) {
                                         </ExtensionsContextProvider>
                                       </DndProvider>
                                     </TaggingActionsContextProvider>
-                                  </TagGroupsLocationContextProvider>
-                                </OpenedEntryContextProvider>
-                              </EntryPropsTabsContextProvider>
-                            </IOActionsContextProvider>
-                          </LocationIndexContextProvider>
-                        </PlatformFacadeContextProvider>
-                      </FSWatcherContextProvider>
-                    </DirectoryContentContextProvider>
-                  </SelectedEntryContextProvider>
-                </PerspectiveActionsContextProvider>
-              </EditedTagLibraryContextProvider>
+                                  </EditedTagLibraryContextProvider>
+                                </TagGroupsLocationContextProvider>
+                              </OpenedEntryContextProvider>
+                            </EntryPropsTabsContextProvider>
+                          </IOActionsContextProvider>
+                        </LocationIndexContextProvider>
+                      </PlatformFacadeContextProvider>
+                    </FSWatcherContextProvider>
+                  </DirectoryContentContextProvider>
+                </SelectedEntryContextProvider>
+              </PerspectiveActionsContextProvider>
             </EditedEntryMetaContextProvider>
           </EditedEntryContextProvider>
         </CurrentLocationContextProvider>

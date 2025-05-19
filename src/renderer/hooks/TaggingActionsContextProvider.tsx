@@ -1048,18 +1048,17 @@ export const TaggingActionsContextProvider = ({
         ...(!entry.created_date && { created_date: new Date().getTime() }),
         ...(!entry.modified_date && { modified_date: new Date().getTime() }),
       };
-      if (Pro && entry.locationId) {
-        const location: CommonLocation = findLocation(entry.locationId);
-        if (location) {
-          editLocationTagGroup(location, modifiedEntry, replaceTags);
-        }
-      }
+      const location: CommonLocation = entry.locationId
+        ? findLocation(entry.locationId)
+        : undefined;
 
-      return saveTagLibrary([
-        ...tagGroups.slice(0, indexForEditing),
-        modifiedEntry,
-        ...tagGroups.slice(indexForEditing + 1),
-      ]);
+      editLocationTagGroup(location, modifiedEntry, replaceTags).then(() => {
+        return saveTagLibrary([
+          ...tagGroups.slice(0, indexForEditing),
+          modifiedEntry,
+          ...tagGroups.slice(indexForEditing + 1),
+        ]);
+      });
     }
   }
 
@@ -1096,51 +1095,52 @@ export const TaggingActionsContextProvider = ({
       created_date: new Date().getTime(),
       modified_date: new Date().getTime(),
     };
-    saveTagLibrary([...tagGroups, newEntry]);
-    if (Pro && location) {
-      return createLocationTagGroup(location, newEntry).then(() => true);
-    }
-    return Promise.resolve(true);
+    return createLocationTagGroup(location, newEntry).then(() => {
+      saveTagLibrary([...tagGroups, newEntry]);
+      return true;
+    });
   }
 
   function mergeTagGroup(entry: TS.TagGroup) {
-    if (Pro && entry.locationId) {
-      const location: CommonLocation = findLocation(entry.locationId);
-      if (location) {
-        mergeLocationTagGroup(location, entry);
+    const location: CommonLocation = entry.locationId
+      ? findLocation(entry.locationId)
+      : undefined;
+    mergeLocationTagGroup(location, entry).then(() => {
+      const indexForEditing = tagGroups.findIndex(
+        (obj) => obj.uuid === entry.uuid,
+      );
+      if (indexForEditing > -1) {
+        const tags = [
+          ...tagGroups[indexForEditing].children,
+          ...entry.children,
+        ];
+        tags.splice(0, tags.length - maxCollectedTag);
+        saveTagLibrary([
+          ...tagGroups.slice(0, indexForEditing),
+          {
+            uuid: entry.uuid,
+            title: entry.title,
+            children: tags,
+            created_date: entry.created_date,
+            modified_date: new Date().getTime(),
+          },
+          ...tagGroups.slice(indexForEditing + 1),
+        ]);
+      } else {
+        saveTagLibrary([
+          ...tagGroups,
+          {
+            uuid: entry.uuid || getUuid(),
+            title: entry.title,
+            color: entry.color,
+            textcolor: entry.textcolor,
+            children: entry.children,
+            created_date: new Date().getTime(),
+            modified_date: new Date().getTime(),
+          },
+        ]);
       }
-    }
-    const indexForEditing = tagGroups.findIndex(
-      (obj) => obj.uuid === entry.uuid,
-    );
-    if (indexForEditing > -1) {
-      const tags = [...tagGroups[indexForEditing].children, ...entry.children];
-      tags.splice(0, tags.length - maxCollectedTag);
-      saveTagLibrary([
-        ...tagGroups.slice(0, indexForEditing),
-        {
-          uuid: entry.uuid,
-          title: entry.title,
-          children: tags,
-          created_date: entry.created_date,
-          modified_date: new Date().getTime(),
-        },
-        ...tagGroups.slice(indexForEditing + 1),
-      ]);
-    } else {
-      saveTagLibrary([
-        ...tagGroups,
-        {
-          uuid: entry.uuid || getUuid(),
-          title: entry.title,
-          color: entry.color,
-          textcolor: entry.textcolor,
-          children: entry.children,
-          created_date: new Date().getTime(),
-          modified_date: new Date().getTime(),
-        },
-      ]);
-    }
+    });
   }
 
   function removeTagGroup(parentTagGroupUuid: TS.Uuid) {
@@ -1149,23 +1149,22 @@ export const TaggingActionsContextProvider = ({
     );
     if (indexForRemoving >= 0) {
       const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
-      if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = findLocation(tagGroup.locationId);
-        if (location) {
-          removeLocationTagGroup(location, parentTagGroupUuid);
-        }
-      }
-
-      saveTagLibrary([
-        ...tagGroups.slice(0, indexForRemoving),
-        ...tagGroups.slice(indexForRemoving + 1),
-      ]);
+      const location: CommonLocation =
+        tagGroup && tagGroup.locationId
+          ? findLocation(tagGroup.locationId)
+          : undefined;
+      removeLocationTagGroup(location, parentTagGroupUuid).then(() => {
+        saveTagLibrary([
+          ...tagGroups.slice(0, indexForRemoving),
+          ...tagGroups.slice(indexForRemoving + 1),
+        ]);
+      });
     }
   }
 
   /**
    * Add tag to tagGroup
-   * @param tag
+   * @param tags
    * @param parentTagGroupUuid - tagGroup ID to add in
    */
   function addTag(tags: TS.Tag[], parentTagGroupUuid: TS.Uuid) {
@@ -1183,15 +1182,17 @@ export const TaggingActionsContextProvider = ({
           ...(!tag.textcolor && { textcolor: tagGroup.textcolor }),
         })),
       ];
-      saveTags(newTags, tgIndex);
 
-      if (Pro && tagGroup && tagGroup.locationId) {
-        const location: CommonLocation = findLocation(tagGroup.locationId);
-        if (location) {
-          tagGroup.children = newTags;
-          editLocationTagGroup(location, tagGroup);
-        }
-      }
+      const location: CommonLocation =
+        tagGroup && tagGroup.locationId
+          ? findLocation(tagGroup.locationId)
+          : undefined;
+
+      editLocationTagGroup(location, { ...tagGroup, children: newTags }).then(
+        () => {
+          saveTags(newTags, tgIndex);
+        },
+      );
     }
   }
 
@@ -1411,7 +1412,12 @@ export const TaggingActionsContextProvider = ({
         if (exist) {
           arr = arr.map((tGroup) => {
             if (tGroup.uuid === tagGroup.uuid) {
-              return tagGroup;
+              return {
+                ...tagGroup,
+                ...(location && {
+                  locationId: location.uuid,
+                }),
+              };
             }
             return tGroup;
           });

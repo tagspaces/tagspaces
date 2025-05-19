@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useEffect, useMemo } from 'react';
 import { TS } from '-/tagspaces.namespace';
 import { getDescriptionPreview, mergeFsEntryMeta } from '-/services/utils-io';
 import {
@@ -29,6 +29,10 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelector } from 'react-redux';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { CommonLocation } from '-/utils/CommonLocation';
+import { getTagLibrary } from '-/services/taglibrary-utils';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
+import useFirstRender from '-/utils/useFirstRender';
 
 type TagGroupsLocationContextData = {
   getTagGroups: (location: CommonLocation) => Promise<TS.TagGroup[]>;
@@ -53,6 +57,7 @@ type TagGroupsLocationContextData = {
     location: CommonLocation,
     metaFile?,
   ) => Promise<TS.FileSystemEntryMeta>;
+  getTagsFromLocations: () => Promise<TagGroupsByLocation>;
 };
 
 export const TagGroupsLocationContext =
@@ -63,8 +68,10 @@ export const TagGroupsLocationContext =
     removeLocationTagGroup: undefined,
     mergeLocationTagGroup: undefined,
     loadLocationDataPromise: undefined,
+    getTagsFromLocations: undefined,
   });
 
+export type TagGroupsByLocation = Record<string, TS.TagGroup[]>;
 export type TagGroupsLocationContextProviderProps = {
   children: React.ReactNode;
 };
@@ -75,8 +82,27 @@ export const TagGroupsLocationContextProvider = ({
   const { createDirectoryPromise, saveTextFilePromise } =
     usePlatformFacadeContext();
 
-  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const { locations } = useCurrentLocationContext();
 
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  //const firstRender = useFirstRender();
+
+  /*useEffect(() => {
+    if (Pro && saveTagInLocation && firstRender) {
+      refreshTagsFromLocation();
+    }
+  }, [saveTagInLocation]);
+
+  function refreshTagsFromLocation() {
+    getTagsFromLocations().then((locationTagGroups: TagGroupsByLocation) => {
+      for (const [uuid, groups] of Object.entries(locationTagGroups)) {
+        //console.log(`Location ${uuid} has`, groups);
+        const tGroups: TS.TagGroup[] = groups.map(group => ({...group,locationId: uuid}));
+        tagGroups.current = [...tagGroups.current,...tGroups];
+      }
+      forceUpdate();
+    })
+  }*/
   /*useEffect(() => {
     if (currentLocation) {
       getTagGroups(currentLocation.path).then((groups) => {
@@ -89,6 +115,23 @@ export const TagGroupsLocationContextProvider = ({
       });
     }
   }, [currentLocation]);*/
+
+  async function getTagsFromLocations(): Promise<TagGroupsByLocation> {
+    const result: TagGroupsByLocation = {};
+
+    if (locations && locations.length > 0) {
+      const allFetches = locations.map(async (location) => {
+        const groups = await getTagGroups(location);
+        if (groups && groups.length > 0) {
+          result[location.uuid] = groups;
+        }
+      });
+
+      await Promise.all(allFetches);
+    }
+
+    return result;
+  }
 
   function getTagGroups(location: CommonLocation): Promise<TS.TagGroup[]> {
     return loadLocationDataPromise(location).then(
@@ -129,7 +172,7 @@ export const TagGroupsLocationContextProvider = ({
     location: CommonLocation,
     tagGroup: TS.TagGroup,
   ): Promise<TS.FileSystemEntryMeta> {
-    if (!saveTagInLocation) {
+    if (!saveTagInLocation || !Pro || !location) {
       return Promise.resolve(undefined);
     }
     return loadLocationDataPromise(location)
@@ -179,7 +222,7 @@ export const TagGroupsLocationContextProvider = ({
     tagGroup: TS.TagGroup,
     replaceTags = false,
   ): Promise<TS.FileSystemEntryMeta> {
-    if (!saveTagInLocation) {
+    if (!saveTagInLocation || !Pro || !location) {
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
@@ -254,7 +297,7 @@ export const TagGroupsLocationContextProvider = ({
     location: CommonLocation,
     tagGroupUuid: string,
   ): Promise<TS.FileSystemEntryMeta> {
-    if (!saveTagInLocation) {
+    if (!saveTagInLocation || !Pro || !location) {
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
@@ -293,7 +336,7 @@ export const TagGroupsLocationContextProvider = ({
     location: CommonLocation,
     tagGroup: TS.TagGroup,
   ): Promise<TS.FileSystemEntryMeta> {
-    if (!saveTagInLocation) {
+    if (!saveTagInLocation || !Pro || !location) {
       return Promise.resolve(undefined);
     }
     return new Promise((resolve, reject) => {
@@ -345,7 +388,7 @@ export const TagGroupsLocationContextProvider = ({
     location: CommonLocation,
     metaData: any,
   ): Promise<any> {
-    if (!saveTagInLocation) {
+    if (!saveTagInLocation || !location) {
       return Promise.resolve(undefined);
     }
     // const entryProperties = await location.getPropertiesPromise(location.path);
@@ -398,6 +441,7 @@ export const TagGroupsLocationContextProvider = ({
       removeLocationTagGroup,
       mergeLocationTagGroup,
       loadLocationDataPromise,
+      getTagsFromLocations,
     };
   }, [saveTagInLocation]);
 
