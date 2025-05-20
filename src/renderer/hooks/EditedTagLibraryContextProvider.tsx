@@ -34,8 +34,9 @@ import { getSaveTagInLocation } from '-/reducers/settings';
 type EditedTagLibraryContextData = {
   tagGroups: TS.TagGroup[];
   broadcast: BroadcastChannel;
-  reflectTagLibraryChanged: (tg: TS.TagGroup[]) => void;
+  reflectTagLibraryChanged: () => void;
   refreshTagLibrary: (force?: boolean) => void;
+  setTagGroups: (tg: TS.TagGroup[]) => void;
 };
 
 export const EditedTagLibraryContext =
@@ -44,6 +45,7 @@ export const EditedTagLibraryContext =
     broadcast: undefined,
     reflectTagLibraryChanged: undefined,
     refreshTagLibrary: undefined,
+    setTagGroups: undefined,
   });
 
 export type EditedTagLibraryContextProviderProps = {
@@ -101,8 +103,8 @@ export const EditedTagLibraryContextProvider = ({
     }
   }
 
-  function reflectTagLibraryChanged(newTags: TS.TagGroup[]) {
-    setTagGroups(newTags);
+  function reflectTagLibraryChanged() {
+    //refreshTagLibrary(true);
     broadcast.postMessage({
       uuid: instanceId.current,
       type: 'tagLibraryChanged',
@@ -113,6 +115,7 @@ export const EditedTagLibraryContextProvider = ({
     return {
       tagGroups: tagGroups,
       broadcast: broadcast,
+      setTagGroups,
       reflectTagLibraryChanged,
       refreshTagLibrary,
     };

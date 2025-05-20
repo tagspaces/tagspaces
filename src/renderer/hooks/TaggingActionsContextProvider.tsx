@@ -190,7 +190,8 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { findLocation, persistTagsInSidecarFile } =
     useCurrentLocationContext();
-  const { tagGroups, reflectTagLibraryChanged } = useEditedTagLibraryContext();
+  const { tagGroups, setTagGroups, reflectTagLibraryChanged } =
+    useEditedTagLibraryContext();
   const {
     createLocationTagGroup,
     editLocationTagGroup,
@@ -1016,7 +1017,9 @@ export const TaggingActionsContextProvider = ({
   }
 
   function saveTagLibrary(tg: TS.TagGroup[]) {
-    reflectTagLibraryChanged(setTagLibrary(tg));
+    setTagLibrary(tg); // save in localStorage
+    setTagGroups(tg); // set in EditedTagLibraryContext
+    reflectTagLibraryChanged(); // reflect changes in other instances
   }
 
   function saveTags(tags: TS.Tag[], indexForEditing: number) {
@@ -1292,7 +1295,15 @@ export const TaggingActionsContextProvider = ({
             ),
           ];
         }
-        saveTagLibrary(newTagLibrary);
+        const location: CommonLocation = newTagLibrary[indexToGroup].locationId
+          ? findLocation(newTagLibrary[indexToGroup].locationId)
+          : undefined;
+
+        editLocationTagGroup(location, newTagLibrary[indexToGroup], true).then(
+          () => {
+            return saveTagLibrary(newTagLibrary);
+          },
+        );
       }
       console.log('Tag with this title already exists in the target tag group');
     }
