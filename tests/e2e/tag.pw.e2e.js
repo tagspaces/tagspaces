@@ -298,6 +298,16 @@ test.describe('TST04 - Testing the tag library:', () => {
     isMinio,
     testDataDir,
   }) => {
+    await clickOn('[data-tid=locationManager]');
+    if (isMinio) {
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+
     const tslContent =
       '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
     if (isS3) {
@@ -310,15 +320,7 @@ test.describe('TST04 - Testing the tag library:', () => {
       true,
       '[data-tid=advancedSettingsDialogTID]',
     );
-    await clickOn('[data-tid=locationManager]');
-    if (isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
-      await createS3Location('', defaultLocationName, true);
-    } else {
-      await createPwLocation(testDataDir, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+
     await clickOn('[data-tid=tagLibrary]');
     await expectElementExist('[data-tid=tagContainer_Stanimir]', true);
   });
@@ -346,11 +348,22 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0422 - Add custom date smarttag [web,electron,_pro]', async () => {
+  test('TST0422 - Add custom date smarttag [web,electron,_pro]', async ({
+    isS3,
+    isMinio,
+    testDataDir,
+  }) => {
     const tagName = 'custom-date';
     const sourceTagGroup = 'Smart Tags';
 
     await clickOn('[data-tid=locationManager]');
+    if (isMinio) {
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else if (isS3) {
+      await createS3Location('', defaultLocationName, true);
+    } else {
+      await createPwLocation(testDataDir, defaultLocationName, true);
+    }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await clickOn('[data-tid=tagLibrary]');
     await expectElementExist(
