@@ -4,12 +4,12 @@ import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {
   checkSettings,
   clickOn,
+  createLocation,
   dnd,
   expectElementExist,
   expectMetaFilesExist,
   getGridFileSelector,
   setInputValue,
-  takeScreenshot,
 } from './general.helpers';
 import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
@@ -25,37 +25,30 @@ import {
   createTagGroup,
   deleteTagGroup,
   editedGroupName,
-  newTagName,
   tagMenu,
   testGroup,
   testTagName,
 } from './tag.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
 
-test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
+const tslContent =
+  '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
+
+test.afterEach(async () => {
+  await clearDataStorage();
+  await stopApp();
+});
+
+test.beforeEach(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
     await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
-    await closeWelcomePlaywright();
+    //await closeWelcomePlaywright();
   } else {
     await startTestingApp(
       { isWeb, isS3, webServerPort, testInfo },
       'extconfig.js',
     );
   }
-});
-
-test.afterAll(async () => {
-  await stopApp();
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  /*if (testInfo.status !== testInfo.expectedStatus) {
-    await takeScreenshot(testInfo);
-  }*/
-  await clearDataStorage();
-});
-
-test.beforeEach(async () => {
   await closeWelcomePlaywright();
   await clickOn('[data-tid=tagLibrary]');
 });
@@ -268,16 +261,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     isMinio,
     testDataDir,
   }) => {
-    await clickOn('[data-tid=locationManager]');
-    if (isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
-      await createS3Location('', defaultLocationName, true);
-    } else {
-      await createPwLocation(testDataDir, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    await createLocation({ isMinio, isS3, testDataDir });
     await clickOn('[data-tid=tagLibrary]');
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
@@ -298,23 +282,20 @@ test.describe('TST04 - Testing the tag library:', () => {
     isMinio,
     testDataDir,
   }) => {
-    await clickOn('[data-tid=locationManager]');
-    if (isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
-      await createS3Location('', defaultLocationName, true);
-    } else {
-      await createPwLocation(testDataDir, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    const testTagName = 'Stanimir';
+    await createLocation({ isMinio, isS3, testDataDir });
 
-    const tslContent =
-      '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
     } else {
       await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
     }
+    // check tag exist in tsl.json
+    /*await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
+    await openFolder(AppConfig.metaFolder);
+    await openFile('tsl.json');
+    await expectFileContain(testTagName, 10000);*/
+
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
@@ -322,7 +303,10 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
 
     await clickOn('[data-tid=tagLibrary]');
-    await expectElementExist('[data-tid=tagContainer_Stanimir]', true);
+    await expectElementExist(
+      '[data-tid=tagContainer_' + testTagName + ']',
+      true,
+    );
   });
 
   test('TST0421 - Move tag to another tag group with DnD [web,electron]', async () => {
@@ -385,5 +369,64 @@ test.describe('TST04 - Testing the tag library:', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]',
     );
+  });
+
+  test('TST0425 - Delete tag in location tag group and check tsl.json [web,electron,_pro]', async ({
+    isS3,
+    isMinio,
+    testDataDir,
+  }) => {
+    await createLocation({ isMinio, isS3, testDataDir });
+
+    if (isS3) {
+      await createFileS3('tsl.json', tslContent, '.ts');
+    } else {
+      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
+    }
+    await checkSettings(
+      '[data-tid=saveTagInLocationTID]',
+      true,
+      '[data-tid=advancedSettingsDialogTID]',
+    );
+
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist('[data-tid=tagContainer_Stanimir]', true);
+
+    await tagMenu('Stanimir', 'deleteTagDialog');
+    await clickOn('[data-tid=confirmDeleteTagDialogTagMenu]');
+    await expectElementExist('[data-tid=tagContainer_Stanimir]', false);
+    //TODO check in tsl.json content
+  });
+
+  test('TST0426 - Rename tag in location tag group and check tsl.json [web,electron,_pro]', async ({
+    isS3,
+    isMinio,
+    testDataDir,
+  }) => {
+    await createLocation({ isMinio, isS3, testDataDir });
+
+    if (isS3) {
+      await createFileS3('tsl.json', tslContent, '.ts');
+    } else {
+      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
+    }
+    await checkSettings(
+      '[data-tid=saveTagInLocationTID]',
+      true,
+      '[data-tid=advancedSettingsDialogTID]',
+    );
+
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist('[data-tid=tagContainer_Stanimir]', true, 100000);
+
+    await tagMenu('Stanimir', 'editTagDialog');
+    await setInputValue('[data-tid=editTagInput] input', testTagName);
+    await clickOn('[data-tid=editTagConfirm]');
+    await expectElementExist(
+      '[data-tid=tagContainer_' + testTagName + ']',
+      true,
+    );
+    await expectElementExist('[data-tid=tagContainer_Stanimir]', false);
+    //TODO check in tsl.json content
   });
 });
