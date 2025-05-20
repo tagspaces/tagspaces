@@ -37,6 +37,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   dataTid?: string;
@@ -55,6 +56,7 @@ interface Props {
 function TagsSelect(props: Props) {
   const { t } = useTranslation();
   const { currentLocation } = useCurrentLocationContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const desktopMode = useSelector(isDesktopMode);
   const isUseOnlyTagsFromTagLibrary = useSelector(useOnlyTagsFromTagLibrary);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
@@ -63,7 +65,7 @@ function TagsSelect(props: Props) {
 
   const [selectedTag, setSelectedTag] = useState(undefined);
   const tagsError = useRef<boolean>(false);
-  const allTags = useRef<Array<TS.Tag>>(getAllTags());
+  const allTags = useRef<Array<TS.Tag>>(getAllTags(tagGroups));
 
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);

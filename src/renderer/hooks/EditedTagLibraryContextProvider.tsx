@@ -20,17 +20,23 @@ import React, {
   createContext,
   useEffect,
   useMemo,
-  useReducer,
   useRef,
+  useState,
 } from 'react';
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { Pro } from '-/pro';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useSelector } from 'react-redux';
+import { getSaveTagInLocation } from '-/reducers/settings';
 
 type EditedTagLibraryContextData = {
   tagGroups: TS.TagGroup[];
   broadcast: BroadcastChannel;
-  reflectTagLibraryChanged: (tg: TS.TagGroup[]) => void;
+  reflectTagLibraryChanged: () => void;
+  refreshTagLibrary: (force?: boolean) => void;
+  setTagGroups: (tg: TS.TagGroup[]) => void;
 };
 
 export const EditedTagLibraryContext =
@@ -38,6 +44,8 @@ export const EditedTagLibraryContext =
     tagGroups: undefined,
     broadcast: undefined,
     reflectTagLibraryChanged: undefined,
+    refreshTagLibrary: undefined,
+    setTagGroups: undefined,
   });
 
 export type EditedTagLibraryContextProviderProps = {
@@ -47,43 +55,71 @@ export type EditedTagLibraryContextProviderProps = {
 export const EditedTagLibraryContextProvider = ({
   children,
 }: EditedTagLibraryContextProviderProps) => {
-  const tagGroups = useRef<TS.TagGroup[]>(getTagLibrary());
-
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const broadcast = new BroadcastChannel('tag-library-sync');
-  // Generate a unique ID for the tab
-  const instanceId = getUuid();
+  // INITIAL VALUE from disk
+  const [tagGroups, setTagGroups] = useState<TS.TagGroup[]>(getTagLibrary());
+  const { getTagsFromLocations } = useTagGroupsLocationContext();
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  // Generate a unique ID
+  const instanceId = useRef<string>(getUuid());
+  const broadcast = useMemo(() => new BroadcastChannel('tag-library-sync'), []);
 
   useEffect(() => {
-    // Listen for messages from other tabs
+    refreshTagLibrary();
+  }, [saveTagInLocation]);
+
+  // Listen for incoming broadcasts
+  useEffect(() => {
+    // Listen for messages from other instances
     broadcast.onmessage = (event: MessageEvent) => {
       const action = event.data as TS.BroadcastMessage;
-      if (instanceId !== action.uuid) {
-        if (action.type === 'tagLibraryChanged') {
-          tagGroups.current = getTagLibrary();
-          forceUpdate();
-        }
+      if (action.uuid === instanceId.current) return;
+
+      if (action.type === 'tagLibraryChanged') {
+        refreshTagLibrary(true);
       }
     };
-  }, []);
-
-  function reflectTagLibraryChanged(tg: TS.TagGroup[]) {
-    tagGroups.current = tg;
-    const message: TS.BroadcastMessage = {
-      uuid: instanceId,
-      type: 'tagLibraryChanged',
+    // clean up on unmount
+    return () => {
+      broadcast.close();
     };
-    broadcast.postMessage(message);
-    forceUpdate();
+  }, [broadcast]);
+
+  function refreshTagLibrary(force = false) {
+    if (Pro && saveTagInLocation) {
+      getTagsFromLocations().then((locationTagGroups) => {
+        if (locationTagGroups && Object.keys(locationTagGroups).length > 0) {
+          // rebuild the flattened array
+          const fresh: TS.TagGroup[] = [
+            ...getTagLibrary(),
+            ...Object.entries(locationTagGroups).flatMap(([uuid, groups]) =>
+              groups.map((g) => ({ ...g, locationId: uuid })),
+            ),
+          ];
+          setTagGroups(fresh);
+        }
+      });
+    } else if (force) {
+      setTagGroups(getTagLibrary());
+    }
+  }
+
+  function reflectTagLibraryChanged() {
+    //refreshTagLibrary(true);
+    broadcast.postMessage({
+      uuid: instanceId.current,
+      type: 'tagLibraryChanged',
+    });
   }
 
   const context = useMemo(() => {
     return {
-      tagGroups: tagGroups.current,
+      tagGroups: tagGroups,
       broadcast: broadcast,
+      setTagGroups,
       reflectTagLibraryChanged,
+      refreshTagLibrary,
     };
-  }, [tagGroups.current]);
+  }, [tagGroups]);
 
   return (
     <EditedTagLibraryContext.Provider value={context}>

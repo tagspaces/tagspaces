@@ -73,6 +73,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   style?: any;
@@ -105,6 +106,7 @@ function SearchAutocomplete(props: Props) {
   } = useDirectoryContentContext();
   const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const { openHistoryItem } = useBrowserHistoryContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const { isIndexing, searchAllLocations, searchLocationIndex } =
     useLocationIndexContext();
   const { searches } = useSavedSearchesContext();
@@ -663,7 +665,6 @@ function SearchAutocomplete(props: Props) {
     ) {
       currentOptions.current = action;
       const searchAction = toExecAction(action);
-      const tagGroups = getTagLibrary();
       const options = [];
       for (let j = 0; j < tagGroups.length; j++) {
         tagGroups[j].children.forEach((tag: TS.Tag) => {

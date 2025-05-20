@@ -4,6 +4,11 @@ import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+} from './location.helpers';
 
 // export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
@@ -468,44 +473,21 @@ export async function expectElementExist(
 }
 
 export async function createLocation(
-  locationPath,
-  locationName,
+  { isMinio, isS3, testDataDir },
+  locationPath = '',
+  locationName = defaultLocationName,
   isDefault = false,
 ) {
-  // locationPerspective = locationPerspective || 'Grid';
-  const locationManagerMenu = await global.client.$(
-    '[data-tid=locationManagerPanel]',
-  );
-  await locationManagerMenu.click();
-  const elem = await global.client.$('[data-tid=createNewLocationTID]');
-  await elem.click();
-  const lPath = await global.client.$('[data-tid=locationPath]');
-  await lPath.click();
-  const locationPathInput = await global.client.$(
-    '[data-tid=locationPath] input',
-  );
-  await locationPathInput.keys(locationPath); // || defaultLocationPath);
-  // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-  const lName = await global.client.$('[data-tid=locationName]');
-  await lName.click();
-  const locationNameInput = await global.client.$(
-    '[data-tid=locationName] input',
-  );
-  locationNameInput.keys(
-    locationName || 'Test Location' + new Date().getTime(),
-  );
-  if (isDefault) {
-    await delay(1000);
-    const locationIsDefault = await global.client.$(
-      '[data-tid=locationIsDefault]',
-    );
-    await locationIsDefault.click();
+  await clickOn('[data-tid=locationManager]');
+  if (isMinio) {
+    await createPwMinioLocation(locationPath, locationName, isDefault);
+  } else if (isS3) {
+    await createS3Location(locationPath, locationName, isDefault);
+  } else {
+    await createPwLocation(testDataDir + locationPath, locationName, isDefault);
   }
-  const confirmLocationCreation = await global.client.$(
-    '[data-tid=confirmLocationCreation]',
-  );
-  await confirmLocationCreation.waitForDisplayed();
-  await confirmLocationCreation.click();
+  await clickOn('[data-tid=location_' + locationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
 }
 
 export async function setGridOptions(
@@ -812,7 +794,7 @@ export async function expectFileContain(
       async () => {
         const fLocator = await frameLocator('iframe[allowfullscreen]');
         const bodyTxt = await fLocator.locator('body').innerText();
-        //console.log(bodyTxt);
+        console.log(bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
       },
       {

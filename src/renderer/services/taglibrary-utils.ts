@@ -23,14 +23,15 @@ export function getTagLibrary(): TS.TagGroup[] {
   return defaultTagLibrary;
 }
 
-export function setTagLibrary(
-  tagGroups: Array<TS.TagGroup>,
-): Array<TS.TagGroup> {
-  if (tagGroups && tagGroups.length > 0) {
-    localStorage.setItem(tagLibraryKey, JSON.stringify(tagGroups));
-    //broadcast.postMessage({ type: 'tagLibraryChanged' });
+export function setTagLibrary(tagGroups: TS.TagGroup[]) {
+  if (tagGroups) {
+    localStorage.setItem(
+      tagLibraryKey,
+      JSON.stringify(
+        tagGroups.filter((tg) => tg.locationId === undefined && !tg.readOnly),
+      ),
+    );
   }
-  return tagGroups;
 }
 
 export function getAllTags(tagGroups?: Array<TS.TagGroup>) {
