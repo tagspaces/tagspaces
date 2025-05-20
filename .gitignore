@@ -87,9 +87,9 @@ web/EULA.txt
 .env
 src/.env
 src/main/config
-src/renderer/extconfig*
-public/extconfig*
-cordova/www/extconfig.js
+extconfig*
+!web/extconfig.js
+!web/extconfig.tmpl.js
 
 reports/*
 
