@@ -26,12 +26,16 @@ import React, {
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { Pro } from '-/pro';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
+import { useSelector } from 'react-redux';
+import { getSaveTagInLocation } from '-/reducers/settings';
 
 type EditedTagLibraryContextData = {
   tagGroups: TS.TagGroup[];
   broadcast: BroadcastChannel;
   reflectTagLibraryChanged: (tg: TS.TagGroup[]) => void;
+  refreshTagLibrary: (force?: boolean) => void;
 };
 
 export const EditedTagLibraryContext =
@@ -39,6 +43,7 @@ export const EditedTagLibraryContext =
     tagGroups: undefined,
     broadcast: undefined,
     reflectTagLibraryChanged: undefined,
+    refreshTagLibrary: undefined,
   });
 
 export type EditedTagLibraryContextProviderProps = {
@@ -51,9 +56,14 @@ export const EditedTagLibraryContextProvider = ({
   // INITIAL VALUE from disk
   const [tagGroups, setTagGroups] = useState<TS.TagGroup[]>(getTagLibrary());
   const { getTagsFromLocations } = useTagGroupsLocationContext();
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   // Generate a unique ID
   const instanceId = useRef<string>(getUuid());
   const broadcast = useMemo(() => new BroadcastChannel('tag-library-sync'), []);
+
+  useEffect(() => {
+    refreshTagLibrary();
+  }, [saveTagInLocation]);
 
   // Listen for incoming broadcasts
   useEffect(() => {
@@ -63,7 +73,19 @@ export const EditedTagLibraryContextProvider = ({
       if (action.uuid === instanceId.current) return;
 
       if (action.type === 'tagLibraryChanged') {
-        getTagsFromLocations().then((locationTagGroups) => {
+        refreshTagLibrary(true);
+      }
+    };
+    // clean up on unmount
+    return () => {
+      broadcast.close();
+    };
+  }, [broadcast]);
+
+  function refreshTagLibrary(force = false) {
+    if (Pro && saveTagInLocation) {
+      getTagsFromLocations().then((locationTagGroups) => {
+        if (locationTagGroups && Object.keys(locationTagGroups).length > 0) {
           // rebuild the flattened array
           const fresh: TS.TagGroup[] = [
             ...getTagLibrary(),
@@ -72,14 +94,12 @@ export const EditedTagLibraryContextProvider = ({
             ),
           ];
           setTagGroups(fresh);
-        });
-      }
-    };
-    // clean up on unmount
-    return () => {
-      broadcast.close();
-    };
-  }, [broadcast]);
+        }
+      });
+    } else if (force) {
+      setTagGroups(getTagLibrary());
+    }
+  }
 
   function reflectTagLibraryChanged(newTags: TS.TagGroup[]) {
     setTagGroups(newTags);
@@ -94,6 +114,7 @@ export const EditedTagLibraryContextProvider = ({
       tagGroups: tagGroups,
       broadcast: broadcast,
       reflectTagLibraryChanged,
+      refreshTagLibrary,
     };
   }, [tagGroups]);
 

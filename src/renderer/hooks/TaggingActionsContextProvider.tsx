@@ -749,7 +749,7 @@ export const TaggingActionsContextProvider = ({
       // filter existed in tagLibrary
       const uniqueTags = tags.filter(
         (tag) =>
-          getTagLibrary().findIndex(
+          tagGroups.findIndex(
             (tagGroup) =>
               tagGroup.children.findIndex((obj) => obj.title === tag.title) !==
               -1,
@@ -1016,8 +1016,7 @@ export const TaggingActionsContextProvider = ({
   }
 
   function saveTagLibrary(tg: TS.TagGroup[]) {
-    const tagGroups = setTagLibrary(tg);
-    reflectTagLibraryChanged(tagGroups);
+    reflectTagLibraryChanged(setTagLibrary(tg));
   }
 
   function saveTags(tags: TS.Tag[], indexForEditing: number) {

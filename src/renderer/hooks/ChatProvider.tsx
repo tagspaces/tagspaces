@@ -83,6 +83,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import useFirstRender from '-/utils/useFirstRender';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 /*export type TimelineItem = {
   request: string;
@@ -203,6 +204,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const { showNotification } = useNotificationContext();
   const { deleteDirectory } = useIOActionsContext();
   const { addTagsToFsEntry } = useTaggingActionsContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { findLocation } = useCurrentLocationContext();
@@ -893,9 +895,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       generationSettings.current.tagsFromLibrary &&
       generationSettings.current.tagGroupsIds.length > 0
     ) {
-      const tagLibrary: TS.TagGroup[] = getTagLibrary();
       generationSettings.current.tagGroupsIds.forEach((tagGroupId) => {
-        const tagGroup = tagLibrary.find((tg) => tg.uuid === tagGroupId);
+        const tagGroup = tagGroups.find((tg) => tg.uuid === tagGroupId);
         if (tagGroup) {
           tagsFromLibrary.push(...tagGroup.children.map((tag) => tag.title));
         }

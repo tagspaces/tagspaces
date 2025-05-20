@@ -34,9 +34,7 @@ import TagMenu from '-/components/menus/TagMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -46,13 +44,12 @@ import {
   getTagTextColor,
 } from '-/reducers/settings';
 import SmartTags from '-/reducers/smart-tags';
-import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
+import { getAllTags } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import useFirstRender from '-/utils/useFirstRender';
 import { Box } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -70,11 +67,9 @@ function TagLibrary(props: Props) {
     changeTagOrder,
     moveTag,
     moveTagGroup,
-    importTagGroups,
   } = useTaggingActionsContext();
-  const { getTagGroups } = useTagGroupsLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { findLocation, locations } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
@@ -106,7 +101,7 @@ function TagLibrary(props: Props) {
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] =
     useState<boolean>(false);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-  const firstRender = useFirstRender();
+  /*const firstRender = useFirstRender();
 
   useEffect(() => {
     if (Pro && saveTagInLocation && firstRender) {
@@ -143,7 +138,7 @@ function TagLibrary(props: Props) {
           newGroup.modified_date <= oldGroup.modified_date,
       ),
     );
-  }
+  }*/
 
   const handleTagGroupMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -364,7 +359,6 @@ function TagLibrary(props: Props) {
         open={Boolean(tagLibraryMenuAnchorEl)}
         onClose={() => setTagLibraryMenuAnchorEl(null)}
         showCreateTagGroupDialog={showCreateTagGroupDialog}
-        refreshTagsFromLocation={refreshTagsFromLocation}
       />
       {Boolean(tagMenuAnchorEl) && (
         <TagMenu

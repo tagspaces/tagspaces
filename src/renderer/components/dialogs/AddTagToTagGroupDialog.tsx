@@ -22,7 +22,6 @@ import TsSelect from '-/components/TsSelect';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { getTagLibrary } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { Paper, useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
@@ -34,6 +33,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsDialogTitle from './components/TsDialogTitle';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   open: boolean;
@@ -46,6 +46,7 @@ interface Props {
 function AddTagToTagGroupDialog(props: Props) {
   const { t } = useTranslation();
   const { addTag } = useTaggingActionsContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const [tagGroup, setTagGroup] = useState<string>(undefined);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -117,7 +118,7 @@ function AddTagToTagGroupDialog(props: Props) {
             value={tagGroup}
             onChange={handleTagGroupChange}
           >
-            {getTagLibrary().map((tg) => (
+            {tagGroups.map((tg) => (
               <MenuItem value={tg.uuid}>{tg.title}</MenuItem>
             ))}
           </TsSelect>

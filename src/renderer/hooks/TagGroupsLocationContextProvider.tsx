@@ -85,9 +85,9 @@ export const TagGroupsLocationContextProvider = ({
   const { locations } = useCurrentLocationContext();
 
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-  //const firstRender = useFirstRender();
+  /*const firstRender = useFirstRender();
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (Pro && saveTagInLocation && firstRender) {
       refreshTagsFromLocation();
     }
