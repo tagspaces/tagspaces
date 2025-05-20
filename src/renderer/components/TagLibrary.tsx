@@ -52,6 +52,7 @@ import Collapse from '@mui/material/Collapse';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import CustomDragLayer from '-/components/CustomDragLayer';
 
 interface Props {
   style?: any;
@@ -221,6 +222,7 @@ function TagLibrary(props: Props) {
           tagGroupCollapsed={tagGroupCollapsed}
           isReadOnly={tagGroup.readOnly}
         />
+        <CustomDragLayer />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer taggroup={tagGroup}>
             {tagGroup.children &&

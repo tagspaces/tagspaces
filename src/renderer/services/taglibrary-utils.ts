@@ -27,7 +27,9 @@ export function setTagLibrary(tagGroups: TS.TagGroup[]) {
   if (tagGroups) {
     localStorage.setItem(
       tagLibraryKey,
-      JSON.stringify(tagGroups.filter((tg) => tg.locationId === undefined)),
+      JSON.stringify(
+        tagGroups.filter((tg) => tg.locationId === undefined && !tg.readOnly),
+      ),
     );
   }
 }

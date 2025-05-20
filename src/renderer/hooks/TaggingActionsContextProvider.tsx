@@ -1295,15 +1295,29 @@ export const TaggingActionsContextProvider = ({
             ),
           ];
         }
-        const location: CommonLocation = newTagLibrary[indexToGroup].locationId
+        const locationFrom: CommonLocation = newTagLibrary[indexFromGroup]
+          .locationId
+          ? findLocation(newTagLibrary[indexFromGroup].locationId)
+          : undefined;
+
+        const locationTo: CommonLocation = newTagLibrary[indexToGroup]
+          .locationId
           ? findLocation(newTagLibrary[indexToGroup].locationId)
           : undefined;
 
-        editLocationTagGroup(location, newTagLibrary[indexToGroup], true).then(
-          () => {
+        editLocationTagGroup(
+          locationFrom,
+          newTagLibrary[indexFromGroup],
+          true,
+        ).then(() => {
+          editLocationTagGroup(
+            locationTo,
+            newTagLibrary[indexToGroup],
+            true,
+          ).then(() => {
             return saveTagLibrary(newTagLibrary);
-          },
-        );
+          });
+        });
       }
       console.log('Tag with this title already exists in the target tag group');
     }
