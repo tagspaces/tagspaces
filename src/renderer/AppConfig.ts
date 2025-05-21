@@ -179,4 +179,10 @@ AppConfig.defaultMapBounds =
         northEast: { lat: 29, lng: 50 },
       };
 
+AppConfig.showTSLogo =
+  typeof window !== 'undefined' && (window.ExtShowTSLogo || true);
+
+AppConfig.showTSVersion =
+  typeof window !== 'undefined' && (window.ExtShowTSVersion || true);
+
 export default AppConfig;

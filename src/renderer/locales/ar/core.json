@@ -10,7 +10,7 @@
   "unsavedChangesDetails": "By closing the application your changes will be lost.",
   "titleConfirm": "Confirm",
   "titleAlert": "Alert",
-  "aboutTitle": "About TagSpaces",
+  "aboutThisApp": "About",
   "deleteTagGroupContentConfirm": "Do you want to delete the tag group '{{tagGroup}}' ?",
   "deleteLocationContentAlert": "Do you want to delete the location '{{locationName}}'?",
   "deleteLocationTitleAlert": "Delete Location",

@@ -35,6 +35,8 @@ function CustomLogo() {
   const { openAboutDialog } = useAboutDialogContext();
   const updateAvailable = useSelector(isUpdateAvailable);
   const tsType = Pro ? 'PRO' : 'LITE';
+  const tsAboutTitle =
+    versionMeta.name + ' ' + tsType + ' ' + versionMeta.version;
 
   const logo = useMemo(() => {
     let customLogo = TextLogoIcon;
@@ -57,77 +59,89 @@ function CustomLogo() {
         WebkitAppRegion: 'drag',
       }}
     >
-      <TsIconButton tooltip={t('core:aboutTitle')} style={{ padding: 0 }}>
-        <img
-          style={{
-            width: 30,
-            height: 30,
-            padding: 4,
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
-          src={LogoIcon}
-          alt="TagSpaces Logo"
-        />
-      </TsIconButton>
-      <TsIconButton
-        tooltip={t('core:aboutTitle')}
-        style={{ height: 40, padding: 4 }}
-        data-tid="aboutTagSpaces"
+      <Tooltip
+        title={updateAvailable ? t('core:newVersionAvailable') : tsAboutTitle}
+        placeCloser
       >
-        <img
-          style={{
-            maxHeight: 26,
-            maxWidth: 200,
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
+        <Badge
+          color="secondary"
+          variant="dot"
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
           }}
-          src={logo}
-          alt="Application Logo"
-        />
-      </TsIconButton>
-      <sup>
-        <Tooltip title={updateAvailable ? t('core:newVersionAvailable') : ''}>
-          <Badge
-            color="secondary"
-            variant="dot"
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            invisible={!updateAvailable}
-            style={{
-              // @ts-ignore
-              WebkitAppRegion: 'no-drag',
-            }}
-          >
-            <Typography
-              style={{
-                display: 'inline',
-                fontSize: '10px',
-                marginLeft: 3,
-                lineHeight: '16px',
-              }}
-            >
-              {'v' + versionMeta.version}
-            </Typography>
-          </Badge>
-        </Tooltip>
-      </sup>
-      <sub>
-        <Typography
+          invisible={!updateAvailable}
           style={{
-            display: 'inline',
-            fontSize: '10px',
-            marginLeft: -25,
-            lineHeight: '40px',
             // @ts-ignore
             WebkitAppRegion: 'no-drag',
+            marginTop: 7,
           }}
         >
-          {tsType}
-        </Typography>
-      </sub>
+          {AppConfig.showTSLogo && (
+            <TsIconButton
+              //tooltip={tsAboutTitle}
+              style={{ padding: 0, marginTop: -5, height: 40 }}
+            >
+              <img
+                style={{
+                  width: 30,
+                  height: 30,
+                  // @ts-ignore
+                  WebkitAppRegion: 'no-drag',
+                }}
+                src={LogoIcon}
+                alt="TagSpaces Logo"
+              />
+            </TsIconButton>
+          )}
+          <TsIconButton
+            // tooltip={tsAboutTitle}
+            style={{ height: 40, padding: 0, marginTop: -5 }}
+            data-tid="aboutTagSpaces"
+          >
+            <img
+              style={{
+                maxHeight: 26,
+                maxWidth: 200,
+                // @ts-ignore
+                WebkitAppRegion: 'no-drag',
+              }}
+              src={logo}
+              alt="Application Logo"
+            />
+          </TsIconButton>
+          {AppConfig.showTSVersion && (
+            <>
+              <sup>
+                <Typography
+                  style={{
+                    display: 'inline',
+                    fontSize: '10px',
+                    marginLeft: 3,
+                    lineHeight: '16px',
+                  }}
+                >
+                  {'v' + versionMeta.version}
+                </Typography>
+              </sup>
+              <sub>
+                <Typography
+                  style={{
+                    display: 'inline',
+                    fontSize: '10px',
+                    marginLeft: -25,
+                    lineHeight: '40px',
+                    // @ts-ignore
+                    WebkitAppRegion: 'no-drag',
+                  }}
+                >
+                  {tsType}
+                </Typography>
+              </sub>
+            </>
+          )}
+        </Badge>
+      </Tooltip>
     </div>
   );
 }

@@ -24,6 +24,7 @@ interface Props {
   keyBinding?: string;
   children: any;
   classes?: any;
+  placeCloser?: boolean;
   placement?:
     | 'bottom-end'
     | 'bottom-start'
@@ -40,7 +41,13 @@ interface Props {
 }
 
 function TooltipTS(props: Props) {
-  const { title, placement = 'top', keyBinding, children } = props;
+  const {
+    title,
+    placement = 'top',
+    keyBinding,
+    children,
+    placeCloser = false,
+  } = props;
   let tooltipText = title;
   if (keyBinding) {
     tooltipText = title + ' (' + adjustKeyBinding(keyBinding) + ')';
@@ -52,6 +59,18 @@ function TooltipTS(props: Props) {
       title={tooltipText}
       disableInteractive
       placement={placement}
+      slotProps={{
+        popper: {
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [0, placeCloser ? -12 : -6],
+              },
+            },
+          ],
+        },
+      }}
     />
   );
 }

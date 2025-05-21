@@ -74,6 +74,8 @@ declare interface Window {
   ExtExtensionsFound?: Array<any>;
   ExtSearchTypeGroups?: any;
   ExtDefaultMapBounds?: any;
+  ExtShowTSLogo?: boolean;
+  ExtShowTSVersion?: boolean;
   ExtUseOnlyTagsFromTagLibrary?: boolean;
 }
 

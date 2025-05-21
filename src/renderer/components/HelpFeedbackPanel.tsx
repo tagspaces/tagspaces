@@ -94,7 +94,7 @@ function HelpFeedbackPanel(props: Props) {
             <AboutIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {t('core:aboutTitle')}
+            {t('core:aboutTagSpaces')}
           </Typography>
         </ListItem>
         <ListItem
