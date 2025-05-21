@@ -11,17 +11,17 @@ import {
 import {
   clickOn,
   expectElementExist,
-  takeScreenshot,
   getGridFileSelector,
   setInputValue,
   createNewDirectory,
   dnd,
-  setInputKeys,
+  getAttribute,
   getElementScreenshot,
   checkSettings,
   openFolder,
   waitUntilChanged,
   openFolderProp,
+  createLocation,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import {
@@ -74,15 +74,7 @@ test.beforeEach(
         'extconfig.js',
       );
     }
-    if (isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
-      await createS3Location('', defaultLocationName, true);
-    } else {
-      await createPwLocation(testDataDir, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    await createLocation({ isMinio, isS3, testDataDir });
 
     await openFolderProp('empty_folder');
   },
@@ -442,17 +434,14 @@ test.describe('TST02 - Folder properties', () => {
    * bgnRemovedScreenshot not always the same on web
    */
   test('TST0220 - Set and remove predefined folder background [electron,_pro]', async () => {
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'showProperties',
-    );
-    await openContextEntryMenu(
-      getGridFileSelector('empty_folder'),
-      'openDirectory',
-    );
-    const initScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
-    ); //propsBgnImageTID
+    await openFolderProp('empty_folder');
+    await openFolder('empty_folder');
+
+    const targetSelector = '[data-tid=backgroundTID]>div'; //'[data-tid=perspectiveGridFileTable]';
+    const screenshotSelector = '[data-tid=perspectiveGridFileTable]';
+    const initScreenshot = await getElementScreenshot(screenshotSelector);
+    const initStyle = await getAttribute(targetSelector, 'style');
+
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('ul[data-tid=predefinedBackgroundsTID] > li');
 
@@ -462,17 +451,19 @@ test.describe('TST02 - Folder properties', () => {
       5000,
     );
     await clickOn('[data-tid=colorPickerConfirm]');
-    const withBgnScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
-    );
-    expect(initScreenshot).not.toBe(withBgnScreenshot);
+    // Wait for background-image style change
+    await waitUntilChanged(targetSelector, initStyle, 'style', 8000);
 
-    // remove background
+    const withBgnScreenshot = await getElementScreenshot(screenshotSelector);
+    expect(initScreenshot).not.toBe(withBgnScreenshot);
+    const bgStyle = await getAttribute(targetSelector, 'style');
+
+    // Remove background
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('[data-tid=clearBackground]');
-    const bgnRemovedScreenshot = await getElementScreenshot(
-      '[data-tid=perspectiveGridFileTable]',
-    );
+    await waitUntilChanged(targetSelector, bgStyle, 'style', 8000);
+
+    const bgnRemovedScreenshot = await getElementScreenshot(screenshotSelector);
     expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 });

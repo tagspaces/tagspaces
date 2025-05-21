@@ -108,10 +108,15 @@ export async function waitUntilChanged(
   return await element.getAttribute(attribute);
 }
 
+// Utility to get style attribute
 export async function getAttribute(selector, attribute = 'style') {
-  const element = global.client.locator(selector);
-  return await element.getAttribute(attribute);
+  return await global.client
+    .locator(selector)
+    .evaluate((el, attr) => el.getAttribute(attr), attribute);
+  //const element = global.client.locator(selector);
+  //return await element.getAttribute(attribute);
 }
+
 export async function setInputValue(selector, value) {
   await global.client.locator(selector).fill(value);
 }

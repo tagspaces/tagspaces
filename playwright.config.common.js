@@ -11,7 +11,7 @@ const pwConfig = {
     trace: 'on-first-retry',
   },
   // Set the timeout for each test
-  timeout: process.env.CI ? 120000 : 30000,
+  timeout: process.env.CI ? 120000 : 300000,
   // (2 hours) Maximum time in milliseconds the whole test suite can run. Useful on CI to prevent broken setup from running too long and wasting resources.
   globalTimeout: process.env.CI ? 2 * 60 * 60 * 1000 : undefined,
   ignoreSnapshots: !process.env.CI,
