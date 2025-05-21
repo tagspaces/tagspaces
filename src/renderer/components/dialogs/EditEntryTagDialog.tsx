@@ -167,7 +167,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
       open={open}
       fullScreen={smallScreen}
       onClose={closeDialog}
-      style={{ minWidth: 400, height: '100%', marginBottom: 30 }}
+      sx={{ minWidth: 400, height: '100%', marginBottom: 30 }}
       onKeyDown={(event) => {
         if (event.key === 'Enter') {
           event.preventDefault();
