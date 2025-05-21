@@ -395,7 +395,7 @@ function SettingsAdvanced(props: Props) {
         />
         <Switch
           data-tid="saveTagInLocationTID"
-          disabled={!Pro}
+          disabled={!Pro && !(typeof window.ExtUseLocationTags === 'undefined')}
           onClick={() => setSaveTagInLocation(!settings.saveTagInLocation)}
           checked={settings.saveTagInLocation}
         />

@@ -77,6 +77,7 @@ declare interface Window {
   ExtShowTSLogo?: boolean;
   ExtShowTSVersion?: boolean;
   ExtUseOnlyTagsFromTagLibrary?: boolean;
+  ExtUseLocationTags?: boolean;
 }
 
 declare interface NodeModule {
