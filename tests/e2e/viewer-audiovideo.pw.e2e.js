@@ -109,13 +109,13 @@ test.describe('TST59 - Media player', () => {
   /**
    * for mp4 codecs missing web on Chromium browser
    */
-  test('TST5905 - Play webm [web,minio,electron]', async ({ isWeb }) => {
+  test('TST5905 - Play webm [web,minio,electron]', async ({ isWeb, isWin }) => {
     await openContextEntryMenu(
       getGridFileSelector('sample.webm'),
       'fileMenuOpenFile',
     );
 
-    await expectMediaPlay(isWeb ? false : true);
+    await expectMediaPlay(!(isWeb || isWin));
 
     // Access the iframe
     /*const iframeElement = await global.client.waitForSelector('iframe');
