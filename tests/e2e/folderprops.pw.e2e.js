@@ -351,20 +351,20 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async ({
-    isWeb,
-  }) => {
+  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async () => {
     await openFolder('empty_folder');
     await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
+    const targetSelector = '[data-tid=backgroundTID]';
     const initScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
+    const initStyle = await getAttribute(targetSelector, 'style');
     await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
 
     await waitUntilChanged(
-      '[data-tid=backgroundTID]',
-      'height: 100%; background: rgba(0, 0, 0, 0.267);',
+      targetSelector,
+      initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
       'style',
       15000,
     );
@@ -372,6 +372,7 @@ test.describe('TST02 - Folder properties', () => {
     const withBgnColorScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
+    const bgStyle = await getAttribute(targetSelector, 'style');
     expect(initScreenshot).not.toBe(withBgnColorScreenshot);
 
     // remove background
@@ -379,19 +380,16 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
 
     await waitUntilChanged(
-      '[data-tid=backgroundTID]',
-      'height: 100%; background: transparent;',
+      targetSelector,
+      bgStyle, //'height: 100%; background: transparent;',
       'style',
       15000,
     );
 
-    if (!isWeb) {
-      //todo screenshots are diff in web
-      const bgnRemovedScreenshot = await getElementScreenshot(
-        '[data-tid=perspectiveGridFileTable]',
-      );
-      expect(initScreenshot).toBe(bgnRemovedScreenshot);
-    }
+    const bgnRemovedScreenshot = await getElementScreenshot(
+      '[data-tid=perspectiveGridFileTable]',
+    );
+    expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 
   test('TST0219 - Set and remove predefined folder thumbnail [web,electron,_pro]', async ({
