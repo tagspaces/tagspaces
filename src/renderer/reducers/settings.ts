@@ -1078,7 +1078,9 @@ export const getStoredSearchesVisible = (state: any) =>
   state.settings.storedSearchesVisible;
 export const getShowBookmarks = (state: any) => state.settings.showBookmarks;
 export const getSaveTagInLocation = (state: any) =>
-  state.settings.saveTagInLocation;
+  typeof window.ExtUseLocationTags === 'undefined'
+    ? state.settings.saveTagInLocation
+    : window.ExtUseLocationTags;
 export const getFileOpenHistory = (state: any) =>
   state.settings.fileOpenHistory;
 export const getFolderOpenHistory = (state: any) =>
