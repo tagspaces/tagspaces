@@ -304,3 +304,7 @@ export { default as ChatIcon } from '@mui/icons-material/Chat';
 export { default as ZoomInIcon } from '@mui/icons-material/ControlPoint';
 
 export { default as ZoomOutIcon } from '@mui/icons-material/RemoveCircleOutline';
+
+export { default as PinGroupingOffIcon } from '@mui/icons-material/Grain'; // ScatterPlotOutlined
+
+export { default as PinGroupingOnIcon } from '@mui/icons-material/ScatterPlotTwoTone';

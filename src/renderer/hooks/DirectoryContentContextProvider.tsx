@@ -389,7 +389,20 @@ export const DirectoryContentContextProvider = ({
 
   const reflectActions = async (actions) => {
     if (actions && actions.length > 0) {
+      let updateEntries = undefined;
       for (const action of actions) {
+        const pathParts = action.entry?.path?.split(
+          currentLocation.getDirSeparator(),
+        );
+        if (
+          updateEntries === undefined &&
+          pathParts.includes(AppConfig.metaFolder)
+        ) {
+          // skip metaFolder changes
+          updateEntries = false;
+        } else {
+          updateEntries = true;
+        }
         if (action.action === 'add') {
           await reflectAddAction(action.entry);
         } else if (action.action === 'delete') {
@@ -423,9 +436,11 @@ export const DirectoryContentContextProvider = ({
           );
         }
       }
-      // create a shallow copy to publish changes
-      currentDirectoryEntries.current = [...currentDirectoryEntries.current];
-      forceUpdate();
+      if (updateEntries) {
+        // create a shallow copy to publish changes
+        currentDirectoryEntries.current = [...currentDirectoryEntries.current];
+        forceUpdate();
+      }
     }
   };
 
