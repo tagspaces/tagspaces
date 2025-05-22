@@ -493,7 +493,7 @@ function MobileNavigation(props: Props) {
           <ProTeaser setShowTeaserBanner={setShowTeaserBanner} />
         )}
         <Box
-          style={{
+          sx={{
             display: 'flex',
             flexDirection: 'row',
             alignSelf: 'center',
@@ -505,7 +505,7 @@ function MobileNavigation(props: Props) {
             tooltip={t('core:locationManager')}
             keyBinding={keyBindings['showLocationManager']}
             onClick={() => showPanel('locationManagerPanel')}
-            style={{
+            sx={{
               backgroundColor:
                 currentOpenedPanel === 'locationManagerPanel'
                   ? theme.palette.primary.light
@@ -521,7 +521,7 @@ function MobileNavigation(props: Props) {
             tooltip={t('core:tagLibrary')}
             keyBinding={keyBindings['showTagLibrary']}
             onClick={() => showPanel('tagLibraryPanel')}
-            style={{
+            sx={{
               backgroundColor:
                 currentOpenedPanel === 'tagLibraryPanel'
                   ? theme.palette.primary.light
@@ -535,7 +535,7 @@ function MobileNavigation(props: Props) {
             tooltip={t('core:quickAccess')}
             data-tid="quickAccessButton"
             onClick={() => showPanel('searchPanel')}
-            style={{
+            sx={{
               backgroundColor:
                 currentOpenedPanel === 'searchPanel'
                   ? theme.palette.primary.light
@@ -549,7 +549,7 @@ function MobileNavigation(props: Props) {
             title={t('core:help')}
             data-tid="helpFeedback"
             onClick={() => showPanel('helpFeedbackPanel')}
-            style={{
+            sx={{
               backgroundColor:
                 currentOpenedPanel === 'helpFeedbackPanel'
                   ? theme.palette.primary.light
@@ -565,7 +565,7 @@ function MobileNavigation(props: Props) {
             onClick={() => {
               openSettingsDialog();
             }}
-            style={{
+            sx={{
               backgroundColor: theme.palette.background.default,
             }}
             title={t('core:settings')}

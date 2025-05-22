@@ -21,11 +21,11 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
 
 export const ParentFolderIcon = (props) => (
-  <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} {...props} />
+  <KeyboardReturnIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
 export const MarkdownFileIcon = (props) => (
-  <MarkdownRawIcon style={{ transform: 'scaleX(-1)' }} />
+  <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} />
 );
 
 export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
@@ -169,10 +169,7 @@ export { default as RestoreIcon } from '@mui/icons-material/SettingsBackupRestor
 import ExpandCircleDownOutlined from '@mui/icons-material/ExpandCircleDownOutlined';
 
 export const PrevDocumentIcon = (props) => (
-  <ExpandCircleDownOutlined
-    style={{ transform: 'rotate(180deg)' }}
-    {...props}
-  />
+  <ExpandCircleDownOutlined sx={{ transform: 'rotate(180deg)' }} {...props} />
 );
 
 export { default as NextDocumentIcon } from '@mui/icons-material/ExpandCircleDownOutlined';
@@ -208,7 +205,7 @@ export { default as ExportImportIcon } from '@mui/icons-material/SwapHoriz';
 export { default as ExportIcon } from '@mui/icons-material/ExitToApp';
 
 export const ImportIcon = (props) => (
-  <ExportIcon style={{ transform: 'rotate(180deg)' }} {...props} />
+  <ExportIcon sx={{ transform: 'rotate(180deg)' }} {...props} />
 );
 
 export { default as SortingIcon } from '@mui/icons-material/SwapVerticalCircleOutlined';

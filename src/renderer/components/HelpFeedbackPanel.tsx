@@ -65,11 +65,10 @@ function HelpFeedbackPanel(props: Props) {
 
   return (
     <Box
-      style={{
+      sx={{
         display: 'flex',
         flexDirection: 'column',
-        //marginLeft: 5,
-        paddingLeft: 5,
+        paddingLeft: '5px',
         paddingRight: 0,
         height: '100%',
       }}
@@ -79,10 +78,10 @@ function HelpFeedbackPanel(props: Props) {
         dense={false}
         component="nav"
         aria-label="main help area"
-        style={{
+        sx={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           overflowY: 'auto',
-          marginRight: 5,
+          marginRight: '5px',
         }}
       >
         <ListItem
@@ -93,7 +92,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <AboutIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:aboutTagSpaces')}
           </Typography>
         </ListItem>
@@ -105,7 +104,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <HelpIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:documentation')}
           </Typography>
         </ListItem>
@@ -113,7 +112,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:shortcutKeys')}
           </Typography>
         </ListItem>
@@ -124,7 +123,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <ChangeLogIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:whatsNew')}
           </Typography>
         </ListItem>
@@ -132,7 +131,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <OnboardingIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:onboardingWizard')}
           </Typography>
         </ListItem>
@@ -142,7 +141,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <WebClipperIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:webClipper')}
           </Typography>
         </ListItem>
@@ -153,7 +152,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <NewFeatureIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:suggestNewFeatures')}
           </Typography>
         </ListItem>
@@ -163,7 +162,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <ForumIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:forums')}
           </Typography>
         </ListItem>
@@ -173,7 +172,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <IssueIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:reportIssues')}
           </Typography>
         </ListItem>
@@ -183,7 +182,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <TranslationIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:helpWithTranslation')}
           </Typography>
         </ListItem>
@@ -194,7 +193,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <EmailIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:emailContact')}
           </Typography>
         </ListItem>
@@ -207,7 +206,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <CancelSubscriptionIcon />
             </ListItemIcon>
-            <Typography style={{ color: theme.palette.text.primary }}>
+            <Typography sx={{ color: theme.palette.text.primary }}>
               {t('core:cancelSubscription')}
             </Typography>
           </ListItem>
@@ -216,7 +215,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <XIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('core:followOnX')}
           </Typography>
         </ListItem>
@@ -225,7 +224,7 @@ function HelpFeedbackPanel(props: Props) {
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
+          <Typography sx={{ color: theme.palette.text.primary }}>
             {t('achieveMore') + ' TagSpaces Pro'}
           </Typography>
         </ListItem>

@@ -16,10 +16,6 @@
  *
  */
 
-import React from 'react';
-// {t('core:loading')}
-// <div style={{ padding: 10, backgroundColor: 'transparent' }}>...</div>
-
 function LoadingLazy() {
   return (
     <div

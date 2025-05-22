@@ -51,9 +51,9 @@ function TsToolbarButton(props: TSIconButtonProps) {
       disabled={disabled}
       style={{
         borderRadius: AppConfig.defaultCSSRadius,
-        padding: 8,
-        paddingLeft: 6,
-        paddingRight: 6,
+        padding: '8px',
+        paddingLeft: '6px',
+        paddingRight: '6px',
         display: 'block',
         ...style,
       }}
@@ -62,22 +62,17 @@ function TsToolbarButton(props: TSIconButtonProps) {
           width: showTitle ? '0.9em' : '1em',
           heigh: showTitle ? '0.9em' : '1em',
         },
-        // border: '1px solid transparent',
-        // '&:hover': {
-        //   border: '1px solid ' + alpha(theme.palette.divider, 0.9),
-        //   borderRadius: AppConfig.defaultCSSRadius,
-        // },
       }}
       {...restProps}
     >
       {children}
       {showTitle && (
         <Typography
-          style={{
+          sx={{
             display: 'block',
             fontSize: 11,
-            marginTop: -5,
-            width: 45,
+            marginTop: '-5px',
+            width: '45px',
             padding: 0,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',

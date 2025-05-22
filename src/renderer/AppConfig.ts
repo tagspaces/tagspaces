@@ -168,8 +168,8 @@ AppConfig.maxCollectedTag = 500;
 AppConfig.maxLoops = 2;
 AppConfig.defaultFolderColor = '#a466aa'; // 'gray';
 AppConfig.defaultFileColor = '#33b5be';
-AppConfig.defaultCSSRadius = 10;
-AppConfig.defaultSpaceBetweenButtons = 10;
+AppConfig.defaultCSSRadius = '10px';
+AppConfig.defaultSpaceBetweenButtons = '10px';
 AppConfig.aiFolder = 'ai';
 AppConfig.defaultMapBounds =
   typeof window !== 'undefined' && window.ExtDefaultMapBounds !== undefined

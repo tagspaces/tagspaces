@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import AppConfig from '-/AppConfig';
 import {
   CloudLocationIcon,
@@ -24,6 +23,7 @@ import {
   MoreMenuIcon,
 } from '-/components/CommonIcons';
 import Tooltip from '-/components/Tooltip';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -35,8 +35,8 @@ import {
   extractShortDirectoryName,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -194,7 +194,7 @@ function PathBreadcrumbs(props: Props) {
             onDelete={openDirMenu}
             onClick={openDirMenu}
             onContextMenu={openDirMenu}
-            style={{ marginRight: 2 }}
+            sx={{ marginRight: '2px' }}
           />
         </Tooltip>
       );

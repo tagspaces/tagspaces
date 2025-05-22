@@ -24,7 +24,6 @@ import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
-import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
@@ -47,7 +46,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
@@ -322,7 +320,6 @@ function FolderContainer(props: Props) {
         )}
       </div>
       <div style={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
-        {/*<LoadingAnimation />*/}
         {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
         <a href="#" id="downloadFile" />
         <RenderPerspective />

@@ -324,10 +324,8 @@ function RowCell(props: Props) {
       <Grid
         container
         wrap="nowrap"
-        style={{
-          borderRadius: AppConfig.defaultCSSRadius,
-        }}
         sx={{
+          borderRadius: AppConfig.defaultCSSRadius,
           backgroundColor,
           '&:hover': {
             backgroundColor: theme.palette.divider + ' !important',
@@ -376,17 +374,17 @@ function RowCell(props: Props) {
             </Typography>
           </Grid>
         ) : (
-          <Grid style={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
+          <Grid sx={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
             <Typography
               variant="body1"
               title={fsEntry.name}
-              style={{ wordBreak: 'break-all' }}
+              sx={{ wordBreak: 'break-all' }}
             >
               {entryTitle}
             </Typography>
             <Typography
               data-tid="gridCellDescription"
-              style={{
+              sx={{
                 color: 'gray',
               }}
               variant="body2"
@@ -442,11 +440,11 @@ function RowCell(props: Props) {
           </Grid>
         )}
         <Grid
-          style={{
+          sx={{
             display: 'flex',
             alignItems: 'center',
-            marginRight: 5,
-            paddingRight: 10,
+            marginRight: '5px',
+            paddingRight: '10px',
           }}
         >
           <TsIconButton

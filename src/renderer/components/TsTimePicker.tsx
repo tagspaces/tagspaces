@@ -31,7 +31,7 @@ function TsTimePicker(props) {
   return (
     <div>
       {label && (
-        <FormHelperText style={{ marginLeft: 5, marginTop: 0 }}>
+        <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
           {label}
         </FormHelperText>
       )}
@@ -43,21 +43,21 @@ function TsTimePicker(props) {
           },
           '& .Mui-focused': {
             backgroundColor: 'transparent !important',
-            borderRadius: AppConfig.defaultCSSRadius + 'px',
+            borderRadius: AppConfig.defaultCSSRadius,
           },
-          borderRadius: AppConfig.defaultCSSRadius + 'px',
+          borderRadius: AppConfig.defaultCSSRadius,
           transition: '0.3s',
           '&:hover .MuiOutlinedInput-notchedOutline': {
             border: '2px solid transparent !important',
-            borderRadius: AppConfig.defaultCSSRadius + 'px',
+            borderRadius: AppConfig.defaultCSSRadius,
           },
           '& .MuiOutlinedInput-notchedOutline': {
             border: '2px solid transparent',
-            borderRadius: AppConfig.defaultCSSRadius + 'px',
+            borderRadius: AppConfig.defaultCSSRadius,
           },
           '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
             border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
-            borderRadius: AppConfig.defaultCSSRadius + 'px',
+            borderRadius: AppConfig.defaultCSSRadius,
           },
         }}
         {...props}

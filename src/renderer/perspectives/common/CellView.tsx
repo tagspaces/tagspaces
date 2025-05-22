@@ -16,36 +16,35 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
-import { TS } from '-/tagspaces.namespace';
-import { getDesktopMode, getEntryContainerTab } from '-/reducers/settings';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import FileSourceDnd from '-/components/FileSourceDnd';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import TargetFileBox from '-/components/TargetFileBox';
 import CustomDragLayer from '-/components/CustomDragLayer';
-import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
-import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
-import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
+import TargetFileBox from '-/components/TargetFileBox';
+import TargetMoveFileBox from '-/components/TargetMoveFileBox';
+import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
   fileOperationsEnabled,
   folderOperationsEnabled,
 } from '-/perspectives/common/main-container';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
+import { getDesktopMode, getEntryContainerTab } from '-/reducers/settings';
 import i18n from '-/services/i18n';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { TS } from '-/tagspaces.namespace';
+import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import React from 'react';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useSelector } from 'react-redux';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -285,11 +284,11 @@ function CellView(props: Props) {
                 window.electronIO.ipcRenderer.startDrag(fsEntry.path);
               }}
             >
-              <DragHandleIcon style={{ color: theme.palette.text.primary }} />
+              <DragHandleIcon sx={{ color: theme.palette.text.primary }} />
               <Typography
                 color="textSecondary"
                 variant="caption"
-                style={{ alignSelf: 'center' }}
+                sx={{ alignSelf: 'center' }}
               >
                 {i18n.t('dragOutsideApp')}
               </Typography>

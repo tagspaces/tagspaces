@@ -25,7 +25,7 @@ export function BetaLabel() {
   const { t } = useTranslation();
   return (
     <Tooltip title={t('featureInBetaStatus')}>
-      <Typography style={{ display: 'initial' }}>
+      <Typography sx={{ display: 'initial' }}>
         <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
           {t('betaStatus')}
         </sup>
@@ -39,7 +39,7 @@ export function ProLabel() {
   return (
     !Pro && (
       <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
-        <Typography style={{ display: 'initial' }}>
+        <Typography sx={{ display: 'initial' }}>
           <sup style={{ marginLeft: 5 }}>PRO</sup>
         </Typography>
       </Tooltip>
@@ -52,7 +52,7 @@ export function ProSign() {
   return (
     !Pro && (
       <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
-        <Typography style={{ display: 'initial' }}>
+        <Typography sx={{ display: 'initial' }}>
           <sup
             style={{
               fontSize: 10,
