@@ -198,7 +198,7 @@ function RowCell(props: Props) {
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = currentLocation.isReadOnly ? (
+      const tagContainer = currentLocation?.isReadOnly ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -224,7 +224,7 @@ function RowCell(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, currentLocation.isReadOnly, reorderTags, entryPath]);
+  }, [entryTags, currentLocation?.isReadOnly, reorderTags, entryPath]);
 
   function generateExtension() {
     return selectionMode ? (
