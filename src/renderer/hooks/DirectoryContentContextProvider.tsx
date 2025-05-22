@@ -43,7 +43,6 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
-import { makeCancelable, useCancelable } from '-/utils/useCancelable';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   cleanFrontDirSeparator,
@@ -58,6 +57,7 @@ import {
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -65,6 +65,10 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  useCancelablePerLocation,
+  makeCancelable,
+} from '-/utils/useCancelablePerLocation';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -216,6 +220,7 @@ export const DirectoryContentContextProvider = ({
   const {
     closeAllLocations,
     currentLocation,
+    currentLocationId,
     findLocation,
     skipInitialDirList,
     getLocationPath,
@@ -224,7 +229,6 @@ export const DirectoryContentContextProvider = ({
   const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
-  const { signal, abort } = useCancelable();
 
   const currentLocationPath = useRef<string>('');
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -232,6 +236,8 @@ export const DirectoryContentContextProvider = ({
   const defaultPerspective = useSelector(getDefaultPerspective);
 
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
+  const { signal, abort, cancelAbort } =
+    useCancelablePerLocation(currentLocationId);
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
   const manualPerspective = useRef<TS.PerspectiveType>('unspecified');
@@ -243,7 +249,7 @@ export const DirectoryContentContextProvider = ({
    * undefined means no .ts folder exist
    */
   const isMetaLoaded = useRef<boolean>(undefined);
-  const isLoading = useRef<boolean>(false);
+  //const isLoading = useRef<boolean>(false);
   //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -310,19 +316,19 @@ export const DirectoryContentContextProvider = ({
       getLocationPath(currentLocation).then((locationPath) => {
         currentLocationPath.current = locationPath;
         if (!skipInitialDirList) {
-          if (isLoading.current) {
+          /*if (isLoading.current) {
             //cancel loading KanBan S3 folders on location-folder change
             abort();
           }
-          isLoading.current = true;
+          isLoading.current = true;*/
           openDirectory(locationPath)
             .then((success) => {
               manualPerspective.current = 'unspecified';
-              isLoading.current = false;
+              //isLoading.current = false;
               return success;
             })
             .catch((ex) => {
-              isLoading.current = false;
+              //isLoading.current = false;
               console.log('Error openDirectory:', ex);
             });
         }
@@ -612,6 +618,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setCurrentDirectoryEntries(dirEntries: TS.FileSystemEntry[]) {
+    cancelAbort();
     if (dirEntries && dirEntries.length > 0) {
       currentDirectoryEntries.current = dirEntries; //[...dirEntries];
       forceUpdate();
@@ -860,26 +867,40 @@ export const DirectoryContentContextProvider = ({
    * @param loadDirMeta
    * @param showHiddenEntries
    */
-  function loadDirectoryContent(
-    directoryPath: string,
-    loadDirMeta = false,
-    showHiddenEntries = undefined,
-  ): Promise<TS.FileSystemEntry[]> {
-    // dispatch(actions.setIsLoading(true));
+  const loadDirectoryContent = useCallback(
+    (
+      directoryPath: string,
+      loadDirMeta = false,
+      showHiddenEntries = undefined,
+    ): Promise<TS.FileSystemEntry[]> => {
+      if (selectedEntries.length > 0) {
+        setSelectedEntries([]);
+      }
 
-    if (selectedEntries.length > 0) {
-      setSelectedEntries([]);
-    }
-    if (loadDirMeta) {
-      return getDirMeta(directoryPath, currentLocation).then((meta) => {
-        if (meta) {
-          directoryMeta.current = meta;
-        } else {
-          directoryMeta.current = getDefaultDirMeta();
-        }
-        if (signal.aborted) {
-          return [];
-        }
+      if (loadDirMeta) {
+        return getDirMeta(directoryPath, currentLocation).then((meta) => {
+          if (meta) {
+            directoryMeta.current = meta;
+          } else {
+            directoryMeta.current = getDefaultDirMeta();
+          }
+
+          if (signal?.aborted) {
+            return [];
+          }
+
+          return loadDirectoryContentInt(
+            directoryPath,
+            currentLocation,
+            showHiddenEntries,
+          ).then((entries) => {
+            setCurrentDirectoryEntries(entries);
+            return entries;
+          });
+        });
+      } else {
+        isMetaLoaded.current = false;
+        directoryMeta.current = getDefaultDirMeta();
         return loadDirectoryContentInt(
           directoryPath,
           currentLocation,
@@ -888,84 +909,67 @@ export const DirectoryContentContextProvider = ({
           setCurrentDirectoryEntries(entries);
           return entries;
         });
-      });
-    } else {
-      isMetaLoaded.current = false;
-      directoryMeta.current = getDefaultDirMeta();
-      return loadDirectoryContentInt(
-        directoryPath,
-        currentLocation,
-        showHiddenEntries,
-      ).then((entries) => {
-        setCurrentDirectoryEntries(entries);
-        return entries;
-      });
-    }
-  }
+      }
+    },
+    [currentLocation, signal, selectedEntries],
+  );
 
-  function loadDirectoryContentInt(
-    directoryPath: string,
-    location: CommonLocation,
-    showHiddenEntries = undefined,
-  ): Promise<TS.FileSystemEntry[]> {
-    showNotification(t('core:loading'), 'info', false);
-    const resultsLimit = {
-      maxLoops:
-        currentLocation && currentLocation.maxLoops
-          ? currentLocation.maxLoops
-          : AppConfig.maxLoops,
-      IsTruncated: false,
-    };
-    const promise = location
-      .listDirectoryPromise(
-        directoryPath,
-        [], // location.fullTextIndex ? ['extractTextContent'] : [],
-        currentLocation ? currentLocation.ignorePatternPaths : [],
-        resultsLimit,
-      )
-      .then((results) => {
-        if (signal.aborted) {
+  const loadDirectoryContentInt = useCallback(
+    (
+      directoryPath: string,
+      location: CommonLocation,
+      showHiddenEntries = undefined,
+    ): Promise<TS.FileSystemEntry[]> => {
+      showNotification(t('core:loading'), 'info', false);
+
+      const resultsLimit = {
+        maxLoops: location?.maxLoops ?? AppConfig.maxLoops,
+        IsTruncated: false,
+      };
+
+      const promise = location
+        .listDirectoryPromise(
+          directoryPath,
+          [], // You can enhance this later for fullTextIndex
+          location?.ignorePatternPaths ?? [],
+          resultsLimit,
+        )
+        .then((results) => {
+          if (signal?.aborted) return [];
+
+          if (resultsLimit.IsTruncated) {
+            openIsTruncatedConfirmDialog();
+          }
+
+          if (results !== undefined) {
+            return loadDirectorySuccess(
+              directoryPath,
+              results,
+              location,
+              showHiddenEntries,
+            );
+          }
           return [];
-        }
-        if (resultsLimit.IsTruncated) {
-          openIsTruncatedConfirmDialog();
-        }
-        if (results !== undefined) {
-          // console.debug('app listDirectoryPromise resolved:' + results.length);
-          return loadDirectorySuccess(
-            directoryPath,
-            results,
-            location,
-            showHiddenEntries,
-          );
-        }
-        return [];
-      })
-      .catch((error) => {
-        // console.timeEnd('listDirectoryPromise');
-        return loadDirectoryFailure(error);
-      });
-    const cancelableFetch = makeCancelable(promise, signal);
+        })
+        .catch((error) => {
+          return loadDirectoryFailure(error);
+        });
 
-    return cancelableFetch
-      .then((response) => {
-        return response;
-      })
-      .catch((err) => {
-        if (err.name === 'AbortError') {
-          console.log('Upload was canceled');
-        } else {
-          console.error('Other error:', err);
-        }
-        return [];
-      });
-    /* return Promise.race([promise, uploadCancelled]).then(() => {
-      // useCancelable will call abort when unmounted. After listDirectoryPromise succeeded,
-      // we no longer care about that method of cancellation. Catch here to avoid an unhandled promise rejection.
-      uploadCancelled.catch(() => {});
-      return promise;
-    });*/
-  }
+      const cancelableFetch = makeCancelable(promise, signal);
+
+      return cancelableFetch
+        .then((response) => response)
+        .catch((err) => {
+          if (err.name === 'AbortError') {
+            console.log('cancelableFetch was canceled');
+          } else {
+            console.error('Other error:', err);
+          }
+          return [];
+        });
+    },
+    [signal],
+  );
 
   function clearDirectoryContent() {
     currentDirectoryPath.current = undefined;

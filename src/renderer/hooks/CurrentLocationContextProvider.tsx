@@ -356,7 +356,7 @@ export const CurrentLocationContextProvider = ({
     openAfterCreate = true,
     locationPosition: number = undefined,
   ) {
-    allLocations.current = [...allLocations.current, location];
+    //allLocations.current = [...allLocations.current, location];
     if (openAfterCreate) {
       openLocation(location);
     }
@@ -369,9 +369,9 @@ export const CurrentLocationContextProvider = ({
   }
 
   function deleteLocationInt(locationId: string) {
-    allLocations.current = allLocations.current.filter(
+    /* allLocations.current = allLocations.current.filter(
       (l) => l.uuid !== locationId,
-    );
+    );*/
     dispatch(LocationActions.deleteLocation(locationId));
     forceUpdate();
   }
@@ -391,7 +391,7 @@ export const CurrentLocationContextProvider = ({
       return;
     }
 
-    // Create a copy of the array
+    /* // Create a copy of the array
     const newArray = [...allLocations.current];
 
     // Swap the location with the one above it
@@ -399,7 +399,7 @@ export const CurrentLocationContextProvider = ({
     newArray[currentIndex] = newArray[currentIndex - 1];
     newArray[currentIndex - 1] = temp;
 
-    allLocations.current = newArray;
+    allLocations.current = newArray;*/
     dispatch(LocationActions.moveLocationUp(locationUUID));
   }
 
@@ -420,16 +420,16 @@ export const CurrentLocationContextProvider = ({
     ) {
       return;
     }
+    /*
+        // Create a copy of the array
+        const newArray = [...allLocations.current];
 
-    // Create a copy of the array
-    const newArray = [...allLocations.current];
+        // Swap the location with the one below it
+        const temp = newArray[currentIndex];
+        newArray[currentIndex] = newArray[currentIndex + 1];
+        newArray[currentIndex + 1] = temp;
 
-    // Swap the location with the one below it
-    const temp = newArray[currentIndex];
-    newArray[currentIndex] = newArray[currentIndex + 1];
-    newArray[currentIndex + 1] = temp;
-
-    allLocations.current = newArray;
+        allLocations.current = newArray;*/
     dispatch(LocationActions.moveLocationDown(locationUUID));
   }
 
@@ -452,13 +452,13 @@ export const CurrentLocationContextProvider = ({
     if (currentIndex === -1) {
       throw new Error('Location not found');
     }
+    /*
+        // Remove the location from its current position
+        const [location] = allLocations.current.splice(currentIndex, 1);
 
-    // Remove the location from its current position
-    const [location] = allLocations.current.splice(currentIndex, 1);
-
-    // Insert the location at the specified new index
-    allLocations.current.splice(newIndex, 0, location);
-    allLocations.current = [...allLocations.current];
+        // Insert the location at the specified new index
+        allLocations.current.splice(newIndex, 0, location);
+        allLocations.current = [...allLocations.current];*/
     dispatch(LocationActions.moveLocation(locationUUID, newIndex));
   }
 
