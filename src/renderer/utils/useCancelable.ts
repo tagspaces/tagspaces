@@ -40,37 +40,3 @@ export const useCancelable = (): UseCancelableResult => {
     },
   };
 };
-
-/**
- * Wraps any Promise<T> so that it will reject with
- * an AbortError when signal.abort() is called.
- */
-export function makeCancelable<T>(
-  promise: Promise<T>,
-  signal: AbortSignal,
-): Promise<T> {
-  // 1) If already aborted, fail fast:
-  if (signal.aborted) {
-    return Promise.reject(new DOMException('Aborted', 'AbortError'));
-  }
-
-  return new Promise<T>((resolve, reject) => {
-    // 2) Listener that rejects on abort:
-    const onAbort = () => {
-      reject(new DOMException('Aborted', 'AbortError'));
-    };
-
-    signal.addEventListener('abort', onAbort, { once: true });
-
-    // 3) When the real promise settles, clean up the abort listener:
-    promise
-      .then((value) => {
-        signal.removeEventListener('abort', onAbort);
-        resolve(value);
-      })
-      .catch((err) => {
-        signal.removeEventListener('abort', onAbort);
-        reject(err);
-      });
-  });
-}
