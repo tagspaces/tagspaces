@@ -911,7 +911,7 @@ export const DirectoryContentContextProvider = ({
         });
       }
     },
-    [currentLocation, signal, selectedEntries],
+    [currentLocation, signal, selectedEntries, showUnixHiddenEntries],
   );
 
   const loadDirectoryContentInt = useCallback(
@@ -968,7 +968,7 @@ export const DirectoryContentContextProvider = ({
           return [];
         });
     },
-    [signal],
+    [signal, showUnixHiddenEntries],
   );
 
   function clearDirectoryContent() {
@@ -1089,17 +1089,18 @@ export const DirectoryContentContextProvider = ({
       showHiddenEntries !== undefined
         ? showHiddenEntries
         : showUnixHiddenEntries;
-    dirEntries.map((entry) => {
+
+    dirEntries.forEach((entry) => {
       if (!showHidden && entry.name.startsWith('.')) {
-        return true;
+        return;
       }
 
       if (!showDirs && !entry.isFile) {
-        return true;
+        return;
       }
 
       if (limit !== undefined && directoryContent.length >= limit) {
-        return true;
+        return;
       }
 
       const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
@@ -1107,8 +1108,10 @@ export const DirectoryContentContextProvider = ({
         AppConfig.tagDelimiter,
         location?.getDirSeparator(),
       );
-      directoryContent.push({ ...enhancedEntry, locationID: location.uuid });
-      return true;
+      directoryContent.push({
+        ...enhancedEntry,
+        locationID: location.uuid,
+      });
     });
 
     return directoryContent;
