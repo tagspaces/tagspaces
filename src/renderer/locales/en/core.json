@@ -963,6 +963,6 @@
   "backgroundColorInfo": "The background color will not be visible if you have set a background image",
   "useOnlyTagsFromTagLibrary": "Use only tags from tag library for tagging",
   "reloadOnFocus": "Reload on focus",
-  "toggleClusterGroup": "Toggle Cluster Group",
+  "toggleClusterGroup": "Toggle Pin Grouping",
   "-": "-"
 }
