@@ -45,7 +45,7 @@ import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
-import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -53,7 +53,6 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { isDesktopMode } from '-/reducers/settings';
 import {
   dirNameValidation,
   fileNameValidation,
@@ -83,7 +82,6 @@ import {
   extractFileName,
   extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import L from 'leaflet';
 import React, {
   ChangeEvent,
@@ -102,9 +100,7 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -570,7 +566,7 @@ function EntryProperties(props: Props) {
             onChange={handleFileNameChange}
           />
           {fileNameError.current && (
-            <FormHelperText style={{ marginTop: 0 }}>
+            <FormHelperText sx={{ marginTop: 0 }}>
               {t(
                 'core:' +
                   (openedEntry.isFile ? 'fileNameHelp' : 'directoryNameHelp'),

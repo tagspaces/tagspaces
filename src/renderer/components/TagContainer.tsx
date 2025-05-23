@@ -19,6 +19,7 @@
 import Tag from '-/components/Tag';
 import TagContainerMenu from '-/components/TagContainerMenu';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { getTagColors } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
@@ -29,7 +30,6 @@ import PlaceIcon from '@mui/icons-material/Place';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   tag: TS.Tag;
@@ -211,19 +211,19 @@ function TagContainer(props: Props) {
         >
           {(isTagGeo || isGeoSmartTag) && (
             <PlaceIcon
-              style={{
+              sx={{
                 color: textColor,
-                height: 16,
-                marginLeft: -5,
+                height: '16px',
+                marginLeft: '-5px',
               }}
             />
           )}
           {(isTagDate || isDateSmartTag) && (
             <DateIcon
-              style={{
+              sx={{
                 color: textColor,
-                height: 16,
-                marginLeft: -5,
+                height: '16px',
+                marginLeft: '-5px',
               }}
             />
           )}

@@ -74,6 +74,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OpenedEntryContextData = {
+  haveOpenedEntry: boolean;
   openedEntry: TS.OpenedEntry;
   fileChanged: boolean;
   isEntryInFullWidth: boolean;
@@ -115,6 +116,7 @@ type OpenedEntryContextData = {
 };
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
+  haveOpenedEntry: false,
   openedEntry: undefined,
   fileChanged: false,
   isEntryInFullWidth: false,
@@ -1053,6 +1055,7 @@ export const OpenedEntryContextProvider = ({
 
   const context = useMemo(() => {
     return {
+      haveOpenedEntry: currentEntry.current !== undefined,
       openedEntry: currentEntry.current,
       fileChanged: fileChanged.current,
       isEntryInFullWidth: isEntryInFullWidth.current,

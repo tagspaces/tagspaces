@@ -198,7 +198,7 @@ function RowCell(props: Props) {
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = currentLocation.isReadOnly ? (
+      const tagContainer = currentLocation?.isReadOnly ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -224,7 +224,7 @@ function RowCell(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, currentLocation.isReadOnly, reorderTags, entryPath]);
+  }, [entryTags, currentLocation?.isReadOnly, reorderTags, entryPath]);
 
   function generateExtension() {
     return selectionMode ? (
@@ -324,10 +324,8 @@ function RowCell(props: Props) {
       <Grid
         container
         wrap="nowrap"
-        style={{
-          borderRadius: AppConfig.defaultCSSRadius,
-        }}
         sx={{
+          borderRadius: AppConfig.defaultCSSRadius,
           backgroundColor,
           '&:hover': {
             backgroundColor: theme.palette.divider + ' !important',
@@ -376,17 +374,17 @@ function RowCell(props: Props) {
             </Typography>
           </Grid>
         ) : (
-          <Grid style={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
+          <Grid sx={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
             <Typography
               variant="body1"
               title={fsEntry.name}
-              style={{ wordBreak: 'break-all' }}
+              sx={{ wordBreak: 'break-all' }}
             >
               {entryTitle}
             </Typography>
             <Typography
               data-tid="gridCellDescription"
-              style={{
+              sx={{
                 color: 'gray',
               }}
               variant="body2"
@@ -442,11 +440,11 @@ function RowCell(props: Props) {
           </Grid>
         )}
         <Grid
-          style={{
+          sx={{
             display: 'flex',
             alignItems: 'center',
-            marginRight: 5,
-            paddingRight: 10,
+            marginRight: '5px',
+            paddingRight: '10px',
           }}
         >
           <TsIconButton

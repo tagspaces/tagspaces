@@ -219,7 +219,7 @@ function EntryContainerTitle(props: Props) {
                 currentLocation?.getDirSeparator(),
               )
             }
-            <MoreMenuIcon style={{ fontSize: 20 }} />
+            <MoreMenuIcon sx={{ fontSize: '20px' }} />
           </FileBadge>
         </>
       ) : (
@@ -241,8 +241,8 @@ function EntryContainerTitle(props: Props) {
             WebkitAppRegion: 'no-drag',
           }}
         >
-          <FolderIcon style={{ fontSize: 20 }} />
-          <MoreMenuIcon style={{ fontSize: 20 }} />
+          <FolderIcon sx={{ fontSize: '20px' }} />
+          <MoreMenuIcon sx={{ fontSize: '20px' }} />
         </FileBadge>
       )}
       <Tooltip title={openedEntry.isFile && fileName}>

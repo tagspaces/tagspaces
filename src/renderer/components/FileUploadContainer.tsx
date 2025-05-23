@@ -16,7 +16,14 @@
  *
  */
 
-import React, {
+import AppConfig from '-/AppConfig';
+import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
+import {
   ChangeEvent,
   forwardRef,
   Ref,
@@ -24,13 +31,6 @@ import React, {
   useRef,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/AppConfig';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   id?: string;
