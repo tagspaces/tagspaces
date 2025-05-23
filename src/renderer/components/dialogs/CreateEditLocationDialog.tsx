@@ -482,8 +482,9 @@ function CreateEditLocationDialog(props: Props) {
         editLocation(editedLocation);
       }
       if (
-        JSON.stringify(loc.ignorePatternPaths) !==
-        JSON.stringify(selectedLocation.ignorePatternPaths)
+        selectedLocation &&
+        JSON.stringify(selectedLocation.ignorePatternPaths) !==
+          JSON.stringify(loc.ignorePatternPaths)
       ) {
         createLocationIndex(editedLocation);
       }
