@@ -21,6 +21,7 @@ import EntryIcon from '-/components/EntryIcon';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
 import TooltipTS from '-/components/Tooltip';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
 import LightMdEditor from '-/components/md/LigthMdEditor';
@@ -47,7 +48,6 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   desktopMode: boolean;
@@ -391,7 +391,7 @@ function GridPagination(props: Props) {
                           margin-top: 10px;
                       }
                      .gridPagination .milkdown { 
-                          border-radius: ${AppConfig.defaultCSSRadius}px;
+                          border-radius: ${AppConfig.defaultCSSRadius};
                       }
                       .gridPagination .milkdown .ProseMirror {
                           padding: 10px;
