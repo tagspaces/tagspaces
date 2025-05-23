@@ -39,7 +39,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { Pro } from '-/pro';
 import { tagsValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { isDateTimeTag } from '-/utils/dates';
+import { isDateTimeTag, isYear, isYearMonth } from '-/utils/dates';
 import { isGeoTag } from '-/utils/geo';
 import useValidation from '-/utils/useValidation';
 
@@ -84,7 +84,11 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
       return parts.length === 2 && parts.every(isDateTimeTag);
     }
 
-    return isDateTimeTag(currentTitle);
+    return (
+      isDateTimeTag(currentTitle) &&
+      !isYear(currentTitle) &&
+      !isYearMonth(currentTitle)
+    );
   }, [titleRef.current, tag?.title]);
 
   const handleValidation = (tagTitle: string): boolean => {
@@ -116,7 +120,10 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
     const showGeoEditor = GeoTagEditor && isGeoTag(tag?.title);
 
     return (
-      <DialogContent data-tid="editEntryTagDialog" style={{ overflow: 'auto' }}>
+      <DialogContent
+        data-tid="editEntryTagDialog"
+        sx={{ overflow: 'auto', minWidth: 545, minHeight: 190 }}
+      >
         <FormControl fullWidth error={haveError('tag')}>
           <TsTextField
             error={haveError('tag')}
@@ -156,7 +163,10 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
           />
         )}
         {isShowDatePeriodEditor && tag && (
-          <DateTagEditor datePeriodTag={tag?.title} onChange={setTitle} />
+          <DateTagEditor
+            datePeriodTag={titleRef.current || tag?.title}
+            onChange={setTitle}
+          />
         )}
       </DialogContent>
     );
