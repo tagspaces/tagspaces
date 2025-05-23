@@ -467,20 +467,26 @@ function CreateEditLocationDialog(props: Props) {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
+      let editedLocation;
       if (!selectedLocation) {
-        const commonLocation = new CommonLocation(loc);
-        getMetaLocationId(commonLocation).then((uuid) => {
+        const editedLocation = new CommonLocation(loc);
+        getMetaLocationId(editedLocation).then((uuid) => {
           if (uuid) {
-            commonLocation.uuid = uuid;
+            editedLocation.uuid = uuid;
           }
-          addLocation(commonLocation);
+          addLocation(editedLocation);
         });
       } else {
         loc.newuuid = newuuid;
-        editLocation(new CommonLocation(loc));
-      } /*else {
-        console.log('No addLocation or editLocation props exist');
-      }*/
+        editedLocation = new CommonLocation(loc);
+        editLocation(editedLocation);
+      }
+      if (
+        JSON.stringify(loc.ignorePatternPaths) !==
+        JSON.stringify(selectedLocation.ignorePatternPaths)
+      ) {
+        createLocationIndex(editedLocation);
+      }
       onClose();
       // this.props.resetState('createLocationDialogKey');
     }
