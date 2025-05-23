@@ -15,22 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, {
-  ChangeEvent,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import EditIcon from '@mui/icons-material/Edit';
 import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
@@ -42,6 +28,16 @@ import { TS } from '-/tagspaces.namespace';
 import { isDateTimeTag, isYear, isYearMonth } from '-/utils/dates';
 import { isGeoTag } from '-/utils/geo';
 import useValidation from '-/utils/useValidation';
+import EditIcon from '@mui/icons-material/Edit';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Paper from '@mui/material/Paper';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -122,7 +118,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
     return (
       <DialogContent
         data-tid="editEntryTagDialog"
-        sx={{ overflow: 'auto', minWidth: 545, minHeight: 190 }}
+        sx={{ overflow: 'auto', minWidth: '545px', minHeight: '190px' }}
       >
         <FormControl fullWidth error={haveError('tag')}>
           <TsTextField
@@ -185,6 +181,9 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
           onConfirm();
         }
       }}
+      scroll="paper"
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
+      aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle
         dialogTitle={t('core:tagProperties')}
