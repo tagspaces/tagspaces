@@ -16,356 +16,311 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
-import {
-  CreateFileIcon,
-  ExpandIcon,
-  ReloadIcon,
-  RemoveIcon,
-} from '-/components/CommonIcons';
-import { default as TooltipTS } from '-/components/Tooltip';
-import TsButton from '-/components/TsButton';
-import TsIconButton from '-/components/TsIconButton';
-import TsMenuList from '-/components/TsMenuList';
-import TsSelect from '-/components/TsSelect';
-import TsTextField from '-/components/TsTextField';
-import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
-import SelectChatModel from '-/components/chat/SelectChatModel';
-import { OllamaIcon } from '-/components/dialogs/components/Ollama';
-import { useChatContext } from '-/hooks/useChatContext';
-import { AppDispatch } from '-/reducers/app';
-import {
-  actions as SettingsActions,
-  getAIProviders,
-  getDefaultAIProvider,
-} from '-/reducers/settings';
-import { openURLExternally } from '-/services/utils-io';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  CircularProgress,
+  Button,
+  Checkbox,
+  Chip,
+  ClickAwayListener,
   FormControl,
+  FormControlLabel,
+  FormHelperText,
   Grow,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
+  MenuList,
   Paper,
   Popper,
-  Switch,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Tooltip,
+  Typography,
 } from '@mui/material';
-import Box from '@mui/material/Box';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import InputAdornment from '@mui/material/InputAdornment';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  AIProvider,
+  AIProviders,
+  ModelResponse,
+} from '-/components/chat/ChatTypes';
+import { OllamaIcon } from '-/components/images/OllamaIcon';
+// import { OpenRouterIcon } from '-/components/images/OpenRouterIcon'; // Placeholder
+import { TsTextField } from '-/components/misc/TsTextField';
+import { useChatContext } from '-/hooks/ChatProvider';
+import { useCommonSettings } from '-/hooks/useCommonSettings';
+import {
+  actions as SettingsActions,
+  getAIProviders,
+  getDefaultAIProviderId,
+  isExternalConfig,
+} from '-/reducers/settings';
+import { getUniqueName } from '-/utils/fileNameUtils';
+import { DeleteOutline } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-interface Props {
-  closeSettings: () => void;
-}
-
-function SettingsAI(props: Props) {
-  const { i18n, t } = useTranslation();
-  const { closeSettings } = props;
-  const { changeCurrentModel, checkProviderAlive } = useChatContext();
-  const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
-  const aiProviders: AIProvider[] = useSelector(getAIProviders);
-  //const ollamaAlive = useRef<boolean | null>(null);
-  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
-  const dispatch: AppDispatch = useDispatch();
-  const anchorRef = React.useRef<HTMLDivElement>(null);
-  const providersAlive = React.useRef({});
+export const SettingsAI = () => {
+  const { t } = useTranslation();
+  const { models, checkAIProviderAlive, refreshAIModels } =
+    useChatContext();
+  const dispatch = useDispatch();
+  const defaultAiProviderId = useSelector(getDefaultAIProviderId);
+  const aiProviders = useSelector(getAIProviders);
+  const externalConfig = useSelector(isExternalConfig(TS.AppConfigurationType.AI_CONFIG_TYPE));
+  const providersAlive = useRef<{ [key: string]: boolean }>({});
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const { inputMinHeight } = useCommonSettings();
+  const newAIMenuAnchorRef = useRef(null);
   const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
 
   useEffect(() => {
-    checkOllamaAlive();
-  }, []);
+    checkAllProvidersAlive();
+  }, [aiProviders]); 
 
-  const handleToggle = () => {
-    setOpenedNewAIMenu((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
-      return;
-    }
-
-    setOpenedNewAIMenu(false);
-  };
-
-  function checkOllamaAlive() {
-    aiProviders.map((provider) =>
-      checkProviderAlive(provider.url).then((alive) => {
+  function checkAllProvidersAlive() {
+    aiProviders.forEach((provider) => 
+      checkAIProviderAlive(provider).then((alive) => {
         providersAlive.current = {
           ...providersAlive.current,
           [provider.id]: alive,
         };
         forceUpdate();
-        return alive;
       }),
     );
-    //Promise.all(promises).then(() => forceUpdate());
   }
 
-  function handleChangeProvider(id: string, props: keyof AIProvider, value) {
-    const providers = aiProviders.map((provider) => {
-      if (provider.id === id) {
-        return {
-          ...provider,
-          [props]: value,
-        };
+  function handleChangeProvider(
+    providerId: string,
+    param: string,
+    value: any,
+  ) {
+    const newProviders = aiProviders.map((provider) => {
+      if (provider.id === providerId) {
+        return { ...provider, [param]: value };
       }
       return provider;
     });
-    dispatch(SettingsActions.setAiProviders(providers));
+    dispatch(SettingsActions.setAIProviders(newProviders));
   }
 
-  const changeDefaultAiProvider = (event: ChangeEvent<HTMLInputElement>) => {
-    const providerId = event.target.value as string;
-    dispatch(SettingsActions.setAiProvider(providerId));
-  };
+  function addAiProvider(providerType: AIProviders) {
+    let providerName: string;
+    let providerUrl: string;
+    let engine: AIProviders = providerType; 
+    let defaultTextModel: string | undefined;
+    let defaultImageModel: string | undefined;
+    let apiKey: string | undefined = undefined;
 
-  const addAiProvider = (provider: AIProviders) => {
-    //event: ChangeEvent<HTMLInputElement>) => {
-    //const provider: AIProviders = event.target.value as AIProviders;
-    const providerUrl = provider === 'ollama' ? 'http://localhost:11434' : '';
-    checkProviderAlive(providerUrl).then((isAlive) => {
-      const providerId = getUuid();
+    if (providerType === 'ollama') {
+      providerName = 'Ollama Local';
+      providerUrl = 'http://localhost:11434';
+      defaultTextModel = 'llama3.2'; 
+      defaultImageModel = 'llava'; 
+    } else if (providerType === 'openrouter') {
+      providerName = 'OpenRouter';
+      providerUrl = 'https://openrouter.ai/api/v1';
+      engine = 'openrouter';
+      defaultTextModel = 'gryphe/mythomax-l2-13b'; 
+      defaultImageModel = undefined; 
+      apiKey = ''; 
+    } else {
+      console.error("Unsupported provider type:", providerType);
+      return;
+    }
+    
+    const newProvider: AIProvider = {
+      id: getUniqueName(
+        aiProviders.map((p) => p.id),
+        engine + 'NewId', 
+      ),
+      engine: engine,
+      name: getUniqueName(
+        aiProviders.map((p) => p.name),
+        providerName,
+      ),
+      url: providerUrl,
+      enable: true,
+      apiKey: apiKey,
+      defaultTextModel: defaultTextModel,
+      defaultImageModel: defaultImageModel,
+    };
+
+    checkAIProviderAlive(newProvider).then((alive) => {
       providersAlive.current = {
         ...providersAlive.current,
-        [providerId]: isAlive,
+        [newProvider.id]: alive,
       };
-      const aiProvider: AIProvider = {
-        id: providerId,
-        engine: provider,
-        name: provider,
-        url: providerUrl,
-        enable: true,
-      };
-      dispatch(SettingsActions.addAiProvider(aiProvider));
+      forceUpdate();
     });
-  };
+    dispatch(SettingsActions.addAIProvider(newProvider));
+    refreshAIModels(newProvider); 
+  }
 
-  const externalConfig = typeof window.ExtAI !== 'undefined';
+  function removeAiProvider(providerId: string) {
+    dispatch(SettingsActions.removeAIProvider(providerId));
+    const { [providerId]: _, ...remainingProvidersAlive } = providersAlive.current;
+    providersAlive.current = remainingProvidersAlive;
+    // If the removed provider was the default, clear the default ID
+    if (defaultAiProviderId === providerId) {
+      dispatch(SettingsActions.setDefaultAIProviderId(''));
+    }
+    forceUpdate();
+  }
+
+  function handleDefaultProviderChange(event: SelectChangeEvent) {
+    dispatch(SettingsActions.setDefaultAIProviderId(event.target.value));
+  }
 
   return (
-    <div
-      style={{
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        height: '100%',
-        padding: 10,
-      }}
-    >
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          //expandIcon={<ExpandIcon />}
-          aria-controls="ai-general"
-          id="ai-general-header"
-          data-tid="aiGeneralTID"
+    <>
+      <Typography variant="h6" sx={{ mb: 2, mt: 2 }}>
+        {t('core:artificialIntelligence')}
+      </Typography>
+      <FormControl sx={{ m: 1, minWidth: 320 }} size="small">
+        <InputLabel id="defaultAiProviderID">
+          {t('core:defaultAiProvider')}
+        </InputLabel>
+        <Select
+          labelId="defaultAiProviderID"
+          id="defaultAiProviderIDSelect"
+          value={defaultAiProviderId || ''}
+          label={t('core:defaultAiProvider')}
+          onChange={handleDefaultProviderChange}
+          disabled={externalConfig}
         >
-          <Box style={{ display: 'block' }}>
-            <Typography>{t('core:aiSettings')}</Typography>
-            <br />
-            <Typography variant="caption">
-              TagSpaces do not have its own AI engine or models, but relays
-              entirely on external software like Ollama. If you don't have
-              Ollama, you can download it for free from
-              <TsButton
-                style={{
-                  fontSize: 13,
-                  textTransform: 'unset',
-                  fontWeight: 'normal',
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}
-                variant="text"
-                onClick={() => {
-                  openURLExternally('https://ollama.com/download', true);
-                }}
-              >
-                ollama.com
-              </TsButton>{' '}
-              and follow the installation instructions to get it set up on your
-              computer.
-            </Typography>
-          </Box>
-        </AccordionSummary>
-        <AccordionDetails>
-          <ClickAwayListener onClickAway={handleClose}>
-            <Box
-              ref={anchorRef}
-              sx={{
-                width: '100%',
-                textAlign: 'left',
-                position: 'relative',
-              }}
-            >
-              <TsButton
-                //tooltip={t('core:createNew')}
-                disabled={externalConfig}
-                aria-controls={
-                  openedNewAIMenu ? 'split-button-menu' : undefined
-                }
-                aria-expanded={openedNewAIMenu ? 'true' : undefined}
-                aria-haspopup="menu"
-                data-tid="createNewAIButtonTID"
-                onClick={handleToggle}
-                startIcon={<CreateFileIcon />}
-                style={{ marginBottom: AppConfig.defaultSpaceBetweenButtons }}
-              >
-                <Box
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {t('core:addAIEngine')}
-                </Box>
-              </TsButton>
-              <Popper
-                sx={{
-                  zIndex: 1,
-                }}
-                open={openedNewAIMenu}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                placement="bottom-start"
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === 'bottom' ? 'center top' : 'center bottom',
+          {aiProviders
+            .filter((provider) => provider.enable === true)
+            .map((provider) => (
+              <MenuItem key={provider.id} value={provider.id}>
+                <Stack direction="row" alignItems="center">
+                  {provider.engine === 'ollama' && <OllamaIcon width={15} style={{ marginRight: 5 }} />}
+                  {provider.engine === 'openrouter' && <Typography variant="caption" sx={{mr:0.5}}>[OR]</Typography>}
+                  {provider.name}
+                </Stack>
+              </MenuItem>
+            ))}
+        </Select>
+        <FormHelperText>{t('core:defaultAiProviderDescription')}</FormHelperText>
+      </FormControl>
+      <Button
+        variant="outlined"
+        color="primary"
+        data-tid="addNewAIEngine"
+        sx={{ display: 'flex', m: 1, textTransform: 'none' }}
+        ref={newAIMenuAnchorRef}
+        onClick={() => setOpenedNewAIMenu(true)}
+        startIcon={<AddIcon />}
+        disabled={externalConfig}
+      >
+        {t('core:addAiEngine')}
+      </Button>
+      <Popper
+        open={openedNewAIMenu}
+        anchorEl={newAIMenuAnchorRef.current}
+        role={undefined}
+        placement="bottom-start"
+        transition
+        disablePortal
+        sx={{ zIndex: 1500 }}
+      >
+        {({ TransitionProps }) => (
+          <Grow {...TransitionProps}>
+            <Paper>
+              <ClickAwayListener onClickAway={() => setOpenedNewAIMenu(false)}>
+                <MenuList autoFocusItem={openedNewAIMenu} dense>
+                  <MenuItem
+                    key="createNewOllama"
+                    data-tid="aiCreateNewOllamaTID"
+                    onClick={() => {
+                      addAiProvider('ollama');
+                      setOpenedNewAIMenu(false);
                     }}
                   >
-                    <Paper>
-                      <TsMenuList id="split-button-menu" autoFocusItem>
-                        <MenuItem
-                          key="createNewTextFileTID"
-                          data-tid="aiCreateNewTextFileTID"
-                          onClick={() => {
-                            addAiProvider('ollama');
-                            setOpenedNewAIMenu(false);
-                          }}
-                        >
-                          <ListItemIcon>
-                            <OllamaIcon height={30} />
-                          </ListItemIcon>
-                          <ListItemText primary="Ollama" />
-                        </MenuItem>
-                      </TsMenuList>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </Box>
-          </ClickAwayListener>
-          {aiDefaultProvider && (
-            <TsSelect
-              disabled={externalConfig}
-              value={aiDefaultProvider?.id}
-              onChange={changeDefaultAiProvider}
-              label={t('core:defaultAIEngine')}
-            >
-              {aiProviders
-                .filter((p) => p.enable)
-                .map((provider) => (
-                  <MenuItem key={provider.id} value={provider.id}>
-                    <OllamaIcon width={10} style={{ marginRight: 5 }} />
-                    {provider.name}
+                    <ListItemIcon>
+                      <OllamaIcon height={30} />
+                    </ListItemIcon>
+                    <ListItemText primary="Ollama" />
                   </MenuItem>
-                ))}
-            </TsSelect>
-          )}
-        </AccordionDetails>
-      </Accordion>
-      {!aiDefaultProvider && (
-        <Accordion defaultExpanded>
-          <AccordionSummary>
-            <Typography variant="caption">
-              All AI-functionality is currently disabled. Please add and
-              configure an AI-engine in order to use external AIs in TagSpaces.
-            </Typography>
-          </AccordionSummary>
-        </Accordion>
-      )}
+                  <MenuItem
+                    key="createNewOpenRouter"
+                    data-tid="aiCreateNewOpenRouterTID"
+                    onClick={() => {
+                      addAiProvider('openrouter');
+                      setOpenedNewAIMenu(false);
+                    }}
+                  >
+                    <ListItemIcon><Typography sx={{ml:0.5, mr:0.5}}>[OR]</Typography></ListItemIcon>
+                    <ListItemText primary="OpenRouter" />
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
       {aiProviders.map((provider) => (
-        <Accordion defaultExpanded>
+        <Accordion key={provider.id} sx={{ m: '5px !important' }}>
           <AccordionSummary
-            expandIcon={<ExpandIcon />}
-            aria-controls={provider.id + 'content'}
-            data-tid={provider.id + 'ollamaTID'}
-            sx={{
-              '& .MuiAccordionSummary-content': { alignItems: 'center' },
-            }}
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={provider.id + '-content'}
+            id={provider.id + '-header'}
           >
-            <Typography>
-              <OllamaIcon width={15} style={{ marginRight: 5 }} />
+            <Stack direction="row" alignItems="center">
+              {provider.engine === 'ollama' && <OllamaIcon width={15} style={{ marginRight: 5 }} />}
+              {provider.engine === 'openrouter' && <Typography variant="caption" sx={{mr:0.5}}>[OR]</Typography>}
               {provider.name}
-            </Typography>
-            <TooltipTS
-              title={
-                t('core:serviceStatus') +
-                ': ' +
-                (providersAlive.current[provider.id]
-                  ? t('core:available')
-                  : t('core:notAvailable'))
-              }
-            >
-              {providersAlive.current[provider.id] === null ? (
-                <CircularProgress size={12} />
-              ) : (
-                <FiberManualRecordIcon
-                  sx={{
-                    color: providersAlive.current[provider.id]
-                      ? 'green'
-                      : 'red',
-                    fontSize: 19,
-                    ml: 1,
-                  }}
+              {providersAlive.current[provider.id] === true && (
+                <Chip
+                  label={t('core:online')}
+                  color="success"
+                  size="small"
+                  sx={{ ml: 1 }}
                 />
               )}
-            </TooltipTS>
-            <TsIconButton
-              aria-label="removeAIProvider"
-              tooltip={t('core:remove')}
-              onClick={(e) => {
-                e.stopPropagation();
-                const result = confirm(
-                  'Do you want to remove "' + provider.name + '" AI config?',
-                );
-                if (result) {
-                  dispatch(SettingsActions.removeAiProvider(provider.id));
-                }
-              }}
-              data-tid="removeAIProviderTID"
-            >
-              <RemoveIcon />
-            </TsIconButton>
+              {providersAlive.current[provider.id] === false && (
+                <Chip
+                  label={t('core:offline')}
+                  color="error"
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
+              )}
+            </Stack>
           </AccordionSummary>
           <AccordionDetails>
-            <FormGroup>
+            <Stack spacing={2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={provider.enable}
+                    disabled={externalConfig}
+                    onChange={(event) =>
+                      handleChangeProvider(
+                        provider.id,
+                        'enable',
+                        event.target.checked,
+                      )
+                    }
+                  />
+                }
+                label={t('core:enableAIProvider')}
+              />
               <FormControl>
                 <TsTextField
                   disabled={externalConfig}
                   fullWidth
-                  name="engineName"
-                  label={t('core:engineName') + ' *'}
-                  data-tid="engineTID"
+                  name="name"
+                  label={t('core:name') + ' *'}
+                  data-tid="aiProviderNameTID"
                   value={provider.name}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     handleChangeProvider(
@@ -374,15 +329,16 @@ function SettingsAI(props: Props) {
                       event.target.value,
                     );
                   }}
+                  placeholder={t('core:name')}
                 />
               </FormControl>
               <FormControl>
                 <TsTextField
                   disabled={externalConfig}
                   fullWidth
-                  name="ollamaSocket"
-                  label={t('core:engineUrl') + ' *'}
-                  data-tid="ollamaEngineTID"
+                  name="providerUrl" 
+                  label={t('core:providerURL') + ' *'}
+                  data-tid="aiProviderUrlTID"
                   value={provider.url}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     handleChangeProvider(
@@ -391,81 +347,118 @@ function SettingsAI(props: Props) {
                       event.target.value,
                     );
                   }}
-                  placeholder="http://localhost:11434"
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end" style={{ height: 32 }}>
-                          <TsIconButton
-                            tooltip={t('core:refreshServiceStatus')}
+                  placeholder={provider.engine === 'ollama' ? "http://localhost:11434" : "https://openrouter.ai/api/v1"}
+                  InputProps={{
+                    style: { minHeight: inputMinHeight },
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title={t('core:refreshModels')}>
+                          <IconButton
+                            aria-label="refresh models"
                             onClick={() => {
-                              checkOllamaAlive();
+                              checkAIProviderAlive(provider).then((alive) => { 
+                                providersAlive.current = { ...providersAlive.current, [provider.id]: alive };
+                                if (alive) refreshAIModels(provider); 
+                                forceUpdate();
+                              });
                             }}
+                            edge="end"
                           >
-                            <ReloadIcon />
-                          </TsIconButton>
-                        </InputAdornment>
-                      ),
-                    },
+                            <RefreshIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
                   }}
                 />
               </FormControl>
-              <SelectChatModel
-                label={t('core:defaultAImodelText') + ' *'}
-                handleChangeModel={(modelName: string) => {
-                  handleChangeProvider(
-                    provider.id,
-                    'defaultTextModel',
-                    modelName,
-                  );
-                  changeCurrentModel(modelName, closeSettings);
-                }}
-                aiProvider={provider}
-                chosenModel={provider.defaultTextModel}
-              />
-              <SelectChatModel
-                label={t('core:defaultAImodelImages')}
-                handleChangeModel={(modelName: string) => {
-                  handleChangeProvider(
-                    provider.id,
-                    'defaultImageModel',
-                    modelName,
-                  );
-                  changeCurrentModel(modelName, closeSettings);
-                }}
-                aiProvider={provider}
-                chosenModel={provider.defaultImageModel}
-              />
-              <FormControlLabel
-                labelPlacement="start"
-                style={{ justifyContent: 'space-between', marginLeft: 0 }}
-                control={
-                  <Switch
-                    data-tid="locationIsDefault"
-                    name="isDefault"
-                    checked={provider.enable}
-                    disabled={
-                      !providersAlive.current[provider.id] || externalConfig
-                    }
+              {provider.engine === 'openrouter' && (
+                <FormControl>
+                  <TsTextField
+                    disabled={externalConfig}
+                    fullWidth
+                    name="apiKey"
+                    label={t('core:apiKey', 'API Key') + ' *'} 
+                    data-tid="openRouterApiKeyTID"
+                    value={provider.apiKey || ''} 
+                    type="password"
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      if (providersAlive.current[provider.id]) {
-                        handleChangeProvider(
-                          provider.id,
-                          'enable',
-                          !provider.enable,
-                        );
-                      }
+                      handleChangeProvider(
+                        provider.id,
+                        'apiKey', 
+                        event.target.value,
+                      );
                     }}
+                    placeholder="sk-or-..." 
                   />
-                }
-                label={t('core:engineEnabled')}
-              />
-            </FormGroup>
+                </FormControl>
+              )}
+              <FormControl sx={{ minWidth: 320 }} size="small">
+                <InputLabel id={provider.id + "-defaultTextModelID"}>{t('core:defaultTextModel')}</InputLabel>
+                <Select
+                  labelId={provider.id + "-defaultTextModelID"}
+                  id={provider.id + "-defaultTextModelIDSelect"}
+                  value={provider.defaultTextModel || ''}
+                  label={t('core:defaultTextModel')}
+                  disabled={externalConfig}
+                  onChange={(event: SelectChangeEvent) => {
+                    handleChangeProvider(
+                      provider.id,
+                      'defaultTextModel',
+                      event.target.value,
+                    );
+                  }}
+                >
+                  {models.current
+                    .filter((m) => provider.engine === 'openrouter' || (!m.name.includes('llava') && !m.name.includes('bakllava'))) 
+                    .map((m: ModelResponse) => (
+                      <MenuItem key={m.name} value={m.name}>
+                        {m.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+              {(provider.engine === 'ollama') && ( 
+                <FormControl sx={{ minWidth: 320 }} size="small">
+                  <InputLabel id={provider.id + "-defaultImageModelID"}>{t('core:defaultImageModel')}</InputLabel>
+                  <Select
+                    labelId={provider.id + "-defaultImageModelID"}
+                    id={provider.id + "-defaultImageModelIDSelect"}
+                    value={provider.defaultImageModel || ''}
+                    label={t('core:defaultImageModel')}
+                    disabled={externalConfig}
+                    onChange={(event: SelectChangeEvent) => {
+                      handleChangeProvider(
+                        provider.id,
+                        'defaultImageModel',
+                        event.target.value,
+                      );
+                    }}
+                  >
+                    {models.current
+                      .filter((m) => m.name.includes('llava') || m.name.includes('bakllava')) 
+                      .map((m: ModelResponse) => (
+                        <MenuItem key={m.name} value={m.name}>
+                          {m.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              )}
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => removeAiProvider(provider.id)}
+                startIcon={<DeleteOutline />}
+                disabled={externalConfig || aiProviders.length < 2}
+                sx={{ textTransform: 'none', alignSelf: 'flex-start' }}
+              >
+                {t('core:removeProvider')}
+              </Button>
+            </Stack>
           </AccordionDetails>
         </Accordion>
       ))}
-    </div>
+    </>
   );
-}
-
-export default SettingsAI;
+};

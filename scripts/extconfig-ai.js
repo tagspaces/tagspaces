@@ -21,6 +21,16 @@ window.ExtAI = {
       enable: false,
       /* authKey: '', // optional*/
     },
+    {
+      id: 'openRouterDefault', // Or generate a unique ID
+      engine: 'openrouter',
+      name: 'OpenRouter', // User-friendly display name
+      url: 'https://openrouter.ai/api/v1', // Official OpenRouter API base URL
+      // apiKey: '', // API key will be managed via settings UI, not hardcoded here
+      defaultTextModel: 'gryphe/mythomax-l2-13b', // Example: Specify a popular default model
+      // defaultImageModel: 'openrouter/some-image-model', // If applicable
+      enable: true, // Or false by default
+    },
     /*{
       type: 'chatgpt',
       name: 'ChatGpt',

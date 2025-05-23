@@ -25,6 +25,9 @@ import {
   ChatRole,
   HistoryModel,
   PullModelResponse,
+  ChatRequest as CommonChatRequest, // Renamed to avoid conflict with Ollama's ChatRequest
+  Message as CommonMessage, // Renamed
+  ModelResponse, // Using our ModelResponse
 } from '-/components/chat/ChatTypes';
 import {
   deleteOllamaModel,
@@ -32,6 +35,7 @@ import {
   newOllamaMessage,
   pullOllamaModel,
 } from '-/components/chat/OllamaClient';
+import { OpenRouterClient } from '-/components/chat/OpenRouterClient'; // Added import
 import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
@@ -71,7 +75,7 @@ import {
   loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
 import { format } from 'date-fns';
-import { ChatRequest, ModelResponse, Ollama } from 'ollama';
+import { Ollama } from 'ollama'; 
 import React, {
   createContext,
   useEffect,
@@ -85,33 +89,29 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import useFirstRender from '-/utils/useFirstRender';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
-/*export type TimelineItem = {
-  request: string;
-  response?: string;
-};*/
-
 type ChatData = {
-  //timelineItems: TimelineItem[];
   models: ModelResponse[];
   images: ChatImage[];
-  currentModel: ModelResponse;
-  //openedEntryModel: ModelResponse;
+  currentModel: ModelResponse | undefined;
   chatHistoryItems: ChatItem[];
   isTyping: boolean;
-  checkOllamaModels: () => Promise<boolean>;
-  refreshOllamaModels: (modelName?: string) => Promise<boolean>;
+  checkActiveProviderModels: () => Promise<boolean>;
+  refreshAIModels: (
+    provider: AIProvider,
+    modelName?: string,
+  ) => Promise<boolean>;
   setModel: (model: ModelResponse | string) => Promise<boolean>;
   setImages: (imagesPaths: string[]) => void;
   removeImage: (uuid: string) => void;
   unloadCurrentModel: () => void;
   removeModel: (modelName: string) => void;
-  findModel: (modelName: string) => ModelResponse;
+  findModel: (modelName: string) => ModelResponse | undefined;
   getHistoryFilePath: (name?: string) => string;
   changeCurrentModel: (
     newModelName: string,
     confirmCallback?: () => void,
   ) => Promise<boolean>;
-  getModel: (modelName: string) => Promise<ModelResponse>;
+  getModel: (modelName: string) => Promise<ModelResponse | undefined>;
   addChatHistory: (txt: string, replace?: boolean) => ChatItem[];
   newChatMessage: (
     msg?: string,
@@ -132,55 +132,24 @@ type ChatData = {
   ) => Promise<string>;
   initHistory: () => void;
   deleteHistory: () => Promise<boolean>;
-  checkProviderAlive: (providerUrl: string) => Promise<boolean>;
-  getOllamaClient: (ollamaApiUrl: string) => Promise<Ollama>;
-  getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse;
+  checkAIProviderAlive: (provider: AIProvider) => Promise<boolean>;
+  getAIClient: ( // Renamed
+    provider: AIProvider,
+  ) => Promise<Ollama | OpenRouterClient | undefined>;
+  getEntryModel: (entryName: string, aiProvider: AIProvider) => ModelResponse | undefined;
   tagsGenerate: (
     entry: TS.FileSystemEntry,
     fromDescription?: boolean,
   ) => Promise<boolean>;
   descriptionGenerate: (
     entry: TS.FileSystemEntry,
-  ) => Promise<TS.FileSystemEntry>;
+  ) => Promise<TS.FileSystemEntry | undefined>;
   generationSettings: GenerationSettings;
   setGenerationSettings: (genSettings: any) => void;
   resetGenerationSettings: (option: generateOptionType) => void;
 };
 
-export const ChatContext = createContext<ChatData>({
-  //timelineItems: [],
-  models: [],
-  images: [],
-  currentModel: undefined,
-  //openedEntryModel: undefined,
-  chatHistoryItems: [],
-  isTyping: false,
-  checkOllamaModels: undefined,
-  refreshOllamaModels: undefined,
-  setModel: undefined,
-  setImages: undefined,
-  removeImage: undefined,
-  unloadCurrentModel: undefined,
-  removeModel: undefined,
-  findModel: undefined,
-  getHistoryFilePath: undefined,
-  changeCurrentModel: undefined,
-  getModel: undefined,
-  addChatHistory: undefined,
-  newChatMessage: undefined,
-  cancelMessage: undefined,
-  generate: undefined,
-  initHistory: undefined,
-  deleteHistory: undefined,
-  checkProviderAlive: undefined,
-  getOllamaClient: undefined,
-  getEntryModel: undefined,
-  tagsGenerate: undefined,
-  descriptionGenerate: undefined,
-  generationSettings: undefined,
-  setGenerationSettings: undefined,
-  resetGenerationSettings: undefined,
-});
+export const ChatContext = createContext<ChatData>({} as ChatData); 
 
 export type ChatContextProviderProps = {
   children: React.ReactNode;
@@ -215,16 +184,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const selectedTabName = useSelector(getEntryContainerTab);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
-  const currentModel = useRef<ModelResponse>(undefined);
+  const currentModel = useRef<ModelResponse | undefined>(undefined);
   const generationSettings = useRef<GenerationSettings>(
     getGenerationSettings(),
   );
-  /*const openedEntryModel = useRef<ModelResponse>(
-    getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
-  );*/
   const images = useRef<ChatImage[]>([]);
-  //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
-  //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
     Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
@@ -239,41 +203,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const GENERATE_IMAGE_TAGS =
     Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
   const isTyping = useRef<boolean>(false);
-  //const timelineItems = useRef<TimelineItem[]>([]);
-  const ollamaClient = useRef<Ollama>(undefined);
+  const aiClient = useRef<Ollama | OpenRouterClient | undefined>(undefined); // Generalized
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
   const firstRender = useFirstRender();
-
-  /*
-  useEffect(() => {
-      //refreshOllamaModels();
-      window.electronIO.ipcRenderer.on(
-        'PullModel',
-        (message: PullModelResponse) => {
-          //console.log('ChatMessage:' + message);
-          if (message.status) {
-            dispatch(
-              AppActions.onUploadProgress(
-                {
-                  key: message.model || message.status,
-                  loaded: message.completed,
-                  total: message.total,
-                },
-                undefined,
-                message.model,
-              ),
-            );
-          }
-        },
-      );
-
-      return () => {
-        window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
-        unloadCurrentModel();
-      };
-  }, []);*/
 
   useEffect(() => {
     images.current = [];
@@ -284,16 +218,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       !openedEntry.isFile &&
       selectedTabName === TabNames.aiTab
     ) {
-      checkOllamaModels().then(() => initHistory());
+      checkActiveProviderModels().then(() => initHistory()); // Updated
     }
-  }, [defaultAiProvider, openedEntry]);
-
-  /*useEffect(() => {
-    //setOpenedEntryModel();
-    if (selectedTabName === TabNames.aiTab && models.current.length===0) {
-      refreshOllamaModels().then(() => initHistory());
-    }
-  }, [selectedTabName]);*/
+  }, [defaultAiProvider, openedEntry, selectedTabName, firstRender]);
 
   function getGenerationSettings(
     option: generateOptionType = 'tags',
@@ -312,20 +239,32 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       tagGroupsIds: [],
       appendToDescription: true,
       appendAnalysisToDescription: true,
+      language: 'English', 
       ...storedObj,
     };
   }
 
-  async function getOllamaClient(ollamaApiUrl: string) {
-    if (ollamaApiUrl) {
-      try {
+  // Renamed and generalized
+  async function getAIClient(
+    provider: AIProvider,
+  ): Promise<Ollama | OpenRouterClient | undefined> {
+    if (!provider || !provider.url) {
+      console.warn('AI Provider or URL is not defined:', provider);
+      return undefined;
+    }
+    try {
+      if (provider.engine === 'ollama') {
         //@ts-ignore
         const { Ollama } = await import('ollama/browser');
-
-        return new Ollama({ host: ollamaApiUrl });
-      } catch (error) {
-        console.error('Failed to load Ollama module:', error);
+        return new Ollama({ host: provider.url });
+      } else if (provider.engine === 'openrouter') {
+        return new OpenRouterClient(provider);
+      } else {
+        console.error('Unknown AI engine type:', provider.engine);
+        return undefined;
       }
+    } catch (error) {
+      console.error('Failed to load AI client module:', error);
     }
     return undefined;
   }
@@ -345,34 +284,20 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  /* function setOpenedEntryModel() {
-    if (openedEntry) {
-      const newModel = getOpenedEntryModel(openedEntry.name, defaultAiProvider);
-      if (
-        !newModel ||
-        !openedEntryModel.current ||
-        newModel.name !== openedEntryModel.current.name
-      ) {
-        openedEntryModel.current = newModel;
-        forceUpdate();
-      }
-    }
-  }*/
-
   function getEntryModel(
     fileName: string,
     aiProvider: AIProvider,
-  ): ModelResponse {
+  ): ModelResponse | undefined {
     if (fileName && aiProvider) {
       const ext = extractFileExtension(fileName).toLowerCase();
-      let model = aiProvider.defaultTextModel; // folders don't have Extension
+      let modelName = aiProvider.defaultTextModel;
       if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-        model = aiProvider.defaultTextModel;
+        modelName = aiProvider.defaultTextModel;
       } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-        model = aiProvider.defaultImageModel;
+        modelName = aiProvider.defaultImageModel;
       }
-      if (model) {
-        return findModel(model);
+      if (modelName) {
+        return findModel(modelName);
       }
     }
     return undefined;
@@ -399,7 +324,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           if (jsonContent) {
             const historyModel = loadJSONString(jsonContent) as HistoryModel;
             if (historyModel) {
-              refreshOllamaModels(historyModel.lastModelName);
+              if (defaultAiProvider && historyModel.engine === defaultAiProvider.engine) { 
+                 refreshAIModels(defaultAiProvider, historyModel.lastModelName);
+              } else if (defaultAiProvider) { 
+                refreshAIModels(defaultAiProvider);
+              }
               return historyModel.history ? historyModel.history : [];
             }
           }
@@ -408,8 +337,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         .catch((e) => {
           console.log('cannot load json:' + historyFilePath, e);
           if (currentModel.current === undefined && defaultAiProvider) {
-            //set defaultTextModel if not currentModel
-            setModel(defaultAiProvider.defaultTextModel);
+            setModel(defaultAiProvider.defaultTextModel || '');
           }
           return [];
         });
@@ -417,86 +345,182 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return Promise.resolve([]);
   }
 
-  function checkProviderAlive(providerUrl: string): Promise<boolean> {
-    return getOllamaClient(providerUrl).then((client) =>
-      getOllamaModels(client).then((m) => {
-        return !!m;
-      }),
-    );
-  }
+  // Updated
+  async function checkAIProviderAlive(
+    provider: AIProvider,
+  ): Promise<boolean> {
+    const client = await getAIClient(provider);
+    if (!client) {
+      console.warn(`Could not initialize AI client for ${provider.name}`);
+      return false;
+    }
 
-  /**
-   * return true if model is loaded successful false otherwise
-   */
-  function checkOllamaModels(): Promise<boolean> {
-    if (!models.current || models.current.length === 0) {
-      if (defaultAiProvider) {
-        return getOllamaClient(defaultAiProvider.url).then((client) => {
-          ollamaClient.current = client;
-          return refreshOllamaModels();
-        });
+    try {
+      if (client instanceof Ollama) {
+        const m = await getOllamaModels(client);
+        return !!m && m.length > 0; 
+      } else if (client instanceof OpenRouterClient) {
+        return client.checkProviderAlive();
       }
+    } catch (error) {
+      console.error(`Error checking AI provider ${provider.name} aliveness:`, error);
+      return false;
     }
-    return Promise.resolve(true);
+    return false;
   }
 
-  function refreshOllamaModels(modelName = undefined): Promise<boolean> {
-    if (defaultAiProvider) {
-      return getOllamaModels(ollamaClient.current)
-        .then((m) => {
-          if (m) {
-            models.current = m;
-            const model = findModel(modelName);
-            if (model) {
-              return setModel(model);
-            } else {
-              //set defaultTextModel if not found
-              const model = findModel(defaultAiProvider.defaultTextModel);
-              if (model) {
-                return setModel(defaultAiProvider.defaultTextModel);
-              }
-            }
-            return true;
-          }
+  // Renamed and updated
+  async function checkActiveProviderModels(): Promise<boolean> {
+    if (!defaultAiProvider) {
+      console.warn('No default AI provider configured.');
+      models.current = [];
+      currentModel.current = undefined;
+      aiClient.current = undefined;
+      forceUpdate();
+      return false;
+    }
+    
+    const client = await getAIClient(defaultAiProvider);
+    if (!client) {
+      showNotification(`Failed to initialize AI client for ${defaultAiProvider.name}.`);
+      models.current = [];
+      currentModel.current = undefined;
+      aiClient.current = undefined;
+      forceUpdate();
+      return false;
+    }
+    aiClient.current = client; // Store the client for the default provider
+    return refreshAIModels(defaultAiProvider);
+  }
+
+  // Renamed and generalized
+  async function refreshAIModels(
+    provider: AIProvider,
+    modelNameToSelect?: string,
+  ): Promise<boolean> {
+    if (!provider) return Promise.resolve(false);
+    
+    let clientToUse = aiClient.current;
+    // Re-initialize client if the provider is different from the current default, 
+    // or if the engine type of the current client doesn't match the provider's engine,
+    // or if aiClient.current is not set (e.g. first time or after an error).
+    if (!clientToUse || 
+        (defaultAiProvider && provider.id !== defaultAiProvider.id) || 
+        (clientToUse instanceof Ollama && provider.engine !== 'ollama') ||
+        (clientToUse instanceof OpenRouterClient && provider.engine !== 'openrouter') ) {
+        clientToUse = await getAIClient(provider);
+        if (!clientToUse) {
+          console.warn("Could not get AI client for provider:", provider.name);
+          models.current = []; 
+          if (defaultAiProvider && provider.id === defaultAiProvider.id) currentModel.current = undefined;
+          forceUpdate();
           return false;
-        })
-        .then((success) => {
-          if (success) {
-            forceUpdate();
-          }
-          return success;
-        });
+        }
+        // If this refresh is for the default provider, update the main aiClient.current
+        if (defaultAiProvider && provider.id === defaultAiProvider.id) {
+            aiClient.current = clientToUse;
+        }
     }
-    return Promise.resolve(false);
+
+
+    let fetchedModels: ModelResponse[] | undefined;
+    try {
+      if (clientToUse instanceof Ollama) {
+        fetchedModels = await getOllamaModels(clientToUse);
+      } else if (clientToUse instanceof OpenRouterClient) {
+        fetchedModels = await clientToUse.getOpenRouterModels();
+      }
+
+      if (fetchedModels) {
+        models.current = fetchedModels;
+        let modelToSet = findModel(modelNameToSelect || provider.defaultTextModel || '');
+        if (!modelToSet && fetchedModels.length > 0) {
+            modelToSet = fetchedModels[0]; 
+        }
+        
+        if (defaultAiProvider && provider.id === defaultAiProvider.id) { // Only set currentModel if it's for the default provider
+            if (modelToSet) {
+                await setModel(modelToSet);
+            } else {
+                currentModel.current = undefined;
+            }
+        }
+        forceUpdate(); // Always force update to reflect changes in models.current for UI lists
+        return true;
+      }
+      return false; // No models fetched
+    } catch (error) {
+      console.error("Error refreshing AI models for provider " + provider.name + ":", error);
+      models.current = [];
+      if (defaultAiProvider && provider.id === defaultAiProvider.id) {
+        currentModel.current = undefined; 
+      }
+      forceUpdate();
+      return false;
+    }
   }
 
-  function setModel(m: ModelResponse | string): Promise<boolean> {
+  async function setModel(m: ModelResponse | string): Promise<boolean> {
     const model = typeof m === 'string' ? findModel(m) : m;
     if (
       model &&
       (!currentModel.current || currentModel.current.name !== model.name)
     ) {
       currentModel.current = model;
-      forceUpdate();
-      //load model
-      return newChatMessage().then(() => {
-        /*const newItem: ChatItem = {
-          request: 'Model ' + model.name + ' loaded',
-          timestamp: new Date().getTime(),
-          role: 'system',
-          modelName: currentModel.current?.name,
-          engine: 'ollama',
-        };*/
-        //saveHistoryItems([newItem, ...chatHistoryItems.current]);
+      // Ensure aiClient corresponds to the model's provider engine
+      if (defaultAiProvider && model.engine && defaultAiProvider.engine !== model.engine) {
+        console.warn(`Selected model ${model.name} (${model.engine}) differs from default provider engine (${defaultAiProvider.engine}). Re-initializing client.`);
+        const modelProviderConfig: AIProvider = { 
+          ...defaultAiProvider, 
+          id: `provider-for-${model.engine}-${model.name}`, 
+          name: `Provider for ${model.engine} - ${model.name}`,
+          engine: model.engine as 'ollama' | 'openrouter', 
+          defaultTextModel: model.name, 
+          defaultImageModel: model.engine === 'ollama' ? model.name : undefined, 
+        };
+        const clientForModel = await getAIClient(modelProviderConfig); 
+        if (clientForModel) {
+             if (defaultAiProvider.engine === model.engine) aiClient.current = clientForModel;
+        } else {
+            console.error("Failed to initialize AI client for model's engine:", model.engine);
+            currentModel.current = undefined; 
+            forceUpdate();
+            return false;
+        }
+      } else if (!aiClient.current && defaultAiProvider) { 
+        const client = await getAIClient(defaultAiProvider);
+        if(client) aiClient.current = client;
+        else {
+          console.error("Failed to initialize default AI client in setModel.");
+          currentModel.current = undefined;
+          forceUpdate();
+          return false;
+        }
+      }
+
+
+      forceUpdate(); 
+
+      if (model.engine === 'ollama') { 
+        return newChatMessage(undefined, false, 'system', undefined, model.name, false, [], false)
+          .then(() => {
+            showNotification(
+              `${format(new Date(), 'dd.MM.yyyy HH:mm:ss')} Model ${model.name} selected.`,
+            );
+            return true;
+          })
+          .catch(() => {
+            showNotification(
+              `${format(new Date(), 'dd.MM.yyyy HH:mm:ss')} Model ${model.name} selected. (Note: Initial ping failed, model might be unavailable)`,
+            );
+            return true; 
+          });
+      } else { 
         showNotification(
-          format(new Date().getTime(), 'dd.MM.yyyy HH:mm:ss') +
-            ' Model ' +
-            model.name +
-            ' loaded',
+          `${format(new Date(), 'dd.MM.yyyy HH:mm:ss')} Model ${model.name} selected.`,
         );
-        //forceUpdate();
-        return true;
-      });
+        return Promise.resolve(true);
+      }
     }
     return Promise.resolve(false);
   }
@@ -505,13 +529,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const img = images.current.find((i) => i.uuid === uuid);
     if (img) {
       images.current = images.current.filter((i) => i.uuid !== uuid);
-      deleteEntriesPromise(currentLocation.toFsEntry(img.path, true));
+      if (currentLocation) { 
+        deleteEntriesPromise(currentLocation.toFsEntry(img.path, true));
+      }
       forceUpdate();
     }
   }
 
   function setImages(imagesPaths: string[]) {
-    if (imagesPaths.length > 0) {
+    if (imagesPaths.length > 0 && currentLocation) { 
       imagesPaths.forEach((path) => {
         currentLocation
           .getFileContentPromise(path, 'arraybuffer')
@@ -540,101 +566,82 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   function unloadCurrentModel() {
-    if (currentModel.current) {
-      //unload model
+    if (currentModel.current && defaultAiProvider?.engine === 'ollama') {
       newChatMessage(undefined, true).then(
         () => (currentModel.current = undefined),
       );
+    } else {
+      currentModel.current = undefined; 
+      forceUpdate();
     }
   }
 
-  function removeModel(modelName: string) {
-    const model = findModel(modelName);
-    if (model && defaultAiProvider) {
-      const result = confirm('Do you want to remove ' + model.name + ' model?');
-      if (result) {
-        //addTimeLineRequest('deleting ' + model.name, 'system');
-        showNotification('deleting ' + model.name + ' succeeded');
-        deleteOllamaModel(ollamaClient.current, model.name).then((response) => {
-          console.log('deleteOllamaModel response:' + response);
-          if (response) {
-            if (model.name === currentModel.current?.name) {
-              currentModel.current = undefined;
-            }
-            refreshOllamaModels();
-          }
-        });
-        /*window.electronIO.ipcRenderer
-          .invoke('deleteOllamaModel', defaultAiProvider.url, {
-            name: model.name,
-          })
-          .then((response) => {
+  async function removeModel(modelName: string) {
+    if (defaultAiProvider?.engine === 'ollama') {
+      const model = findModel(modelName);
+      if (model && aiClient.current instanceof Ollama) {
+        const result = confirm('Do you want to remove ' + model.name + ' model?');
+        if (result) {
+          showNotification('Deleting ' + model.name + '...');
+          deleteOllamaModel(aiClient.current as Ollama, model.name).then((response) => {
             console.log('deleteOllamaModel response:' + response);
             if (response) {
+              showNotification(model.name + ' deleted successfully.');
               if (model.name === currentModel.current?.name) {
                 currentModel.current = undefined;
               }
-              refreshOllamaModels();
+              refreshAIModels(defaultAiProvider);
+            } else {
+              showNotification('Failed to delete ' + model.name);
             }
-          });*/
+          });
+        }
       }
+    } else {
+      showNotification(`Model removal is not supported for ${defaultAiProvider?.engine} provider.`);
     }
   }
 
-  function findModel(modelName: string) {
+  function findModel(modelName: string): ModelResponse | undefined {
+    if (!modelName) return undefined;
     return models.current?.find(
-      (m) => m.name === modelName || m.name === modelName + ':latest',
+      (m) => m.name === modelName || m.name === modelName + ':latest', 
     );
   }
 
-  /**
-   * check if model is installed and return details
-   * @param modelName
-   */
-  function getModel(modelName: string): Promise<ModelResponse> {
-    if (!modelName || !defaultAiProvider) {
+  async function getModel(modelName: string): Promise<ModelResponse | undefined> {
+    if (!modelName || !defaultAiProvider ) { 
       return Promise.resolve(undefined);
     }
-    return getOllamaModels(ollamaClient.current).then((m) => {
-      if (m && m.length > 0) {
-        return m.find(
-          (mm) => mm.name === modelName || mm.name === modelName + ':latest',
-        );
-      }
-      return undefined;
-    });
+    await refreshAIModels(defaultAiProvider); 
+    return findModel(modelName);
   }
 
   async function changeCurrentModel(
     newModelName: string,
-    confirmCallback?,
+    confirmCallback?: () => void,
   ): Promise<boolean> {
-    let model;
-    if (!ollamaClient.current) {
-      const client = await getOllamaClient(defaultAiProvider.url);
-      ollamaClient.current = client;
-      const m = await getOllamaModels(client);
-      if (m) {
-        models.current = m;
-        model = models.current.find(
-          (m) => m.name === newModelName || m.name === newModelName + ':latest',
-        );
-      }
-    } else {
-      model = findModel(newModelName);
-    }
-    if (!model && defaultAiProvider) {
-      // return setModel(model);
-      // } else {
+    if (!defaultAiProvider) return false;
+
+    let model = findModel(newModelName);
+
+    if (!model && defaultAiProvider.engine === 'ollama') {
       const result = confirm(
-        'Do you want to download and install ' + newModelName + ' model?',
+        `Model ${newModelName} is not downloaded for Ollama. Do you want to download and install it?`,
       );
       if (result) {
-        if (confirmCallback) {
-          confirmCallback();
-        }
-        // addTimeLineRequest('downloading ' + newModelName, 'system');
+        if (confirmCallback) confirmCallback();
         openFileUploadDialog(newModelName, 'downloadChatModel');
+        
+        if (!(aiClient.current instanceof Ollama)) {
+            const client = await getAIClient(defaultAiProvider);
+            if (!(client instanceof Ollama)) {
+                showNotification("Failed to initialize Ollama client for download.");
+                return false;
+            }
+            aiClient.current = client;
+        }
+
         const onProgressHandler = (message: PullModelResponse) => {
           if (message.status) {
             dispatch(
@@ -650,34 +657,42 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             );
           }
         };
-        return pullOllamaModel(
-          ollamaClient.current,
-          newModelName,
-          onProgressHandler,
-        ).then((response) => {
-          console.log('pullOllamaModel response:' + response);
-          return refreshOllamaModels(newModelName);
-        });
-        /*return window.electronIO.ipcRenderer
-          .invoke('pullOllamaModel', defaultAiProvider.url, {
-            name: newModelName,
-            stream: true,
-          })
-          .then((response) => {
-            console.log('pullOllamaModel response:' + response);
-            refreshOllamaModels(newModelName);
-            return true;
-          });*/
+        try {
+          await pullOllamaModel(
+            aiClient.current as Ollama,
+            newModelName,
+            onProgressHandler,
+          );
+          await refreshAIModels(defaultAiProvider, newModelName);
+          return true;
+        } catch (error) {
+          console.error("Error pulling Ollama model:", error);
+          showNotification(`Failed to download model ${newModelName}.`);
+          return false;
+        }
+      } else {
+        return false; 
       }
+    } else if (!model && defaultAiProvider.engine === 'openrouter') {
+      const confirmSwitch = confirm(`Model ${newModelName} is not in the cached list for OpenRouter. Do you want to attempt to use it anyway?`);
+      if (confirmSwitch) {
+        if (confirmCallback) confirmCallback();
+        return setModel({ name: newModelName, engine: 'openrouter', details: {} }); 
+      }
+      return false;
+    } else if (model) {
+      return setModel(model);
     }
-    return true; //Promise.resolve(true);
+    
+    showNotification(`Model ${newModelName} not found or action cancelled.`);
+    return false;
   }
 
   function addHistoryItem(txt: string, role: ChatRole) {
     if (txt) {
       const newItem: ChatItem = {
-        engine: 'ollama',
-        modelName: currentModel.current?.name,
+        engine: defaultAiProvider?.engine || 'ollama', 
+        modelName: currentModel.current?.name || 'unknown',
         role: role,
         request: txt,
         timestamp: new Date().getTime(),
@@ -688,26 +703,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       } else {
         chatHistoryItems.current = [newItem, ...chatHistoryItems.current];
       }
-      images.current = [];
+      images.current = []; 
       forceUpdate();
     }
   }
-
-  /*function getImages() {
-    if (images.current.length > 0) {
-      const img = images.current.map(
-        (i) => '![chat image](data:image/!*;base64,' + i.base64 + ')',
-      );
-      return img.join(' ');
-    }
-    return '';
-  }*/
 
   function getHistoryFilePath(name?: string) {
     const dirSeparator = currentLocation
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
-    const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
+    const metaFolder = openedEntry ? getMetaDirectoryPath(openedEntry.path, dirSeparator) : '';
     const fileName = name ? name : 'tsc.json';
     return (
       metaFolder + dirSeparator + AppConfig.aiFolder + dirSeparator + fileName
@@ -718,7 +723,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     const dirSeparator = currentLocation
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
-    const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
+    const metaFolder = openedEntry ? getMetaDirectoryPath(openedEntry.path, dirSeparator) : '';
     return metaFolder + dirSeparator + AppConfig.aiFolder;
   }
 
@@ -726,11 +731,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     if (items) {
       chatHistoryItems.current = items;
     }
-    if (chatHistoryItems.current.length > 0) {
+    if (chatHistoryItems.current.length > 0 && openedEntry) { 
       const model: HistoryModel = {
         history: chatHistoryItems.current,
-        lastModelName: currentModel.current?.name,
-        engine: defaultAiProvider?.engine,
+        lastModelName: currentModel.current?.name || '',
+        engine: defaultAiProvider?.engine || 'ollama',
       };
       saveFilePromise(
         { path: getHistoryFilePath() },
@@ -746,40 +751,49 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  function addTimeLineResponse(txt) {
+  function addTimeLineResponse(txt: string) {
     if (!chatHistoryItems.current.length) return;
     const [first, ...rest] = chatHistoryItems.current;
-    chatHistoryItems.current = [
-      { ...first, response: (first.response || '') + txt },
-      ...rest,
-    ];
-    forceUpdate();
+    if (first) { 
+        chatHistoryItems.current = [
+        { ...first, response: (first.response || '') + txt },
+        ...rest,
+        ];
+        forceUpdate();
+    }
   }
 
-  function addChatHistory(txt, replace = false): ChatItem[] {
+  function addChatHistory(txt: string, replace = false): ChatItem[] {
     if (txt && chatHistoryItems.current.length > 0) {
-      chatHistoryItems.current[0].response =
-        (!replace && chatHistoryItems.current[0].response
-          ? chatHistoryItems.current[0].response
-          : '') + txt;
-      // forceUpdate(); don't refresh chatHistoryItems this will reload milkdown editor just update(content)
+      const firstItem = chatHistoryItems.current[0];
+      if (firstItem) { 
+        firstItem.response =
+            (!replace && firstItem.response ? firstItem.response : '') + txt;
+      }
     }
     return chatHistoryItems.current;
   }
 
-  function getOllamaMessages(items: ChatItem[], modelName: string) {
-    const messages = [];
+  function getProviderMessages(
+    items: ChatItem[],
+    modelName: string,
+    providerEngine: AIProvider['engine'],
+  ): CommonMessage[] { 
+    const messages: CommonMessage[] = [];
     for (let i = items.length - 1; i >= 0; i--) {
       const item = items[i];
-      if (item.role === 'user' && item.modelName === modelName) {
+      if (item.modelName === modelName && item.engine === providerEngine) {
         if (item.request) {
-          messages.push({
+          messages.unshift({ 
             role: 'user',
             content: item.request,
+            ...(item.imagePaths && item.imagePaths.length > 0 && providerEngine === 'ollama' 
+              ? { images: images.current.filter(img => item.imagePaths?.includes(img.path)).map(img => img.base64).filter(b64 => !!b64) as string[] } 
+              : {})
           });
         }
         if (item.response) {
-          messages.push({
+          messages.unshift({ 
             role: 'assistant',
             content: item.response,
           });
@@ -789,6 +803,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return messages;
   }
 
+
   function getMessage(msg: string, mode: ChatMode) {
     if (mode === 'helpful') {
       if (DEFAULT_SYSTEM_PROMPT) {
@@ -797,7 +812,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     } else if (mode === 'summary') {
       if (SUMMARIZE_PROMPT) {
         let prompt = SUMMARIZE_PROMPT.replace('{summarize_text}', msg);
-        if (selectedEntries && selectedEntries.length > 0) {
+        if (selectedEntries && selectedEntries.length > 0 && selectedEntries[0]) {
           prompt = prompt.replace(
             '{file_path}',
             ' of ' + selectedEntries[0].name,
@@ -826,7 +841,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         return prompt;
       }
     } else if (mode === 'description') {
-      if (msg) {
+      if (msg) { 
         return TEXT_DESCRIPTION?.replace('{input_text}', msg)
           .replace(
             '{max_chars}',
@@ -840,8 +855,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
               ? generationSettings.current.language
               : 'native',
           );
-      } else {
-        if (generationSettings.current.option === 'analyseImages') {
+      } else { 
+        if (generationSettings.current.option === 'analyseImages' && IMAGE_DESCRIPTION_STRUCTURED) {
           return IMAGE_DESCRIPTION_STRUCTURED;
         }
         return IMAGE_DESCRIPTION?.replace(
@@ -855,12 +870,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         );
       }
     } else if (mode === 'tags') {
-      if (msg) {
+      if (msg) { 
         if (GENERATE_TAGS && openedEntry) {
           return GENERATE_TAGS.replace('{input_text}', msg);
         }
-      } else {
-        // image
+      } else { 
         if (GENERATE_IMAGE_TAGS && openedEntry) {
           return GENERATE_IMAGE_TAGS;
         }
@@ -882,12 +896,35 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   }
 
   const chatMessageHandler = useMemo(() => {
-    return (msg): void => {
-      //console.log(`Chat ${msg}`);
-      isTyping.current = true;
-      addTimeLineResponse(msg);
+    return (contentChunk: string, isLastChunk: boolean, error?: Error): void => {
+      if (error) {
+        console.error("Chat stream error:", error);
+        showNotification(`Chat error: ${error.message}`);
+        isTyping.current = false;
+        forceUpdate();
+        if(chatHistoryItems.current.length > 0) {
+          const lastItem = chatHistoryItems.current[0];
+          if(lastItem) {
+            lastItem.response = (lastItem.response || "") + `\n\n**Error:** ${error.message}`;
+            saveHistoryItems(); 
+          }
+        }
+        return;
+      }
+
+      if (!isLastChunk) {
+        isTyping.current = true; 
+        addTimeLineResponse(contentChunk);
+      } else {
+        isTyping.current = false;
+        if (contentChunk) { 
+          addTimeLineResponse(contentChunk);
+        }
+        saveHistoryItems(); 
+        forceUpdate();
+      }
     };
-  }, []);
+  }, [chatHistoryItems, defaultAiProvider]); 
 
   function getTagsFromLibrary(): string[] {
     const tagsFromLibrary: string[] = [];
@@ -905,229 +942,147 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return tagsFromLibrary;
   }
 
-  /**
-   * @param msg If the messages array is empty, the model will be loaded into memory.
-   * @param unload If the messages array is empty and the keep_alive parameter is set to 0, a model will be unloaded from memory.
-   * @param role
-   * @param mode
-   * @param model
-   * @param stream
-   * @param imgArray
-   * @param includeHistory
-   */
-  function newChatMessage(
-    msg: string = undefined,
+  async function newChatMessage(
+    msg: string = '', 
     unload = false,
     role: ChatRole = 'user',
-    mode: ChatMode = undefined,
-    model: string = currentModel.current?.name,
+    mode: ChatMode | undefined = undefined, 
+    modelName: string = currentModel.current?.name || '', 
     stream: boolean = false,
     imgArray: string[] = [],
     includeHistory = true,
   ): Promise<any> {
-    if (!model) {
+    if (!modelName) {
       showNotification(t('core:chooseModel'));
       return Promise.resolve(false);
-    } else if (!defaultAiProvider) {
+    }
+    if (!defaultAiProvider || !aiClient.current) {
+      showNotification('AI Provider or Client not initialized.');
       return Promise.resolve(false);
     }
-    const msgContent = getMessage(msg, mode);
-    const imagesArray =
-      imgArray.length > 0 ? imgArray : images.current.map((i) => i.base64);
-    const messages =
-      msgContent && !unload
+
+    const msgContent = mode ? getMessage(msg, mode) : msg; 
+    const imagesBase64 = (imgArray.length > 0 ? imgArray : images.current.map(i => i.base64).filter(b => !!b)) as string[];
+
+    const messagesForAPI: CommonMessage[] = 
+      msgContent || unload 
         ? [
-            ...getOllamaMessages(
+            ...getProviderMessages( 
               includeHistory ? chatHistoryItems.current : [],
-              model,
+              modelName,
+              defaultAiProvider.engine,
             ),
             {
               role: role,
               content: msgContent,
-              ...(imagesArray.length > 0 && { images: imagesArray }),
+              ...(imagesBase64.length > 0 && defaultAiProvider.engine === 'ollama' && { images: imagesBase64 }),
             },
           ]
         : [];
-    if (includeHistory) {
-      addHistoryItem(msg, role);
+
+    if (includeHistory && msgContent && !unload) { 
+      addHistoryItem(msg, role); 
     }
-    let format = undefined;
+
+    let formatOption: any = undefined; 
     if (mode === 'tags') {
-      const tagsFromLibrary = getTagsFromLibrary();
-      if (tagsFromLibrary.length > 0) {
-        format = {
-          format: zodToJsonSchema(
-            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
-          ),
-        };
-      }
-      if (imgArray.length > 0) {
-        format = {
-          format: zodToJsonSchema(
-            getZodDescription(generationSettings.current.structuredDataProps),
-          ),
-        };
-      } else {
-        format = {
-          format: zodToJsonSchema(
-            getZodTags(generationSettings.current.maxTags, tagsFromLibrary),
-          ),
-        };
-      }
-    } else if (mode === 'description' || mode === 'summary') {
-      if (
-        imgArray.length > 0 &&
-        generationSettings.current.option === 'analyseImages'
-      ) {
-        format = {
-          format: zodToJsonSchema(
-            getZodDescription(generationSettings.current.structuredDataProps),
-          ),
-        };
-      }
+        const tagsFromLibrary = getTagsFromLibrary();
+        formatOption = { format: zodToJsonSchema(getZodTags(generationSettings.current.maxTags, tagsFromLibrary)) };
+        if (imagesBase64.length > 0) { 
+            formatOption = { format: zodToJsonSchema(getZodDescription(generationSettings.current.structuredDataProps)) };
+        }
+    } else if ((mode === 'description' || mode === 'summary') && imagesBase64.length > 0 && generationSettings.current.option === 'analyseImages') {
+        formatOption = { format: zodToJsonSchema(getZodDescription(generationSettings.current.structuredDataProps)) };
     }
-    const request: ChatRequest = {
-      model,
-      messages,
+    
+    const request: CommonChatRequest = { 
+      model: modelName,
+      messages: messagesForAPI,
       stream: stream,
-      ...(unload && { keep_alive: 0 }),
-      ...(format && format),
+      ...(unload && defaultAiProvider.engine === 'ollama' && { keep_alive: 0 }), 
+      ...(formatOption && defaultAiProvider.engine === 'ollama' && { format: formatOption.format }), 
     };
-    // console.log('AI question: ' + JSON.stringify(messages));
-    return newOllamaMessage(
-      ollamaClient.current,
-      request,
-      chatMessageHandler,
-    ).then((apiResponse) => {
-      // console.log('apiResponse:' + apiResponse);
+
+    try {
+      let apiResponse: string | undefined;
+      if (defaultAiProvider.engine === 'ollama' && aiClient.current instanceof Ollama) {
+        apiResponse = await newOllamaMessage(
+          aiClient.current as Ollama,
+          request as any, 
+          chatMessageHandler,
+        );
+      } else if (defaultAiProvider.engine === 'openrouter' && aiClient.current instanceof OpenRouterClient) {
+        apiResponse = await (aiClient.current as OpenRouterClient).newOpenRouterMessage(
+          request, 
+          chatMessageHandler,
+        );
+      } else {
+        throw new Error(`Unsupported AI engine: ${defaultAiProvider.engine} or client not initialized.`);
+      }
+
       isTyping.current = false;
-      forceUpdate();
-      if (apiResponse === undefined && stream === false) {
-        showNotification('Error check if Ollama service is alive');
+      forceUpdate(); 
+
+      if (apiResponse === undefined && stream === false && !unload) { 
+        showNotification('Error: No response from AI service. Check connection and service status.');
         return undefined;
       }
-      if (msg && includeHistory) {
+      
+      if (msgContent && includeHistory && !unload) { 
         saveHistoryItems();
       }
+
       if (mode === 'tags') {
-        if (imgArray.length > 0) {
-          const response = JSON.parse(apiResponse); // ImageDescription.parse(JSON.parse(apiResponse));
-          const tags = response.objects
-            ? response.objects.map((obj) => obj.name)
-            : [];
-          if (response.time_of_day && response.time_of_day !== 'Unknown') {
-            tags.push(response.time_of_day);
-          }
-          if (response.setting && response.setting !== 'Unknown') {
-            tags.push(response.setting);
-          }
-          if (response.topics) {
-            tags.push(response.topics);
-          }
-          return [...tags, ...response.colors];
-        } else {
-          let tags: string[] = [];
-          try {
-            const response = JSON.parse(apiResponse);
-            tags = response.topics;
-          } catch (e) {
-            console.log('JSON.parse error for:' + apiResponse, e);
-            if (apiResponse) {
-              tags = apiResponse.split(' ');
+        let tags: string[] = [];
+        if (apiResponse) {
+            try {
+                const parsedResponse = JSON.parse(apiResponse); 
+                tags = parsedResponse.topics || (parsedResponse.tags || []); 
+            } catch (e) {
+                if (typeof apiResponse === 'string') {
+                    tags = apiResponse.split(/[\s,;]+/).filter(tag => tag.length > 0);
+                }
+                console.warn("AI response for tags was not JSON, attempting fallback parsing:", apiResponse);
             }
-            //const zodTags = getZodTags(generationSettings.current.maxTags);
-            //response = zodTags.parse(JSON.parse(apiResponse));
-          }
-
-          return tags.slice(0, generationSettings.current.maxTags);
         }
+        return tags.slice(0, generationSettings.current.maxTags);
+
       } else if (mode === 'description' || mode === 'summary') {
-        if (format) {
-          const response = JSON.parse(apiResponse);
-          const arrReturn = [];
-          if (
-            generationSettings.current.structuredDataProps.name &&
-            response.name
-          ) {
-            arrReturn.push('**Name:** ' + response.name);
-          }
-          if (
-            generationSettings.current.structuredDataProps.objects &&
-            response.objects
-          ) {
-            arrReturn.push(
-              response.objects.map(
-                (obj) =>
-                  (obj.name ? '\n\n> > **Object Name:** ' + obj.name : '') +
-                  (obj.attributes
-                    ? '\n\n> > **Attributes:** ' +
-                      JSON.stringify(obj.attributes, null, 4).replace(
-                        /[{}\[\]]/g,
-                        '',
-                      )
-                    : ''),
-              ),
-            );
-          }
-
-          if (
-            generationSettings.current.structuredDataProps.scene &&
-            response.scene
-          ) {
-            arrReturn.push('**Scene:** ' + response.scene);
-          }
-          if (
-            generationSettings.current.structuredDataProps.colors &&
-            response.colors
-          ) {
-            arrReturn.push('**Colors:** ' + response.colors);
-          }
-          if (
-            generationSettings.current.structuredDataProps.summary &&
-            response.summary
-          ) {
-            arrReturn.push('**Summary:** ' + response.summary);
-          }
-          if (
-            generationSettings.current.structuredDataProps.time_of_day &&
-            response.time_of_day
-          ) {
-            arrReturn.push('**Day Time:** ' + response.time_of_day);
-          }
-          if (
-            generationSettings.current.structuredDataProps.settings &&
-            response.setting
-          ) {
-            arrReturn.push('**Setting:** ' + response.setting);
-          }
-          if (
-            response.text_content &&
-            generationSettings.current.structuredDataProps.text_content
-          ) {
-            arrReturn.push('**Content:** ' + response.text_content);
-          }
-          return arrReturn.join('\n\n') + '\n\n';
+        if (formatOption && defaultAiProvider.engine === 'ollama' && apiResponse) { 
+            const response = JSON.parse(apiResponse);
+             const arrReturn = [];
+              if (
+                generationSettings.current.structuredDataProps.name &&
+                response.name
+              ) {
+                arrReturn.push('**Name:** ' + response.name);
+              }
+              return arrReturn.join('\n\n') + '\n\n';
         }
+        return apiResponse; 
       }
-      return stream ? true : apiResponse;
-    });
-    /*return window.electronIO.ipcRenderer
-      .invoke('newOllamaMessage', defaultAiProvider.url, {
-        model,
-        messages,
-        stream: stream,
-        ...(unload && { keep_alive: 0 }),
-      })
-      */
+      return stream ? true : apiResponse; 
+
+    } catch (error) {
+      console.error("Error in newChatMessage:", error);
+      showNotification(`Error communicating with AI: ${error.message}`);
+      isTyping.current = false;
+      forceUpdate();
+      return undefined;
+    }
   }
 
   function cancelMessage() {
-    if (ollamaClient.current) {
-      ollamaClient.current.abort();
-      isTyping.current = false;
-      saveHistoryItems();
-      forceUpdate();
+    if (aiClient.current instanceof Ollama) {
+      (aiClient.current as Ollama).abort();
+    } else if (aiClient.current instanceof OpenRouterClient) {
+      console.log('Cancellation not implemented for OpenRouterClient yet.');
     }
+    isTyping.current = false;
+    if (chatHistoryItems.current.length > 0 && chatHistoryItems.current[0]?.response) {
+        saveHistoryItems();
+    }
+    forceUpdate();
   }
 
   function getFileContent(
@@ -1139,10 +1094,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     } else if (entry.path.endsWith('.html')) {
       return extractTextContent(entry.name, content);
     }
-    return Promise.resolve(content);
+    return Promise.resolve(content as string); 
   }
 
-  function getImageArray(fileContent, content) {
+  function getImageArray(fileContent: 'text' | 'image', content: ArrayBuffer): string[] { 
     if (fileContent === 'image') {
       const base64 = toBase64Image(content);
       if (base64) {
@@ -1152,251 +1107,259 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     return [];
   }
 
-  function generate(
+  async function generate(
     fileContent: 'text' | 'image',
     mode: ChatMode,
     modelName: string,
     entry: TS.FileSystemEntry,
   ): Promise<string> {
-    if (modelName) {
-      if (entry.isFile) {
-        return currentLocation
-          .getFileContentPromise(
-            entry.path,
-            fileContent === 'text' && !entry.path.endsWith('.pdf')
-              ? 'text'
-              : 'arraybuffer',
-          )
-          .then((content) => getFileContent(entry, content))
-          .then((content) =>
-            newChatMessage(
-              fileContent === 'image' ? undefined : content,
-              false,
-              'user',
-              mode,
-              modelName, //openedEntryModel.current.name,
-              false,
-              getImageArray(fileContent, content),
-              false,
-            ),
-          )
-          .catch((e) => {
-            console.log('newOllamaMessage error:', e);
-            return undefined;
-          });
-      } else {
-        // folder
-        return newChatMessage(
-          entry.name,
-          false,
-          'user',
-          mode,
-          modelName, //openedEntryModel.current.name,
-          false,
-          [],
-          false,
-        );
-      }
-    } else {
-      showNotification('Model not found, try pulling it first');
+    if (!modelName) {
+      showNotification('Model not found, try selecting one first.');
+      return Promise.resolve(''); 
     }
-    return Promise.resolve(undefined);
-  }
+    
+    if (!defaultAiProvider) {
+        showNotification('Default AI provider not configured.');
+        return Promise.resolve('');
+    }
 
-  function descriptionGenerate(
-    entry: TS.FileSystemEntry,
-  ): Promise<TS.FileSystemEntry> {
-    return checkOllamaModels().then((success) => {
-      if (success) {
-        const entryModel: ModelResponse = getEntryModel(
-          entry.name,
-          defaultAiProvider,
+    if (entry.isFile && currentLocation) { 
+      try {
+        const contentBufferOrText = await currentLocation.getFileContentPromise(
+          entry.path,
+          fileContent === 'text' && !entry.path.endsWith('.pdf')
+            ? 'text'
+            : 'arraybuffer',
         );
-        if (entryModel) {
-          const ext = extractFileExtension(entry.name).toLowerCase();
-          if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-            return generate(
-              'image',
-              'description',
-              entryModel.name,
-              entry,
-            ).then((results) =>
-              handleGenDescResults(
-                entry,
-                results,
-                generationSettings.current.appendAnalysisToDescription,
-              ),
-            );
-          } else if (
-            AppConfig.aiSupportedFiletypes.text.includes(ext) ||
-            ext === '' /*folders*/
-          ) {
-            return generate('text', 'description', entryModel.name, entry).then(
-              (results) =>
-                handleGenDescResults(
-                  entry,
-                  results,
-                  generationSettings.current.appendToDescription,
-                ),
-            );
-          }
+        
+        let processedContent: string;
+        let imagesForApi: string[] = [];
+
+        if (fileContent === 'image' && contentBufferOrText instanceof ArrayBuffer) {
+            processedContent = ''; 
+            imagesForApi = getImageArray('image', contentBufferOrText);
+        } else if (typeof contentBufferOrText === 'string') {
+            processedContent = await getFileContent(entry, contentBufferOrText);
+        } else if (contentBufferOrText instanceof ArrayBuffer && entry.path.endsWith('.pdf')) { 
+            processedContent = await getFileContent(entry, contentBufferOrText);
         } else {
-          showNotification(
-            'Error: there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
-          );
-          return Promise.resolve(undefined);
+            throw new Error("Unsupported content type or state for generation.");
         }
-        return Promise.resolve(entry);
-      } else {
-        showNotification('Error No Models loaded');
-        return Promise.resolve(undefined);
+
+        return newChatMessage(
+          processedContent, 
+          false, 
+          'user', 
+          mode, 
+          modelName, 
+          false, 
+          imagesForApi, 
+          false, 
+        );
+      } catch (e) {
+        console.log('Error processing file for AI generation:', e);
+        showNotification(`Error processing file: ${e.message}`);
+        return Promise.resolve('');
       }
-    });
+    } else if (!entry.isFile) { 
+      return newChatMessage(
+        entry.name, 
+        false, 'user', mode, modelName, false, [], false,
+      );
+    }
+    
+    showNotification('Generation pre-conditions not met.');
+    return Promise.resolve('');
   }
 
-  /* function descriptionGenerateAll(
-    generateEntries: TS.FileSystemEntry[],
-  ): Promise<TS.FileSystemEntry[]> {
-    return checkOllamaModels().then((success) => {
-      if (success) {
-        const promises = generateEntries.map((entry) => descriptionGenerate(entry));
-        return Promise.all(promises);
-      } else {
-        showNotification(
-          'Ollama Models not loaded. Check if Ollama service is alive.',
+  async function descriptionGenerate(
+    entry: TS.FileSystemEntry,
+  ): Promise<TS.FileSystemEntry | undefined> {
+    const modelsAvailable = await checkActiveProviderModels();
+    if (!modelsAvailable || !defaultAiProvider) {
+      showNotification('AI models not loaded or provider not set. Check AI settings.');
+      return undefined;
+    }
+
+    const entryModel = getEntryModel(entry.name, defaultAiProvider);
+    if (!entryModel) {
+      showNotification(`No suitable AI model found for ${entry.name} with provider ${defaultAiProvider.name}. Check default models in AI settings.`);
+      return undefined;
+    }
+
+    const ext = extractFileExtension(entry.name).toLowerCase();
+    let fileContentType: 'text' | 'image' | undefined;
+
+    if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+      fileContentType = 'image';
+    } else if (AppConfig.aiSupportedFiletypes.text.includes(ext) || ext === '' /*folders*/) {
+      fileContentType = 'text';
+    }
+
+    if (!fileContentType) {
+      showNotification(`File type of ${entry.name} is not supported for description generation.`);
+      return undefined;
+    }
+    
+    try {
+      const results = await generate(fileContentType, 'description', entryModel.name, entry);
+      if (results) {
+        return handleGenDescResults(
+          entry,
+          results,
+          generationSettings.current.appendToDescription, 
         );
-        return undefined;
       }
-    });
-  }*/
+    } catch (error) {
+        showNotification(`Error generating description for ${entry.name}: ${error.message}`);
+    }
+    return undefined;
+  }
+
 
   function handleGenDescResults(
     entry: TS.FileSystemEntry,
     response: string,
     append: boolean,
-  ): TS.FileSystemEntry {
+  ): TS.FileSystemEntry | undefined { 
     if (response) {
       const generatedDesc =
         response +
         '\\\n *Generated with AI on ' +
         formatDateTime(new Date(), true) +
         '* \n';
-      //dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
       entry.meta.description =
         entry.meta?.description && append
           ? entry.meta.description + '\n---\n' + generatedDesc
           : generatedDesc;
-
       return entry;
     }
     return undefined;
   }
 
-  function tagsGenerate(
+  async function tagsGenerate(
     entry: TS.FileSystemEntry,
     fromDescription: boolean = false,
   ): Promise<boolean> {
-    const entryModel: ModelResponse = getEntryModel(
-      entry.name,
-      defaultAiProvider,
-    );
-    if (entryModel) {
-      const ext = extractFileExtension(entry.name).toLowerCase();
-      if (
-        (fromDescription || generationSettings.current.fromDescription) &&
-        entry.meta.description
-      ) {
-        return newChatMessage(
-          entry.meta.description,
-          false,
-          'user',
-          'tags',
-          defaultAiProvider.defaultTextModel,
-          false,
-          [],
-          false,
-        ).then((results) => handleGenTagsResults(entry, results));
-      } else if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
-        return generate('image', 'tags', entryModel.name, entry).then(
-          (results) => handleGenTagsResults(entry, results),
-        );
-      } else if (AppConfig.aiSupportedFiletypes.text.includes(ext)) {
-        return generate('text', 'tags', entryModel.name, entry).then(
-          (results) => handleGenTagsResults(entry, results),
-        );
-      }
-    } else {
-      showNotification('Tags generation not supported for:' + entry.name);
+    if (!defaultAiProvider) {
+        showNotification("Default AI provider not configured.");
+        return false;
+    }
+    const entryModel = getEntryModel(entry.name, defaultAiProvider);
+    if (!entryModel) {
+      showNotification('Tags generation not supported for:' + entry.name + ' with current provider.');
+      return false;
     }
 
-    return Promise.resolve(false);
+    const textModelName = defaultAiProvider.defaultTextModel || entryModel.name; 
+
+    if ((fromDescription || generationSettings.current.fromDescription) && entry.meta.description) {
+      try {
+        const results = await newChatMessage(
+          entry.meta.description, false, 'user', 'tags',
+          textModelName, false, [], false,
+        );
+        return handleGenTagsResults(entry, results);
+      } catch (e) {
+        console.error("Error generating tags from description:", e);
+        return false;
+      }
+    } else {
+      const ext = extractFileExtension(entry.name).toLowerCase();
+      let fileContentType: 'text' | 'image' | undefined;
+      if (AppConfig.aiSupportedFiletypes.image.includes(ext)) {
+        fileContentType = 'image';
+      } else if (AppConfig.aiSupportedFiletypes.text.includes(ext) || ext === '') { 
+        fileContentType = 'text';
+      }
+
+      if (fileContentType) {
+        try {
+          const results = await generate(fileContentType, 'tags', entryModel.name, entry);
+          return handleGenTagsResults(entry, results);
+        } catch (e) {
+          console.error(`Error generating tags from ${fileContentType}:`, e);
+          return false;
+        }
+      } else {
+        showNotification('File type of ' + entry.name + ' not supported for direct tag generation.');
+      }
+    }
+    return false;
   }
 
-  function handleGenTagsResults(entry, response): Promise<boolean> {
-    //console.log('newOllamaMessage response:' + response);
+
+  async function handleGenTagsResults(entry: TS.FileSystemEntry, response: string[] | string): Promise<boolean> {
     if (response && response.length > 0) {
       try {
-        const tags: TS.Tag[] = response.map((tag) => {
-          if (tag) {
-            const tagTitle = tag
-              .replace(/[-/=[\]{}!@#$%^&*(),.?":{}|<>]/g, ' ')
-              .toLowerCase()
-              .split(' ')
-              .filter((str) => str.trim() !== '')
-              .slice(0, 3)
-              .join('-');
-            if (tagTitle) {
-              return {
-                title: tagTitle,
-                ...getTagColors(
-                  tagTitle,
-                  defaultTextColor,
-                  defaultBackgroundColor,
-                ),
-              };
+        const tagsArray = Array.isArray(response) ? response : (typeof response === 'string' ? response.split(/[\s,;]+/) : []);
+        
+        const uniqueTags: TS.Tag[] = tagsArray
+          .map((tagStr) => {
+            if (tagStr && typeof tagStr === 'string') { 
+              const tagTitle = tagStr
+                .replace(/[-/=[\]{}!@#$%^&*(),.?":{}|<>]/g, ' ')
+                .toLowerCase()
+                .split(' ')
+                .filter((str) => str.trim() !== '')
+                .slice(0, 3)
+                .join('-');
+              if (tagTitle) {
+                return {
+                  title: tagTitle,
+                  ...getTagColors(
+                    tagTitle,
+                    defaultTextColor,
+                    defaultBackgroundColor,
+                  ),
+                };
+              }
             }
-          }
-          return undefined;
-        });
-        const uniqueTags = tags.filter(
-          (tag, index, self) =>
-            tag && // Exclude undefined or null tags
-            index === self.findIndex((t) => t?.title === tag.title),
-        );
-        /* const regex = /\{([^}]+)\}/g;
-        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
-          const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
-          return {
-            title: tagTitle,
-            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
-          };
-        });*/
-        return addTagsToFsEntry(entry, uniqueTags).then(() => {
-          dispatch(
-            SettingsActions.setEntryContainerTab(TabNames.propertiesTab),
+            return undefined;
+          })
+          .filter((tag): tag is TS.Tag => tag !== undefined && 
+            (self => self.findIndex(t => t?.title === tag.title) === self.indexOf(tag))(
+              tagsArray.map(tempTagStr => { 
+                if (tempTagStr && typeof tempTagStr === 'string') {
+                  const tempTitle = tempTagStr.toLowerCase().split(' ').filter(s => s.trim() !== '').slice(0,3).join('-');
+                  return { title: tempTitle };
+                }
+                return undefined;
+              }).filter(t => t !== undefined) as {title:string}[] 
+            )
           );
+          
+        if (uniqueTags.length > 0) {
+          await addTagsToFsEntry(entry, uniqueTags);
+          dispatch(SettingsActions.setEntryContainerTab(TabNames.propertiesTab));
           return true;
-        });
-        // showNotification('Tags for ' + entry.name + ' generated by an AI.');
+        }
       } catch (e) {
-        console.error('newOllamaMessage response ' + response, e);
+        console.error('Error processing tags response: ' + response, e);
       }
     } else {
-      console.error('no response ' + response);
+      console.log('No tags generated or empty response.');
     }
-    return Promise.resolve(false);
+    return false;
   }
+
 
   function setGenerationSettings(genSettings: any) {
     generationSettings.current = {
       ...generationSettings.current,
       ...genSettings,
     };
+    if (Pro) { 
+        localStorage.setItem(Pro.keys.generationSettingsKey, JSON.stringify(generationSettings.current));
+    }
     forceUpdate();
   }
 
   function resetGenerationSettings(option: generateOptionType) {
     generationSettings.current = getGenerationSettings(option);
+     if (Pro) { 
+        localStorage.setItem(Pro.keys.generationSettingsKey, JSON.stringify(generationSettings.current));
+    }
     forceUpdate();
   }
 
@@ -1406,11 +1369,10 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
-      //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
       generationSettings: generationSettings.current,
-      checkOllamaModels,
-      refreshOllamaModels,
+      checkActiveProviderModels,
+      refreshAIModels,
       getHistoryFilePath,
       setModel,
       setImages,
@@ -1419,7 +1381,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       removeModel,
       changeCurrentModel,
       getModel,
-      addTimeLineResponse,
       addChatHistory,
       newChatMessage,
       cancelMessage,
@@ -1427,8 +1388,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       generate,
       initHistory,
       deleteHistory,
-      checkProviderAlive,
-      getOllamaClient,
+      checkAIProviderAlive,
+      getAIClient,
       getEntryModel,
       tagsGenerate,
       descriptionGenerate,
@@ -1436,7 +1397,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       resetGenerationSettings,
     };
   }, [
-    defaultAiProvider,
+    defaultAiProvider, 
     isTyping.current,
     models.current,
     images.current,
@@ -1445,6 +1406,8 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     generationSettings.current,
     openedEntry,
     selectedEntries,
+    currentLocation, 
+    tagGroups, 
   ]);
 
   return (

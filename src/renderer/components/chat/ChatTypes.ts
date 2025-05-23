@@ -16,7 +16,7 @@
  *
  */
 
-export type AIProviders = 'ollama' | 'node-lama' | 'chatgpt';
+export type AIProviders = 'ollama' | 'node-lama' | 'chatgpt' | 'openrouter';
 export type ChatRole = 'user' | 'system' | 'assistant' | 'tool';
 export type ChatMode =
   | 'summary'
@@ -31,6 +31,7 @@ export type AIProvider = {
   name: string;
   enable: boolean;
   url: string;
+  apiKey?: string; // Added this line
   //alive?: boolean;
   defaultImageModel?: string;
   defaultTextModel?: string;
