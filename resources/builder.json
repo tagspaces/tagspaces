@@ -16,8 +16,8 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "include": "resources/installer.nsh",
-    "license": "assets/license_en.txt"
+    "include": "resources/installer.nsh"
+    // "license": "assets/license_en.txt"
   },
   "mac": {
     "target": ["pkg", "dmg"],
