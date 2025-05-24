@@ -2,7 +2,7 @@ import AppConfig from '-/AppConfig';
 import { Crepe } from '@milkdown/crepe';
 import { Ctx } from '@milkdown/ctx';
 import { editorViewOptionsCtx } from '@milkdown/kit/core';
-import { imageBlockConfig } from '@milkdown/kit/component/image-block';
+import { remarkPreserveEmptyLinePlugin } from '@milkdown/preset-commonmark';
 
 export function createCrepeEditor(
   root: HTMLElement,
@@ -55,6 +55,7 @@ export function createCrepeEditor(
       },
     },
   });
+  crepe.editor.remove(remarkPreserveEmptyLinePlugin);
   crepe.editor.config((ctx: Ctx) => {
     ctx.update(editorViewOptionsCtx, (prev) => ({
       ...prev,
