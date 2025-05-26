@@ -271,16 +271,27 @@ function SettingsGeneral() {
         </ListItem>
       )}
 
-      <ListItem>
+      <ListItem
+        title={
+          window.ExtCheckForUpdatesOnStartup !== undefined
+            ? t('core:settingExternallyConfigured')
+            : ''
+        }
+      >
         <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
         <Switch
+          disabled={window.ExtCheckForUpdatesOnStartup !== undefined}
           data-tid="settingsSetCheckForUpdates"
           onClick={() =>
             dispatch(
               SettingsActions.setCheckForUpdates(!settings.checkForUpdates),
             )
           }
-          checked={settings.checkForUpdates}
+          checked={
+            window.ExtCheckForUpdatesOnStartup !== undefined
+              ? window.ExtCheckForUpdatesOnStartup
+              : settings.checkForUpdates
+          }
         />
       </ListItem>
       <ListItem>

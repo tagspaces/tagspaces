@@ -27,6 +27,8 @@ import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
@@ -36,28 +38,20 @@ import {
   getSettings,
   isDevMode,
 } from '-/reducers/settings';
+import { isWorkerAvailable } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { CircularProgress, ListItemIcon } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
-import { historyKeys } from '-/hooks/HistoryContextProvider';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { isWorkerAvailable } from '-/services/utils-io';
 
 interface Props {
   showResetSettings: (showDialog: boolean) => void;
@@ -383,7 +377,14 @@ function SettingsAdvanced(props: Props) {
           checked={settings.isRevisionsEnabled}
         />
       </ListItem>
-      <ListItem>
+      <ListItem
+        title={
+          window.ExtUseLocationTags !== undefined
+            ? t('core:settingExternallyConfigured')
+            : ''
+        }
+        // disabled={!Pro}
+      >
         <ListItemText
           primary={
             <>
@@ -395,9 +396,15 @@ function SettingsAdvanced(props: Props) {
         />
         <Switch
           data-tid="saveTagInLocationTID"
-          disabled={!Pro && !(typeof window.ExtUseLocationTags === 'undefined')}
-          onClick={() => setSaveTagInLocation(!settings.saveTagInLocation)}
-          checked={settings.saveTagInLocation}
+          disabled={window.ExtUseLocationTags !== undefined}
+          onClick={() => {
+            Pro && setSaveTagInLocation(!settings.saveTagInLocation);
+          }}
+          checked={
+            window.ExtUseLocationTags !== undefined
+              ? window.ExtUseLocationTags
+              : settings.saveTagInLocation
+          }
         />
       </ListItem>
       <ListItem>
