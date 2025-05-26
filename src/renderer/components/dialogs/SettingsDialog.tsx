@@ -110,7 +110,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={!smallScreen && <OptionsIcon />}
+          icon={smallScreen ? '' : <OptionsIcon />}
           data-tid="generalSettingsDialog"
           label={t('core:generalTab')}
         />
@@ -120,7 +120,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={!smallScreen && <FileIcon />}
+          icon={smallScreen ? '' : <FileIcon />}
           data-tid="fileTypeSettingsDialog"
           label={t('core:fileTypeTab')}
         />
@@ -130,7 +130,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={!smallScreen && <KeyboardIcon />}
+          icon={smallScreen ? '' : <KeyboardIcon />}
           data-tid="keyBindingsSettingsDialog"
           label={t('core:keyBindingsTab')}
         />
@@ -140,7 +140,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={!smallScreen && <ExtensionIcon />}
+          icon={smallScreen ? '' : <ExtensionIcon />}
           data-tid="extensionsSettingsDialog"
           label={t('core:extensionsTab')}
         />
@@ -150,7 +150,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={!smallScreen && <AdvancedSettingsIcon />}
+          icon={smallScreen ? '' : <AdvancedSettingsIcon />}
           data-tid="advancedSettingsDialogTID"
           label={t('core:advancedSettingsTab')}
         />
@@ -161,7 +161,7 @@ function SettingsDialog(props: Props) {
           }}
           data-tid="aiSettingsDialogTID"
           iconPosition="start"
-          icon={!smallScreen && <AIIcon />}
+          icon={smallScreen ? '' : <AIIcon />}
           label={
             <span style={{ whiteSpace: 'nowrap' }}>
               {t('core:aiSettingsTab')}
