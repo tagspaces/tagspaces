@@ -180,9 +180,13 @@ AppConfig.defaultMapBounds =
       };
 
 AppConfig.showTSLogo =
-  typeof window !== 'undefined' && (window.ExtShowTSLogo || true);
+  typeof window !== 'undefined' && window.ExtShowTSLogo !== undefined
+    ? window.ExtShowTSLogo
+    : true;
 
 AppConfig.showTSVersion =
-  typeof window !== 'undefined' && (window.ExtShowTSVersion || true);
+  typeof window !== 'undefined' && window.ExtShowTSVersion !== undefined
+    ? window.ExtShowTSVersion
+    : true;
 
 export default AppConfig;
