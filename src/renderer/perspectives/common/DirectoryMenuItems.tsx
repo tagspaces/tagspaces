@@ -212,7 +212,7 @@ export function getDirectoryMenuItems(
       </MenuItem>,
     );
   }
-  menuItems.push(<Divider key="divider1" />);
+  menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   if (!isReadOnlyMode && !perspectiveMode) {
     if (createNewFile) {
       menuItems.push(
@@ -305,7 +305,7 @@ export function getDirectoryMenuItems(
       );
     }
     if (showCreateDirectoryDialog) {
-      menuItems.push(<Divider key="divider2" />);
+      menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
       menuItems.push(
         <MenuItem
           key="newSubDirectory"
@@ -480,7 +480,7 @@ export function getDirectoryMenuItems(
     );
   }
   if (!perspectiveMode && switchPerspective) {
-    menuItems.push(<Divider key="divider3" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     AvailablePerspectives.forEach((perspective) => {
       let badge = <></>;
       // if (!Pro && perspective.pro) {
@@ -513,7 +513,7 @@ export function getDirectoryMenuItems(
   }
 
   if (selectedEntries.length < 2 && showProperties) {
-    menuItems.push(<Divider key="divider4" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key="showProperties"

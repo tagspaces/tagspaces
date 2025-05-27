@@ -1,7 +1,6 @@
 window.ExtIsFirstRun = false;
 window.ExtCheckForUpdatesOnStartup = false;
 window.ExtUseGenerateThumbnails = true;
-window.ExtLocationsReadOnly = false;
 window.ExtSaveLocationsInBrowser = true;
 window.ExtLocations = [
   {
