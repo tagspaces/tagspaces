@@ -188,18 +188,20 @@ function LocationContextMenu(props: Props) {
     );
   }
   menuItems.push(<Divider />);
-  menuItems.push(
-    <MenuItem
-      key="duplicateLocation"
-      data-tid="duplicateLocationTID"
-      onClick={duplicateLocation}
-    >
-      <ListItemIcon>
-        <ContentCopyIcon />
-      </ListItemIcon>
-      <ListItemText primary={t('core:duplicateLocationTitle')} />
-    </MenuItem>,
-  );
+  if (!AppConfig.locationsReadOnly) {
+    menuItems.push(
+      <MenuItem
+        key="duplicateLocation"
+        data-tid="duplicateLocationTID"
+        onClick={duplicateLocation}
+      >
+        <ListItemIcon>
+          <ContentCopyIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:duplicateLocationTitle')} />
+      </MenuItem>,
+    );
+  }
   menuItems.push(
     <MenuItem
       key="indexLocation"
@@ -252,18 +254,19 @@ function LocationContextMenu(props: Props) {
       </MenuItem>,
     );
   }
-  menuItems.push(
-    <MenuItem
-      key="closeLocationTID"
-      data-tid="closeLocationTID"
-      onClick={closeLocationInt}
-    >
-      <ListItemIcon>
-        <CloseIcon />
-      </ListItemIcon>
-      <ListItemText primary={t('core:closeLocation')} />
-    </MenuItem>,
-  );
+  if (!AppConfig.locationsReadOnly)
+    menuItems.push(
+      <MenuItem
+        key="closeLocationTID"
+        data-tid="closeLocationTID"
+        onClick={closeLocationInt}
+      >
+        <ListItemIcon>
+          <CloseIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:closeLocation')} />
+      </MenuItem>,
+    );
 
   return (
     <Menu

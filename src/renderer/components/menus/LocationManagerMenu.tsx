@@ -76,34 +76,34 @@ function LocationManagerMenu(props: Props) {
         <ListItemText primary={t('core:createLocationTitle')} />
       </MenuItem>,
     );
+    menuItems.push(<Divider key="divider1" />);
   }
 
+  // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+  menuItems.push(
+    <MenuItem
+      disabled={!Pro}
+      key="locationManagerMenuExportLocationsTID"
+      data-tid="locationManagerMenuExportLocationsTID"
+      onClick={() => {
+        setLocationManagerMenuAnchorEl(null);
+        exportLocations();
+      }}
+    >
+      <ListItemIcon>
+        <ExportIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <>
+            {t('core:exportLocationTitle')}
+            <ProLabel />
+          </>
+        }
+      />
+    </MenuItem>,
+  );
   if (!AppConfig.locationsReadOnly) {
-    // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-    menuItems.push(<Divider key="divider1" />);
-    menuItems.push(
-      <MenuItem
-        disabled={!Pro}
-        key="locationManagerMenuExportLocationsTID"
-        data-tid="locationManagerMenuExportLocationsTID"
-        onClick={() => {
-          setLocationManagerMenuAnchorEl(null);
-          exportLocations();
-        }}
-      >
-        <ListItemIcon>
-          <ExportIcon />
-        </ListItemIcon>
-        <ListItemText
-          primary={
-            <>
-              {t('core:exportLocationTitle')}
-              <ProLabel />
-            </>
-          }
-        />
-      </MenuItem>,
-    );
     menuItems.push(
       <MenuItem
         disabled={!Pro}

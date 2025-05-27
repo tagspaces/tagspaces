@@ -425,23 +425,25 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createDirectory')} />
                     </MenuItem>
                     <Divider />
-                    <MenuItem
-                      key="createNewLocation"
-                      data-tid="createNewLocationTID"
-                      onClick={() => {
-                        setSelectedLocation(undefined);
-                        openCreateEditLocationDialog();
-                        setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
-                      }}
-                    >
-                      <ListItemIcon>
-                        <LocalLocationIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={t('core:createLocation')} />
-                    </MenuItem>
+                    {!AppConfig.locationsReadOnly && (
+                      <MenuItem
+                        key="createNewLocation"
+                        data-tid="createNewLocationTID"
+                        onClick={() => {
+                          setSelectedLocation(undefined);
+                          openCreateEditLocationDialog();
+                          setOpenCreateMenu(false);
+                          if (hideDrawer) {
+                            hideDrawer();
+                          }
+                        }}
+                      >
+                        <ListItemIcon>
+                          <LocalLocationIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('core:createLocation')} />
+                      </MenuItem>
+                    )}
                     {!AppConfig.isCordova && (
                       <>
                         <MenuItem
