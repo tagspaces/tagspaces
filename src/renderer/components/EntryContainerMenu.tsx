@@ -171,7 +171,7 @@ function EntryContainerMenu(props: Props) {
         <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>,
     );
-    menuItems.push(<Divider key={'divider1'} />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key={'fileContainerSwitchToFullScreenKey'}
@@ -209,7 +209,7 @@ function EntryContainerMenu(props: Props) {
       );
     }
     if (!currentLocation?.isReadOnly) {
-      menuItems.push(<Divider key={'divider3'} />);
+      menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
       menuItems.push(
         <MenuItem
           key={'deleteEntryKey'}
@@ -227,7 +227,7 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>,
       );
     }
-    menuItems.push(<Divider key={'divider2'} />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key={'navigateToParentKey'}
@@ -318,7 +318,7 @@ function EntryContainerMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['reloadDocument']} />
       </MenuItem>,
     );
-    menuItems.push(<Divider key={'divider6'} />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key={'openInMainAreaKey'}
@@ -388,7 +388,7 @@ function EntryContainerMenu(props: Props) {
       );
     }
     if (!currentLocation?.isReadOnly) {
-      menuItems.push(<Divider key={'divider4'} />);
+      menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
       menuItems.push(
         <MenuItem
           key={'deleteFolderKey'}
@@ -409,7 +409,7 @@ function EntryContainerMenu(props: Props) {
     }
   }
 
-  menuItems.push(<Divider key={'divider5'} />);
+  menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   menuItems.push(
     <MenuItem
       key={'openDirectoryExternallyKey'}

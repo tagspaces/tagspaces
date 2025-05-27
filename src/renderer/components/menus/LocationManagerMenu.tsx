@@ -76,7 +76,7 @@ function LocationManagerMenu(props: Props) {
         <ListItemText primary={t('core:createLocationTitle')} />
       </MenuItem>,
     );
-    menuItems.push(<Divider key="divider1" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   }
 
   // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
@@ -127,7 +127,7 @@ function LocationManagerMenu(props: Props) {
         />
       </MenuItem>,
     );
-    menuItems.push(<Divider key="divider2" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   }
 
   menuItems.push(
@@ -161,7 +161,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemText primary={t('core:updateAllLocationIndexes')} />
     </MenuItem>,
   );
-  menuItems.push(<Divider key="divider3" />);
+  menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   menuItems.push(
     <MenuItem
       key="locationManagerMenuHelp"

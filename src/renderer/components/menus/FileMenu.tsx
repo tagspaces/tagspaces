@@ -38,6 +38,7 @@ import {
 } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -70,7 +71,6 @@ import {
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 
 interface Props {
   anchorEl: Element;
@@ -408,7 +408,7 @@ function FileMenu(props: Props) {
         </MenuItem>,
       );
     }
-    menuItems.push(<Divider key="fmDivider" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
   }
   if (!currentLocation?.isReadOnly) {
     menuItems.push(
@@ -458,7 +458,7 @@ function FileMenu(props: Props) {
         </MenuItem>,
       );
     }
-    menuItems.push(<Divider key="fmDivider1" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key="fileMenuRenameFile"
@@ -532,7 +532,7 @@ function FileMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} />
       </MenuItem>,
     );
-    menuItems.push(<Divider key="fmDivider2" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     if (Pro && selectedEntries.length < 2) {
       menuItems.push(
         <MenuItem
@@ -613,7 +613,7 @@ function FileMenu(props: Props) {
   }
 
   if (selectedEntries.length < 2) {
-    menuItems.push(<Divider key="fmDivider3" />);
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     menuItems.push(
       <MenuItem
         key="showProperties"
