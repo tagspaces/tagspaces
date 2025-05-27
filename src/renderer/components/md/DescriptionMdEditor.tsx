@@ -28,6 +28,8 @@ import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { replaceAll } from '@milkdown/utils';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface CrepeMdEditorProps {
   //onChange?: (markdown: string, prevMarkdown: string) => void;
@@ -39,6 +41,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     const { onFocus } = props;
     const { t } = useTranslation();
     const { currentDirectoryPath } = useDirectoryContentContext();
+    const { metaActions } = useEditedEntryMetaContext();
     const {
       saveDescription,
       isEditDescriptionMode,
@@ -48,6 +51,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     } = useFilePropertiesContext();
     const { openedEntry, openLink } = useOpenedEntryContext();
     const crepeInstanceRef = useRef<Crepe>(undefined);
+    const firstRender = useFirstRender();
 
     const { get, loading } = useEditor(
       (root) => {
@@ -115,19 +119,35 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
 
     useEffect(() => {
       if (!isDescriptionChanged) {
-        const editor = get();
-        if (!loading && editor && editor.status === EditorStatus.Created) {
-          try {
-            const markdown = editor.action(getMarkdown());
-            if (markdown !== openedEntry.meta?.description) {
-              editor.action(replaceAll(openedEntry.meta?.description, true));
+        changeDescription(openedEntry.meta?.description);
+      }
+    }, [openedEntry]); //, isDescriptionChanged]);
+
+    useEffect(() => {
+      if (!firstRender && metaActions && metaActions.length > 0) {
+        for (const action of metaActions) {
+          if (action.entry && openedEntry.path === action.entry.path) {
+            if (action.action === 'descriptionChange') {
+              changeDescription(action.entry.meta?.description);
             }
-          } catch (e) {
-            console.log(e);
           }
         }
       }
-    }, [openedEntry]);
+    }, [metaActions]);
+
+    function changeDescription(description: string) {
+      const editor = get();
+      if (!loading && editor && editor.status === EditorStatus.Created) {
+        try {
+          const markdown = editor.action(getMarkdown());
+          if (markdown !== description) {
+            editor.action(replaceAll(description, true));
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
 

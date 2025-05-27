@@ -73,7 +73,7 @@ export const FilePropertiesContextProvider = ({
   const { showNotification } = useNotificationContext();
   const { setDescriptionChange } = useIOActionsContext();
 
-  const lastOpenedFile = useRef<TS.OpenedEntry>(openedEntry);
+  const lastOpenedFile = useRef<TS.OpenedEntry>({ ...openedEntry });
   const isDescriptionChanged = useRef<boolean>(false);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -99,10 +99,13 @@ export const FilePropertiesContextProvider = ({
       if (isDescriptionChanged.current) {
         // handle not saved changes
         saveDescriptionConfirmOpened(true);
-      } else {
+      } else if (
+        JSON.stringify(lastOpenedFile.current) !== JSON.stringify(openedEntry)
+      ) {
         if (lastOpenedFile.current?.path !== openedEntry.path) {
           setIsEditMode(false);
         }
+
         lastOpenedFile.current = { ...openedEntry };
         forceUpdate();
       }
