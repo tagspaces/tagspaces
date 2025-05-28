@@ -287,7 +287,7 @@ function TagLibrary(props: Props) {
           ' tag groups'
         }
         menuButton={
-          tagGroups.some((tg) => !tg.readOnly) && (
+          (tagGroups.some((tg) => !tg.readOnly) || tagGroups.length === 0) && (
             <TsIconButton
               data-tid="tagLibraryMenu"
               onClick={handleTagLibraryMenu}
