@@ -182,6 +182,9 @@ function CreateEditLocationDialog(props: Props) {
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
     selectedLocation ? selectedLocation.fullTextIndex : false,
   );
+  const [extractLinks, setExtractLinks] = useState<boolean>(
+    selectedLocation ? selectedLocation.extractLinks : false,
+  );
   const [accessKeyId, setAccessKeyId] = useState<string>(
     selectedLocation ? selectedLocation.accessKeyId : '',
   );
@@ -409,6 +412,7 @@ function CreateEditLocationDialog(props: Props) {
           reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
+          extractLinks,
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
@@ -430,6 +434,7 @@ function CreateEditLocationDialog(props: Props) {
           reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
+          extractLinks,
           watchForChanges,
           maxIndexAge,
           ignorePatternPaths,
@@ -455,6 +460,7 @@ function CreateEditLocationDialog(props: Props) {
           reloadOnFocus,
           disableThumbnailGeneration,
           fullTextIndex,
+          extractLinks,
           watchForChanges: false,
           maxIndexAge,
           maxLoops,
@@ -733,6 +739,29 @@ function CreateEditLocationDialog(props: Props) {
                   </>
                 }
               />
+              {fullTextIndex && (
+                <FormControlLabel
+                  labelPlacement="start"
+                  style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                  control={
+                    <Switch
+                      disabled={!Pro}
+                      data-tid="extractLinksTID"
+                      name="extractLinks"
+                      checked={extractLinks}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setExtractLinks(event.target.checked);
+                      }}
+                    />
+                  }
+                  label={
+                    <>
+                      {t('core:extractLinks')}
+                      {Pro ? <BetaLabel /> : <ProLabel />}
+                    </>
+                  }
+                />
+              )}
               {isFullTextIndexConfirmDialogOpened && selectedLocation && (
                 <ConfirmDialog
                   open={isFullTextIndexConfirmDialogOpened}

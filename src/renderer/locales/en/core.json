@@ -405,6 +405,7 @@
   "disableIndexing": "Disable Indexing",
   "disableThumbnailGeneration": "Disable Thumbnail Generation",
   "createFullTextIndex": "Enable full text search",
+  "extractLinks": "Extract links",
   "watchForChangesInLocation": "Watch for external changes in this location",
   "collectedTags": "Collected Tags",
   "pauseResumePlayback": "Pause/Resume Playback",

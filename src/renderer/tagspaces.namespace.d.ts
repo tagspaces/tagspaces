@@ -42,6 +42,7 @@ export namespace TS {
     reloadOnFocus?: boolean;
     disableThumbnailGeneration?: boolean;
     fullTextIndex?: boolean;
+    extractLinks?: boolean;
     maxIndexAge?: number;
     maxLoops?: number;
     persistTagsInSidecarFile?: boolean;

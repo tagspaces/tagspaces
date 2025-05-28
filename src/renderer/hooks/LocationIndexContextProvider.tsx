@@ -362,7 +362,12 @@ export const LocationIndexContextProvider = ({
         ) {
           // Start indexing in worker if not in the object store mode
           return loc
-            .createDirectoryIndexInWorker(dirPath, extractText, ignorePatterns)
+            .createDirectoryIndexInWorker(
+              dirPath,
+              extractText,
+              !!loc.extractLinks,
+              ignorePatterns,
+            )
             .then((result) => {
               if (result && result.success) {
                 return loadIndexFromDisk(dirPath, param.locationID);
@@ -407,7 +412,9 @@ export const LocationIndexContextProvider = ({
     const mode = ['extractThumbPath'];
     if (extractText) {
       mode.push('extractTextContent');
-      mode.push('extractLinks');
+      if (loc.extractLinks) {
+        mode.push('extractLinks');
+      }
     }
     return createIndex(
       {
