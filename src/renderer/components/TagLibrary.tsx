@@ -287,6 +287,7 @@ function TagLibrary(props: Props) {
           ' tag groups'
         }
         menuButton={
+          // Display the menu button if there are editable tag groups or no tag groups exist (to allow creating new ones)
           (tagGroups.some((tg) => !tg.readOnly) || tagGroups.length === 0) && (
             <TsIconButton
               data-tid="tagLibraryMenu"
