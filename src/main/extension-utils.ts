@@ -88,6 +88,7 @@ function processDirs(
           fileTypes,
           buildFolder,
           enabled,
+          isDefault,
           ...props
         } = packageJsonObj['tsextension'];
 
@@ -108,11 +109,13 @@ function processDirs(
                 (item) => item.type === fileType.ext,
               );
               if (existingItemIndex !== -1) {
-                // If an item with the same id already exists, update its properties
-                supportedFileTypes[existingItemIndex] = {
-                  ...supportedFileTypes[existingItemIndex],
-                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
-                };
+                if (isDefault) {
+                  // If an item with the same id already exists, update its properties
+                  supportedFileTypes[existingItemIndex] = {
+                    ...supportedFileTypes[existingItemIndex],
+                    ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
+                  };
+                }
               } else {
                 supportedFileTypes.push({
                   type: fileType.ext,
