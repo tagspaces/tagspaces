@@ -4056,7 +4056,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.153
+ - @tagspacespro/tagspacespro@5.0.156
 
 This package contains the following license:
 
@@ -4840,11 +4840,12 @@ THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - debug@4.4.0
+ - debug@4.4.1
 
-This package contains the following license:
+These packages each contain the following license:
 
 (The MIT License)
 
@@ -5540,11 +5541,12 @@ THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
+ - marked@15.0.12
  - marked@15.0.7
 
-This package contains the following license:
+These packages each contain the following license:
 
 # License information
 
@@ -9016,11 +9018,12 @@ THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - parse5@7.2.1
+ - parse5@7.3.0
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright (c) 2013-2019 Ivan Nikulin (ifaaan@gmail.com, https://github.com/inikulin)
 
@@ -9429,11 +9432,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - dotenv@16.4.7
+ - dotenv@16.5.0
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright (c) 2015, Scott Motte
 All rights reserved.
@@ -9716,9 +9720,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 The following npm packages may be included in this product:
 
  - tldts-core@6.1.84
- - tldts-core@6.1.85
+ - tldts-core@6.1.86
  - tldts@6.1.84
- - tldts@6.1.85
+ - tldts@6.1.86
 
 These packages each contain the following license:
 
@@ -9938,11 +9942,12 @@ THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - cssstyle@4.3.0
+ - cssstyle@4.3.1
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright (c) Chad Walker
 
@@ -9971,6 +9976,7 @@ The following npm packages may be included in this product:
 
  - entities@2.2.0
  - entities@4.5.0
+ - entities@6.0.0
 
 These packages each contain the following license:
 
@@ -10678,23 +10684,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm package may be included in this product:
 
- - @xmldom/xmldom@0.9.6
-
-This package contains the following license:
-
-Copyright 2019 - present Christopher J. Brody and other contributors, as listed in: https://github.com/xmldom/xmldom/graphs/contributors
-Copyright 2012 - 2017 @jindw <jindw@xidea.org> and other contributors, as listed in: https://github.com/jindw/xmldom/graphs/contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------------
-
-The following npm package may be included in this product:
-
  - react-beautiful-dnd@13.1.1
 
 This package contains the following license:
@@ -11077,8 +11066,8 @@ terms above.
 
 The following npm packages may be included in this product:
 
- - dompurify@3.2.4
  - dompurify@3.2.5
+ - dompurify@3.2.6
 
 These packages each contain the following license:
 
@@ -11831,7 +11820,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 The following npm package may be included in this product:
 
- - pdf2json@3.1.5
+ - pdf2json@3.1.6
 
 This package contains the following license:
 
@@ -14757,11 +14746,12 @@ THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - @asamuzakjp/css-color@3.1.1
+ - @asamuzakjp/css-color@3.2.0
 
-This package contains the following license:
+These packages each contain the following license:
 
 MIT License
 
@@ -18067,7 +18057,7 @@ THE SOFTWARE.
 The following npm packages may be included in this product:
 
  - tr46@5.0.0
- - tr46@5.1.0
+ - tr46@5.1.1
 
 These packages each contain the following license:
 
@@ -18341,9 +18331,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following npm packages may be included in this product:
 
  - @csstools/css-calc@2.1.2
+ - @csstools/css-calc@2.1.4
+ - @csstools/css-color-parser@3.0.10
  - @csstools/css-color-parser@3.0.8
  - @csstools/css-parser-algorithms@3.0.4
+ - @csstools/css-parser-algorithms@3.0.5
  - @csstools/css-tokenizer@3.0.3
+ - @csstools/css-tokenizer@3.0.4
 
 These packages each contain the following license:
 
@@ -18556,7 +18550,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.187
+ - @tagspaces/extensions@1.0.190
 
 This package contains the following license:
 
@@ -18573,15 +18567,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.5.58
- - @tagspaces/tagspaces-common-cordova@4.5.58
- - @tagspaces/tagspaces-common-node@4.5.58
- - @tagspaces/tagspaces-common@4.5.58
- - @tagspaces/tagspaces-indexer@4.5.58
+ - @tagspaces/tagspaces-common-aws3@4.5.67
+ - @tagspaces/tagspaces-common-cordova@4.5.67
+ - @tagspaces/tagspaces-common-node@4.5.67
+ - @tagspaces/tagspaces-common@4.5.67
+ - @tagspaces/tagspaces-indexer@4.5.67
  - @tagspaces/tagspaces-pdf-extraction@4.5.53
  - @tagspaces/tagspaces-thumbgen-image@4.5.60
- - @tagspaces/tagspaces-workers@4.5.60
- - @tagspaces/tagspaces-ws@4.5.60
+ - @tagspaces/tagspaces-workers@4.5.67
+ - @tagspaces/tagspaces-ws@4.5.67
 
 These packages each contain the following license:
 
