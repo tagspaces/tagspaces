@@ -93,36 +93,47 @@ function processDirs(
         } = packageJsonObj['tsextension'];
 
         const extensionId =
-          (id ? id : '@tagspaces/extensions/' + dir.name) +
+          (id || '@tagspaces/extensions/' + dir.name) +
           (buildFolder ? '/' + buildFolder : '');
 
         if (fileTypes) {
           fileTypes.forEach((fileType) => {
-            if (fileType.ext) {
-              const supportTypes = fileType.types ? fileType.types : types;
-              const supportedTypes = supportTypes.map((type) => ({
-                [type]: extensionId,
-                ...(isExternal && { extensionExternalPath: directoryPath }),
-              }));
+            if (!fileType.ext) return;
+            // each fileType may target multiple "types" (viewer/editor etc.)
+            const supportTypes = fileType.types || types;
+            const supportedTypes = supportTypes.map((type) => ({
+              [type]: extensionId,
+              ...(isExternal && { extensionExternalPath: directoryPath }),
+            }));
 
-              const existingItemIndex = supportedFileTypes.findIndex(
-                (item) => item.type === fileType.ext,
-              );
-              if (existingItemIndex !== -1) {
-                if (isDefault) {
-                  // If an item with the same id already exists, update its properties
-                  supportedFileTypes[existingItemIndex] = {
-                    ...supportedFileTypes[existingItemIndex],
-                    ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
-                  };
-                }
-              } else {
-                supportedFileTypes.push({
-                  type: fileType.ext,
-                  color: fileType.color ? fileType.color : color,
-                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
+            // find existing slot by extension
+            const idx = supportedFileTypes.findIndex(
+              (item) => item.type === fileType.ext,
+            );
+            if (idx !== -1 && isDefault) {
+              // If an item with the same id already exists, update its properties
+              supportedFileTypes[idx] = {
+                ...supportedFileTypes[idx],
+                ...supportedTypes.reduce((a, b) => ({ ...a, ...b }), {}),
+              };
+            } else if (idx !== -1) {
+              // merge only missing props
+              const existing = supportedFileTypes[idx];
+              // merge in any new role/extension mappings
+              supportedTypes.forEach((st) => {
+                Object.keys(st).forEach((role) => {
+                  if (!existing[role]) {
+                    existing[role] = st[role];
+                  }
                 });
-              }
+              });
+              // color stays as-is, extensions slot keyed by type
+            } else {
+              supportedFileTypes.push({
+                type: fileType.ext,
+                color: fileType.color || color || '',
+                ...supportedTypes.reduce((a, b) => ({ ...a, ...b }), {}),
+              });
             }
           });
         }
