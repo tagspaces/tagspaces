@@ -86,8 +86,8 @@ test.describe('TST69 - Markdown editor', () => {
     const iframeElement = await global.client.waitForSelector('iframe');
     const frame = await iframeElement.contentFrame();
 
-    await frame.click('[data-tid=mdEditorMenuTID]');
-    await frame.click('[data-tid=settingsTID]');
+    await frame.click('[data-tid=mainMenuTID]');
+    await frame.click('[data-tid=settingsIDTID]');
 
     let settingsExists = await isDisplayed(
       '#md-editor-settings-title',
