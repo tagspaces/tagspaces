@@ -9,7 +9,12 @@ import {
   selectorFile,
   setSettings,
 } from './general.helpers';
-import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
+import {
+  createLocalFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+} from './hook';
 import {
   closeFileProperties,
   closeLocation,
@@ -43,7 +48,7 @@ test.beforeAll(
     if (isS3) {
       await createFileS3();
     } else {
-      await createFile(testDataDir);
+      await createLocalFile(testDataDir);
     }
   },
 );
@@ -366,8 +371,8 @@ test.describe('TST06 - Test Search in file structure:', () => {
       await createFileS3('n1ote.txt');
       await createFileS3('note.txt');
     } else {
-      await createFile(testDataDir, 'n1ote.txt');
-      await createFile(testDataDir, 'note.txt');
+      await createLocalFile(testDataDir, 'n1ote.txt');
+      await createLocalFile(testDataDir, 'note.txt');
     }
     // fuzzy
     await addSearchCommand('a:', false);
@@ -443,7 +448,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     if (isS3) {
       await createFileS3('fulltext.txt', 'testing fulltext');
     } else {
-      await createFile(testDataDir, 'fulltext.txt', 'testing fulltext');
+      await createLocalFile(testDataDir, 'fulltext.txt', 'testing fulltext');
     }
 
     await addSearchCommand('sc:', false);
@@ -471,7 +476,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
         'testing open subfolder from search results',
       );
     } else {
-      await createFile(
+      await createLocalFile(
         testDataDir,
         'text_file.txt',
         'testing open subfolder from search results',

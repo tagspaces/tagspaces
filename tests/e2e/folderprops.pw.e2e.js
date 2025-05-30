@@ -22,10 +22,11 @@ import {
   waitUntilChanged,
   openFolderProp,
   createLocation,
+  addDescription,
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import {
-  createFile,
+  createLocalFile,
   createFileS3,
   startTestingApp,
   stopApp,
@@ -89,7 +90,7 @@ test.describe('TST02 - Folder properties', () => {
     if (isS3) {
       await createFileS3(testFile);
     } else {
-      await createFile(testDataDir, testFile);
+      await createLocalFile(testDataDir, testFile);
     }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInMainAreaTID]');
@@ -126,7 +127,7 @@ test.describe('TST02 - Folder properties', () => {
         'empty_folder/.ts',
       );
     } else {
-      await createFile(
+      await createLocalFile(
         testDataDir,
         'tsm.json',
         JSON.stringify(tsmJson),
@@ -253,24 +254,7 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0213 - Add description to folder [web,electron,_pro]', async () => {
-    const desc = 'testDescription';
-
-    await clickOn('[data-tid=descriptionTabTID]');
-    //await clickOn('[data-tid=editDescriptionTID]');
-    // await global.client.dblclick('[data-tid=descriptionTID]');
-    await clickOn('[data-tid=descriptionTID]');
-    const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] [contenteditable=true]',
-    );
-    await editor.type(desc);
-    /*
-    // editorContent is empty on web
-    const editorContent = await editor.innerText();
-    await expect(editorContent).toBe(desc);
-    */
-    await clickOn('[data-tid=editDescriptionTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
+    await addDescription('testDescription');
     await expectElementExist(
       '[data-tid=gridCellDescription]',
       true,

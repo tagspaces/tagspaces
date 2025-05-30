@@ -343,7 +343,7 @@ export async function createFileS3(
   );
   await uploadFile(filePath, fileContent || 'test content');
 }
-export async function createFile(
+export async function createLocalFile(
   testDataDir,
   fileName = 'empty_file.html',
   fileContent = undefined,

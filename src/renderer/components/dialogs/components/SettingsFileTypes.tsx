@@ -456,6 +456,7 @@ function SettingsFileTypes() {
 
   return (
     <Paper
+      data-tid="settingsFileTypesTID"
       style={{
         height: 500,
         width: '100%',

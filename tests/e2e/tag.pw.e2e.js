@@ -11,7 +11,12 @@ import {
   getGridFileSelector,
   setInputValue,
 } from './general.helpers';
-import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
+import {
+  createLocalFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
@@ -288,7 +293,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
     } else {
-      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
+      await createLocalFile(testDataDir, 'tsl.json', tslContent, '.ts');
     }
     // check tag exist in tsl.json
     /*await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
@@ -381,7 +386,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
     } else {
-      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
+      await createLocalFile(testDataDir, 'tsl.json', tslContent, '.ts');
     }
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
@@ -408,7 +413,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
     } else {
-      await createFile(testDataDir, 'tsl.json', tslContent, '.ts');
+      await createLocalFile(testDataDir, 'tsl.json', tslContent, '.ts');
     }
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',

@@ -26,7 +26,7 @@ import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
 } from './file.properties.helpers';
-import { createFile, startTestingApp, stopApp } from './hook';
+import { createLocalFile, startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 

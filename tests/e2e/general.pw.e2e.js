@@ -27,6 +27,12 @@ import {
   dnd,
   setSettings,
   openFile,
+  createFile,
+  addDescription,
+  createLocation,
+  expectFileContain,
+  expectMetaFileContain,
+  openFolderProp,
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';

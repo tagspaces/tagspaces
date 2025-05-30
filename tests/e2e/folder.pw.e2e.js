@@ -25,7 +25,12 @@ import {
   getAttribute,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
-import { createFile, createFileS3, startTestingApp, stopApp } from './hook';
+import {
+  createLocalFile,
+  createFileS3,
+  startTestingApp,
+  stopApp,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
@@ -175,7 +180,11 @@ test.describe('TST01 - Folder management', () => {
     if (isS3) {
       await createFileS3('file_to_move.txt', 'testing file content');
     } else {
-      await createFile(testDataDir, 'file_to_move.txt', 'testing file content');
+      await createLocalFile(
+        testDataDir,
+        'file_to_move.txt',
+        'testing file content',
+      );
     }
 
     const testFolder = await createNewDirectory('empty_folder2');
@@ -205,7 +214,11 @@ test.describe('TST01 - Folder management', () => {
     if (isS3) {
       await createFileS3('file_to_copy.txt', 'testing file content');
     } else {
-      await createFile(testDataDir, 'file_to_copy.txt', 'testing file content');
+      await createLocalFile(
+        testDataDir,
+        'file_to_copy.txt',
+        'testing file content',
+      );
     }
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',

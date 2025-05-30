@@ -34,7 +34,7 @@ import {
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import {
-  createFile,
+  createLocalFile,
   createFileS3,
   startTestingApp,
   stopApp,
@@ -340,7 +340,7 @@ test.describe('TST08 - File folder properties', () => {
     if (isS3) {
       await createFileS3('sample.txt', newFileContent, '.');
     } else {
-      await createFile(testDataDir, 'sample.txt', newFileContent, '.');
+      await createLocalFile(testDataDir, 'sample.txt', newFileContent, '.');
     }
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
@@ -366,7 +366,7 @@ test.describe('TST08 - File folder properties', () => {
     if (isS3) {
       await createFileS3(fileName, svg);
     } else {
-      await createFile(testDataDir, fileName, svg);
+      await createLocalFile(testDataDir, fileName, svg);
     }
     await openFolder('empty_folder');
     await expectElementExist(getGridFileSelector(fileName));

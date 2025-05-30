@@ -1,14 +1,16 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { expect } from '@playwright/test';
+import pathLib from 'path';
 import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
-import { delay } from './hook';
+import { createFileS3, createLocalFile, delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 import {
   createPwLocation,
   createPwMinioLocation,
   createS3Location,
 } from './location.helpers';
+import fse from 'fs-extra';
 
 // export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
@@ -482,6 +484,7 @@ export async function createLocation(
   locationPath = '',
   locationName = defaultLocationName,
   isDefault = false,
+  expectFolderExist = 'empty_folder',
 ) {
   await clickOn('[data-tid=locationManager]');
   if (isMinio) {
@@ -489,10 +492,20 @@ export async function createLocation(
   } else if (isS3) {
     await createS3Location(locationPath, locationName, isDefault);
   } else {
-    await createPwLocation(testDataDir + locationPath, locationName, isDefault);
+    await createPwLocation(
+      pathLib.join(testDataDir, locationPath),
+      locationName,
+      isDefault,
+    );
   }
   await clickOn('[data-tid=location_' + locationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  if (expectFolderExist) {
+    await expectElementExist(
+      getGridFileSelector(expectFolderExist),
+      true,
+      8000,
+    );
+  }
 }
 
 export async function setGridOptions(
@@ -733,6 +746,72 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   }
 }
 
+/**
+ * TODO fix scroll
+ * @param fileType
+ * @param extensionType
+ * @param extension
+ * @returns {Promise<void>}
+ */
+export async function setFileTypeExtension(
+  fileType,
+  extensionType = 'viewer',
+  extension = 'Text_Editor',
+) {
+  await clickOn('[data-tid=settings]');
+  await clickOn('[data-tid=fileTypeSettingsDialog]');
+  const selector = '[data-tid=' + extensionType + 'TID' + fileType + ']';
+  //const selectEl = await global.client.locator('[data-tid=settingsFileTypesTID]');
+  //await selectEl.evaluate(node => node.scrollIntoView());
+  /*await selectEl.evaluate((el, targetSelector) => {
+    const target = el.locator(targetSelector);
+    if (target) {
+      const topPos = target.offsetTop;
+      el.scrollTop = topPos;
+    }
+  }, selector);*/
+
+  // await selectEl.scrollIntoViewIfNeeded();
+  await clickOn(selector);
+  await clickOn(
+    '[data-tid=' + extension + extensionType + 'TID' + fileType + ']',
+  );
+  await clickOn('[data-tid=closeSettingsDialog]');
+}
+
+export async function expectMetaFileContain(
+  { testDataDir },
+  metaFile,
+  rootFolder,
+  contain,
+  timeout,
+) {
+  await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
+  //await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  //await clickOn('[data-tid=reloadDirectory]');
+  if (await isDisplayed(getGridFileSelector(AppConfig.metaFolder))) {
+    await openFolder(AppConfig.metaFolder);
+
+    await expectElementExist(getGridFileSelector(metaFile), true, timeout);
+    await openFile(metaFile, 'showPropertiesTID');
+    await expectLocalFileContain(
+      { testDataDir },
+      metaFile,
+      rootFolder,
+      contain,
+    );
+    //await expectFileContain(contain, timeout);
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+
+    await expectElementExist(
+      getGridFileSelector(AppConfig.metaFolder),
+      true,
+      timeout,
+    );
+    await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
+  }
+}
+
 export async function expectMetaFilesExist(
   arrMetaFiles,
   exist = true,
@@ -790,6 +869,41 @@ export async function writeTextInIframeInput(
   }
 }
 
+export function normalized(content) {
+  // Strip out all uuid properties (e.g. ,"uuid":"e3f0f0909cd84b4..." or "uuid":"..." at start)
+  return content
+    .replace(
+      // match optional leading comma, then "uuid" or "id" with a string value, OR "lmdt" with a number
+      /,?"(?:uuid|id)"\s*:\s*"[^"]*"|,?"lmdt"\s*:\s*\d+/g,
+      '',
+    )
+    .trim();
+}
+/**
+ * Assert that a local file contains the given substring.
+ *
+ * @param filePath - Path to the file on disk.
+ * @param txtToContain - Substring you expect to find in the file.
+ */
+export async function expectLocalFileContain(
+  { testDataDir },
+  fileName,
+  rootFolder,
+  txtToContain = 'etete&5435',
+) {
+  const filePath = pathLib.join(testDataDir, rootFolder, fileName);
+  // Read the file as UTF-8 text
+  const content = await fse.readFile(filePath, 'utf-8');
+  const contentN = normalized(content);
+  const txtToContainN = normalized(txtToContain);
+
+  // Playwright assertion
+  expect(contentN).toContain(
+    txtToContainN,
+    `Expected file "${filePath}" to contain "${txtToContainN}", but it did not: "${contentN}"`,
+  );
+}
+
 export async function expectFileContain(
   txtToContain = 'etete&5435',
   timeout = 10000,
@@ -799,7 +913,7 @@ export async function expectFileContain(
       async () => {
         const fLocator = await frameLocator('iframe[allowfullscreen]');
         const bodyTxt = await fLocator.locator('body').innerText();
-        console.log(bodyTxt);
+        //console.log(bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
       },
       {
@@ -842,6 +956,36 @@ export async function waitForNotification(
       // await expectElementExist('[data-tid=' + tid + ']', false, 1000);
     }
   } */
+}
+
+export async function addDescription(desc) {
+  await clickOn('[data-tid=descriptionTabTID]');
+  await clickOn('[data-tid=descriptionTID]');
+  const editor = await global.client.waitForSelector(
+    '[data-tid=descriptionTID] [contenteditable=true]',
+  );
+  await editor.type(desc);
+  /*
+  // editorContent is empty on web
+  const editorContent = await editor.innerText();
+  await expect(editorContent).toBe(desc);
+  */
+  await clickOn('[data-tid=editDescriptionTID]');
+  await clickOn('[data-tid=editDescriptionTID]');
+  await clickOn('[data-tid=editDescriptionTID]');
+}
+
+export async function createFile(
+  { isS3, testDataDir },
+  fileName,
+  fileContent,
+  rootFolder,
+) {
+  if (isS3) {
+    await createFileS3(fileName, fileContent, rootFolder);
+  } else {
+    await createLocalFile(testDataDir, fileName, fileContent, rootFolder);
+  }
 }
 
 export async function openFolder(folderName) {
