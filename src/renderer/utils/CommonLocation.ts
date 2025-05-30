@@ -42,6 +42,7 @@ export class CommonLocation implements TS.Location {
   reloadOnFocus?: boolean;
   disableThumbnailGeneration?: boolean;
   fullTextIndex?: boolean;
+  extractLinks?: boolean;
   maxIndexAge?: number;
   maxLoops?: number;
   persistTagsInSidecarFile?: boolean;
@@ -81,6 +82,7 @@ export class CommonLocation implements TS.Location {
     this.reloadOnFocus = location.reloadOnFocus;
     this.disableThumbnailGeneration = location.disableThumbnailGeneration;
     this.fullTextIndex = Pro && location.fullTextIndex;
+    this.extractLinks = Pro && location.extractLinks;
     this.maxIndexAge = location.maxIndexAge;
     this.maxLoops = location.maxLoops;
     this.persistTagsInSidecarFile = location.persistTagsInSidecarFile;
@@ -943,6 +945,7 @@ export class CommonLocation implements TS.Location {
   createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
+    extractLinks: boolean,
     ignorePatterns: Array<string>,
   ): Promise<any> => {
     /*if (this.isReadOnly) {
@@ -956,6 +959,7 @@ export class CommonLocation implements TS.Location {
       const payload = JSON.stringify({
         directoryPath,
         extractText,
+        extractLinks,
         ignorePatterns,
       });
       return window.electronIO.ipcRenderer.invoke(

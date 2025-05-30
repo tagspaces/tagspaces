@@ -1205,6 +1205,7 @@ export function toTsLocation(location: CommonLocation): TS.S3Location {
       disableThumbnailGeneration: location.disableThumbnailGeneration,
     }),
     ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
+    ...(location.extractLinks && { extractLinks: location.extractLinks }),
     ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
     ...(location.maxLoops && { maxLoops: location.maxLoops }),
     ...(location.persistTagsInSidecarFile && {
