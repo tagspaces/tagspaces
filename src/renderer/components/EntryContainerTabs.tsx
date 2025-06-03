@@ -166,7 +166,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       selectedTabIndex === index //parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
-      dispatch(SettingsActions.setEntryContainerTab(undefined));
+      dispatch(SettingsActions.setEntryContainerTab(TabNames.closedTabs));
       toggleProperties();
       console.log('tab click:' + index);
     }
