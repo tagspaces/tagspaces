@@ -36,7 +36,13 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -56,7 +62,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
   const [editDisabled, setEditDisabled] = useState(false);
   const { setError, haveError } = useValidation();
   const titleRef = useRef<string>(tag?.title || '');
-  //const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -109,7 +115,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
 
   const setTitle = (newTitle: string) => {
     titleRef.current = newTitle;
-    //forceUpdate();
+    forceUpdate();
   };
 
   const renderContent = () => {
@@ -134,7 +140,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
               handleValidation(value);
               setTitle(value);
             }}
-            defaultValue={tag?.title}
+            value={titleRef.current || tag?.title}
             data-tid="editTagEntryDialog_input"
             slotProps={{
               input: {
