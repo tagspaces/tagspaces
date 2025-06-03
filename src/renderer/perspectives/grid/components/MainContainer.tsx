@@ -81,8 +81,6 @@ function GridPerspective(props: Props) {
     setSelectedEntries(selected);
   };
 
-  const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
-
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
   const selectedEntry = useRef<TS.FileSystemEntry>(undefined);
@@ -96,8 +94,6 @@ function GridPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
-    useState<boolean>(false);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
   const firstRender = useFirstRender();
@@ -176,13 +172,6 @@ function GridPerspective(props: Props) {
 
   const closeOptionsMenu = () => {
     setOptionsContextMenuAnchorEl(null);
-  };
-
-  const openShareFilesDialog = () => {
-    const currentLocation = findLocation();
-    if (currentLocation && currentLocation.haveObjectStoreSupport()) {
-      setIsShareFilesDialogOpened(true);
-    }
   };
 
   const keyMap = {
@@ -335,7 +324,6 @@ function GridPerspective(props: Props) {
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        openShareFilesDialog={openShareFilesDialog}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -371,12 +359,6 @@ function GridPerspective(props: Props) {
           }}
           openHelpWebPage={openHelpWebPage}
           handleSortingMenu={handleSortingMenu}
-        />
-      )}
-      {isShareFilesDialogOpened && Pro && (
-        <ShareFilesDialog
-          open={isShareFilesDialogOpened}
-          onClose={() => setIsShareFilesDialogOpened(false)}
         />
       )}
       {/* TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
