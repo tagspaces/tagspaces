@@ -269,7 +269,7 @@ export const IOActionsContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification } = useNotificationContext();
-  const { selectedEntries } = useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const {
     createDirectoryPromise,
     renameFilePromise,
@@ -616,6 +616,7 @@ export const IOActionsContextProvider = ({
     )
       .then((moveArray) => {
         if (moveArray !== undefined && moveArray.length > 0) {
+          setSelectedEntries([]);
           const moveError = moveArray.find((err) => err instanceof Error);
           if (!moveError) {
             showNotification(t('core:filesMovedSuccessful'));

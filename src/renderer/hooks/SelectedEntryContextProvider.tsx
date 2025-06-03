@@ -85,8 +85,21 @@ export const SelectedEntryContextProvider = ({
   };
 
   const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
-    selectedEntries.current = entries ? entries : [];
-    forceUpdate();
+    const old = selectedEntries.current || [];
+    const incoming = entries || [];
+
+    // Quick length check
+    const lengthsDiffer = old.length !== incoming.length;
+
+    // If lengths match, check each entry’s .path
+    const anyPathDiffers =
+      !lengthsDiffer &&
+      old.some((oldEntry, i) => oldEntry.path !== incoming[i].path);
+
+    if (lengthsDiffer || anyPathDiffers) {
+      selectedEntries.current = incoming;
+      forceUpdate();
+    }
   };
 
   const selectEntry = (entry: TS.FileSystemEntry, select: boolean = true) => {
