@@ -934,12 +934,14 @@ export function createThumbnailsInWorker(
 
 export function getDirProperties(path): Promise<TS.DirProp> {
   if (AppConfig.isElectron) {
-    return window.electronIO.ipcRenderer.invoke('getDirProperties', path);
+    try {
+      return window.electronIO.ipcRenderer.invoke('getDirProperties', path);
+    } catch (e) {
+      return Promise.reject(e);
+    }
   } else {
     return Promise.reject(
-      new Error(
-        'platformDirProperties is supported on Electron local storage.',
-      ),
+      new Error('getDirProperties is supported on Electron local storage.'),
     );
   }
 }

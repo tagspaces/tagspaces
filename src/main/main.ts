@@ -62,7 +62,9 @@ if (process.env.NODE_ENV === 'production') {
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-if (isDebug) {
+const testMode = process.env.NODE_ENV === 'test';
+
+if (isDebug || testMode) {
   require('electron-debug')({ showDevTools: false });
   if (isMacLike) {
     // temp fix https://github.com/electron/electron/issues/43415#issuecomment-2359194469
@@ -71,8 +73,6 @@ if (isDebug) {
 } else {
   console.log = () => {};
 }
-
-const testMode = process.env.NODE_ENV === 'test';
 
 let startupFilePath;
 let portableMode;
@@ -432,7 +432,7 @@ const getAssetPath = (...paths: string[]): string => {
 };*/
 
 async function findPort() {
-  if (isDebug) {
+  if (isDebug || testMode) {
     return 2000;
   }
   const defaultWSPort = settings.getInitWsPort();

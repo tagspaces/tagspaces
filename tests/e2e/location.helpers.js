@@ -106,6 +106,7 @@ export async function createPwLocation(
   locationPath,
   locationName,
   isDefault = false,
+  fullTextIndexing = false,
 ) {
   //await clickOn('[data-tid=locationManager]');
   const lastLocationTID = await getPwLocationTid(-1);
@@ -122,8 +123,11 @@ export async function createPwLocation(
     );
 
     if (isDefault) {
-      await clickOn('[data-tid=switchAdvancedModeTID]');
+      //await clickOn('[data-tid=switchAdvancedModeTID]');
       await global.client.check('[data-tid=locationIsDefault] input');
+    }
+    if (fullTextIndexing) {
+      await global.client.check('[data-tid=changeFullTextIndex] input');
     }
     await global.client.click('[data-tid=confirmLocationCreation]');
   }

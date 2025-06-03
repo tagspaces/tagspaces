@@ -257,6 +257,20 @@ export async function startTestingApp(
     global.app.on('console', (msg) => {
       console.log(`[Electron Main] ${msg.type()}: ${msg.text()}`);
     });
+    /* const mainProcess =  global.app.process();
+
+    // 3. Pipe its stdout / stderr to your Playwright test’s console
+    mainProcess.stdout.on("data", (chunk) => {
+      // chunk is a Buffer; convert to string
+      const text = chunk.toString("utf-8").trim();
+      if (text)
+        console.log(`[main stdout] ${text}`);
+    });*/
+    /* mainProcess.stderr.on("data", (chunk) => {
+      const text = chunk.toString("utf-8").trim();
+      if (text)
+        console.error(`[main stderr] ${text}`);
+    });*/
 
     // Get the Electron context.
     global.context = await global.app.context();

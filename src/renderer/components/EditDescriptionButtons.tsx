@@ -112,6 +112,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
   const descrChangedMarker = isDescriptionChanged ? (
     <Tooltip title={t('core:fileChanged')}>
       <span
+        data-tid="descriptionChangedTID"
         style={{
           color: theme.palette.text.primary,
           marginLeft: 3,
@@ -148,7 +149,11 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
         )}
         <ProTooltip tooltip={!isEditDescriptionMode && t('editDescription')}>
           <TsButton
-            data-tid="editDescriptionTID"
+            data-tid={
+              isEditDescriptionMode
+                ? 'saveDescriptionTID'
+                : 'editDescriptionTID'
+            }
             disabled={
               !Pro ||
               isEditMode ||

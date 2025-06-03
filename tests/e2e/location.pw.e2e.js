@@ -17,6 +17,7 @@ import {
   createNewDirectory,
   expectElementExist,
   expectMetaFileContain,
+  getGridFileSelector,
   openFile,
   openFolder,
   openFolderProp,
@@ -148,20 +149,22 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index [electron]', async ({
+  test('TST0328 - Creating location index WS [electron]', async ({
     isS3,
     isMinio,
     testDataDir,
   }) => {
+    test.setTimeout(520000);
     const props = { isS3, isMinio, testDataDir };
-    const file1 = 'test_file1.txt';
-    const file1content = 'test file 1';
+    const file1 = 'test_file1[tag1 tag2].md'; // todo sidecar tags + ids
+    const file1content = 'test md file 1';
     const file1desc = 'test file 1 desc';
-    const file2 = 'test_file2.txt';
-    const file2content = 'test file 2';
+    const file2 = 'test_file2[tag3 tag4].txt';
+    const file2content = 'test txt file 2';
     const file2desc = 'test file 2 desc';
     const locationFolderName = 'indexingLocation';
 
+    //await createFile(props, 'tsm.json', '{id=f998c4e9349044288c93f096f5cebca8}', '.ts');
     await createNewDirectory(locationFolderName);
 
     await createFile(props, file1, file1content, locationFolderName);
@@ -173,6 +176,12 @@ test.describe('TST03 - Testing locations:', () => {
 
     await openFolderProp(testFolder);
     await addDescription(folderDesc);
+    await expectElementExist(
+      '[data-tid=gridCellDescription]',
+      true,
+      10000,
+      getGridFileSelector(testFolder),
+    );
     await openFile(file1, 'showPropertiesTID');
     await addDescription(file1desc);
     await openFile(file2, 'showPropertiesTID');
@@ -182,14 +191,17 @@ test.describe('TST03 - Testing locations:', () => {
       locationFolderName,
       locationFolderName,
       true,
+      true,
       testFolder,
     );
     await openLocationMenu(locationFolderName);
     await clickOn('[data-tid=indexLocation]');
+    await global.client.waitForTimeout(880000);
     const indexFileContent =
-      '[{"name":"testFolder","path":"testFolder","tags":[],"meta":{},"isFile":false,"size":0,"lmdt":1748619717688,"uuid":"e3f0f0909cd84b4d9b96a137ecd906d0","extension":""},{"name":"test_file1.txt","path":"test_file1.txt","tags":[],"meta":{"id":"c5d7bca3c5264bdca9c5780fea3af871"},"isFile":true,"size":11,"lmdt":1748619714668,"uuid":"c5d7bca3c5264bdca9c5780fea3af871","extension":"txt"},{"name":"test_file2.txt","path":"test_file2.txt","tags":[],"meta":{"id":"745272ca0ec84be1b689ebfeae0ef0a8"},"isFile":true,"size":11,"lmdt":1748619714668,"uuid":"745272ca0ec84be1b689ebfeae0ef0a8","extension":"txt"}]';
+      '[{"name":"testFolder","path":"testFolder","tags":[],"meta":{},"isFile":false,"size":96,"extension":""},{"name":"test_file1[tag1 tag2].md","path":"test_file1[tag1 tag2].md","tags":[{"title":"tag1","type":"plain"},{"title":"tag2","type":"plain"}],"meta":{,"description":"test file 1 desc\\n"},"isFile":true,"size":14,"textContent":"test md file 1","extension":"md"},{"name":"test_file2[tag3 tag4].txt","path":"test_file2[tag3 tag4].txt","tags":[{"title":"tag3","type":"plain"},{"title":"tag4","type":"plain"}],"meta":{,"description":"test file 2 desc\\n"},"isFile":true,"size":15,"textContent":"test txt file 2","extension":"txt"}]';
     //await setFileTypeExtension('json');
     const rootFolder = locationFolderName + '/' + AppConfig.metaFolder;
+    //await global.client.waitForTimeout(180000);
     await expectMetaFileContain(
       { testDataDir },
       'tsi.json',

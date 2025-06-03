@@ -409,7 +409,7 @@ export const LocationIndexContextProvider = ({
     ignorePatterns: Array<string> = [],
     isWalking = () => true,
   ): Promise<TS.FileSystemEntry[]> {
-    const mode = ['extractThumbPath'];
+    const mode = ['loadMeta'];
     if (extractText) {
       mode.push('extractTextContent');
       if (loc.extractLinks) {

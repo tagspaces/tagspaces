@@ -253,7 +253,7 @@ test.describe('TST02 - Folder properties', () => {
     //expect(propsTags).toContain(tagName);
   });
 
-  test('TST0213 - Add description to folder [web,electron,_pro]', async () => {
+  test('TST0213 - Add description to folder [web,minio,electron,_pro]', async () => {
     await addDescription('testDescription');
     await expectElementExist(
       '[data-tid=gridCellDescription]',

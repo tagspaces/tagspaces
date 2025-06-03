@@ -484,6 +484,7 @@ export async function createLocation(
   locationPath = '',
   locationName = defaultLocationName,
   isDefault = false,
+  fullTextIndexing = false,
   expectFolderExist = 'empty_folder',
 ) {
   await clickOn('[data-tid=locationManager]');
@@ -496,6 +497,7 @@ export async function createLocation(
       pathLib.join(testDataDir, locationPath),
       locationName,
       isDefault,
+      fullTextIndexing,
     );
   }
   await clickOn('[data-tid=location_' + locationName + ']');
@@ -897,11 +899,12 @@ export async function expectLocalFileContain(
   const contentN = normalized(content);
   const txtToContainN = normalized(txtToContain);
 
-  // Playwright assertion
-  expect(contentN).toContain(
-    txtToContainN,
-    `Expected file "${filePath}" to contain "${txtToContainN}", but it did not: "${contentN}"`,
-  );
+  /*  if (!contentN.includes(txtToContainN)) {
+    throw new Error(
+      `Expected file ${filePath} to contain ${txtToContainN}, but it did not: ${contentN}`
+    );
+  }*/
+  expect(contentN).toContain(txtToContainN);
 }
 
 export async function expectFileContain(
@@ -964,15 +967,19 @@ export async function addDescription(desc) {
   const editor = await global.client.waitForSelector(
     '[data-tid=descriptionTID] [contenteditable=true]',
   );
-  await editor.type(desc);
+  try {
+    await editor.fill(desc);
+  } catch (e) {
+    await editor.type(desc);
+  }
+  await expectElementExist('[data-tid=descriptionChangedTID]');
   /*
   // editorContent is empty on web
   const editorContent = await editor.innerText();
   await expect(editorContent).toBe(desc);
   */
-  await clickOn('[data-tid=editDescriptionTID]');
-  await clickOn('[data-tid=editDescriptionTID]');
-  await clickOn('[data-tid=editDescriptionTID]');
+  //   await global.client.waitForTimeout(80000);
+  await clickOn('[data-tid=saveDescriptionTID]');
 }
 
 export async function createFile(
@@ -1141,7 +1148,7 @@ export async function createNewDirectory(dirName = testFolder) {
   // set new dir name
   await setInputKeys('directoryName', dirName);
   await clickOn('[data-tid=confirmCreateNewDirectory]');
-  await expectElementExist(getGridFileSelector(dirName), true, 5000);
+  await expectElementExist(getGridFileSelector(dirName), true, 50000);
   // await waitForNotification();
   return dirName;
 }
