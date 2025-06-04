@@ -60,7 +60,6 @@ interface Props {
   handleSortingMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   openSettings: () => void;
-  openShareFilesDialog?: () => void;
 }
 
 function MainToolbar(props: Props) {
@@ -70,10 +69,13 @@ function MainToolbar(props: Props) {
     handleSortingMenu,
     handleExportCsvMenu,
     openSettings,
-    openShareFilesDialog,
   } = props;
 
-  const { openMoveCopyFilesDialog, openAddRemoveTagsDialog } = useMenuContext();
+  const {
+    openMoveCopyFilesDialog,
+    openAddRemoveTagsDialog,
+    openShareFilesDialog,
+  } = useMenuContext();
   const { haveLocalSetting } = usePerspectiveSettingsContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
   const { nativeDragModeEnabled, setNativeDragModeEnabled } =
@@ -233,13 +235,13 @@ function MainToolbar(props: Props) {
             <DeleteIcon />
           </TsToolbarButton>
         )}
-        {openShareFilesDialog && currentLocation?.haveObjectStoreSupport() && (
+        {Pro && currentLocation?.haveObjectStoreSupport() && (
           <TsToolbarButton
             tooltip={t('core:shareFiles')}
             title={t('core:shareFiles')}
             aria-label={t('core:shareFiles')}
             data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-            onClick={openShareFilesDialog}
+            onClick={() => openShareFilesDialog()}
             disabled={selectedEntries.length < 1}
           >
             <ShareIcon />

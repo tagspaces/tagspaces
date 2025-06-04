@@ -78,28 +78,14 @@ interface Props {
   mouseY?: number;
   open: boolean;
   onClose: () => void;
-  openShareFilesDialog?: () => void;
-  /**
-   * @deprecated use selectedEntries instead
-   */
-  // selectedFilePath?: string;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
 }
 
 function FileMenu(props: Props) {
-  const {
-    openShareFilesDialog,
-    reorderTop,
-    reorderBottom,
-    anchorEl,
-    mouseX,
-    mouseY,
-    open,
-    onClose,
-    // selectedFilePath,
-  } = props;
+  const { reorderTop, reorderBottom, anchorEl, mouseX, mouseY, open, onClose } =
+    props;
 
   const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
@@ -107,6 +93,7 @@ function FileMenu(props: Props) {
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameEntryDialog,
+    openShareFilesDialog,
   } = useMenuContext();
   const { selectedEntries, lastSelectedEntry } = useSelectedEntriesContext();
   const { openDeleteMultipleEntriesDialog } =

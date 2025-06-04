@@ -49,6 +49,7 @@ export const TabNames = {
   revisionsTab: 'revisionsTab',
   aiTab: 'aiTab',
   linksTab: 'linksTab',
+  closedTabs: 'closedTabs',
 };
 
 type EntryPropsTabsContextData = {

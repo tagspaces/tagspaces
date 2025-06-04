@@ -59,6 +59,7 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -93,7 +94,7 @@ function EntryContainer() {
     flexDirection: 'column',
   };
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
-    tabIndex !== undefined && tabIndex !== -1,
+    tabIndex !== undefined && tabIndex !== TabNames.closedTabs,
   );
 
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
