@@ -696,7 +696,7 @@
   "currentLocation": "Current Location",
   "navigateTo": "Navigate to",
   "searchScope": "Search Scope",
-  "clickToExpand": "Click to load subfolders",
+  "clickToExpand": "Click to toggle subfolders",
   "exifGeo": "Import EXIF latitude and longitude as geo-tag",
   "exifDateTime": "Import EXIF image shooting date and times as date tag",
   "iptcDescription": "Import IPTC description as file description",
