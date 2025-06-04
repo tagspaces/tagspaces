@@ -97,10 +97,13 @@ const DirectoryTreeView = forwardRef(
 
     useImperativeHandle(ref, () => ({
       changeLocation(newLocation: CommonLocation) {
-        if (isExpanded && data && data[newLocation.uuid] !== undefined) {
+        if (isExpanded) {
           // Collapse (or clear) if already expanded
           //setData(undefined);
           setExpanded(false);
+        } else if (data && data[newLocation.uuid] !== undefined) {
+          //if (newLocation.uuid === currentLocationId) {
+          setData(undefined);
         } else {
           loadSubDirectories(newLocation);
         }
