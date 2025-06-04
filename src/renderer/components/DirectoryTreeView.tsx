@@ -97,6 +97,9 @@ const DirectoryTreeView = forwardRef(
 
     useImperativeHandle(ref, () => ({
       changeLocation(newLocation: CommonLocation) {
+        if (currentLocationId === undefined) {
+          changeLocation(newLocation, true);
+        }
         if (isExpanded) {
           // Collapse (or clear) if already expanded
           //setData(undefined);
