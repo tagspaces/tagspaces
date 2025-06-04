@@ -40,7 +40,7 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_ENTRY_CONTAINER_TAB: 'SETTINGS/SET_ENTRY_CONTAINER_TAB',
-  //SET_SHOW_DETAILS: 'SETTINGS/SET_SHOW_DETAILS',
+  SET_ENTRY_PROPERTIES_HEIGHT: 'SETTINGS/SET_ENTRY_PROPERTIES_HEIGHT',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
   SET_USEONLYTAGSFROMTAGLIBRARY: 'SETTINGS/SET_USEONLYTAGSFROMTAGLIBRARY',
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
@@ -173,6 +173,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_ENTRY_CONTAINER_TAB: {
       return { ...state, entryContainerTab: action.entryContainerTab };
+    }
+    case types.SET_ENTRY_PROPERTIES_HEIGHT: {
+      return { ...state, entryPropertiesHeight: action.entryPropertiesHeight };
     }
     case types.SET_TAG_DELIMITER: {
       return { ...state, tagDelimiter: action.delimiter };
@@ -653,6 +656,10 @@ export const actions = {
     type: types.SET_ENTRY_CONTAINER_TAB,
     entryContainerTab: tabName,
   }),
+  setEntryPropertiesHeight: (height: number) => ({
+    type: types.SET_ENTRY_PROPERTIES_HEIGHT,
+    entryPropertiesHeight: height,
+  }),
   /*  setShowDetails: (showDetails: boolean) => ({
     type: types.SET_SHOW_DETAILS,
     showDetails: showDetails,
@@ -1010,6 +1017,8 @@ export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
 export const getEntryContainerTab = (state: any) =>
   state.settings.entryContainerTab;
+export const getEntryPropertiesHeight = (state: any) =>
+  state.settings.entryPropertiesHeight;
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
 export const getDefaultPerspective = (state: any) =>

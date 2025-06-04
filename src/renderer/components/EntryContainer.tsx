@@ -37,7 +37,9 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { Pro } from '-/pro';
 import {
+  actions as SettingsActions,
   getEntryContainerTab,
+  getEntryPropertiesHeight,
   getKeyBindingObject,
   isDesktopMode,
   isRevisionsEnabled,
@@ -58,11 +60,13 @@ import React, {
 } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { AppDispatch } from '-/reducers/app';
 
 function EntryContainer() {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const {
     openedEntry,
     closeAllFiles,
@@ -83,6 +87,7 @@ function EntryContainer() {
 
   const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
+  const entryPropertiesHeight = useSelector(getEntryPropertiesHeight);
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
   const revisionsEnabled = useSelector(isRevisionsEnabled);
@@ -110,8 +115,6 @@ function EntryContainer() {
     setSaveBeforeReloadConfirmDialogOpened,
   ] = useState<boolean>(false);
   const isSavingInProgress = useRef<boolean>(false);
-  const [entryPropertiesHeight, setEntryPropertiesHeight] =
-    useState<number>(100);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);
   const fileViewerContainer: MutableRefObject<HTMLDivElement> =
@@ -502,15 +505,15 @@ function EntryContainer() {
 
   const toggleEntryPropertiesHeight = () => {
     if (entryPropertiesHeight === 100) {
-      setEntryPropertiesHeight(200);
+      dispatch(SettingsActions.setEntryPropertiesHeight(200));
     } else if (entryPropertiesHeight === 200) {
-      setEntryPropertiesHeight(350);
+      dispatch(SettingsActions.setEntryPropertiesHeight(350));
     } else if (entryPropertiesHeight === 350) {
-      setEntryPropertiesHeight(50);
+      dispatch(SettingsActions.setEntryPropertiesHeight(50));
     } else if (entryPropertiesHeight === 50) {
-      setEntryPropertiesHeight(100);
+      dispatch(SettingsActions.setEntryPropertiesHeight(100));
     } else {
-      setEntryPropertiesHeight(200);
+      dispatch(SettingsActions.setEntryPropertiesHeight(200));
     }
   };
 

@@ -65,6 +65,7 @@ export default {
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
   showUnixHiddenEntries: false,
   entryContainerTab: 0,
+  entryPropertiesHeight: 100,
   checkForUpdates,
   reorderTags: false,
   coloredFileExtension: false,
