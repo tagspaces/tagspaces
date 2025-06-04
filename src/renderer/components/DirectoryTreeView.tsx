@@ -175,7 +175,7 @@ const DirectoryTreeView = forwardRef(
     const onRowClick = (subDir: SubFolder) => {
       const foundLoc = findLocation(subDir.uuid);
       if (foundLoc) {
-        changeLocation(foundLoc, true);
+        //changeLocation(foundLoc, true);
         openDirectory(subDir.path, undefined, foundLoc);
       }
     };
