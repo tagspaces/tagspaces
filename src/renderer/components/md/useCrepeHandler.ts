@@ -1,16 +1,14 @@
 import React, { useImperativeHandle } from 'react';
-import { replaceAll } from '@milkdown/utils';
-import { EditorStatus } from '@milkdown/core';
+import { replaceAll, insert, getMarkdown } from '@milkdown/kit/utils';
+import { EditorStatus } from '@milkdown/kit/core';
 import type { Editor } from '@milkdown/kit/core';
-import { getMarkdown, insert } from '@milkdown/kit/utils';
 import { Crepe } from '@milkdown/crepe';
 
 export interface CrepeRef {
   update: (markdown: string) => void;
   insert: (markdown: string) => void;
   setEditMode: (isEditMode: boolean) => void;
-  openSearchDialog: () => void;
-  getMarkdown: () => string;
+  getMarkdown: () => string | undefined;
   destroy: () => void;
 }
 
@@ -24,7 +22,7 @@ export function useCrepeHandler(
     update: (markdown: string) => {
       const editor = get();
       if (loading || !editor || editor.status !== EditorStatus.Created) return;
-      editor.action(replaceAll(markdown));
+      editor.action(replaceAll(markdown)); //, true));
     },
     insert: (markdown: string) => {
       const editor = get();
@@ -33,20 +31,26 @@ export function useCrepeHandler(
     },
     setEditMode: (isEditable: boolean) => {
       const crepe = getCrepe();
-      if (crepe) {
-        crepe.setReadonly(!isEditable);
-      }
-      /*const editor = get();
-      if (loading || !editor || editor.status !== EditorStatus.Created) return;
-      editor.config((ctx: Ctx) => {
+      const editor = get();
+
+      if (!crepe || !editor) return;
+
+      // If we haven’t reached “Ready” yet, stash the flag and/or delay:
+      /*if (editor.status !== EditorStatus.Ready) {
+        pendingEditableRef.current = isEditable;
+        return;
+      }*/
+
+      // At this point, status === Ready, you can safely flip readOnly:
+      crepe.setReadonly(!isEditable);
+
+      // If you want to be extra sure, also update the editorViewOptionsCtx:
+      /*editor.config((ctx) => {
         ctx.update(editorViewOptionsCtx, (prev) => ({
           ...prev,
           editable: () => isEditable,
         }));
       });*/
-    },
-    openSearchDialog: () => {
-      // openSearchDialog();
     },
     getMarkdown: () => {
       const editor = get();

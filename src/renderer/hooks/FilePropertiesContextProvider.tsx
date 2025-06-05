@@ -175,6 +175,9 @@ export const FilePropertiesContextProvider = ({
     });
   }
   function setEditDescriptionMode(editMode: boolean) {
+    if (!editMode) {
+      isDescriptionChanged.current = false;
+    }
     setIsEditDescriptionMode((prev) => {
       if (prev !== editMode && !isEditMode) {
         if (AppConfig.isElectron) {
