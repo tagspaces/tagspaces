@@ -27,6 +27,7 @@ import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -36,6 +37,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { Pro } from '-/pro';
+import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
@@ -61,8 +63,6 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import { AppDispatch } from '-/reducers/app';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -99,7 +99,7 @@ function EntryContainer() {
     flexDirection: 'column',
   };
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
-    tabIndex !== undefined && tabIndex !== TabNames.closedTabs,
+    tabIndex !== TabNames.closedTabs,
   );
 
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -746,7 +746,9 @@ function EntryContainer() {
             key="FileViewID"
             fileViewer={fileViewer}
             fileViewerContainer={fileViewerContainer}
-            height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
+            height={
+              tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
+            }
             setSavingInProgress={(isSaving: boolean) => {
               isSavingInProgress.current = isSaving;
               forceUpdate();

@@ -19,9 +19,15 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface ButtonsProps {
   getHtml: () => string;
+  resetMdContent: (md: string) => void;
+  setEditMode: (editMode: boolean) => void;
 }
 
-const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
+const EditDescriptionButtons: React.FC<ButtonsProps> = ({
+  getHtml,
+  resetMdContent,
+  setEditMode,
+}) => {
   const { t } = useTranslation();
   const {
     saveDescription,
@@ -140,8 +146,10 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
           <TsButton
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             onClick={() => {
+              resetMdContent(openedEntry.meta?.description);
+              setEditMode(false);
               setEditDescriptionMode(false);
-              return reloadOpenedFile();
+              //return reloadOpenedFile();
             }}
           >
             {t('core:cancel')}
@@ -171,9 +179,13 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({ getHtml }) => {
             onClick={() => {
               if (isEditDescriptionMode) {
                 saveDescription().then(() => {
+                  if (!isDescriptionChanged) {
+                    setEditMode(false);
+                  }
                   setEditDescriptionMode(false);
                 });
               } else {
+                setEditMode(true);
                 setEditDescriptionMode(true);
               }
             }}

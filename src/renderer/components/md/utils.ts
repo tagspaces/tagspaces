@@ -1,8 +1,9 @@
 import AppConfig from '-/AppConfig';
 import { Crepe } from '@milkdown/crepe';
 import { Ctx } from '@milkdown/ctx';
-import { editorViewOptionsCtx } from '@milkdown/kit/core';
+import { editorViewOptionsCtx, editorViewCtx } from '@milkdown/kit/core';
 import { remarkPreserveEmptyLinePlugin } from '@milkdown/preset-commonmark';
+import { trailing } from '@milkdown/kit/plugin/trailing';
 
 export function createCrepeEditor(
   root: HTMLElement,
@@ -56,6 +57,7 @@ export function createCrepeEditor(
     },
   });
   crepe.editor.remove(remarkPreserveEmptyLinePlugin);
+  crepe.editor.remove(trailing);
   crepe.editor.config((ctx: Ctx) => {
     ctx.update(editorViewOptionsCtx, (prev) => ({
       ...prev,
@@ -84,13 +86,13 @@ export function createCrepeEditor(
   if (onChange || onFocus) {
     crepe.on((listener) => {
       listener.markdownUpdated((_, markdown: string, prevMarkdown: string) => {
-        //const view = crepe.editor.ctx.get(editorViewCtx);
-        //if (view && view.hasFocus()) {
-        // console.log('Change listener:' + markdown);
-        if (onChange) {
-          onChange(markdown, prevMarkdown);
+        const view = crepe.editor.ctx.get(editorViewCtx);
+        if (view && view.hasFocus()) {
+          // console.log('Change listener:' + markdown);
+          if (onChange) {
+            onChange(markdown, prevMarkdown);
+          }
         }
-        //}
       });
       listener.focus(() => {
         if (onFocus) {
