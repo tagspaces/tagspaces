@@ -39,6 +39,15 @@ function EditDescription() {
   }, []);
 
   //const noDescription = !description || description.length < 1;
+  const resetMdContent = (mdContent: string) => {
+    if (!fileDescriptionRef.current) return;
+    fileDescriptionRef.current.update(mdContent);
+  };
+
+  const setEditMode = (editMode: boolean) => {
+    if (!fileDescriptionRef.current) return;
+    fileDescriptionRef.current.setEditMode(editMode);
+  };
 
   return (
     <div
@@ -48,6 +57,8 @@ function EditDescription() {
     >
       <EditDescriptionButtons
         getHtml={() => milkdownDivRef.current?.innerHTML}
+        resetMdContent={resetMdContent}
+        setEditMode={setEditMode}
       />
       <div
         ref={milkdownDivRef}
@@ -56,6 +67,7 @@ function EditDescription() {
         onDoubleClick={() => {
           if (Pro) {
             setEditDescriptionMode(true);
+            setEditMode(true);
           }
         }}
         style={{

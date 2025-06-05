@@ -99,7 +99,7 @@ function EntryContainer() {
     flexDirection: 'column',
   };
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
-    tabIndex !== undefined && tabIndex !== TabNames.closedTabs,
+    tabIndex !== TabNames.closedTabs,
   );
 
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -746,8 +746,9 @@ function EntryContainer() {
             key="FileViewID"
             fileViewer={fileViewer}
             fileViewerContainer={fileViewerContainer}
-            height={'calc(100% - 100px)'}
-            // height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
+            height={
+              tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
+            }
             setSavingInProgress={(isSaving: boolean) => {
               isSavingInProgress.current = isSaving;
               forceUpdate();

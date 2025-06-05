@@ -19,17 +19,18 @@ import React, { useRef, forwardRef, useEffect } from 'react';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
 import { getMarkdown, $useKeymap, $command } from '@milkdown/kit/utils';
+import { replaceAll } from '@milkdown/utils';
+import { Crepe } from '@milkdown/crepe';
+
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { createCrepeEditor } from '-/components/md/utils';
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
-import { Crepe } from '@milkdown/crepe';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { replaceAll } from '@milkdown/utils';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import useFirstRender from '-/utils/useFirstRender';
 
 interface CrepeMdEditorProps {
   //onChange?: (markdown: string, prevMarkdown: string) => void;
@@ -50,17 +51,14 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
       setDescription,
     } = useFilePropertiesContext();
     const { openedEntry, openLink } = useOpenedEntryContext();
-    const crepeInstanceRef = useRef<Crepe>(undefined);
+
+    // We’ll keep a ref to the “Crepe” wrapper (returned by createCrepeEditor):
+    const crepeRef = useRef<Crepe>(null);
     const firstRender = useFirstRender();
 
     const { get, loading } = useEditor(
       (root) => {
-        /*if (crepeInstanceRef.current) {
-          return crepeInstanceRef.current;
-        }*/
-        const milkdownListener = (markdown: string) => {
-          setDescription(markdown);
-        };
+        // Build a Milkdown‐based “Crepe” editor:
         const placeholder = isEditDescriptionMode
           ? undefined
           : t(
@@ -76,22 +74,21 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
           placeholder,
           currentDirectoryPath,
           openLink,
-          milkdownListener,
+          (newMd: string) => {
+            setDescription(newMd);
+          },
           onFocus,
         );
 
+        // Listen for status changes:
         crepe.editor.onStatusChange((status: EditorStatus) => {
           if (status === EditorStatus.Created) {
-            //console.log(status);
-            /* if (crepeInstanceRef.current) {
-              console.log('Destroyed...');
-              crepeInstanceRef.current.destroy();
-              crepeInstanceRef.current = null;
-            }*/
-            crepeInstanceRef.current = crepe;
+            // Now “editorView” has been injected. We can safely do replaceAll here
+            crepeRef.current = crepe;
           }
         });
 
+        // Register custom save‐shortcut:
         const saveCommand = $command('saveCommand', () => () => {
           return () => {
             saveDescription();
@@ -114,42 +111,52 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentDirectoryPath, isEditDescriptionMode],
+      [currentDirectoryPath], //, isEditDescriptionMode],
     );
 
+    // Whenever openedEntry changes and the user hasn’t manually edited,
+    // we “push” the new description into the editor.
     useEffect(() => {
       if (!isDescriptionChanged) {
-        changeDescription(openedEntry.meta?.description);
+        pushNewDescription(openedEntry.meta?.description ?? '');
       }
     }, [openedEntry]); //, isDescriptionChanged]);
 
+    // If some external “metaActions” say “hey, description was updated,”
+    // we re‐push it:
     useEffect(() => {
       if (!firstRender && metaActions && metaActions.length > 0) {
         for (const action of metaActions) {
-          if (action.entry && openedEntry.path === action.entry.path) {
-            if (action.action === 'descriptionChange') {
-              changeDescription(action.entry.meta?.description);
-            }
+          if (
+            action.entry &&
+            openedEntry.path === action.entry.path &&
+            action.action === 'descriptionChange'
+          ) {
+            pushNewDescription(action.entry.meta?.description ?? '');
           }
         }
       }
     }, [metaActions]);
 
-    function changeDescription(description: string) {
-      const editor = get();
-      if (!loading && editor && editor.status === EditorStatus.Created) {
+    function pushNewDescription(newMd: string) {
+      // Grab the Crepe wrapper from ref (only after status === Ready!)
+      const crepe = crepeRef.current;
+      if (!loading && crepe && crepe.editor.status === EditorStatus.Created) {
+        // Double‐check that the current editor content differs:
         try {
-          const markdown = editor.action(getMarkdown());
-          if (markdown !== description) {
-            editor.action(replaceAll(description, true));
+          const currentMd = crepe.editor.action(getMarkdown());
+          if (currentMd !== newMd) {
+            // Now we are guaranteed “editorView” is injected, so replaceAll won’t complain:
+            crepe.editor.action(replaceAll(newMd, true));
           }
         } catch (e) {
-          console.log(e);
+          console.error('Failed to replaceAll:', e);
         }
       }
     }
 
-    useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
+    // Hook up the external ref to our Crepe instance so parent callers can access it
+    useCrepeHandler(ref, () => crepeRef.current, get, loading);
 
     return <Milkdown />;
   },
