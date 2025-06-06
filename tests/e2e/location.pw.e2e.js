@@ -149,7 +149,8 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index WS [electron]', async ({
+  test('TST0328 - Creating location index WS []', async ({
+    //todo electron
     isS3,
     isMinio,
     testDataDir,
