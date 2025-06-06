@@ -136,18 +136,17 @@ const DirectoryTreeView = forwardRef(
           setExpanded(false);
         } else if (data && data[newLocation.uuid] !== undefined) {
           //if (newLocation.uuid === currentLocationId) {
-          setData(undefined);
+          //setData(undefined);
+          setExpanded(true);
         } else {
-          resolveRelativePath(newLocation.path).then((path) => {
-            loadSubDirectories({
-              isFile: false,
-              lmdt: 0,
-              name: newLocation.name,
-              path: path,
-              size: 0,
-              locationID: newLocation.uuid,
-              children: [],
-            });
+          loadSubDirectories({
+            isFile: false,
+            lmdt: 0,
+            name: newLocation.name,
+            path: newLocation.path,
+            size: 0,
+            locationID: newLocation.uuid,
+            children: [],
           });
         }
       },
@@ -216,7 +215,7 @@ const DirectoryTreeView = forwardRef(
     };
 
     const onRowClick = (subDir: SubFolder) => {
-      const foundLoc = findLocation(subDir.uuid);
+      const foundLoc = findLocation(subDir.locationID);
       if (foundLoc) {
         //changeLocation(foundLoc, true);
         openDirectory(subDir.path, undefined, foundLoc);
@@ -395,15 +394,6 @@ const DirectoryTreeView = forwardRef(
           .map((entry) => ({
             ...entry,
             locationID: loc.uuid,
-            /*name: entry.name,
-            path: entry.path,
-            uuid,
-            type,
-            accessKeyId,
-            secretAccessKey,
-            bucketName,
-            region,
-            endpointURL,*/
             children: [] as SubFolder[],
           }))
       );
