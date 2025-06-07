@@ -3978,6 +3978,7 @@ The following npm packages may be included in this product:
  - @types/istanbul-lib-report@3.0.3
  - @types/istanbul-reports@3.0.4
  - @types/katex@0.16.7
+ - @types/lodash-es@4.17.12
  - @types/lodash.debounce@4.0.9
  - @types/lodash.throttle@4.1.9
  - @types/lodash@4.17.17
@@ -4056,7 +4057,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.156
+ - @tagspacespro/tagspacespro@5.0.157
 
 This package contains the following license:
 
@@ -9631,7 +9632,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following npm package may be included in this product:
 
- - prosemirror-changeset@2.3.0
+ - prosemirror-changeset@2.3.1
 
 This package contains the following license:
 
@@ -11008,11 +11009,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
+ - lodash-es@4.17.21
  - lodash@4.17.21
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
 
@@ -17761,28 +17763,28 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @milkdown/components@7.11.0
- - @milkdown/core@7.11.0
- - @milkdown/crepe@7.11.0
- - @milkdown/ctx@7.11.0
- - @milkdown/exception@7.11.0
- - @milkdown/kit@7.11.0
- - @milkdown/plugin-block@7.11.0
- - @milkdown/plugin-clipboard@7.11.0
- - @milkdown/plugin-cursor@7.11.0
- - @milkdown/plugin-history@7.11.0
- - @milkdown/plugin-indent@7.11.0
- - @milkdown/plugin-listener@7.11.0
- - @milkdown/plugin-slash@7.11.0
- - @milkdown/plugin-tooltip@7.11.0
- - @milkdown/plugin-trailing@7.11.0
- - @milkdown/plugin-upload@7.11.0
- - @milkdown/preset-commonmark@7.11.0
- - @milkdown/preset-gfm@7.11.0
- - @milkdown/prose@7.11.0
- - @milkdown/react@7.11.0
- - @milkdown/transformer@7.11.0
- - @milkdown/utils@7.11.0
+ - @milkdown/components@7.12.1
+ - @milkdown/core@7.12.1
+ - @milkdown/crepe@7.12.1
+ - @milkdown/ctx@7.12.1
+ - @milkdown/exception@7.12.1
+ - @milkdown/kit@7.12.1
+ - @milkdown/plugin-block@7.12.1
+ - @milkdown/plugin-clipboard@7.12.1
+ - @milkdown/plugin-cursor@7.12.1
+ - @milkdown/plugin-history@7.12.1
+ - @milkdown/plugin-indent@7.12.1
+ - @milkdown/plugin-listener@7.12.1
+ - @milkdown/plugin-slash@7.12.1
+ - @milkdown/plugin-tooltip@7.12.1
+ - @milkdown/plugin-trailing@7.12.1
+ - @milkdown/plugin-upload@7.12.1
+ - @milkdown/preset-commonmark@7.12.1
+ - @milkdown/preset-gfm@7.12.1
+ - @milkdown/prose@7.12.1
+ - @milkdown/react@7.12.1
+ - @milkdown/transformer@7.12.1
+ - @milkdown/utils@7.12.1
 
 These packages each contain the following license:
 
@@ -18550,7 +18552,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.190
+ - @tagspaces/extensions@1.0.191
 
 This package contains the following license:
 
@@ -18567,15 +18569,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.5.67
- - @tagspaces/tagspaces-common-cordova@4.5.67
- - @tagspaces/tagspaces-common-node@4.5.67
- - @tagspaces/tagspaces-common@4.5.67
- - @tagspaces/tagspaces-indexer@4.5.67
+ - @tagspaces/tagspaces-common-aws3@4.5.71
+ - @tagspaces/tagspaces-common-cordova@4.5.71
+ - @tagspaces/tagspaces-common-node@4.5.71
+ - @tagspaces/tagspaces-common@4.5.71
+ - @tagspaces/tagspaces-indexer@4.5.71
  - @tagspaces/tagspaces-pdf-extraction@4.5.53
  - @tagspaces/tagspaces-thumbgen-image@4.5.60
- - @tagspaces/tagspaces-workers@4.5.67
- - @tagspaces/tagspaces-ws@4.5.67
+ - @tagspaces/tagspaces-workers@4.5.71
+ - @tagspaces/tagspaces-ws@4.5.71
 
 These packages each contain the following license:
 
