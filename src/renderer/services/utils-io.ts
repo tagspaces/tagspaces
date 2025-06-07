@@ -946,6 +946,21 @@ export function getDirProperties(path): Promise<TS.DirProp> {
   }
 }
 
+export function resolveRelativePath(path: string): Promise<string> {
+  if (
+    path &&
+    (path.startsWith('.' + AppConfig.dirSeparator) ||
+      path.startsWith('./') ||
+      path.startsWith('..' + AppConfig.dirSeparator) ||
+      path.startsWith('../')) && // location paths are not with platform dirSeparator
+    AppConfig.isElectron
+  ) {
+    // relative paths
+    return window.electronIO.ipcRenderer.invoke('resolveRelativePaths', path);
+  }
+  return Promise.resolve(path);
+}
+
 export function watchFolderMessage(locationPath, depth) {
   if (AppConfig.isElectron) {
     window.electronIO.ipcRenderer.sendMessage(

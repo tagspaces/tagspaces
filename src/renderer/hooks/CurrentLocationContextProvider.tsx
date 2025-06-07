@@ -41,7 +41,12 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
 import versionMeta from '-/version.json';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { getDevicePaths, instanceId, toTsLocation } from '-/services/utils-io';
+import {
+  getDevicePaths,
+  instanceId,
+  resolveRelativePath,
+  toTsLocation,
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
@@ -224,6 +229,10 @@ export const CurrentLocationContextProvider = ({
     return arr1.every((obj, index) => obj.equal(arr2[index]));
   }*/
 
+  /**
+   * @deprecated use resolveRelativePath instead
+   * @param location
+   */
   function getLocationPath(location: CommonLocation): Promise<string> {
     let locationPath = '';
     if (location) {
@@ -234,22 +243,7 @@ export const CurrentLocationContextProvider = ({
         // eslint-disable-next-line prefer-destructuring
         locationPath = location.paths[0];
       }
-
-      if (
-        locationPath &&
-        (locationPath.startsWith('.' + AppConfig.dirSeparator) ||
-          locationPath.startsWith('./') ||
-          locationPath.startsWith('..' + AppConfig.dirSeparator) ||
-          locationPath.startsWith('../')) && // location paths are not with platform dirSeparator
-        AppConfig.isElectron
-      ) {
-        // TODO test relative path (Directory Back) with other platforms
-        // relative paths
-        return window.electronIO.ipcRenderer.invoke(
-          'resolveRelativePaths',
-          locationPath,
-        );
-      }
+      return resolveRelativePath(locationPath);
     }
 
     return Promise.resolve(locationPath);

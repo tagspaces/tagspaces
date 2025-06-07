@@ -38,6 +38,7 @@ import {
   executePromisesInBatches,
   instanceId,
   mergeFsEntryMeta,
+  resolveRelativePath,
   updateFsEntries,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -74,8 +75,11 @@ type DirectoryContentContextData = {
   currentLocationPath: string;
   currentDirectoryEntries: TS.FileSystemEntry[];
   directoryMeta: TS.FileSystemEntryMeta;
-  //currentDirectoryPerspective: TS.PerspectiveType;
+  /**
+   * @deprecated use currentDirectory instead
+   */
   currentDirectoryPath: string;
+  currentDirectory: TS.FileSystemEntry;
   /**
    * used for reorder files in KanBan
    */
@@ -159,6 +163,7 @@ export const DirectoryContentContext =
     directoryMeta: undefined,
     //currentDirectoryPerspective: undefined,
     currentDirectoryPath: undefined,
+    currentDirectory: undefined,
     currentDirectoryFiles: [],
     currentDirectoryDirs: [],
     //isMetaLoaded: undefined,
@@ -251,7 +256,7 @@ export const DirectoryContentContextProvider = ({
   const isMetaLoaded = useRef<boolean>(undefined);
   //const isLoading = useRef<boolean>(false);
   //const isMetaFolderExist = useRef<boolean>(undefined);
-  const currentDirectoryPath = useRef<string>(undefined);
+  const currentDirectory = useRef<TS.FileSystemEntry>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>(undefined);
   const firstRender = useFirstRender();
@@ -345,7 +350,7 @@ export const DirectoryContentContextProvider = ({
       for (const action of metaActions) {
         if (
           action.entry &&
-          cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+          cleanTrailingDirSeparator(currentDirectory.current?.path) ===
             cleanTrailingDirSeparator(action.entry.path)
         ) {
           if (action.action === 'perspectiveChange') {
@@ -420,7 +425,7 @@ export const DirectoryContentContextProvider = ({
           }
           if (
             action.entry &&
-            cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+            cleanTrailingDirSeparator(currentDirectory.current?.path) ===
               cleanTrailingDirSeparator(action.entry.path)
           ) {
             directoryMeta.current = {
@@ -587,7 +592,7 @@ export const DirectoryContentContextProvider = ({
       );
       if (
         cleanTrailingDirSeparator(
-          cleanFrontDirSeparator(currentDirectoryPath.current),
+          cleanFrontDirSeparator(currentDirectory.current?.path),
         ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
       ) {
         currentDirectoryEntries.current.push(entry);
@@ -597,7 +602,7 @@ export const DirectoryContentContextProvider = ({
 
   function reflectDeleteAction(entry: TS.FileSystemEntry) {
     if (!entry.isFile) {
-      if (entry.path === currentDirectoryPath.current) {
+      if (entry.path === currentDirectory.current?.path) {
         loadParentDirectoryContent();
         return;
       }
@@ -694,9 +699,9 @@ export const DirectoryContentContextProvider = ({
 
     // dispatch(actions.setIsLoading(true));
 
-    if (currentDirectoryPath.current !== undefined) {
+    if (currentDirectory.current !== undefined) {
       const parentDirectory = extractParentDirectoryPath(
-        currentDirectoryPath.current,
+        currentDirectory.current.path,
         currentLocation?.getDirSeparator(),
       );
       console.log(
@@ -722,7 +727,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function updateCurrentDirEntry(path: string, entry: any) {
-    if (path === currentDirectoryPath.current) {
+    if (path === currentDirectory.current?.path) {
       directoryMeta.current = directoryMeta.current
         ? { ...directoryMeta.current, ...entry }
         : entry;
@@ -764,7 +769,7 @@ export const DirectoryContentContextProvider = ({
         entries.some(
           (e) =>
             !cleanFrontDirSeparator(e.path).startsWith(
-              cleanFrontDirSeparator(currentDirectoryPath.current),
+              cleanFrontDirSeparator(currentDirectory.current?.path),
             ),
         );
       if (
@@ -987,15 +992,15 @@ export const DirectoryContentContextProvider = ({
   );
 
   function clearDirectoryContent() {
-    currentDirectoryPath.current = undefined;
+    currentDirectory.current = undefined;
     setCurrentDirectoryEntries([]);
   }
 
   function openCurrentDirectory(
     showHiddenEntries = undefined,
   ): Promise<boolean> {
-    if (currentDirectoryPath.current !== undefined) {
-      return openDirectory(currentDirectoryPath.current, showHiddenEntries);
+    if (currentDirectory.current !== undefined) {
+      return openDirectory(currentDirectory.current.path, showHiddenEntries);
     }
     return Promise.resolve(false);
   }
@@ -1011,7 +1016,7 @@ export const DirectoryContentContextProvider = ({
         return cLocation.checkDirExist(dirPath).then((exist) => {
           if (exist) {
             const reloadMeta =
-              cleanTrailingDirSeparator(currentDirectoryPath.current) ===
+              cleanTrailingDirSeparator(currentDirectory.current?.path) ===
               cleanTrailingDirSeparator(dirPath);
             return loadMetaDirectoryContent(
               dirPath,
@@ -1068,8 +1073,13 @@ export const DirectoryContentContextProvider = ({
     );
 
     //setCurrentDirectoryEntries(directoryContent);
-    currentDirectoryPath.current = cleanTrailingDirSeparator(directoryPath);
-    updateHistory(location.uuid, currentLocationPath.current, directoryPath);
+    currentDirectory.current = location.toFsEntry(
+      cleanTrailingDirSeparator(directoryPath),
+      false,
+    );
+    resolveRelativePath(location.path).then((locationPath) => {
+      updateHistory(location.uuid, locationPath, directoryPath); //currentLocationPath.current
+    });
     return directoryContent;
   }
 
@@ -1161,7 +1171,7 @@ export const DirectoryContentContextProvider = ({
   ) {
     manualPerspective.current = perspective;
     getAllPropertiesPromise(
-      directory ? directory : currentDirectoryPath.current,
+      directory ? directory : currentDirectory.current?.path,
     )
       .then((entry: TS.FileSystemEntry) => {
         const action: TS.EditMetaAction = {
@@ -1575,7 +1585,8 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryEntries: currentDirectoryEntries.current,
       directoryMeta: directoryMeta.current,
       //currentDirectoryPerspective: currentPerspective.current,
-      currentDirectoryPath: currentDirectoryPath.current,
+      currentDirectoryPath: currentDirectory.current?.path,
+      currentDirectory: currentDirectory.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
       //isMetaFolderExist: isMetaFolderExist.current,
@@ -1619,7 +1630,7 @@ export const DirectoryContentContextProvider = ({
     currentLocation,
     currentLocationPath.current,
     currentDirectoryEntries.current,
-    currentDirectoryPath.current,
+    currentDirectory.current,
     directoryMeta.current,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,

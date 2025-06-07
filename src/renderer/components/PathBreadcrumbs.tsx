@@ -82,10 +82,10 @@ interface Props {
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   const { openDirectoryMenu } = useMenuContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { openDirectory, currentDirectory } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const currentLocation = findLocation();
+  const currentLocation = findLocation(currentDirectory?.locationID);
   let pathParts: Array<string> = [];
 
   const { isDesktopMode } = props;
@@ -93,11 +93,11 @@ function PathBreadcrumbs(props: Props) {
   const openDirMenu = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
     setSelectedEntries([]);
-    openDirectoryMenu(event, currentDirectoryPath, false, true);
+    openDirectoryMenu(event, currentDirectory?.path, false, true);
   };
 
-  const normalizedCurrentDirPath = currentDirectoryPath
-    ? normalizePath(currentDirectoryPath.split('\\').join('/'))
+  const normalizedCurrentDirPath = currentDirectory
+    ? normalizePath(currentDirectory.path.split('\\').join('/'))
     : undefined;
 
   const locationTypeIcon =
@@ -109,12 +109,12 @@ function PathBreadcrumbs(props: Props) {
 
   let currentFolderChipIcon = undefined;
 
-  if (currentDirectoryPath) {
+  if (currentDirectory) {
     // Make the path unix like ending always with /
     const addSlash =
       currentLocation && currentLocation.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
-      addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
+      addSlash + normalizePath(currentDirectory.path.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
     if (currentLocation && currentLocation.path) {
@@ -183,7 +183,7 @@ function PathBreadcrumbs(props: Props) {
         <Tooltip
           key="lastBreadcrumb"
           title={
-            t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')
+            t('core:openDirectoryMenu') + ' - ' + (currentDirectory?.path || '')
           }
         >
           <StyledBreadcrumb
@@ -229,15 +229,6 @@ function PathBreadcrumbs(props: Props) {
       >
         {getBreadcrumbs()}
       </StyledBreadcrumbs>
-      {/*<DirectoryMenu
-        open={Boolean(directoryContextMenuAnchorEl)}
-        onClose={closeDirectoryMenu}
-        anchorEl={directoryContextMenuAnchorEl}
-        perspectiveMode={false}
-        switchPerspectives={true}
-        directoryPath={currentDirectoryPath}
-        openRenameDirectoryDialog={openRenameDirectoryDialog}
-      />*/}
     </>
   );
 }
