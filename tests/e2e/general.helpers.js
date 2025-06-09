@@ -876,7 +876,7 @@ export function normalized(content) {
   return content
     .replace(
       // match optional leading comma, then "uuid" or "id" with a string value, OR "lmdt" with a number
-      /,?"(?:uuid|id)"\s*:\s*"[^"]*"|,?"lmdt"\s*:\s*\d+/g,
+      /,?"(?:uuid|id)"\s*:\s*"[^"]*"|,?"(?:lmdt|size)"\s*:\s*\d+/g,
       '',
     )
     .trim();
@@ -885,6 +885,8 @@ export function normalized(content) {
  * Assert that a local file contains the given substring.
  *
  * @param filePath - Path to the file on disk.
+ * @param fileName
+ * @param rootFolder
  * @param txtToContain - Substring you expect to find in the file.
  */
 export async function expectLocalFileContain(
