@@ -7,6 +7,7 @@ import {
   createS3Location,
 } from './location.helpers';
 import {
+  addDescription,
   checkSettings,
   clickOn,
   dnd,
@@ -293,13 +294,11 @@ test.describe('TST08 - File folder properties', () => {
    */
   test('TST3001 - Description for files [web,electron,_pro]', async () => {
     const desc = 'testDescription';
-    const fileSelector = getGridFileSelector('sample.pdf');
     // open fileProperties
-    await clickOn(fileSelector);
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
-    await clickOn('[data-tid=descriptionTabTID]');
-    //await clickOn('[data-tid=editDescriptionTID]');
-    //await global.client.dblclick('[data-tid=descriptionTID]');
+    await openFile('sample.pdf');
+    await addDescription(desc);
+
+    /* await clickOn('[data-tid=descriptionTabTID]');
     await clickOn('[data-tid=descriptionTID]');
 
     const editor = await global.client.waitForSelector(
@@ -317,7 +316,7 @@ test.describe('TST08 - File folder properties', () => {
       true,
       10000,
       fileSelector,
-    );
+    );*/
   });
 
   /**
