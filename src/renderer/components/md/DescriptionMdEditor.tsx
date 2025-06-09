@@ -99,7 +99,8 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
         const saveKeyMap = $useKeymap('saveKeymap', {
           saveDescription: {
             //https://prosemirror.net/docs/ref/version/0.18.0.html#keymap
-            shortcuts: 'Mod-s', //keyBindings['saveDocument'], //You can use Mod- as a shorthand for Cmd- on Mac and Ctrl- on other platforms.
+            // both Latin-s and Hebrew-shin
+            shortcuts: ['Mod-s', 'Mod-ש'], //You can use Mod- as a shorthand for Cmd- on Mac and Ctrl- on other platforms.
             command: (ctx) => {
               const commands = ctx.get(commandsCtx);
               return () => commands.call(saveCommand.key);
