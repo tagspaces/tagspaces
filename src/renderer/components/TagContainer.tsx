@@ -30,6 +30,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   tag: TS.Tag;
@@ -68,6 +69,7 @@ function TagContainer(props: Props) {
 
   const { addTags } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 
@@ -86,6 +88,7 @@ function TagContainer(props: Props) {
 
   const tagColors = getTagColors(
     title,
+    tagGroups,
     tag.textcolor || defaultTextColor,
     tag.color || defaultBackgroundColor,
   );

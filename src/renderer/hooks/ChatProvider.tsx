@@ -1350,6 +1350,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
                 title: tagTitle,
                 ...getTagColors(
                   tagTitle,
+                  tagGroups,
                   defaultTextColor,
                   defaultBackgroundColor,
                 ),

@@ -20,6 +20,7 @@ import {
   getTagTextColor,
 } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 type SavedSearchesContextData = {
   searches: TS.SearchQuery[];
@@ -50,6 +51,7 @@ export const SavedSearchesContextProvider = ({
 }: SavedSearchesContextProviderProps) => {
   const searchesKey = 'tsSavedSearches';
   const { setSearchQuery } = useDirectoryContentContext();
+  const { tagGroups } = useEditedTagLibraryContext();
   const reduxSearches = useSelector(getSearches);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -152,6 +154,7 @@ export const SavedSearchesContextProvider = ({
     return tags.map((tag) => {
       const tagColors = getTagColors(
         tag.title,
+        tagGroups,
         defaultTextColor,
         defaultBackgroundColor,
       );
