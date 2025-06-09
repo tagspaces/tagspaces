@@ -343,7 +343,7 @@ export async function testDataRefresh(isS3, testDataDir) {
 
 export async function createFileS3(
   fileName = 'empty_file.html',
-  fileContent = undefined,
+  fileContent = '',
   rootFolder = 'empty_folder',
 ) {
   const filePath = pathLib.join(
@@ -355,7 +355,7 @@ export async function createFileS3(
     rootFolder,
     fileName,
   );
-  await uploadFile(filePath, fileContent || 'test content');
+  await uploadFile(filePath, fileContent); //test content');
 }
 export async function createLocalFile(
   testDataDir,

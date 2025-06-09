@@ -90,7 +90,8 @@ async function deleteAllObjects(bucketName) {
 }
 
 function uploadFile(filePath, content = undefined) {
-  const fileContent = content ? content : fs.readFileSync(filePath);
+  const fileContent =
+    content !== undefined ? content : fs.readFileSync(filePath);
 
   const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
 

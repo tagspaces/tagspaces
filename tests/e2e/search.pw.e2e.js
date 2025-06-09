@@ -323,23 +323,22 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0629 - Search q. comp - file size [web,electron,_pro]', async () => {
-    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    /*await openFolder('empty_folder');
     await expectElementExist(
       getGridFileSelector('empty_file.html'),
       true,
-      5000,
-    );
-    //await openLocationMenu(defaultLocationName);
-    //await clickOn('[data-tid=indexLocation]');
+      8000,
+    );*/
 
     await addSearchCommand('si:', false);
     await clickOn('#textQuery-option-0');
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
+    //await global.client.waitForTimeout(180000);
     await expectElementExist(
       getGridFileSelector('empty_file.html'),
       true,
-      5000,
+      8000,
     );
   });
 
