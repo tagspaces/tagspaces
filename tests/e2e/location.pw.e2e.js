@@ -7,6 +7,7 @@ import {
   createPwMinioLocation,
   createPwLocation,
   createS3Location,
+  defaultLocationName,
 } from './location.helpers';
 import AppConfig from '../../src/renderer/AppConfig';
 import {
@@ -24,7 +25,7 @@ import {
   setInputKeys,
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
-import { clearDataStorage } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -53,11 +54,14 @@ test.afterEach(async ({ page }, testInfo) => {
 test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   testLocationName = '' + new Date().getTime();
 
-  if (isMinio || isS3) {
+  if (isMinio) {
     await createPwMinioLocation('', testLocationName, true);
+  } else if (isS3) {
+    await createS3Location('', testLocationName, true);
   } else {
     await createPwLocation(testDataDir, testLocationName, true);
   }
+
   await clickOn('[data-tid=location_' + testLocationName + ']');
   // await delay(500);
   // await closeFileProperties();
@@ -149,9 +153,10 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index WS [electron]', async ({
+  test('TST0328 - Creating location index [electron]', async ({
     isS3,
     isMinio,
+    isWeb,
     testDataDir,
   }) => {
     test.setTimeout(520000);
@@ -176,6 +181,8 @@ test.describe('TST03 - Testing locations:', () => {
 
     await openFolderProp(testFolder);
     await addDescription(folderDesc);
+
+    //await global.client.waitForTimeout(880000);
     await expectElementExist(
       '[data-tid=gridCellDescription]',
       true,
@@ -201,9 +208,9 @@ test.describe('TST03 - Testing locations:', () => {
       '[{"name":"testFolder","path":"testFolder","meta":{},"isFile":false},{"name":"test_file1[tag1 tag2].md","path":"test_file1[tag1 tag2].md","meta":{},"isFile":true,"textContent":"test md file 1","extension":"md"},{"name":"test_file2[tag3 tag4].txt","path":"test_file2[tag3 tag4].txt","meta":{},"isFile":true,"textContent":"test txt file 2","extension":"txt"}]';
     //await setFileTypeExtension('json');
     const rootFolder = locationFolderName + '/' + AppConfig.metaFolder;
-    //await global.client.waitForTimeout(180000);
+    // await global.client.waitForTimeout(180000);
     await expectMetaFileContain(
-      { testDataDir },
+      { testDataDir, isWeb },
       'tsi.json',
       rootFolder,
       indexFileContent,

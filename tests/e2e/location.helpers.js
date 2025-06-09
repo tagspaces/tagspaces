@@ -24,6 +24,7 @@ export async function createPwMinioLocation(
   locationPath,
   locationName,
   isDefault = false,
+  fullTextIndexing = false,
 ) {
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
@@ -56,7 +57,7 @@ export async function createPwMinioLocation(
       '[data-tid=secretAccessKey] input',
       minioSecretAccessKey,
     );*/
-    await setInputKeys('bucketName', locationName, 20);
+    await setInputKeys('bucketName', 'supported-filestypes', 20);
     //await global.client.fill('[data-tid=bucketName] input', locationName);
     await setInputKeys('endpointURL', minioEndpointURL, 20);
     //await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
@@ -64,6 +65,10 @@ export async function createPwMinioLocation(
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
       await global.client.check('[data-tid=locationIsDefault] input');
+    }
+
+    if (fullTextIndexing) {
+      await global.client.check('[data-tid=changeFullTextIndex] input');
     }
     await clickOn('[data-tid=confirmLocationCreation]');
   }
@@ -73,6 +78,7 @@ export async function createS3Location(
   locationPath,
   locationName,
   isDefault = false,
+  fullTextIndexing = false,
 ) {
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
@@ -97,6 +103,9 @@ export async function createS3Location(
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
       await global.client.check('[data-tid=locationIsDefault] input');
+    }
+    if (fullTextIndexing) {
+      await global.client.check('[data-tid=changeFullTextIndex] input');
     }
     await clickOn('[data-tid=confirmLocationCreation]');
   }

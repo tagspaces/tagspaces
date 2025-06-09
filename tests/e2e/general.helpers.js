@@ -5,6 +5,8 @@ import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { createFileS3, createLocalFile, delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
+import { getS3File } from '../s3rver/S3DataRefresh';
+
 import {
   createPwLocation,
   createPwMinioLocation,
@@ -489,9 +491,19 @@ export async function createLocation(
 ) {
   await clickOn('[data-tid=locationManager]');
   if (isMinio) {
-    await createPwMinioLocation(locationPath, locationName, isDefault);
+    await createPwMinioLocation(
+      locationPath,
+      locationName,
+      isDefault,
+      fullTextIndexing,
+    );
   } else if (isS3) {
-    await createS3Location(locationPath, locationName, isDefault);
+    await createS3Location(
+      locationPath,
+      locationName,
+      isDefault,
+      fullTextIndexing,
+    );
   } else {
     await createPwLocation(
       pathLib.join(testDataDir, locationPath),
@@ -782,7 +794,7 @@ export async function setFileTypeExtension(
 }
 
 export async function expectMetaFileContain(
-  { testDataDir },
+  { testDataDir, isWeb },
   metaFile,
   rootFolder,
   contain,
@@ -796,12 +808,16 @@ export async function expectMetaFileContain(
 
     await expectElementExist(getGridFileSelector(metaFile), true, timeout);
     await openFile(metaFile, 'showPropertiesTID');
-    await expectLocalFileContain(
-      { testDataDir },
-      metaFile,
-      rootFolder,
-      contain,
-    );
+    if (isWeb) {
+      await expectS3FileContain({ testDataDir }, metaFile, rootFolder, contain);
+    } else {
+      await expectLocalFileContain(
+        { testDataDir },
+        metaFile,
+        rootFolder,
+        contain,
+      );
+    }
     //await expectFileContain(contain, timeout);
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
 
@@ -898,6 +914,26 @@ export async function expectLocalFileContain(
   const filePath = pathLib.join(testDataDir, rootFolder, fileName);
   // Read the file as UTF-8 text
   const content = await fse.readFile(filePath, 'utf-8');
+  const contentN = normalized(content);
+  const txtToContainN = normalized(txtToContain);
+
+  /*  if (!contentN.includes(txtToContainN)) {
+    throw new Error(
+      `Expected file ${filePath} to contain ${txtToContainN}, but it did not: ${contentN}`
+    );
+  }*/
+  expect(contentN).toContain(txtToContainN);
+}
+
+export async function expectS3FileContain(
+  { testDataDir },
+  fileName,
+  rootFolder,
+  txtToContain = 'etete&5435',
+) {
+  const filePath = pathLib.join(testDataDir, rootFolder, fileName);
+
+  const content = await getS3File(filePath);
   const contentN = normalized(content);
   const txtToContainN = normalized(txtToContain);
 

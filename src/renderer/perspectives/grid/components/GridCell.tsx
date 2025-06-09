@@ -18,6 +18,13 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  extractTagsAsObjects,
+  extractTitle,
+  getThumbFileLocationForFile,
+  cleanTrailingDirSeparator,
+  cleanFrontDirSeparator,
+} from '@tagspaces/tagspaces-common/paths';
+import {
   FolderOutlineIcon,
   MoreMenuIcon,
   SelectedIcon,
@@ -56,11 +63,6 @@ import {
   formatDateTime,
   formatFileSize,
 } from '@tagspaces/tagspaces-common/misc';
-import {
-  extractTagsAsObjects,
-  extractTitle,
-  getThumbFileLocationForFile,
-} from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -207,18 +209,24 @@ function GridCell(props: Props) {
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
-        if (action.entry && fsEntry.path === action.entry.path) {
-          if (
-            action.action === 'thumbChange' ||
-            action.action === 'bgdColorChange' ||
-            action.action === 'descriptionChange'
-          ) {
+        if (
+          action.entry &&
+          cleanTrailingDirSeparator(cleanFrontDirSeparator(fsEntry.path)) ===
+            cleanTrailingDirSeparator(cleanFrontDirSeparator(action.entry.path))
+        ) {
+          if (action.action === 'thumbChange') {
             fsEntry.meta = { ...action.entry.meta };
             setThumbPath().then((success) => {
               if (success) {
                 forceUpdate();
               }
             });
+          } else if (
+            action.action === 'bgdColorChange' ||
+            action.action === 'descriptionChange'
+          ) {
+            fsEntry.meta = { ...action.entry.meta };
+            forceUpdate();
           }
         }
       }

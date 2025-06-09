@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   S3Client,
+  GetObjectCommand,
   PutObjectCommand,
   DeleteObjectsCommand,
   ListObjectsV2Command,
@@ -89,6 +90,30 @@ async function deleteAllObjects(bucketName) {
   }
 }
 
+function getS3File(filePath) {
+  const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
+
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    ResponseCacheControl: 'no-cache',
+  };
+  const s3Client = getS3Client();
+  return s3Client
+    .send(new GetObjectCommand(params))
+    .then((data) => {
+      if (data.Body) {
+        return data.Body.transformToString('utf-8');
+      } else {
+        return '';
+      }
+    })
+    .catch((e) => {
+      console.log('getFile ' + filePath, e);
+      return Promise.reject(e);
+    });
+}
+
 function uploadFile(filePath, content = undefined) {
   const fileContent =
     content !== undefined ? content : fs.readFileSync(filePath);
@@ -130,4 +155,5 @@ module.exports = {
   uploadTestDirectory,
   refreshS3testData,
   uploadFile,
+  getS3File,
 };
