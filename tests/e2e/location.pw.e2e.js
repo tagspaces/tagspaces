@@ -206,7 +206,7 @@ test.describe('TST03 - Testing locations:', () => {
     await clickOn('[data-tid=indexLocation]');
     //await global.client.waitForTimeout(880000);
     const indexFileContent =
-      '[{"name":"testFolder","path":"testFolder","meta":{},"isFile":false},{"name":"test_file1[tag1 tag2].md","path":"test_file1[tag1 tag2].md","meta":{},"isFile":true,"textContent":"test md file 1","extension":"md"},{"name":"test_file2[tag3 tag4].txt","path":"test_file2[tag3 tag4].txt","meta":{},"isFile":true,"textContent":"test txt file 2","extension":"txt"}]';
+      '[{"name":"testFolder","path":"testFolder","meta":{"description":"test folder desc"},"isFile":false},{"name":"test_file1[tag1 tag2].md","path":"test_file1[tag1 tag2].md","meta":{"description":"test file 1 desc"},"isFile":true,"textContent":"test md file 1","extension":"md"},{"name":"test_file2[tag3 tag4].txt","path":"test_file2[tag3 tag4].txt","meta":{"description":"test file 2 desc"},"isFile":true,"textContent":"test txt file 2","extension":"txt"}]';
     //await setFileTypeExtension('json');
     const rootFolder = locationFolderName + '/' + AppConfig.metaFolder;
     // await global.client.waitForTimeout(180000);
