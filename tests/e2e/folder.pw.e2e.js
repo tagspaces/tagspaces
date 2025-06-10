@@ -77,11 +77,6 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 test.describe('TST01 - Folder management', () => {
   test('TST0101 - Create subfolder [web,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await expectElementExist(
-      '[data-tid=fsEntryName_' + testFolder + ']',
-      true,
-      8000,
-    );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await expectElementExist(
       '[data-tid=currentDir_' + testFolder + ']',
@@ -135,7 +130,6 @@ test.describe('TST01 - Folder management', () => {
   test('TST0104 - Delete empty folder by disabled trashcan [web,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     const testFolder = await createNewDirectory();
-    await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await deleteDirectory();
     await expectElementExist(

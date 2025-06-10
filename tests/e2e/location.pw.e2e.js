@@ -63,6 +63,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   }
 
   await clickOn('[data-tid=location_' + testLocationName + ']');
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
   // await delay(500);
   // await closeFileProperties();
 });
@@ -153,7 +154,7 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index [electron]', async ({
+  test('TST0328 - Creating location index [web,minio,electron]', async ({
     isS3,
     isMinio,
     isWeb,
