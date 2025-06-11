@@ -85,9 +85,11 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
 function GalleryPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <GalleryPerspective {...props} />
-      </ThumbGenerationContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <ThumbGenerationContextProvider>
+          <GalleryPerspective {...props} />
+        </ThumbGenerationContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
