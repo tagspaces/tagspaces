@@ -297,6 +297,12 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await openFile('sample.pdf');
     await addDescription(desc);
+    await expectElementExist(
+      '[data-tid=gridCellDescription]',
+      true,
+      10000,
+      getGridFileSelector('sample.pdf'),
+    );
 
     /* await clickOn('[data-tid=descriptionTabTID]');
     await clickOn('[data-tid=descriptionTID]');
