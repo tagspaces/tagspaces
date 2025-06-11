@@ -3,6 +3,7 @@ import fs from 'fs';
 import sh from 'shelljs';
 import express from 'express';
 import serveStatic from 'serve-static';
+import portfinder from 'portfinder';
 const S3rver = require('s3rver');
 //const corsConfig = require.resolve('./s3rver/cors.xml');
 
@@ -93,10 +94,17 @@ export async function startWebServer(preferredPort = 0) {
       index: ['index.html'],
     }),
   );
+  // If preferredPort is 0, let portfinder choose between 1024 and 49151
+  let portToUse = preferredPort;
+  if (preferredPort === 0) {
+    portfinder.basePort = 1024;
+    portfinder.highestPort = 49151;
+    portToUse = await portfinder.getPortPromise();
+  }
 
   return new Promise((resolve, reject) => {
     // Listen on 0 to let the OS assign a free port
-    const server = app.listen(preferredPort, '127.0.0.1', () => {
+    const server = app.listen(portToUse, '127.0.0.1', () => {
       const { port } = server.address();
       console.log(`Webserver listening at http://127.0.0.1:${port}`);
       resolve({ app, port, server });

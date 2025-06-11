@@ -324,6 +324,7 @@
     "mini-css-extract-plugin": "^2.7.6",
     "npm": "^8.5.5",
     "playwright": "1.52.0",
+    "portfinder": "^1.0.37",
     "prettier": "^3.2.5",
     "properties-reader": "^2.2.0",
     "raw-loader": "^4.0.2",

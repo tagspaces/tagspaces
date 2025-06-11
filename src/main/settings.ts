@@ -20,7 +20,7 @@ class SettingsSingleton {
   private token?: string;
 
   getInitWsPort(): number {
-    return 49352;
+    return 40352;
   }
 
   getUsedWsPort(): number | undefined {
