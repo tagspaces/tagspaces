@@ -1010,7 +1010,7 @@ export async function addDescription(desc) {
   } catch (e) {
     await editor.type(desc);
   }
-  await expectElementExist('[data-tid=descriptionChangedTID]');
+  await expectElementExist('[data-tid=descriptionChangedTID]', true, 8000);
   /*
   // editorContent is empty on web
   const editorContent = await editor.innerText();
@@ -1180,7 +1180,7 @@ export async function reloadDirectory() {
 }
 
 export async function createNewDirectory(dirName = testFolder) {
-  await isDisplayed('[data-tid=folderContainerOpenDirMenu]');
+  await isDisplayed('[data-tid=folderContainerOpenDirMenu]', true, 3000);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=newSubDirectory]');
   // set new dir name

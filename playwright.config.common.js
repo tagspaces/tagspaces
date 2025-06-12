@@ -40,6 +40,8 @@ const pwConfig = {
         ['list', { printSteps: true }],
       ],
   workers: 1,
+  // this helps show why the process is still alive
+  //debug: { openHandles: true },
 };
 
 export default pwConfig;
