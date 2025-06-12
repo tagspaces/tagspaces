@@ -20,7 +20,7 @@
     "@elife/pm2": "3.6.1",
     "@tagspaces/extensions": "1.0.191",
     "@tagspaces/tagspaces-common-node": "4.5.79",
-    "@tagspaces/tagspaces-ws": "4.5.80",
+    "@tagspaces/tagspaces-ws": "4.5.81",
     "sharp": "0.32.6",
     "ws": "8.18.1"
   },
