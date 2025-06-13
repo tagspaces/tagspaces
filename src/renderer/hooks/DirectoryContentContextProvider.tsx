@@ -1145,7 +1145,7 @@ export const DirectoryContentContextProvider = ({
     return Object.keys(searchQuery.current).length > 0;
   }
 
-  function getPerspective(): TS.PerspectiveType {
+  const currentPerspective: TS.PerspectiveType = useMemo(() => {
     if (manualPerspective.current === 'unspecified') {
       if (
         !directoryMeta.current ||
@@ -1157,12 +1157,7 @@ export const DirectoryContentContextProvider = ({
       return directoryMeta.current.perspective;
     }
     return manualPerspective.current;
-  }
-
-  const currentPerspective = useMemo(
-    () => getPerspective(),
-    [currentDirectory.current, manualPerspective.current],
-  );
+  }, [currentDirectory.current, manualPerspective.current]);
 
   function setManualDirectoryPerspective(
     perspective: TS.PerspectiveType,
