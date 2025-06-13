@@ -164,7 +164,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             }
             disabled={
               !Pro ||
-              isEditMode ||
+              //isEditMode ||
               findLocation(openedEntry.locationID)?.isReadOnly
             }
             style={{
