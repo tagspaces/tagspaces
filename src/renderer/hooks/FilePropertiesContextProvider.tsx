@@ -87,6 +87,18 @@ export const FilePropertiesContextProvider = ({
 
   useEffect(() => {
     if (openedEntry) {
+      // auto set EditDescriptionMode on opening
+      const openedLocation = findLocation(openedEntry.locationID);
+      if (openedLocation) {
+        if (openedLocation.isReadOnly) {
+          if (isEditDescriptionMode) {
+            setIsEditDescriptionMode(false);
+          }
+        } else if (!isEditDescriptionMode) {
+          setIsEditDescriptionMode(true);
+        }
+      }
+
       if (
         JSON.stringify(lastOpenedFile.current) !== JSON.stringify(openedEntry)
       ) {
@@ -102,16 +114,6 @@ export const FilePropertiesContextProvider = ({
 
   function closeOpenedEntries() {
     if (openedEntry) {
-      const openedLocation = findLocation(openedEntry.locationID);
-      if (openedLocation) {
-        if (openedLocation.isReadOnly) {
-          if (isEditDescriptionMode) {
-            setIsEditDescriptionMode(false);
-          }
-        } else if (!isEditDescriptionMode) {
-          setIsEditDescriptionMode(true);
-        }
-      }
       if (isDescriptionChanged.current) {
         isDescriptionChanged.current = false;
         // handle not saved changes
