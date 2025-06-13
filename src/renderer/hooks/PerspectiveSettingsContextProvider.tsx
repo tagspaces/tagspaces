@@ -92,20 +92,20 @@ export const PerspectiveSettingsContextProvider = ({
     directoryMeta,
     setDirectoryMeta,
     getDefaultPerspectiveSettings,
-    getPerspective,
+    currentPerspective,
   } = useDirectoryContentContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { removeFolderCustomSettings, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
-    getSettings(getPerspective(), directoryMeta),
+    getSettings(currentPerspective, directoryMeta),
   );
   const firstRender = useFirstRender();
 
   useEffect(() => {
     if (!firstRender) {
-      settings.current = getSettings(getPerspective(), directoryMeta);
+      settings.current = getSettings(currentPerspective, directoryMeta);
       forceUpdate();
     }
   }, [currentDirectoryPath, directoryMeta]);
@@ -114,7 +114,7 @@ export const PerspectiveSettingsContextProvider = ({
     if (!firstRender && metaActions && metaActions.length > 0) {
       for (const action of metaActions) {
         if (action.action === 'perspectiveChange') {
-          settings.current = getSettings(getPerspective(), directoryMeta);
+          settings.current = getSettings(currentPerspective, directoryMeta);
           forceUpdate();
         }
       }
@@ -160,7 +160,7 @@ export const PerspectiveSettingsContextProvider = ({
     return (
       directoryMeta &&
       directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[getPerspective()]
+      directoryMeta.perspectiveSettings[currentPerspective]
     );
   }
 
@@ -168,10 +168,10 @@ export const PerspectiveSettingsContextProvider = ({
    * remove custom folder settings
    */
   function resetLocalSetting() {
-    removeFolderCustomSettings(currentDirectoryPath, getPerspective()).then(
+    removeFolderCustomSettings(currentDirectoryPath, currentPerspective).then(
       (fsEntryMeta: TS.FileSystemEntryMeta) => {
         setDirectoryMeta(fsEntryMeta);
-        settings.current = getSettings(getPerspective(), fsEntryMeta);
+        settings.current = getSettings(currentPerspective, fsEntryMeta);
         forceUpdate();
       },
     );
@@ -187,14 +187,14 @@ export const PerspectiveSettingsContextProvider = ({
     if (Pro && !isDefaultSetting) {
       setPerspectiveSettings(
         currentDirectoryPath,
-        getPerspective(),
+        currentPerspective,
         settings.current,
       ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
         saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta);
         setDirectoryMeta(updatedFsEntryMeta);
       });
     } else {
-      const defaultSettings = getDefaultPerspectiveSettings(getPerspective());
+      const defaultSettings = getDefaultPerspectiveSettings(currentPerspective);
       localStorage.setItem(
         defaultSettings.settingsKey,
         JSON.stringify(settings.current),
