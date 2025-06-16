@@ -206,7 +206,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
         >
           <AiGenDescButton disabled={!Pro} variant="outlined" />
         </ProTooltip>
-        {openedEntry.meta.description && (
+        {openedEntry.meta?.description && (
           <>
             <Box
               style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}

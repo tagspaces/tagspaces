@@ -628,7 +628,7 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.url = fsEntry.url;
     }
     //set meta and generate new meta id if not exist
-    if (!fsEntry.meta || !fsEntry.meta.id) {
+    if (fsEntry.isFile && (!fsEntry.meta || !fsEntry.meta.id)) {
       const meta: TS.FileSystemEntryMeta = await getMetadata(
         fsEntry.path,
         fsEntry.uuid,
