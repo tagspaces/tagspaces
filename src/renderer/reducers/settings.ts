@@ -133,11 +133,10 @@ export default (state: any = defaultSettings, action: any) => {
           state.keyBindings.find((y) => y.name === x.name),
         ),
       );
+
+      const explicitlyDeletedTypes = state.explicitlyDeletedFileTypes || [];
       const defaultFileTypes = defaultSettings.supportedFileTypes.filter(
-        (item) =>
-          state.supportedFileTypes.some(
-            (stateItem) => stateItem.type === item.type,
-          ),
+        (item) => !explicitlyDeletedTypes.includes(item.type),
       );
       return {
         ...defaultSettings,
@@ -418,9 +417,28 @@ export default (state: any = defaultSettings, action: any) => {
       return { ...state, zoomFactor: zoomLevel };
     }
     case types.SET_SUPPORTED_FILE_TYPES: {
+      const added = action.supportedFileTypes.filter(
+        (newObj) =>
+          !state.supportedFileTypes.some(
+            (oldObj) => oldObj.type === newObj.type,
+          ),
+      );
+
+      const removed = state.supportedFileTypes.filter(
+        (oldObj) =>
+          !action.supportedFileTypes.some(
+            (newObj) => newObj.type === oldObj.type,
+          ),
+      );
       return {
         ...state,
         supportedFileTypes: action.supportedFileTypes,
+        explicitlyDeletedFileTypes: [
+          ...state.explicitlyDeletedFileTypes.filter(
+            (type) => !added.some((add) => add.type === type),
+          ),
+          ...removed.map((del) => del.type),
+        ],
       };
     }
     case types.ADD_SUPPORTED_FILE_TYPES: {
@@ -433,34 +451,6 @@ export default (state: any = defaultSettings, action: any) => {
         ),
       };
     }
-    /*case types.ENABLE_EXTENSION: {
-      let enabledExtensions;
-      let supportedFileTypes;
-      if (action.enabled) {
-        if (!state.enabledExtensions.includes(action.extensionId)) {
-          enabledExtensions = [...state.enabledExtensions, action.extensionId];
-        } else {
-          enabledExtensions = [...state.enabledExtensions];
-        }
-      } else {
-        enabledExtensions = state.enabledExtensions.filter(
-          (extensionId) => extensionId === action.extensionId,
-        );
-        supportedFileTypes = state.supportedFileTypes.filter(
-          (fType) =>
-            !(
-              fType.viewer === action.extensionId &&
-              fType.editor === action.extensionId
-            ),
-        );
-      }
-
-      return {
-        ...state,
-        enabledExtensions: enabledExtensions,
-        ...(supportedFileTypes && { supportedFileTypes: supportedFileTypes }),
-      };
-    }*/
     case types.REMOVE_SUPPORTED_FILE_TYPES: {
       const supportedFileTypes = state.supportedFileTypes.map(
         (fType: TS.FileTypes) => ({
