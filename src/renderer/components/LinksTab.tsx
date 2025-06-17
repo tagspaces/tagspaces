@@ -61,7 +61,7 @@ function LinksTab(props: Props) {
       indexExist.current = false;
       // links from description
       if (openedEntry.meta?.description) {
-        const descriptionLinks = extractLinks(openedEntry.meta.description);
+        const descriptionLinks = extractLinks(openedEntry.meta?.description);
         if (descriptionLinks && descriptionLinks.length > 0) {
           links.current = descriptionLinks;
         }

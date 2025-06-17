@@ -74,10 +74,10 @@ function AiGenDescButton(props: Props) {
       setIsLoading(false);
       if (entry.uuid === openedEntry.uuid) {
         dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
-        setDescription(entry.meta.description);
+        setDescription(entry.meta?.description);
         return saveDescription().then(handleResult);
       } else {
-        return setDescriptionChange(entry, entry.meta.description).then(
+        return setDescriptionChange(entry, entry.meta?.description).then(
           handleResult,
         );
       }

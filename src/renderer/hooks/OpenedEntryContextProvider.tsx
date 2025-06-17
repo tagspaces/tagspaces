@@ -249,8 +249,8 @@ export const OpenedEntryContextProvider = ({
             action.action === 'bgdImgChange' ||
             action.action === 'autoSaveChange' ||
             (action.action === 'descriptionChange' &&
-              currentEntry.current.meta.description !==
-                action.entry.meta.description)
+              currentEntry.current.meta?.description !==
+                action.entry.meta?.description)
           ) {
             currentEntry.current = {
               ...currentEntry.current,

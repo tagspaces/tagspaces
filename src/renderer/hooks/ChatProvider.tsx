@@ -1304,7 +1304,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       const ext = extractFileExtension(entry.name).toLowerCase();
       if (
         (fromDescription || generationSettings.current.fromDescription) &&
-        entry.meta.description
+        entry.meta?.description
       ) {
         return newChatMessage(
           entry.meta.description,
