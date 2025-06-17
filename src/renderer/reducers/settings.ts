@@ -133,6 +133,12 @@ export default (state: any = defaultSettings, action: any) => {
           state.keyBindings.find((y) => y.name === x.name),
         ),
       );
+      const defaultFileTypes = defaultSettings.supportedFileTypes.filter(
+        (item) =>
+          state.supportedFileTypes.some(
+            (stateItem) => stateItem.type === item.type,
+          ),
+      );
       return {
         ...defaultSettings,
         ...state,
@@ -150,7 +156,7 @@ export default (state: any = defaultSettings, action: any) => {
           ...mergedKeyBindings,
         ],
         supportedFileTypes: mergeByProp(
-          defaultSettings.supportedFileTypes,
+          defaultFileTypes,
           state.supportedFileTypes,
           'type',
         ),
