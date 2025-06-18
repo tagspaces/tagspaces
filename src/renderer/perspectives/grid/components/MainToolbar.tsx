@@ -47,7 +47,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { Box, Divider, Toolbar } from '@mui/material/';
+import { Box, Divider, Toolbar } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';

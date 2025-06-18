@@ -100,7 +100,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
 
   const saveAsMarkdown = () => {
     setAnchorEl(null);
-    if (openedEntry.meta.description) {
+    if (openedEntry.meta?.description) {
       const blob = new Blob([openedEntry.meta.description], {
         type: 'text/markdown',
       });
@@ -206,7 +206,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
         >
           <AiGenDescButton disabled={!Pro} variant="outlined" />
         </ProTooltip>
-        {openedEntry.meta.description && (
+        {openedEntry.meta?.description && (
           <>
             <Box
               style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}

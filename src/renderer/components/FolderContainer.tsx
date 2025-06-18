@@ -77,7 +77,7 @@ function FolderContainer(props: Props) {
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    getPerspective,
+    currentPerspective,
     setManualDirectoryPerspective,
     enterSearchMode,
     isSearchMode,
@@ -326,7 +326,7 @@ function FolderContainer(props: Props) {
       </div>
       {isDesktopMode && (
         <ToggleButtonGroup
-          value={getPerspective()}
+          value={currentPerspective}
           size="small"
           data-tid="floatingPerspectiveSwitcher"
           disabled={showWelcomePanel}

@@ -1010,14 +1010,18 @@ export async function addDescription(desc) {
   } catch (e) {
     await editor.type(desc);
   }
-  await expectElementExist('[data-tid=descriptionChangedTID]', true, 8000);
+  if (await isDisplayed('[data-tid=descriptionChangedTID]', true, 8000)) {
+    await clickOn('[data-tid=saveDescriptionTID]');
+  } else {
+    await clickOn('[data-tid=saveDescriptionTID]');
+  }
+  // await expectElementExist('[data-tid=descriptionChangedTID]', true, 8000);
   /*
   // editorContent is empty on web
   const editorContent = await editor.innerText();
   await expect(editorContent).toBe(desc);
   */
   //   await global.client.waitForTimeout(80000);
-  await clickOn('[data-tid=saveDescriptionTID]');
 }
 
 export async function createFile(

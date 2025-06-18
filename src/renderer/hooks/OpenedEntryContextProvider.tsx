@@ -252,8 +252,8 @@ export const OpenedEntryContextProvider = ({
             action.action === 'bgdImgChange' ||
             action.action === 'autoSaveChange' ||
             (action.action === 'descriptionChange' &&
-              currentEntry.current.meta.description !==
-                action.entry.meta.description)
+              currentEntry.current.meta?.description !==
+                action.entry.meta?.description)
           ) {
             currentEntry.current = {
               ...currentEntry.current,
@@ -631,7 +631,7 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.url = fsEntry.url;
     }
     //set meta and generate new meta id if not exist
-    if (!fsEntry.meta || !fsEntry.meta.id) {
+    if (fsEntry.isFile && (!fsEntry.meta || !fsEntry.meta.id)) {
       const meta: TS.FileSystemEntryMeta = await getMetadata(
         fsEntry.path,
         fsEntry.uuid,

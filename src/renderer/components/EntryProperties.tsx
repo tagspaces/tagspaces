@@ -72,7 +72,7 @@ import {
   inputBaseClasses,
 } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import { styled, useTheme } from '@mui/material/styles';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
