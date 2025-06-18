@@ -83,7 +83,10 @@ type OpenedEntryContextData = {
   setEntryInFullWidth: (fullWidth: boolean) => void;
   setFileChanged: (isChanged: boolean) => void;
   addToEntryContainer: (fsEntry: TS.OpenedEntry) => void;
-  closeAllFiles: () => void;
+  /**
+   * don't use this direct. In FilePropertiesContextProvider have wrapper function closeOpenedEntries that check for unsaved changes before close file
+   */
+  actuallyCloseFiles: () => void;
   reflectUpdateOpenedFileContent: (entry: TS.FileSystemEntry) => void;
   reloadOpenedFile: () => Promise<boolean>;
   /*updateOpenedFile: (
@@ -125,7 +128,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   setEntryInFullWidth: undefined,
   setFileChanged: undefined,
   addToEntryContainer: () => {},
-  closeAllFiles: () => {},
+  actuallyCloseFiles: () => {},
   reflectUpdateOpenedFileContent: () => {},
   reloadOpenedFile: undefined,
   //updateOpenedFile: () => Promise.resolve(false),
@@ -219,7 +222,7 @@ export const OpenedEntryContextProvider = ({
             currentEntry.current &&
             currentEntry.current.path.startsWith(action.entry.path)
           ) {
-            closeAllFiles();
+            actuallyCloseFiles();
           }
         } else if (action.action === 'update' || action.action === 'move') {
           if (
@@ -477,7 +480,7 @@ export const OpenedEntryContextProvider = ({
     });
   }
 
-  function closeAllFiles() {
+  function actuallyCloseFiles() {
     const appName = versionMeta.name;
     document.title = appName;
     if (currentLocation) {
@@ -1064,7 +1067,7 @@ export const OpenedEntryContextProvider = ({
       setEntryInFullWidth,
       setFileChanged,
       addToEntryContainer,
-      closeAllFiles,
+      actuallyCloseFiles,
       reflectUpdateOpenedFileContent,
       reloadOpenedFile,
       //updateOpenedFile,

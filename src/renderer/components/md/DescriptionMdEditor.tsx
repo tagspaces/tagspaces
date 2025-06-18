@@ -122,6 +122,18 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
       }
     }, [openedEntry]); //, isDescriptionChanged]);
 
+    useEffect(() => {
+      const crepe = crepeRef.current;
+      if (!loading && crepe && crepe.editor.status === EditorStatus.Created) {
+        // Double‐check that the current editor content differs:
+        try {
+          crepe.setReadonly(!isEditDescriptionMode);
+        } catch (e) {
+          console.error('Failed to setReadonly:', e);
+        }
+      }
+    }, [isEditDescriptionMode]);
+
     // If some external “metaActions” say “hey, description was updated,”
     // we re‐push it:
     useEffect(() => {
