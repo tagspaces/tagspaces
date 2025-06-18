@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { getTagColors } from '-/services/taglibrary-utils';
 import { useTranslation } from 'react-i18next';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   tags: Array<TS.Tag>;
@@ -30,6 +31,7 @@ interface Props {
 
 function TagsPreview(props: Props) {
   const { t } = useTranslation();
+  const { tagGroups } = useEditedTagLibraryContext();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 
@@ -51,6 +53,7 @@ function TagsPreview(props: Props) {
   } else {
     const tagColors = getTagColors(
       tags[0].title,
+      tagGroups,
       defaultTextColor,
       defaultBackgroundColor,
     );
@@ -67,6 +70,7 @@ function TagsPreview(props: Props) {
     } else {
       const tag2Colors = getTagColors(
         tags[1].title,
+        tagGroups,
         defaultTextColor,
         defaultBackgroundColor,
       );

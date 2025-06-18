@@ -6,6 +6,7 @@ import {
 import versionMeta from '-/version.json';
 import { saveAsTextFile } from '-/services/utils-io';
 import defaultTagLibrary from '../reducers/taglibrary-default';
+import TagGroup = TS.TagGroup;
 
 export const tagLibraryKey = 'tsTagLibrary';
 
@@ -89,10 +90,13 @@ export function exportTagGroups(
  */
 export const getTagColors = (
   tagTitle: string,
+  tagGroups: TagGroup[],
   defaultTextColor: string,
   defaultBackgroundColor: string,
 ) => {
-  const tagExist = getAllTags().find((tag: TS.Tag) => tag.title === tagTitle);
+  const tagExist = getAllTags(tagGroups).find(
+    (tag: TS.Tag) => tag.title === tagTitle,
+  );
   return tagExist
     ? {
         textcolor: tagExist.textcolor || defaultTextColor,
