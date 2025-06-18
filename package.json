@@ -173,7 +173,7 @@
     "@mui/material": "^7.1.1",
     "@mui/x-date-pickers": "^8.5.2",
     "@tagspaces/tagspaces-common": "4.5.82",
-    "@tagspaces/tagspaces-common-aws3": "4.5.82",
+    "@tagspaces/tagspaces-common-aws3": "4.5.83",
     "@tagspaces/tagspaces-common-cordova": "4.5.82",
     "@tagspaces/tagspaces-indexer": "4.5.82",
     "aws-amplify": "^4.3.8",

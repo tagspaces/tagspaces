@@ -52,6 +52,20 @@ function getS3Client() {
   });
 }
 
+function getMinioClient() {
+  return new S3Client({
+    region: 'eu-central-1',
+    endpoint: 'http://127.0.0.1:9000', // Adjust endpoint as needed
+    credentials: {
+      accessKeyId: 'minioadmin',
+      secretAccessKey: 'minioadmin',
+    },
+    // Force path style required for local S3rver
+    forcePathStyle: true,
+    //logger: console,
+  });
+}
+
 async function deleteAllObjects(bucketName) {
   try {
     // List objects in the bucket
@@ -90,15 +104,16 @@ async function deleteAllObjects(bucketName) {
   }
 }
 
-function getS3File(filePath) {
-  const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
+function getS3File({ isMinio }, filePath) {
+  const key = filePath.replace(/\\/g, '/'); // Normalize path separators
+  //const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
 
   const params = {
     Bucket: bucketName,
     Key: key,
     ResponseCacheControl: 'no-cache',
   };
-  const s3Client = getS3Client();
+  const s3Client = isMinio ? getMinioClient() : getS3Client();
   return s3Client
     .send(new GetObjectCommand(params))
     .then((data) => {
