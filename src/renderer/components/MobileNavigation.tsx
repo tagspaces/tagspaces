@@ -68,8 +68,7 @@ import {
   isDesktopMode,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { Divider, Popover } from '@mui/material';
+import { Divider, Popover, ClickAwayListener } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grow from '@mui/material/Grow';

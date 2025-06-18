@@ -24,7 +24,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { selectDirectoryDialog } from '-/services/utils-io';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';

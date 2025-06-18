@@ -40,7 +40,7 @@ import { TS } from '-/tagspaces.namespace';
 import { MilkdownProvider } from '@milkdown/react';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';

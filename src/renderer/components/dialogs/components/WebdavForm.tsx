@@ -75,7 +75,7 @@ function WebdavForm(props: Props) {
 
   return (
     <Grid container direction="column" spacing={1}>
-      <Grid item>
+      <Grid>
         <FormControl fullWidth={true} error={errorTextName}>
           <TextField
             required
@@ -92,7 +92,7 @@ function WebdavForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid item>
+      <Grid>
         <FormControl fullWidth={true} error={errorTextName}>
           <InputLabel id="AuthID">{t('core:WebdavAuth')}</InputLabel>
           <Select
@@ -114,7 +114,7 @@ function WebdavForm(props: Props) {
       </Grid>
       {(authType === AuthTypes.Basic || authType === AuthTypes.Digest) && (
         <>
-          <Grid item>
+          <Grid>
             <FormControl fullWidth={true}>
               <TextField
                 margin="dense"
@@ -130,7 +130,7 @@ function WebdavForm(props: Props) {
               />
             </FormControl>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormControl fullWidth={true}>
               <TextField
                 margin="dense"
@@ -163,7 +163,7 @@ function WebdavForm(props: Props) {
         </>
       )}
       {authType === AuthTypes.Token && (
-        <Grid item>
+        <Grid>
           <FormControl fullWidth={true}>
             <TextField
               margin="dense"
@@ -194,7 +194,7 @@ function WebdavForm(props: Props) {
           </FormControl>
         </Grid>
       )}
-      <Grid item>
+      <Grid>
         <FormControl fullWidth={true} error={webdavErrorUrl}>
           <TextField
             margin="dense"

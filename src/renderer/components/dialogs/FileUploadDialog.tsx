@@ -213,8 +213,7 @@ function FileUploadDialog(props: Props) {
                   alignItems="center"
                 >
                   <Grid
-                    item
-                    xs={10}
+                    size={{ xs: 10 }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -239,7 +238,7 @@ function FileUploadDialog(props: Props) {
                       </Tooltip>
                     )}
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid size={{ xs: 2 }}>
                     {abort && typeof abort === 'function' && (
                       <TsButton
                         tooltip={t('core:abort')}
@@ -249,7 +248,7 @@ function FileUploadDialog(props: Props) {
                       </TsButton>
                     )}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     {percentage > -1 && (
                       <LinearProgressWithLabel value={percentage} />
                     )}

@@ -40,7 +40,7 @@ import {
   getDescriptionPreview,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
