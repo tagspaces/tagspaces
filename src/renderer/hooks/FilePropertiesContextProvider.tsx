@@ -70,7 +70,8 @@ export const FilePropertiesContextProvider = ({
   children,
 }: FilePropertiesContextProviderProps) => {
   const { t } = useTranslation();
-  const { openedEntry, actuallyCloseFiles } = useOpenedEntryContext();
+  const { openedEntry, actuallyCloseFiles, openFsEntry } =
+    useOpenedEntryContext();
   const { findLocation } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const { setDescriptionChange } = useIOActionsContext();
@@ -103,10 +104,18 @@ export const FilePropertiesContextProvider = ({
         JSON.stringify(lastOpenedFile.current) !== JSON.stringify(openedEntry)
       ) {
         if (lastOpenedFile.current?.path !== openedEntry.path) {
-          setIsEditMode(false);
+          if (isDescriptionChanged.current) {
+            isDescriptionChanged.current = false;
+            // handle not saved changes
+            isSaveDescriptionConfirmOpened.current = true;
+          } else {
+            lastOpenedFile.current = { ...openedEntry };
+            setIsEditMode(false);
+          }
+        } else {
+          lastOpenedFile.current = { ...openedEntry };
         }
 
-        lastOpenedFile.current = { ...openedEntry };
         forceUpdate();
       }
     }
@@ -202,9 +211,9 @@ export const FilePropertiesContextProvider = ({
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
       isDescriptionChanged.current = false;
-      lastOpenedFile.current = { ...openedEntry };
       setIsEditDescriptionMode(false);
     }
+    lastOpenedFile.current = { ...openedEntry };
     isSaveDescriptionConfirmOpened.current = isOpened;
     forceUpdate();
   }
@@ -243,10 +252,12 @@ export const FilePropertiesContextProvider = ({
         content={t('core:saveDescriptionOnClosing')}
         confirmCallback={(result) => {
           if (result) {
-            saveDescription();
+            saveDescription().then(() => {
+              openFsEntry(openedEntry);
+            });
           } else {
             setSaveDescriptionConfirmOpened(false);
-            actuallyCloseFiles();
+            openFsEntry(openedEntry);
           }
         }}
         cancelDialogTID="cancelSaveDescCloseDialog"
