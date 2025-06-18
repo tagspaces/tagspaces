@@ -136,7 +136,7 @@ type DirectoryContentContextData = {
   enterSearchMode: () => void;
   exitSearchMode: () => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
-  getPerspective: () => TS.PerspectiveType;
+  currentPerspective: TS.PerspectiveType;
   getAllPropertiesPromise: (
     entryPath: string,
     locationID?: string,
@@ -196,7 +196,7 @@ export const DirectoryContentContext =
     enterSearchMode: () => {},
     exitSearchMode: () => {},
     getDefaultPerspectiveSettings: undefined,
-    getPerspective: undefined,
+    currentPerspective: undefined,
     getAllPropertiesPromise: undefined,
     loadCurrentDirMeta: undefined,
     openIsTruncatedConfirmDialog: undefined,
@@ -616,7 +616,6 @@ export const DirectoryContentContextProvider = ({
   }
 
   function getDefaultDirMeta(): TS.FileSystemEntryMeta {
-    // const perspective = getPerspective();
     const settings: TS.PerspectiveSettings = {
       [defaultPerspective]: getDefaultPerspectiveSettings(defaultPerspective),
     };
@@ -1142,16 +1141,11 @@ export const DirectoryContentContextProvider = ({
     return directoryContent;
   }
 
-  /*const perspective = useMemo(
-    () => getPerspective(),
-    [directoryMeta.current?.perspective, manualPerspective.current],
-  );*/
-
   function isSearching(): boolean {
     return Object.keys(searchQuery.current).length > 0;
   }
 
-  function getPerspective(): TS.PerspectiveType {
+  const currentPerspective: TS.PerspectiveType = useMemo(() => {
     if (manualPerspective.current === 'unspecified') {
       if (
         !directoryMeta.current ||
@@ -1163,7 +1157,7 @@ export const DirectoryContentContextProvider = ({
       return directoryMeta.current.perspective;
     }
     return manualPerspective.current;
-  }
+  }, [currentDirectory.current, manualPerspective.current]);
 
   function setManualDirectoryPerspective(
     perspective: TS.PerspectiveType,
@@ -1584,7 +1578,6 @@ export const DirectoryContentContextProvider = ({
       currentLocationPath: currentLocationPath.current,
       currentDirectoryEntries: currentDirectoryEntries.current,
       directoryMeta: directoryMeta.current,
-      //currentDirectoryPerspective: currentPerspective.current,
       currentDirectoryPath: currentDirectory.current?.path,
       currentDirectory: currentDirectory.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
@@ -1594,7 +1587,7 @@ export const DirectoryContentContextProvider = ({
       isSearchMode: isSearchMode.current,
       isSearching,
       sendDirMessage,
-      getPerspective,
+      currentPerspective,
       updateCurrentDirEntry,
       setSearchQuery,
       loadDirectoryContent,
