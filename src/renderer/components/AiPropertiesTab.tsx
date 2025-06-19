@@ -38,7 +38,7 @@ function AiPropertiesTab(props: Props) {
   return (
     <Box position="relative" display="inline-flex">
       <AiGenDescButton />
-      {openedEntry.meta.description && (
+      {openedEntry.meta?.description && (
         <AiGenTagsButton fromDescription={true} />
       )}
     </Box>

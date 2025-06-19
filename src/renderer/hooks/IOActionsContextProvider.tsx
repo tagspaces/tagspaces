@@ -1738,7 +1738,9 @@ export const IOActionsContextProvider = ({
       })
       .catch(() => {
         if (
-          path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) === -1
+          path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) ===
+            -1 &&
+          path.indexOf(AppConfig.metaFolder + location.getDirSeparator()) === -1
         ) {
           // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
           const mataData = { id: id };

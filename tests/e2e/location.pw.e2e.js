@@ -211,7 +211,7 @@ test.describe('TST03 - Testing locations:', () => {
     const rootFolder = locationFolderName + '/' + AppConfig.metaFolder;
     // await global.client.waitForTimeout(180000);
     await expectMetaFileContain(
-      { testDataDir, isWeb },
+      { testDataDir, isS3, isMinio },
       'tsi.json',
       rootFolder,
       indexFileContent,

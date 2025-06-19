@@ -304,6 +304,7 @@ export async function testDataRefresh(isS3, testDataDir) {
   if (isS3) {
     //console.log('testDataDir:'+testDataDir);
     await refreshS3testData(testDataDir);
+    //} else (isMinio){ todo minio
   } else {
     await fse.rm(testDataDir, {
       recursive: true,

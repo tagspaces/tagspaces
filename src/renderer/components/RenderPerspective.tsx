@@ -156,7 +156,7 @@ interface Props {}
 
 function RenderPerspective(props: Props) {
   const { currentLocationId } = useCurrentLocationContext();
-  const { getPerspective } = useDirectoryContentContext();
+  const { currentPerspective } = useDirectoryContentContext();
   const { metaActions } = useEditedEntryMetaContext();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
@@ -179,20 +179,19 @@ function RenderPerspective(props: Props) {
   }
 
   function getPerspectiveComponent() {
-    const perspective = getPerspective();
-    if (perspective === PerspectiveIDs.LIST) {
+    if (currentPerspective === PerspectiveIDs.LIST) {
       return <ListPerspectiveAsync />;
     }
-    if (Pro && perspective === PerspectiveIDs.GALLERY) {
+    if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
       return <GalleryPerspectiveAsync />;
     }
-    if (Pro && perspective === PerspectiveIDs.MAPIQUE) {
+    if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return <MapiquePerspectiveAsync />;
     }
-    if (Pro && perspective === PerspectiveIDs.KANBAN) {
+    if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
       return <KanBanPerspectiveAsync />;
     }
-    if (Pro && perspective === PerspectiveIDs.FOLDERVIZ) {
+    if (Pro && currentPerspective === PerspectiveIDs.FOLDERVIZ) {
       return <FolderVizPerspectiveAsync />;
     }
 

@@ -37,7 +37,7 @@ import { saveAsTextFile } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, Grid2 } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -253,7 +253,7 @@ function ChatView() {
 
   return (
     <Box sx={{ flexGrow: 1, margin: 0, height: '100%' }}>
-      <Grid2
+      <Grid
         container
         spacing={1}
         direction="column"
@@ -263,13 +263,13 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
-        <Grid2
+        <Grid
           container
           spacing={0}
           direction="row"
           style={{ flexFlow: 'nowrap' }}
         >
-          <Grid2 size={11.5}>
+          <Grid size={11.5}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
@@ -277,8 +277,8 @@ function ChatView() {
               chosenModel={currentModel?.name}
               label={t('core:selectedAIModel')}
             />
-          </Grid2>
-          <Grid2>
+          </Grid>
+          <Grid>
             <TsIconButton
               style={{ marginTop: 20 }}
               tooltip={t('core:chatMore')}
@@ -316,9 +316,9 @@ function ChatView() {
               confirmDialogTID="confirmDeleteHistoryDialog"
               confirmDialogContentTID="confirmDeleteHistoryDialogContent"
             />
-          </Grid2>
-        </Grid2>
-        <Grid2 size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
+          </Grid>
+        </Grid>
+        <Grid size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
           <div className="chatMD" ref={milkdownDivRef}>
             <style>
               {`
@@ -337,9 +337,9 @@ function ChatView() {
               <ChatMdEditor ref={editorRef} currentFolder={openedEntry.path} />
             </MilkdownProvider>
           </div>
-        </Grid2>
-        <Grid2 container spacing={1} direction="column">
-          <Grid2>
+        </Grid>
+        <Grid container spacing={1} direction="column">
+          <Grid>
             {images.length > 0 &&
               images.map((image, index) => (
                 <Box position="relative" style={{ float: 'right' }}>
@@ -371,8 +371,8 @@ function ChatView() {
                   </TsIconButton>
                 </Box>
               ))}
-          </Grid2>
-          <Grid2>
+          </Grid>
+          <Grid>
             <ChatDndTargetFile accepts={[FILE, DragItemTypes.FILE]}>
               <FormControl fullWidth>
                 <TsTextField
@@ -461,9 +461,9 @@ function ChatView() {
                 </FormHelperText>
               </FormControl>
             </ChatDndTargetFile>
-          </Grid2>
-        </Grid2>
-      </Grid2>
+          </Grid>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

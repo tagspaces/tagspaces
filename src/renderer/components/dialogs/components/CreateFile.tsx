@@ -23,7 +23,7 @@ import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

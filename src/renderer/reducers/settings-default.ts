@@ -246,6 +246,7 @@ export default {
   supportedFileTypes: window.ExtSupportedFileTypes
     ? [...supportedFileTypes, ...window.ExtSupportedFileTypes]
     : supportedFileTypes,
+  explicitlyDeletedFileTypes: [],
   extensionsFound: window.ExtExtensionsFound
     ? [...extensionsFound, ...window.ExtExtensionsFound]
     : extensionsFound,

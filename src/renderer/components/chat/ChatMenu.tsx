@@ -17,10 +17,9 @@
  */
 
 import React from 'react';
-import { ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { ListItemIcon, Menu, MenuItem, Divider } from '@mui/material';
 import SelectAllIcon from '@mui/icons-material/SelectAll';
 import { useTranslation } from 'react-i18next';
-import { Divider } from '@mui/material/';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import HtmlIcon from '@mui/icons-material/Html';
 import RttIcon from '@mui/icons-material/Rtt';

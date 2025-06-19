@@ -40,13 +40,13 @@ import {
   getDefaultAIProvider,
 } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
+  ClickAwayListener,
   FormControl,
   Grow,
   MenuItem,

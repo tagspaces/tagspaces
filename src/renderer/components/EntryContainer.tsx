@@ -69,7 +69,6 @@ function EntryContainer() {
   const dispatch: AppDispatch = useDispatch();
   const {
     openedEntry,
-    closeAllFiles,
     reloadOpenedFile,
     toggleEntryFullWidth,
     isEntryInFullWidth,
@@ -78,7 +77,7 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
   const { toggleFullScreen } = useFullScreenContext();
-  const { saveDescription, isEditMode, setEditMode } =
+  const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
     useFilePropertiesContext();
   const { setAutoSave } = useIOActionsContext();
   const { findLocation } = useCurrentLocationContext();
@@ -397,7 +396,7 @@ function EntryContainer() {
   };
 
   const closeFile = () => {
-    closeAllFiles();
+    closeOpenedEntries();
     // setEditingSupported(false);
   };
 

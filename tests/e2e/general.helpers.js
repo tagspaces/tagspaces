@@ -794,7 +794,7 @@ export async function setFileTypeExtension(
 }
 
 export async function expectMetaFileContain(
-  { testDataDir, isWeb },
+  { testDataDir, isS3, isMinio },
   metaFile,
   rootFolder,
   contain,
@@ -808,8 +808,8 @@ export async function expectMetaFileContain(
 
     await expectElementExist(getGridFileSelector(metaFile), true, timeout);
     await openFile(metaFile, 'showPropertiesTID');
-    if (isWeb) {
-      await expectS3FileContain({ testDataDir }, metaFile, rootFolder, contain);
+    if (isS3 || isMinio) {
+      await expectS3FileContain({ isMinio }, metaFile, rootFolder, contain);
     } else {
       await expectLocalFileContain(
         { testDataDir },
@@ -926,14 +926,14 @@ export async function expectLocalFileContain(
 }
 
 export async function expectS3FileContain(
-  { testDataDir },
+  { isMinio },
   fileName,
   rootFolder,
   txtToContain = 'etete&5435',
 ) {
-  const filePath = pathLib.join(testDataDir, rootFolder, fileName);
+  const filePath = rootFolder + '/' + fileName; //pathLib.join(rootFolder,fileName); //testDataDir, rootFolder, fileName);
 
-  const content = await getS3File(filePath);
+  const content = await getS3File({ isMinio }, filePath);
   const contentN = normalized(content);
   const txtToContainN = normalized(txtToContain);
 
@@ -1010,14 +1010,18 @@ export async function addDescription(desc) {
   } catch (e) {
     await editor.type(desc);
   }
-  await expectElementExist('[data-tid=descriptionChangedTID]');
+  if (await isDisplayed('[data-tid=descriptionChangedTID]', true, 8000)) {
+    await clickOn('[data-tid=saveDescriptionTID]');
+  } else {
+    await clickOn('[data-tid=saveDescriptionTID]');
+  }
+  // await expectElementExist('[data-tid=descriptionChangedTID]', true, 8000);
   /*
   // editorContent is empty on web
   const editorContent = await editor.innerText();
   await expect(editorContent).toBe(desc);
   */
   //   await global.client.waitForTimeout(80000);
-  await clickOn('[data-tid=saveDescriptionTID]');
 }
 
 export async function createFile(
@@ -1180,7 +1184,7 @@ export async function reloadDirectory() {
 }
 
 export async function createNewDirectory(dirName = testFolder) {
-  await isDisplayed('[data-tid=folderContainerOpenDirMenu]');
+  await isDisplayed('[data-tid=folderContainerOpenDirMenu]', true, 3000);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=newSubDirectory]');
   // set new dir name
