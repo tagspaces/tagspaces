@@ -364,7 +364,7 @@ export namespace TS {
   }
 
   interface FolderSettings {
-    settingsKey: string;
+    settingsKey?: string;
     showDirectories?: boolean;
     showTags?: boolean;
     showDetails?: boolean;

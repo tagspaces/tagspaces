@@ -184,11 +184,12 @@ export const PerspectiveSettingsContextProvider = ({
     if (isDefaultSetting === undefined) {
       isDefaultSetting = !haveLocalSetting();
     }
+    const { settingsKey, ...cleanSettings } = settings.current;
     if (Pro && !isDefaultSetting) {
       setPerspectiveSettings(
         currentDirectoryPath,
         currentPerspective,
-        settings.current,
+        cleanSettings,
       ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
         saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta);
         setDirectoryMeta(updatedFsEntryMeta);
@@ -197,7 +198,7 @@ export const PerspectiveSettingsContextProvider = ({
       const defaultSettings = getDefaultPerspectiveSettings(currentPerspective);
       localStorage.setItem(
         defaultSettings.settingsKey,
-        JSON.stringify(settings.current),
+        JSON.stringify(cleanSettings),
       );
     }
   }
