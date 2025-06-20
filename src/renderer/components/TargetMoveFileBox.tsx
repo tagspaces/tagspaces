@@ -17,15 +17,16 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { useDrop } from 'react-dnd';
+import { TS } from '-/tagspaces.namespace';
+import { SubFolder } from '-/components/DirectoryTreeView';
 
 interface Props {
   accepts: string[];
   onDrop: (item: any, monitor: any) => void;
   children: any;
   targetPath?: string;
-  targetLocation?: CommonLocation;
+  targetLocation?: SubFolder;
 }
 
 const TargetMoveFileBox = (props: Props) => {

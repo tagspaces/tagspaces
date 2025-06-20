@@ -52,7 +52,11 @@ type MenuContextData = {
   closeDirectoryMenu: () => void;
   openRenameEntryDialog: () => void;
   closeRenameEntryDialog: () => void;
-  openMoveCopyFilesDialog: (entries?: TS.FileSystemEntry[]) => void;
+  openMoveCopyFilesDialog: (
+    entries?: TS.FileSystemEntry[],
+    targetDirectory?: string,
+    targetLocationId?: string,
+  ) => void;
   closeMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: (entries?: TS.FileSystemEntry[]) => void;
   closeAddRemoveTagsDialog: () => void;
@@ -113,6 +117,8 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const currentEntries = useRef<TS.FileSystemEntry[]>(undefined);
+  const targetDirectory = useRef<string>(undefined);
+  const targetLocationId = useRef<string>(undefined);
   const openRenameEntry = useRef<boolean>(false);
   const openMoveCopyFiles = useRef<boolean>(false);
   const openAddRemoveTags = useRef<boolean>(false);
@@ -209,9 +215,15 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
     forceUpdate();
   };
 
-  const openMoveCopyFilesDialog = (entries?: TS.FileSystemEntry[]) => {
+  const openMoveCopyFilesDialog = (
+    entries?: TS.FileSystemEntry[],
+    tDirectory?: string,
+    tLocationId?: string,
+  ) => {
     openMoveCopyFiles.current = true;
     currentEntries.current = entries;
+    targetDirectory.current = tDirectory;
+    targetLocationId.current = tLocationId;
     forceUpdate();
   };
 
@@ -311,6 +323,8 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
         entries={
           currentEntries.current ? currentEntries.current : selectedEntries
         }
+        targetDir={targetDirectory.current}
+        targetLocationId={targetLocationId.current}
       />
       <AddRemoveTagsDialogAsync
         open={openAddRemoveTags.current}

@@ -27,6 +27,9 @@ import { Box, List } from '@mui/material';
 import { useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
+import { TS } from '-/tagspaces.namespace';
+import { useSelector } from 'react-redux';
+import { getLocations } from '-/reducers/locations';
 
 /*const CreateEditLocationDialog = React.lazy(
   () =>
@@ -51,7 +54,6 @@ interface Props {
 function LocationManager(props: Props) {
   const { t } = useTranslation();
   const {
-    locations,
     findLocation,
     moveLocation,
     deleteLocation,
@@ -61,7 +63,7 @@ function LocationManager(props: Props) {
   } = useCurrentLocationContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
 
-  //const locations: Array<CommonLocation> = useSelector(getLocations);
+  const locations: TS.Location[] = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -196,7 +198,15 @@ function LocationManager(props: Props) {
                       >
                         <LocationView
                           key={location.uuid}
-                          location={location}
+                          location={{
+                            isFile: false,
+                            lmdt: 0,
+                            name: location.name,
+                            path: location.path,
+                            size: 0,
+                            locationID: location.uuid,
+                            children: [],
+                          }}
                           setDeleteLocationDialogOpened={
                             setDeleteLocationDialogOpened
                           }
