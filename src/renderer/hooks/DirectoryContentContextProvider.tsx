@@ -70,6 +70,10 @@ import {
   useCancelablePerLocation,
   makeCancelable,
 } from '-/utils/useCancelablePerLocation';
+import {
+  galleryDefaultSettings,
+  mapiqueDefaultSettings,
+} from '../../../tagspacespro/modules/perspectives';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -630,6 +634,10 @@ export const DirectoryContentContextProvider = ({
       return defaultGridSettings;
     } else if (perspective === PerspectiveIDs.LIST) {
       return defaultListSettings;
+    } else if (perspective === PerspectiveIDs.GALLERY) {
+      return Pro.Perspectives.galleryDefaultSettings;
+    } else if (perspective === PerspectiveIDs.MAPIQUE) {
+      return Pro.Perspectives.mapiqueDefaultSettings;
     } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
       return Pro.Perspectives.KanBanPerspectiveSettings;
     }

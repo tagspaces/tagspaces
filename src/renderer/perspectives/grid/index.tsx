@@ -14,7 +14,6 @@ export { default } from './components/MainContainer';
 // }
 
 export const defaultSettings = {
-  testID: 'gridPerspectiveContainer',
   settingsKey: 'tsPerspectiveGrid',
   orderBy: true,
   sortBy: 'byName',
