@@ -44,6 +44,10 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
+import {
+  makeCancelable,
+  useCancelablePerLocation,
+} from '-/utils/useCancelablePerLocation';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   cleanFrontDirSeparator,
@@ -66,14 +70,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  useCancelablePerLocation,
-  makeCancelable,
-} from '-/utils/useCancelablePerLocation';
-import {
-  galleryDefaultSettings,
-  mapiqueDefaultSettings,
-} from '../../../tagspacespro/modules/perspectives';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
