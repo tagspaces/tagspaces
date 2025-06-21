@@ -2,7 +2,7 @@ import {
   AIProvider,
   ChatRequest, // Used in newOpenRouterMessage
   Message, // Used to type messages within ChatRequest
-  ModelResponse, 
+  ModelResponse,
 } from './ChatTypes'; // Adjust path as necessary
 
 // Define a type for the response from OpenRouter's model endpoint
@@ -32,7 +32,6 @@ interface OpenRouterModelResponse {
   data: OpenRouterModel[];
 }
 
-
 export class OpenRouterClient {
   private providerConfig: AIProvider;
 
@@ -55,7 +54,7 @@ export class OpenRouterClient {
 
   private getHeaders(): Record<string, string> {
     return {
-      'Authorization': `Bearer ${this.getApiKey()}`,
+      Authorization: `Bearer ${this.getApiKey()}`,
       'Content-Type': 'application/json',
       'HTTP-Referer': 'https://tagspaces.org/', // Or your app's URL
       'X-Title': 'TagSpaces', // Or your app's name
@@ -73,20 +72,24 @@ export class OpenRouterClient {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: response.statusText }));
         console.error('Failed to fetch OpenRouter models:', errorData);
-        throw new Error(`Failed to fetch models: ${errorData.message || response.statusText}`);
+        throw new Error(
+          `Failed to fetch models: ${errorData.message || response.statusText}`,
+        );
       }
 
       const modelData: OpenRouterModelResponse = await response.json();
 
       return modelData.data.map((model) => ({
-        name: model.id, 
-        details: { 
+        name: model.id,
+        details: {
           // Example: you can populate these from model.architecture or model.top_provider if needed
           // parameter_size: model.architecture?.modality, // This is just an example
           // quantization_level: model.top_provider?.max_completion_tokens?.toString(), // Example
-        }
+        },
       }));
     } catch (error) {
       console.error('Error fetching OpenRouter models:', error);
@@ -96,14 +99,19 @@ export class OpenRouterClient {
 
   async newOpenRouterMessage(
     request: ChatRequest, // Using ChatRequest as defined in the prompt
-    chatMessageHandler?: (contentChunk: string, isLastChunk: boolean, error?: Error) => void
+    chatMessageHandler?: (
+      contentChunk: string,
+      isLastChunk: boolean,
+      error?: Error,
+    ) => void,
   ): Promise<string | undefined> {
     const apiUrl = `${this.getApiUrl()}chat/completions`;
     const headers = this.getHeaders();
 
     const openRouterRequest = {
       model: request.model,
-      messages: request.messages.map((msg: Message) => ({ // Explicitly typing msg as Message
+      messages: request.messages.map((msg: Message) => ({
+        // Explicitly typing msg as Message
         role: msg.role,
         content: msg.content,
       })),
@@ -125,8 +133,13 @@ export class OpenRouterClient {
         let errorPayload: any = { message: response.statusText };
         try {
           errorPayload = await response.json();
-        } catch (e) { /* Ignore if error response is not JSON */ }
-        const errorMessage = errorPayload?.error?.message || errorPayload?.message || response.statusText;
+        } catch (e) {
+          /* Ignore if error response is not JSON */
+        }
+        const errorMessage =
+          errorPayload?.error?.message ||
+          errorPayload?.message ||
+          response.statusText;
         console.error('OpenRouter API error:', errorMessage, errorPayload);
         if (chatMessageHandler) {
           chatMessageHandler('', true, new Error(`API Error: ${errorMessage}`));
@@ -145,29 +158,34 @@ export class OpenRouterClient {
           if (done) {
             // Process any remaining data in buffer
             if (buffer.startsWith('data: ')) {
-                const dataContent = buffer.substring('data: '.length).trim();
-                if (dataContent && dataContent !== '[DONE]') {
-                    try {
-                        const json = JSON.parse(dataContent);
-                        const chunkContent = json.choices?.[0]?.delta?.content;
-                        if (chunkContent) {
-                            content += chunkContent;
-                            if (chatMessageHandler) chatMessageHandler(chunkContent, false);
-                        }
-                    } catch (e) {
-                        console.warn('Error parsing final stream data JSON:', e, dataContent);
-                    }
+              const dataContent = buffer.substring('data: '.length).trim();
+              if (dataContent && dataContent !== '[DONE]') {
+                try {
+                  const json = JSON.parse(dataContent);
+                  const chunkContent = json.choices?.[0]?.delta?.content;
+                  if (chunkContent) {
+                    content += chunkContent;
+                    if (chatMessageHandler)
+                      chatMessageHandler(chunkContent, false);
+                  }
+                } catch (e) {
+                  console.warn(
+                    'Error parsing final stream data JSON:',
+                    e,
+                    dataContent,
+                  );
                 }
+              }
             }
             if (chatMessageHandler) chatMessageHandler('', true);
             break;
           }
 
           buffer += decoder.decode(value, { stream: true });
-          
+
           let eolIndex;
           // SSE events are separated by double newlines
-          while ((eolIndex = buffer.indexOf('\n\n')) >= 0) { 
+          while ((eolIndex = buffer.indexOf('\n\n')) >= 0) {
             const line = buffer.substring(0, eolIndex).trim();
             buffer = buffer.substring(eolIndex + 2); // Consume the event including \n\n
 
@@ -182,7 +200,8 @@ export class OpenRouterClient {
                 const chunkContent = json.choices?.[0]?.delta?.content;
                 if (chunkContent) {
                   content += chunkContent;
-                  if (chatMessageHandler) chatMessageHandler(chunkContent, false);
+                  if (chatMessageHandler)
+                    chatMessageHandler(chunkContent, false);
                 }
               } catch (e) {
                 console.warn('Error parsing stream data JSON:', e, dataContent);

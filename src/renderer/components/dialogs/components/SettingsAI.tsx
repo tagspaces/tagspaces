@@ -70,12 +70,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 export const SettingsAI = () => {
   const { t } = useTranslation();
-  const { models, checkAIProviderAlive, refreshAIModels } =
-    useChatContext();
+  const { models, checkAIProviderAlive, refreshAIModels } = useChatContext();
   const dispatch = useDispatch();
   const defaultAiProviderId = useSelector(getDefaultAIProviderId);
   const aiProviders = useSelector(getAIProviders);
-  const externalConfig = useSelector(isExternalConfig(TS.AppConfigurationType.AI_CONFIG_TYPE));
+  const externalConfig = useSelector(
+    isExternalConfig(TS.AppConfigurationType.AI_CONFIG_TYPE),
+  );
   const providersAlive = useRef<{ [key: string]: boolean }>({});
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const { inputMinHeight } = useCommonSettings();
@@ -84,10 +85,10 @@ export const SettingsAI = () => {
 
   useEffect(() => {
     checkAllProvidersAlive();
-  }, [aiProviders]); 
+  }, [aiProviders]);
 
   function checkAllProvidersAlive() {
-    aiProviders.forEach((provider) => 
+    aiProviders.forEach((provider) =>
       checkAIProviderAlive(provider).then((alive) => {
         providersAlive.current = {
           ...providersAlive.current,
@@ -98,11 +99,7 @@ export const SettingsAI = () => {
     );
   }
 
-  function handleChangeProvider(
-    providerId: string,
-    param: string,
-    value: any,
-  ) {
+  function handleChangeProvider(providerId: string, param: string, value: any) {
     const newProviders = aiProviders.map((provider) => {
       if (provider.id === providerId) {
         return { ...provider, [param]: value };
@@ -115,7 +112,7 @@ export const SettingsAI = () => {
   function addAiProvider(providerType: AIProviders) {
     let providerName: string;
     let providerUrl: string;
-    let engine: AIProviders = providerType; 
+    let engine: AIProviders = providerType;
     let defaultTextModel: string | undefined;
     let defaultImageModel: string | undefined;
     let apiKey: string | undefined = undefined;
@@ -123,24 +120,24 @@ export const SettingsAI = () => {
     if (providerType === 'ollama') {
       providerName = 'Ollama Local';
       providerUrl = 'http://localhost:11434';
-      defaultTextModel = 'llama3.2'; 
-      defaultImageModel = 'llava'; 
+      defaultTextModel = 'llama3.2';
+      defaultImageModel = 'llava';
     } else if (providerType === 'openrouter') {
       providerName = 'OpenRouter';
       providerUrl = 'https://openrouter.ai/api/v1';
       engine = 'openrouter';
-      defaultTextModel = 'gryphe/mythomax-l2-13b'; 
-      defaultImageModel = undefined; 
-      apiKey = ''; 
+      defaultTextModel = 'gryphe/mythomax-l2-13b';
+      defaultImageModel = undefined;
+      apiKey = '';
     } else {
-      console.error("Unsupported provider type:", providerType);
+      console.error('Unsupported provider type:', providerType);
       return;
     }
-    
+
     const newProvider: AIProvider = {
       id: getUniqueName(
         aiProviders.map((p) => p.id),
-        engine + 'NewId', 
+        engine + 'NewId',
       ),
       engine: engine,
       name: getUniqueName(
@@ -162,12 +159,13 @@ export const SettingsAI = () => {
       forceUpdate();
     });
     dispatch(SettingsActions.addAIProvider(newProvider));
-    refreshAIModels(newProvider); 
+    refreshAIModels(newProvider);
   }
 
   function removeAiProvider(providerId: string) {
     dispatch(SettingsActions.removeAIProvider(providerId));
-    const { [providerId]: _, ...remainingProvidersAlive } = providersAlive.current;
+    const { [providerId]: _, ...remainingProvidersAlive } =
+      providersAlive.current;
     providersAlive.current = remainingProvidersAlive;
     // If the removed provider was the default, clear the default ID
     if (defaultAiProviderId === providerId) {
@@ -202,14 +200,22 @@ export const SettingsAI = () => {
             .map((provider) => (
               <MenuItem key={provider.id} value={provider.id}>
                 <Stack direction="row" alignItems="center">
-                  {provider.engine === 'ollama' && <OllamaIcon width={15} style={{ marginRight: 5 }} />}
-                  {provider.engine === 'openrouter' && <Typography variant="caption" sx={{mr:0.5}}>[OR]</Typography>}
+                  {provider.engine === 'ollama' && (
+                    <OllamaIcon width={15} style={{ marginRight: 5 }} />
+                  )}
+                  {provider.engine === 'openrouter' && (
+                    <Typography variant="caption" sx={{ mr: 0.5 }}>
+                      [OR]
+                    </Typography>
+                  )}
                   {provider.name}
                 </Stack>
               </MenuItem>
             ))}
         </Select>
-        <FormHelperText>{t('core:defaultAiProviderDescription')}</FormHelperText>
+        <FormHelperText>
+          {t('core:defaultAiProviderDescription')}
+        </FormHelperText>
       </FormControl>
       <Button
         variant="outlined"
@@ -258,7 +264,9 @@ export const SettingsAI = () => {
                       setOpenedNewAIMenu(false);
                     }}
                   >
-                    <ListItemIcon><Typography sx={{ml:0.5, mr:0.5}}>[OR]</Typography></ListItemIcon>
+                    <ListItemIcon>
+                      <Typography sx={{ ml: 0.5, mr: 0.5 }}>[OR]</Typography>
+                    </ListItemIcon>
                     <ListItemText primary="OpenRouter" />
                   </MenuItem>
                 </MenuList>
@@ -275,8 +283,14 @@ export const SettingsAI = () => {
             id={provider.id + '-header'}
           >
             <Stack direction="row" alignItems="center">
-              {provider.engine === 'ollama' && <OllamaIcon width={15} style={{ marginRight: 5 }} />}
-              {provider.engine === 'openrouter' && <Typography variant="caption" sx={{mr:0.5}}>[OR]</Typography>}
+              {provider.engine === 'ollama' && (
+                <OllamaIcon width={15} style={{ marginRight: 5 }} />
+              )}
+              {provider.engine === 'openrouter' && (
+                <Typography variant="caption" sx={{ mr: 0.5 }}>
+                  [OR]
+                </Typography>
+              )}
               {provider.name}
               {providersAlive.current[provider.id] === true && (
                 <Chip
@@ -336,7 +350,7 @@ export const SettingsAI = () => {
                 <TsTextField
                   disabled={externalConfig}
                   fullWidth
-                  name="providerUrl" 
+                  name="providerUrl"
                   label={t('core:providerURL') + ' *'}
                   data-tid="aiProviderUrlTID"
                   value={provider.url}
@@ -347,7 +361,11 @@ export const SettingsAI = () => {
                       event.target.value,
                     );
                   }}
-                  placeholder={provider.engine === 'ollama' ? "http://localhost:11434" : "https://openrouter.ai/api/v1"}
+                  placeholder={
+                    provider.engine === 'ollama'
+                      ? 'http://localhost:11434'
+                      : 'https://openrouter.ai/api/v1'
+                  }
                   InputProps={{
                     style: { minHeight: inputMinHeight },
                     endAdornment: (
@@ -356,9 +374,12 @@ export const SettingsAI = () => {
                           <IconButton
                             aria-label="refresh models"
                             onClick={() => {
-                              checkAIProviderAlive(provider).then((alive) => { 
-                                providersAlive.current = { ...providersAlive.current, [provider.id]: alive };
-                                if (alive) refreshAIModels(provider); 
+                              checkAIProviderAlive(provider).then((alive) => {
+                                providersAlive.current = {
+                                  ...providersAlive.current,
+                                  [provider.id]: alive,
+                                };
+                                if (alive) refreshAIModels(provider);
                                 forceUpdate();
                               });
                             }}
@@ -378,26 +399,28 @@ export const SettingsAI = () => {
                     disabled={externalConfig}
                     fullWidth
                     name="apiKey"
-                    label={t('core:apiKey', 'API Key') + ' *'} 
+                    label={t('core:apiKey', 'API Key') + ' *'}
                     data-tid="openRouterApiKeyTID"
-                    value={provider.apiKey || ''} 
+                    value={provider.apiKey || ''}
                     type="password"
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       handleChangeProvider(
                         provider.id,
-                        'apiKey', 
+                        'apiKey',
                         event.target.value,
                       );
                     }}
-                    placeholder="sk-or-..." 
+                    placeholder="sk-or-..."
                   />
                 </FormControl>
               )}
               <FormControl sx={{ minWidth: 320 }} size="small">
-                <InputLabel id={provider.id + "-defaultTextModelID"}>{t('core:defaultTextModel')}</InputLabel>
+                <InputLabel id={provider.id + '-defaultTextModelID'}>
+                  {t('core:defaultTextModel')}
+                </InputLabel>
                 <Select
-                  labelId={provider.id + "-defaultTextModelID"}
-                  id={provider.id + "-defaultTextModelIDSelect"}
+                  labelId={provider.id + '-defaultTextModelID'}
+                  id={provider.id + '-defaultTextModelIDSelect'}
                   value={provider.defaultTextModel || ''}
                   label={t('core:defaultTextModel')}
                   disabled={externalConfig}
@@ -410,7 +433,12 @@ export const SettingsAI = () => {
                   }}
                 >
                   {models.current
-                    .filter((m) => provider.engine === 'openrouter' || (!m.name.includes('llava') && !m.name.includes('bakllava'))) 
+                    .filter(
+                      (m) =>
+                        provider.engine === 'openrouter' ||
+                        (!m.name.includes('llava') &&
+                          !m.name.includes('bakllava')),
+                    )
                     .map((m: ModelResponse) => (
                       <MenuItem key={m.name} value={m.name}>
                         {m.name}
@@ -418,12 +446,14 @@ export const SettingsAI = () => {
                     ))}
                 </Select>
               </FormControl>
-              {(provider.engine === 'ollama') && ( 
+              {provider.engine === 'ollama' && (
                 <FormControl sx={{ minWidth: 320 }} size="small">
-                  <InputLabel id={provider.id + "-defaultImageModelID"}>{t('core:defaultImageModel')}</InputLabel>
+                  <InputLabel id={provider.id + '-defaultImageModelID'}>
+                    {t('core:defaultImageModel')}
+                  </InputLabel>
                   <Select
-                    labelId={provider.id + "-defaultImageModelID"}
-                    id={provider.id + "-defaultImageModelIDSelect"}
+                    labelId={provider.id + '-defaultImageModelID'}
+                    id={provider.id + '-defaultImageModelIDSelect'}
                     value={provider.defaultImageModel || ''}
                     label={t('core:defaultImageModel')}
                     disabled={externalConfig}
@@ -436,7 +466,11 @@ export const SettingsAI = () => {
                     }}
                   >
                     {models.current
-                      .filter((m) => m.name.includes('llava') || m.name.includes('bakllava')) 
+                      .filter(
+                        (m) =>
+                          m.name.includes('llava') ||
+                          m.name.includes('bakllava'),
+                      )
                       .map((m: ModelResponse) => (
                         <MenuItem key={m.name} value={m.name}>
                           {m.name}

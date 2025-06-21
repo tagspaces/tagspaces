@@ -6,11 +6,11 @@
 @import 'assets/rc-table.css';
 @import '~leaflet/dist/leaflet.css';
 @import '~react-image-gallery/styles/css/image-gallery.css';
-@import "~slick-carousel/slick/slick.css"; /* used from react-slick */
-@import "~slick-carousel/slick/slick-theme.css";
+@import '~slick-carousel/slick/slick.css'; /* used from react-slick */
+@import '~slick-carousel/slick/slick-theme.css';
 @import '~react-leaflet-markercluster/styles';
-@import "~@milkdown/crepe/theme/common/style.css";
-@import "~@milkdown/crepe/theme/frame.css";
+@import '~@milkdown/crepe/theme/common/style.css';
+@import '~@milkdown/crepe/theme/frame.css';
 @import 'assets/milkdown.css';
 
 /* Needed to disable border on focused HotKey element */
@@ -48,14 +48,15 @@ body {
   cursor: pointer;
 }
 
-.rc-table-cell, .rc-table-row {
+.rc-table-cell,
+.rc-table-row {
   display: block !important;
 }
 
 .full-height {
   height: 100%;
 }
-.mx-auto{
+.mx-auto {
   margin-left: auto;
   margin-right: auto;
 }
