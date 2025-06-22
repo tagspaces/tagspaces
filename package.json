@@ -285,7 +285,7 @@
     "current-git-branch": "^1.1.0",
     "detect-port": "^1.5.1",
     "dotenv-webpack": "^8.0.1",
-    "electron": "^35.3.0",
+    "electron": "^30.0.0",
     "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.3",
@@ -356,7 +356,7 @@
   },
   "engines": {
     "npm": ">= 6.14.15",
-    "node": ">=18.0.0 <23.0.0",
+    "node": ">=18.0.0 <24.0.0",
     "yarn": "please-use-npm"
   },
   "electronmon": {

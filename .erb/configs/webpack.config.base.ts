@@ -5,10 +5,12 @@
 import webpack from 'webpack';
 const Dotenv = require('dotenv-webpack');
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import webpackPaths from './webpack.paths';
-import { dependencies as externals } from '../../release/app/package.json';
+import webpackPaths from './webpack.paths.ts';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const externals = require('../../release/app/package.json').dependencies;
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
-import path = require('path');
+import * as path from 'path';
 import { checkThirdPartyTxt, checkVersionJson } from '../../src/main/util';
 
 checkVersionJson();

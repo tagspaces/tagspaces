@@ -78,13 +78,16 @@ test.describe('OpenRouter Integration Tests', () => {
   test('TSTXX02 - Send message using OpenRouter model', async ({
     page,
     isWeb,
-  }) => {
+  }, testInfo) => {
     // First, configure the API key (similar to the previous test)
     await clickOn('[data-tid=settingsButton]');
     await clickOn('[data-tid=settingsCategory-AI]');
     await clickOn('[data-tid=aiProviderAddButton]');
     await clickOn('[data-tid=aiCreateNewOpenRouterTID]');
-    const apiKey = process.env.OPENROUTER_API_KEY || 'TEST_OPENROUTER_API_KEY'; // Use real key from env if available
+    const apiKey = process.env.OPENROUTER_API_KEY || 'TEST_OPENROUTER_API_KEY';
+    if (!apiKey || apiKey === 'TEST_OPENROUTER_API_KEY') {
+      testInfo.skip('No valid OpenRouter API key provided in environment.');
+    }
     await page.fill('[data-tid=aiProviderApiKey_OpenRouter_0]', apiKey);
     await clickOn('[data-tid=aiProviderSaveButton_OpenRouter_0]');
     await clickOn('[data-tid=dialogCloseButton]');
@@ -108,13 +111,15 @@ test.describe('OpenRouter Integration Tests', () => {
     await expectElementExist('[data-tid=chatViewTID]', true);
 
     // Select an OpenRouter model
-    // The selector for the model dropdown and specific model needs to be identified
     await clickOn('[data-tid=selectChatModelButton]');
-    // We need a way to wait for models to load
-    await page.waitForTimeout(2000); // Crude wait, replace with a proper selector if possible
-    // Selecting a specific model, e.g., "openrouter/auto" or a known free model
-    // This selector will need to be verified from the actual UI
-    await clickOn('[data-tid=chatModelListItem_openrouter/mythomist-7b]'); // Adjust model name/TID
+    // Wait for the model list to appear
+    await expectElementExist('[data-tid=chatModelList]', true, 10000);
+    // Wait for at least one OpenRouter model to be listed
+    await page.waitForSelector('[data-tid^=chatModelListItem_openrouter/]', {
+      timeout: 10000,
+    });
+    // Select a specific model (adjust if model name changes)
+    await clickOn('[data-tid=chatModelListItem_openrouter/mythomist-7b]');
     await expectElementExist(
       '[data-tid=chatModelListItem_openrouter/mythomist-7b][aria-selected="true"]',
       true,
@@ -126,12 +131,11 @@ test.describe('OpenRouter Integration Tests', () => {
     await clickOn('[data-tid=chatSendMessageButton]');
 
     // Verify response is received
-    // The selector for the response message area needs to be identified
     await expectElementExist(
       '[data-tid^=chatMessageContent_assistant_]',
       true,
       30000,
-    ); // Wait up to 30s for response
+    );
     const responseElement = await page
       .locator('[data-tid^=chatMessageContent_assistant_]')
       .last();
