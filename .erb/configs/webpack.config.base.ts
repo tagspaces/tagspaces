@@ -3,11 +3,11 @@
  */
 
 import webpack from 'webpack';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 const Dotenv = require('dotenv-webpack');
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths.ts';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 const externals = require('../../release/app/package.json').dependencies;
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import * as path from 'path';
