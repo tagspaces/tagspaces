@@ -219,6 +219,11 @@ type IOActionsContextData = {
     file: TS.OrderVisibilitySettings,
     files?: Array<TS.OrderVisibilitySettings>,
   ) => Promise<TS.FileSystemEntryMeta>;
+  reorderColumn: (
+    entry: TS.FileSystemEntry,
+    columnFiles?: TS.OrderVisibilitySettings[],
+    filePath?: string,
+  ) => Promise<TS.OrderVisibilitySettings[]>;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
@@ -257,6 +262,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   getDirectoryOrder: undefined,
   getFilesOrder: undefined,
   pushFileOrder: undefined,
+  reorderColumn: undefined,
 });
 
 export type IOActionsContextProviderProps = {
@@ -2076,6 +2082,45 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  /**
+   *
+   * @param entry
+   * @param columnFiles if = undefined toTop ordered
+   * @param filePath
+   */
+  function reorderColumn(
+    entry: TS.FileSystemEntry,
+    columnFiles: TS.OrderVisibilitySettings[] = undefined,
+    filePath = undefined,
+  ): Promise<TS.OrderVisibilitySettings[]> {
+    const dirPath = extractContainingDirectoryPath(
+      filePath ? filePath : entry.path,
+    );
+
+    return pushFileOrder(
+      dirPath,
+      {
+        uuid: entry.uuid,
+        name: extractFileName(entry.path, currentLocation?.getDirSeparator()),
+      },
+      columnFiles,
+    )
+      .then((updatedFsEntryMeta) => {
+        return saveCurrentLocationMetaData(dirPath, updatedFsEntryMeta)
+          .then(() => {
+            return updatedFsEntryMeta.customOrder.files;
+          })
+          .catch((err) => {
+            console.log('Error adding files for ' + dirPath + ' with ' + err);
+            return undefined;
+          });
+      })
+      .catch((error) => {
+        console.log('Error reorderTop ' + error);
+        return undefined;
+      });
+  }
+
   function toggleDirVisibility(
     dir: TS.OrderVisibilitySettings,
     parentDirPath: string = undefined,
@@ -2354,6 +2399,7 @@ export const IOActionsContextProvider = ({
       getDirectoryOrder,
       getFilesOrder,
       pushFileOrder,
+      reorderColumn,
     };
   }, [
     warningOpeningFilesExternally,

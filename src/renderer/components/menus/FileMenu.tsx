@@ -78,8 +78,8 @@ interface Props {
   mouseY?: number;
   open: boolean;
   onClose: () => void;
-  reorderTop?: () => void;
-  reorderBottom?: () => void;
+  reorderTop?: (entry: TS.FileSystemEntry) => void;
+  reorderBottom?: (entry: TS.FileSystemEntry) => void;
   onDuplicateFile?: (fileDirPath: string) => void;
 }
 
@@ -418,7 +418,7 @@ function FileMenu(props: Props) {
           data-tid="reorderTopTID"
           onClick={() => {
             onClose();
-            reorderTop();
+            reorderTop(lastSelectedEntry);
           }}
         >
           <ListItemIcon>
@@ -435,7 +435,7 @@ function FileMenu(props: Props) {
           data-tid="reorderBottomTID"
           onClick={() => {
             onClose();
-            reorderBottom();
+            reorderBottom(lastSelectedEntry);
           }}
         >
           <ListItemIcon>
