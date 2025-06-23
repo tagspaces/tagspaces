@@ -154,6 +154,7 @@ type DirectoryContentContextData = {
   ) => Promise<TS.FileSystemEntry[]>;
   setThumbnail: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
   getMetaForEntry: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext =
@@ -204,6 +205,7 @@ export const DirectoryContentContext =
     setThumbnails: undefined,
     setThumbnail: undefined,
     getMetaForEntry: undefined,
+    getEnhancedDir: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -1622,6 +1624,7 @@ export const DirectoryContentContextProvider = ({
       setThumbnails,
       setThumbnail,
       getMetaForEntry,
+      getEnhancedDir,
     };
   }, [
     currentLocation,
