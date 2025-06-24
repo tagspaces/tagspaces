@@ -75,14 +75,14 @@ function MoveCopyFilesDialog(props: Props) {
       !currentLocation.haveWebDavSupport()
     ) {
       const promises = selectedDirs.map((dirPath) => {
-        try {
-          return getDirProperties(dirPath).then((prop) => {
+        return getDirProperties(dirPath)
+          .then((prop) => {
             dirProp.current[dirPath] = prop;
             return true;
+          })
+          .catch((ex) => {
+            console.debug('getDirProperties:', ex);
           });
-        } catch (ex) {
-          console.debug('getDirProperties:', ex);
-        }
       });
       Promise.all(promises).then(() => forceUpdate());
     }

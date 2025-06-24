@@ -77,6 +77,7 @@ import { Pro } from '-/pro';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import useFirstRender from '-/utils/useFirstRender';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 type IOActionsContextData = {
   createDirectory: (directoryPath: string) => Promise<boolean>;
@@ -292,6 +293,7 @@ export const IOActionsContextProvider = ({
     saveBinaryFilePromise,
     deleteEntriesPromise,
   } = usePlatformFacadeContext();
+  const { setActions } = usePerspectiveActionsContext();
   const { actions, setReflectActions } = useEditedEntryContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const {
@@ -335,7 +337,7 @@ export const IOActionsContextProvider = ({
               );
             }
           }
-        } else if (action.action === 'update') {
+        } /* else if (action.action === 'update') {
           // reflect visibility change on renamed KanBan column
           if (
             action.entry &&
@@ -354,7 +356,7 @@ export const IOActionsContextProvider = ({
               reflectRenameVisibility(action.oldEntryPath, action.entry.path);
             }
           }
-        }
+        }*/
       }
     }
   }, [actions]);
@@ -2138,11 +2140,8 @@ export const IOActionsContextProvider = ({
                 if (folders) {
                   setCurrentDirectoryDirs(folders);
                 }
-                /* const action: TS.KanBanMetaActions = {
-                  action: 'directoryVisibilityChange',
-                  meta: updatedFsEntryMeta,
-                };
-                setReflectKanBanActions(action);*/
+                const action: TS.PerspectiveActions = { action: 'reload' };
+                setActions(action);
               })
               .catch((err) => {
                 console.log(
@@ -2242,11 +2241,8 @@ export const IOActionsContextProvider = ({
                 if (folders) {
                   setCurrentDirectoryDirs(folders);
                 }
-                /*const action: TS.KanBanMetaActions = {
-                  action: 'directoryVisibilityChange',
-                  meta: updatedFsEntryMeta,
-                };
-                setReflectKanBanActions(action);*/
+                const action: TS.PerspectiveActions = { action: 'reload' };
+                setActions(action);
               })
               .catch((err) => {
                 console.log(

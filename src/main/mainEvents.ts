@@ -553,7 +553,16 @@ export default function loadMainEvents() {
   });
 
   ipcMain.handle('getDirProperties', async (event, path) => {
-    const result = await getDirProperties(path);
-    return result;
+    try {
+      const result = await getDirProperties(path);
+      return result; // renderer.invoke() resolves with this
+    } catch (err) {
+      console.error('Error in getDirProperties:', err);
+      throw {
+        message: `Failed to getDirProperties "${path}"`,
+        code: err.code || 'UNKNOWN',
+        stack: err.stack,
+      };
+    }
   });
 }
