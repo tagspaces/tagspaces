@@ -218,6 +218,9 @@ function FileView(props: Props) {
           ? '&query=' + encodeURIComponent(searchQuery.textQuery)
           : '';
       const locale = '&locale=' + i18n.language;
+      const thumb = openedEntry.meta?.thumbPath
+        ? '&thumb=' + encodeURIComponent(openedEntry.meta?.thumbPath)
+        : '';
       const theming =
         '&theme=' +
         theme.palette.mode +
@@ -231,6 +234,7 @@ function FileView(props: Props) {
         encodeURIComponent(
           openedEntry.url ? openedEntry.url : openedEntry.path,
         ) +
+        thumb +
         locale +
         theming +
         extQuery +
