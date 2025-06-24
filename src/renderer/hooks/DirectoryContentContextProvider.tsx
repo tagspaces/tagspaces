@@ -1381,16 +1381,21 @@ export const DirectoryContentContextProvider = ({
   ): Record<string, TS.FileSystemEntryMeta> {
     const metaLookup: Record<string, TS.FileSystemEntryMeta> = {};
     for (const entry of entriesToMerge) {
-      if (entry) {
-        const { path, meta } = entry;
-        if (!metaLookup[path]) {
-          // first time we see this path
-          metaLookup[path] = meta;
-        }
-        // shallow-merge the incoming meta onto our accumulator
-        Object.assign(metaLookup[path], meta);
+      if (!entry) continue;
+
+      const { path, meta } = entry;
+      // default meta to an object
+      const incomingMeta = meta ?? {};
+
+      // if we haven't seen this path, start with a shallow clone of incomingMeta
+      if (!metaLookup[path]) {
+        metaLookup[path] = { id: getUuid(), ...incomingMeta };
+      } else {
+        // now both sides are objects, safe to merge
+        Object.assign(metaLookup[path], incomingMeta);
       }
     }
+
     return metaLookup;
   }
 
