@@ -81,7 +81,7 @@ function LocationView(props: Props) {
 
   const dispatch: AppDispatch = useDispatch();
   const { location, hideDrawer } = props;
-  const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+  const isCloudLocation = location?.type === locationType.TYPE_CLOUD;
 
   const handleLocationIconClick = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -180,7 +180,7 @@ function LocationView(props: Props) {
   };
 
   let locationNameTitle = location?.path;
-  if (isCloudLocation && location.bucketName) {
+  if (isCloudLocation && location?.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
     } else if (location.region) {
@@ -281,7 +281,7 @@ function LocationView(props: Props) {
               </TargetMoveFileBox>
             )}
           </ListItemText>
-          {location.isDefault && (
+          {location?.isDefault && (
             <Tooltip title={t('core:thisIsStartupLocation')}>
               <DefaultLocationIcon data-tid="startupIndication" />
             </Tooltip>

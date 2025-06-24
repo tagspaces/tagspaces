@@ -138,7 +138,8 @@ export const ThumbGenerationContextProvider = ({
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);*/
 
   useEffect(() => {
-    if (!firstRender && metaActions && metaActions.length > 0) {
+    if (metaActions && metaActions.length > 0) {
+      //!firstRender (skip firstRender: if switch from KanBan perspective to Gallery thumbGenerate missing)
       const entries = [];
       let genThumbs = false;
       for (const action of metaActions) {

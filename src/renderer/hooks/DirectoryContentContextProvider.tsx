@@ -781,27 +781,10 @@ export const DirectoryContentContextProvider = ({
         entries.length > 0 &&
         !isNotFromCurrentDir //entries[0].path.startsWith(currentDirectoryPath.current)
       ) {
-        //const currDirEntries = currentDirEntries ? currentDirEntries : currentDirectoryEntries;
-        if (
+        /*if (
           currentDirectoryEntries.current &&
           currentDirectoryEntries.current.length > 0
         ) {
-          /*if (inlineUpdate) {
-            // inline update currentDirectoryEntries
-            let isUpdated = false;
-            for (const oldEntry of currentDirectoryEntries.current) {
-              const entryUpdated = entries.find(
-                (updated) => updated.path === oldEntry.path,
-              );
-              if (entryUpdated) {
-                oldEntry.meta = { ...oldEntry.meta, ...entryUpdated.meta };
-                isUpdated = true;
-              }
-            }
-            if (isUpdated) {
-              forceUpdate();
-            }
-          }*/
           setCurrentDirectoryEntries(
             currentDirectoryEntries.current.map((e) => {
               const eUpdated = entries.filter((u) => u.path === e.path);
@@ -814,9 +797,9 @@ export const DirectoryContentContextProvider = ({
               return e;
             }),
           );
-        } else {
-          setCurrentDirectoryEntries(entries);
-        }
+        } else {*/
+        setCurrentDirectoryEntries(entries);
+        // }
       }
     }
   }
@@ -1346,11 +1329,10 @@ export const DirectoryContentContextProvider = ({
           : dirEntries.filter((entry) => entry.isFile);
         const fileEntriesPromises = getFileEntriesPromises(files, meta);
         const thumbs = getThumbs(files, meta);
-        return getEntries([
-          ...dirEntriesPromises,
-          ...fileEntriesPromises,
-          ...thumbs,
-        ]);
+        return getEntries(
+          [...dirEntriesPromises, ...fileEntriesPromises, ...thumbs],
+          dirEntries,
+        );
       })
       .catch((ex) => {
         console.log(ex);
@@ -1381,17 +1363,51 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
-  function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
+  function getEntries(metaPromises, dirEntries): Promise<TS.FileSystemEntry[]> {
     // const catchHandler = (error) => undefined;
     //return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
     return executePromisesInBatches(metaPromises, 100)
       .then((entries: TS.FileSystemEntry[]) => {
-        return entries;
+        return mergeByPath(entries, dirEntries);
       })
       .catch((err) => {
         console.log('err updateEntries:', err);
         return undefined;
       });
+  }
+
+  function buildMetaLookup(
+    entriesToMerge: TS.FileSystemEntry[],
+  ): Record<string, TS.FileSystemEntryMeta> {
+    const metaLookup: Record<string, TS.FileSystemEntryMeta> = {};
+    for (const entry of entriesToMerge) {
+      const { path, meta } = entry;
+      if (!metaLookup[path]) {
+        // first time we see this path
+        metaLookup[path] = meta;
+      }
+      // shallow-merge the incoming meta onto our accumulator
+      Object.assign(metaLookup[path], meta);
+    }
+    return metaLookup;
+  }
+
+  function mergeByPath(
+    entriesToMerge: TS.FileSystemEntry[],
+    dirEntries: TS.FileSystemEntry[],
+  ): TS.FileSystemEntry[] {
+    const lookup = buildMetaLookup(entriesToMerge);
+
+    return dirEntries.map((e) => {
+      const extraMeta = lookup[e.path];
+      if (extraMeta) {
+        return {
+          ...e,
+          meta: { ...(e.meta || {}), ...extraMeta },
+        };
+      }
+      return e;
+    });
   }
 
   function getThumbs(
