@@ -44,6 +44,10 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
+import {
+  makeCancelable,
+  useCancelablePerLocation,
+} from '-/utils/useCancelablePerLocation';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   cleanFrontDirSeparator,
@@ -66,10 +70,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  useCancelablePerLocation,
-  makeCancelable,
-} from '-/utils/useCancelablePerLocation';
 
 type DirectoryContentContextData = {
   currentLocationPath: string;
@@ -154,6 +154,7 @@ type DirectoryContentContextData = {
   ) => Promise<TS.FileSystemEntry[]>;
   setThumbnail: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
   getMetaForEntry: (fsEntry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext =
@@ -204,6 +205,7 @@ export const DirectoryContentContext =
     setThumbnails: undefined,
     setThumbnail: undefined,
     getMetaForEntry: undefined,
+    getEnhancedDir: undefined,
   });
 
 export type DirectoryContentContextProviderProps = {
@@ -630,6 +632,10 @@ export const DirectoryContentContextProvider = ({
       return defaultGridSettings;
     } else if (perspective === PerspectiveIDs.LIST) {
       return defaultListSettings;
+    } else if (perspective === PerspectiveIDs.GALLERY) {
+      return Pro.Perspectives.galleryDefaultSettings;
+    } else if (perspective === PerspectiveIDs.MAPIQUE) {
+      return Pro.Perspectives.mapiqueDefaultSettings;
     } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
       return Pro.Perspectives.KanBanPerspectiveSettings;
     }
@@ -1618,6 +1624,7 @@ export const DirectoryContentContextProvider = ({
       setThumbnails,
       setThumbnail,
       getMetaForEntry,
+      getEnhancedDir,
     };
   }, [
     currentLocation,

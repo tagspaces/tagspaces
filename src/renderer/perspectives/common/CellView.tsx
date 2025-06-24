@@ -16,6 +16,10 @@
  *
  */
 
+import React from 'react';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DragItemTypes from '-/components/DragItemTypes';
@@ -42,9 +46,6 @@ import { TS } from '-/tagspaces.namespace';
 import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import React from 'react';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { useSelector } from 'react-redux';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -61,16 +62,18 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean,
   ) => any;
+  orderTop?: (entry: TS.FileSystemEntry) => void;
+  orderBottom?: (entry: TS.FileSystemEntry) => void;
   isLast?: boolean;
 }
 
 function CellView(props: Props) {
-  const { fsEntry, index, cellContent, isLast } = props;
+  const { fsEntry, index, cellContent, isLast, orderTop, orderBottom } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const theme = useTheme();
 
-  const { openMenu } = useMenuContext();
+  const { openFileMenu, openDirectoryMenu } = useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -127,7 +130,15 @@ function CellView(props: Props) {
       } else {
         addToSelection(fsEntry);
       }
-      openMenu(event, fsEntry);
+      if (fsEntry.isFile) {
+        const dirPath = extractContainingDirectoryPath(
+          fsEntry.path,
+          currentLocation?.getDirSeparator(),
+        );
+        openFileMenu(event, dirPath, orderTop, orderBottom);
+      } else {
+        openDirectoryMenu(event, fsEntry.path, true);
+      }
     }
   };
 

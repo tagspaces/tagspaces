@@ -45,8 +45,8 @@ type MenuContextData = {
   openFileMenu: (
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
     dirPath: string,
-    orderTop?: () => void,
-    orderBottom?: () => void,
+    orderTop?: (entry: TS.FileSystemEntry) => void,
+    orderBottom?: (entry: TS.FileSystemEntry) => void,
   ) => void;
   // setMousePosition: (x: number, y: number) => void;
   closeDirectoryMenu: () => void;
@@ -128,8 +128,8 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const directoryPath = useRef<string>(undefined);
   const mouseX = useRef<number>(undefined);
   const mouseY = useRef<number>(undefined);
-  const reorderTop = useRef<() => void>(undefined);
-  const reorderBottom = useRef<() => void>(undefined);
+  const reorderTop = useRef<(entry: TS.FileSystemEntry) => void>(undefined);
+  const reorderBottom = useRef<(entry: TS.FileSystemEntry) => void>(undefined);
   const menuItems = useRef<React.ReactNode>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -185,8 +185,8 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const openFileMenu = (
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
     dirPath: string,
-    orderTop?: () => void,
-    orderBottom?: () => void,
+    orderTop?: (entry: TS.FileSystemEntry) => void,
+    orderBottom?: (entry: TS.FileSystemEntry) => void,
   ) => {
     event.preventDefault();
     directoryPath.current = dirPath;

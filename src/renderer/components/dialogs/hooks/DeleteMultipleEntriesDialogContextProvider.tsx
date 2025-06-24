@@ -24,7 +24,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type DeleteMultipleEntriesDialogContextData = {
-  openDeleteMultipleEntriesDialog: () => void;
+  openDeleteMultipleEntriesDialog: (callback?: () => void) => void;
   closeDeleteMultipleEntriesDialog: () => void;
 };
 
@@ -53,11 +53,13 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
   const { selectedEntries } = useSelectedEntriesContext(); // todo don't use context provider here pass it like props in openDialog
   const { showNotification } = useNotificationContext();
   const open = useRef<boolean>(false);
+  const callback = useRef<() => void>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog() {
+  function openDialog(callbackFn?: () => void) {
     open.current = true;
+    callback.current = callbackFn;
     forceUpdate();
   }
 
@@ -83,10 +85,9 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
 
   function deleteSelectedEntries() {
     if (selectedEntries) {
-      deleteEntries(...selectedEntries).then(
-        (success) =>
-          success &&
-          selectedEntries.length > 1 &&
+      deleteEntries(...selectedEntries).then((success) => {
+        if (success) {
+          //&& selectedEntries.length > 1) {
           showNotification(
             t('core:deletingEntriesSuccessful', {
               dirPath: selectedEntries
@@ -95,8 +96,14 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
             }),
             'default',
             true,
-          ),
-      );
+          );
+          if (callback.current) {
+            callback.current();
+          }
+          return true;
+        }
+        return false;
+      });
     }
   }
 

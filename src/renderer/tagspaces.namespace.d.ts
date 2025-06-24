@@ -364,7 +364,7 @@ export namespace TS {
   }
 
   interface FolderSettings {
-    settingsKey: string;
+    settingsKey?: string;
     showDirectories?: boolean;
     showTags?: boolean;
     showDetails?: boolean;
@@ -382,6 +382,7 @@ export namespace TS {
     entrySize?: EntrySizes;
     thumbnailMode?: ThumbnailMode;
     gridPageLimit?: number;
+    galleryTypeGroup?: string[];
     // isLocal?: boolean;
   }
 

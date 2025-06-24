@@ -32,7 +32,6 @@ import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog'
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from 'assets/links';
-import { defaultSettings } from '../index';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
@@ -316,7 +315,7 @@ function GridPerspective(props: Props) {
       style={{
         height: '100%', // 'calc(100% - 47px)'
       }}
-      data-tid={defaultSettings.testID}
+      data-tid="gridPerspectiveContainer"
     >
       <MainToolbar
         prefixDataTID={'grid'}
