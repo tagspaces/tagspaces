@@ -40,6 +40,7 @@ import {
   mergeFsEntryMeta,
   resolveRelativePath,
   updateFsEntries,
+  mergeByPath,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -768,38 +769,40 @@ export const DirectoryContentContextProvider = ({
     checkCurrentDir = true,
   ) {
     if (dirEntries) {
-      const entries = dirEntries.filter((e) => e !== undefined);
+      //const entries = dirEntries.filter((e) => e !== undefined);
       const isNotFromCurrentDir =
         checkCurrentDir &&
-        entries.some(
+        dirEntries.some(
           (e) =>
             !cleanFrontDirSeparator(e.path).startsWith(
               cleanFrontDirSeparator(currentDirectory.current?.path),
             ),
         );
       if (
-        entries.length > 0 &&
+        dirEntries.length > 0 &&
         !isNotFromCurrentDir //entries[0].path.startsWith(currentDirectoryPath.current)
       ) {
-        /*if (
+        if (
           currentDirectoryEntries.current &&
           currentDirectoryEntries.current.length > 0
         ) {
           setCurrentDirectoryEntries(
-            currentDirectoryEntries.current.map((e) => {
-              const eUpdated = entries.filter((u) => u.path === e.path);
-              if (eUpdated.length > 0) {
-                const mergedMeta = eUpdated.reduce((merged, obj) => {
-                  return { ...merged, ...obj.meta };
-                }, {});
-                return { ...e, meta: { ...e.meta, ...mergedMeta } };
-              }
-              return e;
-            }),
+            mergeByPath(dirEntries, currentDirectoryEntries.current),
           );
-        } else {*/
-        setCurrentDirectoryEntries(entries);
-        // }
+          /* currentDirectoryEntries.current.map((e) => {
+            const eUpdated = entries.filter((u) => u.path === e.path);
+            if (eUpdated.length > 0) {
+              const mergedMeta = eUpdated.reduce((merged, obj) => {
+                return { ...merged, ...obj.meta };
+              }, {});
+              return { ...e, meta: { ...e.meta, ...mergedMeta } };
+            }
+            return e;
+            })
+          ); */
+        } else {
+          setCurrentDirectoryEntries(dirEntries);
+        }
       }
     }
   }
@@ -1374,47 +1377,6 @@ export const DirectoryContentContextProvider = ({
         console.log('err updateEntries:', err);
         return undefined;
       });
-  }
-
-  function buildMetaLookup(
-    entriesToMerge: TS.FileSystemEntry[],
-  ): Record<string, TS.FileSystemEntryMeta> {
-    const metaLookup: Record<string, TS.FileSystemEntryMeta> = {};
-    for (const entry of entriesToMerge) {
-      if (!entry) continue;
-
-      const { path, meta } = entry;
-      // default meta to an object
-      const incomingMeta = meta ?? {};
-
-      // if we haven't seen this path, start with a shallow clone of incomingMeta
-      if (!metaLookup[path]) {
-        metaLookup[path] = { id: getUuid(), ...incomingMeta };
-      } else {
-        // now both sides are objects, safe to merge
-        Object.assign(metaLookup[path], incomingMeta);
-      }
-    }
-
-    return metaLookup;
-  }
-
-  function mergeByPath(
-    entriesToMerge: TS.FileSystemEntry[],
-    dirEntries: TS.FileSystemEntry[],
-  ): TS.FileSystemEntry[] {
-    const lookup = buildMetaLookup(entriesToMerge);
-
-    return dirEntries.map((e) => {
-      const extraMeta = lookup[e.path];
-      if (extraMeta) {
-        return {
-          ...e,
-          meta: { ...(e.meta || {}), ...extraMeta },
-        };
-      }
-      return e;
-    });
   }
 
   function getThumbs(
