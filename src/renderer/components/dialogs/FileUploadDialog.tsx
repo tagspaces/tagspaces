@@ -43,6 +43,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
 import { uploadAbort } from '-/services/utils-io';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 interface Props {
   open: boolean;
@@ -59,6 +60,7 @@ function FileUploadDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
+  const { uploadMeta } = useFileUploadContext();
   const progress = useSelector(getProgress);
 
   const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
@@ -266,16 +268,29 @@ function FileUploadDialog(props: Props) {
             })}
       </DialogContent>
       <TsDialogActions>
-        {!haveProgress && (
-          <TsButton
-            data-tid="uploadCloseAndClearTID"
-            onClick={() => {
-              onClose();
-              dispatch(AppActions.resetProgress());
-            }}
-          >
-            {t('core:closeAndClear')}
-          </TsButton>
+        {progress && progress.length > 0 && !haveProgress && (
+          <>
+            {AppConfig.isElectron && (
+              <TsButton
+                data-tid="uploadMetaTID"
+                onClick={() => {
+                  uploadMeta();
+                }}
+              >
+                {t('core:uploadMeta')}
+              </TsButton>
+            )}
+
+            <TsButton
+              data-tid="uploadCloseAndClearTID"
+              onClick={() => {
+                onClose();
+                dispatch(AppActions.resetProgress());
+              }}
+            >
+              {t('core:closeAndClear')}
+            </TsButton>
+          </>
         )}
         <TsButton data-tid="uploadMinimizeDialogTID" onClick={onClose}>
           {t('core:minimize')}

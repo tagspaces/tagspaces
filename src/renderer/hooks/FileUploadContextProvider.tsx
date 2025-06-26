@@ -23,10 +23,12 @@ import FileUploadContainer, {
 
 type FileUploadContextData = {
   openFileUpload: (dPath: string) => void;
+  uploadMeta: () => void;
 };
 
 export const FileUploadContext = createContext<FileUploadContextData>({
   openFileUpload: undefined,
+  uploadMeta: undefined,
 });
 
 export type FileUploadContextProviderProps = {
@@ -39,12 +41,17 @@ export const FileUploadContextProvider = ({
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   function openFileUpload(dPath: string) {
-    fileUploadContainerRef.current.onFileUpload(dPath);
+    fileUploadContainerRef.current?.onFileUpload(dPath);
+  }
+
+  function uploadMeta() {
+    fileUploadContainerRef.current?.onMetaUpload();
   }
 
   const context = useMemo(() => {
     return {
       openFileUpload: openFileUpload,
+      uploadMeta: uploadMeta,
     };
   }, []);
 
