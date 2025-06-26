@@ -1263,6 +1263,7 @@ export const IOActionsContextProvider = ({
             getThumbFileLocationForFile(
               target,
               currentLocation?.getDirSeparator(),
+              false,
             ),
             'thumb',
             path,
