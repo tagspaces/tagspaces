@@ -1225,6 +1225,13 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
+    if (onUploadProgress) {
+      paths.forEach((path) => {
+        const key =
+          targetPath + '/' + extractFileName(path, AppConfig.dirSeparator);
+        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
+      });
+    }
     return new Promise((resolve, reject) => {
       const uploadJobs = [];
       paths.map((path) => {
