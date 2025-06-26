@@ -157,6 +157,7 @@ function FileUploadDialog(props: Props) {
     }
     return '/';
   }
+  const completed = progress?.filter((item) => item.progress === 100);
 
   return (
     <Dialog
@@ -172,9 +173,14 @@ function FileUploadDialog(props: Props) {
       slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
       <TsDialogTitle
-        dialogTitle={t(
-          'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
-        )}
+        dialogTitle={
+          t(
+            'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
+          ) +
+          (progress
+            ? ' (' + completed.length + '/' + progress.length + ')'
+            : '')
+        }
         closeButtonTestId="closeFileUploadTID"
         onClose={onClose}
       />
@@ -239,14 +245,16 @@ function FileUploadDialog(props: Props) {
                     )}
                   </Grid>
                   <Grid size={{ xs: 2 }}>
-                    {abort && typeof abort === 'function' && (
-                      <TsButton
-                        tooltip={t('core:abort')}
-                        onClick={() => abort()}
-                      >
-                        <CloseIcon />
-                      </TsButton>
-                    )}
+                    {abort &&
+                      typeof abort === 'function' &&
+                      percentage !== 100 && (
+                        <TsButton
+                          tooltip={t('core:abort')}
+                          onClick={() => abort()}
+                        >
+                          <CloseIcon />
+                        </TsButton>
+                      )}
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     {percentage > -1 && (

@@ -73,7 +73,8 @@ function CellView(props: Props) {
     usePerspectiveSettingsContext();
   const theme = useTheme();
 
-  const { openFileMenu, openDirectoryMenu } = useMenuContext();
+  const { openFileMenu, openDirectoryMenu, openMoveCopyFilesDialog } =
+    useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { moveFiles, openFileNatively } = useIOActionsContext();
@@ -245,34 +246,26 @@ function CellView(props: Props) {
     }
     if (item) {
       const { entry } = item;
-      let arrPath;
+      let arrEntries;
       if (
         selectedEntries &&
         selectedEntries.length > 0 &&
         selectedEntries.some((e) => e.path === entry.path)
       ) {
         const arrSelected = selectedEntries
-          .map((entry) => entry.path)
+          //.map((entry) => entry.path)
           // remove target folder selection
-          .filter((epath) => epath !== item.targetPath);
+          .filter((e) => e.path !== item.targetPath);
         if (arrSelected.length > 0) {
-          arrPath = arrSelected;
+          arrEntries = arrSelected;
         } else {
-          arrPath = [entry.path];
+          arrEntries = [entry];
         }
       } else if (entry) {
-        arrPath = [entry.path];
+        arrEntries = [entry];
       }
-      console.log('Dropped files: ' + JSON.stringify(arrPath));
-      handleEntryExist(selectedEntries, item.targetPath).then((exist) => {
-        if (exist) {
-          openEntryExistDialog(exist, () => {
-            moveFiles(arrPath, item.targetPath, currentLocationId);
-          });
-        } else {
-          moveFiles(arrPath, item.targetPath, currentLocationId);
-        }
-      });
+      //console.log('Dropped files: ' + JSON.stringify(arrEntries));
+      openMoveCopyFilesDialog(arrEntries, item.targetPath, currentLocationId);
     }
   };
 
