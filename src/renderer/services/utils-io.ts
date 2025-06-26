@@ -1067,6 +1067,51 @@ export function getDevicePaths(): Promise<any> {
   }
 }
 
+function buildMetaLookup(
+  entriesToMerge: TS.FileSystemEntry[],
+): Record<string, TS.FileSystemEntryMeta> {
+  const metaLookup: Record<string, TS.FileSystemEntryMeta> = {};
+  for (const entry of entriesToMerge) {
+    if (!entry) continue;
+
+    const { path, meta } = entry;
+    // default meta to an object
+    const incomingMeta = meta ?? {};
+
+    // if we haven't seen this path, start with a shallow clone of incomingMeta
+    if (!metaLookup[path]) {
+      metaLookup[path] = { id: getUuid(), ...incomingMeta };
+    } else {
+      // now both sides are objects, safe to merge
+      Object.assign(metaLookup[path], incomingMeta);
+    }
+  }
+
+  return metaLookup;
+}
+
+/**
+ * @param entriesToMerge -> updated entries with only
+ * @param dirEntries -> currentDirEntries
+ */
+export function mergeByPath(
+  entriesToMerge: TS.FileSystemEntry[],
+  dirEntries: TS.FileSystemEntry[],
+): TS.FileSystemEntry[] {
+  const lookup = buildMetaLookup(entriesToMerge);
+
+  return dirEntries.map((e) => {
+    const extraMeta = lookup[e.path];
+    if (extraMeta) {
+      return {
+        ...e,
+        meta: { ...(e.meta || {}), ...extraMeta },
+      };
+    }
+    return e;
+  });
+}
+
 /**
  * @param filePath
  * @param fileUrl

@@ -127,13 +127,9 @@ const DirectoryTreeView = forwardRef(
           changeLocation(findLocation(newLocation.locationID), true);
         }
         if (isExpanded) {
-          // Collapse (or clear) if already expanded
-          //setData(undefined);
+          // Collapse (and clear) if already expanded
+          setData({ [newLocation.uuid]: undefined });
           setExpanded(false);
-        } else if (data && data[newLocation.locationID] !== undefined) {
-          //if (newLocation.uuid === currentLocationId) {
-          //setData(undefined);
-          setExpanded(true);
         } else {
           loadSubDirectories({
             isFile: false,
@@ -235,42 +231,9 @@ const DirectoryTreeView = forwardRef(
 
     const loadSubDirectories = (sub: SubFolder) => {
       resolveRelativePath(sub.path).then((locationPath) => {
-        /*const subFolder: SubFolder = {
-          isFile: false,
-          lmdt: 0,
-          name: sub.name,
-          path: locationPath,
-          size: 0,
-          locationID: sub.locationID,
-          children: [], // will be overwritten
-        };*/
         getDirectoriesTree(locationPath, sub.locationID)
           .then((children) => {
             attachNewChildren(sub, children);
-            /*if (Array.isArray(children)) {
-                // Build a new `data` map just for this one location.uuid
-                let newDirsArray: SubFolder[] | undefined = undefined;
-
-                // If this is first expansion, data===undefined → use children directly
-                if (!data) {
-                  // !loc.path) {
-                  newDirsArray = children;
-                } else {
-                  // Try to merge under an existing subtree
-                  const merged = getMergedDirsCopy(sub.path, children);
-                  if (merged) {
-                    newDirsArray = merged;
-                  } else {
-                    // No existing match → just put `loc` with its new `children`
-                    newDirsArray = [{ ...sub, path: locationPath, children: children }];
-                  }
-                }
-
-                if (newDirsArray) {
-                  setData({ [sub.locationID]: newDirsArray });
-                  setExpanded(true);
-                }
-            }*/
           })
           .catch((error) => {
             console.error('loadSubDirectories error:', error);
@@ -284,8 +247,7 @@ const DirectoryTreeView = forwardRef(
         let newDirsArray: SubFolder[] | undefined = undefined;
 
         // If this is first expansion, data===undefined → use children directly
-        if (!data) {
-          // !loc.path) {
+        if (!data || !data[sub.locationID]) {
           newDirsArray = children;
         } else {
           // Try to merge under an existing subtree

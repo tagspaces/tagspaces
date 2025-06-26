@@ -33,8 +33,10 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   fileViewer: MutableRefObject<HTMLIFrameElement>;
@@ -53,6 +55,7 @@ function FileView(props: Props) {
   const { setFullscreen, isFullscreen, toggleFullScreen } =
     useFullScreenContext();
   const { searchQuery, isSearchMode } = useDirectoryContentContext();
+  const { findLocation } = useCurrentLocationContext();
   const {
     fileViewer,
     fileViewerContainer,
@@ -62,6 +65,8 @@ function FileView(props: Props) {
   } = props;
 
   const eventID = useRef<string>(getUuid());
+  const [thumb, setThumb] = useState<string | null>(null);
+  const [loadingThumb, setLoadingThumb] = useState(true);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -94,6 +99,19 @@ function FileView(props: Props) {
       fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
     };
   }, []);
+
+  useEffect(() => {
+    setLoadingThumb(true);
+    const loc = findLocation(openedEntry.locationID);
+    loc
+      ?.getThumbPath(openedEntry.meta.thumbPath, openedEntry.meta.lastUpdated)
+      .then((t) => {
+        setThumb(t);
+      })
+      .finally(() => {
+        setLoadingThumb(false);
+      });
+  }, [openedEntry]);
 
   const handleFullscreenChange = useCallback((e) => {
     let change = '';
@@ -218,6 +236,8 @@ function FileView(props: Props) {
           ? '&query=' + encodeURIComponent(searchQuery.textQuery)
           : '';
       const locale = '&locale=' + i18n.language;
+
+      const thumbParam = thumb ? '&thumb=' + encodeURIComponent(thumb) : '';
       const theming =
         '&theme=' +
         theme.palette.mode +
@@ -231,6 +251,7 @@ function FileView(props: Props) {
         encodeURIComponent(
           openedEntry.url ? openedEntry.url : openedEntry.path,
         ) +
+        thumbParam +
         locale +
         theming +
         extQuery +
@@ -280,7 +301,7 @@ function FileView(props: Props) {
           <span>ESC</span>
         </div>
       )}
-      {openedEntry.isFile && (
+      {openedEntry.isFile && !loadingThumb && (
         <iframe
           ref={fileViewer}
           style={{

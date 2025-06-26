@@ -40,6 +40,7 @@ import {
   mergeFsEntryMeta,
   resolveRelativePath,
   updateFsEntries,
+  mergeByPath,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -768,54 +769,39 @@ export const DirectoryContentContextProvider = ({
     checkCurrentDir = true,
   ) {
     if (dirEntries) {
-      const entries = dirEntries.filter((e) => e !== undefined);
+      //const entries = dirEntries.filter((e) => e !== undefined);
       const isNotFromCurrentDir =
         checkCurrentDir &&
-        entries.some(
+        dirEntries.some(
           (e) =>
             !cleanFrontDirSeparator(e.path).startsWith(
               cleanFrontDirSeparator(currentDirectory.current?.path),
             ),
         );
       if (
-        entries.length > 0 &&
+        dirEntries.length > 0 &&
         !isNotFromCurrentDir //entries[0].path.startsWith(currentDirectoryPath.current)
       ) {
-        //const currDirEntries = currentDirEntries ? currentDirEntries : currentDirectoryEntries;
         if (
           currentDirectoryEntries.current &&
           currentDirectoryEntries.current.length > 0
         ) {
-          /*if (inlineUpdate) {
-            // inline update currentDirectoryEntries
-            let isUpdated = false;
-            for (const oldEntry of currentDirectoryEntries.current) {
-              const entryUpdated = entries.find(
-                (updated) => updated.path === oldEntry.path,
-              );
-              if (entryUpdated) {
-                oldEntry.meta = { ...oldEntry.meta, ...entryUpdated.meta };
-                isUpdated = true;
-              }
-            }
-            if (isUpdated) {
-              forceUpdate();
-            }
-          }*/
           setCurrentDirectoryEntries(
-            currentDirectoryEntries.current.map((e) => {
-              const eUpdated = entries.filter((u) => u.path === e.path);
-              if (eUpdated.length > 0) {
-                const mergedMeta = eUpdated.reduce((merged, obj) => {
-                  return { ...merged, ...obj.meta };
-                }, {});
-                return { ...e, meta: { ...e.meta, ...mergedMeta } };
-              }
-              return e;
-            }),
+            mergeByPath(dirEntries, currentDirectoryEntries.current),
           );
+          /* currentDirectoryEntries.current.map((e) => {
+            const eUpdated = entries.filter((u) => u.path === e.path);
+            if (eUpdated.length > 0) {
+              const mergedMeta = eUpdated.reduce((merged, obj) => {
+                return { ...merged, ...obj.meta };
+              }, {});
+              return { ...e, meta: { ...e.meta, ...mergedMeta } };
+            }
+            return e;
+            })
+          ); */
         } else {
-          setCurrentDirectoryEntries(entries);
+          setCurrentDirectoryEntries(dirEntries);
         }
       }
     }
@@ -1346,11 +1332,10 @@ export const DirectoryContentContextProvider = ({
           : dirEntries.filter((entry) => entry.isFile);
         const fileEntriesPromises = getFileEntriesPromises(files, meta);
         const thumbs = getThumbs(files, meta);
-        return getEntries([
-          ...dirEntriesPromises,
-          ...fileEntriesPromises,
-          ...thumbs,
-        ]);
+        return getEntries(
+          [...dirEntriesPromises, ...fileEntriesPromises, ...thumbs],
+          dirEntries,
+        );
       })
       .catch((ex) => {
         console.log(ex);
@@ -1381,12 +1366,12 @@ export const DirectoryContentContextProvider = ({
     });
   }
 
-  function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
+  function getEntries(metaPromises, dirEntries): Promise<TS.FileSystemEntry[]> {
     // const catchHandler = (error) => undefined;
     //return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
     return executePromisesInBatches(metaPromises, 100)
       .then((entries: TS.FileSystemEntry[]) => {
-        return entries;
+        return mergeByPath(entries, dirEntries);
       })
       .catch((err) => {
         console.log('err updateEntries:', err);

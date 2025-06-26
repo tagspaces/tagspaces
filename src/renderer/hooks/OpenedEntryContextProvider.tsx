@@ -757,11 +757,13 @@ export const OpenedEntryContextProvider = ({
         const locationId = lid ? lid : getFirstRWLocation()?.uuid;
         getAllPropertiesPromise(entryPath, locationId)
           .then((fsEntry: TS.FileSystemEntry) => {
-            if (fsEntry.isFile) {
-              openFsEntry(fsEntry);
-              setEntryInFullWidth(options.fullWidth);
-            } else {
-              openDirectory(fsEntry.path);
+            if (fsEntry) {
+              if (fsEntry.isFile) {
+                openFsEntry(fsEntry);
+                setEntryInFullWidth(options.fullWidth);
+              } else {
+                openDirectory(fsEntry.path);
+              }
             }
             return true;
           })
