@@ -16,34 +16,37 @@
  *
  */
 
-import React, { useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
+import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import Dialog from '@mui/material/Dialog';
-import CloseIcon from '@mui/icons-material/Close';
-import { useSelector, useDispatch } from 'react-redux';
-import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { LinearProgress, Grid, Tooltip } from '@mui/material';
-import WarningIcon from '@mui/icons-material/Warning';
-import DraggablePaper from '-/components/DraggablePaper';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import {
   actions as AppActions,
   AppDispatch,
   getProgress,
 } from '-/reducers/app';
-import { extractFileName } from '@tagspaces/tagspaces-common/paths';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import AppConfig from '-/AppConfig';
 import { uploadAbort } from '-/services/utils-io';
-import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import CloseIcon from '@mui/icons-material/Close';
+import WarningIcon from '@mui/icons-material/Warning';
+import { Grid, LinearProgress, Tooltip } from '@mui/material';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  cleanFrontDirSeparator,
+  extractFileName,
+} from '@tagspaces/tagspaces-common/paths';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -277,7 +280,8 @@ function FileUploadDialog(props: Props) {
                   uploadMeta();
                 }}
               >
-                {t('core:uploadMeta')}
+                {t('core:transferMeta')}
+                <InfoIcon tooltip={t('core:transferMetaInfo')} />
               </TsButton>
             )}
 
