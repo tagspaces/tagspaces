@@ -13,10 +13,18 @@ import {
   expectElementExist,
   getGridFileSelector,
   isDisplayed,
+  openFolder,
   setPerspectiveSetting,
   takeScreenshot,
 } from './general.helpers';
-import { startTestingApp, stopApp } from './hook';
+import {
+  createFileS3,
+  createFolderS3,
+  createLocalFile,
+  createLocalFolder,
+  startTestingApp,
+  stopApp,
+} from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
@@ -63,6 +71,33 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
+  test('TST4901 - Folder which is opened in kanban for the first time []', async ({
+    isS3,
+    testDataDir,
+  }) => {
+    // Open max 3 sub-folders as columns on fresh folder
+    if (isS3) {
+      await createFolderS3('test_kanban_column1');
+      await createFolderS3('test_kanban_column2');
+      await createFolderS3('test_kanban_column3');
+      await createFolderS3('test_kanban_column4');
+    } else {
+      await createLocalFolder(testDataDir, 'test_kanban_column1');
+      await createLocalFolder(testDataDir, 'test_kanban_column2');
+      await createLocalFolder(testDataDir, 'test_kanban_column3');
+      await createLocalFolder(testDataDir, 'test_kanban_column4');
+    }
+    await clickOn('[data-tid=openGridPerspective]');
+    await openFolder('empty_folder');
+    await clickOn('[data-tid=openKanbanPerspective]');
+    await expectElementExist(
+      '[data-tid=kanbanSettingsDialogOpenTID]',
+      true,
+      5000,
+    );
+    await expectElementExist('[data-tid=test_kanban_column1]', true, 50000);
+  });
+
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
 

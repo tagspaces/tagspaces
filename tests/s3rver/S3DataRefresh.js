@@ -150,6 +150,30 @@ function uploadFile(filePath, content = undefined) {
     return Promise.reject(err);
   }
 }
+function createDir(dirPath) {
+  const key = path
+    .relative(directoryPath, dirPath)
+    .replace(/\\/g, '/')
+    .replace(/\/?$/, '/'); // Ensure trailing slash
+
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    Body: '', // S3 requires a body, even if it's an empty string
+  };
+
+  const s3Client = getS3Client();
+
+  return s3Client
+    .send(new PutObjectCommand(params))
+    .then(() => {
+      console.log(`Created directory-like key ${bucketName}/${key}`);
+    })
+    .catch((err) => {
+      console.error(`Error creating S3 'directory' ${dirPath}:`, err);
+      return Promise.reject(err);
+    });
+}
 
 function uploadTestDirectory(dirPath) {
   try {
@@ -170,5 +194,6 @@ module.exports = {
   uploadTestDirectory,
   refreshS3testData,
   uploadFile,
+  createDir,
   getS3File,
 };

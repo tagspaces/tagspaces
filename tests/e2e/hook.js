@@ -2,7 +2,11 @@
 import pathLib from 'path';
 import fse from 'fs-extra';
 import os from 'os';
-import { refreshS3testData, uploadFile } from '../s3rver/S3DataRefresh';
+import {
+  createDir,
+  refreshS3testData,
+  uploadFile,
+} from '../s3rver/S3DataRefresh';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -373,6 +377,34 @@ export async function createLocalFile(
       await fse.createFile(filePath);
       console.log('Empty file created!');
     }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function createLocalFolder(
+  testDataDir,
+  folderName = 'empty_local_folder',
+  rootFolder = 'empty_folder',
+) {
+  const folderPath = pathLib.join(testDataDir, rootFolder, folderName);
+  try {
+    await fse.mkdir(folderPath);
+    console.log('Folder created! ' + folderPath);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function createFolderS3(
+  folderName = 'empty_local_folder',
+  rootFolder = 'empty_folder',
+) {
+  const folderPath = pathLib.join(rootFolder, folderName);
+
+  try {
+    await createDir(folderPath);
+    console.log('Folder created! ' + folderPath);
   } catch (err) {
     console.error(err);
   }
