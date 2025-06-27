@@ -222,7 +222,7 @@ function LocationView(props: Props) {
   );
   const { FILE } = NativeTypes;
   const isLocationSelected =
-    currentLocation && currentLocation.uuid === location.uuid;
+    currentLocation && currentLocation.uuid === location.locationID;
   return (
     <Box
       style={{
