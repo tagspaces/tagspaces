@@ -1268,6 +1268,7 @@ export const DirectoryContentContextProvider = ({
           location?.getDirSeparator(),
         );
       }
+      return entry;
     });
   }
 
