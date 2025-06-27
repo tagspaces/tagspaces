@@ -13225,8 +13225,8 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @mui/x-date-pickers@8.5.2
- - @mui/x-internals@8.5.2
+ - @mui/x-date-pickers@8.6.0
+ - @mui/x-internals@8.6.0
 
 These packages each contain the following license:
 
@@ -14215,7 +14215,7 @@ The following npm packages may be included in this product:
  - cli-truncate@4.0.0
  - decompress-response@6.0.0
  - electron-context-menu@4.1.0
- - electron-debug@3.2.0
+ - electron-debug@4.1.0
  - electron-dl@4.0.0
  - electron-is-dev@3.0.1
  - escape-goat@4.0.0
@@ -14260,7 +14260,6 @@ The following npm packages may be included in this product:
  - camelcase-keys@6.2.2
  - camelcase@5.3.1
  - chalk@4.1.2
- - electron-is-dev@1.2.0
  - escape-string-regexp@2.0.0
  - find-up@4.1.0
  - globals@11.12.0
@@ -15444,10 +15443,10 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @mui/core-downloads-tracker@7.1.1
- - @mui/icons-material@7.1.1
- - @mui/lab@7.0.0-beta.13
- - @mui/material@7.1.1
+ - @mui/core-downloads-tracker@7.1.2
+ - @mui/icons-material@7.1.2
+ - @mui/lab@7.0.0-beta.14
+ - @mui/material@7.1.2
  - @mui/private-theming@7.1.1
  - @mui/styled-engine@7.1.1
  - @mui/system@7.1.1
@@ -17223,28 +17222,28 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @milkdown/components@7.13.1
- - @milkdown/core@7.13.1
- - @milkdown/crepe@7.13.1
- - @milkdown/ctx@7.13.1
- - @milkdown/exception@7.13.1
- - @milkdown/kit@7.13.1
- - @milkdown/plugin-block@7.13.1
- - @milkdown/plugin-clipboard@7.13.1
- - @milkdown/plugin-cursor@7.13.1
- - @milkdown/plugin-history@7.13.1
- - @milkdown/plugin-indent@7.13.1
- - @milkdown/plugin-listener@7.13.1
- - @milkdown/plugin-slash@7.13.1
- - @milkdown/plugin-tooltip@7.13.1
- - @milkdown/plugin-trailing@7.13.1
- - @milkdown/plugin-upload@7.13.1
- - @milkdown/preset-commonmark@7.13.1
- - @milkdown/preset-gfm@7.13.1
- - @milkdown/prose@7.13.1
- - @milkdown/react@7.13.1
- - @milkdown/transformer@7.13.1
- - @milkdown/utils@7.13.1
+ - @milkdown/components@7.14.0
+ - @milkdown/core@7.14.0
+ - @milkdown/crepe@7.14.0
+ - @milkdown/ctx@7.14.0
+ - @milkdown/exception@7.14.0
+ - @milkdown/kit@7.14.0
+ - @milkdown/plugin-block@7.14.0
+ - @milkdown/plugin-clipboard@7.14.0
+ - @milkdown/plugin-cursor@7.14.0
+ - @milkdown/plugin-history@7.14.0
+ - @milkdown/plugin-indent@7.14.0
+ - @milkdown/plugin-listener@7.14.0
+ - @milkdown/plugin-slash@7.14.0
+ - @milkdown/plugin-tooltip@7.14.0
+ - @milkdown/plugin-trailing@7.14.0
+ - @milkdown/plugin-upload@7.14.0
+ - @milkdown/preset-commonmark@7.14.0
+ - @milkdown/preset-gfm@7.14.0
+ - @milkdown/prose@7.14.0
+ - @milkdown/react@7.14.0
+ - @milkdown/transformer@7.14.0
+ - @milkdown/utils@7.14.0
 
 These packages each contain the following license:
 
