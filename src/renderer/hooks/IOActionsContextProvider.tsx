@@ -40,6 +40,7 @@ import {
   cleanFrontDirSeparator,
   generateFileName,
   getMetaContentFileLocation,
+  getFileLocationFromMetaFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -1161,11 +1162,12 @@ export const IOActionsContextProvider = ({
     onUploadProgress?: (progress, response) => void,
     reflect: boolean = true,
     locationID: string = undefined,
+    override = false,
   ): Promise<TS.FileSystemEntry> {
     return findLocation(locationID)
       .getPropertiesPromise(filePath)
       .then((entryProps) => {
-        if (entryProps) {
+        if (entryProps && !override) {
           showNotification(
             'File with the same name already exist, importing skipped!',
             'warning',
@@ -1234,13 +1236,6 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    if (onUploadProgress) {
-      paths.forEach((path) => {
-        const key =
-          targetPath + '/' + extractFileName(path, AppConfig.dirSeparator);
-        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
-      });
-    }
     const metaJobs: job[] = [];
 
     for (let i = 0; i < paths.length; i++) {
@@ -1262,7 +1257,7 @@ export const IOActionsContextProvider = ({
 
       // thumb file
       metaJobs.push({
-        src: getThumbFileLocationForFile(src, AppConfig.dirSeparator),
+        src: getThumbFileLocationForFile(src, AppConfig.dirSeparator, false),
         dst: getThumbFileLocationForFile(
           dst,
           currentLocation!.getDirSeparator(),
@@ -1278,7 +1273,33 @@ export const IOActionsContextProvider = ({
       open,
       targetLocationId,
       sourceLocationId,
-    );
+      true,
+    ).then((entries) => {
+      if (entries && entries.length > 0) {
+        const filePaths = entries.map((entry) => {
+          return getFileLocationFromMetaFile(entry.path);
+        });
+        const unique = [...new Set(filePaths)];
+        const reflectActionsPromises: Promise<TS.EditAction>[] = unique.map(
+          (path) => {
+            return getAllPropertiesPromise(path, targetLocationId).then(
+              (entry) => {
+                return {
+                  action: 'update',
+                  entry: entry,
+                  open: false,
+                  oldEntryPath: entry.path,
+                };
+              },
+            );
+          },
+        );
+        Promise.all(reflectActionsPromises).then((reflectActions) => {
+          setReflectActions(...reflectActions);
+        });
+      }
+      return entries;
+    });
   }
 
   /**
@@ -1350,7 +1371,16 @@ export const IOActionsContextProvider = ({
       open,
       targetLocationId,
       sourceLocationId,
-    );
+    ).then((entries) => {
+      const reflectActions: TS.EditAction[] = entries.map((entry) => ({
+        action: 'add',
+        entry: entry,
+        open: open,
+        source: 'upload',
+      }));
+      setReflectActions(...reflectActions);
+      return entries;
+    });
   }
 
   function processUploadJobs(
@@ -1359,6 +1389,7 @@ export const IOActionsContextProvider = ({
     open = true,
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
+    override = false,
   ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
       const jobsPromises: Promise<TS.FileSystemEntry>[] = uploadJobs.map(
@@ -1381,6 +1412,7 @@ export const IOActionsContextProvider = ({
                   onUploadProgress,
                   false,
                   targetLocationId,
+                  override,
                 ),
               )
               .catch((err) => {
@@ -1414,6 +1446,7 @@ export const IOActionsContextProvider = ({
                         onUploadProgress,
                         false,
                         targetLocationId,
+                        override,
                       );
                     }
                     return undefined;
@@ -1502,13 +1535,6 @@ export const IOActionsContextProvider = ({
               },
             );
             Promise.all(entriesEnhanced).then((entries) => {
-              const reflectActions: TS.EditAction[] = entries.map((entry) => ({
-                action: 'add',
-                entry: entry,
-                open: open,
-                source: 'upload',
-              }));
-              setReflectActions(...reflectActions);
               resolve(entries);
             });
           }
