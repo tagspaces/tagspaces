@@ -505,9 +505,7 @@ function EntryProperties(props: Props) {
         <Grid size={12}>
           <TsTextField
             error={fileNameError.current}
-            title={
-              isEditMode && 'Exit the edit mode in order to rename the file'
-            }
+            title={isEditMode && t('core:renameDisableTooltip')}
             label={
               openedEntry.isFile ? t('core:fileName') : t('core:folderName')
             }
