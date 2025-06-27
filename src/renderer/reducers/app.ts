@@ -126,7 +126,7 @@ export default (state: any = initialState, action: any) => {
         },
       ];
       state.progress.map((fileProgress) => {
-        if (fileProgress.path !== action.path) {
+        if (fileProgress && fileProgress.path !== action.path) {
           arrProgress.push(fileProgress);
         }
         return true;
@@ -134,7 +134,11 @@ export default (state: any = initialState, action: any) => {
       return { ...state, progress: arrProgress };
     }
     case types.PROGRESS_FINISH: {
-      return { ...state, progress: action.progresses, state: 'finished' };
+      const arrProgress = action.progresses.map((p) => ({
+        ...p,
+        state: 'finished',
+      }));
+      return { ...state, progress: arrProgress };
     }
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };

@@ -27,12 +27,14 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
-  currentDirectoryPath?: string;
+  targetPath?: string;
+  targetLocationID?: string;
 }
 
 const DirectoryListView: React.FC<Props> = ({
-  currentDirectoryPath,
+  targetPath,
   setTargetDir,
+  targetLocationID,
 }) => {
   const { t } = useTranslation();
   const { currentLocation, findLocation, locations } =
@@ -41,25 +43,21 @@ const DirectoryListView: React.FC<Props> = ({
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
-    currentLocation ? currentLocation.uuid : undefined,
+    targetLocationID ? targetLocationID : currentLocation?.uuid,
   );
-  const chosenDirectory = useRef<string>(currentDirectoryPath);
+  const chosenDirectory = useRef<string>(targetPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
   >(currentDirectoryEntries.filter((entry) => !entry.isFile));
 
-  /*useEffect(() => {
-    const chosenLocation = findLocation(chosenLocationId.current);
-    if (chosenLocation) {
-      const path =
-        currentLocation &&
-        chosenLocation.uuid === currentLocation.uuid &&
-        currentDirectoryPath
-          ? currentDirectoryPath
-          : chosenLocation.path;
-      listDirectory(path);
+  useEffect(() => {
+    if (targetLocationID && targetLocationID !== currentLocation?.uuid) {
+      const chosenLocation = findLocation(chosenLocationId.current);
+      if (chosenLocation) {
+        listDirectory(targetPath);
+      }
     }
-  }, [chosenLocationId.current]);*/
+  }, []);
 
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
@@ -107,7 +105,7 @@ const DirectoryListView: React.FC<Props> = ({
 
   function listDirectory(directoryPath) {
     chosenDirectory.current = directoryPath;
-    currentLocation
+    findLocation(chosenLocationId.current)
       .listDirectoryPromise(
         directoryPath,
         [], // mode,

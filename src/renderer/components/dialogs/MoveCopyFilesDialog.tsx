@@ -33,11 +33,14 @@ interface Props {
   onClose: (clearSelection?: boolean) => void;
   // force to move/copy different entries from selected
   entries: TS.FileSystemEntry[];
+  targetDir?: string;
+  targetLocationId?: string;
 }
 
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { open, entries, onClose, targetDir, targetLocationId } = props;
   const { findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { handleEntryExist, openEntryExistDialog } =
@@ -46,14 +49,14 @@ function MoveCopyFilesDialog(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
 
   const [targetPath, setTargetPath] = useState(
-    currentDirectoryPath ? currentDirectoryPath : '',
+    targetDir ? targetDir : currentDirectoryPath,
   );
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const { open, entries, onClose } = props;
 
   const currentLocation = findLocation();
+  const targetLocation = findLocation(targetLocationId);
 
   const selectedFiles = entries
     ? entries.filter((fsEntry) => fsEntry.isFile).map((fsentry) => fsentry.path)
@@ -106,7 +109,7 @@ function MoveCopyFilesDialog(props: Props) {
       copyFiles(
         selectedFiles,
         targetPath,
-        currentLocation.uuid,
+        targetLocation.uuid,
         onUploadProgress,
       );
       setTargetPath('');
@@ -115,7 +118,7 @@ function MoveCopyFilesDialog(props: Props) {
       copyDirs(
         getEntriesCount(selectedDirs),
         targetPath,
-        currentLocation.uuid,
+        targetLocation.uuid,
         onUploadProgress,
       );
     }
@@ -131,7 +134,7 @@ function MoveCopyFilesDialog(props: Props) {
       moveFiles(
         selectedFiles,
         targetPath,
-        currentLocation.uuid,
+        targetLocation.uuid,
         onUploadProgress,
         true,
         true,
@@ -144,7 +147,7 @@ function MoveCopyFilesDialog(props: Props) {
       moveDirs(
         getEntriesCount(selectedDirs),
         targetPath,
-        currentLocation.uuid,
+        targetLocation.uuid,
         onUploadProgress,
       );
     }
@@ -220,7 +223,8 @@ function MoveCopyFilesDialog(props: Props) {
         </List>
         <DirectoryListView
           setTargetDir={setTargetPath}
-          currentDirectoryPath={currentDirectoryPath}
+          targetPath={targetPath}
+          targetLocationID={targetLocation?.uuid}
         />
         <Box style={{ marginTop: 10 }}>
           {targetPath ? (

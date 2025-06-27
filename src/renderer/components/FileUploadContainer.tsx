@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -39,6 +38,7 @@ interface Props {
 
 export interface FileUploadContainerRef {
   onFileUpload: (directoryPath: string) => void;
+  onMetaUpload: () => void;
 }
 
 const FileUploadContainer = forwardRef(
@@ -46,16 +46,22 @@ const FileUploadContainer = forwardRef(
     const dispatch: AppDispatch = useDispatch();
     const { id } = props;
     const { findLocalLocation } = useCurrentLocationContext();
-    const { openFileUploadDialog } = useFileUploadDialogContext();
-    const { uploadFilesAPI } = useIOActionsContext();
+    //const { openFileUploadDialog } = useFileUploadDialogContext();
+    const { uploadFilesAPI, uploadMeta } = useIOActionsContext();
     const { setReflectMetaActions } = useEditedEntryMetaContext();
     const directoryPath = useRef<string>(undefined);
+    const metaUpload = useRef<() => void>(undefined);
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
     };
 
     useImperativeHandle(ref, () => ({
+      onMetaUpload() {
+        if (metaUpload.current) {
+          metaUpload.current();
+        }
+      },
       onFileUpload(dirPath: string) {
         directoryPath.current = dirPath;
         /* if (AppConfig.isCordovaAndroid) {
@@ -100,7 +106,7 @@ const FileUploadContainer = forwardRef(
       // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
       // const file = selection.currentTarget.files[0];
       dispatch(AppActions.resetProgress());
-      openFileUploadDialog();
+      // openFileUploadDialog();
       const localLocation = findLocalLocation();
       const sourceLocationId = localLocation ? localLocation.uuid : undefined;
 
@@ -117,7 +123,7 @@ const FileUploadContainer = forwardRef(
         files,
         directoryPath.current,
         onUploadProgress,
-        true,
+        false,
         true,
         undefined,
         sourceLocationId,
@@ -133,6 +139,15 @@ const FileUploadContainer = forwardRef(
         .catch((error) => {
           console.log('uploadFiles', error);
         });
+      metaUpload.current = () =>
+        uploadMeta(
+          files.map((f) => f.path),
+          directoryPath.current,
+          onUploadProgress,
+          false,
+          undefined,
+          sourceLocationId,
+        );
     }
     const inputId = id || `id-${Math.random().toString(36).substr(2, 9)}`;
 

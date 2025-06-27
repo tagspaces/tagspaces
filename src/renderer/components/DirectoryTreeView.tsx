@@ -25,7 +25,6 @@ import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import Table from 'rc-table';
@@ -42,17 +41,17 @@ import { TS } from '-/tagspaces.namespace';
 import { resolveRelativePath } from '-/services/utils-io';
 
 interface Props {
-  location: CommonLocation;
+  location: SubFolder;
   handleFileMoveDrop: (item, monitor) => void;
 }
 
 export interface DirectoryTreeViewRef {
-  changeLocation: (location: CommonLocation) => void;
+  changeLocation: (location: SubFolder) => void;
   closeLocation: () => void;
 }
 
 // Re‐declare SubFolder with explicit types
-interface SubFolder extends TS.FileSystemEntry {
+export interface SubFolder extends TS.FileSystemEntry {
   /* accessKeyId?: string;
   bucketName?: string;
   region?: string;
@@ -61,9 +60,8 @@ interface SubFolder extends TS.FileSystemEntry {
 
   uuid: string;
   name: string;
-  type: string;
-  path: string;*/
-
+  path: string;
+  type: string; */
   children?: SubFolder[];
 }
 
@@ -86,7 +84,7 @@ const DirectoryTreeView = forwardRef(
 
     // When currentLocationId changes refresh `data`
     useEffect(() => {
-      if (data && currentLocationId === location.uuid) {
+      if (data && currentLocationId === location.locationID) {
         setData(undefined);
       }
     }, [currentLocationId]);
@@ -95,13 +93,11 @@ const DirectoryTreeView = forwardRef(
     useEffect(() => {
       if (
         data === undefined &&
-        currentLocationId === location.uuid &&
+        currentLocationId === location.locationID &&
         currentDirectoryEntries?.length > 0
       ) {
-        const location = findLocation(currentLocationId);
-        //resolveRelativePath(location.path).then((path) => {
         if (
-          currentDirectoryEntries[0].locationID === location.uuid &&
+          currentDirectoryEntries[0].locationID === location.locationID &&
           currentDirectoryPath === location.path
         ) {
           attachNewChildren(
@@ -111,12 +107,12 @@ const DirectoryTreeView = forwardRef(
               name: location.name,
               path: currentDirectoryPath,
               size: 0,
-              locationID: location.uuid,
+              locationID: location.locationID,
               children: [],
             },
             processDirs(
               currentDirectoryEntries,
-              location,
+              location.locationID,
               showUnixHiddenEntries,
             ),
           );
@@ -126,9 +122,9 @@ const DirectoryTreeView = forwardRef(
     }, [data, currentLocationId, currentDirectoryEntries]);
 
     useImperativeHandle(ref, () => ({
-      changeLocation(newLocation: CommonLocation) {
+      changeLocation(newLocation: SubFolder) {
         if (currentLocationId === undefined) {
-          changeLocation(newLocation, true);
+          changeLocation(findLocation(newLocation.locationID), true);
         }
         if (isExpanded) {
           // Collapse (and clear) if already expanded
@@ -141,7 +137,7 @@ const DirectoryTreeView = forwardRef(
             name: newLocation.name,
             path: newLocation.path,
             size: 0,
-            locationID: newLocation.uuid,
+            locationID: newLocation.locationID,
             children: [],
           });
         }
@@ -157,13 +153,17 @@ const DirectoryTreeView = forwardRef(
     const { FILE } = NativeTypes;
 
     const renderBodyRow = (propsRow: any) => {
-      if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
+      const subFolderLocation = findLocation(location.locationID);
+      if (
+        AppConfig.isElectron ||
+        subFolderLocation.type !== locationType.TYPE_CLOUD
+      ) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
           <TargetFileBox
             accepts={[FILE]}
             directoryPath={location.path}
-            locationId={location.uuid}
+            locationId={subFolderLocation.uuid}
           >
             <CustomDragLayer />
             <TargetTableMoveFileBox
@@ -281,7 +281,7 @@ const DirectoryTreeView = forwardRef(
               // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
               const directoryContent = processDirs(
                 dirEntries,
-                loc,
+                loc.uuid,
                 showUnixHiddenEntries,
               );
               resolve(directoryContent);
@@ -298,13 +298,13 @@ const DirectoryTreeView = forwardRef(
      * keeping only "files" (not directories), skipping any hidden or meta-folder entries.
      *
      * @param entries             The array of FileSystemEntry; if undefined, returns [].
-     * @param loc                 A CommonLocation object whose fields will be copied into each SubFolder.
+     * @param locationID          A locationID whose fields will be copied into each SubFolder.
      * @param showHiddenEntries   If false, skip any files whose name starts with a dot.
      * @returns                   An array of SubFolder objects (children always initialized to []).
      */
     function processDirs(
       entries: TS.FileSystemEntry[] | undefined,
-      loc: CommonLocation,
+      locationID: string,
       showHiddenEntries: boolean,
     ): SubFolder[] {
       // Early exit if entries is missing or empty
@@ -355,7 +355,7 @@ const DirectoryTreeView = forwardRef(
           // 3) Map each remaining FileSystemEntry to SubFolder
           .map((entry) => ({
             ...entry,
-            locationID: loc.uuid,
+            locationID: locationID,
             children: [] as SubFolder[],
           }))
       );
@@ -429,7 +429,7 @@ const DirectoryTreeView = forwardRef(
     if (isExpanded && data !== undefined) {
       return (
         <Table
-          key={location.uuid}
+          key={location.locationID}
           style={{
             borderRadius: AppConfig.defaultCSSRadius,
             backgroundColor: alpha(theme.palette.grey.A400, 0.2),
@@ -443,7 +443,7 @@ const DirectoryTreeView = forwardRef(
           showHeader={false}
           // className="table"
           rowKey="path"
-          data={data[location.uuid]}
+          data={data[location.locationID]}
           columns={columns}
           indentSize={20}
           expandable={{ onExpand }}

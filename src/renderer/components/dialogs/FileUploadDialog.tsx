@@ -43,6 +43,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
 import { uploadAbort } from '-/services/utils-io';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 interface Props {
   open: boolean;
@@ -59,6 +60,7 @@ function FileUploadDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
+  const { uploadMeta } = useFileUploadContext();
   const progress = useSelector(getProgress);
 
   const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
@@ -157,6 +159,7 @@ function FileUploadDialog(props: Props) {
     }
     return '/';
   }
+  const completed = progress?.filter((item) => item.progress === 100);
 
   return (
     <Dialog
@@ -172,9 +175,14 @@ function FileUploadDialog(props: Props) {
       slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
     >
       <TsDialogTitle
-        dialogTitle={t(
-          'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
-        )}
+        dialogTitle={
+          t(
+            'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
+          ) +
+          (progress
+            ? ' (' + completed.length + '/' + progress.length + ')'
+            : '')
+        }
         closeButtonTestId="closeFileUploadTID"
         onClose={onClose}
       />
@@ -239,14 +247,16 @@ function FileUploadDialog(props: Props) {
                     )}
                   </Grid>
                   <Grid size={{ xs: 2 }}>
-                    {abort && typeof abort === 'function' && (
-                      <TsButton
-                        tooltip={t('core:abort')}
-                        onClick={() => abort()}
-                      >
-                        <CloseIcon />
-                      </TsButton>
-                    )}
+                    {abort &&
+                      typeof abort === 'function' &&
+                      percentage !== 100 && (
+                        <TsButton
+                          tooltip={t('core:abort')}
+                          onClick={() => abort()}
+                        >
+                          <CloseIcon />
+                        </TsButton>
+                      )}
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     {percentage > -1 && (
@@ -258,16 +268,29 @@ function FileUploadDialog(props: Props) {
             })}
       </DialogContent>
       <TsDialogActions>
-        {!haveProgress && (
-          <TsButton
-            data-tid="uploadCloseAndClearTID"
-            onClick={() => {
-              onClose();
-              dispatch(AppActions.resetProgress());
-            }}
-          >
-            {t('core:closeAndClear')}
-          </TsButton>
+        {progress && progress.length > 0 && !haveProgress && (
+          <>
+            {AppConfig.isElectron && (
+              <TsButton
+                data-tid="uploadMetaTID"
+                onClick={() => {
+                  uploadMeta();
+                }}
+              >
+                {t('core:uploadMeta')}
+              </TsButton>
+            )}
+
+            <TsButton
+              data-tid="uploadCloseAndClearTID"
+              onClick={() => {
+                onClose();
+                dispatch(AppActions.resetProgress());
+              }}
+            >
+              {t('core:closeAndClear')}
+            </TsButton>
+          </>
         )}
         <TsButton data-tid="uploadMinimizeDialogTID" onClick={onClose}>
           {t('core:minimize')}

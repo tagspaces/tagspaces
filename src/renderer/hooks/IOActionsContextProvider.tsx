@@ -40,6 +40,7 @@ import {
   cleanFrontDirSeparator,
   generateFileName,
   getMetaContentFileLocation,
+  getFileLocationFromMetaFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -121,6 +122,14 @@ type IOActionsContextData = {
     targetPath: string,
     onUploadProgress?: (progress, abort, fileName?) => void,
     uploadMeta?: boolean,
+    open?: boolean,
+    targetLocationId?: string,
+    sourceLocationId?: string,
+  ) => Promise<TS.FileSystemEntry[]>;
+  uploadMeta: (
+    files: Array<any>,
+    targetPath: string,
+    onUploadProgress?: (progress, abort, fileName?) => void,
     open?: boolean,
     targetLocationId?: string,
     sourceLocationId?: string,
@@ -239,6 +248,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   downloadUrl: undefined,
   downloadFsEntry: undefined,
   uploadFilesAPI: undefined,
+  uploadMeta: undefined,
   uploadFiles: undefined,
   renameDirectory: undefined,
   renameFile: undefined,
@@ -1152,11 +1162,12 @@ export const IOActionsContextProvider = ({
     onUploadProgress?: (progress, response) => void,
     reflect: boolean = true,
     locationID: string = undefined,
-  ) {
+    override = false,
+  ): Promise<TS.FileSystemEntry> {
     return findLocation(locationID)
       .getPropertiesPromise(filePath)
       .then((entryProps) => {
-        if (entryProps) {
+        if (entryProps && !override) {
           showNotification(
             'File with the same name already exist, importing skipped!',
             'warning',
@@ -1203,7 +1214,92 @@ export const IOActionsContextProvider = ({
       })
       .catch((err) => {
         console.log('Error getting properties', err);
+        return undefined;
       });
+  }
+
+  interface job {
+    src: string;
+    dst: string;
+    type: 'meta' | 'thumb' | 'file';
+    originalPathForThumb?: string;
+  }
+  /**
+   * Uploads the “.meta” and thumbnail files.
+   * Returns a Promise that resolves when *all* meta/thumb uploads settle.
+   */
+  function uploadMeta(
+    paths: string[],
+    targetPath: string,
+    onUploadProgress?: (progress, response) => void,
+    open = true,
+    targetLocationId: string = undefined,
+    sourceLocationId: string = undefined,
+  ): Promise<TS.FileSystemEntry[]> {
+    const metaJobs: job[] = [];
+
+    for (let i = 0; i < paths.length; i++) {
+      const src = paths[i];
+      let dst = joinPaths(
+        currentLocation?.getDirSeparator(),
+        targetPath,
+        extractFileName(src, AppConfig.dirSeparator),
+      );
+      // meta file
+      metaJobs.push({
+        src: getMetaFileLocationForFile(src, AppConfig.dirSeparator),
+        dst: getMetaFileLocationForFile(
+          dst,
+          currentLocation!.getDirSeparator(),
+        ),
+        type: 'meta',
+      });
+
+      // thumb file
+      metaJobs.push({
+        src: getThumbFileLocationForFile(src, AppConfig.dirSeparator, false),
+        dst: getThumbFileLocationForFile(
+          dst,
+          currentLocation!.getDirSeparator(),
+          false,
+        ),
+        type: 'thumb',
+        originalPathForThumb: src,
+      });
+    }
+    return processUploadJobs(
+      metaJobs,
+      onUploadProgress,
+      open,
+      targetLocationId,
+      sourceLocationId,
+      true,
+    ).then((entries) => {
+      if (entries && entries.length > 0) {
+        const filePaths = entries.map((entry) => {
+          return getFileLocationFromMetaFile(entry.path);
+        });
+        const unique = [...new Set(filePaths)];
+        const reflectActionsPromises: Promise<TS.EditAction>[] = unique.map(
+          (path) => {
+            return getAllPropertiesPromise(path, targetLocationId).then(
+              (entry) => {
+                return {
+                  action: 'update',
+                  entry: entry,
+                  open: false,
+                  oldEntryPath: entry.path,
+                };
+              },
+            );
+          },
+        );
+        Promise.all(reflectActionsPromises).then((reflectActions) => {
+          setReflectActions(...reflectActions);
+        });
+      }
+      return entries;
+    });
   }
 
   /**
@@ -1225,114 +1321,151 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
+    if (onUploadProgress) {
+      paths.forEach((path) => {
+        const key =
+          targetPath + '/' + extractFileName(path, AppConfig.dirSeparator);
+        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
+      });
+    }
+    const uploadJobs: job[] = [];
+    paths.map((path) => {
+      let target = joinPaths(
+        currentLocation?.getDirSeparator(),
+        targetPath,
+        extractFileName(path, AppConfig.dirSeparator),
+      );
+      uploadJobs.push({
+        src: path,
+        dst: target,
+        type: 'file',
+      });
+      if (uploadMeta) {
+        // copy meta
+        uploadJobs.push({
+          src: getMetaFileLocationForFile(path, AppConfig.dirSeparator),
+          dst: getMetaFileLocationForFile(
+            target,
+            currentLocation?.getDirSeparator(),
+          ),
+          type: 'meta',
+        });
+
+        // thumb file
+        uploadJobs.push({
+          src: getThumbFileLocationForFile(path, AppConfig.dirSeparator),
+          dst: getThumbFileLocationForFile(
+            target,
+            currentLocation?.getDirSeparator(),
+            false,
+          ),
+          type: 'thumb',
+          originalPathForThumb: path,
+        });
+      }
+      return true;
+    });
+    return processUploadJobs(
+      uploadJobs,
+      onUploadProgress,
+      open,
+      targetLocationId,
+      sourceLocationId,
+    ).then((entries) => {
+      const reflectActions: TS.EditAction[] = entries.map((entry) => ({
+        action: 'add',
+        entry: entry,
+        open: open,
+        source: 'upload',
+      }));
+      setReflectActions(...reflectActions);
+      return entries;
+    });
+  }
+
+  function processUploadJobs(
+    uploadJobs: job[],
+    onUploadProgress?: (progress, response) => void,
+    open = true,
+    targetLocationId: string = undefined,
+    sourceLocationId: string = undefined,
+    override = false,
+  ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
-      const uploadJobs = [];
-      paths.map((path) => {
-        let target = joinPaths(
-          currentLocation?.getDirSeparator(),
-          targetPath,
-          extractFileName(path, AppConfig.dirSeparator),
-        ); // with "/" dir separator cannot extractFileName on Win
-        // fix for Win
-        /*if (
-          currentLocation.haveObjectStoreSupport() &&
-          (target.startsWith('\\') || target.startsWith('/'))
-        ) {
-          target = target.substr(1);
-        }*/
-        uploadJobs.push([path, target, 'file']);
-        if (uploadMeta) {
-          // copy meta
-          uploadJobs.push([
-            getMetaFileLocationForFile(path, AppConfig.dirSeparator),
-            getMetaFileLocationForFile(
-              target,
-              currentLocation?.getDirSeparator(),
-            ),
-            'meta',
-          ]);
-          uploadJobs.push([
-            getThumbFileLocationForFile(path, AppConfig.dirSeparator),
-            getThumbFileLocationForFile(
-              target,
-              currentLocation?.getDirSeparator(),
-            ),
-            'thumb',
-            path,
-          ]);
-        }
-        return true;
-      });
-      const jobsPromises = uploadJobs.map((job) => {
-        // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-        // const file = selection.currentTarget.files[0];
-        const filePath = job[1];
-        const fileType = job[2];
+      const jobsPromises: Promise<TS.FileSystemEntry>[] = uploadJobs.map(
+        (job) => {
+          // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
+          // const file = selection.currentTarget.files[0];
+          const filePath = job.dst;
+          const fileType = job.type;
+          const originalPathForThumb = job.originalPathForThumb;
 
-        // TODO try to replace this with <input type="file"
-        if (AppConfig.isElectron) {
-          return findLocation(sourceLocationId)
-            .getFileContentPromise(job[0], 'arraybuffer')
-            .then((fileContent) =>
-              uploadFile(
-                filePath,
-                fileType,
-                fileContent,
-                onUploadProgress,
-                false,
-                targetLocationId,
-              ),
-            )
-            .catch((err) => {
-              if (
-                err &&
-                err.message &&
-                err.message.indexOf(
-                  'Error: EISDIR: illegal operation on a directory, read',
-                ) > -1
-              ) {
-                const errorMessage = t('core:uploadDirsNotSupported');
-                showNotification(errorMessage, 'warning', true);
-                dispatch(AppActions.setProgress(filePath, -1, errorMessage));
-              }
-              // console.log('Error getting file:' + job[0] + ' ' + err);
-              if (fileType === 'thumb' && job[3]) {
-                return generateThumbnailPromise(
-                  job[3],
-                  0,
-                  currentLocation.loadTextFilePromise,
-                  currentLocation.getFileContentPromise,
-                  currentLocation.getThumbPath,
-                  currentLocation?.getDirSeparator(),
-                ).then((dataURL) => {
-                  if (dataURL && dataURL.length > 6) {
-                    const baseString = dataURL.split(',').pop();
-                    const fileContent = base64ToBlob(baseString);
-                    return uploadFile(
-                      filePath,
-                      fileType,
-                      fileContent,
-                      onUploadProgress,
-                      false,
-                      targetLocationId,
-                    );
-                  }
-                  return undefined;
-                });
-              }
-            });
-        }
+          // TODO try to replace this with <input type="file"
+          if (AppConfig.isElectron) {
+            return findLocation(sourceLocationId)
+              .getFileContentPromise(job.src, 'arraybuffer')
+              .then((fileContent) =>
+                uploadFile(
+                  filePath,
+                  fileType,
+                  fileContent,
+                  onUploadProgress,
+                  false,
+                  targetLocationId,
+                  override,
+                ),
+              )
+              .catch((err) => {
+                if (
+                  err &&
+                  err.message &&
+                  err.message.indexOf(
+                    'Error: EISDIR: illegal operation on a directory, read',
+                  ) > -1
+                ) {
+                  const errorMessage = t('core:uploadDirsNotSupported');
+                  showNotification(errorMessage, 'warning', true);
+                  dispatch(AppActions.setProgress(filePath, -1, errorMessage));
+                }
+                if (fileType === 'thumb' && originalPathForThumb) {
+                  return generateThumbnailPromise(
+                    originalPathForThumb,
+                    0,
+                    currentLocation.loadTextFilePromise,
+                    currentLocation.getFileContentPromise,
+                    currentLocation.getThumbPath,
+                    currentLocation.getDirSeparator(),
+                  ).then((dataURL) => {
+                    if (dataURL && dataURL.length > 6) {
+                      const baseString = dataURL.split(',').pop();
+                      const fileContent = base64ToBlob(baseString);
+                      return uploadFile(
+                        filePath,
+                        fileType,
+                        fileContent,
+                        onUploadProgress,
+                        false,
+                        targetLocationId,
+                        override,
+                      );
+                    }
+                    return undefined;
+                  });
+                }
+              });
+          }
 
-        return undefined;
-      });
+          return undefined;
+        },
+      );
       Promise.allSettled(jobsPromises)
         .then((filesProm) => {
-          const arrFiles: Array<TS.FileSystemEntry> = [];
-          const arrMeta: Array<TS.FileSystemEntry> = [];
+          const arrFiles: TS.FileSystemEntry[] = [];
+          const arrMeta: TS.FileSystemEntry[] = [];
 
           filesProm.map((result) => {
             if (result.status !== 'rejected') {
-              const file = result.value;
+              const file: TS.FileSystemEntry = result.value;
               if (file) {
                 if (file.meta) {
                   arrMeta.push(file);
@@ -1355,7 +1488,7 @@ export const IOActionsContextProvider = ({
             );
 
             // Enhance entries
-            const entriesEnhanced = arrFiles.map(
+            const entriesEnhanced: Promise<TS.FileSystemEntry>[] = arrFiles.map(
               async (file: TS.FileSystemEntry) => {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
@@ -1391,28 +1524,19 @@ export const IOActionsContextProvider = ({
                   }
                 }
                 if (file.meta) {
-                  return enhanceEntry(
+                  const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
                     file,
                     AppConfig.tagDelimiter,
                     currentLocation?.getDirSeparator(),
                   );
+                  return enhancedEntry;
                 }
                 return file;
               },
             );
             Promise.all(entriesEnhanced).then((entries) => {
-              const reflectActions: TS.EditAction[] = entries.map((entry) => ({
-                action: 'add',
-                entry: entry,
-                open: open,
-                source: 'upload',
-              }));
-              setReflectActions(...reflectActions);
               resolve(entries);
             });
-          } else {
-            // eslint-disable-next-line prefer-promise-reject-errors
-            reject('Upload failed');
           }
           return true;
         })
@@ -2372,6 +2496,7 @@ export const IOActionsContextProvider = ({
       downloadFsEntry,
       uploadFilesAPI,
       uploadFiles,
+      uploadMeta,
       renameDirectory,
       renameFile,
       openFileNatively,

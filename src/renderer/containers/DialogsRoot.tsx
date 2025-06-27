@@ -34,7 +34,6 @@ import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTe
 import { SettingsDialogContextProvider } from '-/components/dialogs/hooks/SettingsDialogContextProvider';
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
-import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
 import { DownloadUrlContextProvider } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
 import { AiGenerationDialogContextProvider } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
@@ -47,45 +46,43 @@ function DialogsRoot({ children }: DialogsRootProps) {
   return (
     <EntryExistDialogContextProvider>
       <DeleteMultipleEntriesDialogContextProvider>
-        <FileUploadContextProvider>
-          <CreateEditLocationDialogContextProvider>
-            <MoveOrCopyFilesDialogContextProvider>
-              <CreateDirectoryDialogContextProvider>
-                <ProgressDialogContextProvider>
-                  <NewFileDialogContextProvider>
-                    <NewAudioDialogContextProvider>
-                      <LicenseDialogContextProvider>
-                        <ThirdPartyLibsDialogContextProvider>
-                          <AboutDialogContextProvider>
-                            <OnboardingDialogContextProvider>
-                              <KeyboardDialogContextProvider>
-                                <LinkDialogContextProvider>
-                                  <ProTeaserDialogContextProvider>
-                                    <AiGenerationDialogContextProvider>
-                                      <SettingsDialogContextProvider>
-                                        <ResolveConflictContextProvider>
-                                          <DownloadUrlContextProvider>
-                                            <MenuContextProvider>
-                                              {children}
-                                            </MenuContextProvider>
-                                          </DownloadUrlContextProvider>
-                                        </ResolveConflictContextProvider>
-                                      </SettingsDialogContextProvider>
-                                    </AiGenerationDialogContextProvider>
-                                  </ProTeaserDialogContextProvider>
-                                </LinkDialogContextProvider>
-                              </KeyboardDialogContextProvider>
-                            </OnboardingDialogContextProvider>
-                          </AboutDialogContextProvider>
-                        </ThirdPartyLibsDialogContextProvider>
-                      </LicenseDialogContextProvider>
-                    </NewAudioDialogContextProvider>
-                  </NewFileDialogContextProvider>
-                </ProgressDialogContextProvider>
-              </CreateDirectoryDialogContextProvider>
-            </MoveOrCopyFilesDialogContextProvider>
-          </CreateEditLocationDialogContextProvider>
-        </FileUploadContextProvider>
+        <CreateEditLocationDialogContextProvider>
+          <MoveOrCopyFilesDialogContextProvider>
+            <CreateDirectoryDialogContextProvider>
+              <ProgressDialogContextProvider>
+                <NewFileDialogContextProvider>
+                  <NewAudioDialogContextProvider>
+                    <LicenseDialogContextProvider>
+                      <ThirdPartyLibsDialogContextProvider>
+                        <AboutDialogContextProvider>
+                          <OnboardingDialogContextProvider>
+                            <KeyboardDialogContextProvider>
+                              <LinkDialogContextProvider>
+                                <ProTeaserDialogContextProvider>
+                                  <AiGenerationDialogContextProvider>
+                                    <SettingsDialogContextProvider>
+                                      <ResolveConflictContextProvider>
+                                        <DownloadUrlContextProvider>
+                                          <MenuContextProvider>
+                                            {children}
+                                          </MenuContextProvider>
+                                        </DownloadUrlContextProvider>
+                                      </ResolveConflictContextProvider>
+                                    </SettingsDialogContextProvider>
+                                  </AiGenerationDialogContextProvider>
+                                </ProTeaserDialogContextProvider>
+                              </LinkDialogContextProvider>
+                            </KeyboardDialogContextProvider>
+                          </OnboardingDialogContextProvider>
+                        </AboutDialogContextProvider>
+                      </ThirdPartyLibsDialogContextProvider>
+                    </LicenseDialogContextProvider>
+                  </NewAudioDialogContextProvider>
+                </NewFileDialogContextProvider>
+              </ProgressDialogContextProvider>
+            </CreateDirectoryDialogContextProvider>
+          </MoveOrCopyFilesDialogContextProvider>
+        </CreateEditLocationDialogContextProvider>
       </DeleteMultipleEntriesDialogContextProvider>
     </EntryExistDialogContextProvider>
   );

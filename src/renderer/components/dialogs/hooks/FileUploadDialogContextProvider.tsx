@@ -16,8 +16,17 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
+import { useSelector } from 'react-redux';
+import { getProgress } from '-/reducers/app';
+import useFirstRender from '-/utils/useFirstRender';
 
 type FileUploadDialogContextData = {
   openFileUploadDialog: (targetPath?: string, dialogTitle?: string) => void;
@@ -40,8 +49,21 @@ export const FileUploadDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const targetPath = useRef<string>(undefined);
   const dialogTitle = useRef<string>('importDialogTitle');
+  const progress = useSelector(getProgress);
+  const firstRender = useFirstRender();
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+
+  useEffect(() => {
+    if (
+      !firstRender &&
+      !open.current &&
+      Array.isArray(progress) &&
+      progress.length > 0
+    ) {
+      openDialog();
+    }
+  }, [progress]);
 
   function openDialog(tPath?: string, dTitle?: string) {
     open.current = true;

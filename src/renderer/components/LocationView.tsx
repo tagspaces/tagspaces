@@ -26,12 +26,12 @@ import {
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DirectoryTreeView, {
   DirectoryTreeViewRef,
+  SubFolder,
 } from '-/components/DirectoryTreeView';
 import TargetFileBox from '-/components/TargetFileBox';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -39,7 +39,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
-import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -53,9 +52,11 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
-  location: CommonLocation;
+  location: SubFolder;
   hideDrawer?: () => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
 }
@@ -66,12 +67,13 @@ function LocationView(props: Props) {
   const { uploadFiles } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const {
+    findLocation,
     openLocation,
     currentLocation,
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
-  const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
+  const { openMoveCopyFilesDialog } = useMenuContext();
   const { setActions } = usePerspectiveActionsContext();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
@@ -81,7 +83,8 @@ function LocationView(props: Props) {
 
   const dispatch: AppDispatch = useDispatch();
   const { location, hideDrawer } = props;
-  const isCloudLocation = location?.type === locationType.TYPE_CLOUD;
+  const subFolderLocation = findLocation(location.locationID);
+  const isCloudLocation = subFolderLocation?.type === locationType.TYPE_CLOUD;
 
   const handleLocationIconClick = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
@@ -94,21 +97,24 @@ function LocationView(props: Props) {
   };
 
   const handleLocationClick = () => {
-    if (currentLocation && location.uuid === currentLocation.uuid) {
+    if (currentLocation && location.locationID === currentLocation.uuid) {
       // the same location click
       openDirectory(currentLocationPath).then(() => {
         const action: TS.PerspectiveActions = { action: 'reload' };
         setActions(action);
       });
     } else {
-      openLocation(location);
+      openLocation(subFolderLocation);
       if (hideDrawer) {
         hideDrawer();
       }
     }
   };
 
-  const handleLocationContextMenuClick = (event: any, chosenLocation) => {
+  const handleLocationContextMenuClick = (
+    event: any,
+    chosenLocation: CommonLocation,
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     setSelectedLocation(chosenLocation);
@@ -142,8 +148,9 @@ function LocationView(props: Props) {
         showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }
-      const targetLocation = item.targetLocation;
-      let targetPath = targetLocation ? targetLocation.path : undefined;
+      const itemLocation = item.targetLocation;
+      const targetLocation = findLocation(itemLocation?.locationID);
+      let targetPath = itemLocation ? itemLocation.path : undefined;
       if (targetPath === undefined) {
         targetPath = item.targetPath;
       }
@@ -168,7 +175,8 @@ function LocationView(props: Props) {
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           const entries =
             selectedEntries.length > 0 ? selectedEntries : [entry];
-          openMoveOrCopyFilesDialog(entries, targetPath, targetLocation.uuid);
+          openMoveCopyFilesDialog(entries, targetPath, targetLocation.uuid);
+          //openMoveOrCopyFilesDialog(entries, targetPath, targetLocation.uuid);
           //moveFiles(arrPath, targetPath, targetLocation.uuid);
         } else {
           showNotification(t('Moving file not possible'), 'error', true);
@@ -180,11 +188,13 @@ function LocationView(props: Props) {
   };
 
   let locationNameTitle = location?.path;
-  if (isCloudLocation && location?.bucketName) {
-    if (location.endpointURL) {
-      locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
-    } else if (location.region) {
-      locationNameTitle = location.region + ' - ' + location.bucketName;
+  if (isCloudLocation && subFolderLocation?.bucketName) {
+    if (subFolderLocation.endpointURL) {
+      locationNameTitle =
+        subFolderLocation.endpointURL + ' - ' + subFolderLocation.bucketName;
+    } else if (subFolderLocation.region) {
+      locationNameTitle =
+        subFolderLocation.region + ' - ' + subFolderLocation.bucketName;
     }
   }
 
@@ -239,7 +249,7 @@ function LocationView(props: Props) {
           }}
           onClick={handleLocationClick}
           onContextMenu={(event) =>
-            handleLocationContextMenuClick(event, location)
+            handleLocationContextMenuClick(event, subFolderLocation)
           }
         >
           <ListItemIcon
@@ -281,7 +291,7 @@ function LocationView(props: Props) {
               </TargetMoveFileBox>
             )}
           </ListItemText>
-          {location?.isDefault && (
+          {subFolderLocation?.isDefault && (
             <Tooltip title={t('core:thisIsStartupLocation')}>
               <DefaultLocationIcon data-tid="startupIndication" />
             </Tooltip>
@@ -291,9 +301,11 @@ function LocationView(props: Props) {
             aria-haspopup="true"
             edge="end"
             data-tid={'locationMoreButton_' + location.name}
-            onClick={(event) => handleLocationContextMenuClick(event, location)}
+            onClick={(event) =>
+              handleLocationContextMenuClick(event, subFolderLocation)
+            }
             onContextMenu={(event) =>
-              handleLocationContextMenuClick(event, location)
+              handleLocationContextMenuClick(event, subFolderLocation)
             }
           >
             <MoreMenuIcon />
