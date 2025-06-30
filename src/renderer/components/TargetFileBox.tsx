@@ -94,7 +94,7 @@ function TargetFileBox(props: Props) {
         files,
         dirPath,
         onUploadProgress,
-        true,
+        false,
         false,
         undefined,
         sourceLocationId,

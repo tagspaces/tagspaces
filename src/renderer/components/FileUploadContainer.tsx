@@ -124,7 +124,7 @@ const FileUploadContainer = forwardRef(
         directoryPath.current,
         onUploadProgress,
         false,
-        true,
+        false,
         undefined,
         sourceLocationId,
       )
