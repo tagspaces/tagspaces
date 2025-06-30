@@ -83,6 +83,7 @@ AppConfig.SearchTypeGroups =
           'png',
           'gif',
           'svg',
+          'heic',
           'webp',
           'bmp',
           'tga',
