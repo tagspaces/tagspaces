@@ -39,6 +39,7 @@ interface Props {
 export interface FileUploadContainerRef {
   onFileUpload: (directoryPath: string) => void;
   onMetaUpload: () => void;
+  setMetaUpload: (mUpload: () => void) => void;
 }
 
 const FileUploadContainer = forwardRef(
@@ -61,6 +62,9 @@ const FileUploadContainer = forwardRef(
         if (metaUpload.current) {
           metaUpload.current();
         }
+      },
+      setMetaUpload(mUpload: () => void) {
+        metaUpload.current = mUpload;
       },
       onFileUpload(dirPath: string) {
         directoryPath.current = dirPath;

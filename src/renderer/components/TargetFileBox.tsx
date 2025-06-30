@@ -32,6 +32,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = {
@@ -54,7 +55,8 @@ function TargetFileBox(props: Props) {
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { currentLocation, findLocalLocation, findLocation } =
     useCurrentLocationContext();
-  const { uploadFilesAPI } = useIOActionsContext();
+  const { setMetaUpload } = useFileUploadContext();
+  const { uploadFilesAPI, uploadMeta } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
@@ -100,6 +102,16 @@ function TargetFileBox(props: Props) {
         sourceLocationId,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
+          setMetaUpload(() =>
+            uploadMeta(
+              files.map((f) => f.path),
+              dirPath,
+              onUploadProgress,
+              false,
+              undefined,
+              sourceLocationId,
+            ),
+          );
           const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
             action: 'thumbGenerate',
             entry: entry,
