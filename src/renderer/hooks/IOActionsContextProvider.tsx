@@ -1017,13 +1017,15 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
-      const arrFiles = [];
+    if (onUploadProgress) {
       for (let i = 0; i < files.length; i += 1) {
-        arrFiles.push(files[i].path);
+        const key = cleanTrailingDirSeparator(targetPath) + '/' + files[i].name;
+        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
       }
+    }
+    if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       return uploadFiles(
-        arrFiles,
+        files.map((f) => f.path),
         targetPath,
         onUploadProgress,
         uploadMeta,
@@ -1321,13 +1323,6 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    if (onUploadProgress) {
-      paths.forEach((path) => {
-        const key =
-          targetPath + '/' + extractFileName(path, AppConfig.dirSeparator);
-        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
-      });
-    }
     const uploadJobs: job[] = [];
     paths.map((path) => {
       let target = joinPaths(

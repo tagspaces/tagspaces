@@ -121,7 +121,7 @@
     "copy-web-extensions": "shx mkdir -p web/modules/@tagspaces/extensions/arithmetic-player && shx cp -rL web/third-party/extensions/@tagspacesarithmetic-player_1.0.0/* web/modules/@tagspaces/extensions/arithmetic-player/",
     "gen-third-party-extensions": "node -r ts-node/register scripts/generateExtensionsConfig.ts ./web/third-party/extensions",
     "run-web-aws": "npm run prepare-web-pro && node scripts/webserver.js",
-    "run-web-dev": "npm run prepare-web-pro-dev && shx cp scripts/extconfig-extensions.js web/extconfig.js && node scripts/webserver.js",
+    "run-web-dev": "npm run prepare-web-pro-dev && node scripts/webserver.js",
     "run-web-server": "node scripts/webserver.js",
     "setup-tests": "node scripts/setup-tests.js",
     "skip:husky:pre-commit": "node -e \"require('fs').rename('./.git/hooks/pre-commit', './.git/hooks/pre-commit.disabled', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
