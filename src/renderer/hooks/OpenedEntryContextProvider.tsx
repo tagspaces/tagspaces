@@ -631,18 +631,28 @@ export const OpenedEntryContextProvider = ({
       entryForOpening.url = fsEntry.url;
     }
     //set meta and generate new meta id if not exist
-    if (fsEntry.isFile && (!fsEntry.meta || !fsEntry.meta.id)) {
-      const meta: TS.FileSystemEntryMeta = await getMetadata(
-        fsEntry.path,
-        fsEntry.uuid,
-        loc,
-      );
-      if (meta) {
-        entryForOpening.uuid = meta.id;
-        entryForOpening.meta = { ...(fsEntry.meta || {}), ...meta };
+    if (fsEntry.isFile) {
+      if (!fsEntry.meta?.id) {
+        const meta: TS.FileSystemEntryMeta = await getMetadata(
+          fsEntry.path,
+          fsEntry.uuid,
+          loc,
+        );
+        if (meta) {
+          entryForOpening.uuid = meta.id;
+          entryForOpening.meta = { ...fsEntry.meta, ...meta };
+        }
+      }
+      if (fsEntry.meta?.thumbPath) {
+        const thumb = await loc?.getThumbPath(
+          fsEntry.meta.thumbPath,
+          fsEntry.meta.lastUpdated,
+        );
+        if (thumb) {
+          entryForOpening.meta.thumbPath = thumb;
+        }
       }
     }
-
     if (
       fsEntry.isNewFile &&
       AppConfig.editableFiles.includes(fsEntry.extension)

@@ -748,10 +748,6 @@ function EntryContainer() {
             height={
               tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
             }
-            setSavingInProgress={(isSaving: boolean) => {
-              isSavingInProgress.current = isSaving;
-              forceUpdate();
-            }}
             handleMessage={handleMessage}
           />
         )}

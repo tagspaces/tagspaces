@@ -18,7 +18,6 @@
 
 import AppConfig from '-/AppConfig';
 import { CloseIcon } from '-/components/CommonIcons';
-import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
@@ -33,40 +32,31 @@ import {
   useEffect,
   useReducer,
   useRef,
-  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   handleMessage: (obj: any) => void;
-  setSavingInProgress?: (isSaving: boolean) => void;
   height?: string;
 }
 
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
-  const { openedEntry, fileChanged, setFileChanged } = useOpenedEntryContext();
-  const { saveFileOpen } = useResolveConflictContext();
+  const { openedEntry } = useOpenedEntryContext();
+  //const { saveFileOpen } = useResolveConflictContext();
   const { isEditMode } = useFilePropertiesContext();
   const { setFullscreen, isFullscreen, toggleFullScreen } =
     useFullScreenContext();
   const { searchQuery, isSearchMode } = useDirectoryContentContext();
-  const { findLocation } = useCurrentLocationContext();
-  const {
-    fileViewer,
-    fileViewerContainer,
-    height,
-    setSavingInProgress,
-    handleMessage,
-  } = props;
+
+  const { fileViewer, fileViewerContainer, height, handleMessage } = props;
 
   const eventID = useRef<string>(getUuid());
-  const [thumb, setThumb] = useState<string | null>(null);
-  const [loadingThumb, setLoadingThumb] = useState(true);
+  // const [thumb, setThumb] = useState<string | null>(null);
+  // const [loadingThumb, setLoadingThumb] = useState(true);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -100,7 +90,7 @@ function FileView(props: Props) {
     };
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     setLoadingThumb(true);
     const loc = findLocation(openedEntry.locationID);
     loc
@@ -111,7 +101,7 @@ function FileView(props: Props) {
       .finally(() => {
         setLoadingThumb(false);
       });
-  }, [openedEntry]);
+  }, [openedEntry]);*/
 
   const handleFullscreenChange = useCallback((e) => {
     let change = '';
@@ -170,7 +160,7 @@ function FileView(props: Props) {
     }
   });
 
-  const savingFile = (force = false) => {
+  /*const savingFile = (force = false) => {
     try {
       if (
         fileViewer &&
@@ -202,7 +192,7 @@ function FileView(props: Props) {
       setSavingInProgress(false);
       console.debug('function getContent not exist for file:', e);
     }
-  };
+  };*/
 
   function getFileOpenerURL(): string {
     if (openedEntry && openedEntry.path) {
@@ -237,7 +227,9 @@ function FileView(props: Props) {
           : '';
       const locale = '&locale=' + i18n.language;
 
-      const thumbParam = thumb ? '&thumb=' + encodeURIComponent(thumb) : '';
+      const thumbParam = openedEntry?.meta?.thumbPath
+        ? '&thumb=' + encodeURIComponent(openedEntry.meta.thumbPath)
+        : '';
       const theming =
         '&theme=' +
         theme.palette.mode +
@@ -301,7 +293,7 @@ function FileView(props: Props) {
           <span>ESC</span>
         </div>
       )}
-      {openedEntry.isFile && !loadingThumb && (
+      {openedEntry.isFile && ( //!loadingThumb && (
         <iframe
           ref={fileViewer}
           style={{

@@ -162,7 +162,11 @@ export class CommonLocation implements TS.Location {
         normalizedUrl = url.replaceAll(this.getDirSeparator(), '/');
       }
     }
-    if (!normalizedUrl.startsWith('http') && !normalizedUrl.startsWith('/')) {
+    if (
+      !normalizedUrl.startsWith('http') &&
+      !AppConfig.isWin &&
+      !normalizedUrl.startsWith('/')
+    ) {
       normalizedUrl = '/' + normalizedUrl;
     }
     return normalizedUrl;
