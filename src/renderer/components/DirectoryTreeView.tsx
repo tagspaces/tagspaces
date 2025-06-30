@@ -118,6 +118,11 @@ const DirectoryTreeView = forwardRef(
           );
         }
         //loadSubDirectories(location);
+      } else if (!currentLocationId) {
+        setData(undefined);
+        if (isExpanded) {
+          setExpanded(false);
+        }
       }
     }, [data, currentLocationId, currentDirectoryEntries]);
 
