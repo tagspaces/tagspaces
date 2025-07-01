@@ -199,7 +199,7 @@ export async function startTestingApp(
   }
 
   if (isWeb) {
-    const { webkit, chromium } = require('playwright');
+    const { webkit, chromium } = require('playwright-core');
     global.app = await chromium.launch({
       headless: process.env.HEADLESS_MODE === 'true',
       slowMo: 50,
@@ -215,7 +215,7 @@ export async function startTestingApp(
     // await global.client.close();
   } else {
     //if (global.isPlaywright) {
-    const { _electron: electron } = require('playwright');
+    const { _electron: electron } = require('@playwright/test');
     // 1. Create a unique temporary directory for user data
     const userDataDir = fse.mkdtempSync(
       pathLib.join(os.tmpdir(), `electron-user-data-${testInfo.workerIndex}`),
