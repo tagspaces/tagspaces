@@ -15,7 +15,9 @@ export default defineConfig({
   projects: [
     {
       name: 'electron-light',
-      grep: new RegExp('^(?!.*\\b_pro\\b).*\\belectron\\b.*'),
+      grep: new RegExp(
+        '\\[(?![^\\]]*\\b_pro\\b)(?=[^\\]]*\\belectron\\b)[^\\]]*\\]',
+      ),
       use: {
         isElectron: true,
         isWin,
