@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -37,7 +37,6 @@ import {
   normalizePath,
   extractTags,
   cleanTrailingDirSeparator,
-  cleanFrontDirSeparator,
   generateFileName,
   getMetaContentFileLocation,
   getFileLocationFromMetaFile,
@@ -77,7 +76,6 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import useFirstRender from '-/utils/useFirstRender';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 type IOActionsContextData = {
@@ -304,7 +302,7 @@ export const IOActionsContextProvider = ({
     deleteEntriesPromise,
   } = usePlatformFacadeContext();
   const { setActions } = usePerspectiveActionsContext();
-  const { actions, setReflectActions } = useEditedEntryContext();
+  const { setReflectActions } = useEditedEntryContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const {
     currentDirectoryPath,
@@ -319,10 +317,10 @@ export const IOActionsContextProvider = ({
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
-  const firstRender = useFirstRender();
+  //const firstRender = useFirstRender();
   const currentLocation = findLocation();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
@@ -347,29 +345,10 @@ export const IOActionsContextProvider = ({
               );
             }
           }
-        } /* else if (action.action === 'update') {
-          // reflect visibility change on renamed KanBan column
-          if (
-            action.entry &&
-            !action.entry.isFile &&
-            action.entry.meta?.perspective === 'kanban'
-          ) {
-            const dirPath = extractContainingDirectoryPath(
-              action.entry.path,
-              currentLocation?.getDirSeparator(),
-            );
-            if (
-              cleanTrailingDirSeparator(
-                cleanFrontDirSeparator(currentDirectoryPath),
-              ) === cleanTrailingDirSeparator(cleanFrontDirSeparator(dirPath))
-            ) {
-              reflectRenameVisibility(action.oldEntryPath, action.entry.path);
-            }
-          }
-        }*/
+        }
       }
     }
-  }, [actions]);
+  }, [actions]);*/
 
   function createDirectory(directoryPath: string) {
     return createDirectoryPromise(directoryPath)
@@ -2259,8 +2238,8 @@ export const IOActionsContextProvider = ({
                 if (folders) {
                   setCurrentDirectoryDirs(folders);
                 }
-                const action: TS.PerspectiveActions = { action: 'reload' };
-                setActions(action);
+                //const action: TS.PerspectiveActions = { action: 'reload' };
+                //setActions(action);
               })
               .catch((err) => {
                 console.log(
