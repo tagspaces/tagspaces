@@ -16,6 +16,7 @@ import {
   openFolder,
   setPerspectiveSetting,
   takeScreenshot,
+  typeInputValue,
 } from './general.helpers';
 import {
   createFileS3,
@@ -132,6 +133,20 @@ test.describe('TST49 - Perspective KanBan', () => {
 
     await expectElementExist(
       '[data-tid=' + defaultLocationName + 'KanBanColumnTID]',
+      true,
+      5000,
+    );
+  });
+
+  test('TST4903 - Create new columns(sub-folder) [web,minio,electron,_pro]', async () => {
+    const columnName = 'testFolder';
+    await clickOn('[data-tid=createKanBanColumnTID]');
+
+    await typeInputValue('[data-tid=directoryName] input', columnName, 0);
+    await clickOn('[data-tid=confirmCreateNewDirectory]');
+
+    await expectElementExist(
+      '[data-tid=' + columnName + 'KanBanColumnTID]',
       true,
       5000,
     );
