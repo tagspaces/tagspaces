@@ -2238,8 +2238,8 @@ export const IOActionsContextProvider = ({
                 if (folders) {
                   setCurrentDirectoryDirs(folders);
                 }
-                //const action: TS.PerspectiveActions = { action: 'reload' };
-                //setActions(action);
+                const action: TS.PerspectiveActions = { action: 'reload' };
+                setActions(action);
               })
               .catch((err) => {
                 console.log(

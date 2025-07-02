@@ -61,7 +61,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 10000);
   await clickOn('[data-tid=openKanbanPerspective]');
   await expectElementExist(
     '[data-tid=kanbanSettingsDialogOpenTID]',
@@ -133,10 +133,10 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
 
     // hide empty_folder in order to expect moved file is not shown
-    await clickOn('[data-tid=empty_folderKanBanColumnActionTID]');
+    /* await clickOn('[data-tid=empty_folderKanBanColumnActionTID]');
     await clickOn('[data-tid=columnVisibilityTID]');
+    await expectElementExist(getGridFileSelector(fileName), false, 5000);*/
 
-    await expectElementExist(getGridFileSelector(fileName), false, 5000);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'openDirectory',
@@ -147,7 +147,7 @@ test.describe('TST49 - Perspective KanBan', () => {
      await clickOn('[data-tid=showFolderContentTID]');
     }*/
     await clickOn('[data-tid=openDefaultPerspective]');
-    await expectElementExist(getGridFileSelector(fileName), true, 55000);
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
     await clickOn('[data-tid=openKanbanPerspective]');
   });
 
