@@ -72,7 +72,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4901 - Folder which is opened in kanban for the first time [web,minio,electron]', async ({
+  test('TST4901 - Folder which is opened in kanban for the first time [web,minio,electron,_pro]', async ({
     isS3,
     testDataDir,
   }) => {
