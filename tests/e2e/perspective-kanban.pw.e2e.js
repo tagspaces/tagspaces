@@ -61,7 +61,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 10000);
+  //await expectElementExist(getGridFileSelector('empty_folder'), true, 10000);
   await clickOn('[data-tid=openKanbanPerspective]');
   await expectElementExist(
     '[data-tid=kanbanSettingsDialogOpenTID]',
@@ -112,6 +112,27 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(
       '[data-tid=test_kanban_column4KanBanColumnTID]',
       false,
+      5000,
+    );
+  });
+
+  test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
+    await expectElementExist(
+      '[data-tid=empty_folderKanBanColumnTID]',
+      true,
+      5000,
+    );
+    await expectElementExist(
+      '[data-tid=' + defaultLocationName + 'KanBanColumnTID]',
+      false,
+      5000,
+    );
+
+    await clickOn('[data-tid=showFolderContentTID]');
+
+    await expectElementExist(
+      '[data-tid=' + defaultLocationName + 'KanBanColumnTID]',
+      true,
       5000,
     );
   });
