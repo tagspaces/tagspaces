@@ -118,14 +118,15 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4902 - Show current folder [web,minio,electron,_pro]', async ({
-    isWeb,
+    isS3,
+    isMinio,
   }) => {
     await expectElementExist(
       '[data-tid=empty_folderKanBanColumnTID]',
       true,
       5000,
     );
-    const locationFolderName = isWeb ? '' : defaultLocationName;
+    const locationFolderName = isS3 || isMinio ? '' : defaultLocationName;
     await expectElementExist(
       '[data-tid=' + locationFolderName + 'KanBanColumnTID]',
       false,
@@ -154,6 +155,8 @@ test.describe('TST49 - Perspective KanBan', () => {
       5000,
     );
   });
+
+  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {});
 
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
