@@ -400,7 +400,7 @@ export async function createFolderS3(
   folderName = 'empty_local_folder',
   rootFolder = 'empty_folder',
 ) {
-  const folderPath = pathLib.join(rootFolder, folderName);
+  const folderPath = (rootFolder ? rootFolder + '/' : '') + folderName; //pathLib.join(rootFolder, folderName);
 
   try {
     await createDir(folderPath);
