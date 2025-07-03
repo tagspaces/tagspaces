@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
+import { test } from './fixtures';
 import {
   defaultLocationName,
   createPwMinioLocation,
@@ -13,15 +13,12 @@ import {
   expectElementExist,
   getGridFileSelector,
   isDisplayed,
-  openFolder,
+  rightClickOn,
   setPerspectiveSetting,
-  takeScreenshot,
   typeInputValue,
 } from './general.helpers';
 import {
-  createFileS3,
   createFolderS3,
-  createLocalFile,
   createLocalFolder,
   startTestingApp,
   stopApp,
@@ -29,6 +26,7 @@ import {
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { createColumn, createMdCard } from './perspective-kanban.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -118,6 +116,9 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
+    if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
+      await clickOn('[data-tid=hideFolderContentTID]');
+    }
     await expectElementExist(
       '[data-tid=empty_folderKanBanColumnTID]',
       true,
@@ -139,20 +140,63 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4903 - Create new columns(sub-folder) [web,minio,electron,_pro]', async () => {
-    const columnName = 'testFolder';
-    await clickOn('[data-tid=createKanBanColumnTID]');
+    await createColumn('testFolder');
+  });
 
-    await typeInputValue('[data-tid=directoryName] input', columnName, 0);
-    await clickOn('[data-tid=confirmCreateNewDirectory]');
+  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {
+    const columnName = 'testFolderTmp';
+    const newColumnName = 'testFolderRenamed';
+    //create new folder
+    await createColumn(columnName);
 
+    //rename folder
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=renameDirectory]');
+
+    await typeInputValue(
+      '[data-tid=renameEntryDialogInput] input',
+      newColumnName,
+      0,
+    );
+    await clickOn('[data-tid=confirmRenameEntry]');
     await expectElementExist(
-      '[data-tid=' + columnName + 'KanBanColumnTID]',
+      '[data-tid=' + newColumnName + 'KanBanColumnTID]',
       true,
       5000,
     );
   });
 
-  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {});
+  test('TST4905 - Create card in column [web,minio,electron,_pro]', async () => {
+    await createMdCard('testCard');
+  });
+
+  test('TST4906 - Rename card in column [web,minio,electron,_pro]', async () => {
+    const cardName = 'testCard1';
+    const newCardName = 'testCard2';
+    await createMdCard(cardName);
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName + '_md]');
+    await clickOn('[data-tid=fileMenuRenameFile]');
+    await typeInputValue(
+      '[data-tid=renameEntryDialogInput] input',
+      newCardName,
+      0,
+    );
+    await clickOn('[data-tid=confirmRenameEntry]');
+
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + newCardName + '_md]',
+      false,
+    );
+  });
+
+  test('TST4907 - Add and show tag to column [web,minio,electron,_pro]', async () => {
+    /*const cardName = 'testTagCard';
+    await createMdCard(cardName);
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName + '_md]');
+    await clickOn('[data-tid=fileMenuAddRemoveTags]');*/
+  });
 
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
