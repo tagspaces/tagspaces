@@ -59,6 +59,7 @@ function TsDialogTitle(props: TSDialogTitle) {
         position: 'absolute',
         right: 15,
         top: 15,
+        zIndex: 1000,
       }}
       data-tid={closeButtonTestId}
       onClick={onClose}

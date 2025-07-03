@@ -16,38 +16,38 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { GlobalHotKeys } from 'react-hotkeys';
-import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import FileSourceDnd from '-/components/FileSourceDnd';
 import TagDropContainer from '-/components/TagDropContainer';
-import GridCell from './GridCell';
-import MainToolbar from '-/perspectives/grid/components/MainToolbar';
-import SortingMenu from '-/perspectives/grid/components/SortingMenu';
+import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
+import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import EntryTagMenu from '-/components/menus/EntryTagMenu';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
 import GridPagination from '-/perspectives/grid/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
-import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import Links from 'assets/links';
-import { fileOperationsEnabled } from '-/perspectives/common/main-container';
-import { openURLExternally } from '-/services/utils-io';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import MainToolbar from '-/perspectives/grid/components/MainToolbar';
+import SortingMenu from '-/perspectives/grid/components/SortingMenu';
 import { GridCellsStyleContextProvider } from '-/perspectives/grid/hooks/GridCellsStyleProvider';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
+import { Pro } from '-/pro';
+import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
+import { openURLExternally } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
-import FileSourceDnd from '-/components/FileSourceDnd';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import Links from 'assets/links';
+import React, { useEffect, useRef, useState } from 'react';
+import { GlobalHotKeys } from 'react-hotkeys';
+import { useSelector } from 'react-redux';
+import GridCell from './GridCell';
 
 interface Props {}
 
@@ -188,17 +188,6 @@ function GridPerspective(props: Props) {
     reloadDocument: keyBindings.reloadDocument,
   };
 
-  /*const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setMouseX(event.clientX);
-    setMouseY(event.clientY);
-    if (selectedEntries.length > 0) {
-      setSelectedEntries([]);
-    }
-    perspectiveMode.current = false;
-    setDirContextMenuAnchorEl(event.currentTarget);
-  };*/
-
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (selectedEntries.length > 0) {
@@ -216,7 +205,7 @@ function GridPerspective(props: Props) {
       }
     },
     addRemoveTags: () => {
-      if (selectedEntries && selectedEntries.length > 1) {
+      if (selectedEntries && selectedEntries.length > 0) {
         openAddRemoveTagsDialog();
       }
     },
