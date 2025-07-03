@@ -117,18 +117,14 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4902 - Show current folder [web,minio,electron,_pro]', async ({
-    isS3,
-    isMinio,
-  }) => {
+  test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
     await expectElementExist(
       '[data-tid=empty_folderKanBanColumnTID]',
       true,
       5000,
     );
-    const locationFolderName = isS3 || isMinio ? '' : defaultLocationName;
     await expectElementExist(
-      '[data-tid=' + locationFolderName + 'KanBanColumnTID]',
+      '[data-tid=currentFolderKanBanColumnTID]',
       false,
       5000,
     );
@@ -136,7 +132,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=showFolderContentTID]');
 
     await expectElementExist(
-      '[data-tid=' + locationFolderName + 'KanBanColumnTID]',
+      '[data-tid=currentFolderKanBanColumnTID]',
       true,
       5000,
     );
