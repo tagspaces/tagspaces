@@ -261,12 +261,12 @@ export const DirectoryContentContextProvider = ({
   //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectory = useRef<TS.FileSystemEntry>(undefined);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
-  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>(undefined);
+  const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
-  const defaultColumnsToShow = 3;
+  const defaultColumnsToShow = 3; //KanBan
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -807,6 +807,18 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
+  function getDefaultColumnsToShow(
+    entries: TS.FileSystemEntry[],
+  ): TS.OrderVisibilitySettings[] {
+    return entries
+      .filter((entry) => !entry.isFile)
+      .slice(0, defaultColumnsToShow)
+      .map((dir) => ({
+        uuid: dir.uuid,
+        name: dir.name,
+      }));
+  }
+
   async function loadMetaDirectoryContent(
     directoryPath: string,
     location: CommonLocation,
@@ -834,14 +846,8 @@ export const DirectoryContentContextProvider = ({
     // set default directory metadata
     if (!meta) {
       currentDirectoryFiles.current = [];
-      // add defaultColumnsToShow
-      const columnsToShow = entries
-        .filter((entry) => !entry.isFile)
-        .slice(0, defaultColumnsToShow);
-      currentDirectoryDirs.current = columnsToShow.map((dir) => ({
-        uuid: dir.uuid,
-        name: dir.name,
-      }));
+      // add defaultColumnsToShow for KanBan
+      currentDirectoryDirs.current = getDefaultColumnsToShow(entries);
       const meta = cleanMetaData(
         mergeFsEntryMeta({
           ...getDefaultDirMeta(),
@@ -1573,7 +1579,10 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryPath: currentDirectory.current?.path,
       currentDirectory: currentDirectory.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
-      currentDirectoryDirs: currentDirectoryDirs.current,
+      currentDirectoryDirs:
+        currentDirectoryDirs.current?.length > 0
+          ? currentDirectoryDirs.current
+          : getDefaultColumnsToShow(currentDirectoryEntries.current),
       //isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,

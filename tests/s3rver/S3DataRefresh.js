@@ -151,10 +151,8 @@ function uploadFile(filePath, content = undefined) {
   }
 }
 function createDir(dirPath) {
-  const key = path
-    .relative(directoryPath, dirPath)
-    .replace(/\\/g, '/')
-    .replace(/\/?$/, '/'); // Ensure trailing slash
+  const key = //path.relative(directoryPath, dirPath)
+    dirPath.replace(/\\/g, '/').replace(/\/?$/, '/'); // Ensure trailing slash
 
   const params = {
     Bucket: bucketName,

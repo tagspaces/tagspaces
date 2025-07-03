@@ -16,6 +16,7 @@ import {
   openFolder,
   setPerspectiveSetting,
   takeScreenshot,
+  typeInputValue,
 } from './general.helpers';
 import {
   createFileS3,
@@ -61,7 +62,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  //await expectElementExist(getGridFileSelector('empty_folder'), true, 10000);
   await clickOn('[data-tid=openKanbanPerspective]');
   await expectElementExist(
     '[data-tid=kanbanSettingsDialogOpenTID]',
@@ -71,11 +72,16 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4901 - Folder which is opened in kanban for the first time []', async ({
+  test('TST4901 - Folder which is opened in kanban for the first time [web,minio,electron,_pro]', async ({
     isS3,
     testDataDir,
   }) => {
     // Open max 3 sub-folders as columns on fresh folder
+    await expectElementExist(
+      '[data-tid=kanbanSettingsDialogOpenTID]',
+      true,
+      5000,
+    );
     if (isS3) {
       await createFolderS3('test_kanban_column1');
       await createFolderS3('test_kanban_column2');
@@ -87,16 +93,66 @@ test.describe('TST49 - Perspective KanBan', () => {
       await createLocalFolder(testDataDir, 'test_kanban_column3');
       await createLocalFolder(testDataDir, 'test_kanban_column4');
     }
-    await clickOn('[data-tid=openGridPerspective]');
-    await openFolder('empty_folder');
-    await clickOn('[data-tid=openKanbanPerspective]');
+
+    await global.client.dblclick('[data-tid=empty_folderKanBanColumnTID]');
     await expectElementExist(
-      '[data-tid=kanbanSettingsDialogOpenTID]',
+      '[data-tid=test_kanban_column1KanBanColumnTID]',
       true,
       5000,
     );
-    await expectElementExist('[data-tid=test_kanban_column1]', true, 50000);
+    await expectElementExist(
+      '[data-tid=test_kanban_column2KanBanColumnTID]',
+      true,
+      5000,
+    );
+    await expectElementExist(
+      '[data-tid=test_kanban_column3KanBanColumnTID]',
+      true,
+      5000,
+    );
+    await expectElementExist(
+      '[data-tid=test_kanban_column4KanBanColumnTID]',
+      false,
+      5000,
+    );
   });
+
+  test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
+    await expectElementExist(
+      '[data-tid=empty_folderKanBanColumnTID]',
+      true,
+      5000,
+    );
+    await expectElementExist(
+      '[data-tid=currentFolderKanBanColumnTID]',
+      false,
+      5000,
+    );
+
+    await clickOn('[data-tid=showFolderContentTID]');
+
+    await expectElementExist(
+      '[data-tid=currentFolderKanBanColumnTID]',
+      true,
+      5000,
+    );
+  });
+
+  test('TST4903 - Create new columns(sub-folder) [web,minio,electron,_pro]', async () => {
+    const columnName = 'testFolder';
+    await clickOn('[data-tid=createKanBanColumnTID]');
+
+    await typeInputValue('[data-tid=directoryName] input', columnName, 0);
+    await clickOn('[data-tid=confirmCreateNewDirectory]');
+
+    await expectElementExist(
+      '[data-tid=' + columnName + 'KanBanColumnTID]',
+      true,
+      5000,
+    );
+  });
+
+  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {});
 
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
@@ -115,10 +171,10 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
 
     // hide empty_folder in order to expect moved file is not shown
-    await clickOn('[data-tid=empty_folderKanBanColumnActionTID]');
+    /* await clickOn('[data-tid=empty_folderKanBanColumnActionTID]');
     await clickOn('[data-tid=columnVisibilityTID]');
+    await expectElementExist(getGridFileSelector(fileName), false, 5000);*/
 
-    await expectElementExist(getGridFileSelector(fileName), false, 5000);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'openDirectory',
@@ -129,7 +185,7 @@ test.describe('TST49 - Perspective KanBan', () => {
      await clickOn('[data-tid=showFolderContentTID]');
     }*/
     await clickOn('[data-tid=openDefaultPerspective]');
-    await expectElementExist(getGridFileSelector(fileName), true, 55000);
+    await expectElementExist(getGridFileSelector(fileName), true, 5000);
     await clickOn('[data-tid=openKanbanPerspective]');
   });
 

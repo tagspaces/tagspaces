@@ -245,7 +245,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.164"
+    "@tagspacespro/tagspacespro": "5.0.165-alpha.3"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
@@ -275,7 +275,6 @@
     "adm-zip": "0.5.16",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
-    "chromedriver": "^90.0.0",
     "concat-licenses": "^2.0.1",
     "concurrently": "^8.2.1",
     "core-js": "^3.32.2",
@@ -319,7 +318,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jsdom": "^11.0.0",
     "json-loader": "^0.5.7",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "mini-css-extract-plugin": "^2.7.6",

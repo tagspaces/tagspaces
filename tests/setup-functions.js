@@ -54,31 +54,6 @@ export async function startMinio(isWin, testWorkerDir) {
   }
 }*/
 
-export async function startChromeDriver() {
-  //const childProcess = await require('child_process');
-  const chromeDriver = await require('chromedriver');
-  //const binPath = chromedriver.path;
-
-  const args = ['--url-base=/', '--port=9515'];
-
-  await chromeDriver.start(args);
-  /*const process = await childProcess.execFile(binPath, args, function (err, stdout, stderr) {
-    // handle results
-    console.log('err: ' + err);
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
-  });*/
-  return chromeDriver;
-}
-
-export async function stopChromeDriver(chromeDriver) {
-  chromeDriver.stop();
-  // Send SIGHUP to process.
-  /*console.log('stopChromeDriver');
-  process.stdin.pause();
-  process.kill(); //'SIGHUP');*/
-}
-
 /**
  * Start a static file server on a free port.
  *
