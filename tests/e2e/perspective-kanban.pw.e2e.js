@@ -186,7 +186,7 @@ test.describe('TST49 - Perspective KanBan', () => {
 
     await expectElementExist(
       '[data-tid=fsEntryName_' + newCardName + '_md]',
-      false,
+      true,
     );
   });
 

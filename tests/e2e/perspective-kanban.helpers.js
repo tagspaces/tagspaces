@@ -19,5 +19,5 @@ export async function createMdCard(cardName, column = 'empty_folder') {
   await typeInputValue('[data-tid=newEntryDialogInputTID] input', cardName, 0);
   await clickOn('[data-tid=createMarkdownButton]');
 
-  await expectElementExist('[data-tid=fsEntryName_' + cardName + '_md]', false);
+  await expectElementExist('[data-tid=fsEntryName_' + cardName + '_md]', true);
 }
