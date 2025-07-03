@@ -46,7 +46,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   return {
     backgroundColor,
     borderRadius: AppConfig.defaultCSSRadius,
-    height: theme.spacing(4),
+    height: 34, // theme.spacing(4),
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
@@ -68,6 +68,10 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
   return {
+    overflowX: 'scroll',
+    marginTop: '8px',
+    // @ts-ignore
+    WebkitAppRegion: 'no-drag',
     '& ol': {
       flexWrap: 'nowrap',
     },
@@ -206,12 +210,6 @@ function PathBreadcrumbs(props: Props) {
   return (
     <>
       <StyledBreadcrumbs
-        style={{
-          overflowX: 'scroll',
-          marginTop: 8,
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
         maxItems={isDesktopMode ? 2 : 1}
         itemsAfterCollapse={isDesktopMode ? 1 : 1}
         itemsBeforeCollapse={isDesktopMode ? 1 : 0}
@@ -219,8 +217,8 @@ function PathBreadcrumbs(props: Props) {
         separator={
           <span
             style={{
-              marginLeft: -4,
-              marginRight: -5,
+              marginLeft: -3,
+              marginRight: -3,
             }}
           >
             {'›'}

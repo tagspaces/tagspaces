@@ -38,6 +38,8 @@ import TsTextField from '-/components/TsTextField';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
@@ -49,7 +51,6 @@ import {
   isDesktopMode,
 } from '-/reducers/settings';
 import { haveSearchFilters } from '-/services/search';
-import { getTagLibrary } from '-/services/taglibrary-utils';
 import { dataTidFormat } from '-/services/test';
 import { removePrefix } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -72,23 +73,12 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   style?: any;
   open: boolean;
   setAnchorSearch: (el: HTMLButtonElement) => void;
 }
-
-/*const useStyles = makeStyles(theme => ({
-  customWidth: {
-    maxWidth: 550
-  },
-  noMaxWidth: {
-    maxWidth: 'none'
-  }
-}));*/
 
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
@@ -1262,10 +1252,11 @@ function SearchAutocomplete(props: Props) {
         <style>
           {`
           #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 1px 15px 0 5px !important;
+            padding: 4px 5px 1px 6px !important;
           }
           #searchAutocompleteComp .MuiTextField-root {
             overflow-x: hidden !important;
+            margin-bottom: 0;
           }
           .MuiAutocomplete-popper {
             min-width: 350px;
@@ -1497,7 +1488,6 @@ function SearchAutocomplete(props: Props) {
           style={{
             marginRight: 10,
             marginLeft: 10,
-            marginTop: 3,
           }}
           onClick={clickSearchButton}
         >
