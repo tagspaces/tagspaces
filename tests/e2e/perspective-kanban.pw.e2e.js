@@ -27,6 +27,7 @@ import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { createColumn, createMdCard } from './perspective-kanban.helpers';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -191,11 +192,36 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4907 - Add and show tag to column [web,minio,electron,_pro]', async () => {
-    /*const cardName = 'testTagCard';
-    await createMdCard(cardName);
+    const columnName = 'tagsColumn';
+    //create new folder
+    await createColumn(columnName);
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false,
+    });
+  });
 
-    await rightClickOn('[data-tid=fsEntryName_' + cardName + '_md]');
-    await clickOn('[data-tid=fileMenuAddRemoveTags]');*/
+  test('TST4908 - Add and show tag to board [web,minio,electron,_pro]', async () => {
+    if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
+      await clickOn('[data-tid=hideFolderContentTID]');
+    }
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowDetails]',
+    );
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(defaultLocationName) + ']',
+      true,
+      8000,
+    );
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false,
+    });
   });
 
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
