@@ -1,5 +1,5 @@
 .milkdown {
-    --crepe-font-title: 'Open Sans', Arial, Helvetica, sans-serif !important;
+  --crepe-font-title: 'Open Sans', Arial, Helvetica, sans-serif !important;
 }
 
 .milkdown .ProseMirror a[href^="http://"]:after, 
@@ -8,38 +8,76 @@
 }
 /* ⧉ ⎋ ⇲ ⇒*/
 
-.milkdown .ProseMirror a[href^="ts://"]:after {
-  content: ' ⇒';
+.milkdown .ProseMirror a[href^="ts://"]:before
+{
+  content: '⇒ ';
+}
+
+.milkdown .ProseMirror h1 {
+  font-size: 32px;
+  line-height: 36px;
+  margin-top: 20px;
+}
+      
+.milkdown .ProseMirror h2 {
+  font-size: 28px;
+  line-height: 32px;
+  margin-top: 20px;
+}
+
+.milkdown .ProseMirror h3 {
+  font-size: 24px;
+  line-height: 26px;
+  margin-top: 20px;
+}
+
+.milkdown .ProseMirror h4 {
+  font-size: 22px;
+  line-height: 24px;
+  margin-top: 20px;
+}
+
+.milkdown .ProseMirror h5 {
+  font-size: 20px;
+  line-height: 20px;
+  margin-top: 14px;
+}
+
+.milkdown .ProseMirror h6 {
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 18px;
+  margin-top: 12px;
 }
 
 .dark .milkdown {
-    --crepe-color-background: #1f1b16;
-    --crepe-color-on-background: #eae1d9;
-    --crepe-color-surface: #18120b;
-    --crepe-color-surface-low: #201b13;
-    --crepe-color-on-surface: #ede0d4;
-    --crepe-color-on-surface-variant: #d3c4b4;
-    --crepe-color-outline: #9c8f80;
-    --crepe-color-primary: #f4bd6f;
-    --crepe-color-secondary: #56442a;
-    --crepe-color-on-secondary: #fbdebc;
-    --crepe-color-inverse: #ede0d4;
-    --crepe-color-on-inverse: #362f27;
-    --crepe-color-inline-code: #ffb4ab;
-    --crepe-color-error: #ffb4ab;
-    --crepe-color-hover: #251f17;
-    --crepe-color-selected: #3b342b;
-    --crepe-color-inline-area: #3f3830;
+  --crepe-color-background: #1f1b16;
+  --crepe-color-on-background: #eae1d9;
+  --crepe-color-surface: #18120b;
+  --crepe-color-surface-low: #201b13;
+  --crepe-color-on-surface: #ede0d4;
+  --crepe-color-on-surface-variant: #d3c4b4;
+  --crepe-color-outline: #9c8f80;
+  --crepe-color-primary: #f4bd6f;
+  --crepe-color-secondary: #56442a;
+  --crepe-color-on-secondary: #fbdebc;
+  --crepe-color-inverse: #ede0d4;
+  --crepe-color-on-inverse: #362f27;
+  --crepe-color-inline-code: #ffb4ab;
+  --crepe-color-error: #ffb4ab;
+  --crepe-color-hover: #251f17;
+  --crepe-color-selected: #3b342b;
+  --crepe-color-inline-area: #3f3830;
 
-    /* --crepe-font-title: Georgia, Cambria, 'Times New Roman', Times, serif; */
-    --crepe-font-default: 'Open Sans', Arial, Helvetica, sans-serif;
-    --crepe-font-code:
-            Fira Code, Menlo, Monaco, 'Courier New', Courier, monospace;
+  /* --crepe-font-title: Georgia, Cambria, 'Times New Roman', Times, serif; */
+  --crepe-font-default: 'Open Sans', Arial, Helvetica, sans-serif;
+  --crepe-font-code:
+          Fira Code, Menlo, Monaco, 'Courier New', Courier, monospace;
 
-    --crepe-shadow-1:
-            0px 1px 2px 0px rgba(255, 255, 255, 0.3),
-            0px 1px 3px 1px rgba(255, 255, 255, 0.15);
-    --crepe-shadow-2:
-            0px 1px 2px 0px rgba(255, 255, 255, 0.3),
-            0px 2px 6px 2px rgba(255, 255, 255, 0.15);
+  --crepe-shadow-1:
+          0px 1px 2px 0px rgba(255, 255, 255, 0.3),
+          0px 1px 3px 1px rgba(255, 255, 255, 0.15);
+  --crepe-shadow-2:
+          0px 1px 2px 0px rgba(255, 255, 255, 0.3),
+          0px 2px 6px 2px rgba(255, 255, 255, 0.15);
 }
