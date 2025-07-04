@@ -156,20 +156,28 @@ export class CommonLocation implements TS.Location {
    *  normalize path for URL is always '/'
    */
   normalizeUrl = (url: string) => {
-    let normalizedUrl = url;
-    if (this.getDirSeparator() !== '/') {
-      if (url) {
-        normalizedUrl = url.replaceAll(this.getDirSeparator(), '/');
-      }
+    if (!url) return '';
+
+    // 1) swap out Windows separators for '/'
+    let normalized =
+      this.getDirSeparator() !== '/'
+        ? url.replaceAll(this.getDirSeparator(), '/')
+        : url;
+
+    // 2) pull off any leading protocol so we don't collapse its "://"
+    const protocolMatch = normalized.match(/^[a-z]+:\/\//i);
+    const protocol = protocolMatch?.[0] || '';
+    let rest = protocol ? normalized.slice(protocol.length) : normalized;
+
+    // 3) collapse any sequence of 2+ slashes into one
+    rest = rest.replace(/\/{2,}/g, '/');
+
+    // 4) ensure a leading slash for non‑HTTP URLs on non‑Windows
+    if (!protocol && !AppConfig.isWin && !rest.startsWith('/')) {
+      rest = '/' + rest;
     }
-    if (
-      !normalizedUrl.startsWith('http') &&
-      !AppConfig.isWin &&
-      !normalizedUrl.startsWith('/')
-    ) {
-      normalizedUrl = '/' + normalizedUrl;
-    }
-    return normalizedUrl;
+
+    return protocol + rest;
   };
 
   haveObjectStoreSupport = (): boolean => this.type === locationType.TYPE_CLOUD;

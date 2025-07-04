@@ -1533,11 +1533,17 @@ export const DirectoryContentContextProvider = ({
         location?.getDirSeparator(),
       );
       let thumbPath;
-      if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
-        thumbPath =
-          location.haveObjectStoreSupport() || location.haveWebDavSupport()
+      const metaFile = meta.find((metaFile) =>
+        thumbDirPath.endsWith(metaFile.path),
+      );
+      if (metaFile) {
+        thumbPath = await location.getThumbPath(
+          thumbDirPath,
+          metaFile.lmdt, //? metaFile.lmdt : new Date().getTime(),
+        );
+        /*location.haveObjectStoreSupport() || location.haveWebDavSupport()
             ? await location.getURLforPathInt(thumbDirPath)
-            : thumbDirPath;
+            : thumbDirPath;*/
       }
       if (
         meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&

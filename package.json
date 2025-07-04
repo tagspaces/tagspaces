@@ -172,10 +172,10 @@
     "@mui/lab": "7.0.0-beta.14",
     "@mui/material": "^7.1.2",
     "@mui/x-date-pickers": "^8.6.0",
-    "@tagspaces/tagspaces-common": "4.5.86",
-    "@tagspaces/tagspaces-common-aws3": "4.5.86",
-    "@tagspaces/tagspaces-common-cordova": "4.5.86",
-    "@tagspaces/tagspaces-indexer": "4.5.86",
+    "@tagspaces/tagspaces-common": "4.5.88",
+    "@tagspaces/tagspaces-common-aws3": "4.5.88",
+    "@tagspaces/tagspaces-common-cordova": "4.5.88",
+    "@tagspaces/tagspaces-indexer": "4.5.88",
     "aws-amplify": "^4.3.8",
     "clone": "^2.1.2",
     "coordinate-parser": "^1.0.7",
@@ -245,7 +245,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.166-alpha.1"
+    "@tagspacespro/tagspacespro": "5.0.167-alpha.1"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
