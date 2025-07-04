@@ -193,6 +193,11 @@ test.describe('TST49 - Perspective KanBan', () => {
 
   test('TST4907 - Add and show tag to column [web,minio,electron,_pro]', async () => {
     const columnName = 'tagsColumn';
+
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowDetails]',
+    );
     //create new folder
     await createColumn(columnName);
     await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
