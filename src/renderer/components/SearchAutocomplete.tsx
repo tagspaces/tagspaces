@@ -1252,7 +1252,7 @@ function SearchAutocomplete(props: Props) {
         <style>
           {`
           #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 4px 5px 1px 6px !important;
+            padding: 2px 6px 2px 4px !important;
           }
           #searchAutocompleteComp .MuiTextField-root {
             overflow-x: hidden !important;
