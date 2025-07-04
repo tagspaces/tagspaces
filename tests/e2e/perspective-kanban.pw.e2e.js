@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test } from './fixtures';
+import { expect, test } from './fixtures';
 import {
   defaultLocationName,
   createPwMinioLocation,
@@ -11,11 +11,14 @@ import {
 import {
   clickOn,
   expectElementExist,
+  getAttribute,
+  getElementScreenshot,
   getGridFileSelector,
   isDisplayed,
   rightClickOn,
   setPerspectiveSetting,
   typeInputValue,
+  waitUntilChanged,
 } from './general.helpers';
 import {
   createFolderS3,
@@ -289,5 +292,47 @@ test.describe('TST49 - Perspective KanBan', () => {
       true,
       5000,
     );
+  });
+
+  test('TST4911 - Load folder color [web,minio,electron,_pro]', async () => {
+    const columnName = 'testColorColumn';
+
+    //create new folder
+    await createColumn(columnName);
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+
+    const targetSelector = '[data-tid=' + columnName + 'ColumnTID]';
+    const initScreenshot = await getElementScreenshot(targetSelector);
+    const initStyle = await getAttribute(targetSelector, 'style');
+    //console.log(initStyle);
+    await clickOn('[data-tid=changeBackgroundColorTID]');
+    await clickOn('[data-tid=backgroundTID1]');
+
+    await waitUntilChanged(
+      targetSelector,
+      initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
+      'style',
+      15000,
+    );
+
+    const withBgnColorScreenshot = await getElementScreenshot(targetSelector);
+    const bgStyle = await getAttribute(targetSelector, 'style');
+    //console.log(bgStyle);
+    expect(initScreenshot).not.toBe(withBgnColorScreenshot);
+
+    // remove background
+    await clickOn('[data-tid=backgroundClearTID]');
+    await clickOn('[data-tid=confirmConfirmResetColorDialog]');
+
+    await waitUntilChanged(
+      targetSelector,
+      bgStyle, //'height: 100%; background: transparent;',
+      'style',
+      15000,
+    );
+
+    //const bgnRemovedScreenshot = await getElementScreenshot(targetSelector);
+    //expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 });
