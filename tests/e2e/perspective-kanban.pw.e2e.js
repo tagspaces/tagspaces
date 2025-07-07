@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
+import { expect, test } from './fixtures';
 import {
   defaultLocationName,
   createPwMinioLocation,
@@ -11,17 +11,17 @@ import {
 import {
   clickOn,
   expectElementExist,
+  getAttribute,
+  getElementScreenshot,
   getGridFileSelector,
   isDisplayed,
-  openFolder,
+  rightClickOn,
   setPerspectiveSetting,
-  takeScreenshot,
   typeInputValue,
+  waitUntilChanged,
 } from './general.helpers';
 import {
-  createFileS3,
   createFolderS3,
-  createLocalFile,
   createLocalFolder,
   startTestingApp,
   stopApp,
@@ -29,6 +29,8 @@ import {
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { createColumn, createMdCard } from './perspective-kanban.helpers';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -118,6 +120,9 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
+    if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
+      await clickOn('[data-tid=hideFolderContentTID]');
+    }
     await expectElementExist(
       '[data-tid=empty_folderKanBanColumnTID]',
       true,
@@ -139,20 +144,93 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4903 - Create new columns(sub-folder) [web,minio,electron,_pro]', async () => {
-    const columnName = 'testFolder';
-    await clickOn('[data-tid=createKanBanColumnTID]');
+    await createColumn('testFolder');
+  });
 
-    await typeInputValue('[data-tid=directoryName] input', columnName, 0);
-    await clickOn('[data-tid=confirmCreateNewDirectory]');
+  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {
+    const columnName = 'testFolderTmp';
+    const newColumnName = 'testFolderRenamed';
+    //create new folder
+    await createColumn(columnName);
 
+    //rename folder
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=renameDirectory]');
+
+    await typeInputValue(
+      '[data-tid=renameEntryDialogInput] input',
+      newColumnName,
+      0,
+    );
+    await clickOn('[data-tid=confirmRenameEntry]');
     await expectElementExist(
-      '[data-tid=' + columnName + 'KanBanColumnTID]',
+      '[data-tid=' + newColumnName + 'KanBanColumnTID]',
       true,
       5000,
     );
   });
 
-  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {});
+  test('TST4905 - Create card in column [web,minio,electron,_pro]', async () => {
+    await createMdCard('testCard');
+  });
+
+  test('TST4906 - Rename card in column [web,minio,electron,_pro]', async () => {
+    const cardName = 'testCard1';
+    const newCardName = 'testCard2';
+    await createMdCard(cardName);
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName + '_md]');
+    await clickOn('[data-tid=fileMenuRenameFile]');
+    await typeInputValue(
+      '[data-tid=renameEntryDialogInput] input',
+      newCardName,
+      0,
+    );
+    await clickOn('[data-tid=confirmRenameEntry]');
+
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + newCardName + '_md]',
+      true,
+    );
+  });
+
+  test('TST4907 - Add and show tag to column [web,minio,electron,_pro]', async () => {
+    const columnName = 'tagsColumn';
+
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowDetails]',
+    );
+    //create new folder
+    await createColumn(columnName);
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false,
+    });
+  });
+
+  test('TST4908 - Add and show tag to board [web,minio,electron,_pro]', async () => {
+    if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
+      await clickOn('[data-tid=hideFolderContentTID]');
+    }
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowDetails]',
+    );
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(defaultLocationName) + ']',
+      true,
+      8000,
+    );
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false,
+    });
+  });
 
   test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
@@ -214,5 +292,50 @@ test.describe('TST49 - Perspective KanBan', () => {
       true,
       5000,
     );
+  });
+
+  test('TST4911 - Load folder color [web,minio,electron,_pro]', async () => {
+    const columnName = 'testColorColumn';
+
+    //create new folder
+    await createColumn(columnName);
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+
+    const targetSelector =
+      'xpath=(//div[@data-tid="' +
+      columnName +
+      'KanBanColumnTID"]//parent::div)[1]';
+    const initScreenshot = await getElementScreenshot(targetSelector);
+    const initStyle = await getAttribute(targetSelector, 'style');
+    //console.log(initStyle);
+    await clickOn('[data-tid=changeBackgroundColorTID]');
+    await clickOn('[data-tid=backgroundTID1]');
+
+    await waitUntilChanged(
+      targetSelector,
+      initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
+      'style',
+      10000,
+    );
+
+    const withBgnColorScreenshot = await getElementScreenshot(targetSelector);
+    const bgStyle = await getAttribute(targetSelector, 'style');
+    //console.log(bgStyle);
+    expect(initScreenshot).not.toBe(withBgnColorScreenshot);
+
+    // remove background
+    await clickOn('[data-tid=backgroundClearTID]');
+    await clickOn('[data-tid=confirmConfirmResetColorDialog]');
+
+    await waitUntilChanged(
+      targetSelector,
+      bgStyle, //'height: 100%; background: transparent;',
+      'style',
+      10000,
+    );
+
+    //const bgnRemovedScreenshot = await getElementScreenshot(targetSelector);
+    //expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 });
