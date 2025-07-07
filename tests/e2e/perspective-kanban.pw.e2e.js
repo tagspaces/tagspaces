@@ -360,4 +360,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=reorderTopTID]');
     await expectFirstColumnElement(card1Id, 'empty_folder');
   });
+
+  test('TST4913 - Show column details [web,minio,electron,_pro]', async () => {
+    const columnName = 'empty_folder';
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
+  });
 });
