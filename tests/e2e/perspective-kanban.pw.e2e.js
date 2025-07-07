@@ -302,7 +302,10 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
     await clickOn('[data-tid=showProperties]');
 
-    const targetSelector = '[data-tid=' + columnName + 'ColumnTID]';
+    const targetSelector =
+      'xpath=(//div[@data-tid="' +
+      columnName +
+      'KanBanColumnTID"]//parent::div)[1]';
     const initScreenshot = await getElementScreenshot(targetSelector);
     const initStyle = await getAttribute(targetSelector, 'style');
     //console.log(initStyle);
@@ -313,7 +316,7 @@ test.describe('TST49 - Perspective KanBan', () => {
       targetSelector,
       initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
       'style',
-      15000,
+      10000,
     );
 
     const withBgnColorScreenshot = await getElementScreenshot(targetSelector);
@@ -329,7 +332,7 @@ test.describe('TST49 - Perspective KanBan', () => {
       targetSelector,
       bgStyle, //'height: 100%; background: transparent;',
       'style',
-      15000,
+      10000,
     );
 
     //const bgnRemovedScreenshot = await getElementScreenshot(targetSelector);
