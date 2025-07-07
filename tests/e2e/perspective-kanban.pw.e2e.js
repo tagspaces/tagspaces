@@ -367,4 +367,18 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=showProperties]');
     await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
   });
+
+  test('TST4914 - Show current folder details [web,minio,electron,_pro]', async () => {
+    const columnName = 'empty_folder';
+    await global.client.dblclick(
+      '[data-tid=' + columnName + 'KanBanColumnTID]',
+    );
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(columnName) + ']',
+      true,
+      8000,
+    );
+  });
 });
