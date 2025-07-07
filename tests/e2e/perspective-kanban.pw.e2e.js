@@ -29,7 +29,12 @@ import {
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
-import { createColumn, createMdCard } from './perspective-kanban.helpers';
+import {
+  createColumn,
+  createMdCard,
+  expectFirstColumnElement,
+  expectLastColumnElement,
+} from './perspective-kanban.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
@@ -328,14 +333,31 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=backgroundClearTID]');
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
 
-    await waitUntilChanged(
-      targetSelector,
-      bgStyle, //'height: 100%; background: transparent;',
-      'style',
-      10000,
-    );
+    await waitUntilChanged(targetSelector, bgStyle, 'style', 10000);
+
+    //const bgRemovedStyle = await getAttribute(targetSelector, 'style');
+    //expect(initStyle).toBe(bgRemovedStyle);
 
     //const bgnRemovedScreenshot = await getElementScreenshot(targetSelector);
-    //expect(initScreenshot).toBe(bgnRemovedScreenshot);
+    //expect(initScreenshot).toBe(withBgnColorScreenshot);
+  });
+  test('TST4912 - Move card to top / bottom [web,minio,electron,_pro]', async () => {
+    const cardName1 = 'testCard1';
+    const cardName2 = 'testCard2';
+    const card1Id = await createMdCard(cardName1);
+    const card2Id = await createMdCard(cardName2);
+    await expectFirstColumnElement(card2Id, 'empty_folder');
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName2 + '_md]');
+    await clickOn('[data-tid=reorderBottomTID]');
+    await expectLastColumnElement(card2Id, 'empty_folder');
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName1 + '_md]');
+    await clickOn('[data-tid=reorderBottomTID]');
+    await expectLastColumnElement(card1Id, 'empty_folder');
+
+    await rightClickOn('[data-tid=fsEntryName_' + cardName1 + '_md]');
+    await clickOn('[data-tid=reorderTopTID]');
+    await expectFirstColumnElement(card1Id, 'empty_folder');
   });
 });

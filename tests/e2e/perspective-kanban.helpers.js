@@ -1,5 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
-
+import { expect } from './fixtures';
 import { clickOn, expectElementExist, typeInputValue } from './general.helpers';
 
 export async function createColumn(columnName) {
@@ -18,6 +18,35 @@ export async function createMdCard(cardName, column = 'empty_folder') {
   await clickOn('[data-tid=createCard_' + column + ']');
   await typeInputValue('[data-tid=newEntryDialogInputTID] input', cardName, 0);
   await clickOn('[data-tid=createMarkdownButton]');
+  const cardSelector = '[data-tid=fsEntryName_' + cardName + '_md]';
+  await expectElementExist(cardSelector, true);
+  const card = await global.client.locator(cardSelector);
+  const parent = await card.locator('..');
+  return await parent.getAttribute('data-entry-id');
+}
 
-  await expectElementExist('[data-tid=fsEntryName_' + cardName + '_md]', true);
+export async function getColumnEntries(column) {
+  // grab a Locator for the container
+  const container = global.client.locator('[data-tid="' + column + 'CTID"]');
+
+  // then find all descendants with a data-entry-id attribute
+  const entries = container.locator('[data-entry-id]');
+
+  const count = await entries.count();
+  const ids = [];
+  for (let i = 0; i < count; i++) {
+    const entry = entries.nth(i);
+    const id = await entry.getAttribute('data-entry-id');
+    ids.push(id);
+    //console.log(`Entry ${i}: ${id}`);
+  }
+  return ids;
+}
+export async function expectFirstColumnElement(elId, column = 'empty_folder') {
+  const el = await getColumnEntries(column);
+  expect(elId).toBe(el[0]);
+}
+export async function expectLastColumnElement(elId, column = 'empty_folder') {
+  const el = await getColumnEntries(column);
+  expect(elId).toBe(el[el.length - 1]);
 }
