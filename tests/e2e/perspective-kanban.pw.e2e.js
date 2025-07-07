@@ -381,4 +381,33 @@ test.describe('TST49 - Perspective KanBan', () => {
       8000,
     );
   });
+
+  test('TST4915 - Load thumbnails for board, column and cards [web,minio,electron,_pro]', async () => {
+    await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowDetails]',
+    );
+    const initThumbStyle = await getAttribute(
+      '[data-tid=folderThumbTID]',
+      'style',
+    );
+
+    await clickOn('[data-tid=showFolderContentTID]');
+    await openContextEntryMenu(
+      getGridFileSelector('sample.bmp'),
+      'setAsThumbTID',
+    );
+    const newStyle = await waitUntilChanged(
+      '[data-tid=folderThumbTID]',
+      initThumbStyle,
+      'style',
+    );
+
+    expect(initThumbStyle).not.toBe(newStyle);
+
+    /*await setPerspectiveSetting(
+      'kanban',
+      '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
+    );*/
+  });
 });
