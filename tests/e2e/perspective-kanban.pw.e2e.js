@@ -76,6 +76,11 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
     true,
     5000,
   );
+  await expectElementExist(
+    '[data-tid=empty_folderKanBanColumnTID]',
+    true,
+    8000,
+  );
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
@@ -210,6 +215,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     await createColumn(columnName);
     await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
     await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(columnName) + ']',
+      true,
+      8000,
+    );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
       remove: false,

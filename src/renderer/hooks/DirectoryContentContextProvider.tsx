@@ -418,7 +418,11 @@ export const DirectoryContentContextProvider = ({
           /// RENAME
         } else if (action.action === 'update') {
           let index = currentDirectoryEntries.current.findIndex(
-            (e) => e.path === action.oldEntryPath,
+            (e) =>
+              cleanTrailingDirSeparator(cleanFrontDirSeparator(e.path)) ===
+              cleanTrailingDirSeparator(
+                cleanFrontDirSeparator(action.oldEntryPath),
+              ),
           );
           if (index !== -1) {
             currentDirectoryEntries.current[index] = {

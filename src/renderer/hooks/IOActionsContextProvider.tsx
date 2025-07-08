@@ -2298,61 +2298,63 @@ export const IOActionsContextProvider = ({
     oldDirPath: string,
     newDirPath: string,
   ): void {
-    const parentDirectory = extractContainingDirectoryPath(
-      //extractParentDirectoryPath(
-      oldDirPath,
-      currentLocation?.getDirSeparator(),
-    );
-    const oldDir = extractDirectoryName(
-      oldDirPath,
-      currentLocation?.getDirSeparator(),
-    );
-    currentLocation
-      .loadMetaDataPromise(parentDirectory)
-      .then((fsEntryMeta) => {
-        const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
-          ? fsEntryMeta.customOrder
-          : {};
+    if (oldDirPath !== newDirPath) {
+      const parentDirectory = extractContainingDirectoryPath(
+        //extractParentDirectoryPath(
+        oldDirPath,
+        currentLocation?.getDirSeparator(),
+      );
+      const oldDir = extractDirectoryName(
+        oldDirPath,
+        currentLocation?.getDirSeparator(),
+      );
+      currentLocation
+        .loadMetaDataPromise(parentDirectory)
+        .then((fsEntryMeta) => {
+          const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
+            ? fsEntryMeta.customOrder
+            : {};
 
-        //let dirs: TS.OrderVisibilitySettings[] = [dir];
-        if (customOrder.folders && customOrder.folders.length > 0) {
-          const index = customOrder.folders.findIndex(
-            (col) => col.name === oldDir,
-          );
-          if (index !== -1) {
-            const newDir = extractDirectoryName(
-              newDirPath,
-              currentLocation?.getDirSeparator(),
+          //let dirs: TS.OrderVisibilitySettings[] = [dir];
+          if (customOrder.folders && customOrder.folders.length > 0) {
+            const index = customOrder.folders.findIndex(
+              (col) => col.name === oldDir,
             );
-            customOrder.folders[index] = {
-              ...customOrder.folders[index],
-              name: newDir,
-            };
-            const updatedFsEntryMeta = {
-              ...fsEntryMeta,
-              customOrder: { ...customOrder, folders: customOrder.folders },
-            };
+            if (index !== -1) {
+              const newDir = extractDirectoryName(
+                newDirPath,
+                currentLocation?.getDirSeparator(),
+              );
+              customOrder.folders[index] = {
+                ...customOrder.folders[index],
+                name: newDir,
+              };
+              const updatedFsEntryMeta = {
+                ...fsEntryMeta,
+                customOrder: { ...customOrder, folders: customOrder.folders },
+              };
 
-            saveCurrentLocationMetaData(parentDirectory, updatedFsEntryMeta)
-              .then(() => {
-                const folders = updatedFsEntryMeta.customOrder?.folders;
-                if (folders) {
-                  setCurrentDirectoryDirs(folders);
-                }
-                const action: TS.PerspectiveActions = { action: 'reload' };
-                setActions(action);
-              })
-              .catch((err) => {
-                console.log(
-                  'Error adding dirs for ' + parentDirectory + ' with ' + err,
-                );
-              });
+              saveCurrentLocationMetaData(parentDirectory, updatedFsEntryMeta)
+                .then(() => {
+                  const folders = updatedFsEntryMeta.customOrder?.folders;
+                  if (folders) {
+                    setCurrentDirectoryDirs(folders);
+                  }
+                  const action: TS.PerspectiveActions = { action: 'reload' };
+                  setActions(action);
+                })
+                .catch((err) => {
+                  console.log(
+                    'Error adding dirs for ' + parentDirectory + ' with ' + err,
+                  );
+                });
+            }
           }
-        }
-      })
-      .catch((ex) => {
-        console.log(ex);
-      });
+        })
+        .catch((ex) => {
+          console.log(ex);
+        });
+    }
   }
 
   function getDirectoryOrder(

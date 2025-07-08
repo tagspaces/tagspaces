@@ -494,16 +494,22 @@ export class CommonLocation implements TS.Location {
       AppConfig.tagDelimiter,
       this.getDirSeparator(),
     );
+    let entryPath = path;
+    if (!isFile && !path.endsWith(this.getDirSeparator())) {
+      entryPath = path + this.getDirSeparator();
+    }
     return {
       uuid: getUuid(),
       name,
       isFile,
       locationID: this.uuid,
-      extension: extractFileExtension(path, this.getDirSeparator()),
+      ...(isFile && {
+        extension: extractFileExtension(path, this.getDirSeparator()),
+      }),
       tags,
       size: 0,
       lmdt: new Date().getTime(),
-      path,
+      path: entryPath,
     };
   };
 
