@@ -475,7 +475,8 @@ export default function loadMainEvents() {
     }
   });
   ipcMain.handle('deleteDirectoryPromise', async (event, path, useTrash) => {
-    if (useTrash) {
+    if (useTrash && !path.startsWith('\\')) {
+      // network drive
       try {
         await shell.trashItem(path);
       } catch (err) {

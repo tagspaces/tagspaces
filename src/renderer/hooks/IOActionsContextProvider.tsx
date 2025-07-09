@@ -389,7 +389,9 @@ export const IOActionsContextProvider = ({
         .then((success) => {
           const fileNames = entries
             .map((e) => {
-              deleteMeta(e.path, e.uuid);
+              if (e.isFile) {
+                deleteMeta(e.path, e.uuid);
+              }
               return e.name;
             })
             .join(' ');
