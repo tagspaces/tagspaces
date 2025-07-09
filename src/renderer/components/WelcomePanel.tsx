@@ -36,6 +36,8 @@ import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/u
 import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
 import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { getDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import Box from '@mui/material/Box';
@@ -43,6 +45,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
@@ -51,8 +54,6 @@ import Links from 'assets/links';
 import { useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
-import { historyKeys } from '-/hooks/HistoryContextProvider';
 
 const PREFIX = 'WelcomePanel';
 
@@ -162,7 +163,7 @@ function WelcomePanel() {
     return (
       <List
         dense={true}
-        aria-label="useful link on welcome page"
+        aria-label="useful links in the welcome page"
         style={{
           height: 'calc(100% - 70px)',
           marginTop: 45,
@@ -172,129 +173,158 @@ function WelcomePanel() {
           backgroundColor: theme.palette.background.default,
         }}
       >
-        <ListItem onClick={() => openNewFileDialog()}>
-          <ListItemIcon>
-            <CreateFileIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:create')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => openNewFileDialog()}>
+            <ListItemIcon>
+              <CreateFileIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:create')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
-        <ListItem onClick={() => openCreateEditLocationDialog()}>
-          <ListItemIcon>
-            <LocalLocationIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('createLocationTitle')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton onClick={openCreateEditLocationDialog}>
+            <ListItemIcon>
+              <LocalLocationIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('createLocationTitle')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
-        <ListItem onClick={() => openLinkDialog()}>
-          <ListItemIcon>
-            <OpenLinkIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('openLink')} className={classes.listItem} />
-        </ListItem>
-        <Divider />
-        <ListItem
-          onClick={() =>
-            openURLExternally(Links.documentationLinks.general, true)
-          }
-        >
-          <ListItemIcon>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('documentation')}
-            className={classes.listItem}
-          />
-        </ListItem>
-        <ListItem onClick={() => openKeyboardDialog()}>
-          <ListItemIcon>
-            <KeyShortcutsIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('shortcutKeys')}
-            className={classes.listItem}
-          />
-        </ListItem>
-        <ListItem
-          onClick={() => openURLExternally(Links.links.changelogURL, true)}
-        >
-          <ListItemIcon>
-            <ChangeLogIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:whatsNew')}
-            className={classes.listItem}
-          />
-        </ListItem>
-        <ListItem
-          onClick={() => openURLExternally(Links.links.webClipper, true)}
-        >
-          <ListItemIcon>
-            <WebClipperIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:webClipper')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton onClick={openLinkDialog}>
+            <ListItemIcon>
+              <OpenLinkIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('openLink')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
         <Divider />
-        <ListItem
-          onClick={() => openURLExternally(Links.links.suggestFeature, true)}
-        >
-          <ListItemIcon>
-            <NewFeatureIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:suggestNewFeatures')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() =>
+              openURLExternally(Links.documentationLinks.general, true)
+            }
+          >
+            <ListItemIcon>
+              <HelpIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('documentation')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
-        <ListItem
-          onClick={() => openURLExternally(Links.links.reportIssue, true)}
-        >
-          <ListItemIcon>
-            <IssueIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:reportIssues')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton onClick={openKeyboardDialog}>
+            <ListItemIcon>
+              <KeyShortcutsIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('shortcutKeys')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
-        <ListItem
-          onClick={() => openURLExternally(Links.links.helpTranslating, true)}
-        >
-          <ListItemIcon>
-            <TranslationIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:helpWithTranslation')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.changelogURL, true)}
+          >
+            <ListItemIcon>
+              <ChangeLogIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:whatsNew')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.webClipper, true)}
+          >
+            <ListItemIcon>
+              <WebClipperIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:webClipper')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
         <Divider />
-        <ListItem
-          onClick={() => openURLExternally(Links.links.emailContact, true)}
-        >
-          <ListItemIcon>
-            <EmailIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:emailContact')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.suggestFeature, true)}
+          >
+            <ListItemIcon>
+              <NewFeatureIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:suggestNewFeatures')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
-        <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
-          <ListItemIcon>
-            <XIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={t('core:followOnX')}
-            className={classes.listItem}
-          />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.reportIssue, true)}
+          >
+            <ListItemIcon>
+              <IssueIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:reportIssues')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.helpTranslating, true)}
+          >
+            <ListItemIcon>
+              <TranslationIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:helpWithTranslation')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.emailContact, true)}
+          >
+            <ListItemIcon>
+              <EmailIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:emailContact')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.twitter, true)}
+          >
+            <ListItemIcon>
+              <XIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:followOnX')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
         </ListItem>
       </List>
     );
