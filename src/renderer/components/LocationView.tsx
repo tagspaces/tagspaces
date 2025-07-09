@@ -32,6 +32,7 @@ import TargetFileBox from '-/components/TargetFileBox';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -39,8 +40,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -52,8 +55,6 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
-import { CommonLocation } from '-/utils/CommonLocation';
 
 interface Props {
   location: SubFolder;
@@ -238,78 +239,85 @@ function LocationView(props: Props) {
       >
         <CustomDragLayer />
         <ListItem
-          data-tid={'location_' + location.name.replace(/ /g, '_')}
+          disablePadding
           style={{
-            padding: 0,
-            paddingRight: 15,
             borderRadius: AppConfig.defaultCSSRadius,
             backgroundColor: isLocationSelected
               ? theme.palette.primary.light
               : 'inherit',
           }}
-          onClick={handleLocationClick}
-          onContextMenu={(event) =>
-            handleLocationContextMenuClick(event, subFolderLocation)
-          }
         >
-          <ListItemIcon
-            style={{
-              minWidth: 'auto',
-              cursor: 'pointer',
-            }}
-            onClick={handleLocationIconClick}
-          >
-            <Tooltip title={t('clickToExpand')}>
-              {isCloudLocation ? (
-                <CloudLocationIcon
-                  style={{
-                    cursor: 'pointer',
-                    margin: theme.spacing(1),
-                  }}
-                />
-              ) : (
-                <LocalLocationIcon
-                  style={{
-                    cursor: 'pointer',
-                    margin: theme.spacing(1),
-                  }}
-                />
-              )}
-            </Tooltip>
-          </ListItemIcon>
-          <ListItemText>
-            {isCloudLocation && !AppConfig.isElectron ? (
-              <>{LocationTitle}</>
-            ) : (
-              <TargetMoveFileBox
-                accepts={[DragItemTypes.FILE]}
-                onDrop={handleFileMoveDrop}
-                targetPath={currentLocationPath}
-                targetLocation={location}
-              >
-                {LocationTitle}
-              </TargetMoveFileBox>
-            )}
-          </ListItemText>
-          {subFolderLocation?.isDefault && (
-            <Tooltip title={t('core:thisIsStartupLocation')}>
-              <DefaultLocationIcon data-tid="startupIndication" />
-            </Tooltip>
-          )}
-          <TsIconButton
-            aria-label={t('core:options')}
-            aria-haspopup="true"
-            edge="end"
-            data-tid={'locationMoreButton_' + location.name}
-            onClick={(event) =>
-              handleLocationContextMenuClick(event, subFolderLocation)
-            }
+          <ListItemButton
+            data-tid={'location_' + location.name.replace(/ /g, '_')}
+            onClick={handleLocationClick}
             onContextMenu={(event) =>
               handleLocationContextMenuClick(event, subFolderLocation)
             }
+            style={{
+              padding: 0,
+              paddingRight: 15,
+              borderRadius: AppConfig.defaultCSSRadius,
+            }}
           >
-            <MoreMenuIcon />
-          </TsIconButton>
+            <ListItemIcon
+              style={{
+                minWidth: 'auto',
+                cursor: 'pointer',
+              }}
+              onClick={handleLocationIconClick}
+            >
+              <Tooltip title={t('clickToExpand')}>
+                {isCloudLocation ? (
+                  <CloudLocationIcon
+                    style={{
+                      cursor: 'pointer',
+                      margin: theme.spacing(1),
+                    }}
+                  />
+                ) : (
+                  <LocalLocationIcon
+                    style={{
+                      cursor: 'pointer',
+                      margin: theme.spacing(1),
+                    }}
+                  />
+                )}
+              </Tooltip>
+            </ListItemIcon>
+            <ListItemText>
+              {isCloudLocation && !AppConfig.isElectron ? (
+                <>{LocationTitle}</>
+              ) : (
+                <TargetMoveFileBox
+                  accepts={[DragItemTypes.FILE]}
+                  onDrop={handleFileMoveDrop}
+                  targetPath={currentLocationPath}
+                  targetLocation={location}
+                >
+                  {LocationTitle}
+                </TargetMoveFileBox>
+              )}
+            </ListItemText>
+            {subFolderLocation?.isDefault && (
+              <Tooltip title={t('core:thisIsStartupLocation')}>
+                <DefaultLocationIcon data-tid="startupIndication" />
+              </Tooltip>
+            )}
+            <TsIconButton
+              aria-label={t('core:options')}
+              aria-haspopup="true"
+              edge="end"
+              data-tid={'locationMoreButton_' + location.name}
+              onClick={(event) =>
+                handleLocationContextMenuClick(event, subFolderLocation)
+              }
+              onContextMenu={(event) =>
+                handleLocationContextMenuClick(event, subFolderLocation)
+              }
+            >
+              <MoreMenuIcon />
+            </TsIconButton>
+          </ListItemButton>
         </ListItem>
       </TargetFileBox>
       <DirectoryTreeView

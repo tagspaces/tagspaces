@@ -25,20 +25,20 @@ import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { resolveRelativePath } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import Table from 'rc-table';
 import {
   Ref,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useState,
-  useEffect,
 } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
-import { TS } from '-/tagspaces.namespace';
-import { resolveRelativePath } from '-/services/utils-io';
 
 interface Props {
   location: SubFolder;
@@ -438,7 +438,7 @@ const DirectoryTreeView = forwardRef(
           style={{
             borderRadius: AppConfig.defaultCSSRadius,
             backgroundColor: alpha(theme.palette.grey.A400, 0.2),
-            marginTop: 5,
+            marginTop: 0,
             marginBottom: 5,
           }}
           components={{
