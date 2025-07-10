@@ -126,6 +126,7 @@ export namespace TS {
     oldEntryPath?: string;
     open?: boolean;
     source?: ActionSource;
+    skipSelection?: boolean;
   }
 
   interface EditMetaAction {

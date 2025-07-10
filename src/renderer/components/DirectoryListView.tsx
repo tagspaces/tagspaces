@@ -183,10 +183,14 @@ const DirectoryListView: React.FC<Props> = ({
         style={{ marginLeft: 5, marginTop: 10, marginBottom: 10 }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
-          openCreateDirectoryDialog(chosenDirectory.current, (newDirPath) => {
-            listDirectory(chosenDirectory.current);
-            setTargetDir(newDirPath);
-          });
+          openCreateDirectoryDialog(
+            chosenDirectory.current,
+            (newDirPath) => {
+              listDirectory(chosenDirectory.current);
+              setTargetDir(newDirPath);
+            },
+            true,
+          );
           //reflect: false,
         }}
       >

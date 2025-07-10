@@ -53,6 +53,8 @@ type PlatformFacadeContextData = {
     path: string,
     locationID?: string,
     reflect?: boolean,
+    open?: boolean,
+    skipSelection?: boolean,
   ) => Promise<any>;
   copyFilePromise: (
     sourceFilePath: string,
@@ -190,13 +192,20 @@ export const PlatformFacadeContextProvider = ({
     path: string,
     locationID?: string,
     reflect: boolean = true,
+    open: boolean = true,
+    skipSelection: boolean = false,
   ): Promise<any> {
     ignoreByWatcher(path);
     const currentLocation = getLocation({ locationID });
     return currentLocation.createDirectoryPromise(path).then((result) => {
       if (result !== undefined && reflect) {
         // do not reflect if directory not created
-        reflectAddEntry(currentLocation.toFsEntry(path, false));
+        reflectAddEntry(
+          currentLocation.toFsEntry(path, false),
+          open,
+          'local',
+          skipSelection,
+        );
       }
       deignoreByWatcher(path);
       return result;

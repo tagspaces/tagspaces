@@ -33,6 +33,7 @@ type EditedEntryContextData = {
     entry: TS.FileSystemEntry,
     open?: boolean,
     source?: TS.ActionSource,
+    skipSelection?: boolean,
   ) => void;
 };
 
@@ -107,11 +108,13 @@ export const EditedEntryContextProvider = ({
    * @param entry
    * @param open
    * @param actionSource
+   * @param skipSelection
    */
   function reflectAddEntry(
     entry: TS.FileSystemEntry,
     open = true,
     actionSource: TS.ActionSource = 'local',
+    skipSelection: boolean = false,
   ) {
     if (!entry.tags || entry.tags.length === 0) {
       entry.tags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
@@ -121,6 +124,7 @@ export const EditedEntryContextProvider = ({
       entry: entry,
       open: open,
       ...(typeof actionSource !== 'boolean' && { source: actionSource }),
+      ...(skipSelection !== undefined && { skipSelection: skipSelection }),
     };
     actions.current = [currentAction];
     forceUpdate();

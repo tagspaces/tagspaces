@@ -30,6 +30,7 @@ type CreateDirectoryDialogContextData = {
   openCreateDirectoryDialog: (
     selectedDirectoryPath?: string,
     callback?: (newDirPath: string) => void,
+    skipSelection?: boolean,
   ) => void;
   closeCreateDirectoryDialog: () => void;
 };
@@ -56,6 +57,7 @@ export const CreateDirectoryDialogContextProvider = ({
 }: CreateDirectoryDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
   const selectedDirectoryPath = useRef<string>(undefined);
+  const skipSelection = useRef<boolean>(false);
   const callbackFn = useRef<(newDirPath: string) => void>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -81,9 +83,11 @@ export const CreateDirectoryDialogContextProvider = ({
   function openDialog(
     directoryPath: string,
     callback: (newDirPath: string) => void,
+    skipSel: boolean = false,
   ) {
     open.current = true;
     selectedDirectoryPath.current = directoryPath;
+    skipSelection.current = skipSel;
     callbackFn.current = callback;
     forceUpdate();
   }
@@ -114,6 +118,7 @@ export const CreateDirectoryDialogContextProvider = ({
         open={open.current}
         onClose={closeDialog}
         selectedDirectoryPath={selectedDirectoryPath.current}
+        skipSelection={skipSelection.current}
         callback={callbackFn.current}
       />
       {children}

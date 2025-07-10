@@ -79,7 +79,13 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 
 type IOActionsContextData = {
-  createDirectory: (directoryPath: string) => Promise<boolean>;
+  createDirectory: (
+    directoryPath: string,
+    locationID?: string,
+    reflect?: boolean,
+    open?: boolean,
+    skipSelection?: boolean,
+  ) => Promise<boolean>;
   deleteEntries: (...entries: TS.FileSystemEntry[]) => Promise<boolean>;
   deleteDirectory: (directoryPath: string) => Promise<boolean>;
   deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
@@ -350,8 +356,20 @@ export const IOActionsContextProvider = ({
     }
   }, [actions]);*/
 
-  function createDirectory(directoryPath: string) {
-    return createDirectoryPromise(directoryPath)
+  function createDirectory(
+    directoryPath: string,
+    locationID?: string,
+    reflect: boolean = true,
+    open: boolean = true,
+    skipSelection: boolean = false,
+  ) {
+    return createDirectoryPromise(
+      directoryPath,
+      locationID,
+      reflect,
+      open,
+      skipSelection,
+    )
       .then((result) => {
         if (result !== undefined && result.dirPath !== undefined) {
           // eslint-disable-next-line no-param-reassign
