@@ -461,7 +461,7 @@ export default function loadMainEvents() {
     },
   );
   ipcMain.handle('deleteFilePromise', async (event, path, useTrash) => {
-    if (useTrash) {
+    if (useTrash && !path.startsWith('\\')) {
       try {
         await shell.trashItem(path);
         return true;
