@@ -475,7 +475,8 @@ export const DirectoryContentContextProvider = ({
             if (
               currentDirectoryEntries.current.some(
                 (entry) => entry.path === action.entry.path,
-              )
+              ) &&
+              !action.skipSelection
             ) {
               selected.push(action.entry);
               updated = true;

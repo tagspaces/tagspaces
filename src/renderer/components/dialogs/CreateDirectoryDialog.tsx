@@ -55,13 +55,14 @@ interface Props {
   open: boolean;
   onClose: () => void;
   selectedDirectoryPath?: string;
+  skipSelection?: boolean;
   callback?: (newDirPath: string) => void;
 }
 
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
   const { createDirectory, setBackgroundColorChange } = useIOActionsContext();
-  const { findLocation } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -73,8 +74,7 @@ function CreateDirectoryDialog(props: Props) {
   const [name, setName] = useState('');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const { open, onClose, selectedDirectoryPath } = props;
-  const currentLocation = findLocation();
+  const { open, onClose, selectedDirectoryPath, skipSelection } = props;
 
   const defaultBackgrounds = [
     'transparent',
@@ -129,7 +129,13 @@ function CreateDirectoryDialog(props: Props) {
       );
       currentLocation.checkDirExist(dirPath).then((exist) => {
         if (!exist) {
-          createDirectory(dirPath).then(() => {
+          createDirectory(
+            dirPath,
+            currentLocation.uuid,
+            true,
+            true,
+            skipSelection,
+          ).then(() => {
             if (props.callback) {
               props.callback(dirPath);
             }
