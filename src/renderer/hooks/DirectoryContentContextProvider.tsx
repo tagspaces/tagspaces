@@ -230,7 +230,6 @@ export const DirectoryContentContextProvider = ({
     currentLocation,
     currentLocationId,
     findLocation,
-    findLocationFromPath,
     skipInitialDirList,
     getLocationPath,
   } = useCurrentLocationContext();
@@ -709,16 +708,21 @@ export const DirectoryContentContextProvider = ({
     }
 
     if (currentDirectory.current !== undefined) {
-      findLocationFromPath(currentDirectory.current.path).then((l) => {
-        if (l) {
-          const parentDirectory = extractParentDirectoryPath(
-            currentDirectory.current.path,
-          );
-          return openDirectory(parentDirectory, undefined, l);
+      const loc = findLocation(currentDirectory.current.locationID);
+
+      if (loc) {
+        const parentDirectory = extractParentDirectoryPath(
+          currentDirectory.current.path,
+        );
+        if (
+          !loc.path ||
+          parentDirectory.includes(cleanTrailingDirSeparator(loc.path))
+        ) {
+          return openDirectory(parentDirectory, undefined, loc);
         } else {
           showNotification(t('core:parentDirNotInLocation'), 'warning', true);
         }
-      });
+      }
     } else {
       showNotification(t('core:firstOpenaFolder'), 'warning', true);
     }

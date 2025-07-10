@@ -57,7 +57,6 @@ type CurrentLocationContextData = {
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
   findLocation: (locationID?: string) => CommonLocation | undefined;
-  findLocationFromPath: (path: string) => Promise<CommonLocation | undefined>;
   getDirSeparator: (locationID?: string) => string;
   findLocalLocation: () => CommonLocation;
   changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
@@ -101,7 +100,6 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
     findLocation: undefined,
-    findLocationFromPath: undefined,
     getDirSeparator: undefined,
     findLocalLocation: undefined,
     changeLocation: () => {},
@@ -285,7 +283,7 @@ export const CurrentLocationContextProvider = ({
     );
   }
 
-  async function findLocationFromPath(
+  /*async function findLocationFromPath(
     path: string,
   ): Promise<CommonLocation | undefined> {
     if (!path) return undefined;
@@ -298,7 +296,7 @@ export const CurrentLocationContextProvider = ({
     }
 
     return undefined;
-  }
+  }*/
 
   function getDirSeparator(locationID: string = undefined): string {
     const loc = findLocation(locationID);
@@ -647,7 +645,6 @@ export const CurrentLocationContextProvider = ({
       persistTagsInSidecarFile,
       getLocationPath,
       findLocation,
-      findLocationFromPath,
       getDirSeparator,
       findLocalLocation,
       changeLocation,
