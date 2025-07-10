@@ -16,23 +16,23 @@
  *
  */
 
-import React, { ReactNode } from 'react';
-import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { alpha, useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
-import { useDispatch } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
-import { Identifier } from 'dnd-core';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
+import { alpha, useTheme } from '@mui/material/styles';
+import { Identifier } from 'dnd-core';
+import React, { ReactNode } from 'react';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = {
@@ -172,9 +172,9 @@ function TargetFileBox(props: Props) {
       style={{
         ...style,
         ...(isActive && {
-          boxShadow: 'inset 0px 0px 0 5px ' + theme.palette.primary.main,
+          // boxShadow: 'inset 0px 0px 0 5px ' + theme.palette.primary.main,
           borderRadius: 5,
-          backgroundColor: alpha(theme.palette.primary.main, 0.5),
+          backgroundColor: alpha(theme.palette.primary.main, 0.7),
         }),
       }}
     >
