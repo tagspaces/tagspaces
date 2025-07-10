@@ -178,7 +178,7 @@ export const DirectoryContentContext =
     //removeDirectoryEntries: undefined,
     //reflectRenameEntries: undefined,
     setSearchQuery: () => {},
-    loadParentDirectoryContent: () => {},
+    loadParentDirectoryContent: undefined,
     loadDirectoryContent: undefined,
     enhanceDirectoryContent: undefined,
     openDirectory: undefined,
@@ -230,6 +230,7 @@ export const DirectoryContentContextProvider = ({
     currentLocation,
     currentLocationId,
     findLocation,
+    findLocationFromPath,
     skipInitialDirList,
     getLocationPath,
   } = useCurrentLocationContext();
@@ -707,32 +708,19 @@ export const DirectoryContentContextProvider = ({
       return openCurrentDirectory();
     }
 
-    // dispatch(actions.setIsLoading(true));
-
     if (currentDirectory.current !== undefined) {
-      const parentDirectory = extractParentDirectoryPath(
-        currentDirectory.current.path,
-        currentLocation?.getDirSeparator(),
-      );
-      console.log(
-        'parentDirectory: ' +
-          parentDirectory +
-          ' - currentLocationPath: ' +
-          currentLocationPath.current,
-      );
-      if (
-        parentDirectory.includes(
-          cleanTrailingDirSeparator(currentLocationPath.current),
-        )
-      ) {
-        openDirectory(parentDirectory);
-      } else {
-        showNotification(t('core:parentDirNotInLocation'), 'warning', true);
-        // dispatch(actions.setIsLoading(false));
-      }
+      findLocationFromPath(currentDirectory.current.path).then((l) => {
+        if (l) {
+          const parentDirectory = extractParentDirectoryPath(
+            currentDirectory.current.path,
+          );
+          return openDirectory(parentDirectory, undefined, l);
+        } else {
+          showNotification(t('core:parentDirNotInLocation'), 'warning', true);
+        }
+      });
     } else {
       showNotification(t('core:firstOpenaFolder'), 'warning', true);
-      // dispatch(actions.setIsLoading(false));
     }
   }
 

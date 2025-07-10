@@ -18,7 +18,6 @@
 
 import React, {
   createContext,
-  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -58,6 +57,7 @@ type CurrentLocationContextData = {
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
   findLocation: (locationID?: string) => CommonLocation | undefined;
+  findLocationFromPath: (path: string) => Promise<CommonLocation | undefined>;
   getDirSeparator: (locationID?: string) => string;
   findLocalLocation: () => CommonLocation;
   changeLocation: (location: CommonLocation, skipInitDirList?: boolean) => void;
@@ -101,6 +101,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
     findLocation: undefined,
+    findLocationFromPath: undefined,
     getDirSeparator: undefined,
     findLocalLocation: undefined,
     changeLocation: () => {},
@@ -283,6 +284,22 @@ export const CurrentLocationContextProvider = ({
       (l) => l.uuid === currentLocationId.current,
     );
   }
+
+  async function findLocationFromPath(
+    path: string,
+  ): Promise<CommonLocation | undefined> {
+    if (!path) return undefined;
+
+    for (const loc of allLocations.current) {
+      const resolved = await resolveRelativePath(loc.path);
+      if (path.startsWith(resolved)) {
+        return loc;
+      }
+    }
+
+    return undefined;
+  }
+
   function getDirSeparator(locationID: string = undefined): string {
     const loc = findLocation(locationID);
     if (loc) {
@@ -630,6 +647,7 @@ export const CurrentLocationContextProvider = ({
       persistTagsInSidecarFile,
       getLocationPath,
       findLocation,
+      findLocationFromPath,
       getDirSeparator,
       findLocalLocation,
       changeLocation,
