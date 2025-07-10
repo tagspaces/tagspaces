@@ -26,6 +26,7 @@ export async function createMdCard(cardName, column = 'empty_folder') {
 }
 
 export async function getColumnEntries(column) {
+  await global.client.waitForTimeout(1000); // for web
   // grab a Locator for the container
   const container = global.client.locator('[data-tid="' + column + 'CTID"]');
 
