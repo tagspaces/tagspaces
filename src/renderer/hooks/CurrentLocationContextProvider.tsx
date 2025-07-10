@@ -18,7 +18,6 @@
 
 import React, {
   createContext,
-  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -283,6 +282,22 @@ export const CurrentLocationContextProvider = ({
       (l) => l.uuid === currentLocationId.current,
     );
   }
+
+  /*async function findLocationFromPath(
+    path: string,
+  ): Promise<CommonLocation | undefined> {
+    if (!path) return undefined;
+
+    for (const loc of allLocations.current) {
+      const resolved = await resolveRelativePath(loc.path);
+      if (path.startsWith(resolved)) {
+        return loc;
+      }
+    }
+
+    return undefined;
+  }*/
+
   function getDirSeparator(locationID: string = undefined): string {
     const loc = findLocation(locationID);
     if (loc) {
