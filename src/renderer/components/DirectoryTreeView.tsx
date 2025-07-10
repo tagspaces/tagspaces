@@ -158,17 +158,15 @@ const DirectoryTreeView = forwardRef(
     const { FILE } = NativeTypes;
 
     const renderBodyRow = (propsRow: any) => {
-      const subFolderLocation = findLocation(location.locationID);
-      if (
-        AppConfig.isElectron ||
-        subFolderLocation.type !== locationType.TYPE_CLOUD
-      ) {
+      const subFolderLocation = propsRow.location;
+      const loc = findLocation(subFolderLocation.locationID);
+      if (AppConfig.isElectron || loc.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
           <TargetFileBox
             accepts={[FILE]}
-            directoryPath={location.path}
-            locationId={subFolderLocation.uuid}
+            directoryPath={subFolderLocation.path}
+            locationId={subFolderLocation.locationID}
           >
             <CustomDragLayer />
             <TargetTableMoveFileBox
