@@ -16,7 +16,15 @@
  *
  */
 
+import {
+  Ref,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import AppConfig from '-/AppConfig';
+import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import { FolderOutlineIcon } from '-/components/CommonIcons';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DragItemTypes from '-/components/DragItemTypes';
@@ -30,13 +38,6 @@ import { TS } from '-/tagspaces.namespace';
 import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import Table from 'rc-table';
-import {
-  Ref,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 
@@ -98,7 +99,8 @@ const DirectoryTreeView = forwardRef(
       ) {
         if (
           currentDirectoryEntries[0].locationID === location.locationID &&
-          currentDirectoryPath === location.path
+          cleanTrailingDirSeparator(currentDirectoryPath) ===
+            cleanTrailingDirSeparator(location.path)
         ) {
           attachNewChildren(
             {
