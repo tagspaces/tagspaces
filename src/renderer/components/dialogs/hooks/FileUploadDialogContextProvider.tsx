@@ -29,7 +29,11 @@ import { getProgress } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 
 type FileUploadDialogContextData = {
-  openFileUploadDialog: (targetPath?: string, dialogTitle?: string) => void;
+  openFileUploadDialog: (
+    targetPath?: string,
+    dialogTitle?: string,
+    transferMeta?: boolean,
+  ) => void;
   closeFileUploadDialog: () => void;
 };
 
@@ -48,6 +52,7 @@ export const FileUploadDialogContextProvider = ({
 }: FileUploadDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
   const targetPath = useRef<string>(undefined);
+  const transferMeta = useRef<boolean>(undefined);
   const dialogTitle = useRef<string>('importDialogTitle');
   const progress = useSelector(getProgress);
   const firstRender = useFirstRender();
@@ -65,9 +70,10 @@ export const FileUploadDialogContextProvider = ({
     }
   }, [progress]);
 
-  function openDialog(tPath?: string, dTitle?: string) {
+  function openDialog(tPath?: string, dTitle?: string, tMeta?: boolean) {
     open.current = true;
     targetPath.current = tPath;
+    transferMeta.current = tMeta;
     if (dTitle) {
       dialogTitle.current = dTitle;
     }
@@ -77,6 +83,7 @@ export const FileUploadDialogContextProvider = ({
   function closeDialog() {
     open.current = false;
     targetPath.current = undefined;
+    transferMeta.current = undefined;
     dialogTitle.current = 'importDialogTitle';
     forceUpdate();
   }
@@ -95,6 +102,7 @@ export const FileUploadDialogContextProvider = ({
         onClose={() => closeDialog()}
         title={dialogTitle.current}
         targetPath={targetPath.current}
+        transferMeta={transferMeta.current}
       />
     </FileUploadDialogContext.Provider>
   );

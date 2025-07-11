@@ -55,6 +55,7 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 
 interface Props {
   location: SubFolder;
@@ -162,17 +163,32 @@ function LocationView(props: Props) {
         if (targetLocation.type !== currentLocation.type) {
           //locationType.TYPE_CLOUD) {
           dispatch(AppActions.resetProgress());
-          openFileUploadDialog(targetPath);
-          return uploadFiles(
-            arrPath,
-            targetPath,
-            onUploadProgress,
-            true,
-            false,
-            targetLocation.uuid,
-          ).catch((error) => {
-            console.log('uploadFiles', error);
-          });
+          openFileUploadDialog(targetPath, undefined, false);
+          return (
+            uploadFiles(
+              arrPath,
+              targetPath,
+              onUploadProgress,
+              true,
+              false,
+              targetLocation.uuid,
+            )
+              /* todo show meta upload button
+          .then((fsEntries: Array<TS.FileSystemEntry>) => {
+              setMetaUpload(() =>
+                uploadMeta(
+                  arrPath,
+                  targetPath,
+                  onUploadProgress,
+                  false,
+                  targetLocation.uuid,
+                ),
+              )
+            }*/
+              .catch((error) => {
+                console.log('uploadFiles', error);
+              })
+          );
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           const entries =
             selectedEntries.length > 0 ? selectedEntries : [entry];

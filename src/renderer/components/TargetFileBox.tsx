@@ -89,7 +89,7 @@ function TargetFileBox(props: Props) {
         );
       }
       dispatch(AppActions.resetProgress());
-      openFileUploadDialog();
+      openFileUploadDialog(undefined, undefined, true);
       const localLocation = findLocalLocation();
       const sourceLocationId = localLocation ? localLocation.uuid : undefined;
       return uploadFilesAPI(

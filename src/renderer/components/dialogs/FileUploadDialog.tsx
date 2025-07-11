@@ -52,11 +52,12 @@ interface Props {
   open: boolean;
   title: string;
   targetPath?: string;
+  transferMeta?: boolean;
   onClose: () => void;
 }
 
 function FileUploadDialog(props: Props) {
-  const { open = false, title, onClose } = props;
+  const { open = false, transferMeta = false, title, onClose } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
@@ -273,7 +274,7 @@ function FileUploadDialog(props: Props) {
       <TsDialogActions>
         {progress && progress.length > 0 && !haveProgress && (
           <>
-            {AppConfig.isElectron && (
+            {transferMeta && AppConfig.isElectron && (
               <TsButton
                 data-tid="uploadMetaTID"
                 onClick={() => {

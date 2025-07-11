@@ -1164,41 +1164,12 @@ function EntryProperties(props: Props) {
           confirmDialogContentTID="confirmResetColorDialogContent"
         />
       )}
-      {/*{isMoveCopyFilesDialogOpened && (
-        <MoveCopyFilesDialog
-          key={getUuid()}
-          open={isMoveCopyFilesDialogOpened}
-          onClose={toggleMoveCopyFilesDialog}
-          entries={[
-            {
-              ...openedEntry,
-              isFile: openedEntry.isFile,
-              name: entryName,
-              tags: [],
-            },
-          ]}
-        />
-      )}*/}
-      {/*{ThumbnailChooserDialog && (
-        <ThumbnailChooserDialog
-          open={isFileThumbChooseDialogOpened}
-          onClose={toggleThumbFilesDialog}
-          entry={openedEntry as TS.FileSystemEntry}
-        />
-      )}*/}
       {showSharingLinkDialog && (
         <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
         />
       )}
-      {/*{BgndImgChooserDialog && (
-        <BgndImgChooserDialog
-          open={isBgndImgChooseDialogOpened}
-          onClose={toggleBgndImgDialog}
-          entry={openedEntry as TS.FileSystemEntry}
-        />
-      )}*/}
       {CustomBackgroundDialog && (
         <CustomBackgroundDialog
           color={openedEntry.meta?.color}
