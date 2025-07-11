@@ -16,13 +16,14 @@
  *
  */
 
-import {
-  extractFileExtension,
-  encodeFileName,
-} from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import { Pro } from '../pro';
+import {
+  encodeFileName,
+  extractFileExtension,
+} from '@tagspaces/tagspaces-common/paths';
+import DOMPurify from 'dompurify';
 import * as pdfjsModule from 'pdfjs-dist/legacy/build/pdf.min.mjs';
+import { Pro } from '../pro';
 
 const pdfjs = (
   'default' in pdfjsModule ? pdfjsModule['default'] : pdfjsModule
@@ -143,18 +144,10 @@ export function generateThumbnailPromise(
     return getFileContentPromise({ path: fileURLEscaped }, 'arraybuffer').then(
       (buffer) => generatePDFThumbnail(buffer, maxSize),
     );
-  } else if (Pro && ext === 'html') {
-    return Pro.ThumbsGenerator.generateHtmlThumbnail(
-      fileURLEscaped,
-      maxSize,
-      loadTextFilePromise,
-    );
-  } else if (Pro && ext === 'url') {
-    return Pro.ThumbsGenerator.generateUrlThumbnail(
-      fileURLEscaped,
-      maxSize,
-      loadTextFilePromise,
-    );
+  } else if (ext === 'html') {
+    return generateHtmlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
+  } else if (ext === 'url') {
+    return generateUrlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
@@ -273,6 +266,109 @@ export function generatePDFThumbnail(
       console.log('Error creating PDF thumb', e);
       resolve('');
     }
+  });
+}
+
+function getPropetiesThumbnail(propertiesFile) {
+  if (propertiesFile) {
+    let currentSection;
+    const propetiesLines = propertiesFile.split('\n');
+    for (let i = 0; i < propetiesLines.length; i += 1) {
+      const propertyLine = propetiesLines[i].trim();
+      if (propertyLine) {
+        const section = /^\[([^=]+)\]$/.exec(propertyLine);
+        let property;
+        if (section) {
+          if (currentSection !== section) {
+            currentSection = section[1];
+          }
+        } else {
+          property = /^([^#=]+)(={0,1})(.*)$/.exec(propertyLine);
+        }
+
+        if (currentSection === 'InternetShortcut') {
+          if (property && property[1] === 'COMMENT') {
+            if (property[3].startsWith('data:image/')) {
+              return property[3];
+            }
+          }
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ *   TODO The onload event is triggered when an image has finished loading.
+ *   However, in the case of a base64 image source,
+ *   the image is already loaded as a string of text and doesn't need to be fetched from a remote server.
+ *   Instead, use the complete property to check if the image has finished loading.
+ *
+ * @param image
+ * @param maxSize
+ */
+export function resizeImg(image: string, maxSize): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      if (img.width >= img.height) {
+        canvas.width = maxSize;
+        canvas.height = (maxSize * img.height) / img.width;
+      } else {
+        canvas.height = maxSize;
+        canvas.width = (maxSize * img.width) / img.height;
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL(AppConfig.thumbType));
+    };
+    img.src = image;
+    /*img.onload = () => {
+      // called when the image has finished loading
+    };
+    if (img.complete) {
+      // called if the image is already loaded
+      img.onload();
+    }*/
+  });
+}
+
+export function generateUrlThumbnail(
+  fileURL: string,
+  maxSize: number,
+  loadTextFilePromise,
+): Promise<string> {
+  return new Promise((resolve) => {
+    loadTextFilePromise(fileURL)
+      .then((content) => {
+        if (!content || content.length < 1) {
+          resolve('');
+        }
+
+        const thumb = getPropetiesThumbnail(content);
+        if (thumb !== undefined) {
+          resizeImg(thumb, maxSize)
+            .then((img) => {
+              resolve(img);
+              return true;
+            })
+            .catch((err) => {
+              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
+              resolve('');
+            });
+        } else {
+          // TODO handle no imgData state (load URL in IFRAME and generate screenshot)
+          resolve('');
+        }
+        return true;
+      })
+      .catch((err) => {
+        console.log('Error generating url tmb for: ' + fileURL + ' - ' + err);
+        resolve('');
+      });
   });
 }
 
@@ -481,5 +577,99 @@ function generateVideoThumbnail(fileURL): Promise<string> {
       console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
       resolve('');
     }
+  });
+}
+
+function getHtmlThumbnail(html: string) {
+  const start = 'data-screenshot="';
+  const end = '"';
+  const inxBegin = html.indexOf(start);
+  let imgDataUrl;
+  if (inxBegin > -1) {
+    imgDataUrl = html.substr(inxBegin + start.length);
+    const inxEnd = imgDataUrl.indexOf(end);
+    if (inxEnd > -1) {
+      imgDataUrl = imgDataUrl.substr(0, inxEnd);
+      if (imgDataUrl.startsWith('data:image/')) {
+        return imgDataUrl.trim();
+      }
+    }
+  }
+  return false; // wrong format
+}
+
+export function generateHtmlThumbnail(
+  fileURL: string,
+  maxSize: number,
+  loadTextFilePromise,
+): Promise<string> {
+  return new Promise((resolve) => {
+    loadTextFilePromise(fileURL)
+      .then((contentHtml) => {
+        if (!contentHtml || contentHtml.length < 1) {
+          resolve('');
+        }
+
+        const thumb = getHtmlThumbnail(contentHtml);
+        if (thumb) {
+          // console.log(thumb);
+          // resolve(thumb);
+          resizeImg(thumb, maxSize)
+            .then((img) => {
+              resolve(img);
+              return true;
+            })
+            .catch((err) => {
+              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
+              resolve('');
+            });
+        } else {
+          const sanitizedHtml = DOMPurify.sanitize(contentHtml, {});
+          const iframe = document.createElement('iframe');
+          iframe.onload = () => {
+            const iframedoc =
+              iframe.contentDocument || iframe.contentWindow.document;
+            iframedoc.body.innerHTML = sanitizedHtml;
+            // iframedoc.src = 'data:text/html;charset=utf-8,' + contentHtml;
+
+            import(/* webpackChunkName: "html2canvas" */ 'html2canvas')
+              .then(({ default: html2canvas }) => {
+                html2canvas(iframedoc.body, {
+                  // @ts-ignore
+                  dpi: 144,
+                  letterRendering: true,
+                  width: maxSize,
+                  height: maxSize,
+                })
+                  .then((canvas) => {
+                    // document.body.appendChild(canvas);
+                    document.body.removeChild(iframe);
+                    resolve(canvas.toDataURL(AppConfig.thumbType));
+                    return true;
+                  })
+                  .catch((err) => {
+                    console.log(
+                      'Error html2canvas tmb for: ' + fileURL + ' - ' + err,
+                    );
+                    resolve('');
+                  });
+                return true;
+              })
+              .catch((error) => {
+                console.log(
+                  'An error occurred while loading the html2canvas: ' + error,
+                );
+                resolve('');
+              });
+          };
+          document.body.appendChild(iframe);
+        }
+
+        return true;
+      })
+      .catch((err) => {
+        console.log('Error generating tmb for: ' + fileURL + ' - ' + err);
+        resolve('');
+      });
   });
 }
