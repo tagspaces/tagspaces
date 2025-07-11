@@ -348,6 +348,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
         directoryPath={directoryPath.current}
         mouseX={mouseX.current}
         mouseY={mouseY.current}
+        items={menuItems.current}
         openRenameDirectoryDialog={openRenameEntryDialog}
       />
       <FileMenuAsync
