@@ -302,6 +302,8 @@ export { default as ZoomInIcon } from '@mui/icons-material/ControlPoint';
 
 export { default as ZoomOutIcon } from '@mui/icons-material/RemoveCircleOutline';
 
+export { default as ZoomLevelIcon } from '@mui/icons-material/Loupe';
+
 export { default as PinGroupingOffIcon } from '@mui/icons-material/Grain'; // ScatterPlotOutlined
 
 export { default as PinGroupingOnIcon } from '@mui/icons-material/ScatterPlotTwoTone';
