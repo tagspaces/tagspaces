@@ -1188,7 +1188,11 @@ export const IOActionsContextProvider = ({
               // handle meta files
               if (fileType === 'meta') {
                 try {
-                  fsEntry.meta = loadJSONString(fileContent.toString());
+                  const data =
+                    fileContent instanceof Uint8Array
+                      ? new TextDecoder('utf-8')
+                      : fileContent.toString();
+                  fsEntry.meta = loadJSONString(data);
                 } catch (e) {
                   console.debug('cannot parse entry meta');
                 }

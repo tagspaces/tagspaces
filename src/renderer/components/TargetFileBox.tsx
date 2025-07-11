@@ -33,6 +33,7 @@ import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { CommonLocation } from '-/utils/CommonLocation';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = {
@@ -53,8 +54,7 @@ function TargetFileBox(props: Props) {
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const { openFileUploadDialog } = useFileUploadDialogContext();
-  const { currentLocation, findLocalLocation, findLocation } =
-    useCurrentLocationContext();
+  const { findLocalLocation, findLocation } = useCurrentLocationContext();
   const { setMetaUpload } = useFileUploadContext();
   const { uploadFilesAPI, uploadMeta } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -69,8 +69,11 @@ function TargetFileBox(props: Props) {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
   };
 
-  const handleCopyFiles = (files: Array<File>) => {
-    if (currentLocation?.isReadOnly) {
+  const handleCopyFiles = (
+    files: Array<File>,
+    targetLocation: CommonLocation,
+  ) => {
+    if (targetLocation?.isReadOnly) {
       showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
       return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }
@@ -98,7 +101,7 @@ function TargetFileBox(props: Props) {
         onUploadProgress,
         false,
         false,
-        undefined,
+        targetLocation.uuid,
         sourceLocationId,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
@@ -108,7 +111,7 @@ function TargetFileBox(props: Props) {
               dirPath,
               onUploadProgress,
               false,
-              undefined,
+              targetLocation.uuid,
               sourceLocationId,
             ),
           );
@@ -144,15 +147,19 @@ function TargetFileBox(props: Props) {
               return file;
             });
           }
-          const location = findLocation(locationId);
+          const targetLocation = findLocation(locationId);
           if (
             AppConfig.isElectron &&
-            !location.haveObjectStoreSupport() &&
-            !location.haveWebDavSupport()
+            !targetLocation.haveObjectStoreSupport() &&
+            !targetLocation.haveWebDavSupport()
           ) {
-            return openMoveOrCopyFilesDialog(files, dirPath, location.uuid);
+            return openMoveOrCopyFilesDialog(
+              files,
+              dirPath,
+              targetLocation.uuid,
+            );
           } else {
-            return handleCopyFiles(files);
+            return handleCopyFiles(files, targetLocation);
           }
         }
       },
