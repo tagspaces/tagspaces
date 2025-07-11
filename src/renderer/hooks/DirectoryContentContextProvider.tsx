@@ -715,14 +715,18 @@ export const DirectoryContentContextProvider = ({
         const parentDirectory = extractParentDirectoryPath(
           currentDirectory.current.path,
         );
-        if (
-          !loc.path ||
-          parentDirectory.includes(cleanTrailingDirSeparator(loc.path))
-        ) {
-          return openDirectory(parentDirectory, undefined, loc);
-        } else {
-          showNotification(t('core:parentDirNotInLocation'), 'warning', true);
-        }
+        resolveRelativePath(loc.path).then((locationPath) => {
+          if (
+            !locationPath ||
+            parentDirectory.startsWith(cleanTrailingDirSeparator(locationPath))
+          ) {
+            //limit opening only from location
+            return openDirectory(parentDirectory, undefined, loc);
+          } else {
+            // don't open dirs parent to location
+            showNotification(t('core:parentDirNotInLocation'), 'warning', true);
+          }
+        });
       }
     } else {
       showNotification(t('core:firstOpenaFolder'), 'warning', true);
