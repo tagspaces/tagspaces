@@ -84,11 +84,11 @@ const DirectoryTreeView = forwardRef(
     //const dispatch: AppDispatch = useDispatch();
 
     // When currentLocationId changes refresh `data`
-    useEffect(() => {
+    /*useEffect(() => {
       if (data && currentLocationId === location.locationID) {
         setData(undefined);
       }
-    }, [currentLocationId]);
+    }, [currentLocationId]);*/
 
     // initially loadSubDirectories or whenever data was just cleared from previous useEffect
     useEffect(() => {
