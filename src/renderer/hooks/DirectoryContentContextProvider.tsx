@@ -232,6 +232,7 @@ export const DirectoryContentContextProvider = ({
     findLocation,
     skipInitialDirList,
     getLocationPath,
+    changeLocation,
   } = useCurrentLocationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions, setReflectMetaActions } = useEditedEntryMetaContext();
@@ -1009,6 +1010,13 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
+      if (
+        location &&
+        currentLocation &&
+        currentLocation.type !== location.type
+      ) {
+        changeLocation(location, true);
+      }
       const cLocation = location || findLocation();
       if (cLocation) {
         return cLocation.checkDirExist(dirPath).then((exist) => {
