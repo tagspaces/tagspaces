@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import CalendarPerspectiveIcon from '@mui/icons-material/CalendarMonth';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import FolderVizPerspectiveIcon from '@mui/icons-material/Hub';
 import MapiquePerspectiveIcon from '@mui/icons-material/Map';
@@ -30,7 +31,7 @@ export const PerspectiveIDs = {
   FOLDERVIZ: 'folderviz',
   MAPIQUE: 'mapique',
   KANBAN: 'kanban',
-  // WIKI: 'wiki'
+  CALENDAR: 'calendar',
 };
 
 export const GridPerspectiveMeta = {
@@ -64,7 +65,7 @@ export const KanbanPerspectiveMeta = {
   id: PerspectiveIDs.KANBAN,
   key: 'openKanbanPerspective',
   pro: true,
-  beta: true,
+  beta: false,
   icon: <KanbanPerspectiveIcon />,
   title: 'Kanban Perspective',
 };
@@ -84,9 +85,18 @@ export const FolderVizPerspectiveMeta = {
   id: PerspectiveIDs.FOLDERVIZ,
   key: 'openFolderVizPerspective',
   pro: true,
-  beta: true,
+  beta: false,
   icon: <FolderVizPerspectiveIcon />,
   title: 'FolderViz Perspective',
+};
+
+export const CalendarPerspectiveMeta = {
+  id: PerspectiveIDs.CALENDAR,
+  key: 'openCalendarPerspective',
+  pro: true,
+  beta: true,
+  icon: <CalendarPerspectiveIcon />,
+  title: 'Calendar Perspective',
 };
 
 export const AvailablePerspectives = [];
@@ -96,3 +106,4 @@ AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
 AvailablePerspectives.push(KanbanPerspectiveMeta);
 AvailablePerspectives.push(FolderVizPerspectiveMeta);
+// AvailablePerspectives.push(CalendarPerspectiveMeta);
