@@ -21,6 +21,7 @@ import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathCo
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 
 function TargetPath() {
@@ -39,8 +40,10 @@ function TargetPath() {
           <InfoIcon style={{ paddingRight: 10 }} />
           {t('core:entriesWillBeCreatedIn') +
             ' ' +
-            (currentLocation ? currentLocation.name : '') +
-            ' ' +
+            (currentLocation?.type === locationType.TYPE_CLOUD
+              ? currentLocation.name
+              : '') +
+            '/' +
             targetDirectoryPath}
         </Typography>
       ) : (
