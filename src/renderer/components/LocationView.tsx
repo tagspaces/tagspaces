@@ -152,7 +152,7 @@ function LocationView(props: Props) {
       }
       const itemLocation = item.targetLocation;
       const targetLocation = findLocation(itemLocation?.locationID);
-      let targetPath = itemLocation ? itemLocation.path : undefined;
+      let targetPath = itemLocation ? itemLocation.path || '' : undefined;
       if (targetPath === undefined) {
         targetPath = item.targetPath;
       }
