@@ -1010,13 +1010,12 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
-      if (
+      /*if (
         location &&
         currentLocation &&
         currentLocation.type !== location.type
-      ) {
-        changeLocation(location, true);
-      }
+      ) {*/
+      changeLocation(location, true);
       const cLocation = location || findLocation();
       if (cLocation) {
         return cLocation.checkDirExist(dirPath).then((exist) => {

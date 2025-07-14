@@ -561,8 +561,9 @@ export const CurrentLocationContextProvider = ({
   ) {
     skipInitialDirList.current = skipInitDirList;
     if (
-      !currentLocationId.current ||
-      location.uuid !== currentLocationId.current
+      location &&
+      (!currentLocationId.current ||
+        location.uuid !== currentLocationId.current)
     ) {
       if (location && location.name) {
         document.title = location.name + ' | ' + versionMeta.name;
