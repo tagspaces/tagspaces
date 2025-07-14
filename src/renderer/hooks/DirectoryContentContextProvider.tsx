@@ -617,7 +617,9 @@ export const DirectoryContentContextProvider = ({
       }
     }
     let index = currentDirectoryEntries.current.findIndex(
-      (e) => e.path === entry.path,
+      (e) =>
+        cleanTrailingDirSeparator(e.path) ===
+        cleanTrailingDirSeparator(entry.path),
     );
     if (index !== -1) {
       currentDirectoryEntries.current.splice(index, 1);
