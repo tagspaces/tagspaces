@@ -153,26 +153,33 @@ export class CommonLocation implements TS.Location {
     return '';
   };
   /**
-   *  normalize path for URL is always '/'
+   * normalize path for URL: always use '/'
+   *  – preserves UNC paths (\\HOST\share → //HOST/share)
    */
   normalizeUrl = (url: string) => {
     if (!url) return '';
 
     // 1) swap out Windows separators for '/'
-    let normalized =
-      this.getDirSeparator() !== '/'
-        ? url.replaceAll(this.getDirSeparator(), '/')
-        : url;
+    const sep = this.getDirSeparator();
+    let normalized = sep !== '/' ? url.replaceAll(sep, '/') : url;
 
-    // 2) pull off any leading protocol so we don't collapse its "://"
+    // 2) detect UNC (\\ → //) before collapsing anything
+    const isUnc = normalized.startsWith('//');
+
+    // 3) pull off any leading protocol so we don't touch its "://"
     const protocolMatch = normalized.match(/^[a-z]+:\/\//i);
     const protocol = protocolMatch?.[0] || '';
     let rest = protocol ? normalized.slice(protocol.length) : normalized;
 
-    // 3) collapse any sequence of 2+ slashes into one
+    // 4) collapse any run of 2+ slashes into one
     rest = rest.replace(/\/{2,}/g, '/');
 
-    // 4) ensure a leading slash for non‑HTTP URLs on non‑Windows
+    // 5) restore UNC prefix if needed
+    if (isUnc) {
+      rest = rest.replace(/^\/+/, '//');
+    }
+
+    // 5) ensure a leading slash for non‑HTTP URLs on non‑Windows
     if (!protocol && !AppConfig.isWin && !rest.startsWith('/')) {
       rest = '/' + rest;
     }
