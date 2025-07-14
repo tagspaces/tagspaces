@@ -104,7 +104,7 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopy() {
     dispatch(AppActions.resetProgress());
-    openFileUploadDialog(undefined, 'copyEntriesTitle', false); //selectedFiles.length > 0);
+    openFileUploadDialog(targetDir, 'copyEntriesTitle', false); //selectedFiles.length > 0);
     if (selectedFiles.length > 0) {
       //todo use uploadFilesAPI && transferMeta = true
       copyFiles(

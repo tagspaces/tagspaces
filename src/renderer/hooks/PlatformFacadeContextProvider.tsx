@@ -307,8 +307,8 @@ export const PlatformFacadeContextProvider = ({
       if (onProgress) {
         const progress = {
           loaded: completed, //processedSize,
-          total: ioJobPromises.length,
-          key: targetPath,
+          total: completed, //ioJobPromises.length,
+          key: path, //targetPath,
         };
         onProgress(
           progress,
