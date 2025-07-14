@@ -161,23 +161,25 @@ const DirectoryTreeView = forwardRef(
 
     const renderBodyRow = (propsRow: any) => {
       const subFolderLocation = propsRow.location;
-      const loc = findLocation(subFolderLocation.locationID);
-      if (AppConfig.isElectron || loc.type !== locationType.TYPE_CLOUD) {
-        // DnD to S3 location is not permitted in web browser without <input> element
-        return (
-          <TargetFileBox
-            accepts={[FILE]}
-            directoryPath={subFolderLocation.path}
-            locationId={subFolderLocation.locationID}
-          >
-            <CustomDragLayer />
-            <TargetTableMoveFileBox
-              accepts={[DragItemTypes.FILE]}
-              onDrop={handleFileMoveDrop}
-              {...propsRow}
-            />
-          </TargetFileBox>
-        );
+      if (subFolderLocation) {
+        const loc = findLocation(subFolderLocation.locationID);
+        if (AppConfig.isElectron || loc.type !== locationType.TYPE_CLOUD) {
+          // DnD to S3 location is not permitted in web browser without <input> element
+          return (
+            <TargetFileBox
+              accepts={[FILE]}
+              directoryPath={subFolderLocation.path}
+              locationId={subFolderLocation.locationID}
+            >
+              <CustomDragLayer />
+              <TargetTableMoveFileBox
+                accepts={[DragItemTypes.FILE]}
+                onDrop={handleFileMoveDrop}
+                {...propsRow}
+              />
+            </TargetFileBox>
+          );
+        }
       }
       return <tr {...propsRow} />;
     };
