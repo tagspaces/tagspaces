@@ -23,27 +23,13 @@ import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
+import { getLocations } from '-/reducers/locations';
+import { TS } from '-/tagspaces.namespace';
 import { Box, List } from '@mui/material';
 import { useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
 import { useSelector } from 'react-redux';
-import { getLocations } from '-/reducers/locations';
-
-/*const CreateEditLocationDialog = React.lazy(
-  () =>
-    import(
-      /!* webpackChunkName: "CreateEditLocationDialog" *!/ './dialogs/CreateEditLocationDialog'
-    ),
-);
-function CreateEditLocationDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <CreateEditLocationDialog {...props} />
-    </React.Suspense>
-  );
-}*/
 
 interface Props {
   style?: any;
@@ -64,11 +50,7 @@ function LocationManager(props: Props) {
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
 
   const locations: TS.Location[] = useSelector(getLocations);
-  // const loading: boolean = useSelector(isLoading);
-  //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  /*const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
-    useState<boolean>(false);*/
   const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
     useState<boolean>(false);
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
@@ -94,12 +76,6 @@ function LocationManager(props: Props) {
       return;
     }
     moveLocation(result.draggableId, result.destination.index);
-    /*dispatch(
-      LocationActions.moveLocation(
-        result.draggableId,
-        result.destination.index,
-      ),
-    );*/
   };
 
   const { reduceHeightBy, show } = props;
@@ -114,14 +90,12 @@ function LocationManager(props: Props) {
         paddingRight: 0,
       }}
     >
-      {
-        //loading &&
-        currentLocation &&
-          (currentLocation.haveObjectStoreSupport() ||
-            currentLocation.haveWebDavSupport()) && (
-            <>
-              <style>
-                {`
+      {currentLocation &&
+        (currentLocation.haveObjectStoreSupport() ||
+          currentLocation.haveWebDavSupport()) && (
+          <>
+            <style>
+              {`
                 @keyframes hide {
                   to {
                       width: 0;
@@ -129,23 +103,19 @@ function LocationManager(props: Props) {
                 }
               }
             `}
-              </style>
-              <div
-                style={{
-                  position: 'absolute',
-                  zIndex: 1000,
-                  height: 'calc(100% - 150px)',
-                  width: 310,
-                  backdropFilter: 'grayscale(1)',
-                  animation: 'hide 1ms linear 5s 1 forwards',
-                  // backgroundColor: 'red'
-                  // backdropFilter: 'blur(2px)',
-                  // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-                }}
-              />
-            </>
-          )
-      }
+            </style>
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                height: 'calc(100% - 150px)',
+                width: 310,
+                backdropFilter: 'grayscale(1)',
+                animation: 'hide 1ms linear 5s 1 forwards',
+              }}
+            />
+          </>
+        )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();
@@ -175,11 +145,7 @@ function LocationManager(props: Props) {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                /* style={getListStyle(snapshot.isDraggingOver)} */
-              >
+              <div {...provided.droppableProps} ref={provided.innerRef}>
                 {locations.map((location, index) => (
                   <Draggable
                     key={location.uuid}
@@ -191,10 +157,6 @@ function LocationManager(props: Props) {
                         ref={prov.innerRef}
                         {...prov.draggableProps}
                         {...prov.dragHandleProps}
-                        /* style={getItemStyle(
-                            snap.isDragging,
-                            prov.draggableProps.style
-                          )} */
                       >
                         <LocationView
                           key={location.uuid}
@@ -228,13 +190,6 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {/*{isEditLocationDialogOpened && (
-        <CreateEditLocationDialogAsync
-          open={isEditLocationDialogOpened}
-          onClose={() => setEditLocationDialogOpened(false)}
-          editLocation={(location) => editLocation(location)}
-        />
-      )}*/}
       {isDeleteLocationDialogOpened && (
         <ConfirmDialog
           open={isDeleteLocationDialogOpened}
@@ -246,7 +201,6 @@ function LocationManager(props: Props) {
           confirmCallback={(result) => {
             if (result && selectedLocation) {
               deleteLocation(selectedLocation.uuid);
-              //dispatch(LocationActions.deleteLocation(selectedLocation));
             }
           }}
           cancelDialogTID="cancelDeleteLocationDialog"
