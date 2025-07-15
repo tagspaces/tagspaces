@@ -104,7 +104,7 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopy() {
     dispatch(AppActions.resetProgress());
-    openFileUploadDialog(targetDir, 'copyEntriesTitle', false); //selectedFiles.length > 0);
+    openFileUploadDialog(targetDir, 'copyEntriesTitle'); //selectedFiles.length > 0);
     if (selectedFiles.length > 0) {
       //todo use uploadFilesAPI && transferMeta = true
       copyFiles(
@@ -144,7 +144,7 @@ function MoveCopyFilesDialog(props: Props) {
     }
     if (selectedDirs.length > 0) {
       dispatch(AppActions.resetProgress());
-      openFileUploadDialog(undefined, 'moveEntriesTitle', false);
+      openFileUploadDialog(undefined, 'moveEntriesTitle');
       moveDirs(
         getEntriesCount(selectedDirs),
         targetPath,

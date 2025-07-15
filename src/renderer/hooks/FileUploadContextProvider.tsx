@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo, useRef } from 'react';
+import React, { createContext, useMemo, useRef, useState } from 'react';
 import FileUploadContainer, {
   FileUploadContainerRef,
 } from '-/components/FileUploadContainer';
@@ -25,12 +25,14 @@ type FileUploadContextData = {
   openFileUpload: (dPath: string) => void;
   uploadMeta: () => void;
   setMetaUpload: (mUpload: () => void) => void;
+  transferMeta: boolean;
 };
 
 export const FileUploadContext = createContext<FileUploadContextData>({
   openFileUpload: undefined,
   uploadMeta: undefined,
   setMetaUpload: undefined,
+  transferMeta: false,
 });
 
 export type FileUploadContextProviderProps = {
@@ -41,6 +43,7 @@ export const FileUploadContextProvider = ({
   children,
 }: FileUploadContextProviderProps) => {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
+  const [transferMeta, setTransferMeta] = useState<boolean>(false);
 
   function openFileUpload(dPath: string) {
     fileUploadContainerRef.current?.onFileUpload(dPath);
@@ -48,9 +51,11 @@ export const FileUploadContextProvider = ({
 
   function uploadMeta() {
     fileUploadContainerRef.current?.onMetaUpload();
+    setTransferMeta(false);
   }
 
   function setMetaUpload(mUpload: () => void) {
+    setTransferMeta(mUpload !== undefined);
     fileUploadContainerRef.current?.setMetaUpload(mUpload);
   }
 
@@ -59,8 +64,9 @@ export const FileUploadContextProvider = ({
       openFileUpload: openFileUpload,
       uploadMeta: uploadMeta,
       setMetaUpload: setMetaUpload,
+      transferMeta,
     };
-  }, []);
+  }, [transferMeta]);
 
   return (
     <FileUploadContext.Provider value={context}>
