@@ -106,4 +106,4 @@ AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
 AvailablePerspectives.push(KanbanPerspectiveMeta);
 AvailablePerspectives.push(FolderVizPerspectiveMeta);
-// AvailablePerspectives.push(CalendarPerspectiveMeta);
+AvailablePerspectives.push(CalendarPerspectiveMeta);

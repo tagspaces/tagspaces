@@ -25,9 +25,9 @@ import {
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { AvailablePerspectives } from '-/perspectives';
+import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import { getKeyBindingObject } from '-/reducers/settings';
+import { getKeyBindingObject, isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import Divider from '@mui/material/Divider';
@@ -66,6 +66,7 @@ export function getDirectoryMenuItems(
   changeFolderBackground?: () => void,
 ) {
   const keyBindings = useSelector(getKeyBindingObject);
+  const devMode: boolean = useSelector(isDevMode);
   const menuItems = [];
   if (selectedEntries.length < 2) {
     if (perspectiveMode) {
@@ -488,6 +489,9 @@ export function getDirectoryMenuItems(
       // }
       if (perspective.beta) {
         badge = <BetaLabel />;
+      }
+      if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
+        return;
       }
       menuItems.push(
         <MenuItem

@@ -16,18 +16,17 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import LayersClearIcon from '@mui/icons-material/LayersClear';
-import ListItemText from '@mui/material/ListItemText';
+import { BetaLabel } from '-/components/HelperComponents';
 import TsSelect from '-/components/TsSelect';
-import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import { isDesktopMode, isDevMode } from '-/reducers/settings';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
-import { isDesktopMode } from '-/reducers/settings';
+import { useSelector } from 'react-redux';
 
 interface Props {
   defaultValue: string;
@@ -39,6 +38,7 @@ interface Props {
 
 function PerspectiveSelector(props: Props) {
   const { defaultValue, onChange, testId, label, fullWidth = true } = props;
+  const devMode: boolean = useSelector(isDevMode);
   const desktopMode = useSelector(isDesktopMode);
   const { t } = useTranslation();
 
@@ -59,6 +59,9 @@ function PerspectiveSelector(props: Props) {
   );
 
   AvailablePerspectives.forEach((perspective) => {
+    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
+      return;
+    }
     let includePerspective = true;
     if (!Pro && perspective.pro === true) {
       includePerspective = false;

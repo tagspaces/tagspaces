@@ -20,20 +20,20 @@ import React, { useEffect, useReducer } from 'react';
 
 import AppConfig from '-/AppConfig';
 
-import { Pro } from '-/pro';
-import { PerspectiveIDs } from '-/perspectives';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import LoadingLazy from '-/components/LoadingLazy';
-import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirContextProvider';
-import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
-import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
-import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import CustomDragLayer from '-/components/CustomDragLayer';
+import LoadingLazy from '-/components/LoadingLazy';
 import TargetFileBox from '-/components/TargetFileBox';
-import { NativeTypes } from 'react-dnd-html5-backend';
+import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
+import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
+import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { PerspectiveIDs } from '-/perspectives';
+import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirContextProvider';
+import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 const GridPerspective = React.lazy(
   () =>
@@ -141,6 +141,20 @@ function FolderVizPerspectiveAsync(props) {
   );
 }
 
+let CalendarPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.CalendarPerspective) {
+  CalendarPerspective = Pro.Perspectives.CalendarPerspective;
+}
+function CalendarPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ThumbGenerationContextProvider>
+        <CalendarPerspective {...props} />
+      </ThumbGenerationContextProvider>
+    </React.Suspense>
+  );
+}
+
 const WelcomePanel = React.lazy(
   () => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'),
 );
@@ -193,6 +207,9 @@ function RenderPerspective(props: Props) {
     }
     if (Pro && currentPerspective === PerspectiveIDs.FOLDERVIZ) {
       return <FolderVizPerspectiveAsync />;
+    }
+    if (Pro && currentPerspective === PerspectiveIDs.CALENDAR) {
+      return <CalendarPerspectiveAsync />;
     }
 
     return <GridPerspectiveAsync />;

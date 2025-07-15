@@ -146,6 +146,9 @@ function FolderContainer(props: Props) {
 
   const perspectiveToggleButtons = [];
   AvailablePerspectives.forEach((perspective) => {
+    if (perspective.id === PerspectiveIDs.CALENDAR) {
+      return;
+    }
     perspectiveToggleButtons.push(
       <ToggleButton
         value={perspective.id}
