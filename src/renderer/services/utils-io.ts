@@ -117,11 +117,11 @@ export function orderDirectories(
       const arrLength = directories.length;
       directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
-          (meta) => meta.name === a.name,
+          (meta) => meta.uuid === a.uuid,
           // meta => meta.path === Object.keys(a)[0]
         );
         let indexB = metaArray.findIndex(
-          (meta) => meta.name === b.name,
+          (meta) => meta.uuid === b.uuid,
           // meta => meta.path === Object.keys(b)[0]
         );
         // set new dirs last
@@ -145,8 +145,8 @@ export function orderByMetaArray(
 ) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
-    let indexA = metaArray.findIndex((metaFiles) => metaFiles.name === a.name);
-    let indexB = metaArray.findIndex((metaFiles) => metaFiles.name === b.name);
+    let indexA = metaArray.findIndex((metaFiles) => metaFiles.uuid === a.uuid);
+    let indexB = metaArray.findIndex((metaFiles) => metaFiles.uuid === b.uuid);
     // set new files last; dirs first
     if (indexA === -1) {
       indexA = !a.isFile ? arrLength * -1 : arrLength;
@@ -1106,6 +1106,7 @@ export function mergeByPath(
       return {
         ...e,
         meta: { ...(e.meta || {}), ...extraMeta },
+        ...(extraMeta.id && { uuid: extraMeta.id }),
       };
     }
     return e;

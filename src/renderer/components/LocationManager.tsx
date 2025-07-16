@@ -161,6 +161,7 @@ function LocationManager(props: Props) {
                         <LocationView
                           key={location.uuid}
                           location={{
+                            uuid: location.uuid,
                             isFile: false,
                             lmdt: 0,
                             name: location.name,

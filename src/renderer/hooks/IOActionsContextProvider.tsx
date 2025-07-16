@@ -219,7 +219,7 @@ type IOActionsContextData = {
     dir: TS.OrderVisibilitySettings,
     parentDirPath?,
   ) => void;
-  reflectRenameVisibility: (oldDirPath: string, newDirPath: string) => void;
+  //reflectRenameVisibility: (oldDirPath: string, newDirPath: string) => void;
   getDirectoryOrder: (
     path: string,
     dirs: Array<TS.FileSystemEntry>,
@@ -273,7 +273,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   setThumbnailImageChange: undefined,
   setFolderBackgroundPromise: undefined,
   toggleDirVisibility: undefined,
-  reflectRenameVisibility: undefined,
+  //reflectRenameVisibility: undefined,
   getDirectoryOrder: undefined,
   getFilesOrder: undefined,
   pushFileOrder: undefined,
@@ -870,7 +870,7 @@ export const IOActionsContextProvider = ({
     location
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        if (fsEntryMeta.id) {
+        if (fsEntryMeta?.id) {
           return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
             ...fsEntryMeta,
             id: fileId,
@@ -2225,7 +2225,7 @@ export const IOActionsContextProvider = ({
       dirPath,
       {
         uuid: entry.uuid,
-        name: extractFileName(entry.path, currentLocation?.getDirSeparator()),
+        //name: extractFileName(entry.path, currentLocation?.getDirSeparator()),
       },
       columnFiles,
     )
@@ -2250,6 +2250,7 @@ export const IOActionsContextProvider = ({
     parentDirPath: string = undefined,
   ) {
     if (Pro) {
+      //todo persist id
       const currentDirPath = parentDirPath
         ? parentDirPath
         : currentDirectoryPath;
@@ -2285,8 +2286,7 @@ export const IOActionsContextProvider = ({
     currentDirPath: string,
     dir: TS.OrderVisibilitySettings,
   ): Promise<TS.FileSystemEntryMeta> {
-    return currentLocation
-      .loadMetaDataPromise(currentDirPath)
+    return getMetadata(currentDirPath, dir.uuid, currentLocation)
       .then((fsEntryMeta) => {
         const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
           ? fsEntryMeta.customOrder
@@ -2295,7 +2295,7 @@ export const IOActionsContextProvider = ({
         let dirs: TS.OrderVisibilitySettings[] = [dir];
         if (customOrder.folders && customOrder.folders.length > 0) {
           const index = customOrder.folders.findIndex(
-            (col) => col.name === dir.name,
+            (col) => col.uuid === dir.uuid,
           );
           if (index !== -1) {
             customOrder.folders.splice(index, 1);
@@ -2318,7 +2318,7 @@ export const IOActionsContextProvider = ({
       });
   }
 
-  function reflectRenameVisibility(
+  /*function reflectRenameVisibility(
     oldDirPath: string,
     newDirPath: string,
   ): void {
@@ -2339,7 +2339,6 @@ export const IOActionsContextProvider = ({
             ? fsEntryMeta.customOrder
             : {};
 
-          //let dirs: TS.OrderVisibilitySettings[] = [dir];
           if (customOrder.folders && customOrder.folders.length > 0) {
             const index = customOrder.folders.findIndex(
               (col) => col.name === oldDir,
@@ -2379,7 +2378,7 @@ export const IOActionsContextProvider = ({
           console.log(ex);
         });
     }
-  }
+  }*/
 
   function getDirectoryOrder(
     path: string,
@@ -2452,15 +2451,15 @@ export const IOActionsContextProvider = ({
           ? fsEntryMeta.customOrder
           : {};
         const customOrderFiles = customOrder.files
-          ? customOrder.files.filter((f) => f.name !== file.name)
+          ? customOrder.files.filter((f) => f.uuid !== file.uuid)
           : [];
         const orderFiles = files
           ? [
               ...customOrderFiles,
               ...files.filter(
                 (f) =>
-                  f.name !== file.name &&
-                  !customOrderFiles.some((ff) => ff.name === f.name),
+                  f.uuid !== file.uuid &&
+                  !customOrderFiles.some((ff) => ff.uuid === f.uuid),
               ),
               file,
             ]
@@ -2473,7 +2472,7 @@ export const IOActionsContextProvider = ({
       })
       .catch(() => {
         const orderFiles = files
-          ? [...files.filter((f) => f.name !== file.name), file]
+          ? [...files.filter((f) => f.uuid !== file.uuid), file]
           : [file];
         return {
           id: getUuid(),
@@ -2516,7 +2515,7 @@ export const IOActionsContextProvider = ({
       setThumbnailImageChange,
       setFolderBackgroundPromise,
       toggleDirVisibility,
-      reflectRenameVisibility,
+      //reflectRenameVisibility,
       getDirectoryOrder,
       getFilesOrder,
       pushFileOrder,

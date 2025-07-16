@@ -182,7 +182,7 @@ export namespace TS {
   }
 
   interface FileSystemEntry {
-    uuid?: string;
+    uuid: string;
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
@@ -384,7 +384,7 @@ export namespace TS {
 
   interface OrderVisibilitySettings {
     uuid: string;
-    name: string;
+    //name: string;
     isCurrent?: boolean;
   }
 
