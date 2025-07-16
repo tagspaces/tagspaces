@@ -59,6 +59,7 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
+  isMeta,
 } from '@tagspaces/tagspaces-common/paths';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, {
@@ -833,13 +834,17 @@ export const DirectoryContentContextProvider = ({
       setSelectedEntries([]);
     }
 
-    // Fetch directory metadata
-    const meta = await getDirMeta(directoryPath, location);
-    // Update directory metadata
-    if (meta) {
-      directoryMeta.current = meta;
-      currentDirectoryDirs.current = meta.customOrder?.folders || [];
-      currentDirectoryFiles.current = meta.customOrder?.files || [];
+    const isMetaPath = isMeta(directoryPath);
+    let meta;
+    if (!isMetaPath) {
+      // Fetch directory metadata
+      meta = await getDirMeta(directoryPath, location);
+      // Update directory metadata
+      if (meta) {
+        directoryMeta.current = meta;
+        currentDirectoryDirs.current = meta.customOrder?.folders || [];
+        currentDirectoryFiles.current = meta.customOrder?.files || [];
+      }
     }
     // Load directory content
     const entries = await loadDirectoryContentInt(
@@ -848,7 +853,7 @@ export const DirectoryContentContextProvider = ({
       showHiddenEntries,
     );
     // set default directory metadata
-    if (!meta) {
+    if (!isMetaPath && !meta) {
       currentDirectoryFiles.current = [];
       // add defaultColumnsToShow for KanBan
       currentDirectoryDirs.current = getDefaultColumnsToShow(entries);
