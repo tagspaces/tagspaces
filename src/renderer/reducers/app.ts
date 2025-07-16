@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
@@ -116,9 +117,10 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isOnline: false, error: null };
     }
     case types.PROGRESS: {
+      const path = cleanFrontDirSeparator(action.path);
       const arrProgress = [
         {
-          path: action.path,
+          path: path,
           filePath: action.filePath,
           progress: action.progress,
           abort: action.abort,
@@ -126,7 +128,7 @@ export default (state: any = initialState, action: any) => {
         },
       ];
       state.progress.map((fileProgress) => {
-        if (fileProgress && fileProgress.path !== action.path) {
+        if (fileProgress && fileProgress.path !== path) {
           arrProgress.push(fileProgress);
         }
         return true;

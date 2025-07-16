@@ -52,19 +52,19 @@ interface Props {
   open: boolean;
   title: string;
   targetPath?: string;
-  transferMeta?: boolean;
+  //transferMeta?: boolean;
   onClose: () => void;
 }
 
 function FileUploadDialog(props: Props) {
-  const { open = false, transferMeta = false, title, onClose } = props;
+  const { open = false, title, onClose } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
-  const { uploadMeta } = useFileUploadContext();
+  const { uploadMeta, transferMeta } = useFileUploadContext();
   const progress = useSelector(getProgress);
 
   const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider

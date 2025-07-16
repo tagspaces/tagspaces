@@ -131,7 +131,7 @@ type IOActionsContextData = {
     sourceLocationId?: string,
   ) => Promise<TS.FileSystemEntry[]>;
   uploadMeta: (
-    files: Array<any>,
+    files: string[],
     targetPath: string,
     onUploadProgress?: (progress, abort, fileName?) => void,
     open?: boolean,
@@ -1535,6 +1535,8 @@ export const IOActionsContextProvider = ({
             Promise.all(entriesEnhanced).then((entries) => {
               resolve(entries);
             });
+          } else {
+            reject(undefined);
           }
           return true;
         })

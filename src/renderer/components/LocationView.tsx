@@ -56,6 +56,7 @@ import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 interface Props {
   location: SubFolder;
@@ -66,8 +67,10 @@ interface Props {
 function LocationView(props: Props) {
   const { t } = useTranslation();
 
-  const { uploadFiles } = useIOActionsContext();
+  const { uploadFilesAPI, uploadMeta } = useIOActionsContext();
+  const { setMetaUpload } = useFileUploadContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
   const {
     findLocation,
     openLocation,
@@ -135,15 +138,15 @@ function LocationView(props: Props) {
   const handleFileMoveDrop = (item, monitor) => {
     if (item) {
       const { entry } = item;
-      let arrPath = [];
+      let arrFiles: TS.FileSystemEntry[] = [];
       if (
         selectedEntries &&
         selectedEntries.length > 0 &&
         selectedEntries.some((e) => e.path === entry.path)
       ) {
-        arrPath = selectedEntries.map((i) => i.path);
+        arrFiles = selectedEntries; //.map((i) => i.path);
       } else if (entry) {
-        arrPath.push(entry.path);
+        arrFiles.push(entry);
       }
 
       if (currentLocation?.isReadOnly) {
@@ -159,36 +162,42 @@ function LocationView(props: Props) {
 
       if (targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
-        console.log('Dropped files: ' + JSON.stringify(arrPath));
+        console.log('Dropped files in: ' + targetPath);
         if (targetLocation.type !== currentLocation.type) {
           //locationType.TYPE_CLOUD) {
           dispatch(AppActions.resetProgress());
-          openFileUploadDialog(targetPath, undefined, false);
-          return (
-            uploadFiles(
-              arrPath,
-              targetPath,
-              onUploadProgress,
-              true,
-              false,
-              targetLocation.uuid,
-            )
-              /* todo show meta upload button
-          .then((fsEntries: Array<TS.FileSystemEntry>) => {
+          openFileUploadDialog(targetPath, undefined);
+          return uploadFilesAPI(
+            arrFiles,
+            targetPath,
+            onUploadProgress,
+            false,
+            false,
+            targetLocation.uuid,
+            currentLocation.uuid,
+          )
+            .then((fsEntries: Array<TS.FileSystemEntry>) => {
               setMetaUpload(() =>
                 uploadMeta(
-                  arrPath,
+                  arrFiles.map((f) => f.path),
                   targetPath,
                   onUploadProgress,
                   false,
                   targetLocation.uuid,
+                  currentLocation.uuid,
                 ),
-              )
-            }*/
-              .catch((error) => {
-                console.log('uploadFiles', error);
-              })
-          );
+              );
+              const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
+                action: 'thumbGenerate',
+                entry: entry,
+              }));
+              setReflectMetaActions(...actions);
+              return true;
+            })
+            .catch((error) => {
+              console.log('uploadFiles', error);
+              setMetaUpload(undefined);
+            });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           const entries =
             selectedEntries.length > 0 ? selectedEntries : [entry];
