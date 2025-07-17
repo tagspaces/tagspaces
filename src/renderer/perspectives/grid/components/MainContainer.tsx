@@ -44,10 +44,11 @@ import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import Links from 'assets/links';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useSelector } from 'react-redux';
 import GridCell from './GridCell';
+import { useReloadOnFocus } from '-/perspectives/common/useReloadOnFocus';
 
 interface Props {}
 
@@ -60,7 +61,7 @@ function GridPerspective(props: Props) {
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const { actions } = usePerspectiveActionsContext();
   const { showDirectories } = usePerspectiveSettingsContext();
-  const { findLocation } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { openFileNatively, duplicateFile } = useIOActionsContext();
   const { openDeleteMultipleEntriesDialog } =
@@ -96,6 +97,10 @@ function GridPerspective(props: Props) {
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
     useState<boolean>(false);
   const firstRender = useFirstRender();
+
+  useReloadOnFocus(currentLocation.reloadOnFocus, () =>
+    openDirectory(currentDirectoryPath),
+  );
 
   useEffect(() => {
     if (!firstRender && actions && actions.length > 0) {
