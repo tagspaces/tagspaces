@@ -2414,10 +2414,12 @@ export const IOActionsContextProvider = ({
     entry: TS.FileSystemEntry,
     filesArray: Array<TS.FileSystemEntry>,
   ): Promise<TS.FileSystemEntryMeta> {
-    const files: Array<TS.OrderVisibilitySettings> = filesArray.map((file) => ({
-      uuid: file.uuid,
-      name: file.name,
-    }));
+    const files: Array<TS.OrderVisibilitySettings> = filesArray
+      .filter((f) => f.isFile)
+      .map((file) => ({
+        uuid: file.uuid,
+        name: file.name,
+      }));
     return currentLocation
       .loadMetaDataPromise(entry.path)
       .then((fsEntryMeta) => {
