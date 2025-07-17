@@ -1106,6 +1106,7 @@ export function mergeByPath(
       return {
         ...e,
         meta: { ...(e.meta || {}), ...extraMeta },
+        ...(extraMeta.id && { uuid: extraMeta.id }),
       };
     }
     return e;
