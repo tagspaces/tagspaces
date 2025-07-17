@@ -2287,8 +2287,7 @@ export const IOActionsContextProvider = ({
     currentDirPath: string,
     dir: TS.OrderVisibilitySettings,
   ): Promise<TS.FileSystemEntryMeta> {
-    return currentLocation
-      .loadMetaDataPromise(currentDirPath)
+    return getMetadata(currentDirPath, dir.uuid, currentLocation)
       .then((fsEntryMeta) => {
         const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
           ? fsEntryMeta.customOrder
