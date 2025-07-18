@@ -98,7 +98,7 @@ function ListPerspective(props: Props) {
     useState<boolean>(false);
   const firstRender = useFirstRender();
 
-  useReloadOnFocus(currentLocation.reloadOnFocus, () =>
+  useReloadOnFocus(currentLocation?.reloadOnFocus, () =>
     openDirectory(currentDirectoryPath),
   );
 
