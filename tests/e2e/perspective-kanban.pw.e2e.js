@@ -393,6 +393,7 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4915 - Load thumbnails for board, column and cards [web,minio,electron,_pro]', async () => {
+    //board thumbnail
     await setPerspectiveSetting(
       'kanban',
       '[data-tid=kanBanPerspectiveToggleShowDetails]',
@@ -415,9 +416,59 @@ test.describe('TST49 - Perspective KanBan', () => {
 
     expect(initThumbStyle).not.toBe(newStyle);
 
-    /*await setPerspectiveSetting(
+    //column thumbnail
+    await setPerspectiveSetting(
       'kanban',
       '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
-    );*/
+    );
+    const columnName = 'empty_folder2';
+    await createColumn(columnName);
+    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + columnName + ']',
+      true,
+      5000,
+    );
+
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=predefinedThumbnailsTID] > li');
+    await clickOn('[data-tid=confirmCustomThumb]');
+
+    const initColumnThumbStyle = await getAttribute(
+      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+      'style',
+    );
+
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=predefinedThumbnailsTID] > li:nth-child(2)');
+    await clickOn('[data-tid=confirmCustomThumb]');
+    const newColumnThumbStyle = await waitUntilChanged(
+      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+      initColumnThumbStyle,
+      'style',
+    );
+
+    expect(initColumnThumbStyle).not.toBe(newColumnThumbStyle);
+
+    //card thumbnail
+    const cardName = 'testCard';
+    const cardId = await createMdCard(cardName, columnName);
+
+    await expectElementExist(
+      '[data-tid=OpenedTID' + cardName + '_md]',
+      true,
+      5000,
+    );
+
+    const cardSelector = '[data-tid=fsEntryName_' + cardName + '_md]';
+    const initScreenshot = await getElementScreenshot(cardSelector);
+
+    await clickOn('[data-tid=changeThumbnailTID]');
+    await clickOn('[data-tid=predefinedThumbnailsTID] > li');
+    await clickOn('[data-tid=confirmCustomThumb]');
+
+    const changeThumbScreenshot = await getElementScreenshot(cardSelector);
+    expect(initScreenshot).not.toBe(changeThumbScreenshot);
   });
 });

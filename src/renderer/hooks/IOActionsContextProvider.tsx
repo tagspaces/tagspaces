@@ -2141,20 +2141,28 @@ export const IOActionsContextProvider = ({
   }
 
   function setThumbnailImageChange(entry: TS.FileSystemEntry) {
+    const location = findLocation(entry.locationID);
     if (
-      currentLocation?.haveObjectStoreSupport() ||
-      currentLocation?.haveWebDavSupport()
+      location &&
+      (location?.haveObjectStoreSupport() || location?.haveWebDavSupport())
     ) {
       // reload cache
-      const folderThumbPath = getThumbFileLocationForDirectory(
-        entry.path,
-        currentLocation?.getDirSeparator(),
-      );
-      currentLocation
-        .generateURLforPath(folderThumbPath, 604800)
-        .then(() => setThumbnailImageChangeAction(entry));
+      if (entry.isFile) {
+        location.delUrlCache(entry.meta.thumbPath);
+        setThumbnailImageChangeAction(entry);
+      } else {
+        // reload cache for folder
+        const folderThumbPath = getThumbFileLocationForDirectory(
+          entry.path,
+          location?.getDirSeparator(),
+        );
+        location
+          .generateURLforPath(folderThumbPath, 604800)
+          .then(() => setThumbnailImageChangeAction(entry));
+      }
+    } else {
+      setThumbnailImageChangeAction(entry);
     }
-    setThumbnailImageChangeAction(entry);
   }
 
   function setThumbnailImageChangeAction(entry: TS.FileSystemEntry) {

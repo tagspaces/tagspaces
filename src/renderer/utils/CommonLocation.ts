@@ -237,10 +237,12 @@ export class CommonLocation implements TS.Location {
    * @param thumbPath
    * @param dt
    * // isLocalFile - force to generate local URL
+   * @param expirationInSeconds
    */
   getThumbPath = (
     thumbPath: string,
     dt = undefined,
+    expirationInSeconds = 900,
   ): Promise<string | undefined> => {
     if (!thumbPath) {
       return Promise.resolve(undefined);
@@ -251,7 +253,7 @@ export class CommonLocation implements TS.Location {
         return Promise.resolve(thumbPath);
       }
 
-      return this.getURLforPathInt(thumbPath);
+      return this.getURLforPathInt(thumbPath, expirationInSeconds);
     }
 
     const normalizedUrl = this.normalizeUrl(thumbPath) + (dt ? '?' + dt : '');
@@ -282,6 +284,7 @@ export class CommonLocation implements TS.Location {
   getBgndPath = (
     bgndPath: string,
     dt = undefined,
+    expirationInSeconds = 900,
   ): Promise<string | undefined> => {
     if (!bgndPath) {
       return Promise.resolve(undefined);
@@ -292,7 +295,7 @@ export class CommonLocation implements TS.Location {
         return Promise.resolve(bgndPath);
       }
 
-      return this.getURLforPathInt(bgndPath);
+      return this.getURLforPathInt(bgndPath, expirationInSeconds);
     }
 
     const normalizedUrl = this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
@@ -449,6 +452,10 @@ export class CommonLocation implements TS.Location {
     return Promise.reject(new Error('checkDirExist: not implemented'));
   };
 
+  delUrlCache = (path) => {
+    delete this.urlCache[path];
+  };
+
   getURLforPathInt = async (
     path: string,
     expirationInSeconds: number = 900,
@@ -483,7 +490,7 @@ export class CommonLocation implements TS.Location {
         url = this.ioAPI.getURLforPath(path);
       }
     }
-    if (url) {
+    if (url && expirationInSeconds > 0) {
       this.urlCache[path] = {
         url: url,
         expirationTime: new Date().getTime() + expirationInSeconds * 1000,
