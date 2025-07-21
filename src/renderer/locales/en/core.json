@@ -469,7 +469,7 @@
   "singleClickOpenExternally": "Single click opens file externally",
   "singleClickSelects": "Single click selects only",
   "entriesSize": "Entries Size",
-  "parentDirNotInLocation": "Unable to navigate! Parent folder not in the current location.",
+  "parentDirNotInLocation": "Unable to navigate, location root reached.",
   "mustContainTheseTags": "Must contain all of these tags",
   "atLeastOneOfTheseTags": "At least one of these tags",
   "noneOfTheseTags": "None of these tags",
