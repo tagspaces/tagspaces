@@ -211,6 +211,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             <Tab
               key={'key' + tab.name + index}
               data-tid={tab.name + 'TID'}
+              // @ts-ignore
               icon={tab.icon}
               label={tab.title}
               sx={{
