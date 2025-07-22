@@ -17,7 +17,6 @@
  */
 
 import LoadingLazy from '-/components/LoadingLazy';
-import Tooltip from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
@@ -68,30 +67,6 @@ interface StyledTabProps {
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
-
-const StyledTab = styled((props: StyledTabProps) => {
-  const { title, tinyMode, ...tabProps } = props; // Extract title and tinyMode
-
-  return (
-    <Tooltip title={tinyMode && title}>
-      <Tab
-        label={!tinyMode && title}
-        disableRipple
-        iconPosition="start"
-        {...tabProps} // Pass remaining props to Tab
-      />
-    </Tooltip>
-  );
-})(({ theme }) => ({
-  textTransform: 'none',
-  fontWeight: theme.typography.fontWeightRegular,
-  fontSize: theme.typography.pxToRem(15),
-  minHeight: 50,
-  maxHeight: 50,
-  minWidth: 40,
-  marginRight: 5,
-  padding: 5,
-}));
 
 function a11yProps(index: number) {
   return {
@@ -233,12 +208,19 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           aria-label="Switching among description, revisions entry properties"
         >
           {tabsArray.current.map((tab, index) => (
-            <StyledTab
+            <Tab
               key={'key' + tab.name + index}
               data-tid={tab.name + 'TID'}
               icon={tab.icon}
-              title={tab.title}
-              tinyMode={isTinyMode}
+              label={tab.title}
+              sx={{
+                fontSize: 12,
+                fontWeight: 'normal',
+                textTransform: 'none',
+                paddingTop: '0px',
+                paddingBottom: '0px',
+                minHeight: '68px',
+              }}
               {...a11yProps(index)}
               onClick={() => handleTabClick(selectedTabIndex, index)}
             />
