@@ -971,5 +971,7 @@
   "transferMeta": "Transfer Sidecar Files",
   "transferMetaInfo": "Transfer corresponding thumbnails and sidecar files containing tags or description",
   "renameDisableTooltip": "Exit the file edit mode in order to rename it",
+  "confirmReindex": "Index not available",
+  "confirmReindexContent": "Do you want to create it now?",
   "-": "-"
 }

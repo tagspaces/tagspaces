@@ -60,6 +60,7 @@ import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import LoadingLazy from '-/components/LoadingLazy';
 import { getAllTags } from '-/services/utils-io';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 type TaggingActionsContextData = {
   addTagsToFsEntries: (
@@ -201,7 +202,7 @@ export const TaggingActionsContextProvider = ({
   } = useTagGroupsLocationContext();
   const { currentDirectoryEntries, getAllPropertiesPromise, getMetaForEntry } =
     useDirectoryContentContext();
-  const { getIndex } = useLocationIndexContext();
+  const { getIndex, createLocationIndex } = useLocationIndexContext();
   const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
@@ -213,6 +214,8 @@ export const TaggingActionsContextProvider = ({
     entries?: TS.FileSystemEntry[];
   }>({ open: false });
 
+  const [isConfirmReindexDialogOpened, setConfirmReindexDialogOpened] =
+    useState<TS.TagGroup>(undefined);
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const maxCollectedTag = useSelector(getMaxCollectedTag);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -975,7 +978,9 @@ export const TaggingActionsContextProvider = ({
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
     const index = getIndex();
     if (!index || index.length < 1) {
-      showNotification('Please index location first', 'error', true);
+      //open confirm
+      setConfirmReindexDialogOpened(tagGroup);
+      //showNotification('Please index location first', 'error', true);
       return true;
     }
 
@@ -1538,6 +1543,28 @@ export const TaggingActionsContextProvider = ({
           onClose={closeEditEntryTagDialog}
           tag={dialogState.tag}
           entries={dialogState.entries}
+        />
+      )}
+      {isConfirmReindexDialogOpened && (
+        <ConfirmDialog
+          open={Boolean(isConfirmReindexDialogOpened)}
+          onClose={() => {
+            setConfirmReindexDialogOpened(undefined);
+          }}
+          title={t('core:confirmReindex')}
+          content={t('core:confirmReindexContent')}
+          confirmCallback={(result) => {
+            if (result) {
+              createLocationIndex(currentLocation).then(() =>
+                collectTagsFromLocation(isConfirmReindexDialogOpened),
+              );
+            } else {
+              setConfirmReindexDialogOpened(undefined);
+            }
+          }}
+          cancelDialogTID="cancelConfirmReindexDialog"
+          confirmDialogTID="confirmConfirmReindexDialog"
+          confirmDialogContentTID="confirConfirmReindexDialogContent"
         />
       )}
 
