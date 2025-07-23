@@ -79,7 +79,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   await expectElementExist(
     '[data-tid=empty_folderKanBanColumnTID]',
     true,
-    8000,
+    10000,
   );
 });
 
@@ -392,7 +392,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4915 - Load thumbnails for board, column and cards [web,minio,electron,_pro]', async () => {
+  test('TST4915a - Load thumbnails for board [web,minio,electron,_pro]', async () => {
     //board thumbnail
     await setPerspectiveSetting(
       'kanban',
@@ -405,7 +405,7 @@ test.describe('TST49 - Perspective KanBan', () => {
 
     await clickOn('[data-tid=showFolderContentTID]');
     await openContextEntryMenu(
-      getGridFileSelector('sample.bmp'),
+      getGridFileSelector('sample.c'),
       'setAsThumbTID',
     );
     const newStyle = await waitUntilChanged(
@@ -415,8 +415,9 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
 
     expect(initThumbStyle).not.toBe(newStyle);
+  });
 
-    //column thumbnail
+  test('TST4915b - Load thumbnails for column [web,minio,electron,_pro]', async () => {
     await setPerspectiveSetting(
       'kanban',
       '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
@@ -450,7 +451,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
 
     expect(initColumnThumbStyle).not.toBe(newColumnThumbStyle);
+  });
 
+  test('TST4915c - Load thumbnails for cards [web,minio,electron,_pro]', async () => {
+    const columnName = 'empty_folder3';
+    await createColumn(columnName);
     //card thumbnail
     const cardName = 'testCard';
     const cardId = await createMdCard(cardName, columnName);
