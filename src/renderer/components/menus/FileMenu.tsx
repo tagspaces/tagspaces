@@ -196,16 +196,14 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(lastSelectedEntry.path)
       .then((thumbPath: string) => {
-        const entry: TS.FileSystemEntry = currentLocation.toFsEntry(
-          extractContainingDirectoryPath(
-            lastSelectedEntry.path,
-            currentLocation?.getDirSeparator(),
-          ),
-          false,
-        );
-        setThumbnailImageChange({
-          ...entry,
-          meta: { id: entry.uuid, thumbPath },
+        getAllPropertiesPromise(
+          extractContainingDirectoryPath(lastSelectedEntry.path),
+          lastSelectedEntry.locationID,
+        ).then((dirEntry) => {
+          setThumbnailImageChange({
+            ...dirEntry,
+            meta: { ...dirEntry.meta, thumbPath },
+          });
         });
         //showNotification('Thumbnail created: ' + thumbPath);
         return true;

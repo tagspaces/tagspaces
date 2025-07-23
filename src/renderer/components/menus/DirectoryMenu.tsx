@@ -279,7 +279,7 @@ Do you want to continue?`)
           return true;
         })
         .catch((err) => {
-          console.log('Error importing tags: ' + err);
+          console.log('Error importing tags: ' + directoryPath, err);
           openProgressDialog();
         });
     } else {
