@@ -601,12 +601,11 @@ function EntryContainer() {
     }
 
     const tabsComponent = useCallback(
-      (marginRight: string | undefined = undefined) => (
+      () => (
         <EntryContainerTabs
           isPanelOpened={isPanelOpened}
           openPanel={openPanel}
           toggleProperties={toggleProperties}
-          marginRight={marginRight}
         />
       ),
       [isPanelOpened],
@@ -624,7 +623,7 @@ function EntryContainer() {
           height: '100%',
         }}
       >
-        {tabsComponent('160px')}
+        {tabsComponent()}
         <div
           style={{
             zIndex: 1,

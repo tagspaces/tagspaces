@@ -29,7 +29,7 @@ import {
   getMapTileServer,
 } from '-/reducers/settings';
 import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,28 +39,6 @@ interface StyledTabsProps {
   value: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 }
-
-const StyledTabs = styled((props: StyledTabsProps) => (
-  <Tabs
-    {...props}
-    variant="scrollable"
-    // scrollButtons={}
-    // allowScrollButtonsMobile
-    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
-  />
-))(({ theme }) => ({
-  '& .MuiTabs-indicator': {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  '& .MuiTabs-indicatorSpan': {
-    maxWidth: 40,
-    width: '100%',
-    backgroundColor: theme.palette.text.primary, //theme.palette.background.default //'#635ee7',
-  },
-}));
-
 interface StyledTabProps {
   title: string;
   tinyMode: any;
@@ -96,11 +74,10 @@ interface EntryContainerTabsProps {
   openPanel: () => void;
   toggleProperties: () => void;
   isPanelOpened: boolean;
-  marginRight: string;
 }
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
-  const { openPanel, toggleProperties, marginRight, isPanelOpened } = props;
+  const { openPanel, toggleProperties, isPanelOpened } = props;
 
   const { t } = useTranslation();
   const { initHistory, checkOllamaModels } = useChatContext();
@@ -201,8 +178,14 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             : 'none',
       }}
     >
-      <Box sx={{ ...(marginRight && { marginRight }) }}>
-        <StyledTabs
+      {/* <Box sx={{ ...(marginRight && { marginRight }) }}> */}
+      <Box
+        style={{
+          marginRight: 160,
+          // borderBottom: '1px solid ' + theme.palette.divider,
+        }}
+      >
+        <Tabs
           value={selectedTabIndex}
           onChange={handleChange}
           aria-label="Switching among description, revisions entry properties"
@@ -220,13 +203,13 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
                 textTransform: 'none',
                 paddingTop: '0px',
                 paddingBottom: '0px',
-                minHeight: '68px',
+                minHeight: '60px', // 68px
               }}
               {...a11yProps(index)}
               onClick={() => handleTabClick(selectedTabIndex, index)}
             />
           ))}
-        </StyledTabs>
+        </Tabs>
       </Box>
       {tabsArray.current.map((tab, index) => (
         <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
