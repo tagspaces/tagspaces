@@ -528,6 +528,7 @@ function EntryContainer() {
           data-tid="autoSaveTID"
           checked={openedEntry.meta && openedEntry.meta.autoSave}
           onChange={toggleAutoSave}
+          size={desktopMode ? 'small' : 'medium'}
           name="autoSave"
         />
       </Tooltip>
@@ -626,17 +627,20 @@ function EntryContainer() {
         {tabsComponent()}
         <div
           style={{
-            zIndex: 1,
+            zIndex: 1000,
             position: 'absolute',
             right: 10,
-            top: 8,
+            top: 0,
             backgroundColor: theme.palette.background.default,
+            // backgroundColor: 'transparent',
             display: 'flex',
             alignItems: 'center',
+            flexDirection: 'column',
+            borderRadius: AppConfig.defaultCSSRadius,
           }}
         >
-          {autoSave}
           {editFile}
+          {autoSave}
         </div>
       </div>
     );

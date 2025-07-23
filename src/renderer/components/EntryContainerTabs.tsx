@@ -181,14 +181,17 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       {/* <Box sx={{ ...(marginRight && { marginRight }) }}> */}
       <Box
         style={{
-          marginRight: 160,
+          marginRight: 140,
           // borderBottom: '1px solid ' + theme.palette.divider,
         }}
       >
         <Tabs
           value={selectedTabIndex}
           onChange={handleChange}
+          variant="scrollable"
+          scrollButtons={false}
           aria-label="Switching among description, revisions entry properties"
+          slotProps={{ indicator: { sx: { maxWidth: 85 } } }}
         >
           {tabsArray.current.map((tab, index) => (
             <Tab
@@ -197,15 +200,21 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               // @ts-ignore
               icon={tab.icon}
               label={tab.title}
-              sx={{
+              style={{
+                paddingLeft: 0,
+                paddingRight: 0,
                 fontSize: 12,
                 fontWeight: 'normal',
                 textTransform: 'none',
                 paddingTop: '0px',
                 paddingBottom: '0px',
                 minHeight: '60px', // 68px
+                marginLeft: -8,
+                marginRight: -8,
               }}
-              {...a11yProps(index)}
+              // sx={{ maxWidth: 70 }}
+              id={`tab-${index}`}
+              ariaControls={`simple-tabpanel-${index}`}
               onClick={() => handleTabClick(selectedTabIndex, index)}
             />
           ))}
