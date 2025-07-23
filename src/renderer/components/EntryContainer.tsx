@@ -17,14 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CancelIcon, CloseEditIcon, SaveIcon } from '-/components/CommonIcons';
-import EditFileButton from '-/components/EditFileButton';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import FileView from '-/components/FileView';
 import Tooltip from '-/components/Tooltip';
-import TsButton from '-/components/TsButton';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
@@ -36,7 +33,6 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
-import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -47,9 +43,8 @@ import {
   isRevisionsEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { Switch, useMediaQuery } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import { useTheme } from '@mui/material/styles';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import React, {
@@ -195,10 +190,6 @@ function EntryContainer() {
             (success) => {
               if (success) {
                 setFileChanged(false);
-                // showNotification(
-                //   t('core:fileSavedSuccessfully'),
-                //   NotificationTypes.default
-                // );
               }
               // change state will not render DOT before file name too
               isSavingInProgress.current = false;
@@ -388,7 +379,6 @@ function EntryContainer() {
       event.stopPropagation();
     }
     if (openedEntry && fileChanged && isEditMode) {
-      // openedEntry.changed
       setSaveBeforeCloseConfirmDialogOpened(true);
     } else {
       closeFile();
@@ -397,7 +387,6 @@ function EntryContainer() {
 
   const closeFile = () => {
     closeOpenedEntries();
-    // setEditingSupported(false);
   };
 
   const startSavingFile = () => {
@@ -452,26 +441,6 @@ function EntryContainer() {
     setEditMode(true);
   };
 
-  /*const setPercent = (p: number | undefined) => {
-    percent.current = p;
-    // console.log('Percent ' + percent.current);
-    if (p !== undefined) {
-      bufferedSplitResize(() => {
-        // Threshold >10% for automatically close Properties panel
-        if (p <= 10) {
-          // parseInt(defaultSplitSize, 10)) {
-          closePanel();
-        } else {
-          if (entrySplitSize !== p + '%') {
-            setEntryPropertiesSplitSize(p + '%');
-          }
-          openPanel();
-        }
-      });
-    }
-    forceUpdate();
-  };*/
-
   const openPanel = () => {
     if (!isPanelOpened) {
       setPanelOpened(true);
@@ -484,22 +453,11 @@ function EntryContainer() {
   const openNextFileAction = () => {
     const action: TS.PerspectiveActions = { action: 'openNext' };
     setActions(action);
-    // window.dispatchEvent(new Event('next-file'));
   };
 
   const openPrevFileAction = () => {
     const action: TS.PerspectiveActions = { action: 'openPrevious' };
     setActions(action);
-    //window.dispatchEvent(new Event('previous-file'));
-  };
-
-  const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const autoSave = event.target.checked;
-    if (Pro) {
-      setAutoSave(openedEntry, autoSave, openedEntry.locationID);
-    } else {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-    }
   };
 
   const toggleEntryPropertiesHeight = () => {
@@ -517,142 +475,20 @@ function EntryContainer() {
   };
 
   const tabs = () => {
-    const autoSave = isEditable(openedEntry) && revisionsEnabled && (
-      <Tooltip
-        title={
-          t('core:autosave') +
-          (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
-        }
-      >
-        <Switch
-          data-tid="autoSaveTID"
-          checked={openedEntry.meta && openedEntry.meta.autoSave}
-          onChange={toggleAutoSave}
-          size={desktopMode ? 'small' : 'medium'}
-          name="autoSave"
-        />
-      </Tooltip>
-    );
-
-    let closeCancelIcon;
-    if (desktopMode) {
-      closeCancelIcon = fileChanged ? <CancelIcon /> : <CloseEditIcon />;
-    }
-
-    let editFile = null;
-    if (editingSupported) {
-      if (isEditMode) {
-        editFile = (
-          <ButtonGroup>
-            <TsButton
-              tooltip={t('core:cancelEditing')}
-              data-tid="cancelEditingTID"
-              onClick={() => {
-                setEditMode(false);
-                setFileChanged(false);
-              }}
-              style={{
-                borderRadius: 'unset',
-                borderTopLeftRadius: AppConfig.defaultCSSRadius,
-                borderBottomLeftRadius: AppConfig.defaultCSSRadius,
-                borderTopRightRadius: fileChanged
-                  ? 0
-                  : AppConfig.defaultCSSRadius,
-                borderBottomRightRadius: fileChanged
-                  ? 0
-                  : AppConfig.defaultCSSRadius,
-              }}
-              aria-label={t('core:cancelEditing')}
-              startIcon={closeCancelIcon}
-            >
-              <Box
-                style={{
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  maxWidth: 100,
-                }}
-              >
-                {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
-              </Box>
-            </TsButton>
-
-            {fileChanged && (
-              <Tooltip
-                title={
-                  t('core:saveFile') +
-                  ' (' +
-                  (AppConfig.isMacLike ? '⌘' : 'CTRL') +
-                  ' + S)'
-                }
-              >
-                <TsButton
-                  disabled={false}
-                  onClick={startSavingFile}
-                  aria-label={t('core:saveFile')}
-                  data-tid="fileContainerSaveFile"
-                  startIcon={desktopMode && <SaveIcon />}
-                  loading={isSavingInProgress.current}
-                  style={{
-                    borderRadius: 'unset',
-                    borderTopRightRadius: AppConfig.defaultCSSRadius,
-                    borderBottomRightRadius: AppConfig.defaultCSSRadius,
-                  }}
-                >
-                  {t('core:save')}
-                </TsButton>
-              </Tooltip>
-            )}
-          </ButtonGroup>
-        );
-      } else {
-        editFile = <EditFileButton />;
-      }
-    }
-
     const tabsComponent = useCallback(
       () => (
         <EntryContainerTabs
           isPanelOpened={isPanelOpened}
           openPanel={openPanel}
           toggleProperties={toggleProperties}
+          isSavingInProgress={isSavingInProgress.current}
+          savingFile={savingFile}
         />
       ),
       [isPanelOpened],
     );
 
-    if (!autoSave && !editFile) {
-      return tabsComponent();
-    }
-
-    return (
-      <div
-        style={{
-          position: 'relative',
-          overflow: 'hidden',
-          height: '100%',
-        }}
-      >
-        {tabsComponent()}
-        <div
-          style={{
-            zIndex: 1000,
-            position: 'absolute',
-            right: 10,
-            top: 0,
-            backgroundColor: theme.palette.background.default,
-            // backgroundColor: 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            borderRadius: AppConfig.defaultCSSRadius,
-          }}
-        >
-          {editFile}
-          {autoSave}
-        </div>
-      </div>
-    );
+    return tabsComponent();
   };
 
   if (!openedEntry || openedEntry.path === undefined) {
