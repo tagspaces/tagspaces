@@ -28,8 +28,8 @@ import {
   getEntryContainerTab,
   getMapTileServer,
 } from '-/reducers/settings';
-import { Box, Tab, Tabs, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Tab, Tabs, TabsProps, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,18 +45,9 @@ interface StyledTabProps {
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
-
-function a11yProps(index: number) {
-  return {
-    id: `tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 const TabContent1 = React.lazy(
   () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
 );
-
 const TabContent2 = React.lazy(
   () => import(/* webpackChunkName: "EditDescription" */ './EditDescription'),
 );
@@ -78,7 +69,6 @@ interface EntryContainerTabsProps {
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { openPanel, toggleProperties, isPanelOpened } = props;
-
   const { t } = useTranslation();
   const { initHistory, checkOllamaModels } = useChatContext();
   const { getTabsArray } = useEntryPropsTabsContext();
@@ -99,6 +89,26 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       forceUpdate();
     });
   }, [openedEntry]);
+
+  const StyledTabs = styled((props: TabsProps) => (
+    <Tabs
+      {...props}
+      slotProps={{
+        indicator: { children: <span className="MuiTabs-indicatorSpan" /> },
+      }}
+    />
+  ))({
+    '& .MuiTabs-indicator': {
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+    },
+    '& .MuiTabs-indicatorSpan': {
+      maxWidth: 55,
+      width: '100%',
+      backgroundColor: theme.palette.primary.main,
+    },
+  });
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (tabsArray.current.length > 0) {
@@ -185,13 +195,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           // borderBottom: '1px solid ' + theme.palette.divider,
         }}
       >
-        <Tabs
+        <StyledTabs
           value={selectedTabIndex}
           onChange={handleChange}
           variant="scrollable"
           scrollButtons={false}
           aria-label="Switching among description, revisions entry properties"
-          slotProps={{ indicator: { sx: { maxWidth: 85 } } }}
         >
           {tabsArray.current.map((tab, index) => (
             <Tab
@@ -218,7 +227,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               onClick={() => handleTabClick(selectedTabIndex, index)}
             />
           ))}
-        </Tabs>
+        </StyledTabs>
       </Box>
       {tabsArray.current.map((tab, index) => (
         <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>

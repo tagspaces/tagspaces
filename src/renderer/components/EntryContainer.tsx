@@ -565,7 +565,16 @@ function EntryContainer() {
               aria-label={t('core:cancelEditing')}
               startIcon={closeCancelIcon}
             >
-              {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
+              <Box
+                style={{
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  maxWidth: 100,
+                }}
+              >
+                {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
+              </Box>
             </TsButton>
 
             {fileChanged && (
