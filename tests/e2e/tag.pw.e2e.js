@@ -259,9 +259,28 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0416 - Export tag groups / all / some [manual]', async () => {});
 
-  test.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
+  test('TST0417 - Collect tags from current location [web,electron,_pro]', async ({
+    isS3,
+    isMinio,
+    testDataDir,
+  }) => {
+    const tagName = 'iptc';
+    const tagGroup = 'ToDo_Workflow';
 
-  test('TST0419 - Create location based tag group [web,electron, _pro]', async ({
+    await createLocation({ isMinio, isS3, testDataDir });
+    await clickOn('[data-tid=tagLibrary]');
+    await clickOn('[data-tid=tagLibraryMoreButton_' + tagGroup + ']');
+    await clickOn('[data-tid=collectTags]');
+    await clickOn('[data-tid=confirmConfirmReindexDialog]');
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      15000,
+      '[data-tid=tagGroupContainer_' + tagGroup + ']',
+    );
+  });
+
+  test('TST0419 - Create location based tag group [web,electron,_pro]', async ({
     isS3,
     isMinio,
     testDataDir,
