@@ -255,7 +255,7 @@ Do you want to continue?`)
         readMacOSTags(entry.path)
           .then((tags) => {
             if (tags.length > 0) {
-              addTags([entry.path], tags);
+              addTags([entry], tags);
             }
             return tags;
           })
