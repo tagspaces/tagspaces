@@ -59,6 +59,7 @@ import AppConfig from '-/AppConfig';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import LoadingLazy from '-/components/LoadingLazy';
+import { getAllTags } from '-/services/utils-io';
 
 type TaggingActionsContextData = {
   addTagsToFsEntries: (
@@ -972,12 +973,13 @@ export const TaggingActionsContextProvider = ({
   }
 
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
-    if (getIndex().length < 1) {
+    const index = getIndex();
+    if (!index || index.length < 1) {
       showNotification('Please index location first', 'error', true);
       return true;
     }
 
-    const uniqueTags = collectTagsFromIndex(getIndex(), tagGroup);
+    const uniqueTags = collectTagsFromIndex(index, tagGroup);
     if (uniqueTags.length > 0) {
       const changedTagGroup = {
         ...tagGroup,
@@ -994,8 +996,9 @@ export const TaggingActionsContextProvider = ({
     const defaultTagColor = tagBackgroundColor;
     const defaultTagTextColor = tagTextColor;
     locationIndex.map((entry) => {
-      if (entry.tags && entry.tags.length > 0) {
-        entry.tags.map((tag) => {
+      const tags = getAllTags(entry);
+      if (tags && tags.length > 0) {
+        tags.map((tag) => {
           if (
             uniqueTags.findIndex((obj) => obj.title === tag.title) < 0 && // element not already added
             tagGroup.children.findIndex((obj) => obj.title === tag.title) < 0 && // element not already added
