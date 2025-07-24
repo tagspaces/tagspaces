@@ -506,4 +506,23 @@ test.describe('TST49 - Perspective KanBan', () => {
       srcColumnName,
     ]);
   });
+
+  test('TST4917 - Move column with buttons from the context menu [web,minio,electron,_pro]', async () => {
+    const col1Name = 'col1';
+    const col2Name = 'col2';
+
+    await createColumn(col1Name);
+    await createColumn(col2Name);
+
+    const initColumns = await getColumnsIds();
+    console.log(initColumns);
+    expect(initColumns.slice(-2)).toEqual([col1Name, col2Name]);
+
+    await clickOn('[data-tid=' + col2Name + 'KanBanColumnActionTID]');
+    await clickOn('[data-tid=moveLeftTID]');
+
+    const movedColumns = await getColumnsIds();
+    console.log(movedColumns);
+    expect(movedColumns.slice(-2)).toEqual([col2Name, col1Name]);
+  });
 });
