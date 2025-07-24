@@ -31,7 +31,7 @@ function EntryContainerNav(props: Props) {
         position: 'absolute',
         top: 5,
         right: 5,
-        backgroundColor: theme.palette.background.default,
+        // backgroundColor: theme.palette.background.default,
         display: 'flex',
         alignItems: 'center',
       }}
