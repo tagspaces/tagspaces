@@ -257,7 +257,7 @@ export default {
       name: 'Standard',
       serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
       serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>',
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors',
     },
     {
       uuid: getUuid(),
