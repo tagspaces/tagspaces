@@ -525,4 +525,10 @@ test.describe('TST49 - Perspective KanBan', () => {
     console.log(movedColumns);
     expect(movedColumns.slice(-2)).toEqual([col2Name, col1Name]);
   });
+
+  test('TST4918 - Open import Trello board dialog [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=importKanBanTID]');
+    await expectElementExist('[data-tid=kanBanImportDialogTID]', true, 5000);
+    await clickOn('[data-tid=closeImportDialogTID]');
+  });
 });
