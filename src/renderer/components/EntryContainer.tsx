@@ -26,10 +26,8 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
@@ -40,7 +38,6 @@ import {
   getEntryPropertiesHeight,
   getKeyBindingObject,
   isDesktopMode,
-  isRevisionsEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { useMediaQuery } from '@mui/material';
@@ -51,6 +48,7 @@ import React, {
   MutableRefObject,
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -74,9 +72,7 @@ function EntryContainer() {
   const { toggleFullScreen } = useFullScreenContext();
   const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
     useFilePropertiesContext();
-  const { setAutoSave } = useIOActionsContext();
   const { findLocation } = useCurrentLocationContext();
-  const { isEditable } = useEntryPropsTabsContext();
   const { saveFileOpen } = useResolveConflictContext();
 
   const { showNotification } = useNotificationContext();
@@ -84,7 +80,6 @@ function EntryContainer() {
   const entryPropertiesHeight = useSelector(getEntryPropertiesHeight);
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
-  const revisionsEnabled = useSelector(isRevisionsEnabled);
   const theme = useTheme();
   const timer = useRef<NodeJS.Timeout>(null);
 
@@ -474,22 +469,18 @@ function EntryContainer() {
     }
   };
 
-  const tabs = () => {
-    const tabsComponent = useCallback(
-      () => (
-        <EntryContainerTabs
-          isPanelOpened={isPanelOpened}
-          openPanel={openPanel}
-          toggleProperties={toggleProperties}
-          isSavingInProgress={isSavingInProgress.current}
-          savingFile={savingFile}
-        />
-      ),
-      [isPanelOpened],
-    );
-
-    return tabsComponent();
-  };
+  const tabsElement = useMemo(
+    () => (
+      <EntryContainerTabs
+        isPanelOpened={isPanelOpened}
+        openPanel={openPanel}
+        toggleProperties={toggleProperties}
+        isSavingInProgress={isSavingInProgress.current}
+        savingFile={savingFile}
+      />
+    ),
+    [isPanelOpened, isSavingInProgress.current, fileChanged],
+  );
 
   if (!openedEntry || openedEntry.path === undefined) {
     return <div>{t('core:noEntrySelected')}</div>;
@@ -562,7 +553,7 @@ function EntryContainer() {
               smallScreen={smallScreen}
             />
           </Box>
-          {tabs()}
+          {tabsElement}
           {openedEntry.isFile && isPanelOpened && (
             <Tooltip title={t('core:togglePreviewSize')}>
               <div

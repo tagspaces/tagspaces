@@ -44,7 +44,6 @@ import {
   Tabs,
   TabsProps,
   Tooltip,
-  useMediaQuery,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
@@ -53,7 +52,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CancelIcon, CloseEditIcon, SaveIcon } from './CommonIcons';
 import EditFileButton from './EditFileButton';
 import TsButton from './TsButton';
-import { useResolveConflictContext } from './dialogs/hooks/useResolveConflictContext';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -109,24 +107,16 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const tabsArray = useRef<TabItem[]>([]);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
+  //const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
   const desktopMode = useSelector(isDesktopMode);
   const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
     useFilePropertiesContext();
   const { setAutoSave } = useIOActionsContext();
   const { isEditable } = useEntryPropsTabsContext();
-  const { saveFileOpen } = useResolveConflictContext();
   const { showNotification } = useNotificationContext();
   const revisionsEnabled = useSelector(isRevisionsEnabled);
   const { findLocation } = useCurrentLocationContext();
-  const {
-    openedEntry,
-    reloadOpenedFile,
-    toggleEntryFullWidth,
-    isEntryInFullWidth,
-    fileChanged,
-    setFileChanged,
-  } = useOpenedEntryContext();
+  const { openedEntry, fileChanged, setFileChanged } = useOpenedEntryContext();
 
   const cLocation = findLocation(openedEntry.locationID);
 
