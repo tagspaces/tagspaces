@@ -1242,32 +1242,26 @@ export const IOActionsContextProvider = ({
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
     const metaJobs: job[] = [];
+    const targetLocation = findLocation(targetLocationId);
 
     for (let i = 0; i < paths.length; i++) {
       const src = paths[i];
       let dst = joinPaths(
-        currentLocation?.getDirSeparator(),
+        targetLocation?.getDirSeparator(),
         targetPath,
-        extractFileName(src, AppConfig.dirSeparator),
+        extractFileName(src),
       );
       // meta file
       metaJobs.push({
-        src: getMetaFileLocationForFile(src, AppConfig.dirSeparator),
-        dst: getMetaFileLocationForFile(
-          dst,
-          currentLocation!.getDirSeparator(),
-        ),
+        src: getMetaFileLocationForFile(src),
+        dst: getMetaFileLocationForFile(dst),
         type: 'meta',
       });
 
       // thumb file
       metaJobs.push({
-        src: getThumbFileLocationForFile(src, AppConfig.dirSeparator, false),
-        dst: getThumbFileLocationForFile(
-          dst,
-          currentLocation!.getDirSeparator(),
-          false,
-        ),
+        src: getThumbFileLocationForFile(src, undefined, false),
+        dst: getThumbFileLocationForFile(dst, undefined, false),
         type: 'thumb',
         originalPathForThumb: src,
       });
