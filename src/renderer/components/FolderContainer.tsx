@@ -38,7 +38,10 @@ import {
   getDefaultAIProvider,
   getDesktopMode,
   getKeyBindingObject,
+  isDevMode,
 } from '-/reducers/settings';
+import BlurOnIcon from '@mui/icons-material/BlurOn';
+import { Fab, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -46,6 +49,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
@@ -55,7 +59,9 @@ import {
   MainMenuIcon,
   SearchIcon,
 } from './CommonIcons';
+import { BetaLabel } from './HelperComponents';
 import PathBreadcrumbs from './PathBreadcrumbs';
+import TsMenuList from './TsMenuList';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -64,6 +70,7 @@ interface Props {
 }
 
 function FolderContainer(props: Props) {
+  const devMode: boolean = useSelector(isDevMode);
   const { toggleDrawer, drawerOpened, style } = props;
   const { t } = useTranslation();
   const theme = useTheme();
@@ -85,6 +92,16 @@ function FolderContainer(props: Props) {
 
   const isDesktopMode = useSelector(getDesktopMode);
   const progress = useSelector(getProgress);
+
+  const [perspectiveMenuAnchorEl, setPerspectiveMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const open = Boolean(perspectiveMenuAnchorEl);
+  const perspectiveMenuOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+    setPerspectiveMenuAnchorEl(event.currentTarget);
+  };
+  const handlePerspectiveMenuClose = () => {
+    setPerspectiveMenuAnchorEl(null);
+  };
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
@@ -146,7 +163,7 @@ function FolderContainer(props: Props) {
 
   const perspectiveToggleButtons = [];
   AvailablePerspectives.forEach((perspective) => {
-    if (perspective.id === PerspectiveIDs.CALENDAR) {
+    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
       return;
     }
     perspectiveToggleButtons.push(
@@ -182,6 +199,40 @@ function FolderContainer(props: Props) {
   const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const readOnlyLocation = findLocation()?.isReadOnly;
+
+  const perspectiveMenuItem = [];
+  AvailablePerspectives.forEach((perspective) => {
+    let badge = <></>;
+    // if (!Pro && perspective.pro) {
+    //   badge = <ProLabel />;
+    // }
+    if (perspective.beta) {
+      badge = <BetaLabel />;
+    }
+    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
+      return;
+    }
+    perspectiveMenuItem.push(
+      <MenuItem
+        key={perspective.key}
+        data-tid={perspective.key}
+        onClick={() => {
+          handlePerspectiveMenuClose();
+          switchPerspective(perspective.id);
+        }}
+      >
+        <ListItemIcon>{perspective.icon}</ListItemIcon>
+        <ListItemText
+          primary={
+            <>
+              {perspective.title}
+              {badge}
+            </>
+          }
+        />
+      </MenuItem>,
+    );
+  });
 
   return (
     <div
@@ -327,7 +378,7 @@ function FolderContainer(props: Props) {
         <a href="#" id="downloadFile" />
         <RenderPerspective />
       </div>
-      {isDesktopMode && (
+      {isDesktopMode ? (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
@@ -375,6 +426,39 @@ function FolderContainer(props: Props) {
             </Tooltip>
           )}
         </ToggleButtonGroup>
+      ) : (
+        <>
+          <Fab
+            size="medium"
+            color="secondary"
+            aria-label="add"
+            style={{
+              bottom: -30,
+              right: 20,
+              position: 'absolute',
+            }}
+            onClick={perspectiveMenuOpenClick}
+          >
+            <BlurOnIcon />
+          </Fab>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={perspectiveMenuAnchorEl}
+            open={open}
+            onClose={handlePerspectiveMenuClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+          >
+            <TsMenuList>{perspectiveMenuItem}</TsMenuList>
+          </Menu>
+        </>
       )}
     </div>
   );

@@ -22,10 +22,9 @@ import {
   RenameIcon,
   TagIcon,
 } from '-/components/CommonIcons';
-import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
-import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
 import { getKeyBindingObject, isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
@@ -342,6 +341,7 @@ export function getDirectoryMenuItems(
     }
   }
   if (Pro && !isReadOnlyMode && selectedEntries.length < 2) {
+    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     if (setFolderThumbnail && perspectiveMode) {
       menuItems.push(
         <MenuItem
@@ -480,41 +480,41 @@ export function getDirectoryMenuItems(
       </MenuItem>,
     );
   }
-  if (!perspectiveMode && switchPerspective) {
-    menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
-    AvailablePerspectives.forEach((perspective) => {
-      let badge = <></>;
-      // if (!Pro && perspective.pro) {
-      //   badge = <ProLabel />;
-      // }
-      if (perspective.beta) {
-        badge = <BetaLabel />;
-      }
-      if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
-        return;
-      }
-      menuItems.push(
-        <MenuItem
-          key={perspective.key}
-          data-tid={perspective.key}
-          onClick={() => {
-            onClose();
-            switchPerspective(perspective.id);
-          }}
-        >
-          <ListItemIcon>{perspective.icon}</ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                {perspective.title}
-                {badge}
-              </>
-            }
-          />
-        </MenuItem>,
-      );
-    });
-  }
+  // if (!perspectiveMode && switchPerspective) {
+  //   menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
+  //   AvailablePerspectives.forEach((perspective) => {
+  //     let badge = <></>;
+  //     // if (!Pro && perspective.pro) {
+  //     //   badge = <ProLabel />;
+  //     // }
+  //     if (perspective.beta) {
+  //       badge = <BetaLabel />;
+  //     }
+  //     if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
+  //       return;
+  //     }
+  //     menuItems.push(
+  //       <MenuItem
+  //         key={perspective.key}
+  //         data-tid={perspective.key}
+  //         onClick={() => {
+  //           onClose();
+  //           switchPerspective(perspective.id);
+  //         }}
+  //       >
+  //         <ListItemIcon>{perspective.icon}</ListItemIcon>
+  //         <ListItemText
+  //           primary={
+  //             <>
+  //               {perspective.title}
+  //               {badge}
+  //             </>
+  //           }
+  //         />
+  //       </MenuItem>,
+  //     );
+  //   });
+  // }
 
   if (selectedEntries.length < 2 && showProperties) {
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
