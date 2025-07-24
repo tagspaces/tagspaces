@@ -32,8 +32,10 @@ import { dataTidFormat } from '../../src/renderer/services/test';
 import {
   createColumn,
   createMdCard,
+  dragKanBanColumn,
   expectFirstColumnElement,
   expectLastColumnElement,
+  getColumnsIds,
 } from './perspective-kanban.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
 
@@ -475,5 +477,33 @@ test.describe('TST49 - Perspective KanBan', () => {
 
     const changeThumbScreenshot = await getElementScreenshot(cardSelector);
     expect(initScreenshot).not.toBe(changeThumbScreenshot);
+  });
+
+  test('TST4916 - Move columns with dnd [web,minio,electron,_pro]', async () => {
+    const srcColumnName = 'column1';
+    const midColumnName = 'column2';
+    const destColumnName = 'column3';
+
+    await createColumn(srcColumnName);
+    await createColumn(midColumnName);
+    await createColumn(destColumnName);
+
+    const initColumns = await getColumnsIds();
+    console.log(initColumns);
+    expect(initColumns.slice(-3)).toEqual([
+      srcColumnName,
+      midColumnName,
+      destColumnName,
+    ]);
+
+    await dragKanBanColumn(srcColumnName, destColumnName);
+    const movedColumns = await getColumnsIds();
+    console.log(movedColumns);
+
+    expect(movedColumns.slice(-3)).toEqual([
+      midColumnName,
+      destColumnName,
+      srcColumnName,
+    ]);
   });
 });
