@@ -143,10 +143,7 @@ function GridPagination(props: Props) {
     }
   };
 
-  const folderName = extractDirectoryName(
-    props.currentDirectoryPath,
-    currentLocation?.getDirSeparator(),
-  );
+  const folderName = extractDirectoryName(props.currentDirectoryPath);
 
   const dirColor =
     directoryMeta && directoryMeta.color ? directoryMeta.color : 'transparent';
@@ -390,7 +387,7 @@ function GridPagination(props: Props) {
                       .gridPagination .milkdown .ProseMirror h1 {
                           margin-top: 10px;
                       }
-                     .gridPagination .milkdown { 
+                     .gridPagination .milkdown {
                           border-radius: ${AppConfig.defaultCSSRadius};
                       }
                       .gridPagination .milkdown .ProseMirror {

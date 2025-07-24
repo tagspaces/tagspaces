@@ -497,6 +497,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     ]);
 
     await dragKanBanColumn(srcColumnName, destColumnName);
+    await global.client.waitForTimeout(1000);
     const movedColumns = await getColumnsIds();
     console.log(movedColumns);
 
@@ -521,6 +522,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=' + col2Name + 'KanBanColumnActionTID]');
     await clickOn('[data-tid=moveLeftTID]');
 
+    await global.client.waitForTimeout(1000);
     const movedColumns = await getColumnsIds();
     console.log(movedColumns);
     expect(movedColumns.slice(-2)).toEqual([col2Name, col1Name]);
