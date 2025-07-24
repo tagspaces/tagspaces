@@ -469,17 +469,17 @@ function MobileNavigation(props: Props) {
           </Popper>
         </ClickAwayListener>
         <LocationManager
-          reduceHeightBy={150}
+          reduceHeightBy={desktopMode ? 150 : 180}
           show={currentOpenedPanel === 'locationManagerPanel'}
         />
         {currentOpenedPanel === 'tagLibraryPanel' && (
-          <TagLibrary reduceHeightBy={140} />
+          <TagLibrary reduceHeightBy={desktopMode ? 140 : 170} />
         )}
         {currentOpenedPanel === 'searchPanel' && (
-          <StoredSearches reduceHeightBy={140} />
+          <StoredSearches reduceHeightBy={desktopMode ? 140 : 165} />
         )}
         {currentOpenedPanel === 'helpFeedbackPanel' && (
-          <HelpFeedbackPanel reduceHeightBy={150} />
+          <HelpFeedbackPanel reduceHeightBy={desktopMode ? 150 : 175} />
         )}
       </Box>
       <Box
