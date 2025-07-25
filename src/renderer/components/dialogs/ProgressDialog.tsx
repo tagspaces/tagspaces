@@ -16,14 +16,13 @@
  *
  */
 
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import { CircularProgress } from '@mui/material';
 import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { CircularProgress } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -40,9 +39,10 @@ function ProgressDialog(props: Props) {
       PaperComponent={DraggablePaper}
       open={open}
       onClose={onClose}
+      style={{ minHeight: 200 }}
     >
       <DialogTitle
-        style={{ cursor: 'move' }}
+        style={{ cursor: 'move', minHeight: 20 }}
         data-tid="progressDialogTitle"
         id="draggable-dialog-title"
       >
@@ -57,12 +57,7 @@ function ProgressDialog(props: Props) {
           alignItems: 'center',
         }}
       >
-        <CircularProgress
-          size={24}
-          sx={{
-            display: 'contents',
-          }}
-        />
+        <CircularProgress size={40} />
       </DialogContent>
     </Dialog>
   );

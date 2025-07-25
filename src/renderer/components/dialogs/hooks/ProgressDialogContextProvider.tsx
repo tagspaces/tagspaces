@@ -16,8 +16,8 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
 
 type ProgressDialogContextData = {
   openProgressDialog: (title?: string) => void;
