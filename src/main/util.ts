@@ -5,7 +5,7 @@ import { BrowserWindow } from 'electron';
 import webpackPaths from '../../.erb/configs/webpack.paths';
 import fs from 'fs';
 import chalk from 'chalk';
-import { execSync } from 'child_process';
+import { execFile, execSync } from 'child_process';
 import http from 'http';
 import settings from './settings';
 
@@ -283,47 +283,22 @@ export function ollamaPostRequest(
  * @param filename
  * @returns {Promise<TS.Tag[]>}
  */
-export function readMacOSTags(filename) {
-  const cmdArr = [
-    'mdls',
-    '-raw',
-    '-name',
-    'kMDItemUserTags',
-    '"' + filename + '"',
-  ];
-  const cmd = cmdArr.join(' ');
-
+export async function readMacOSTags(filename) {
   return new Promise((resolve, reject) => {
-    const foundTags = [];
-    const { exec } = require('child_process');
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        console.error(error);
-        reject(error);
-      }
-      if (stderr) {
-        console.log(stderr);
-        reject(stderr);
-      }
-      if (stdout && stdout !== '(null)') {
-        stdout
-          .toString()
-          .replace(/^\(|\)$/g, '')
-          .split(',')
-          .map((item) => {
-            const newTag = {
-              // id: uuidv1(),
-              title: item.trim(),
-            };
-            foundTags.push(newTag);
-            return newTag;
-          });
+    const args = ['-raw', '-name', 'kMDItemUserTags', filename];
+    execFile('mdls', args, (error, stdout, stderr) => {
+      if (error) return reject(error);
+      if (stderr) return reject(new Error(stderr));
 
-        resolve(foundTags);
-        // console.log('Tags in file "' + filename + '": ' + JSON.stringify(foundTags));
-      } else {
-        resolve(foundTags);
+      const text = stdout.trim();
+      if (!text || text === '(null)') {
+        return resolve([]);
       }
+      const tags = text
+        .replace(/^\(|\)$/g, '')
+        .split(',')
+        .map((item) => ({ title: item.trim() }));
+      resolve(tags);
     });
   });
 }

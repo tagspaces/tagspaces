@@ -84,7 +84,8 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
-  const { openProgressDialog } = useProgressDialogContext();
+  const { openProgressDialog, closeProgressDialog } =
+    useProgressDialogContext();
   const { openNewFileDialog } = useNewFileDialogContext();
   const { currentLocation, getLocationPath, findLocation } =
     useCurrentLocationContext();
@@ -249,7 +250,7 @@ Do you want to continue?`)
       ) {
         return false;
       }
-      openProgressDialog();
+      openProgressDialog('importingMacTags');
 
       const entryCallback = (entry) => {
         readMacOSTags(entry.path)
@@ -269,7 +270,7 @@ Do you want to continue?`)
         entryCallback,
       )
         .then(() => {
-          openProgressDialog();
+          closeProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
           showNotification(
             'Tags from ' + directoryPath + ' are imported successfully.',
@@ -280,7 +281,7 @@ Do you want to continue?`)
         })
         .catch((err) => {
           console.log('Error importing tags: ' + directoryPath, err);
-          openProgressDialog();
+          closeProgressDialog();
         });
     } else {
       showNotification(

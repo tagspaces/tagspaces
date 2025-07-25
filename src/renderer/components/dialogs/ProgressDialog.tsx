@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -26,32 +27,42 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
+  title?: string;
   onClose: () => void;
 }
 
 function ProgressDialog(props: Props) {
+  const { t } = useTranslation();
+  const { open, onClose, title } = props;
   return (
     <Dialog
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
-      open={props.open}
-      onClose={props.onClose}
+      open={open}
+      onClose={onClose}
     >
       <DialogTitle
         style={{ cursor: 'move' }}
         data-tid="progressDialogTitle"
         id="draggable-dialog-title"
       >
-        <DialogCloseButton testId="closeProgressTID" onClose={props.onClose} />
+        {title && t(title)}
+        <DialogCloseButton testId="closeProgressTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          flexGrow: 1,
+          minWidth: 300,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <CircularProgress size={24} />
+        <CircularProgress
+          size={24}
+          sx={{
+            display: 'contents',
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -20,7 +20,7 @@ import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 
 type ProgressDialogContextData = {
-  openProgressDialog: () => void;
+  openProgressDialog: (title?: string) => void;
   closeProgressDialog: () => void;
 };
 
@@ -41,16 +41,19 @@ export const ProgressDialogContextProvider = ({
   children,
 }: ProgressDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
+  const title = useRef<string>(undefined);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  function openDialog() {
+  function openDialog(t) {
     open.current = true;
+    title.current = t;
     forceUpdate();
   }
 
   function closeDialog() {
     open.current = false;
+    title.current = undefined;
     forceUpdate();
   }
 
@@ -71,7 +74,11 @@ export const ProgressDialogContextProvider = ({
 
   return (
     <ProgressDialogContext.Provider value={context}>
-      <ProgressDialogAsync open={open.current} onClose={closeDialog} />
+      <ProgressDialogAsync
+        open={open.current}
+        title={title.current}
+        onClose={closeDialog}
+      />
       {children}
     </ProgressDialogContext.Provider>
   );

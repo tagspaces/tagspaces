@@ -49,6 +49,11 @@ import { ApiResponse } from './types';
 const progress = {};
 let wsc;
 
+function isSafePath(filePath) {
+  if (typeof filePath !== 'string') return false;
+  return true;
+}
+
 export default function loadMainEvents() {
   ipcMain.on('reloadWindow', () => {
     const mainWindow = BrowserWindow.getAllWindows();
@@ -183,9 +188,12 @@ export default function loadMainEvents() {
     }
     return false;
   });*/
+
   ipcMain.handle('readMacOSTags', async (event, filename) => {
-    const results = await readMacOSTags(filename);
-    return results;
+    if (!isSafePath(filename)) {
+      throw new Error('Invalid filename');
+    }
+    return await readMacOSTags(filename);
   });
   ipcMain.on('ondragstart', (event, filePath) => {
     // https://www.electronjs.org/docs/latest/api/web-contents#contentsstartdragitem
