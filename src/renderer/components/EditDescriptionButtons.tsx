@@ -204,7 +204,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
         <ProTooltip
           tooltip={'Add AI generated description based on the file content'}
         >
-          <AiGenDescButton disabled={!Pro} variant="outlined" />
+          <AiGenDescButton variant="outlined" />
         </ProTooltip>
         {openedEntry.meta?.description && (
           <>
@@ -214,11 +214,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             <ProTooltip
               tooltip={'Add AI generated tags based on the description'}
             >
-              <AiGenTagsButton
-                disabled={!Pro}
-                fromDescription={true}
-                variant="outlined"
-              />
+              <AiGenTagsButton fromDescription={true} variant="outlined" />
             </ProTooltip>
           </>
         )}

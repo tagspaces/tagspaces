@@ -411,6 +411,7 @@ function SettingsAI(props: Props) {
                 />
               </FormControl>
               <SelectChatModel
+                disabled={!providersAlive.current[provider.id]}
                 label={t('core:defaultAImodelText') + ' *'}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(
@@ -424,6 +425,7 @@ function SettingsAI(props: Props) {
                 chosenModel={provider.defaultTextModel}
               />
               <SelectChatModel
+                disabled={!providersAlive.current[provider.id]}
                 label={t('core:defaultAImodelImages')}
                 handleChangeModel={(modelName: string) => {
                   handleChangeProvider(

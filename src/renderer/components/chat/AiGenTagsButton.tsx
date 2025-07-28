@@ -33,6 +33,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -42,12 +43,10 @@ type Props = TSButtonProps & {
   entries?: TS.FileSystemEntry[];
   fromDescription?: boolean;
   generationCompleted?: () => void;
-  disabled?: boolean;
 };
 
 function AiGenTagsButton(props: Props) {
-  const { fromDescription, variant, disabled, entries, generationCompleted } =
-    props;
+  const { fromDescription, variant, entries, generationCompleted } = props;
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
@@ -57,6 +56,8 @@ function AiGenTagsButton(props: Props) {
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const disabled = isLoading || !Pro;
 
   let generateEntries: TS.FileSystemEntry[] = entries;
   if (!generateEntries && openedEntry) {
@@ -110,7 +111,7 @@ function AiGenTagsButton(props: Props) {
     <ButtonGroup>
       <TsButton
         loading={isLoading}
-        disabled={isLoading || disabled}
+        disabled={disabled}
         // tooltip="Uses currently configured AI model to generate tags for this file"
         data-tid="generateTagsAITID"
         onClick={handleGeneration}
@@ -126,6 +127,7 @@ function AiGenTagsButton(props: Props) {
         )}
       </TsButton>
       <TsButton
+        disabled={disabled}
         // tooltip={t('core:openGenSettings')}
         aria-label={t('core:openGenSettings')}
         data-tid="fileContainerPrevFile"
