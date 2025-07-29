@@ -21,8 +21,10 @@ import TsButton, { TSButtonProps } from '-/components/TsButton';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonGroup } from '@mui/material';
@@ -32,8 +34,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { Pro } from '-/pro';
 
 type Props = TSButtonProps & {
   variant?: OverridableStringUnion<
@@ -43,10 +43,12 @@ type Props = TSButtonProps & {
   entries?: TS.FileSystemEntry[];
   fromDescription?: boolean;
   generationCompleted?: () => void;
+  style?: any;
 };
 
 function AiGenTagsButton(props: Props) {
-  const { fromDescription, variant, entries, generationCompleted } = props;
+  const { fromDescription, variant, entries, generationCompleted, style } =
+    props;
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
@@ -114,7 +116,7 @@ function AiGenTagsButton(props: Props) {
   };
 
   return (
-    <ButtonGroup>
+    <ButtonGroup style={{ ...style }}>
       <TsButton
         loading={isLoading}
         disabled={disabled}
