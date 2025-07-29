@@ -68,27 +68,15 @@ function FilePreviewDialog(props: Props) {
       : undefined;
 
   const handleMessage = (data: any) => {
-    let message;
     let textFilePath;
     switch (
       data.command // todo use diff command
     ) {
-      case 'loadDefaultTextContent':
+      case 'parentLoadTextContent':
         if (!openedFile || !openedFile.path) {
           break;
         }
         textFilePath = openedFile.path;
-
-        /*if (
-          fileViewer &&
-          fileViewer.current &&
-          fileViewer.current.contentWindow &&
-          // @ts-ignore
-          fileViewer.current.contentWindow.setTheme
-        ) {
-          // @ts-ignore call setContent from iframe
-          fileViewer.current.contentWindow.setTheme(currentTheme);
-        }*/
         const openLocation = findLocation(openedFile.locationID);
 
         openLocation
@@ -97,11 +85,11 @@ function FilePreviewDialog(props: Props) {
             data.preview ? data.preview : false,
           )
           .then((content) => {
-            const UTF8_BOM = '\ufeff';
-            if (content.indexOf(UTF8_BOM) === 0) {
-              content = content.substr(1);
-            }
-            let fileDirectory = extractContainingDirectoryPath(
+            // Check and remove UTF-8 BOM
+            const cleanedContent = content.startsWith('\uFEFF')
+              ? content.slice(1)
+              : content;
+            /* let fileDirectory = extractContainingDirectoryPath(
               textFilePath,
               openLocation?.getDirSeparator(),
             );
@@ -113,22 +101,15 @@ function FilePreviewDialog(props: Props) {
               );
               fileDirectory =
                 (webDir && webDir !== '/' ? webDir + '/' : '') + fileDirectory;
-            }
-            if (
-              fileViewer &&
-              fileViewer.current &&
-              fileViewer.current.contentWindow &&
-              // @ts-ignore
-              fileViewer.current.contentWindow.setContent
-            ) {
-              // @ts-ignore call setContent from iframe
-              fileViewer.current.contentWindow.setContent(
-                content,
-                fileDirectory,
-                !isEditMode,
-                currentTheme,
-              );
-            }
+            }*/
+            fileViewer?.current?.contentWindow?.postMessage(
+              {
+                action: 'fileContent',
+                content: cleanedContent,
+                isEditMode: isEditMode,
+              },
+              '*',
+            );
           })
           .catch((err) => {
             console.log('Error loading text content ' + err);

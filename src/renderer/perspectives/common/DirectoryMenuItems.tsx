@@ -435,6 +435,7 @@ export function getDirectoryMenuItems(
     selectedEntries.length < 2 &&
     AppConfig.isElectron &&
     AppConfig.isMacLike &&
+    !perspectiveMode &&
     importMacTags
   ) {
     menuItems.push(
