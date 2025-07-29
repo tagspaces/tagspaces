@@ -16,14 +16,14 @@
  *
  */
 
-import React from 'react';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Box } from '@mui/material';
+import AppConfig from '-/AppConfig';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
-import { useSelector } from 'react-redux';
-import { isDevMode } from '-/reducers/settings';
 import ChatView from '-/components/chat/ChatView';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { isDevMode } from '-/reducers/settings';
+import { Box } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 interface Props {}
 
@@ -39,7 +39,10 @@ function AiPropertiesTab(props: Props) {
     <Box position="relative" display="inline-flex">
       <AiGenDescButton />
       {openedEntry.meta?.description && (
-        <AiGenTagsButton fromDescription={true} />
+        <AiGenTagsButton
+          fromDescription={true}
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+        />
       )}
     </Box>
   );
