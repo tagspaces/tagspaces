@@ -974,5 +974,6 @@
   "confirmReindex": "Index not available",
   "confirmReindexContent": "Do you want to create it now?",
   "importingMacTags": "Importing MacOS tags...",
+  "noModelsLoaded": "Error No Models loaded. Check if AI service is alive.",
   "-": "-"
 }

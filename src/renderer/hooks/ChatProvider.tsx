@@ -1248,7 +1248,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         }
         return Promise.resolve(entry);
       } else {
-        showNotification('Error No Models loaded');
+        showNotification(t('core:noModelsLoaded'));
         return Promise.resolve(undefined);
       }
     });

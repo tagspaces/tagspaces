@@ -106,9 +106,7 @@ function AiGenTagsButton(props: Props) {
           });
       } else {
         setIsLoading(false);
-        showNotification(
-          'Ollama Models not loaded. Check if Ollama service is alive.',
-        );
+        showNotification(t('core:noModelsLoaded'));
       }
     });
   };
