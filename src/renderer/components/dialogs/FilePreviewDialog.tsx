@@ -159,6 +159,7 @@ function FilePreviewDialog(props: Props) {
           padding: smallScreen ? '0' : 'inherited',
           flexGrow: 1,
         }}
+        data-tid="filePreviewTID"
       >
         <Typography
           variant="body2"

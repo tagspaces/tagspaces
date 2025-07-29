@@ -887,6 +887,18 @@ export async function writeTextInIframeInput(
   }
 }
 
+export async function createRevision(newFileContent = 'txt') {
+  await clickOn('[data-tid=fileContainerEditFile]');
+  await writeTextInIframeInput(newFileContent);
+  await clickOn('[data-tid=fileContainerSaveFile]');
+  await clickOn('[data-tid=cancelEditingTID]');
+
+  //Toggle Revisions
+  await clickOn('[data-tid=revisionsTabTID]');
+  //await clickOn('[data-tid=revisionsTID]');
+  await expectElementExist('[data-tid=viewRevisionTID]');
+}
+
 export function normalized(content) {
   // Strip out all uuid properties (e.g. ,"uuid":"e3f0f0909cd84b4..." or "uuid":"..." at start)
   return content

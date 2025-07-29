@@ -10,10 +10,12 @@ import {
   addDescription,
   checkSettings,
   clickOn,
+  createRevision,
   dnd,
   expectElementExist,
   expectFileContain,
   expectMetaFilesExist,
+  frameLocator,
   getGridFileName,
   getGridFileSelector,
   getRevision,
@@ -401,17 +403,8 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0813a - Delete file and check revisions deleted [web,electron,_pro]', async () => {
     const fileName = 'sample.txt';
-    // await clickOn(getGridFileSelector(fileName));
     await openFile(fileName);
-    await clickOn('[data-tid=fileContainerEditFile]');
-    await writeTextInIframeInput('txt');
-    await clickOn('[data-tid=fileContainerSaveFile]');
-    await clickOn('[data-tid=cancelEditingTID]');
-
-    //Toggle Revisions
-    await clickOn('[data-tid=revisionsTabTID]');
-    //await clickOn('[data-tid=revisionsTID]');
-    await expectElementExist('[data-tid=viewRevisionTID]');
+    await createRevision();
 
     const revision = await getRevision(0);
     expect(revision).not.toBeUndefined();
@@ -484,5 +477,56 @@ test.describe('TST08 - File folder properties', () => {
       true,
       5000,
     );
+  });
+
+  test('TST0828 - Toggle file revisions [web,minio,electron]', async () => {
+    const fileName = 'sample.txt';
+    await openFile(fileName);
+    await createRevision();
+    const revision = await getRevision(0);
+    expect(revision).not.toBeUndefined();
+  });
+
+  test('TST0829 - Create and restore revision [web,minio,electron]', async () => {
+    const fileName = 'sample.txt';
+    await openFile(fileName);
+    const fLocator = await frameLocator('iframe[allowfullscreen]');
+    const initContent = await fLocator.locator('body').innerText();
+
+    const revisionContent = 'file changed';
+    await createRevision(revisionContent);
+
+    const revision = await getRevision(0);
+    expect(revision).not.toBeUndefined();
+    await clickOn(
+      '[data-tid="' + revision.id + '"] [data-tid="restoreRevisionTID"]',
+    );
+    await expectFileContain(initContent, 15000);
+  });
+
+  test('TST0830 - Create, open and delete revision [web,minio,electron]', async () => {
+    //create revision
+    const fileName = 'sample.txt';
+    await openFile(fileName);
+    const fLocator = await frameLocator('iframe[allowfullscreen]');
+    const initContent = await fLocator.locator('body').innerText();
+
+    const revisionContent = 'file revision';
+    await createRevision(revisionContent);
+
+    const revision = await getRevision(0);
+    expect(revision).not.toBeUndefined();
+
+    // open revision
+    await clickOn(
+      '[data-tid="' + revision.id + '"] [data-tid="viewRevisionTID"]',
+    );
+
+    const pfLocator = await frameLocator(
+      '[data-tid="filePreviewTID"] iframe[allowfullscreen]',
+    );
+    const previewContent = await pfLocator.locator('body').innerText();
+
+    expect(previewContent).toBe(initContent);
   });
 });
