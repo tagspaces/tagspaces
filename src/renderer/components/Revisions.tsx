@@ -79,10 +79,10 @@ function Revisions() {
       const location = findLocation(openedFile.locationID);
       if (location) {
         getMetadataID(openedFile.path, openedFile.uuid, location).then((id) => {
-          openedFile.uuid = id;
+          //openedFile.uuid = id;
           const backupFilePath = getBackupFileLocation(
             openedFile.path,
-            openedFile.uuid,
+            id,
             location.getDirSeparator(),
           );
           const backupPath = extractContainingDirectoryPath(

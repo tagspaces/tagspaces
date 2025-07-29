@@ -25,14 +25,12 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getCurrentTheme } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import useEventListener from '-/utils/useEventListener';
 import { Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { MutableRefObject, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -68,55 +66,67 @@ function FilePreviewDialog(props: Props) {
       : undefined;
 
   const handleMessage = (data: any) => {
-    let textFilePath;
-    switch (
-      data.command // todo use diff command
-    ) {
-      case 'parentLoadTextContent':
-        if (!openedFile || !openedFile.path) {
-          break;
-        }
-        textFilePath = openedFile.path;
-        const openLocation = findLocation(openedFile.locationID);
-
-        openLocation
-          ?.loadTextFilePromise(
-            textFilePath,
-            data.preview ? data.preview : false,
-          )
-          .then((content) => {
-            // Check and remove UTF-8 BOM
-            const cleanedContent = content.startsWith('\uFEFF')
-              ? content.slice(1)
-              : content;
-            /* let fileDirectory = extractContainingDirectoryPath(
-              textFilePath,
-              openLocation?.getDirSeparator(),
-            );
+    if (!openedFile || !openedFile.path) {
+      return;
+    }
+    switch (data.command) {
+      case 'loadDefaultTextContent':
+        getFileContent(data.preview ? data.preview : false).then((content) => {
+          if (
+            fileViewer &&
+            fileViewer.current &&
+            fileViewer.current.contentWindow &&
+            // @ts-ignore
+            fileViewer.current.contentWindow.setContent
+          ) {
+            let fileDirectory = extractContainingDirectoryPath(openedFile.path);
             if (AppConfig.isWeb) {
               const webDir = extractContainingDirectoryPath(
                 // eslint-disable-next-line no-restricted-globals
                 location.href,
-                openLocation?.getDirSeparator(),
               );
               fileDirectory =
                 (webDir && webDir !== '/' ? webDir + '/' : '') + fileDirectory;
-            }*/
-            fileViewer?.current?.contentWindow?.postMessage(
-              {
-                action: 'fileContent',
-                content: cleanedContent,
-                isEditMode: isEditMode,
-              },
-              '*',
+            }
+            // @ts-ignore call setContent from iframe
+            fileViewer.current.contentWindow.setContent(
+              content,
+              fileDirectory,
+              !isEditMode,
+              theme.palette.mode,
             );
-          })
-          .catch((err) => {
-            console.log('Error loading text content ' + err);
-          });
+          }
+        });
+        break;
+      case 'parentLoadTextContent':
+        getFileContent(data.preview ? data.preview : false).then((content) => {
+          fileViewer?.current?.contentWindow?.postMessage(
+            {
+              action: 'fileContent',
+              content: content,
+              isEditMode: isEditMode,
+            },
+            '*',
+          );
+        });
         break;
     }
   };
+
+  function getFileContent(preview): Promise<string> {
+    const openLocation = findLocation(openedFile.locationID);
+
+    return openLocation
+      ?.loadTextFilePromise(openedFile.path, preview)
+      .then((content) => {
+        // Check and remove UTF-8 BOM
+        return content.startsWith('\uFEFF') ? content.slice(1) : content;
+      })
+      .catch((err) => {
+        console.log('Error loading text content ' + err);
+        return undefined;
+      });
+  }
 
   if (!fsEntry) {
     return null;

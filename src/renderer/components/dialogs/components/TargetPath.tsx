@@ -41,9 +41,8 @@ function TargetPath() {
           {t('core:entriesWillBeCreatedIn') +
             ' ' +
             (currentLocation?.type === locationType.TYPE_CLOUD
-              ? currentLocation.name
+              ? currentLocation.name + '/'
               : '') +
-            '/' +
             targetDirectoryPath}
         </Typography>
       ) : (
