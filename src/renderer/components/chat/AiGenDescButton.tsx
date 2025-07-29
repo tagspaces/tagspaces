@@ -17,13 +17,16 @@
  */
 
 import TsButton, { TSButtonProps } from '-/components/TsButton';
+import { AIProvider } from '-/components/chat/ChatTypes';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -35,13 +38,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { Pro } from '-/pro';
-import { AIProvider } from '-/components/chat/ChatTypes';
 
-type Props = TSButtonProps & {};
+type Props = TSButtonProps & { style?: any };
 
 function AiGenDescButton(props: Props) {
+  const { style } = props;
   const { t } = useTranslation();
   // const { disabled } = props;
   const dispatch: AppDispatch = useDispatch();
@@ -89,7 +90,7 @@ function AiGenDescButton(props: Props) {
   }
 
   return (
-    <ButtonGroup>
+    <ButtonGroup style={{ ...style }}>
       <TsButton
         loading={isLoading}
         disabled={disabled}

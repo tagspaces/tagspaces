@@ -200,26 +200,27 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
           </TsButton>
         </ProTooltip>
       </ButtonGroup>
-      <ButtonGroup style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}>
-        <ProTooltip
-          tooltip={'Add AI generated description based on the file content'}
-        >
-          <AiGenDescButton variant="outlined" />
-        </ProTooltip>
-        {openedEntry.meta?.description && (
-          <>
-            <ProTooltip
-              tooltip={'Add AI generated tags based on the description'}
-            >
-              <AiGenTagsButton
-                style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-                fromDescription={true}
-                variant="outlined"
-              />
-            </ProTooltip>
-          </>
-        )}
-      </ButtonGroup>
+      <ProTooltip
+        tooltip={'Add AI generated description based on the file content'}
+      >
+        <AiGenDescButton
+          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          variant="outlined"
+        />
+      </ProTooltip>
+      {openedEntry.meta?.description && (
+        <>
+          <ProTooltip
+            tooltip={'Add AI generated tags based on the description'}
+          >
+            <AiGenTagsButton
+              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              fromDescription={true}
+              variant="outlined"
+            />
+          </ProTooltip>
+        </>
+      )}
       <TsIconButton
         tooltip={t('core:chatMore')}
         onClick={handleMoreClick}
