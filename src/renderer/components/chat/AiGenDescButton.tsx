@@ -74,8 +74,8 @@ function AiGenDescButton(props: Props) {
   };
   function handleGenerationResult(entry: TS.FileSystemEntry) {
     //console.log('newOllamaMessage response:' + response);
+    setIsLoading(false);
     if (entry) {
-      setIsLoading(false);
       if (entry.uuid === openedEntry.uuid) {
         dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
         setDescription(entry.meta?.description);
