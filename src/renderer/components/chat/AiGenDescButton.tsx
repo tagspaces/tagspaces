@@ -25,22 +25,26 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { AppDispatch } from '-/reducers/app';
-import { actions as SettingsActions } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getDefaultAIProvider,
+} from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ButtonGroup } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AIIcon } from '../CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
+import { AIProvider } from '-/components/chat/ChatTypes';
 
 type Props = TSButtonProps & {};
 
 function AiGenDescButton(props: Props) {
   const { t } = useTranslation();
-  const { disabled } = props;
+  // const { disabled } = props;
   const dispatch: AppDispatch = useDispatch();
-  //const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { setDescriptionChange } = useIOActionsContext();
@@ -51,13 +55,13 @@ function AiGenDescButton(props: Props) {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  //const openedEntryModel = getEntryModel(openedEntry?.name, defaultAiProvider);
+  const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const disabled = isLoading || !Pro || !defaultAiProvider; //!getEntryModel(openedEntry?.name, defaultAiProvider);
   if (
     !openedEntry ||
     !openedEntry.isFile ||
     findLocation(openedEntry.locationID)?.isReadOnly
   ) {
-    //|| !openedEntryModel) {
     return null;
   }
 
@@ -70,8 +74,8 @@ function AiGenDescButton(props: Props) {
   };
   function handleGenerationResult(entry: TS.FileSystemEntry) {
     //console.log('newOllamaMessage response:' + response);
+    setIsLoading(false);
     if (entry) {
-      setIsLoading(false);
       if (entry.uuid === openedEntry.uuid) {
         dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
         setDescription(entry.meta?.description);
@@ -88,7 +92,7 @@ function AiGenDescButton(props: Props) {
     <ButtonGroup>
       <TsButton
         loading={isLoading}
-        disabled={isLoading || disabled}
+        disabled={disabled}
         // tooltip="Uses currently configured AI model to generate description for this file"
         data-tid="generateDescriptionAITID"
         style={{
@@ -105,6 +109,7 @@ function AiGenDescButton(props: Props) {
         {t('core:generateDescription')}
       </TsButton>
       <TsButton
+        disabled={disabled}
         // tooltip={t('core:openGenSettings')}
         aria-label={t('core:openGenSettings')}
         data-tid="fileContainerPrevFile"

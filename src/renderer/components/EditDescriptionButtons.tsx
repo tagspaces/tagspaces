@@ -6,16 +6,16 @@ import TsIconButton from '-/components/TsIconButton';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import DescriptionMenu from '-/components/md/DescriptionMenu';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { saveAsTextFile } from '-/services/utils-io';
-import { Box, ButtonGroup, Tooltip, useTheme } from '@mui/material';
+import { ButtonGroup, Tooltip, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface ButtonsProps {
   getHtml: () => string;
@@ -204,18 +204,15 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
         <ProTooltip
           tooltip={'Add AI generated description based on the file content'}
         >
-          <AiGenDescButton disabled={!Pro} variant="outlined" />
+          <AiGenDescButton variant="outlined" />
         </ProTooltip>
         {openedEntry.meta?.description && (
           <>
-            <Box
-              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-            ></Box>
             <ProTooltip
               tooltip={'Add AI generated tags based on the description'}
             >
               <AiGenTagsButton
-                disabled={!Pro}
+                style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
                 fromDescription={true}
                 variant="outlined"
               />
