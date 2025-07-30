@@ -26,8 +26,16 @@ type ImportMacTagDialogContextData = {
 
 export const ImportMacTagDialogContext =
   createContext<ImportMacTagDialogContextData>({
-    openImportMacTagDialog: undefined,
-    closeImportMacTagDialog: undefined,
+    openImportMacTagDialog: () => {
+      throw new Error(
+        'openImportMacTagDialog must be used within a ImportMacTagDialogContextProvider',
+      );
+    },
+    closeImportMacTagDialog: () => {
+      throw new Error(
+        'closeImportMacTagDialog must be used within a ImportMacTagDialogContextProvider',
+      );
+    },
   });
 
 export type ImportMacTagDialogContextProviderProps = {

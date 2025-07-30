@@ -125,11 +125,11 @@ Do you want to continue?`)
         data-tid="ImportMacTagDialogTitle"
         id="draggable-dialog-title"
       >
-        {t('ImportMacTags')}
+        {t('core:ImportMacTags')}
         <DialogCloseButton testId="closeImportMacTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        <div style={{ margin: 20 }}>{t('importMacTagsHelp')}</div>
+        <div style={{ margin: 20 }}>{t('core:importMacTagsHelp')}</div>
         <FormControlLabel
           labelPlacement="start"
           control={

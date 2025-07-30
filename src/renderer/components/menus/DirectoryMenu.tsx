@@ -245,57 +245,6 @@ function DirectoryMenu(props: Props) {
   function importMacTags() {
     openImportMacTagDialog(directoryPath);
   }
-  /*function importMacTags() {
-    if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
-      if (
-        !confirm(`Experimental feature\n
-Depending on how many tags you have in your current directory, the tag extraction process may take a long time in which the application's user interface may appear as blocked.\n
-Do you want to continue?`)
-      ) {
-        return false;
-      }
-      openProgressDialog('importingMacTags');
-
-      const entryCallback = (entry) => {
-        readMacOSTags(entry.path)
-          .then((tags) => {
-            if (tags.length > 0) {
-              addTags([entry], tags);
-            }
-            return tags;
-          })
-          .catch((err) => {
-            console.log('Error creating tags: ' + err);
-          });
-      };
-      Pro.MacTagsImport.importTags(
-        directoryPath,
-        currentLocation.listDirectoryPromise,
-        entryCallback,
-      )
-        .then(() => {
-          closeProgressDialog();
-          console.log('Import tags succeeded ' + directoryPath);
-          showNotification(
-            'Tags from ' + directoryPath + ' are imported successfully.',
-            'default',
-            true,
-          );
-          return true;
-        })
-        .catch((err) => {
-          console.log('Error importing tags: ' + directoryPath, err);
-          closeProgressDialog();
-        });
-    } else {
-      showNotification(
-        t('core:thisFunctionalityIsAvailableInPro'),
-        'default',
-        true,
-      );
-      return true;
-    }
-  }*/
 
   function onFail(message) {
     console.log('Camera Failed: ' + message);
