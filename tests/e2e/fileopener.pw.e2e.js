@@ -480,9 +480,9 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0828 - Toggle file revisions [web,minio,electron]', async () => {
-    const fileName = 'sample.txt';
+    const fileName = 'sample.html';
     await openFile(fileName);
-    await createRevision();
+    await createRevision('revision content', 'div[class="note-editing-area"]');
     const revision = await getRevision(0);
     expect(revision).not.toBeUndefined();
   });
@@ -506,27 +506,40 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0830 - Create, open and delete revision [web,minio,electron]', async () => {
     //create revision
-    const fileName = 'sample.txt';
+    const fileName = 'sample.md';
     await openFile(fileName);
     const fLocator = await frameLocator('iframe[allowfullscreen]');
     const initContent = await fLocator.locator('body').innerText();
 
     const revisionContent = 'file revision';
-    await createRevision(revisionContent);
+    await createRevision(
+      revisionContent,
+      '.milkdown div[contenteditable=true]',
+    );
 
     const revision = await getRevision(0);
     expect(revision).not.toBeUndefined();
 
-    // open revision
+    // open revision preview
     await clickOn(
       '[data-tid="' + revision.id + '"] [data-tid="viewRevisionTID"]',
     );
 
-    const pfLocator = await frameLocator(
+    await expectFileContain(
+      initContent,
+      15000,
       '[data-tid="filePreviewTID"] iframe[allowfullscreen]',
     );
-    const previewContent = await pfLocator.locator('body').innerText();
+    await clickOn('[data-tid="closeFilePreviewTID"]');
 
-    expect(previewContent).toBe(initContent);
+    //delete revision
+    await clickOn(
+      '[data-tid="' + revision.id + '"] [data-tid="deleteRevisionTID"]',
+    );
+    await expectElementExist(
+      'table[data-tid=tableRevisionsTID] tbody tr',
+      false,
+      8000,
+    );
   });
 });

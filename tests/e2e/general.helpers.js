@@ -887,9 +887,12 @@ export async function writeTextInIframeInput(
   }
 }
 
-export async function createRevision(newFileContent = 'txt') {
+export async function createRevision(
+  newFileContent = 'txt',
+  editorSelector = '#monaco_editor',
+) {
   await clickOn('[data-tid=fileContainerEditFile]');
-  await writeTextInIframeInput(newFileContent);
+  await writeTextInIframeInput(newFileContent, editorSelector);
   await clickOn('[data-tid=fileContainerSaveFile]');
   await clickOn('[data-tid=cancelEditingTID]');
 
@@ -960,11 +963,12 @@ export async function expectS3FileContain(
 export async function expectFileContain(
   txtToContain = 'etete&5435',
   timeout = 10000,
+  iframeLocator = 'iframe[allowfullscreen]',
 ) {
   await expect
     .poll(
       async () => {
-        const fLocator = await frameLocator('iframe[allowfullscreen]');
+        const fLocator = await frameLocator(iframeLocator);
         const bodyTxt = await fLocator.locator('body').innerText();
         //console.log(bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
