@@ -73,6 +73,7 @@ test.beforeEach(
     }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    global.client.on('dialog', (dialog) => dialog.accept());
     // If its have opened file
     // await closeFileProperties();
   },
@@ -536,6 +537,26 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(
       '[data-tid="' + revision.id + '"] [data-tid="deleteRevisionTID"]',
     );
+    await expectElementExist(
+      'table[data-tid=tableRevisionsTID] tbody tr',
+      false,
+      8000,
+    );
+  });
+  test('TST0831 - Create 2 revisions and delete all revision [web,minio,electron]', async () => {
+    const fileName = 'sample.md';
+    await openFile(fileName);
+    await createRevision(
+      'file revision 1',
+      '.milkdown div[contenteditable=true]',
+    );
+    await createRevision(
+      'file revision 2',
+      '.milkdown div[contenteditable=true]',
+    );
+
+    await clickOn('[data-tid="deleteRevisionsTID"]');
+
     await expectElementExist(
       'table[data-tid=tableRevisionsTID] tbody tr',
       false,

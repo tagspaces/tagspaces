@@ -195,7 +195,7 @@ function Revisions() {
                   tooltip={t('core:deleteAllRevisions')}
                   aria-label="delete all revisions"
                   onClick={() =>
-                    confirm(
+                    window.confirm(
                       'The all revisions will be deleted. Do you want to continue?',
                     ) && deleteRevisions()
                   }

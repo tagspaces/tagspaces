@@ -896,8 +896,10 @@ export async function createRevision(
   await clickOn('[data-tid=fileContainerSaveFile]');
   await clickOn('[data-tid=cancelEditingTID]');
 
-  //Toggle Revisions
-  await clickOn('[data-tid=revisionsTabTID]');
+  if (await isDisplayed('[data-tid=viewRevisionTID]', false, 3000)) {
+    //Toggle Revisions
+    await clickOn('[data-tid=revisionsTabTID]');
+  }
   //await clickOn('[data-tid=revisionsTID]');
   await expectElementExist('[data-tid=viewRevisionTID]');
 }
