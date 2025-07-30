@@ -32,7 +32,6 @@ import {
   createNewInstance,
   getRelativeEntryPath,
   openDirectoryMessage,
-  readMacOSTags,
 } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import TsMenuList from '-/components/TsMenuList';
@@ -59,6 +58,7 @@ import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hook
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { useImportMacTagDialogContext } from '-/components/dialogs/hooks/useImportMacTagDialogContext';
 
 interface Props {
   open: boolean;
@@ -106,6 +106,7 @@ function DirectoryMenu(props: Props) {
   const { setReflectActions } = useEditedEntryContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openImportMacTagDialog } = useImportMacTagDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
 
@@ -242,6 +243,9 @@ function DirectoryMenu(props: Props) {
   }
 
   function importMacTags() {
+    openImportMacTagDialog(directoryPath);
+  }
+  /*function importMacTags() {
     if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
       if (
         !confirm(`Experimental feature\n
@@ -291,7 +295,7 @@ Do you want to continue?`)
       );
       return true;
     }
-  }
+  }*/
 
   function onFail(message) {
     console.log('Camera Failed: ' + message);

@@ -37,6 +37,7 @@ import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/Resol
 import { DownloadUrlContextProvider } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
 import { AiGenerationDialogContextProvider } from '-/components/dialogs/hooks/AiGenerationDialogContextProvider';
 import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
+import { ImportMacTagDialogContextProvider } from '-/components/dialogs/hooks/ImportMacTagDialogContextProvider';
 
 export type DialogsRootProps = {
   children: React.ReactNode;
@@ -63,9 +64,11 @@ function DialogsRoot({ children }: DialogsRootProps) {
                                     <SettingsDialogContextProvider>
                                       <ResolveConflictContextProvider>
                                         <DownloadUrlContextProvider>
-                                          <MenuContextProvider>
-                                            {children}
-                                          </MenuContextProvider>
+                                          <ImportMacTagDialogContextProvider>
+                                            <MenuContextProvider>
+                                              {children}
+                                            </MenuContextProvider>
+                                          </ImportMacTagDialogContextProvider>
                                         </DownloadUrlContextProvider>
                                       </ResolveConflictContextProvider>
                                     </SettingsDialogContextProvider>
