@@ -480,7 +480,7 @@ test.describe('TST08 - File folder properties', () => {
     );
   });
 
-  test('TST0828 - Toggle file revisions [web,minio,electron]', async () => {
+  test('TST0828 - Toggle file revisions [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.html';
     await openFile(fileName);
     await createRevision('revision content', 'div[class="note-editing-area"]');
@@ -488,7 +488,7 @@ test.describe('TST08 - File folder properties', () => {
     expect(revision).not.toBeUndefined();
   });
 
-  test('TST0829 - Create and restore revision [web,minio,electron]', async () => {
+  test('TST0829 - Create and restore revision [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     const fLocator = await frameLocator('iframe[allowfullscreen]');
@@ -505,7 +505,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(initContent, 15000);
   });
 
-  test('TST0830 - Create, open and delete revision [web,minio,electron]', async () => {
+  test('TST0830 - Create, open and delete revision [web,minio,electron,_pro]', async () => {
     //create revision
     const fileName = 'sample.md';
     await openFile(fileName);
@@ -543,7 +543,7 @@ test.describe('TST08 - File folder properties', () => {
       8000,
     );
   });
-  test('TST0831 - Create 2 revisions and delete all revision [web,minio,electron]', async () => {
+  test('TST0831 - Create 2 revisions and delete all revision [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.md';
     await openFile(fileName);
     await createRevision(
