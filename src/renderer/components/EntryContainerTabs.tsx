@@ -16,44 +16,25 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import LoadingLazy from '-/components/LoadingLazy';
 import TsTabPanel from '-/components/TsTabPanel';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDesktopMode,
-  isRevisionsEnabled,
 } from '-/reducers/settings';
-import {
-  Box,
-  ButtonGroup,
-  Switch,
-  Tab,
-  Tabs,
-  TabsProps,
-  Tooltip,
-} from '@mui/material';
+import { Box, Tab, Tabs, TabsProps } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { CancelIcon, CloseEditIcon, SaveIcon } from './CommonIcons';
-import EditFileButton from './EditFileButton';
-import TsButton from './TsButton';
+import EntryContainerButtons from '-/components/EntryContainerButtons';
 
-interface StyledTabsProps {
+/*interface StyledTabsProps {
   children?: React.ReactNode;
   value: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
@@ -63,7 +44,7 @@ interface StyledTabProps {
   tinyMode: any;
   icon: any;
   onClick: (event: React.SyntheticEvent) => void;
-}
+}*/
 const TabContent1 = React.lazy(
   () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
 );
@@ -96,29 +77,16 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     isSavingInProgress,
     savingFile,
   } = props;
-  const { t } = useTranslation();
   const { initHistory, checkOllamaModels } = useChatContext();
   const { getTabsArray } = useEntryPropsTabsContext();
   const theme = useTheme();
-  //const devMode: boolean = useSelector(isDevMode);
   const selectedTab: (typeof TabNames)[keyof typeof TabNames] =
     useSelector(getEntryContainerTab);
   const tileServer = useSelector(getMapTileServer);
   const tabsArray = useRef<TabItem[]>([]);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  //const isTinyMode = useMediaQuery(theme.breakpoints.down('sm'));
-  const desktopMode = useSelector(isDesktopMode);
-  const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
-    useFilePropertiesContext();
-  const { setAutoSave } = useIOActionsContext();
-  const { isEditable } = useEntryPropsTabsContext();
-  const { showNotification } = useNotificationContext();
-  const revisionsEnabled = useSelector(isRevisionsEnabled);
-  const { findLocation } = useCurrentLocationContext();
-  const { openedEntry, fileChanged, setFileChanged } = useOpenedEntryContext();
-
-  const cLocation = findLocation(openedEntry.locationID);
+  const { openedEntry } = useOpenedEntryContext();
 
   useEffect(() => {
     getTabsArray(openedEntry).then((tabs) => {
@@ -206,124 +174,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     return null;
   }
 
-  const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const autoSave = event.target.checked;
-    if (Pro) {
-      setAutoSave(openedEntry, autoSave, openedEntry.locationID);
-    } else {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-    }
-  };
-
-  const autoSave = isEditable(openedEntry) && revisionsEnabled && (
-    <Tooltip
-      title={
-        t('core:autosave') +
-        (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
-      }
-    >
-      <Switch
-        data-tid="autoSaveTID"
-        checked={openedEntry.meta && openedEntry.meta.autoSave}
-        onChange={toggleAutoSave}
-        // size={desktopMode ? 'small' : 'medium'}
-        size="small"
-        name="autoSave"
-      />
-    </Tooltip>
-  );
-
-  let closeCancelIcon;
-  if (desktopMode) {
-    closeCancelIcon = fileChanged ? <CancelIcon /> : <CloseEditIcon />;
-  }
-
-  const editingSupported: boolean =
-    cLocation &&
-    !cLocation.isReadOnly &&
-    openedEntry &&
-    openedEntry.editingExtensionId !== undefined &&
-    openedEntry.editingExtensionId.length > 3;
-
-  const startSavingFile = () => {
-    if (isEditMode) {
-      savingFile();
-    } else {
-      saveDescription();
-    }
-  };
-
-  let editFile = null;
-  if (editingSupported) {
-    if (isEditMode) {
-      editFile = (
-        <ButtonGroup>
-          <TsButton
-            tooltip={t('core:cancelEditing')}
-            data-tid="cancelEditingTID"
-            onClick={() => {
-              setEditMode(false);
-              setFileChanged(false);
-            }}
-            style={{
-              borderRadius: 'unset',
-              borderTopLeftRadius: AppConfig.defaultCSSRadius,
-              borderBottomLeftRadius: AppConfig.defaultCSSRadius,
-              borderTopRightRadius: fileChanged
-                ? 0
-                : AppConfig.defaultCSSRadius,
-              borderBottomRightRadius: fileChanged
-                ? 0
-                : AppConfig.defaultCSSRadius,
-            }}
-            aria-label={t('core:cancelEditing')}
-            startIcon={closeCancelIcon}
-          >
-            <Box
-              style={{
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                maxWidth: 100,
-              }}
-            >
-              {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
-            </Box>
-          </TsButton>
-
-          {fileChanged && (
-            <Tooltip
-              title={
-                t('core:saveFile') +
-                ' (' +
-                (AppConfig.isMacLike ? '⌘' : 'CTRL') +
-                ' + S)'
-              }
-            >
-              <TsButton
-                disabled={false}
-                onClick={startSavingFile}
-                aria-label={t('core:saveFile')}
-                data-tid="fileContainerSaveFile"
-                startIcon={desktopMode && <SaveIcon />}
-                loading={isSavingInProgress}
-                style={{
-                  borderRadius: 'unset',
-                  borderTopRightRadius: AppConfig.defaultCSSRadius,
-                  borderBottomRightRadius: AppConfig.defaultCSSRadius,
-                }}
-              >
-                {t('core:save')}
-              </TsButton>
-            </Tooltip>
-          )}
-        </ButtonGroup>
-      );
-    } else {
-      editFile = <EditFileButton />;
-    }
-  }
-
   return (
     <div
       style={{
@@ -376,18 +226,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             />
           ))}
         </StyledTabs>
-        <Box
-          style={{
-            marginLeft: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            marginRight: 10,
-            alignItems: 'anchor-center',
-          }}
-        >
-          {editFile}
-          {autoSave}
-        </Box>
+        <EntryContainerButtons
+          isSavingInProgress={isSavingInProgress}
+          savingFile={savingFile}
+        />
       </Box>
       {tabsArray.current.map((tab, index) => (
         <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
