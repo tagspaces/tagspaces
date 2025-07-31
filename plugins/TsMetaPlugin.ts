@@ -4,7 +4,7 @@ import webpackPaths from '../.erb/configs/webpack.paths';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import chalk from 'chalk';
-import { spawn } from 'child_process';
+import { execFile, spawn } from 'child_process';
 
 export class TsMetaPlugin {
   apply(compiler: webpack.Compiler) {
@@ -29,32 +29,33 @@ export class TsMetaPlugin {
           ),
         );
 
-        // Spawn "npm run third-party" asynchronously
-        const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-        const args = ['run', 'third-party'];
+        const root = path.resolve(webpackPaths.rootPath);
+        const entryPoint = path.join(
+          root,
+          'node_modules',
+          'generate-license-file',
+          'bin',
+          'generate-license-file',
+        );
+
+        if (!fs.existsSync(entryPoint)) {
+          throw new Error(
+            `Cannot find generate-license-file script at ${entryPoint}`,
+          );
+        }
 
         await new Promise<void>((resolve, reject) => {
-          const child = spawn(cmd, args, {
-            cwd: webpackPaths.rootPath,
-            stdio: 'inherit', // pipe stdout/stderr to parent
+          // On Windows, shell=false is fine because we're calling Node directly.
+          const child = spawn(process.execPath, [entryPoint], {
+            cwd: root,
+            stdio: 'inherit',
+            shell: false,
           });
 
-          child.on('error', (err) => {
-            console.error('Failed to start "third-party" script:', err);
-            reject(err);
-          });
-
+          child.on('error', reject);
           child.on('exit', (code, signal) => {
-            if (signal) {
-              return reject(
-                new Error(`"third-party" was terminated by signal ${signal}`),
-              );
-            }
-            if (code !== 0) {
-              return reject(
-                new Error(`"third-party" exited with code ${code}`),
-              );
-            }
+            if (signal) return reject(new Error(`killed by signal ${signal}`));
+            if (code !== 0) return reject(new Error(`exit code ${code}`));
             resolve();
           });
         });
@@ -65,40 +66,20 @@ export class TsMetaPlugin {
      * Warn version.json is missing
      */
     async function checkVersionJson() {
-      //const version = path.resolve(webpackPaths.srcRendererPath, 'version.json');
       const cwd = path.resolve(webpackPaths.rootPath);
+      const script = path.join(cwd, 'scripts', 'versionmeta.js');
 
       // Spawn "npm run version-meta" asynchronously
       await new Promise<void>((resolve, reject) => {
-        // On Windows, use "npm.cmd"
-        const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-        const args = ['run', 'version-meta'];
-
-        const child = spawn(cmd, args, {
-          cwd,
-          stdio: 'inherit', // pipe stdout/stderr through to your console
-        });
-
-        child.on('error', (err) => {
-          console.error('Failed to start version-meta script:', err);
-          reject(err);
-        });
-
-        child.on('exit', (code, signal) => {
-          if (signal) {
-            const err = new Error(
-              `version-meta was killed by signal: ${signal}`,
-            );
-            console.error(err);
-            return reject(err);
-          }
-          if (code !== 0) {
-            const err = new Error(`version-meta exited with code ${code}`);
-            console.error(err);
-            return reject(err);
-          }
-          resolve();
-        });
+        execFile(
+          'node',
+          [script],
+          { cwd, stdio: 'inherit' },
+          (err, _stdout, _stderr) => {
+            if (err) return reject(err);
+            resolve();
+          },
+        );
       });
     }
 
@@ -127,20 +108,19 @@ export class TsMetaPlugin {
         });
       }
 
-      // spawn the “npm run generate-jwt” script without blocking
-      await new Promise((resolve, reject) => {
-        // On Windows “npm.cmd” is the executable
-        const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-        const child = spawn(cmd, ['run', 'generate-jwt'], {
-          cwd: webpackPaths.rootPath,
-          stdio: 'inherit',
-        });
+      const cwd = path.resolve(webpackPaths.rootPath);
+      const script = path.join(cwd, 'scripts', 'jwt_generate.js');
 
-        child.on('error', reject);
-        child.on('exit', (code) => {
-          if (code === 0) resolve();
-          else reject(new Error(`generate-jwt exited with code ${code}`));
-        });
+      await new Promise((resolve, reject) => {
+        execFile(
+          'node',
+          [script],
+          { cwd, stdio: 'inherit' },
+          (err, _stdout, _stderr) => {
+            if (err) return reject(err);
+            resolve();
+          },
+        );
       });
     }
     // beforeRun fires once, before compiling begins
