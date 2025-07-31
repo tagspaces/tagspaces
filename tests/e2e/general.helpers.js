@@ -984,6 +984,28 @@ export async function expectFileContain(
     .toBe(true);
 }
 
+export async function expectFileSizeGt(
+  greater = 2,
+  timeout = 10000,
+  iframeLocator = 'iframe[allowfullscreen]',
+) {
+  await expect
+    .poll(
+      async () => {
+        const fLocator = await frameLocator(iframeLocator);
+        const bodyTxt = await fLocator.locator('body').innerText();
+        //console.log(bodyTxt);
+        return bodyTxt !== undefined && bodyTxt.length > greater;
+      },
+      {
+        message: 'make sure bodyTxt size > ' + greater, // custom error message
+        // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
+        timeout: timeout,
+      },
+    )
+    .toBe(true);
+}
+
 /**
  * @deprecated
  * @param tid

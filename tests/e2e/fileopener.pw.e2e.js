@@ -14,6 +14,7 @@ import {
   dnd,
   expectElementExist,
   expectFileContain,
+  expectFileSizeGt,
   expectMetaFilesExist,
   frameLocator,
   getGridFileName,
@@ -491,6 +492,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0829 - Create and restore revision [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
+    await expectFileSizeGt(2);
     const fLocator = await frameLocator('iframe[allowfullscreen]');
     const initContent = await fLocator.locator('body').innerText();
 
@@ -509,6 +511,7 @@ test.describe('TST08 - File folder properties', () => {
     //create revision
     const fileName = 'sample.md';
     await openFile(fileName);
+    await expectFileSizeGt(2);
     const fLocator = await frameLocator('iframe[allowfullscreen]');
     const initContent = await fLocator.locator('body').innerText();
 
