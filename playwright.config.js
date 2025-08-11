@@ -4,10 +4,25 @@ import pwConfig from './playwright.config.common';
 const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 //const isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 
-function projectTagGrep(name) {
-  // \b ensures we match whole words (so “web” doesn’t match “webhook”)
-  return new RegExp(`\\[(?=[^\\]]*\\b${name}\\b)[^\\]]*\\]`);
-  //return new RegExp(`\\[.*\\b${name}\\b.*\\]`);
+// support either 'electron' or ['electron','!_pro'] form
+function projectTagGrep(names) {
+  const arr = Array.isArray(names) ? names : [names];
+
+  // split include / exclude (exclude tokens start with '!')
+  const include = arr.filter((s) => !s.startsWith('!'));
+  const exclude = arr.filter((s) => s.startsWith('!')).map((s) => s.slice(1));
+
+  const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  const negLookaheads = exclude
+    .map((n) => `(?![^\\]]*\\b${escape(n)}\\b)`)
+    .join('');
+  const posLookaheads = include
+    .map((n) => `(?=[^\\]]*\\b${escape(n)}\\b)`)
+    .join('');
+
+  // If there are no include tokens, this will match any bracketed tag that doesn't contain excluded tokens.
+  return new RegExp(`\\[${negLookaheads}${posLookaheads}[^\\]]*\\]`);
   //return new RegExp('(?:TST4901|TST4902|TST4903|TST4909)'); // return new RegExp(`TST01.*`);
 }
 
@@ -16,9 +31,8 @@ export default defineConfig({
   projects: [
     {
       name: 'electron-light',
-      grep: new RegExp(
-        '\\[(?![^\\]]*\\b_pro\\b)(?=[^\\]]*\\belectron\\b)[^\\]]*\\]',
-      ),
+      // require 'electron' AND forbid '_pro'
+      grep: projectTagGrep(['electron', '!_pro']),
       use: {
         isElectron: true,
         isWin,
@@ -34,7 +48,7 @@ export default defineConfig({
     },
     {
       name: 'electron-s3',
-      grep: projectTagGrep('minio'),
+      grep: projectTagGrep(['electron', 's3']),
       use: {
         isElectron: true,
         isS3: true,
@@ -43,7 +57,7 @@ export default defineConfig({
     },
     {
       name: 'electron-minio',
-      grep: projectTagGrep('minio'),
+      grep: projectTagGrep(['electron', 'minio']),
       use: {
         isElectron: true,
         isMinio: true,
@@ -52,7 +66,7 @@ export default defineConfig({
     },
     {
       name: 'web-s3',
-      grep: projectTagGrep('web'),
+      grep: projectTagGrep(['web', 's3']),
       use: {
         isWeb: true,
         isS3: true,
@@ -62,7 +76,7 @@ export default defineConfig({
     },
     {
       name: 'web-minio',
-      grep: projectTagGrep('web'),
+      grep: projectTagGrep(['web', 'minio']),
       use: {
         isWeb: true,
         isMinio: true,
