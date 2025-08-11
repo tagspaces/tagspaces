@@ -4056,7 +4056,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.169
+ - @tagspacespro/tagspacespro@5.0.177
 
 This package contains the following license:
 
@@ -8443,11 +8443,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - nwsapi@2.2.20
+ - nwsapi@2.2.21
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright (c) 2007-2025 Diego Perini (http://www.iport.it/)
 
@@ -8700,11 +8701,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - form-data@4.0.3
+ - form-data@4.0.4
 
-This package contains the following license:
+These packages each contain the following license:
 
 Copyright (c) 2012 Felix Geisendörfer (felix@debuggable.com) and contributors
 
@@ -11751,7 +11753,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 The following npm package may be included in this product:
 
- - pdf2json@3.1.6
+ - pdf2json@3.2.0
 
 This package contains the following license:
 
@@ -13303,8 +13305,10 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
+ - @mui/x-data-grid@8.9.1
  - @mui/x-date-pickers@8.6.0
  - @mui/x-internals@8.6.0
+ - @mui/x-internals@8.8.0
 
 These packages each contain the following license:
 
@@ -15529,8 +15533,8 @@ The following npm packages may be included in this product:
  - @mui/private-theming@7.1.1
  - @mui/styled-engine@7.1.1
  - @mui/system@7.1.1
- - @mui/types@7.4.3
- - @mui/utils@7.1.1
+ - @mui/types@7.4.4
+ - @mui/utils@7.2.0
 
 These packages each contain the following license:
 
@@ -18100,15 +18104,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.5.92
- - @tagspaces/tagspaces-common-cordova@4.5.92
- - @tagspaces/tagspaces-common-node@4.5.92
- - @tagspaces/tagspaces-common@4.5.92
- - @tagspaces/tagspaces-indexer@4.5.92
+ - @tagspaces/tagspaces-common-aws3@4.5.95
+ - @tagspaces/tagspaces-common-cordova@4.5.95
+ - @tagspaces/tagspaces-common-node@4.5.95
+ - @tagspaces/tagspaces-common@4.5.95
+ - @tagspaces/tagspaces-indexer@4.5.95
  - @tagspaces/tagspaces-pdf-extraction@4.5.53
  - @tagspaces/tagspaces-thumbgen-image@4.5.60
- - @tagspaces/tagspaces-workers@4.5.92
- - @tagspaces/tagspaces-ws@4.5.92
+ - @tagspaces/tagspaces-workers@4.5.95
+ - @tagspaces/tagspaces-ws@4.5.95
 
 These packages each contain the following license:
 
