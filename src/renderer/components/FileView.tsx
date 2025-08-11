@@ -30,7 +30,7 @@ import {
   MutableRefObject,
   useCallback,
   useEffect,
-  useReducer,
+  useMemo,
   useRef,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,7 @@ function FileView(props: Props) {
   const eventID = useRef<string>(getUuid());
   // const [thumb, setThumb] = useState<string | null>(null);
   // const [loadingThumb, setLoadingThumb] = useState(true);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  // const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -89,19 +89,6 @@ function FileView(props: Props) {
       fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
     };
   }, []);
-
-  /*useEffect(() => {
-    setLoadingThumb(true);
-    const loc = findLocation(openedEntry.locationID);
-    loc
-      ?.getThumbPath(openedEntry.meta.thumbPath, openedEntry.meta.lastUpdated)
-      .then((t) => {
-        setThumb(t);
-      })
-      .finally(() => {
-        setLoadingThumb(false);
-      });
-  }, [openedEntry]);*/
 
   const handleFullscreenChange = useCallback((e) => {
     let change = '';
@@ -193,8 +180,7 @@ function FileView(props: Props) {
       console.debug('function getContent not exist for file:', e);
     }
   };*/
-
-  function getFileOpenerURL(): string {
+  const fileOpenerURL: string = useMemo(() => {
     if (openedEntry && openedEntry.path) {
       // if (fileTitle.length > maxCharactersTitleLength) {
       //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
@@ -262,7 +248,27 @@ function FileView(props: Props) {
       }
     }
     return 'about:blank';
-  }
+  }, [
+    openedEntry?.lmdt,
+    openedEntry?.isEncrypted,
+    openedEntry?.viewingExtensionPath,
+    openedEntry?.editingExtensionPath,
+    isEditMode,
+    theme.palette,
+    searchQuery?.textQuery,
+    isSearchMode,
+    eventID.current,
+  ]);
+
+  /*  useEffect(() => {
+    const el = fileViewer.current;
+    if (!el) return;
+    // note: el.src may return fully qualified URL — use === comparison will work if we set it before,
+    // otherwise you can compare el.getAttribute('src') to be stricter.
+    if (el.getAttribute('src') !== fileOpenerURL) {
+      el.setAttribute('src', fileOpenerURL);
+    }
+  }, [fileOpenerURL]); */
 
   return (
     <div
@@ -303,7 +309,7 @@ function FileView(props: Props) {
             border: 0,
           }}
           allow="clipboard-write *"
-          src={getFileOpenerURL() /*fileOpenerURL.current*/}
+          src={fileOpenerURL}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
           id={'FileViewer' + eventID.current}

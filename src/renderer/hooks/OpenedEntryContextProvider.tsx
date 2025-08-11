@@ -603,21 +603,17 @@ export const OpenedEntryContextProvider = ({
     /**
      * check for editMode in order to show save changes dialog (shouldReload: false)
      */
-    if (currentEntry.current) {
-      //openedEntries.length > 0) {
-      const openFile = currentEntry.current; //openedEntries[0];
-      if (fileChanged.current) {
-        entryForOpening = {
-          ...openFile,
-        }; // false };
-        addToEntryContainer(entryForOpening);
-        showNotification(
-          `You can't open another file, because '${openFile.path}' is opened for editing`,
-          'default',
-          true,
-        );
-        return Promise.resolve(false);
-      }
+    if (fileChanged.current && currentEntry.current) {
+      entryForOpening = {
+        ...currentEntry.current,
+      }; // false };
+      addToEntryContainer(entryForOpening);
+      showNotification(
+        `You can't open another file, because '${currentEntry.current.path}' is opened for editing`,
+        'default',
+        true,
+      );
+      return Promise.resolve(false);
     }
 
     entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);

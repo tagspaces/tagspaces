@@ -158,7 +158,7 @@ function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   //const desktopMode = useSelector(isDesktopMode);
-  const { openedEntry, sharingLink, getOpenedDirProps } =
+  const { openedEntry, sharingLink, getOpenedDirProps, fileChanged } =
     useOpenedEntryContext();
   const { openMoveCopyFilesDialog } = useMenuContext();
   const { isEditMode } = useFilePropertiesContext();
@@ -415,6 +415,14 @@ function EntryProperties(props: Props) {
   };
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
+    if (openedEntry && fileChanged) {
+      showNotification(
+        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+        'default',
+        true,
+      );
+      return;
+    }
     if (action === 'remove-value') {
       if (!value) {
         // no tags left in the select element

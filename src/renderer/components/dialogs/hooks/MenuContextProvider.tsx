@@ -29,6 +29,8 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type MenuContextData = {
   openMenu: (
@@ -112,6 +114,8 @@ const AddRemoveTagsDialog = React.lazy(
 export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const { findLocation } = useCurrentLocationContext();
   const { selectedEntries } = useSelectedEntriesContext();
+  const { openedEntry, fileChanged } = useOpenedEntryContext();
+  const { showNotification } = useNotificationContext();
   const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
@@ -228,6 +232,20 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   };
 
   const openAddRemoveTagsDialog = (entries?: TS.FileSystemEntry[]) => {
+    const ent = entries || selectedEntries;
+    if (
+      openedEntry &&
+      fileChanged &&
+      ent &&
+      ent.some((e) => e.path === openedEntry.path)
+    ) {
+      showNotification(
+        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+        'default',
+        true,
+      );
+      return;
+    }
     openAddRemoveTags.current = true;
     currentEntries.current = entries;
     forceUpdate();
@@ -309,7 +327,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       openShareFilesDialog,
       closeShareFilesDialog,
     };
-  }, []);
+  }, [selectedEntries, openedEntry, fileChanged]);
 
   return (
     <MenuContext.Provider value={context}>
