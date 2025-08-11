@@ -9,12 +9,10 @@ import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 import { dependencies } from '../../package.json';
 import checkNodeEnv from '../scripts/check-node-env';
-import { generateJWT } from '../../src/main/util';
 
 checkNodeEnv('development');
 
 const dist = webpackPaths.dllPath;
-generateJWT();
 
 const configuration: webpack.Configuration = {
   context: webpackPaths.rootPath,

@@ -9,10 +9,7 @@ import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import path = require('path');
-import { checkThirdPartyTxt, checkVersionJson } from '../../src/main/util';
-
-checkVersionJson();
-checkThirdPartyTxt();
+import { TsMetaPlugin } from '../../plugins/TsMetaPlugin';
 
 const configuration: webpack.Configuration = {
   // packages that is not included in the bundle
@@ -94,6 +91,7 @@ const configuration: webpack.Configuration = {
       ),
     }),
     //new NodePolyfillPlugin(),
+    new TsMetaPlugin(),
   ],
 };
 
