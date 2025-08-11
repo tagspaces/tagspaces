@@ -257,7 +257,6 @@ function FileView(props: Props) {
     theme.palette,
     searchQuery?.textQuery,
     isSearchMode,
-    eventID.current,
   ]);
 
   /*  useEffect(() => {
