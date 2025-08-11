@@ -32,7 +32,6 @@ import {
   createNewInstance,
   getRelativeEntryPath,
   openDirectoryMessage,
-  readMacOSTags,
 } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import TsMenuList from '-/components/TsMenuList';
@@ -59,6 +58,7 @@ import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hook
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { useImportMacTagDialogContext } from '-/components/dialogs/hooks/useImportMacTagDialogContext';
 
 interface Props {
   open: boolean;
@@ -106,6 +106,7 @@ function DirectoryMenu(props: Props) {
   const { setReflectActions } = useEditedEntryContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openImportMacTagDialog } = useImportMacTagDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
 
@@ -242,55 +243,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function importMacTags() {
-    if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
-      if (
-        !confirm(`Experimental feature\n
-Depending on how many tags you have in your current directory, the tag extraction process may take a long time in which the application's user interface may appear as blocked.\n
-Do you want to continue?`)
-      ) {
-        return false;
-      }
-      openProgressDialog('importingMacTags');
-
-      const entryCallback = (entry) => {
-        readMacOSTags(entry.path)
-          .then((tags) => {
-            if (tags.length > 0) {
-              addTags([entry], tags);
-            }
-            return tags;
-          })
-          .catch((err) => {
-            console.log('Error creating tags: ' + err);
-          });
-      };
-      Pro.MacTagsImport.importTags(
-        directoryPath,
-        currentLocation.listDirectoryPromise,
-        entryCallback,
-      )
-        .then(() => {
-          closeProgressDialog();
-          console.log('Import tags succeeded ' + directoryPath);
-          showNotification(
-            'Tags from ' + directoryPath + ' are imported successfully.',
-            'default',
-            true,
-          );
-          return true;
-        })
-        .catch((err) => {
-          console.log('Error importing tags: ' + directoryPath, err);
-          closeProgressDialog();
-        });
-    } else {
-      showNotification(
-        t('core:thisFunctionalityIsAvailableInPro'),
-        'default',
-        true,
-      );
-      return true;
-    }
+    openImportMacTagDialog(directoryPath);
   }
 
   function onFail(message) {

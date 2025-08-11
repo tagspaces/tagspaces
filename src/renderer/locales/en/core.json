@@ -546,6 +546,7 @@
   "stopAll": "Stop all",
   "fileExist": "File with the same name already exist",
   "importMacTags": "Import macOS tags",
+  "importMacTagsHelp": "Experimental feature! Depending on how many tags you have in your current directory, the tag extraction process may take a long time in which the application's user interface may appear as blocked.",
   "cantDownloadLocalFile": "You can't download local files",
   "perspectiveSettingsTitle": "Perspective Settings",
   "unlimited": "Unlimited",
@@ -974,6 +975,7 @@
   "confirmReindex": "Index not available",
   "confirmReindexContent": "Do you want to create it now?",
   "importingMacTags": "Importing MacOS tags...",
+  "importTagsRecursive": "Importing tags recursive",
   "noModelsLoaded": "Error: No AI-models are loaded, please check if the AI-service is running.",
   "-": "-"
 }

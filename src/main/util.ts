@@ -238,7 +238,12 @@ export async function readMacOSTags(filename) {
   return new Promise((resolve, reject) => {
     const args = ['-raw', '-name', 'kMDItemUserTags', filename];
     execFile('mdls', args, (error, stdout, stderr) => {
-      if (error) return reject(error);
+      if (error) {
+        if (error.code === 1 && !stderr) {
+          return resolve([]);
+        }
+        return reject(error);
+      }
       if (stderr) return reject(new Error(stderr));
 
       const text = stdout.trim();
