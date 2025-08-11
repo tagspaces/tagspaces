@@ -62,7 +62,7 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
+test.beforeEach(async ({ iss3, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
@@ -86,7 +86,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST49 - Perspective KanBan', () => {
-  test('TST4901 - Folder which is opened in kanban for the first time [web,minio,electron,_pro]', async ({
+  test('TST4901 - Folder which is opened in kanban for the first time [web,s3,electron,_pro]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -131,7 +131,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4902 - Show current folder [web,minio,electron,_pro]', async () => {
+  test('TST4902 - Show current folder [web,s3,electron,_pro]', async () => {
     if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
       await clickOn('[data-tid=hideFolderContentTID]');
     }
@@ -155,11 +155,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4903 - Create new columns(sub-folder) [web,minio,electron,_pro]', async () => {
+  test('TST4903 - Create new columns(sub-folder) [web,s3,electron,_pro]', async () => {
     await createColumn('testFolder');
   });
 
-  test('TST4904 - Rename column [web,minio,electron,_pro]', async () => {
+  test('TST4904 - Rename column [web,s3,electron,_pro]', async () => {
     const columnName = 'testFolderTmp';
     const newColumnName = 'testFolderRenamed';
     //create new folder
@@ -182,11 +182,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4905 - Create card in column [web,minio,electron,_pro]', async () => {
+  test('TST4905 - Create card in column [web,s3,electron,_pro]', async () => {
     await createMdCard('testCard');
   });
 
-  test('TST4906 - Rename card in column [web,minio,electron,_pro]', async () => {
+  test('TST4906 - Rename card in column [web,s3,electron,_pro]', async () => {
     const cardName = 'testCard1';
     const newCardName = 'testCard2';
     await createMdCard(cardName);
@@ -206,7 +206,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4907 - Add and show tag to column [web,minio,electron,_pro]', async () => {
+  test('TST4907 - Add and show tag to column [web,s3,electron,_pro]', async () => {
     const columnName = 'tagsColumn';
 
     await setPerspectiveSetting(
@@ -228,7 +228,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     });
   });
 
-  test('TST4908 - Add and show tag to board [web,minio,electron,_pro]', async () => {
+  test('TST4908 - Add and show tag to board [web,s3,electron,_pro]', async () => {
     if (await isDisplayed('[data-tid=hideFolderContentTID]')) {
       await clickOn('[data-tid=hideFolderContentTID]');
     }
@@ -249,7 +249,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     });
   });
 
-  test('TST4909 - move with copy/move file dialog [web,minio,electron,_pro]', async () => {
+  test('TST4909 - move with copy/move file dialog [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.bmp';
 
     await setPerspectiveSetting(
@@ -284,7 +284,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=openKanbanPerspective]');
   });
 
-  test('TST4910 - prev/next button [web,electron,_pro]', async () => {
+  test('TST4910 - prev/next button [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.3gp';
     const nextFileName = 'sample.avif';
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
@@ -311,7 +311,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4911 - Load folder color [web,minio,electron,_pro]', async () => {
+  test('TST4911 - Load folder color [web,s3,electron,_pro]', async () => {
     const columnName = 'testColorColumn';
 
     //create new folder
@@ -353,7 +353,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     //const bgnRemovedScreenshot = await getElementScreenshot(targetSelector);
     //expect(initScreenshot).toBe(withBgnColorScreenshot);
   });
-  test('TST4912 - Move card to top / bottom [web,minio,electron,_pro]', async () => {
+  test('TST4912 - Move card to top / bottom [web,s3,electron,_pro]', async () => {
     const cardName1 = 'testCard1';
     const cardName2 = 'testCard2';
     const card1Id = await createMdCard(cardName1);
@@ -373,14 +373,14 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectFirstColumnElement(card1Id, 'empty_folder');
   });
 
-  test('TST4913 - Show column details [web,minio,electron,_pro]', async () => {
+  test('TST4913 - Show column details [web,s3,electron,_pro]', async () => {
     const columnName = 'empty_folder';
     await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
     await clickOn('[data-tid=showProperties]');
     await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
   });
 
-  test('TST4914 - Show current folder details [web,minio,electron,_pro]', async () => {
+  test('TST4914 - Show current folder details [web,s3,electron,_pro]', async () => {
     const columnName = 'empty_folder';
     await global.client.dblclick(
       '[data-tid=' + columnName + 'KanBanColumnTID]',
@@ -394,7 +394,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4915a - Load thumbnails for board [web,minio,electron,_pro]', async () => {
+  test('TST4915a - Load thumbnails for board [web,s3,electron,_pro]', async () => {
     //board thumbnail
     await setPerspectiveSetting(
       'kanban',
@@ -419,7 +419,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     expect(initThumbStyle).not.toBe(newStyle);
   });
 
-  test('TST4915b - Load thumbnails for column [web,minio,electron,_pro]', async () => {
+  test('TST4915b - Load thumbnails for column [web,s3,electron,_pro]', async () => {
     await setPerspectiveSetting(
       'kanban',
       '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
@@ -458,7 +458,7 @@ test.describe('TST49 - Perspective KanBan', () => {
   /**
    * todo web minio not work with thumbnails
    */
-  test('TST4915c - Load thumbnails for cards [web,electron,_pro]', async () => {
+  test('TST4915c - Load thumbnails for cards [web,s3,electron,_pro]', async () => {
     const columnName = 'empty_folder3';
     await createColumn(columnName);
     //card thumbnail
@@ -482,7 +482,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     expect(initScreenshot).not.toBe(changeThumbScreenshot);
   });
 
-  test('TST4916 - Move columns with dnd [web,minio,electron,_pro]', async () => {
+  test('TST4916 - Move columns with dnd [web,s3,electron,_pro]', async () => {
     const srcColumnName = 'column1';
     const midColumnName = 'column2';
     const destColumnName = 'column3';
@@ -511,7 +511,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     ]);
   });
 
-  test('TST4917 - Move column with buttons from the context menu [web,minio,electron,_pro]', async () => {
+  test('TST4917 - Move column with buttons from the context menu [web,s3,electron,_pro]', async () => {
     const col1Name = 'col1';
     const col2Name = 'col2';
 
@@ -531,7 +531,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     expect(movedColumns.slice(-2)).toEqual([col2Name, col1Name]);
   });
 
-  test('TST4918 - Open import Trello board dialog [web,minio,electron,_pro]', async () => {
+  test('TST4918 - Open import Trello board dialog [web,s3,electron,_pro]', async () => {
     await clickOn('[data-tid=importKanBanTID]');
     await expectElementExist('[data-tid=kanBanImportDialogTID]', true, 5000);
     await clickOn('[data-tid=closeImportDialogTID]');
