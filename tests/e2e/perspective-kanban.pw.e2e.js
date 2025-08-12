@@ -62,7 +62,7 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ iss3, isS3, testDataDir }) => {
+test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
   if (isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else if (isS3) {
