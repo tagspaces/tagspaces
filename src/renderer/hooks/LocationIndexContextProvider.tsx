@@ -54,6 +54,7 @@ type LocationIndexContextData = {
   indexLoadedOn: number;
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
+  getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
   cancelDirectoryIndexing: () => void;
   createLocationIndex: (location: CommonLocation) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
@@ -75,6 +76,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   indexLoadedOn: undefined,
   isIndexing: undefined,
   getIndex: undefined,
+  getLastIndex: undefined,
   cancelDirectoryIndexing: () => {},
   createLocationIndex: () => Promise.resolve(false),
   createLocationsIndexes: () => Promise.resolve(false),
@@ -207,8 +209,8 @@ export const LocationIndexContextProvider = ({
         location.uuid,
       );
       if (directoryIndex) {
-        // index is up to date
-        setIndex(directoryIndex, location);
+        return directoryIndex;
+        //setIndex(directoryIndex, location);
       } else {
         await createLocationIndex(location);
       }
@@ -923,6 +925,7 @@ export const LocationIndexContextProvider = ({
     searchAllLocations,
     setIndex,
     getIndex,
+    getLastIndex,
     reflectUpdateSidecarMeta,
     findLinks,
     checkIndexExist,
