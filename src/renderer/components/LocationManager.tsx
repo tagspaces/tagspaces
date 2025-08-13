@@ -17,7 +17,6 @@
  */
 
 import LocationView from '-/components/LocationView';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
@@ -28,7 +27,6 @@ import { TS } from '-/tagspaces.namespace';
 import { Box, List } from '@mui/material';
 import { useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 interface Props {
@@ -38,12 +36,9 @@ interface Props {
 }
 
 function LocationManager(props: Props) {
-  const { t } = useTranslation();
   const {
     findLocation,
     moveLocation,
-    deleteLocation,
-    selectedLocation,
     setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
@@ -51,8 +46,6 @@ function LocationManager(props: Props) {
 
   const locations: TS.Location[] = useSelector(getLocations);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
-    useState<boolean>(false);
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
     useState<boolean>(false);
   const [importFile, setImportFile] = useState<File>(undefined);
@@ -126,11 +119,7 @@ function LocationManager(props: Props) {
           openCreateEditLocationDialog();
         }}
       />
-      {locationDirectoryContextMenuAnchorEl && (
-        <LocationContextMenu
-          setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
-        />
-      )}
+      {locationDirectoryContextMenuAnchorEl && <LocationContextMenu />}
       <List
         data-tid="locationList"
         style={{
@@ -169,9 +158,6 @@ function LocationManager(props: Props) {
                             locationID: location.uuid,
                             children: [],
                           }}
-                          setDeleteLocationDialogOpened={
-                            setDeleteLocationDialogOpened
-                          }
                         />
                       </div>
                     )}
@@ -190,23 +176,6 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isDeleteLocationDialogOpened && (
-        <ConfirmDialog
-          open={isDeleteLocationDialogOpened}
-          onClose={() => setDeleteLocationDialogOpened(false)}
-          title={t('core:deleteLocationTitleAlert')}
-          content={t('core:deleteLocationContentAlert', {
-            locationName: selectedLocation ? selectedLocation.name : '',
-          })}
-          confirmCallback={(result) => {
-            if (result && selectedLocation) {
-              deleteLocation(selectedLocation.uuid);
-            }
-          }}
-          cancelDialogTID="cancelDeleteLocationDialog"
-          confirmDialogTID="confirmDeleteLocationDialog"
-        />
-      )}
       {ExportLocationsDialog && isExportLocationsDialogOpened && (
         <ExportLocationsDialog
           open={isExportLocationsDialogOpened}

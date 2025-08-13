@@ -22,7 +22,6 @@ import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import FileView from '-/components/FileView';
 import Tooltip from '-/components/Tooltip';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -46,7 +45,6 @@ import { useTheme } from '@mui/material/styles';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import React, {
   MutableRefObject,
-  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -75,7 +73,7 @@ function EntryContainer() {
   const { findLocation } = useCurrentLocationContext();
   const { saveFileOpen } = useResolveConflictContext();
 
-  const { showNotification } = useNotificationContext();
+  const { showNotification, openConfirmDialog } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const entryPropertiesHeight = useSelector(getEntryPropertiesHeight);
   const keyBindings = useSelector(getKeyBindingObject);
@@ -95,14 +93,6 @@ function EntryContainer() {
 
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const [
-    isSaveBeforeCloseConfirmDialogOpened,
-    setSaveBeforeCloseConfirmDialogOpened,
-  ] = useState<boolean>(false);
-  const [
-    isSaveBeforeReloadConfirmDialogOpened,
-    setSaveBeforeReloadConfirmDialogOpened,
-  ] = useState<boolean>(false);
   const isSavingInProgress = useRef<boolean>(false);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);
@@ -359,8 +349,20 @@ function EntryContainer() {
   const reloadDocument = () => {
     if (openedEntry) {
       if (isEditMode && fileChanged) {
-        // openedEntry.changed) {
-        setSaveBeforeReloadConfirmDialogOpened(true);
+        openConfirmDialog(
+          t('core:confirm'),
+          t('core:fileModified'),
+          (result) => {
+            if (result) {
+              startSavingFile();
+            } else {
+              setFileChanged(false);
+            }
+          },
+          'cancelSaveBeforeCloseDialog',
+          'confirmSaveBeforeCloseDialog',
+          'confirmDialogContent',
+        );
       } else {
         setEditMode(false);
         reloadOpenedFile();
@@ -374,7 +376,22 @@ function EntryContainer() {
       event.stopPropagation();
     }
     if (openedEntry && fileChanged && isEditMode) {
-      setSaveBeforeCloseConfirmDialogOpened(true);
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:saveFileBeforeClosingFile'),
+        (result) => {
+          if (result) {
+            startSavingFile();
+          } else {
+            closeFile();
+            isSavingInProgress.current = false;
+            setFileChanged(false);
+          }
+        },
+        'cancelSaveBeforeCloseDialog',
+        'confirmSaveBeforeCloseDialog',
+        'confirmDialogContent',
+      );
     } else {
       closeFile();
     }
@@ -591,51 +608,6 @@ function EntryContainer() {
           />
         )}
       </div>
-      {isSaveBeforeCloseConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isSaveBeforeCloseConfirmDialogOpened}
-          onClose={() => {
-            setSaveBeforeCloseConfirmDialogOpened(false);
-          }}
-          title={t('core:confirm')}
-          content={t('core:saveFileBeforeClosingFile')}
-          confirmCallback={(result) => {
-            if (result) {
-              startSavingFile();
-            } else {
-              closeFile();
-              setSaveBeforeCloseConfirmDialogOpened(false);
-              isSavingInProgress.current = false;
-              setFileChanged(false);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
-      {isSaveBeforeReloadConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isSaveBeforeReloadConfirmDialogOpened}
-          onClose={() => {
-            setSaveBeforeReloadConfirmDialogOpened(false);
-          }}
-          title={t('core:confirm')}
-          content="File was modified, do you want to save the changes?"
-          confirmCallback={(result) => {
-            if (result) {
-              setSaveBeforeReloadConfirmDialogOpened(false);
-              startSavingFile();
-            } else {
-              setSaveBeforeReloadConfirmDialogOpened(false);
-              setFileChanged(false);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
     </GlobalHotKeys>
   );
 }

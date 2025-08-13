@@ -42,18 +42,11 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
-interface Props {
-  //setEditLocationDialogOpened: (open: boolean) => void;
-  setDeleteLocationDialogOpened: (open: boolean) => void;
-  //closeLocationTree: () => void;
-}
+interface Props {}
 
 function LocationContextMenu(props: Props) {
-  const {
-    setDeleteLocationDialogOpened,
-    //closeLocationTree
-  } = props;
   const { t } = useTranslation();
 
   const {
@@ -66,7 +59,9 @@ function LocationContextMenu(props: Props) {
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
     getLocationPath,
+    deleteLocation,
   } = useCurrentLocationContext();
+  const { openConfirmDialog } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
   //const dispatch: AppDispatch = useDispatch();
@@ -120,7 +115,19 @@ function LocationContextMenu(props: Props) {
 
   const showDeleteLocationDialog = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    setDeleteLocationDialogOpened(true);
+    openConfirmDialog(
+      t('core:deleteLocationTitleAlert'),
+      t('core:deleteLocationContentAlert', {
+        locationName: selectedLocation ? selectedLocation.name : '',
+      }),
+      (result) => {
+        if (result && selectedLocation) {
+          deleteLocation(selectedLocation.uuid);
+        }
+      },
+      'cancelDeleteLocationDialog',
+      'confirmDeleteLocationDialog',
+    );
   };
 
   const showInFileManagerInt = () => {

@@ -25,7 +25,6 @@ import CustomDragLayer from '-/components/CustomDragLayer';
 import DragItemTypes from '-/components/DragItemTypes';
 import TargetFileBox from '-/components/TargetFileBox';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
-import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryExistDialogContext';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -40,7 +39,7 @@ import {
   folderOperationsEnabled,
 } from '-/perspectives/common/main-container';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
-import { getDesktopMode, getEntryContainerTab } from '-/reducers/settings';
+import { getEntryContainerTab } from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
@@ -77,7 +76,7 @@ function CellView(props: Props) {
     useMenuContext();
   const { openEntryInternal, openedEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
-  const { moveFiles, openFileNatively } = useIOActionsContext();
+  const { openFileNatively } = useIOActionsContext();
   const { currentLocationId, currentLocation } = useCurrentLocationContext();
   const {
     selectedEntries,
@@ -85,12 +84,10 @@ function CellView(props: Props) {
     addToSelection,
     lastSelectedEntry,
   } = useSelectedEntriesContext();
-  const { handleEntryExist, openEntryExistDialog } =
-    useEntryExistDialogContext();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
 
-  const desktopMode = useSelector(getDesktopMode);
+  //const desktopMode = useSelector(getDesktopMode);
   const selectedTabName = useSelector(getEntryContainerTab);
   // const fileSourceRef = useRef<HTMLDivElement | null>(null);
 

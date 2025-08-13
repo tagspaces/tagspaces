@@ -171,7 +171,7 @@ function EntryProperties(props: Props) {
   const { metaActions } = useEditedEntryMetaContext();
   const { addTagsToFsEntry, removeTagsFromEntry } = useTaggingActionsContext();
   const { findLocation } = useCurrentLocationContext();
-  const { showNotification } = useNotificationContext();
+  const { showNotification, openConfirmDialog } = useNotificationContext();
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
         Pro.contextProviders.ThumbDialogContext,
@@ -197,14 +197,8 @@ function EntryProperties(props: Props) {
     : '';
 
   const [editName, setEditName] = useState<string>(undefined);
-  const [isConfirmResetColorDialogOpened, setConfirmResetColorDialogOpened] =
-    useState<boolean>(false);
-  /* const [isFileThumbChooseDialogOpened, setFileThumbChooseDialogOpened] =
-    useState<boolean>(false);*/
   const [showSharingLinkDialog, setShowSharingLinkDialog] =
     useState<boolean>(false);
-  /* const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
-    useState<boolean>(false);*/
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
   const backgroundImage = useRef<string>('none');
@@ -970,7 +964,18 @@ function EntryProperties(props: Props) {
                               disabled={!Pro}
                               aria-label="clear"
                               onClick={() =>
-                                setConfirmResetColorDialogOpened(true)
+                                openConfirmDialog(
+                                  t('core:confirm'),
+                                  t('core:confirmResetColor'),
+                                  (result) => {
+                                    if (result) {
+                                      handleChangeColor('transparent');
+                                    }
+                                  },
+                                  'cancelConfirmResetColorDialog',
+                                  'confirmConfirmResetColorDialog',
+                                  'confirmResetColorDialogContent',
+                                )
                               }
                             >
                               <ClearColorIcon />
@@ -1144,26 +1149,6 @@ function EntryProperties(props: Props) {
           />
         </Grid>
       </Grid>
-      {isConfirmResetColorDialogOpened && (
-        <ConfirmDialog
-          open={isConfirmResetColorDialogOpened}
-          onClose={() => {
-            setConfirmResetColorDialogOpened(false);
-          }}
-          title={t('core:confirm')}
-          content={t('core:confirmResetColor')}
-          confirmCallback={(result) => {
-            if (result) {
-              handleChangeColor('transparent');
-            } else {
-              setConfirmResetColorDialogOpened(false);
-            }
-          }}
-          cancelDialogTID="cancelConfirmResetColorDialog"
-          confirmDialogTID="confirmConfirmResetColorDialog"
-          confirmDialogContentTID="confirmResetColorDialogContent"
-        />
-      )}
       {showSharingLinkDialog && (
         <LinkGeneratorDialog
           open={showSharingLinkDialog}

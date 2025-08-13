@@ -61,7 +61,6 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 interface Props {
   location: SubFolder;
   hideDrawer?: () => void;
-  setDeleteLocationDialogOpened: (open: boolean) => void;
 }
 
 function LocationView(props: Props) {

@@ -20,7 +20,6 @@ import AppConfig from '-/AppConfig';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useExtensionsContext } from '-/hooks/useExtensionsContext';
@@ -40,19 +39,39 @@ import Typography from '@mui/material/Typography';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
   const { extensions, removeExtension, enableExtension } =
     useExtensionsContext();
+  const { openConfirmDialog } = useNotificationContext();
   const { findLocalLocation } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [removeExtDialogOpened, setRemoveExtDialogOpened] =
-    useState<TS.Extension>(undefined);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
+
+  function setRemoveExtDialogOpened(ext: TS.Extension) {
+    if (ext) {
+      openConfirmDialog(
+        t('core:removeExtension'),
+        t('core:removeExtensionTooltip', {
+          extensionName: ext.extensionName,
+        }),
+        (result) => {
+          if (result) {
+            dispatch(SettingsActions.removeSupportedFileTypes(ext.extensionId));
+            removeExtension(ext.extensionId);
+          }
+        },
+        'cancelRemoveExtDialogTID',
+        'confirmRemoveExtDialogTID',
+        'confirmRemoveExtDialogContentTID',
+      );
+    }
+  }
 
   const onUploadProgress = (progress, abort, fileName) => {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -192,29 +211,6 @@ function SettingsExtensions() {
                   </ListItem>
                 ))}
           </List>
-          <ConfirmDialog
-            open={removeExtDialogOpened !== undefined}
-            onClose={() => setRemoveExtDialogOpened(undefined)}
-            title={t('core:removeExtension')}
-            content={t('core:removeExtensionTooltip', {
-              extensionName: removeExtDialogOpened
-                ? removeExtDialogOpened.extensionName
-                : '',
-            })}
-            confirmCallback={(result) => {
-              if (result) {
-                dispatch(
-                  SettingsActions.removeSupportedFileTypes(
-                    removeExtDialogOpened.extensionId,
-                  ),
-                );
-                removeExtension(removeExtDialogOpened.extensionId);
-              }
-            }}
-            cancelDialogTID="cancelRemoveExtDialogTID"
-            confirmDialogTID="confirmRemoveExtDialogTID"
-            confirmDialogContentTID="confirmRemoveExtDialogContentTID"
-          />
           {extensions &&
             extensions.filter((ext) => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>

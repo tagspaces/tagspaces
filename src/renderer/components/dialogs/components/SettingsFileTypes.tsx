@@ -24,7 +24,6 @@ import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 import { AppDispatch } from '-/reducers/app';
 import {
@@ -55,16 +54,16 @@ import {
   TableVirtuoso,
   TableVirtuosoHandle,
 } from 'react-virtuoso';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
   const { extensions } = useExtensionsContext();
+  const { openConfirmDialog } = useNotificationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
-  const [isConfirmDialogOpened, setIsConfirmDialogOpened] =
-    useState<boolean>(false);
   const [isColorPickerVisible, setColorPickerVisible] =
     useState<boolean>(false);
   const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
@@ -267,7 +266,18 @@ function SettingsFileTypes() {
 
   const onRemoveItem = (item) => {
     selectedItem.current = item;
-    setIsConfirmDialogOpened(true);
+    openConfirmDialog(
+      t('core:confirm'),
+      t('core:confirmFileTypeDeletion'),
+      (result) => {
+        if (result) {
+          removeItem(selectedItem.current);
+        }
+      },
+      'cancelDeleteFileTypeDialog',
+      'confirmDeleteFileTypeDialog',
+      'confirmDeleteFileTypeDialogContent',
+    );
   };
 
   const removeItem = (itemForRemoval: any) => {
@@ -492,24 +502,6 @@ function SettingsFileTypes() {
         >
           {t('core:resetFileType')}
         </TsButton>
-      )}
-      {isConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isConfirmDialogOpened}
-          onClose={() => {
-            setIsConfirmDialogOpened(false);
-          }}
-          title="Confirm"
-          content={t('core:confirmFileTypeDeletion')}
-          confirmCallback={(result) => {
-            if (result) {
-              removeItem(selectedItem.current);
-            }
-          }}
-          cancelDialogTID="cancelDeleteFileTypeDialog"
-          confirmDialogTID="confirmDeleteFileTypeDialog"
-          confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
-        />
       )}
       <TableVirtuoso
         style={{

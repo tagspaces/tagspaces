@@ -27,7 +27,7 @@ import {
   immutablySwapItems,
   formatDateTime4Tag,
 } from '@tagspaces/tagspaces-common/misc';
-import { getTagLibrary, setTagLibrary } from '-/services/taglibrary-utils';
+import { setTagLibrary } from '-/services/taglibrary-utils';
 import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
@@ -60,7 +60,6 @@ import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { CommonLocation } from '-/utils/CommonLocation';
 import LoadingLazy from '-/components/LoadingLazy';
 import { getAllTags } from '-/services/utils-io';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 type TaggingActionsContextData = {
   addTagsToFsEntries: (
@@ -206,7 +205,7 @@ export const TaggingActionsContextProvider = ({
   const { renameFile, saveMetaDataPromise, saveCurrentLocationMetaData } =
     useIOActionsContext();
   const { reflectUpdateMeta, setReflectActions } = useEditedEntryContext();
-  const { showNotification } = useNotificationContext();
+  const { showNotification, openConfirmDialog } = useNotificationContext();
 
   const [dialogState, setDialogState] = useState<{
     open: boolean;
@@ -214,8 +213,6 @@ export const TaggingActionsContextProvider = ({
     entries?: TS.FileSystemEntry[];
   }>({ open: false });
 
-  const [isConfirmReindexDialogOpened, setConfirmReindexDialogOpened] =
-    useState<TS.TagGroup>(undefined);
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const maxCollectedTag = useSelector(getMaxCollectedTag);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -228,6 +225,25 @@ export const TaggingActionsContextProvider = ({
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   //const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
+
+  function setConfirmReindexDialogOpened(tg: TS.TagGroup) {
+    if (tg) {
+      openConfirmDialog(
+        t('core:confirmReindex'),
+        t('core:confirmReindexContent'),
+        (result) => {
+          if (result) {
+            createLocationIndex(currentLocation).then(() =>
+              collectTagsFromLocation(tg),
+            );
+          }
+        },
+        'cancelConfirmReindexDialog',
+        'confirmConfirmReindexDialog',
+        'confirmReindexDialogContentTID',
+      );
+    }
+  }
 
   function addTagsToFilePath(path: string, tags: string[]) {
     if (tags && tags.length > 0) {
@@ -1545,29 +1561,6 @@ export const TaggingActionsContextProvider = ({
           entries={dialogState.entries}
         />
       )}
-      {isConfirmReindexDialogOpened && (
-        <ConfirmDialog
-          open={Boolean(isConfirmReindexDialogOpened)}
-          onClose={() => {
-            setConfirmReindexDialogOpened(undefined);
-          }}
-          title={t('core:confirmReindex')}
-          content={t('core:confirmReindexContent')}
-          confirmCallback={(result) => {
-            if (result) {
-              createLocationIndex(currentLocation).then(() =>
-                collectTagsFromLocation(isConfirmReindexDialogOpened),
-              );
-            } else {
-              setConfirmReindexDialogOpened(undefined);
-            }
-          }}
-          cancelDialogTID="cancelConfirmReindexDialog"
-          confirmDialogTID="confirmConfirmReindexDialog"
-          confirmDialogContentTID="confirConfirmReindexDialogContent"
-        />
-      )}
-
       {children}
     </TaggingActionsContext.Provider>
   );

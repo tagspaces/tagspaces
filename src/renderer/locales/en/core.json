@@ -977,5 +977,6 @@
   "importingMacTags": "Importing MacOS tags...",
   "importTagsRecursive": "Importing tags recursive",
   "noModelsLoaded": "Error: No AI-models are loaded, please check if the AI-service is running.",
+  "fileModified": "File was modified, do you want to save the changes?",
   "-": "-"
 }

@@ -25,7 +25,6 @@ import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
@@ -85,7 +84,7 @@ interface Props {
 function CreateEditLocationDialog(props: Props) {
   const { t } = useTranslation();
 
-  const { showNotification } = useNotificationContext();
+  const { showNotification, openConfirmDialog } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
   const { addLocation, editLocation, selectedLocation, findLocation } =
@@ -99,8 +98,6 @@ function CreateEditLocationDialog(props: Props) {
   const [showSecretAccessKey, setShowSecretAccessKey] =
     useState<boolean>(false);
   const [showEncryptionKey, setShowEncryptionKey] = useState<boolean>(false);
-  const [isConfirmEncryptionChanged, setConfirmEncryptionChanged] =
-    useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
@@ -235,11 +232,6 @@ function CreateEditLocationDialog(props: Props) {
 
   const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] =
     useState<boolean>(false);
-
-  const [
-    isFullTextIndexConfirmDialogOpened,
-    setFullTextIndexConfirmDialogOpened,
-  ] = useState<boolean>(false);
 
   const firstRender = useFirstRender();
 
@@ -390,7 +382,18 @@ function CreateEditLocationDialog(props: Props) {
       selectedLocation &&
       encryptionKey !== selectedLocation.encryptionKey
     ) {
-      setConfirmEncryptionChanged(true);
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:confirmEncryptionChanged'),
+        (result) => {
+          if (result) {
+            onConfirm();
+          }
+        },
+        'cancelConfirmEncryptionChanged',
+        'confirmConfirmEncryptionChanged',
+        'confirmConfirmEncryptionChangedContent',
+      );
     } else {
       onConfirm();
     }
@@ -630,24 +633,6 @@ function CreateEditLocationDialog(props: Props) {
           padding: 8,
         }}
       >
-        <ConfirmDialog
-          open={isConfirmEncryptionChanged}
-          onClose={() => {
-            setConfirmEncryptionChanged(false);
-          }}
-          title={t('core:confirm')}
-          content={t('core:confirmEncryptionChanged')}
-          confirmCallback={(result) => {
-            if (result) {
-              onConfirm();
-            } else {
-              setConfirmEncryptionChanged(false);
-            }
-          }}
-          cancelDialogTID="cancelConfirmEncryptionChanged"
-          confirmDialogTID="confirmConfirmEncryptionChanged"
-          confirmDialogContentTID="confirmConfirmEncryptionChangedContent"
-        />
         {selectedLocation && (
           <>
             <Typography
@@ -727,7 +712,20 @@ function CreateEditLocationDialog(props: Props) {
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       setFullTextIndex(event.target.checked);
                       if (event.target.checked) {
-                        setFullTextIndexConfirmDialogOpened(true);
+                        if (selectedLocation) {
+                          openConfirmDialog(
+                            t('core:confirm'),
+                            t('core:fullTextIndexRegenerate'),
+                            (result) => {
+                              if (result) {
+                                createLocationIndex(selectedLocation);
+                              }
+                            },
+                            'cancelSaveBeforeCloseDialog',
+                            'confirmSaveBeforeCloseDialog',
+                            'confirmDialogContent',
+                          );
+                        }
                       }
                     }}
                   />
@@ -760,26 +758,6 @@ function CreateEditLocationDialog(props: Props) {
                       {Pro ? <BetaLabel /> : <ProLabel />}
                     </>
                   }
-                />
-              )}
-              {isFullTextIndexConfirmDialogOpened && selectedLocation && (
-                <ConfirmDialog
-                  open={isFullTextIndexConfirmDialogOpened}
-                  onClose={() => {
-                    setFullTextIndexConfirmDialogOpened(false);
-                  }}
-                  title={t('core:confirm')}
-                  content={t('core:fullTextIndexRegenerate')}
-                  confirmCallback={(result) => {
-                    if (result) {
-                      createLocationIndex(selectedLocation);
-                    } else {
-                      setFullTextIndexConfirmDialogOpened(false);
-                    }
-                  }}
-                  cancelDialogTID="cancelSaveBeforeCloseDialog"
-                  confirmDialogTID="confirmSaveBeforeCloseDialog"
-                  confirmDialogContentTID="confirmDialogContent"
                 />
               )}
               <FormControlLabel

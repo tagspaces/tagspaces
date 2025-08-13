@@ -25,7 +25,6 @@ import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
 import { historyKeys } from '-/hooks/HistoryContextProvider';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
@@ -52,22 +51,21 @@ import Switch from '@mui/material/Switch';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { clearAllURLParams } from '-/utils/dom';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
-interface Props {
-  showResetSettings: (showDialog: boolean) => void;
-}
+interface Props {}
 
 function SettingsAdvanced(props: Props) {
-  const { showResetSettings } = props;
   const { t } = useTranslation();
   const { delAllHistory } = useHistoryContext();
+  const { openConfirmDialog } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const maxCollectedTag = useSelector(getMaxCollectedTag);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
-  const [confirmDialogKey, setConfirmDialogKey] = useState<null | string>(null);
   const wsAlive = useRef<boolean>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -79,6 +77,23 @@ function SettingsAdvanced(props: Props) {
       });
     }
   }, [settings.enableWS]);
+
+  function setConfirmDialogKey(key: string) {
+    if (key) {
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:confirm' + key + 'Deletion'),
+        (result) => {
+          if (result) {
+            delAllHistory(key);
+          }
+        },
+        'cancelDelete' + key + 'Dialog',
+        'confirmDelete' + key + 'Dialog',
+        'confirmDelete' + key + 'DialogContent',
+      );
+    }
+  }
 
   const handleEditTileServerClick = (event, tileServer, isDefault: boolean) => {
     event.preventDefault();
@@ -123,7 +138,27 @@ function SettingsAdvanced(props: Props) {
       <ListItem>
         <TsButton
           data-tid="resetSettingsTID"
-          onClick={() => showResetSettings(true)}
+          onClick={() =>
+            openConfirmDialog(
+              t('core:confirm'),
+              t('core:confirmResetSettings'),
+              (result) => {
+                if (result) {
+                  clearAllURLParams();
+                  localStorage.clear();
+                  // eslint-disable-next-line no-restricted-globals
+                  if (AppConfig.isElectron) {
+                    window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+                  } else {
+                    window.location.reload();
+                  }
+                }
+              },
+              'cancelResetSettingsDialogTID',
+              'confirmResetSettingsDialogTID',
+              'confirmResetSettingsDialogContentTID',
+            )
+          }
           color="secondary"
           style={{ marginLeft: -7 }}
         >
@@ -342,24 +377,6 @@ function SettingsAdvanced(props: Props) {
           <MenuItem value={100}>100</MenuItem>
         </TsSelect>
       </ListItem>
-      <ConfirmDialog
-        open={confirmDialogKey !== null}
-        onClose={() => {
-          setConfirmDialogKey(null);
-        }}
-        title="Confirm"
-        content={t('core:confirm' + confirmDialogKey + 'Deletion')}
-        confirmCallback={(result) => {
-          if (result) {
-            delAllHistory(confirmDialogKey);
-          }
-        }}
-        cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
-        confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
-        confirmDialogContentTID={
-          'confirmDelete' + confirmDialogKey + 'DialogContent'
-        }
-      />
       <ListItem>
         <ListItemText
           primary={

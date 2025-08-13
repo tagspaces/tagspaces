@@ -25,7 +25,6 @@ import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
 import { AIProvider, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
@@ -60,7 +59,6 @@ function ChatView() {
     changeCurrentModel,
     setModel,
     currentModel,
-    deleteHistory,
     isTyping,
     cancelMessage,
   } = useChatContext();
@@ -75,8 +73,6 @@ function ChatView() {
   //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [isConfirmDialogOpened, setIsConfirmDialogOpened] =
-    React.useState<boolean>(false);
   /*const getAddedText = (oldText, newText) => {
     if (newText.startsWith(oldText)) {
       return newText.slice(oldText.length);
@@ -148,12 +144,12 @@ function ChatView() {
       });
   };
 
-  const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {
+  /*const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {
     currentMode.current = event.target.value
       ? (event.target.value as ChatMode)
       : undefined;
     forceUpdate();
-  };
+  };*/
 
   const handleChatMessage = () => {
     //isTyping.current = true;
@@ -214,11 +210,6 @@ function ChatView() {
           showNotification(t('core:generatedHTMLFailed'));
         });
     }
-  };
-
-  const clearHistory = () => {
-    setAnchorEl(null);
-    deleteHistory();
   };
 
   const saveAsHtml = () => {
@@ -296,25 +287,8 @@ function ChatView() {
               handleClose={handleClose}
               handleSelectAll={handleSelectAll}
               handleCopy={handleCopy}
-              clearHistory={() => setIsConfirmDialogOpened(true)}
               saveAsHtml={saveAsHtml}
               saveAsMarkdown={saveAsMarkdown}
-            />
-            <ConfirmDialog
-              open={isConfirmDialogOpened}
-              onClose={() => {
-                setIsConfirmDialogOpened(false);
-              }}
-              title={t('core:titleConfirm')}
-              content={t('core:confirmHistoryDeletion')}
-              confirmCallback={(result) => {
-                if (result) {
-                  clearHistory();
-                }
-              }}
-              cancelDialogTID="cancelDeleteHistoryDialog"
-              confirmDialogTID="confirmDeleteHistoryDialog"
-              confirmDialogContentTID="confirmDeleteHistoryDialogContent"
             />
           </Grid>
         </Grid>

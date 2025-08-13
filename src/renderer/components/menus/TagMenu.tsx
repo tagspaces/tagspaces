@@ -33,6 +33,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import React from 'react';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl?: Element;
@@ -41,7 +43,6 @@ interface Props {
   selectedTag?: TS.Tag;
   selectedTagGroupEntry?: TS.TagGroup;
   showEditTagDialog: () => void;
-  showDeleteTagDialog: () => void;
 }
 
 function TagMenu(props: Props) {
@@ -50,16 +51,16 @@ function TagMenu(props: Props) {
     selectedTagGroupEntry,
     onClose,
     showEditTagDialog,
-    showDeleteTagDialog,
     anchorEl,
     open,
   } = props;
 
   const { t } = useTranslation();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { addTags } = useTaggingActionsContext();
+  const { addTags, deleteTag } = useTaggingActionsContext();
   const { currentLocation } = useCurrentLocationContext();
   const { setSearchQuery } = useDirectoryContentContext();
+  const { openConfirmDialog } = useNotificationContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const tagGroupReadOnly = selectedTagGroupEntry?.readOnly;
 
@@ -82,7 +83,21 @@ function TagMenu(props: Props) {
 
   function openDeleteTagDialog() {
     onClose();
-    showDeleteTagDialog();
+    openConfirmDialog(
+      t('core:deleteTagFromTagGroup'),
+      t('core:deleteTagFromTagGroupContentConfirm', {
+        tagName: selectedTag ? selectedTag.title : '',
+      }),
+      (result) => {
+        if (result) {
+          if (selectedTag && selectedTagGroupEntry) {
+            deleteTag(selectedTag.title, selectedTagGroupEntry.uuid);
+          }
+        }
+      },
+      'cancelDeleteTagDialogTagMenu',
+      'confirmDeleteTagDialogTagMenu',
+    );
   }
 
   function applyTag() {

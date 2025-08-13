@@ -44,7 +44,7 @@ interface Props {
   confirmDialogContentTID?: string;
   prompt?: string;
   helpText?: string;
-  list: Array<string>;
+  list: string[];
   confirmCallback: (result: boolean | string) => void;
   onClose: () => void;
 }
@@ -53,11 +53,17 @@ function ConfirmDialog(props: Props) {
   const {
     open,
     onClose,
+    title,
+    content,
     confirmCallback,
     prompt,
     helpText,
     customCancelText,
     customConfirmText,
+    list,
+    confirmDialogContentTID,
+    cancelDialogTID,
+    confirmDialogTID,
   } = props;
   const { t } = useTranslation();
   const [promptValue, setPromptValue] = useState<string>('');
@@ -78,15 +84,12 @@ function ConfirmDialog(props: Props) {
       style={{ zIndex: 1301 }}
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {props.title}
+        {title}
         <DialogCloseButton testId="closeConfirmTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        <DialogContentText
-          data-tid={props.confirmDialogContentTID}
-          component="span"
-        >
-          {props.content}
+        <DialogContentText data-tid={confirmDialogContentTID} component="span">
+          {content}
           {prompt && (
             <TsTextField
               fullWidth
@@ -96,9 +99,9 @@ function ConfirmDialog(props: Props) {
               placeholder={prompt}
             />
           )}
-          {props.list && (
+          {list && (
             <List dense>
-              {props.list.map((listItem) => (
+              {list.map((listItem) => (
                 <ListItem key={listItem.toString()}>
                   <ListItemIcon>
                     <BulletIcon />
@@ -111,16 +114,10 @@ function ConfirmDialog(props: Props) {
         </DialogContentText>
       </DialogContent>
       <TsDialogActions>
-        <TsButton
-          onClick={() => onConfirm(false)}
-          data-tid={props.cancelDialogTID}
-        >
+        <TsButton onClick={() => onConfirm(false)} data-tid={cancelDialogTID}>
           {customCancelText ? customCancelText : t('core:no')}
         </TsButton>
-        <TsButton
-          data-tid={props.confirmDialogTID}
-          onClick={() => onConfirm(true)}
-        >
+        <TsButton data-tid={confirmDialogTID} onClick={() => onConfirm(true)}>
           {customConfirmText ? customConfirmText : t('core:yes')}
         </TsButton>
       </TsDialogActions>

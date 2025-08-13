@@ -37,9 +37,9 @@ import {
   MenuItem,
 } from '@mui/material';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -71,13 +71,36 @@ function EntryContainerMenu(props: Props) {
   const keyBindings = useSelector(getKeyBindingObject);
   const { currentLocation } = useCurrentLocationContext();
   const { deleteFile, downloadFsEntry } = useIOActionsContext();
-  //const { showNotification } = useNotificationContext();
+  const { openConfirmDialog } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
-  const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] =
-    useState<boolean>(false);
+
+  function setDeleteEntryModalOpened() {
+    const title = openedEntry.isFile
+      ? t('core:deleteConfirmationTitle')
+      : t('core:deleteDirectory');
+    const content = openedEntry.isFile
+      ? t('core:doYouWantToDeleteFile')
+      : t('core:deleteDirectoryContentConfirm', {
+          dirPath: entryName,
+        });
+
+    openConfirmDialog(
+      title,
+      content,
+      (result) => {
+        if (result) {
+          return deleteFile(openedEntry.path, openedEntry.uuid);
+        }
+      },
+      'cancelDeleteTID',
+      'confirmDeleteTID',
+      'confirmDialogContentTID',
+      openedEntry.isFile && [entryName],
+    );
+  }
 
   const navigateToFolder = () => {
     if (openedEntry.isFile) {
@@ -216,7 +239,7 @@ function EntryContainerMenu(props: Props) {
           data-tid="deleteEntryTID"
           aria-label={t('core:deleteEntry')}
           onClick={() => {
-            setDeleteEntryModalOpened(true);
+            setDeleteEntryModalOpened();
             handleClose();
           }}
         >
@@ -395,7 +418,7 @@ function EntryContainerMenu(props: Props) {
           data-tid="deleteFolderTID"
           aria-label={t('core:deleteDirectory')}
           onClick={() => {
-            setDeleteEntryModalOpened(true);
+            setDeleteEntryModalOpened();
             handleClose();
           }}
         >
@@ -447,35 +470,6 @@ function EntryContainerMenu(props: Props) {
       >
         <TsMenuList sx={{ minWidth: 300 }}>{menuItems}</TsMenuList>
       </Menu>
-      {isDeleteEntryModalOpened && (
-        <ConfirmDialog
-          open={isDeleteEntryModalOpened}
-          onClose={() => {
-            setDeleteEntryModalOpened(false);
-          }}
-          title={
-            openedEntry.isFile
-              ? t('core:deleteConfirmationTitle')
-              : t('core:deleteDirectory')
-          }
-          content={
-            openedEntry.isFile
-              ? t('core:doYouWantToDeleteFile')
-              : t('core:deleteDirectoryContentConfirm', {
-                  dirPath: entryName,
-                })
-          }
-          list={openedEntry.isFile && [entryName]}
-          confirmCallback={(result) => {
-            if (result) {
-              return deleteFile(openedEntry.path, openedEntry.uuid);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
     </>
   );
 }
