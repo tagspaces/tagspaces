@@ -207,29 +207,57 @@ export const FilePropertiesContextProvider = ({
   function setSaveDescriptionConfirmOpened(isOpened: boolean) {
     if (!isOpened) {
       isDescriptionChanged.current = false;
+      lastOpenedFile.current = { ...openedEntry };
       setIsEditDescriptionMode(false);
-    } else {
-      openConfirmDialog(
-        t('core:confirm'),
-        t('core:saveDescriptionOnClosing'),
-        (result) => {
-          if (result) {
-            saveDescription().then(() => {
-              openFsEntry(openedEntry);
-            });
-          } else {
-            isDescriptionChanged.current = false;
-            setIsEditDescriptionMode(false);
-            openFsEntry(openedEntry);
-          }
-        },
-        'cancelSaveDescCloseDialog',
-        'confirmSaveDescCloseDialog',
-        'confirmDescDialogContent',
-      );
+      return;
     }
-    lastOpenedFile.current = { ...openedEntry };
-    forceUpdate();
+
+    // take a snapshot of the edited file so the confirm callback uses the current edited value
+    const fileSnapshot = {
+      ...lastOpenedFile.current,
+      meta: { ...lastOpenedFile.current?.meta },
+    };
+
+    openConfirmDialog(
+      t('core:confirm'),
+      t('core:saveDescriptionOnClosing'),
+      (result) => {
+        if (result) {
+          const location = findLocation(fileSnapshot.locationID);
+          if (!location || location.isReadOnly) {
+            showNotification(t('core:readonlyModeSave'));
+            return;
+          }
+          if (!Pro) {
+            showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+            return;
+          }
+
+          setDescriptionChange(
+            fileSnapshot,
+            fileSnapshot.meta?.description,
+          ).then(() => {
+            // after saving, update refs and UI
+            // make lastOpenedFile correspond to currently opened entry (it may have changed)
+            lastOpenedFile.current = openedEntry
+              ? { ...openedEntry }
+              : fileSnapshot;
+            isDescriptionChanged.current = false;
+            setIsEditMode(false);
+            openFsEntry(fileSnapshot);
+          });
+        } else {
+          // user cancelled: discard changes and re-open the original entry
+          isDescriptionChanged.current = false;
+          lastOpenedFile.current = { ...openedEntry };
+          setIsEditDescriptionMode(false);
+          openFsEntry(openedEntry);
+        }
+      },
+      'cancelSaveDescCloseDialog',
+      'confirmSaveDescCloseDialog',
+      'confirmDescDialogContent',
+    );
   }
 
   const context = useMemo(
