@@ -140,7 +140,10 @@ type PlatformFacadeContextData = {
     reflect?: boolean | TS.ActionSource,
   ) => Promise<TS.FileSystemEntry>;
   deleteEntriesPromise: (...paths: TS.FileSystemEntry[]) => Promise<boolean>;
-  setFolderThumbnailPromise: (filePath: string) => Promise<string>;
+  setFolderThumbnailPromise: (
+    filePath: string,
+    force?: boolean,
+  ) => Promise<string>;
 };
 
 export const PlatformFacadeContext = createContext<PlatformFacadeContextData>({
@@ -215,8 +218,12 @@ export const PlatformFacadeContextProvider = ({
   /**
    * @param filePath
    * return Promise<destThumbPath>
+   * @param force
    */
-  function setFolderThumbnailPromise(filePath: string): Promise<string> {
+  function setFolderThumbnailPromise(
+    filePath: string,
+    force = true,
+  ): Promise<string> {
     const currentLocation = findLocation();
     const directoryPath = extractContainingDirectoryPath(
       filePath,
@@ -241,27 +248,33 @@ export const PlatformFacadeContextProvider = ({
       sourceThumbPath,
       destThumbPath,
       undefined,
-      t('core:thumbAlreadyExists', { directoryName }),
-    ).then(() => {
-      //  dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
-      return destThumbPath;
-    });
+      force ? t('core:thumbAlreadyExists', { directoryName }) : null,
+    )
+      .then(() => {
+        //  dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
+        return destThumbPath;
+      })
+      .catch((e) => {
+        console.debug('set thumbnail for folder failed:', e);
+        return undefined;
+      });
   }
 
   function copyFilePromise(
     sourceFilePath: string,
     targetFilePath: string,
     locationID: string,
-    confirmMessage: string = 'File ' +
-      targetFilePath +
-      ' exist do you want to override it?',
+    confirmMessage?: string | null,
   ): Promise<any> {
     return getLocation({ locationID })
       .getPropertiesPromise(targetFilePath)
       .then((isTargetExist) => {
         if (isTargetExist) {
+          const defaultConfirm = `File "${targetFilePath}" exists. Do you want to overwrite it?`;
+          const text = confirmMessage ?? defaultConfirm;
           // eslint-disable-next-line no-alert
-          const confirmOverwrite = window && window.confirm(confirmMessage);
+          const confirmOverwrite =
+            confirmMessage !== null && window && window.confirm(text);
           if (confirmOverwrite === true) {
             return copyFilePromiseOverwrite(
               sourceFilePath,

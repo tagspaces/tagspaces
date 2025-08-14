@@ -79,8 +79,11 @@ export const ThumbGenerationContextProvider = ({
     loadCurrentDirMeta,
   } = useDirectoryContentContext();
   const { findLocation } = useCurrentLocationContext();
-  const { saveBinaryFilePromise, createDirectoryPromise } =
-    usePlatformFacadeContext();
+  const {
+    saveBinaryFilePromise,
+    createDirectoryPromise,
+    setFolderThumbnailPromise,
+  } = usePlatformFacadeContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { getResentPageFiles } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
@@ -137,6 +140,21 @@ export const ThumbGenerationContextProvider = ({
     }
   }, [currentDirectoryPath, page]); //, isMetaFolderExist]);*/
 
+  function pickByExtensionPriority(
+    entries: TS.FileSystemEntry[],
+    priority: string[] = ['jpg', 'jpeg', 'png', 'pdf'],
+  ): TS.FileSystemEntry | undefined {
+    if (!entries || entries.length === 0) return undefined;
+
+    for (const ext of priority) {
+      const found = entries.find((e) => e.extension === ext);
+      if (found) return found;
+    }
+
+    // fallback: first entry
+    return entries[0];
+  }
+
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
       //!firstRender (skip firstRender: if switch from KanBan perspective to Gallery thumbGenerate missing)
@@ -161,7 +179,29 @@ export const ThumbGenerationContextProvider = ({
           genEntries = currentDirectoryEntries;
         }
         if (genEntries) {
-          generateThumbnails(genEntries).then(() => {
+          generateThumbnails(genEntries).then((success) => {
+            if (success) {
+              const entry = pickByExtensionPriority(
+                genEntries.filter((e) => e.isFile),
+                [
+                  ...supportedImgs,
+                  'pdf',
+                  'html',
+                  ...supportedVideos,
+                  ...supportedText,
+                  'url',
+                ],
+              );
+              if (entry) {
+                setFolderThumbnailPromise(entry.path, false).then((success) => {
+                  if (!success) {
+                    console.debug(
+                      'set automatically thumbnail for folder failed: Thumb already exist',
+                    );
+                  }
+                });
+              }
+            }
             return loadCurrentDirMeta(currentDirectoryPath, genEntries).then(
               (ent) => {
                 updateCurrentDirEntries(ent);
