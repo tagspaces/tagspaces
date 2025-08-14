@@ -69,7 +69,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST50 - Perspective Grid', () => {
-  test('TST5002 - Open file with click [web,electron]', async () => {
+  test('TST5002 - Open file with click [web,minio,s3,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
     const fileName = 'sample.txt';
     await openFile(fileName, 'showPropertiesTID');
@@ -81,7 +81,7 @@ test.describe('TST50 - Perspective Grid', () => {
     // await checkFilenameForExist(testTestFilename);
   });
 
-  test('TST5004 - Select-deselect all files [web,electron]', async () => {
+  test('TST5004 - Select-deselect all files [web,minio,s3,electron]', async () => {
     await selectAllFiles();
     await expectAllFileSelected(true);
     await selectAllFiles();
@@ -89,7 +89,7 @@ test.describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add/Remove tags from selected files [web,electron]', async () => {
+  test('TST5005 - Add/Remove tags from selected files [web,minio,s3,electron]', async () => {
     let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
@@ -131,7 +131,7 @@ test.describe('TST50 - Perspective Grid', () => {
   /**
    * todo in [web] its need more time to wait for removed files
    */
-  test('TST5007 - Remove all tags from selected files [web,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [web,minio,s3,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
@@ -157,7 +157,7 @@ test.describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5008 - Copy file [web,electron]', async () => {
+  test('TST5008 - Copy file [web,minio,s3,electron]', async () => {
     const fileName = 'sample.svg';
     await openFile(fileName, 'showPropertiesTID');
     // add meta json to file
@@ -190,7 +190,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
-  test('TST5010 - Move file [web,electron]', async () => {
+  test('TST5010 - Move file [web,minio,s3,electron]', async () => {
     const fileName = 'sample.svg';
     //Toggle Properties
     await openFile(fileName, 'showPropertiesTID');
@@ -225,7 +225,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5012 - Move file different partition [manual]', async () => {});
 
-  test('TST5013 - Delete files from selection (many files) [web,electron]', async () => {
+  test('TST5013 - Delete files from selection (many files) [web,minio,s3,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
@@ -243,7 +243,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
-  test('TST5048 - prev/next button [web,electron]', async () => {
+  test('TST5048 - prev/next button [web,minio,s3,electron]', async () => {
     const fileName = 'sample.svg';
     const nextFileName = 'sample.tga';
     await clickOn(getGridFileSelector(fileName));

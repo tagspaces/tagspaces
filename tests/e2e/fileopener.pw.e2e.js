@@ -121,7 +121,7 @@ test.describe('TST08 - File folder properties', () => {
     expect(propsPrevFileName).toBe(firstFileName);
   });
 
-  test('TST0802 - Open next file buttons [web,electron]', async () => {
+  test('TST0802 - Open next file buttons [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     const firstFileName = await getGridFileName(0);
@@ -145,7 +145,7 @@ test.describe('TST08 - File folder properties', () => {
     expect(secondFileName).toBe(propsNextFileName);
   });
 
-  test('TST0803 - Open previous files buttons [web,electron]', async () => {
+  test('TST0803 - Open previous files buttons [web,s3,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
 
@@ -172,7 +172,7 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * full width button not visible on electron (github app size specific)
    */
-  test('TST0804 - Open file in full width [web]', async () => {
+  test('TST0804 - Open file in full width [web,s3]', async () => {
     //expect.extend(matchers);
     //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
@@ -189,7 +189,7 @@ test.describe('TST08 - File folder properties', () => {
     // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
-  test('TST0805 - Rename opened file [web,electron]', async ({}) => {
+  test('TST0805 - Rename opened file [web,s3,electron]', async ({}) => {
     const fileName = 'sample.svg';
     const newTitle = 'renamed.svg';
     // set setting PersistTagsInSidecarFile in order to add meta json file
@@ -236,14 +236,14 @@ test.describe('TST08 - File folder properties', () => {
 
   test.skip('TST0806 - Download file [manual]', async () => {});
 
-  test('TST0808 - Add and remove tags to a file (file names) [web,electron]', async () => {
+  test('TST0808 - Add and remove tags to a file (file names) [web,s3,electron]', async () => {
     // open fileProperties
     const fileName = 'sample.epub'; //'sample.svg';
     await openFile(fileName, 'showPropertiesTID');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  test('TST0809 - Add and remove tag to a file (sidecar files) [web,electron]', async () => {
+  test('TST0809 - Add and remove tag to a file (sidecar files) [web,s3,electron]', async () => {
     // global.client.setDefaultTimeout(300000);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     // open fileProperties
@@ -253,7 +253,7 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
   });
 
-  test('TST0810 - Tag file drag&drop in file opener [web,electron]', async () => {
+  test('TST0810 - Tag file drag&drop in file opener [web,s3,electron]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
     await dnd(
@@ -283,7 +283,7 @@ test.describe('TST08 - File folder properties', () => {
     );
   });
 
-  test('TST0811 - Duplicate file [web,electron]', async () => {
+  test('TST0811 - Duplicate file [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.jpg'),
       'fileMenuDuplicateFileTID',
@@ -296,7 +296,7 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * Description is Pro feature (if no Pro editDescription button is disabled)
    */
-  test('TST3001 - Description for files [web,electron,_pro]', async () => {
+  test('TST3001 - Description for files [web,s3,electron,_pro]', async () => {
     const desc = 'testDescription';
     // open fileProperties
     await openFile('sample.pdf');
@@ -337,7 +337,7 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * reload file button failed on web windows only but the problem is in test only
    */
-  test('TST0812 - Reload file [electron]', async ({ isS3, testDataDir }) => {
+  test('TST0812 - Reload file [s3,electron]', async ({ isS3, testDataDir }) => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
@@ -403,7 +403,7 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInFileName]', true);
   });
 
-  test('TST0813a - Delete file and check revisions deleted [web,electron,_pro]', async () => {
+  test('TST0813a - Delete file and check revisions deleted [web,minio,s3,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     await createRevision();
@@ -424,7 +424,7 @@ test.describe('TST08 - File folder properties', () => {
    * TODO dont work on web tests https://trello.com/c/93iEURf4/731-migrate-fullscreen-to-https-githubcom-snakesilk-react-fullscreen
    * dont work on electron Mac https://github.com/microsoft/playwright/issues/1086
    */
-  test('TST0814 - Open file fullscreen and exit with close button [electron]', async ({
+  test('TST0814 - Open file fullscreen and exit with close button [s3,electron]', async ({
     isWin,
   }) => {
     if (isWin) {
@@ -459,7 +459,7 @@ test.describe('TST08 - File folder properties', () => {
 
   test.skip('TST0825 - Change folder thumbnail / Reset thumbnail [Pro]', async () => {});
 
-  test('TST0827 - Link for internal sharing + copy [web,electron]', async () => {
+  test('TST0827 - Link for internal sharing + copy [web,minio,s3,electron]', async () => {
     const fileName = 'sample.jpg';
     await openFile(fileName, 'showPropertiesTID');
 

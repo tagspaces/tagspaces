@@ -230,7 +230,7 @@ test.describe('TST51 - Perspective Grid', () => {
     }
   });
 
-  test('TST0511 - Generate thumbnail from Videos [electron]', async ({
+  test('TST0511 - Generate thumbnail from Videos [electron,s3]', async ({
     isWin,
   }) => {
     if (isWin) {
@@ -243,11 +243,11 @@ test.describe('TST51 - Perspective Grid', () => {
     }
   });
 
-  test('TST0516 - Generate thumbnail from PDF [electron]', async () => {
+  test('TST0516 - Generate thumbnail from PDF [electron,s3]', async () => {
     await expectMetaFilesExist(['sample.pdf.jpg']);
   });
 
-  test('TST0517 - Generate thumbnail from ODT [electron,_pro]', async () => {
+  test('TST0517 - Generate thumbnail from ODT [electron,minio,s3,_pro]', async () => {
     await expectMetaFilesExist([
       'sample.odt.jpg',
       'sample.ods.jpg',
@@ -255,7 +255,7 @@ test.describe('TST51 - Perspective Grid', () => {
     ]);
   });
 
-  test('TST0519 - Generate thumbnail from TIFF [electron,_pro]', async () => {
+  test('TST0519 - Generate thumbnail from TIFF [electron,minio,s3,_pro]', async () => {
     await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 

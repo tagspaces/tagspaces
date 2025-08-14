@@ -58,8 +58,10 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 // Scenarios for sorting files in grid perspective
-test.describe('TST5003 - Testing sort files in the grid perspective [web,electron]', () => {
-  test('TST10xx - Sort by name [web,electron]', async ({ testDataDir }) => {
+test.describe('TST5003 - Testing sort files in the grid perspective', () => {
+  test('TST10xx - Sort by name [web,minio,s3,electron]', async ({
+    testDataDir,
+  }) => {
     // DESC
     await clickOn('[data-tid=gridPerspectiveSortByName]');
     let sorted = getDirEntries(testDataDir, 'byName', false);
@@ -79,7 +81,9 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,electro
     }
   });
 
-  test('TST10xx - Sort by size [web,electron]', async ({ testDataDir }) => {
+  test('TST10xx - Sort by size [web,minio,s3,electron]', async ({
+    testDataDir,
+  }) => {
     await clickOn('[data-tid=gridPerspectiveSortBySize]');
     // DESC
     let sorted = getDirEntries(testDataDir, 'byFileSize', true);
@@ -98,7 +102,9 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,electro
     }
   });
 
-  test('TST10xx - Sort by date [web,electron]', async ({ testDataDir }) => {
+  test('TST10xx - Sort by date [web,minio,s3,electron]', async ({
+    testDataDir,
+  }) => {
     await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
     let sorted = getDirEntries(testDataDir, 'byDateModified', true);
@@ -118,7 +124,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,electro
     }
   });
 
-  test('TST10xx - Sort by extension [web,electron]', async ({
+  test('TST10xx - Sort by extension [web,minio,s3,electron]', async ({
     testDataDir,
   }) => {
     await clickOn('[data-tid=gridPerspectiveSortByExt]');
@@ -137,7 +143,9 @@ test.describe('TST5003 - Testing sort files in the grid perspective [web,electro
     }
   });
 
-  test('TST10xx - Sort by tags [web,electron]', async ({ testDataDir }) => {
+  test('TST10xx - Sort by tags [web,minio,s3,electron]', async ({
+    testDataDir,
+  }) => {
     await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
     let sorted = getDirEntries(testDataDir, 'byFirstTag', true);
     for (let i = 0; i < sorted.length; i += 1) {

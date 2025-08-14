@@ -69,7 +69,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST03 - Testing locations:', () => {
-  test('TST0301 - Should create a location [web,electron]', async () => {
+  test('TST0301 - Should create a location [web,minio,s3,electron]', async () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
@@ -77,7 +77,7 @@ test.describe('TST03 - Testing locations:', () => {
     );
   });
 
-  test('TST0302 - Should remove a location [web,electron]', async () => {
+  test('TST0302 - Should remove a location [web,minio,s3,electron]', async () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
@@ -95,7 +95,7 @@ test.describe('TST03 - Testing locations:', () => {
     await expectElementExist('[data-tid=WelcomePanelTID]', true);
   });
 
-  test('TST0303 - Rename location [web,electron]', async () => {
+  test('TST0303 - Rename location [web,minio,s3,electron]', async () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
     await global.client.dblclick('[data-tid=locationName] input');
@@ -109,7 +109,7 @@ test.describe('TST03 - Testing locations:', () => {
     );
   });
 
-  test('TST0305 - Set as startup location [web,electron]', async () => {
+  test('TST0305 - Set as startup location [web,minio,s3,electron]', async () => {
     await openLocationMenu(testLocationName);
     await startupLocation();
     await expectElementExist('[data-tid=startupIndication]', false);
@@ -128,7 +128,7 @@ test.describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  test('TST0307 - Move location Up and Down [web,electron]', async ({
+  test('TST0307 - Move location Up and Down [web,minio,s3,electron]', async ({
     isWeb,
     isMinio,
     isS3,

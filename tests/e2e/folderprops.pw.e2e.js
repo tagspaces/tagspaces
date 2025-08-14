@@ -82,7 +82,7 @@ test.beforeEach(
 );
 
 test.describe('TST02 - Folder properties', () => {
-  test('TST0201 - Open in main area [web,electron]', async ({
+  test('TST0201 - Open in main area [web,minio,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -97,7 +97,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
   });
 
-  test('TST0204 - Reload folder from toolbar [web,electron]', async ({
+  test('TST0204 - Reload folder from toolbar [web,minio,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -159,7 +159,7 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test('TST0205 - Delete folder from toolbar [web,electron]', async ({
+  test('TST0205 - Delete folder from toolbar [web,minio,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -171,7 +171,7 @@ test.describe('TST02 - Folder properties', () => {
     await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0206 - Rename folder [web,electron]', async () => {
+  test('TST0206 - Rename folder [web,minio,s3,electron]', async () => {
     const newTile = 'folderRenamed';
 
     await openFolder('empty_folder');
@@ -201,7 +201,7 @@ test.describe('TST02 - Folder properties', () => {
     expect(propsOldFileName).toBe(propsFolderName);
   });
 
-  test('TST0207 - Move folder [web,electron]', async ({
+  test('TST0207 - Move folder [web,minio,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -220,10 +220,10 @@ test.describe('TST02 - Folder properties', () => {
     await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0210 - Add and remove tag to folder with dropdown menu [web,electron]', async () => {
+  test('TST0210 - Add and remove tag to folder with dropdown menu [web,minio,s3,electron]', async () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
-  test('TST0211 - Add tag folder with DnD from tag library [web,electron]', async ({
+  test('TST0211 - Add tag folder with DnD from tag library [web,minio,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -263,7 +263,7 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test('TST0215 - Link for internal sharing + copy [web,electron]', async () => {
+  test('TST0215 - Link for internal sharing + copy [web,minio,s3,electron]', async () => {
     // await clickOn('[data-tid=copyLinkToClipboardTID]');
     const sharingLink = await global.client.waitForSelector(
       '[data-tid=sharingLinkTID] input',
@@ -298,7 +298,7 @@ test.describe('TST02 - Folder properties', () => {
     */
   });
 
-  test('TST0216 - Set gallery perspective as default for folder [web,electron,_pro]', async () => {
+  test('TST0216 - Set gallery perspective as default for folder [web,minio,s3,electron,_pro]', async () => {
     const fileName = 'sample.jpg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
@@ -335,7 +335,7 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0218 - Set and remove predefined background gradient for folder [web,electron,_pro]', async () => {
+  test('TST0218 - Set and remove predefined background gradient for folder [web,minio,s3,electron,_pro]', async () => {
     await openFolder('empty_folder');
     await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
     const targetSelector = '[data-tid=backgroundTID]';
@@ -376,7 +376,7 @@ test.describe('TST02 - Folder properties', () => {
     expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 
-  test('TST0219 - Set and remove predefined folder thumbnail [web,electron,_pro]', async ({
+  test('TST0219 - Set and remove predefined folder thumbnail [web,minio,s3,electron,_pro]', async ({
     isWeb,
     isWin,
   }) => {
@@ -415,7 +415,7 @@ test.describe('TST02 - Folder properties', () => {
   /**
    * bgnRemovedScreenshot not always the same on web
    */
-  test('TST0220 - Set and remove predefined folder background [electron,_pro]', async () => {
+  test('TST0220 - Set and remove predefined folder background [minio,s3,electron,_pro]', async () => {
     await openFolderProp('empty_folder');
     await openFolder('empty_folder');
 

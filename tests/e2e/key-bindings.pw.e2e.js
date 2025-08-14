@@ -59,14 +59,14 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST13 - Settings Key Bindings [electron]', () => {
-  test('TST1311 - Test show search [electron]', async () => {
+  test('TST1311 - Test show search [electron,minio,s3]', async () => {
     await clickOn(selectorFile);
     await global.client.keyboard.press('ControlOrMeta+KeyF'); //('ControlOrMeta+KeyK');
     await global.client.keyboard.press('ControlOrMeta+KeyK'); // on Mac
     await expectElementExist('#textQuery', true, 5000);
   });
 
-  test('TST1312 - Test rename file [electron]', async () => {
+  test('TST1312 - Test rename file [electron,minio,s3]', async () => {
     const newTitle = 'renamed.pdf';
     await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('F2');
@@ -85,13 +85,13 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     await expectElementExist(getGridFileSelector(oldName), true, 5000);
   });
 
-  test('TST1313 - Test open file [electron]', async () => {
+  test('TST1313 - Test open file [electron,minio,s3]', async () => {
     await clickOn(getGridFileSelector(testFileName));
     await global.client.keyboard.press('Enter');
     await expectElementExist('[data-tid=detailsTabTID]', true, 5000);
   });
 
-  test('TST1315 - Test delete file [electron]', async () => {
+  test('TST1315 - Test delete file [electron,minio,s3]', async () => {
     await clickOn(getGridFileSelector(testFileName));
     if (isMac) {
       await global.client.keyboard.press('F8');
@@ -102,7 +102,7 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     await expectElementExist(getGridFileSelector(testFileName), false);
   });
 
-  test('TST1316 - Show help and feedback panel in the left [electron]', async () => {
+  test('TST1316 - Show help and feedback panel in the left [electron,minio,s3]', async () => {
     await clickOn(getGridFileSelector('sample.txt'));
     await global.client.keyboard.press('F1');
     await expectElementExist('[data-tid=aboutDialog]', true);
