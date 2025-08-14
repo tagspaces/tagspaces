@@ -721,9 +721,9 @@ function CreateEditLocationDialog(props: Props) {
                                 createLocationIndex(selectedLocation);
                               }
                             },
-                            'cancelSaveBeforeCloseDialog',
-                            'confirmSaveBeforeCloseDialog',
-                            'confirmDialogContent',
+                            'cancelReIndexDialogTID',
+                            'confirmReIndexDialogTID',
+                            'confirmDialogContentTID',
                           );
                         }
                       }

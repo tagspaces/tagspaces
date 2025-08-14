@@ -165,7 +165,7 @@ test.describe('TST02 - Folder properties', () => {
   }) => {
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteFolderTID]');
-    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await clickOn('[data-tid=confirmDeleteTID]');
     await expectElementExist('OpenedTIDempty_folder', false, 5000);
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await testDataRefresh(isS3, testDataDir);

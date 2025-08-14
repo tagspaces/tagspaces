@@ -13,7 +13,6 @@ import {
   ReloadIcon,
 } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';

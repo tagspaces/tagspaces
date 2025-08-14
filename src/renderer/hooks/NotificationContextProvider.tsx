@@ -111,6 +111,7 @@ export const NotificationContextProvider = ({
     confirmDescription.current = description;
     confirmCallback.current = callback;
     cancelDialogTID.current = cancelTID;
+    confirmDialogTID.current = confirmTID;
     confirmDialogContentTID.current = confirmContentTID;
     listItems.current = list;
     prompt.current = promptTxt;
