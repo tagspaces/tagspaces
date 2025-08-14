@@ -144,7 +144,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async ({
+  test('TST0609 - Show thumbnails of image files in the search results [web,minio,s3,electron]', async ({
     isWin,
     isWeb,
   }) => {
@@ -490,7 +490,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('text_file.txt'), true, 5000);
   });
 
-  test('TST0647 - Search by new sidecar tag [web,minio,electron]', async () => {
+  test('TST0647 - Search by new sidecar tag [web,minio,s3,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     const tag = 'test-tag10';
     const fileName = 'sample';

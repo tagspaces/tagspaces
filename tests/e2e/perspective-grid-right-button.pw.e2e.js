@@ -414,7 +414,7 @@ test.describe('TST50** - Right button on a file', () => {
   /**
    * delete dir is not supported on minio
    */
-  test('TST5035 - Delete directory (directory menu) [web,minio,electron]', async () => {
+  test('TST5035 - Delete directory (directory menu) [web,minio,s3,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     // await global.client.pause(500);
     await global.client.dblclick(getGridFileSelector('empty_folder'));

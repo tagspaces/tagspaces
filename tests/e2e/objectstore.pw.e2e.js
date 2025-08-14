@@ -46,7 +46,7 @@ test.beforeEach(async ({ isMinio, isS3 }) => {
 });
 
 test.describe('TST09 - ObjectStore location', () => {
-  test('TST0917 - Create, open and remove bookmark to S3 file in properties [web,minio,_pro]', async () => {
+  test('TST0917 - Create, open and remove bookmark to S3 file in properties [web,minio,s3,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(

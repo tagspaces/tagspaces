@@ -55,7 +55,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST69 - Markdown editor', () => {
-  test('TST6901 - Open and render md file [web,minio,electron]', async () => {
+  test('TST6901 - Open and render md file [web,minio,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
       'fileMenuOpenFile',
@@ -76,7 +76,7 @@ test.describe('TST69 - Markdown editor', () => {
       .toBe(true);
   });
 
-  test('TST6902 - Open settings [web,minio,electron]', async () => {
+  test('TST6902 - Open settings [web,minio,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
       'fileMenuOpenFile',
