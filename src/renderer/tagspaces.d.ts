@@ -78,6 +78,14 @@ declare interface Window {
   ExtShowTSVersion?: boolean;
   ExtUseOnlyTagsFromTagLibrary?: boolean;
   ExtUseLocationTags?: boolean;
+  ExtDefaultQuestionPrompt?: string;
+  ExtDefaultSystemPrompt?: string;
+  ExtSummarizePrompt?: string;
+  ExtImageDescription?: string;
+  ExtImageDescriptionStructured?: string;
+  ExtTextDescription?: string;
+  ExtGenerateTags?: string;
+  ExtGenerateImageTags?: string;
 }
 
 declare interface NodeModule {
