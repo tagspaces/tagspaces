@@ -319,6 +319,11 @@ export namespace TS {
     closeBgndDialog: () => void;
   };
 
+  type AiTemplatesContextData = {
+    getTemplate: (key: string) => string;
+    setTemplate: (key: string, value: string) => void;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;

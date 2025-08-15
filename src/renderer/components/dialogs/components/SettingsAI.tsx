@@ -62,16 +62,18 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   closeSettings: () => void;
 }
 
 function SettingsAI(props: Props) {
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const { closeSettings } = props;
   const { changeCurrentModel, checkProviderAlive } = useChatContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
@@ -82,6 +84,12 @@ function SettingsAI(props: Props) {
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const providersAlive = React.useRef({});
   const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
+
+  const aiTemplatesContext = Pro?.contextProviders?.AiTemplatesContext
+    ? useContext<TS.AiTemplatesContextData>(
+        Pro.contextProviders.AiTemplatesContext,
+      )
+    : undefined;
 
   useEffect(() => {
     checkOllamaAlive();
@@ -466,6 +474,48 @@ function SettingsAI(props: Props) {
           </AccordionDetails>
         </Accordion>
       ))}
+      {Pro && aiTemplatesContext && (
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandIcon />}
+            aria-controls={'AdvancedContent'}
+            data-tid={'AdvancedTID'}
+            sx={{
+              '& .MuiAccordionSummary-content': { alignItems: 'center' },
+            }}
+          >
+            <Typography>{'Advanced'}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TsTextField
+              fullWidth
+              disabled={
+                !(typeof window.ExtDefaultQuestionPrompt === 'undefined')
+              }
+              label={t('DefaultQuestionPrompt')}
+              value={aiTemplatesContext.getTemplate('DEFAULT_QUESTION_PROMPT')}
+              onChange={(e) =>
+                aiTemplatesContext.setTemplate(
+                  'DEFAULT_QUESTION_PROMPT',
+                  e.target.value,
+                )
+              }
+            />
+            <TsTextField
+              fullWidth
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('DefaultSystemPrompt')}
+              value={aiTemplatesContext.getTemplate('DEFAULT_SYSTEM_PROMPT')}
+              onChange={(e) =>
+                aiTemplatesContext.setTemplate(
+                  'DEFAULT_SYSTEM_PROMPT',
+                  e.target.value,
+                )
+              }
+            />
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 }
