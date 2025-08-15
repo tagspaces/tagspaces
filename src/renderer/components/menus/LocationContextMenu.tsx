@@ -76,7 +76,7 @@ function LocationContextMenu(props: Props) {
 
   const indexLocation = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    createLocationIndex(selectedLocation);
+    createLocationIndex(selectedLocation, true);
   };
 
   const showEditLocationDialog = () => {

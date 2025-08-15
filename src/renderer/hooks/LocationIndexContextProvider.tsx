@@ -56,7 +56,10 @@ type LocationIndexContextData = {
   getIndex: () => TS.FileSystemEntry[];
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
   cancelDirectoryIndexing: () => void;
-  createLocationIndex: (location: CommonLocation) => Promise<boolean>;
+  createLocationIndex: (
+    location: CommonLocation,
+    force?: boolean,
+  ) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
   clearDirectoryIndex: (persist?: boolean) => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
@@ -104,7 +107,8 @@ export const LocationIndexContextProvider = ({
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
   const { actions } = useEditedEntryContext();
-  const { showNotification, hideNotifications } = useNotificationContext();
+  const { showNotification, hideNotifications, openConfirmDialog } =
+    useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
   //const allLocations = useSelector(getLocations);
@@ -476,37 +480,61 @@ export const LocationIndexContextProvider = ({
       });
   }
 
-  function createLocationIndex(location: CommonLocation): Promise<boolean> {
-    if (location && !location.disableIndexing) {
-      return getLocationPath(location).then((locationPath) => {
-        const isCurrentLocation =
-          currentLocation && currentLocation.uuid === location.uuid;
-        isIndexing.current = location.name;
-        forceUpdate();
-        return createDirectoryIndexWrapper(
-          { path: locationPath, locationID: location.uuid },
-          location.fullTextIndex,
-          location.ignorePatternPaths,
-          enableWS,
-        )
-          .then((directoryIndex) => {
-            if (isCurrentLocation) {
-              // Load index only if current location
-              setIndex(directoryIndex);
-            }
-            isIndexing.current = undefined;
-            forceUpdate();
-            return true;
-          })
-          .catch((err) => {
-            isIndexing.current = undefined;
-            //lastError.current = err;
-            forceUpdate();
-            return false;
-          });
-      });
+  function createLocationIndex(
+    location: CommonLocation,
+    force = false,
+  ): Promise<boolean> {
+    if (location) {
+      if (location.disableIndexing) {
+        if (force) {
+          openConfirmDialog(
+            t('core:confirm'),
+            t('core:indexDisabledConfirm'),
+            (result) => {
+              if (result) {
+                createLocationIndexInt(location);
+              }
+            },
+            'cancelIndexDisabledDialogTID',
+            'confirmIndexDisabledDialogTID',
+            'indexDisabledContentTID',
+          );
+        }
+      } else {
+        return createLocationIndexInt(location);
+      }
     }
     return Promise.resolve(false);
+  }
+
+  function createLocationIndexInt(location: CommonLocation): Promise<boolean> {
+    return getLocationPath(location).then((locationPath) => {
+      const isCurrentLocation =
+        currentLocation && currentLocation.uuid === location.uuid;
+      isIndexing.current = location.name;
+      forceUpdate();
+      return createDirectoryIndexWrapper(
+        { path: locationPath, locationID: location.uuid },
+        location.fullTextIndex,
+        location.ignorePatternPaths,
+        enableWS,
+      )
+        .then((directoryIndex) => {
+          if (isCurrentLocation) {
+            // Load index only if current location
+            setIndex(directoryIndex);
+          }
+          isIndexing.current = undefined;
+          forceUpdate();
+          return true;
+        })
+        .catch((err) => {
+          isIndexing.current = undefined;
+          //lastError.current = err;
+          forceUpdate();
+          return false;
+        });
+    });
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
