@@ -21,7 +21,6 @@ import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { getOllamaModels } from '-/components/chat/OllamaClient';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { useChatContext } from '-/hooks/useChatContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -32,6 +31,7 @@ import { ModelResponse } from 'ollama';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   id?: string;
@@ -47,10 +47,9 @@ function SelectChatModel(props: Props) {
   const { id, label, aiProvider, chosenModel, handleChangeModel, disabled } =
     props;
   const { removeModel, getOllamaClient, models } = useChatContext();
+  const { openConfirmDialog } = useNotificationContext();
 
   const defaultAiProvider: AIProvider = useSelector(getDefaultAIProvider);
-  const [isCustomModelPromptDialogOpened, setCustomModelPromptDialogOpened] =
-    useState(false);
   const [installedModels, setModels] = useState(
     aiProvider?.id === defaultAiProvider?.id ? models : [],
   );
@@ -196,7 +195,23 @@ function SelectChatModel(props: Props) {
 
   const changeModel = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === 'customModel') {
-      setCustomModelPromptDialogOpened(true);
+      openConfirmDialog(
+        t('core:downloadChatModel'),
+        undefined,
+        (result) => {
+          if (result && typeof result === 'string') {
+            handleChangeModel(result);
+          }
+        },
+        'cancelInstallCustomModel',
+        'confirmInstallCustomModel',
+        'confirmCustomModelContent',
+        undefined,
+        t('core:model'),
+        'E.g.: llama3.2:1b, further models available on ollama.com/search',
+        t('core:startDownload'),
+        t('core:cancel'),
+      );
     } else {
       handleChangeModel(event.target.value);
     }
@@ -283,30 +298,6 @@ function SelectChatModel(props: Props) {
           {t('core:installCustomModel')}
         </MenuItem>
       </TsSelect>
-      <ConfirmDialog
-        prompt={t('core:model')}
-        open={isCustomModelPromptDialogOpened}
-        onClose={() => {
-          setCustomModelPromptDialogOpened(false);
-        }}
-        title={t('core:downloadChatModel')}
-        helpText={
-          'E.g.: llama3.2:1b, further models available on ollama.com/search'
-        }
-        // content={t('core:chooseModel')}
-        confirmCallback={(result) => {
-          if (result && typeof result === 'string') {
-            handleChangeModel(result);
-          } else {
-            setCustomModelPromptDialogOpened(false);
-          }
-        }}
-        cancelDialogTID="cancelInstallCustomModel"
-        confirmDialogTID="confirmInstallCustomModel"
-        confirmDialogContentTID="confirmCustomModelContent"
-        customConfirmText={t('core:startDownload')}
-        customCancelText={t('core:cancel')}
-      />
     </>
   );
 }

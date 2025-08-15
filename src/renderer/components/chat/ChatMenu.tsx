@@ -24,13 +24,15 @@ import CopyIcon from '@mui/icons-material/FileCopy';
 import HtmlIcon from '@mui/icons-material/Html';
 import RttIcon from '@mui/icons-material/Rtt';
 import { DeleteIcon } from '-/components/CommonIcons';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useChatContext } from '-/hooks/useChatContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface ChatMenuProps {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
   handleSelectAll: () => void;
   handleCopy: () => void;
-  clearHistory: () => void;
   saveAsHtml: () => void;
   saveAsMarkdown: () => void;
 }
@@ -42,11 +44,28 @@ function ChatMenu(props: ChatMenuProps) {
     handleClose,
     handleSelectAll,
     handleCopy,
-    clearHistory,
     saveAsHtml,
     saveAsMarkdown,
   } = props;
 
+  const { deleteHistory } = useChatContext();
+  const { openConfirmDialog } = useNotificationContext();
+
+  const clearHistory = () => {
+    handleClose();
+    openConfirmDialog(
+      t('core:titleConfirm'),
+      t('core:confirmHistoryDeletion'),
+      (result) => {
+        if (result) {
+          deleteHistory();
+        }
+      },
+      'cancelDeleteHistoryDialog',
+      'confirmDeleteHistoryDialog',
+      'confirmDeleteHistoryDialogContent',
+    );
+  };
   return (
     <Menu
       anchorEl={anchorEl}

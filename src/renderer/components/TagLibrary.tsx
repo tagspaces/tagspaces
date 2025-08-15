@@ -23,7 +23,6 @@ import TagContainerDnd from '-/components/TagContainerDnd';
 import TagGroupContainer from '-/components/TagGroupContainer';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 import TsIconButton from '-/components/TsIconButton';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import CreateTagGroupDialog from '-/components/dialogs/CreateTagGroupDialog';
 import CreateTagsDialog from '-/components/dialogs/CreateTagsDialog';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
@@ -53,6 +52,7 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomDragLayer from '-/components/CustomDragLayer';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   style?: any;
@@ -64,7 +64,6 @@ function TagLibrary(props: Props) {
   const {
     createTagGroup,
     removeTagGroup,
-    deleteTag,
     changeTagOrder,
     moveTag,
     moveTagGroup,
@@ -72,6 +71,7 @@ function TagLibrary(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const { findLocation } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
+  const { openConfirmDialog } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -93,13 +93,9 @@ function TagLibrary(props: Props) {
     useState<boolean>(false);
   const [isEditTagGroupDialogOpened, setIsEditTagGroupDialogOpened] =
     useState<boolean>(false);
-  const [isDeleteTagGroupDialogOpened, setIsDeleteTagGroupDialogOpened] =
-    useState<boolean>(false);
   const [isCreateTagDialogOpened, setIsCreateTagDialogOpened] =
     useState<boolean>(false);
   const [isEditTagDialogOpened, setIsEditTagDialogOpened] =
-    useState<boolean>(false);
-  const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] =
     useState<boolean>(false);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   /*const firstRender = useFirstRender();
@@ -196,7 +192,19 @@ function TagLibrary(props: Props) {
   };
 
   const showDeleteTagGroupDialog = () => {
-    setIsDeleteTagGroupDialogOpened(true);
+    openConfirmDialog(
+      t('core:deleteTagGroup'),
+      t('core:deleteTagGroupContentConfirm', {
+        tagGroup: selectedTagGroupEntry ? selectedTagGroupEntry.title : '',
+      }),
+      (result) => {
+        if (result && selectedTagGroupEntry) {
+          removeTagGroup(selectedTagGroupEntry.uuid);
+        }
+      },
+      'cancelDeleteTagGroupDialog',
+      'confirmDeleteTagGroupDialog',
+    );
     setTagGroupMenuAnchorEl(null);
   };
 
@@ -258,12 +266,6 @@ function TagLibrary(props: Props) {
     );
   };
 
-  function confirmDeleteTag() {
-    if (selectedTag && selectedTagGroupEntry) {
-      deleteTag(selectedTag.title, selectedTagGroupEntry.uuid);
-    }
-  }
-
   const { reduceHeightBy } = props;
 
   const allTags = getAllTags(tagGroups);
@@ -298,23 +300,6 @@ function TagLibrary(props: Props) {
           )
         }
       />
-      {isDeleteTagGroupDialogOpened && (
-        <ConfirmDialog
-          open={isDeleteTagGroupDialogOpened}
-          onClose={() => setIsDeleteTagGroupDialogOpened(false)}
-          title={t('core:deleteTagGroup')}
-          content={t('core:deleteTagGroupContentConfirm', {
-            tagGroup: selectedTagGroupEntry ? selectedTagGroupEntry.title : '',
-          })}
-          confirmCallback={(result) => {
-            if (result && selectedTagGroupEntry) {
-              removeTagGroup(selectedTagGroupEntry.uuid);
-            }
-          }}
-          cancelDialogTID="cancelDeleteTagGroupDialog"
-          confirmDialogTID="confirmDeleteTagGroupDialog"
-        />
-      )}
       {isCreateTagGroupDialogOpened && (
         <CreateTagGroupDialog
           open={isCreateTagGroupDialogOpened}
@@ -370,7 +355,6 @@ function TagLibrary(props: Props) {
           open={Boolean(tagMenuAnchorEl)}
           onClose={() => setTagMenuAnchorEl(null)}
           showEditTagDialog={() => setIsEditTagDialogOpened(true)}
-          showDeleteTagDialog={() => setIsDeleteTagDialogOpened(true)}
           selectedTag={selectedTag}
           selectedTagGroupEntry={selectedTagGroupEntry}
         />
@@ -381,23 +365,6 @@ function TagLibrary(props: Props) {
           onClose={() => setIsEditTagDialogOpened(false)}
           selectedTagGroupEntry={selectedTagGroupEntry}
           selectedTag={selectedTag}
-        />
-      )}
-      {isDeleteTagDialogOpened && (
-        <ConfirmDialog
-          open={isDeleteTagDialogOpened}
-          onClose={() => setIsDeleteTagDialogOpened(false)}
-          title={t('core:deleteTagFromTagGroup')}
-          content={t('core:deleteTagFromTagGroupContentConfirm', {
-            tagName: selectedTag ? selectedTag.title : '',
-          })}
-          confirmCallback={(result) => {
-            if (result) {
-              confirmDeleteTag();
-            }
-          }}
-          cancelDialogTID="cancelDeleteTagDialogTagMenu"
-          confirmDialogTID="confirmDeleteTagDialogTagMenu"
         />
       )}
       <div

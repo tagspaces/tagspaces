@@ -151,20 +151,6 @@ function EntryTagMenu(props: Props) {
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
-      {/* <ConfirmDialog
-        open={isDeleteTagDialogOpened}
-        onClose={handleCloseDialogs}
-        title={t('core:removeTag')}
-        content={t('core:removeTagTooltip')}
-        confirmCallback={(result) => {
-          if (result) {
-            confirmRemoveTag();
-          }
-        }}
-        cancelDialogTID="cancelDeleteTagDialogTagMenu"
-        confirmDialogTID="confirmRemoveTagFromFile"
-        confirmDialogContentTID="confirmDialogContent"
-      /> */}
     </div>
   );
 }

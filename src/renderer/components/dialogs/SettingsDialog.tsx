@@ -16,7 +16,6 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import {
   AIIcon,
   AdvancedSettingsIcon,
@@ -28,7 +27,6 @@ import {
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
 import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
@@ -37,9 +35,7 @@ import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import { clearAllURLParams } from '-/utils/dom';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -50,7 +46,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
@@ -61,9 +56,7 @@ interface Props {
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
-  const desktopMode = useSelector(isDesktopMode);
-  const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
-    useState<boolean>(false);
+  // const desktopMode = useSelector(isDesktopMode);
   const { open, onClose } = props;
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -182,38 +175,9 @@ function SettingsDialog(props: Props) {
         {currentTab === 1 && <SettingsFileTypes />}
         {currentTab === 2 && <SettingsKeyBindings />}
         {currentTab === 3 && <SettingsExtensions />}
-        {currentTab === 4 && (
-          <SettingsAdvanced
-            showResetSettings={setIsResetSettingsDialogOpened}
-          />
-        )}
+        {currentTab === 4 && <SettingsAdvanced />}
         {currentTab === 5 && <SettingsAI closeSettings={onClose} />}
       </div>
-      {isResetSettingsDialogOpened && (
-        <ConfirmDialog
-          open={isResetSettingsDialogOpened}
-          onClose={() => {
-            setIsResetSettingsDialogOpened(false);
-          }}
-          title="Confirm"
-          content={t('core:confirmResetSettings')}
-          confirmCallback={(result) => {
-            if (result) {
-              clearAllURLParams();
-              localStorage.clear();
-              // eslint-disable-next-line no-restricted-globals
-              if (AppConfig.isElectron) {
-                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
-              } else {
-                window.location.reload();
-              }
-            }
-          }}
-          cancelDialogTID="cancelResetSettingsDialogTID"
-          confirmDialogTID="confirmResetSettingsDialogTID"
-          confirmDialogContentTID="confirmResetSettingsDialogContentTID"
-        />
-      )}
     </DialogContent>
   );
 

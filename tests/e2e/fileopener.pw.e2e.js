@@ -396,7 +396,7 @@ test.describe('TST08 - File folder properties', () => {
 
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteEntryTID]');
-    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await clickOn('[data-tid=confirmDeleteTID]');
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
 
     await expectMetaFilesExist(arrayMeta, false);
@@ -414,7 +414,7 @@ test.describe('TST08 - File folder properties', () => {
 
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteEntryTID]');
-    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await clickOn('[data-tid=confirmDeleteTID]');
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
 
     await expectMetaFilesExist([revision.file], false, revision.id);

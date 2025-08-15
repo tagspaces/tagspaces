@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -68,7 +67,6 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -168,7 +166,7 @@ export const OpenedEntryContextProvider = ({
   } = useDirectoryContentContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
-  const { showNotification } = useNotificationContext();
+  const { showNotification, openConfirmDialog } = useNotificationContext();
   const { actions } = useEditedEntryContext();
   const { metaActions } = useEditedEntryMetaContext();
   const { saveFilePromise } = usePlatformFacadeContext();
@@ -182,8 +180,6 @@ export const OpenedEntryContextProvider = ({
   const isEntryInFullWidth = useRef<boolean>(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
-  const [isLinkFromSearchDialogOpened, setLinkFromSearchConfirmDialogOpened] =
-    useState<string>(undefined);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
@@ -287,6 +283,30 @@ export const OpenedEntryContextProvider = ({
       });
     }
   }, [currentDirectoryPath]);
+
+  function setLinkFromSearchConfirmDialogOpened(query: string) {
+    if (query) {
+      openConfirmDialog(
+        t('core:invalidSharingLink'),
+        t('core:confirmSearchById'),
+        (result) => {
+          if (result) {
+            setSearchQuery({
+              textQuery: query,
+              searchBoxing: 'location',
+              searchType: 'strict',
+              maxSearchResults: 1,
+              forceIndexing: true,
+              executeSearch: true,
+            });
+          }
+        },
+        'linkFromSearchDialogCancel',
+        'linkFromSearchDialogConfirm',
+        'linkFromSearchDialogContent',
+      );
+    }
+  }
 
   function openNextFile(
     entries: TS.FileSystemEntry[],
@@ -1103,29 +1123,6 @@ export const OpenedEntryContextProvider = ({
   return (
     <OpenedEntryContext.Provider value={context}>
       {children}
-      <ConfirmDialog
-        open={isLinkFromSearchDialogOpened !== undefined}
-        onClose={() => {
-          setLinkFromSearchConfirmDialogOpened(undefined);
-        }}
-        title={t('core:invalidSharingLink')}
-        content={t('core:confirmSearchById')}
-        confirmCallback={(result) => {
-          if (result) {
-            setSearchQuery({
-              textQuery: isLinkFromSearchDialogOpened,
-              searchBoxing: 'location',
-              searchType: 'strict',
-              maxSearchResults: 1,
-              forceIndexing: true,
-              executeSearch: true,
-            });
-          }
-        }}
-        cancelDialogTID="linkFromSearchDialogCancel"
-        confirmDialogTID="linkFromSearchDialogConfirm"
-        confirmDialogContentTID="linkFromSearchDialogContent"
-      />
     </OpenedEntryContext.Provider>
   );
 };

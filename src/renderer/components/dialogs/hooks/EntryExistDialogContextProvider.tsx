@@ -16,11 +16,11 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type EntryExistDialogContextData = {
   handleEntryExist: (
@@ -50,10 +50,7 @@ export const EntryExistDialogContextProvider = ({
 }: EntryExistDialogContextProviderProps) => {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
-  const confirmOverride = useRef<() => void>(undefined);
-  const entriesExistPath = useRef<string[]>([]);
-
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const { openConfirmDialog } = useNotificationContext();
 
   async function handleEntryExist(
     entries: TS.FileSystemEntry[],
@@ -104,14 +101,20 @@ export const EntryExistDialogContextProvider = ({
   }
 
   function openDialog(existPath: string[], confirmCallback: () => void) {
-    confirmOverride.current = confirmCallback;
-    entriesExistPath.current = existPath;
-    forceUpdate();
-  }
-
-  function closeDialog() {
-    entriesExistPath.current = [];
-    forceUpdate();
+    if (existPath && existPath.length > 0) {
+      openConfirmDialog(
+        t('core:confirm'),
+        formatFileExist(existPath) + ' exist do you want to override it?',
+        (result) => {
+          if (result) {
+            confirmCallback();
+          }
+        },
+        'cancelOverwriteByCopyMoveDialog',
+        'confirmOverwriteByCopyMoveDialog',
+        'confirmDialogContent',
+      );
+    }
   }
 
   function formatFileExist(entries) {
@@ -125,33 +128,11 @@ export const EntryExistDialogContextProvider = ({
     return {
       handleEntryExist: handleEntryExist,
       openEntryExistDialog: openDialog,
-      closeEntryExistDialog: closeDialog,
     };
   }, []);
 
   return (
     <EntryExistDialogContext.Provider value={context}>
-      {entriesExistPath.current.length > 0 && (
-        <ConfirmDialog
-          open={true}
-          onClose={() => {
-            closeDialog();
-          }}
-          title={t('core:confirm')}
-          content={
-            formatFileExist(entriesExistPath.current) +
-            ' exist do you want to override it?'
-          }
-          confirmCallback={(result) => {
-            if (result) {
-              confirmOverride.current();
-            }
-          }}
-          cancelDialogTID="cancelOverwriteByCopyMoveDialog"
-          confirmDialogTID="confirmOverwriteByCopyMoveDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
       {children}
     </EntryExistDialogContext.Provider>
   );
