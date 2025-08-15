@@ -51,7 +51,7 @@ import {
   getTagColor,
   getTagTextColor,
 } from '-/reducers/settings';
-import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
+import { getTagColors } from '-/services/taglibrary-utils';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
 import {
@@ -84,7 +84,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import useFirstRender from '-/utils/useFirstRender';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
-import { IMAGE_DESCRIPTION } from '@tagspacespro/tagspacespro/modules/components';
 
 /*export type TimelineItem = {
   request: string;
