@@ -51,7 +51,7 @@ import {
   getTagColor,
   getTagTextColor,
 } from '-/reducers/settings';
-import { getTagColors, getTagLibrary } from '-/services/taglibrary-utils';
+import { getTagColors } from '-/services/taglibrary-utils';
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import { toBase64Image } from '-/services/utils-io';
 import {
@@ -227,17 +227,25 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const DEFAULT_QUESTION_PROMPT =
-    Pro && Pro.UI ? Pro.UI.DEFAULT_QUESTION_PROMPT : false;
+    window.ExtDefaultQuestionPrompt ??
+    Pro?.UI?.DEFAULT_QUESTION_PROMPT ??
+    false;
   const DEFAULT_SYSTEM_PROMPT =
-    Pro && Pro.UI ? Pro.UI.DEFAULT_SYSTEM_PROMPT : false;
-  const SUMMARIZE_PROMPT = Pro && Pro.UI ? Pro.UI.SUMMARIZE_PROMPT : false;
-  const IMAGE_DESCRIPTION = Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION : false;
+    window.ExtDefaultSystemPrompt ?? Pro?.UI?.DEFAULT_SYSTEM_PROMPT ?? false;
+  const SUMMARIZE_PROMPT =
+    window.ExtSummarizePrompt ?? Pro?.UI?.SUMMARIZE_PROMPT ?? false;
+  const IMAGE_DESCRIPTION =
+    window.ExtImageDescription ?? Pro?.UI?.IMAGE_DESCRIPTION ?? false;
   const IMAGE_DESCRIPTION_STRUCTURED =
-    Pro && Pro.UI ? Pro.UI.IMAGE_DESCRIPTION_STRUCTURED : false;
-  const TEXT_DESCRIPTION = Pro && Pro.UI ? Pro.UI.TEXT_DESCRIPTION : false;
-  const GENERATE_TAGS = Pro && Pro.UI ? Pro.UI.GENERATE_TAGS : false;
+    window.ExtImageDescriptionStructured ??
+    Pro?.UI?.IMAGE_DESCRIPTION_STRUCTURED ??
+    false;
+  const TEXT_DESCRIPTION =
+    window.ExtTextDescription ?? Pro?.UI?.TEXT_DESCRIPTION ?? false;
+  const GENERATE_TAGS =
+    window.ExtGenerateTags ?? Pro?.UI?.GENERATE_TAGS ?? false;
   const GENERATE_IMAGE_TAGS =
-    Pro && Pro.UI ? Pro.UI.GENERATE_IMAGE_TAGS : false;
+    window.ExtGenerateImageTags ?? Pro?.UI?.GENERATE_IMAGE_TAGS ?? false;
   const isTyping = useRef<boolean>(false);
   //const timelineItems = useRef<TimelineItem[]>([]);
   const ollamaClient = useRef<Ollama>(undefined);
