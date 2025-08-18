@@ -1232,6 +1232,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
               handleGenDescResults(
                 entry,
                 results,
+                entryModel.name,
                 generationSettings.current.appendAnalysisToDescription,
               ),
             );
@@ -1244,6 +1245,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
                 handleGenDescResults(
                   entry,
                   results,
+                  entryModel.name,
                   generationSettings.current.appendToDescription,
                 ),
             );
@@ -1281,12 +1283,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function handleGenDescResults(
     entry: TS.FileSystemEntry,
     response: string,
+    modelName: string,
     append: boolean,
   ): TS.FileSystemEntry {
     if (response) {
       const generatedDesc =
         response +
-        '\\\n *Generated with AI on ' +
+        '\\\n *Generated with AI model ' +
+        modelName +
+        ' on ' +
         formatDateTime(new Date(), true) +
         '* \n';
       //dispatch(SettingsActions.setEntryContainerTab(TabNames.descriptionTab));
