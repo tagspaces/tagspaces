@@ -49,6 +49,7 @@ import { GlobalHotKeys } from 'react-hotkeys';
 import { useSelector } from 'react-redux';
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
 import { useReloadOnFocus } from '-/perspectives/common/useReloadOnFocus';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
 
@@ -58,7 +59,9 @@ function ListPerspective(props: Props) {
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
   } = useMenuContext();
-  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const { openEntry, openPrevFile, openNextFile, openedEntry, fileChanged } =
+    useOpenedEntryContext();
+  const { showNotification } = useNotificationContext();
   const { actions } = usePerspectiveActionsContext();
   const { showDirectories } = usePerspectiveSettingsContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -211,7 +214,20 @@ function ListPerspective(props: Props) {
     },
     addRemoveTags: () => {
       if (selectedEntries && selectedEntries.length > 0) {
-        openAddRemoveTagsDialog();
+        if (
+          openedEntry &&
+          fileChanged &&
+          selectedEntries &&
+          selectedEntries.some((e) => e.path === openedEntry.path)
+        ) {
+          showNotification(
+            `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+            'default',
+            true,
+          );
+          return;
+        }
+        openAddRemoveTagsDialog(selectedEntries);
       }
     },
     renameFile: () => {
@@ -221,7 +237,7 @@ function ListPerspective(props: Props) {
     },
     copyMoveSelectedEntries: () => {
       if (selectedEntries && selectedEntries.length > 0) {
-        openMoveCopyFilesDialog();
+        openMoveCopyFilesDialog(selectedEntries);
       }
     },
     openEntry: (e) => {

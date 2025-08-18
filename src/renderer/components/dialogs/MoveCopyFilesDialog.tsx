@@ -1,3 +1,4 @@
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import AppConfig from '-/AppConfig';
 import { FileIcon, FolderIcon } from '-/components/CommonIcons';
 import DirectoryListView from '-/components/DirectoryListView';
@@ -24,9 +25,9 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -47,6 +48,8 @@ function MoveCopyFilesDialog(props: Props) {
     useEntryExistDialogContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
+  const { selectedEntries } = useSelectedEntriesContext();
+  const currentEntries = entries || selectedEntries;
 
   const [targetPath, setTargetPath] = useState(
     targetDir ? targetDir : currentDirectoryPath,
@@ -58,12 +61,14 @@ function MoveCopyFilesDialog(props: Props) {
   const currentLocation = findLocation();
   const targetLocation = findLocation(targetLocationId);
 
-  const selectedFiles = entries
-    ? entries.filter((fsEntry) => fsEntry.isFile).map((fsentry) => fsentry.path)
+  const selectedFiles = currentEntries
+    ? currentEntries
+        .filter((fsEntry) => fsEntry.isFile)
+        .map((fsentry) => fsentry.path)
     : [];
 
-  const selectedDirs = entries
-    ? entries
+  const selectedDirs = currentEntries
+    ? currentEntries
         .filter((fsEntry) => !fsEntry.isFile)
         .map((fsentry) => fsentry.path)
     : [];
@@ -156,7 +161,7 @@ function MoveCopyFilesDialog(props: Props) {
   }
 
   function copyMove(copy: boolean) {
-    handleEntryExist(entries, targetPath).then((exist) => {
+    handleEntryExist(currentEntries, targetPath).then((exist) => {
       if (exist) {
         openEntryExistDialog(exist, () => {
           if (copy) {
@@ -204,8 +209,8 @@ function MoveCopyFilesDialog(props: Props) {
             maxHeight: 200,
           }}
         >
-          {entries.length > 0 &&
-            entries.map((entry) => (
+          {currentEntries.length > 0 &&
+            currentEntries.map((entry) => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -269,5 +274,24 @@ function MoveCopyFilesDialog(props: Props) {
     </Dialog>
   );
 }
+/*const areEqual = (prev: Props, next: Props) => {
+  if (prev.open !== next.open) return false;
+  if (prev.targetDir !== next.targetDir) return false;
+  if (prev.targetLocationId !== next.targetLocationId) return false;
+  if (prev.onClose !== next.onClose) return false;
 
+  const a = prev.entries || [];
+  const b = next.entries || [];
+  if (a.length !== b.length) return false;
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].path !== b[i].path) return false;
+    if (a[i].isFile !== b[i].isFile) return false;
+    // add any other small stable fields you rely on (name, uuid, etc.)
+  }
+
+  return true;
+};
+
+export default React.memo(MoveCopyFilesDialog, areEqual);*/
 export default MoveCopyFilesDialog;
