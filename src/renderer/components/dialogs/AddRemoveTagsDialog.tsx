@@ -41,11 +41,12 @@ import {
 import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TagsSelect from '../TagsSelect';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  selected: TS.FileSystemEntry[];
+  selected?: TS.FileSystemEntry[];
 }
 
 function AddRemoveTagsDialog(props: Props) {
@@ -54,10 +55,12 @@ function AddRemoveTagsDialog(props: Props) {
 
   const { findLocation } = useCurrentLocationContext();
   const { addTagsToFsEntries, removeTags } = useTaggingActionsContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<TS.Tag[]>([]);
   const inputTags = useRef<TS.Tag[]>([]);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
+  const currentEntries = selected || selectedEntries;
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
@@ -102,9 +105,9 @@ function AddRemoveTagsDialog(props: Props) {
   };
 
   const addTagsAction = () => {
-    if (selected && selected.length > 0) {
+    if (currentEntries && currentEntries.length > 0) {
       addTagsToFsEntries(
-        selected,
+        currentEntries,
         uniqueTags([...newlyAddedTags, ...inputTags.current]),
       );
     }
@@ -112,15 +115,15 @@ function AddRemoveTagsDialog(props: Props) {
   };
 
   const removeTagsAction = () => {
-    if (selected && selected.length > 0) {
-      removeTags(selected, [...newlyAddedTags, ...inputTags.current]);
+    if (currentEntries && currentEntries.length > 0) {
+      removeTags(currentEntries, [...newlyAddedTags, ...inputTags.current]);
     }
     onCloseDialog(true);
   };
 
   const removeAllTagsAction = () => {
-    if (selected && selected.length > 0) {
-      removeTags(selected);
+    if (currentEntries && currentEntries.length > 0) {
+      removeTags(currentEntries);
     }
     onCloseDialog(true);
   };
@@ -128,7 +131,7 @@ function AddRemoveTagsDialog(props: Props) {
   const disabledButtons =
     (!newlyAddedTags && !inputTags.current) ||
     (newlyAddedTags.length < 1 && inputTags.current.length < 1) ||
-    selected.length < 1;
+    currentEntries.length < 1;
 
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -169,8 +172,8 @@ function AddRemoveTagsDialog(props: Props) {
           {t('selectedFilesAndFolders')}
         </Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
-          {selected.length > 0 &&
-            selected.map((entry) => (
+          {currentEntries.length > 0 &&
+            currentEntries.map((entry) => (
               <ListItem key={entry.path} title={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -199,7 +202,7 @@ function AddRemoveTagsDialog(props: Props) {
         </TsButton>
         <TsButton
           data-tid="cleanTagsMultipleEntries"
-          disabled={selected.length < 1}
+          disabled={currentEntries.length < 1}
           onClick={removeAllTagsAction}
         >
           {t('core:tagOperationCleanTags')}

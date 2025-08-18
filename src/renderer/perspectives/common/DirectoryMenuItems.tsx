@@ -59,7 +59,11 @@ export function getDirectoryMenuItems(
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
   cameraTakePicture?: () => void,
-  showAddRemoveTagsDialog?: () => void,
+  showAddRemoveTagsDialog?: (
+    entries: TS.FileSystemEntry[],
+    openedEntry?: TS.FileSystemEntry,
+    fileChanged?: boolean,
+  ) => void,
   openInNewWindow?: () => void,
   changeFolderThumbnail?: () => void,
   changeFolderBackground?: () => void,
@@ -419,7 +423,7 @@ export function getDirectoryMenuItems(
         data-tid="dirMenuAddRemoveTags"
         onClick={() => {
           onClose();
-          showAddRemoveTagsDialog();
+          showAddRemoveTagsDialog(selectedEntries);
         }}
       >
         <ListItemIcon>

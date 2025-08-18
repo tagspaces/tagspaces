@@ -53,6 +53,7 @@ import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -76,6 +77,7 @@ function MainToolbar(props: Props) {
     openAddRemoveTagsDialog,
     openShareFilesDialog,
   } = useMenuContext();
+  const { showNotification } = useNotificationContext();
   const { haveLocalSetting } = usePerspectiveSettingsContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
   const { nativeDragModeEnabled, setNativeDragModeEnabled } =
@@ -83,7 +85,7 @@ function MainToolbar(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntry, openedEntry, fileChanged } = useOpenedEntryContext();
   const { loadParentDirectoryContent, currentDirectoryPath } =
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
@@ -193,7 +195,22 @@ function MainToolbar(props: Props) {
             keyBinding={keyBindings['addRemoveTags']}
             aria-label={t('core:tagSelectedEntries')}
             data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-            onClick={() => openAddRemoveTagsDialog(selectedEntries)}
+            onClick={() => {
+              if (
+                openedEntry &&
+                fileChanged &&
+                selectedEntries &&
+                selectedEntries.some((e) => e.path === openedEntry.path)
+              ) {
+                showNotification(
+                  `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+                  'default',
+                  true,
+                );
+                return;
+              }
+              openAddRemoveTagsDialog(selectedEntries);
+            }}
           >
             <TagIcon />
           </TsToolbarButton>

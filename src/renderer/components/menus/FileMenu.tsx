@@ -107,7 +107,7 @@ function FileMenu(props: Props) {
     downloadFsEntry,
     getMetadataID,
   } = useIOActionsContext();
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntry, openedEntry, fileChanged } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
@@ -184,7 +184,7 @@ function FileMenu(props: Props) {
 
   function showMoveCopyFilesDialog() {
     onClose();
-    openMoveCopyFilesDialog();
+    openMoveCopyFilesDialog([lastSelectedEntry]);
   }
 
   function showShareFilesDialog() {
@@ -258,7 +258,20 @@ function FileMenu(props: Props) {
 
   function showAddRemoveTagsDialog() {
     onClose();
-    openAddRemoveTagsDialog();
+    if (
+      openedEntry &&
+      fileChanged &&
+      selectedEntries &&
+      selectedEntries.some((e) => e.path === openedEntry.path)
+    ) {
+      showNotification(
+        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+        'default',
+        true,
+      );
+      return;
+    }
+    openAddRemoveTagsDialog(selectedEntries);
   }
 
   function duplicateFileHandler() {

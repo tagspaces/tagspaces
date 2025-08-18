@@ -18,6 +18,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useMemo,
   useReducer,
   useRef,
@@ -25,11 +26,9 @@ import React, {
 } from 'react';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import LoadingLazy from '-/components/LoadingLazy';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type MenuContextData = {
@@ -55,12 +54,12 @@ type MenuContextData = {
   openRenameEntryDialog: () => void;
   closeRenameEntryDialog: () => void;
   openMoveCopyFilesDialog: (
-    entries?: TS.FileSystemEntry[],
+    entries: TS.FileSystemEntry[],
     targetDirectory?: string,
     targetLocationId?: string,
   ) => void;
   closeMoveCopyFilesDialog: () => void;
-  openAddRemoveTagsDialog: (entries?: TS.FileSystemEntry[]) => void;
+  openAddRemoveTagsDialog: (entries: TS.FileSystemEntry[]) => void;
   closeAddRemoveTagsDialog: () => void;
   openShareFilesDialog: (entries?: TS.FileSystemEntry[]) => void;
   closeShareFilesDialog: () => void;
@@ -113,9 +112,7 @@ const AddRemoveTagsDialog = React.lazy(
 
 export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const { findLocation } = useCurrentLocationContext();
-  const { selectedEntries } = useSelectedEntriesContext();
-  const { openedEntry, fileChanged } = useOpenedEntryContext();
-  const { showNotification } = useNotificationContext();
+  // const { showNotification } = useNotificationContext();
   const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
@@ -140,43 +137,49 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 
-  const openMenu = (
-    event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
-    entry: TS.FileSystemEntry,
-  ) => {
-    if (entry) {
-      if (entry.isFile) {
-        const currentLocation = findLocation(entry.locationID);
-        const dirPath = extractContainingDirectoryPath(
-          entry.path,
-          currentLocation?.getDirSeparator(),
-        );
-        openFileMenu(event, dirPath);
-      } else {
-        openDirectoryMenu(event, entry.path, true);
+  const openMenu = useCallback(
+    (
+      event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
+      entry: TS.FileSystemEntry,
+    ) => {
+      if (entry) {
+        if (entry.isFile) {
+          const currentLocation = findLocation(entry.locationID);
+          const dirPath = extractContainingDirectoryPath(
+            entry.path,
+            currentLocation?.getDirSeparator(),
+          );
+          openFileMenu(event, dirPath);
+        } else {
+          openDirectoryMenu(event, entry.path, true);
+        }
       }
-    }
-  };
+    },
+    [],
+  );
 
-  const openDirectoryMenu = (
-    event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
-    dirPath: string,
-    mode?: boolean,
-    perspectives?: boolean,
-    items?: React.ReactNode,
-  ) => {
-    event.preventDefault();
-    directoryPath.current = dirPath;
-    mouseX.current = event.clientX;
-    mouseY.current = event.clientY;
-    perspectiveMode.current = mode;
-    switchPerspectives.current = perspectives;
-    menuItems.current = items;
-    // @ts-ignore
-    setDirectoryContextMenuAnchorEl(event.currentTarget);
-  };
+  const openDirectoryMenu = useCallback(
+    (
+      event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
+      dirPath: string,
+      mode?: boolean,
+      perspectives?: boolean,
+      items?: React.ReactNode,
+    ) => {
+      event.preventDefault();
+      directoryPath.current = dirPath;
+      mouseX.current = event.clientX;
+      mouseY.current = event.clientY;
+      perspectiveMode.current = mode;
+      switchPerspectives.current = perspectives;
+      menuItems.current = items;
+      // @ts-ignore
+      setDirectoryContextMenuAnchorEl(event.currentTarget);
+    },
+    [],
+  );
 
-  const closeDirectoryMenu = () => {
+  const closeDirectoryMenu = useCallback(() => {
     directoryPath.current = undefined;
     mouseX.current = undefined;
     mouseY.current = undefined;
@@ -184,95 +187,107 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
     switchPerspectives.current = false;
     menuItems.current = undefined;
     setDirectoryContextMenuAnchorEl(null);
-  };
+  }, []);
 
-  const openFileMenu = (
-    event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
-    dirPath: string,
-    orderTop?: (entry: TS.FileSystemEntry) => void,
-    orderBottom?: (entry: TS.FileSystemEntry) => void,
-  ) => {
-    event.preventDefault();
-    directoryPath.current = dirPath;
-    mouseX.current = event.clientX;
-    mouseY.current = event.clientY;
-    //openShareFilesDialog.current = openShareFiles;
-    reorderTop.current = orderTop;
-    reorderBottom.current = orderBottom;
-    // @ts-ignore
-    setFileContextMenuAnchorEl(event.currentTarget);
-  };
+  const openFileMenu = useCallback(
+    (
+      event: MouseEvent | React.MouseEvent<Element, MouseEvent>,
+      dirPath: string,
+      orderTop?: (entry: TS.FileSystemEntry) => void,
+      orderBottom?: (entry: TS.FileSystemEntry) => void,
+    ) => {
+      event.preventDefault();
+      directoryPath.current = dirPath;
+      mouseX.current = event.clientX;
+      mouseY.current = event.clientY;
+      reorderTop.current = orderTop;
+      reorderBottom.current = orderBottom;
+      // @ts-ignore
+      setFileContextMenuAnchorEl(event.currentTarget);
+    },
+    [],
+  );
 
-  const closeFileMenu = () => {
+  const closeFileMenu = useCallback(() => {
     directoryPath.current = undefined;
     mouseX.current = undefined;
     mouseY.current = undefined;
     setFileContextMenuAnchorEl(null);
-  };
+  }, []);
 
-  /*  const setMousePosition = (x: number, y: number) => {
-    mouseX.current = x;
-    mouseY.current = y;
-  };*/
-  const openRenameEntryDialog = () => {
+  const openRenameEntryDialog = useCallback(() => {
     openRenameEntry.current = true;
     forceUpdate();
-  };
+  }, []);
 
-  const openMoveCopyFilesDialog = (
-    entries?: TS.FileSystemEntry[],
-    tDirectory?: string,
-    tLocationId?: string,
-  ) => {
-    openMoveCopyFiles.current = true;
-    currentEntries.current = entries;
-    targetDirectory.current = tDirectory;
-    targetLocationId.current = tLocationId;
+  const closeRenameEntryDialog = useCallback(() => {
+    openRenameEntry.current = false;
     forceUpdate();
-  };
+  }, []);
 
-  const openAddRemoveTagsDialog = (entries?: TS.FileSystemEntry[]) => {
-    const ent = entries || selectedEntries;
-    if (
-      openedEntry &&
-      fileChanged &&
-      ent &&
-      ent.some((e) => e.path === openedEntry.path)
-    ) {
-      showNotification(
-        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
-        'default',
-        true,
-      );
-      return;
-    }
-    openAddRemoveTags.current = true;
-    currentEntries.current = entries;
+  const openMoveCopyFilesDialog = useCallback(
+    (
+      entries: TS.FileSystemEntry[],
+      tDirectory?: string,
+      tLocationId?: string,
+    ) => {
+      openMoveCopyFiles.current = true;
+      currentEntries.current = entries;
+      targetDirectory.current = tDirectory;
+      targetLocationId.current = tLocationId;
+      forceUpdate();
+    },
+    [],
+  );
+
+  const closeMoveCopyFilesDialog = useCallback(() => {
+    openMoveCopyFiles.current = false;
     forceUpdate();
-  };
+  }, []);
 
-  const openShareFilesDialog = (entries?: TS.FileSystemEntry[]) => {
+  const openAddRemoveTagsDialog = useCallback(
+    (entries: TS.FileSystemEntry[]) => {
+      openAddRemoveTags.current = true;
+      currentEntries.current = entries;
+      forceUpdate();
+    },
+    [],
+  );
+
+  const closeAddRemoveTagsDialog = useCallback(() => {
+    openAddRemoveTags.current = false;
+    forceUpdate();
+  }, []);
+
+  const openShareFilesDialog = useCallback((entries?: TS.FileSystemEntry[]) => {
     openShareFiles.current = true;
     currentEntries.current = entries;
     forceUpdate();
-  };
+  }, []);
 
-  const closeRenameEntryDialog = () => {
-    openRenameEntry.current = false;
-    forceUpdate();
-  };
-  const closeMoveCopyFilesDialog = () => {
-    openMoveCopyFiles.current = false;
-    forceUpdate();
-  };
-  const closeAddRemoveTagsDialog = () => {
-    openAddRemoveTags.current = false;
-    forceUpdate();
-  };
-  const closeShareFilesDialog = () => {
+  const closeShareFilesDialog = useCallback(() => {
     openShareFiles.current = false;
     forceUpdate();
-  };
+  }, []);
+
+  // memoize provider value so consumers only re-render when callbacks change ---
+  const context = useMemo(() => {
+    return {
+      openMenu,
+      openDirectoryMenu,
+      closeDirectoryMenu,
+      openFileMenu,
+      closeFileMenu,
+      openRenameEntryDialog,
+      closeRenameEntryDialog,
+      openMoveCopyFilesDialog,
+      closeMoveCopyFilesDialog,
+      openAddRemoveTagsDialog,
+      closeAddRemoveTagsDialog,
+      openShareFilesDialog,
+      closeShareFilesDialog,
+    };
+  }, []);
 
   function DirectoryMenuAsync(props) {
     return (
@@ -310,25 +325,6 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
     );
   }
 
-  const context = useMemo(() => {
-    return {
-      openMenu,
-      openDirectoryMenu,
-      closeDirectoryMenu,
-      openFileMenu,
-      closeFileMenu,
-      //setMousePosition,
-      openRenameEntryDialog,
-      closeRenameEntryDialog,
-      openMoveCopyFilesDialog,
-      closeMoveCopyFilesDialog,
-      openAddRemoveTagsDialog,
-      closeAddRemoveTagsDialog,
-      openShareFilesDialog,
-      closeShareFilesDialog,
-    };
-  }, [selectedEntries, openedEntry, fileChanged]);
-
   return (
     <MenuContext.Provider value={context}>
       <RenameEntryDialogAsync
@@ -338,18 +334,14 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       <MoveCopyFilesDialogAsync
         open={openMoveCopyFiles.current}
         onClose={closeMoveCopyFilesDialog}
-        entries={
-          currentEntries.current ? currentEntries.current : selectedEntries
-        }
+        entries={currentEntries.current}
         targetDir={targetDirectory.current}
         targetLocationId={targetLocationId.current}
       />
       <AddRemoveTagsDialogAsync
         open={openAddRemoveTags.current}
         onClose={closeAddRemoveTagsDialog}
-        selected={
-          currentEntries.current ? currentEntries.current : selectedEntries
-        }
+        selected={currentEntries.current}
       />
       {ShareFilesDialog && (
         <ShareFilesDialog
@@ -359,7 +351,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       )}
       <DirectoryMenuAsync
         open={Boolean(directoryContextMenuAnchorEl)}
-        onClose={() => closeDirectoryMenu()}
+        onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
         perspectiveMode={perspectiveMode.current}
         switchPerspectives={switchPerspectives.current}
@@ -371,7 +363,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       />
       <FileMenuAsync
         open={Boolean(fileContextMenuAnchorEl)}
-        onClose={() => closeFileMenu()}
+        onClose={closeFileMenu}
         anchorEl={fileContextMenuAnchorEl}
         selectedFilePath={directoryPath.current}
         mouseX={mouseX.current}
