@@ -216,33 +216,35 @@ function EntryContainer() {
         }
         break;
       case 'thumbnailGenerated':
-        getResizedImageThumbnail(data.content)
-          .then((base64Image) => {
-            const data = base64ToBlob(base64Image.split(',').pop());
+        if (data.content) {
+          getResizedImageThumbnail(data.content)
+            .then((base64Image) => {
+              const data = base64ToBlob(base64Image.split(',').pop());
 
-            const thumbPath = cLocation.getThumbEntryPath(openedEntry);
-            saveBinaryFilePromise(
-              { path: thumbPath },
-              data, //new Blob([data]), //data.buffer ? data.buffer :
-              true,
-            )
-              .then(() => {
-                return setThumbnailImageChange({
-                  ...(openedEntry as TS.FileSystemEntry),
-                  meta: { ...openedEntry.meta, thumbPath },
+              const thumbPath = cLocation.getThumbEntryPath(openedEntry);
+              saveBinaryFilePromise(
+                { path: thumbPath },
+                data, //new Blob([data]), //data.buffer ? data.buffer :
+                true,
+              )
+                .then(() => {
+                  return setThumbnailImageChange({
+                    ...(openedEntry as TS.FileSystemEntry),
+                    meta: { ...openedEntry.meta, thumbPath },
+                  });
+                })
+                .catch((error) => {
+                  console.error(
+                    'Save to file ' + openedEntry.path + ' failed ',
+                    error,
+                  );
+                  return true;
                 });
-              })
-              .catch((error) => {
-                console.error(
-                  'Save to file ' + openedEntry.path + ' failed ',
-                  error,
-                );
-                return true;
-              });
-          })
-          .catch((error) => {
-            console.error('Thumbnail generation failed ' + error);
-          });
+            })
+            .catch((error) => {
+              console.error('Thumbnail generation failed ' + error);
+            });
+        }
         break;
       case 'savingFile':
         if (fileChanged) {
