@@ -25,6 +25,6 @@
     "ws": "8.18.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/extensions": "2.0.5"
+    "@tagspacespro/extensions": "2.0.6"
   }
 }
