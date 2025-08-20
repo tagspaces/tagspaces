@@ -642,12 +642,14 @@ export const DirectoryContentContextProvider = ({
       return defaultGridSettings;
     } else if (perspective === PerspectiveIDs.LIST) {
       return defaultListSettings;
-    } else if (perspective === PerspectiveIDs.GALLERY) {
-      return Pro.Perspectives.galleryDefaultSettings;
-    } else if (perspective === PerspectiveIDs.MAPIQUE) {
-      return Pro.Perspectives.mapiqueDefaultSettings;
-    } else if (perspective === PerspectiveIDs.KANBAN && Pro) {
-      return Pro.Perspectives.KanBanPerspectiveSettings;
+    } else if (Pro) {
+      if (perspective === PerspectiveIDs.GALLERY) {
+        return Pro.Perspectives.galleryDefaultSettings;
+      } else if (perspective === PerspectiveIDs.MAPIQUE) {
+        return Pro.Perspectives.mapiqueDefaultSettings;
+      } else if (perspective === PerspectiveIDs.KANBAN) {
+        return Pro.Perspectives.KanBanPerspectiveSettings;
+      }
     }
     return defaultGridSettings;
   }
