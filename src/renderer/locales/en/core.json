@@ -979,5 +979,12 @@
   "noModelsLoaded": "Error: No AI-models are loaded, please check if the AI-service is running.",
   "fileModified": "File was modified, do you want to save the changes?",
   "indexDisabledConfirm": "Indexing is currently disabled for this location.\nWould you like to force a reindex?",
+  "defaultQuestionPrompt": "Default Question Prompt",
+  "defaultSystemPrompt": "Default System Prompt",
+  "summarizePrompt": "Summarize Prompt",
+  "imageDescription": "Image Description",
+  "imageDescriptionStructured": "Image Description Structured",
+  "textDescription": "Text Description",
+  "generateImageTags": "Generate Image Tags",
   "-": "-"
 }
