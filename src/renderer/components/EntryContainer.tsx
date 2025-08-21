@@ -54,6 +54,10 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
+import { base64ToBlob } from '-/utils/dom';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -72,6 +76,8 @@ function EntryContainer() {
     useFilePropertiesContext();
   const { findLocation } = useCurrentLocationContext();
   const { saveFileOpen } = useResolveConflictContext();
+  const { setThumbnailImageChange } = useIOActionsContext();
+  const { saveBinaryFilePromise } = usePlatformFacadeContext();
 
   const { showNotification, openConfirmDialog } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
@@ -206,6 +212,37 @@ function EntryContainer() {
                 },
                 '*',
               );
+            });
+        }
+        break;
+      case 'thumbnailGenerated':
+        if (data.content) {
+          getResizedImageThumbnail(data.content)
+            .then((base64Image) => {
+              const data = base64ToBlob(base64Image.split(',').pop());
+
+              const thumbPath = cLocation.getThumbEntryPath(openedEntry);
+              saveBinaryFilePromise(
+                { path: thumbPath },
+                data, //new Blob([data]), //data.buffer ? data.buffer :
+                true,
+              )
+                .then(() => {
+                  return setThumbnailImageChange({
+                    ...(openedEntry as TS.FileSystemEntry),
+                    meta: { ...openedEntry.meta, thumbPath },
+                  });
+                })
+                .catch((error) => {
+                  console.error(
+                    'Save to file ' + openedEntry.path + ' failed ',
+                    error,
+                  );
+                  return true;
+                });
+            })
+            .catch((error) => {
+              console.error('Thumbnail generation failed ' + error);
             });
         }
         break;

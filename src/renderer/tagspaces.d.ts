@@ -81,11 +81,11 @@ declare interface Window {
   ExtDefaultQuestionPrompt?: string;
   ExtDefaultSystemPrompt?: string;
   ExtSummarizePrompt?: string;
-  ExtImageDescription?: string;
-  ExtImageDescriptionStructured?: string;
-  ExtTextDescription?: string;
-  ExtGenerateTags?: string;
-  ExtGenerateImageTags?: string;
+  ExtDescriptionFromTextPrompt?: string;
+  ExtDescriptionFromImageStructuredPrompt?: string;
+  ExtDescriptionFromImagePrompt?: string;
+  ExtTagsFromTextPrompt?: string;
+  ExtTagsFromImagePrompt?: string;
 }
 
 declare interface NodeModule {

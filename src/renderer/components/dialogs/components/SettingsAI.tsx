@@ -33,6 +33,7 @@ import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
+import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -40,6 +41,7 @@ import {
   getDefaultAIProvider,
 } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
@@ -62,7 +64,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -71,7 +73,7 @@ interface Props {
 }
 
 function SettingsAI(props: Props) {
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const { closeSettings } = props;
   const { changeCurrentModel, checkProviderAlive } = useChatContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
@@ -81,7 +83,14 @@ function SettingsAI(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const providersAlive = React.useRef({});
+  const aiTemplates = React.useRef({});
   const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
+
+  const aiTemplatesContext = Pro?.contextProviders?.AiTemplatesContext
+    ? useContext<TS.AiTemplatesContextData>(
+        Pro.contextProviders.AiTemplatesContext,
+      )
+    : undefined;
 
   useEffect(() => {
     checkOllamaAlive();
@@ -154,6 +163,19 @@ function SettingsAI(props: Props) {
       dispatch(SettingsActions.addAiProvider(aiProvider));
     });
   };
+
+  function saveTemplate(key: string) {
+    const template = aiTemplates.current[key];
+    if (template) {
+      aiTemplatesContext.setTemplate(key, template);
+      aiTemplates.current[key] = undefined;
+    }
+  }
+
+  function cancelSavingTemplate(key: string) {
+    aiTemplates.current[key] = undefined;
+    forceUpdate();
+  }
 
   const externalConfig = typeof window.ExtAI !== 'undefined';
 
@@ -466,6 +488,400 @@ function SettingsAI(props: Props) {
           </AccordionDetails>
         </Accordion>
       ))}
+      {Pro && aiTemplatesContext && (
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandIcon />}
+            aria-controls={'AdvancedContent'}
+            data-tid={'AdvancedTID'}
+            sx={{
+              '& .MuiAccordionSummary-content': { alignItems: 'center' },
+            }}
+          >
+            <Typography>{'Advanced'}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={
+                !(typeof window.ExtDefaultQuestionPrompt === 'undefined')
+              }
+              label={t('defaultQuestionPrompt')}
+              value={
+                aiTemplates.current['DEFAULT_QUESTION_PROMPT'] ??
+                aiTemplatesContext.getTemplate('DEFAULT_QUESTION_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['DEFAULT_QUESTION_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current[
+                    'DEFAULT_QUESTION_PROMPT'
+                  ] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        data-tid={'saveDefaultQuestionPromptTID'}
+                        onClick={() => saveTemplate('DEFAULT_QUESTION_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        data-tid={'saveDefaultQuestionPromptTID'}
+                        onClick={() =>
+                          cancelSavingTemplate('DEFAULT_QUESTION_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('defaultSystemPrompt')}
+              value={
+                aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] ??
+                aiTemplatesContext.getTemplate('DEFAULT_SYSTEM_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current[
+                    'DEFAULT_SYSTEM_PROMPT'
+                  ] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('DEFAULT_SYSTEM_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          cancelSavingTemplate('DEFAULT_SYSTEM_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('summarizePrompt')}
+              value={
+                aiTemplates.current['SUMMARIZE_PROMPT'] ??
+                aiTemplatesContext.getTemplate('SUMMARIZE_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['SUMMARIZE_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current['SUMMARIZE_PROMPT'] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('SUMMARIZE_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() => cancelSavingTemplate('SUMMARIZE_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('imageDescription')}
+              value={
+                aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] ??
+                aiTemplatesContext.getTemplate('IMAGE_DESCRIPTION_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] =
+                  e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current[
+                    'IMAGE_DESCRIPTION_PROMPT'
+                  ] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('IMAGE_DESCRIPTION_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          cancelSavingTemplate('IMAGE_DESCRIPTION_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('imageDescriptionStructured')}
+              value={
+                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED_PROMPT'] ??
+                aiTemplatesContext.getTemplate(
+                  'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+                )
+              }
+              onChange={(e) => {
+                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED_PROMPT'] =
+                  e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current[
+                    'IMAGE_DESCRIPTION_STRUCTURED_PROMPT'
+                  ] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          saveTemplate('IMAGE_DESCRIPTION_STRUCTURED_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          cancelSavingTemplate(
+                            'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+                          )
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('textDescription')}
+              value={
+                aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] ??
+                aiTemplatesContext.getTemplate('TEXT_DESCRIPTION_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current[
+                    'TEXT_DESCRIPTION_PROMPT'
+                  ] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('TEXT_DESCRIPTION_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          cancelSavingTemplate('TEXT_DESCRIPTION_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('generateImageTags')}
+              value={
+                aiTemplates.current['IMAGE_TAGS_PROMPT'] ??
+                aiTemplatesContext.getTemplate('IMAGE_TAGS_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['IMAGE_TAGS_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current['IMAGE_TAGS_PROMPT'] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('IMAGE_TAGS_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() =>
+                          cancelSavingTemplate('IMAGE_TAGS_PROMPT')
+                        }
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <TsTextField
+              fullWidth
+              multiline
+              rows={5}
+              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              label={t('generateTags')}
+              value={
+                aiTemplates.current['TEXT_TAGS_PROMPT'] ??
+                aiTemplatesContext.getTemplate('TEXT_TAGS_PROMPT')
+              }
+              onChange={(e) => {
+                aiTemplates.current['TEXT_TAGS_PROMPT'] = e.target.value;
+                forceUpdate();
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: aiTemplates.current['TEXT_TAGS_PROMPT'] && (
+                    <InputAdornment position="end">
+                      <TsButton
+                        variant="contained"
+                        onClick={() => saveTemplate('TEXT_TAGS_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:save')}
+                      </TsButton>
+                      <TsButton
+                        variant="contained"
+                        onClick={() => cancelSavingTemplate('TEXT_TAGS_PROMPT')}
+                        style={{
+                          // @ts-ignore
+                          WebkitAppRegion: 'no-drag',
+                        }}
+                      >
+                        {t('core:cancel')}
+                      </TsButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 }

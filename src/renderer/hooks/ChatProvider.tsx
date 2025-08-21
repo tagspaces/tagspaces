@@ -36,6 +36,7 @@ import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialo
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -60,6 +61,7 @@ import {
   getZodTags,
 } from '-/services/zodObjects';
 import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import {
   extractFileExtension,
@@ -74,6 +76,7 @@ import { format } from 'date-fns';
 import { ChatRequest, ModelResponse, Ollama } from 'ollama';
 import React, {
   createContext,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -82,8 +85,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import useFirstRender from '-/utils/useFirstRender';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 /*export type TimelineItem = {
   request: string;
@@ -226,26 +227,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
   //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
-  const DEFAULT_QUESTION_PROMPT =
-    window.ExtDefaultQuestionPrompt ??
-    Pro?.UI?.DEFAULT_QUESTION_PROMPT ??
-    false;
-  const DEFAULT_SYSTEM_PROMPT =
-    window.ExtDefaultSystemPrompt ?? Pro?.UI?.DEFAULT_SYSTEM_PROMPT ?? false;
-  const SUMMARIZE_PROMPT =
-    window.ExtSummarizePrompt ?? Pro?.UI?.SUMMARIZE_PROMPT ?? false;
-  const IMAGE_DESCRIPTION =
-    window.ExtImageDescription ?? Pro?.UI?.IMAGE_DESCRIPTION ?? false;
-  const IMAGE_DESCRIPTION_STRUCTURED =
-    window.ExtImageDescriptionStructured ??
-    Pro?.UI?.IMAGE_DESCRIPTION_STRUCTURED ??
-    false;
-  const TEXT_DESCRIPTION =
-    window.ExtTextDescription ?? Pro?.UI?.TEXT_DESCRIPTION ?? false;
-  const GENERATE_TAGS =
-    window.ExtGenerateTags ?? Pro?.UI?.GENERATE_TAGS ?? false;
-  const GENERATE_IMAGE_TAGS =
-    window.ExtGenerateImageTags ?? Pro?.UI?.GENERATE_IMAGE_TAGS ?? false;
+  const aiTemplatesContext = Pro?.contextProviders?.AiTemplatesContext
+    ? useContext<TS.AiTemplatesContextData>(
+        Pro.contextProviders.AiTemplatesContext,
+      )
+    : undefined;
   const isTyping = useRef<boolean>(false);
   //const timelineItems = useRef<TimelineItem[]>([]);
   const ollamaClient = useRef<Ollama>(undefined);
@@ -799,12 +785,16 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
 
   function getMessage(msg: string, mode: ChatMode) {
     if (mode === 'helpful') {
-      if (DEFAULT_SYSTEM_PROMPT) {
-        return DEFAULT_SYSTEM_PROMPT.replace('{question}', msg);
+      if (aiTemplatesContext) {
+        return aiTemplatesContext
+          .getTemplate('DEFAULT_SYSTEM_PROMPT')
+          .replace('{question}', msg);
       }
     } else if (mode === 'summary') {
-      if (SUMMARIZE_PROMPT) {
-        let prompt = SUMMARIZE_PROMPT.replace('{summarize_text}', msg);
+      if (aiTemplatesContext) {
+        let prompt = aiTemplatesContext
+          .getTemplate('SUMMARIZE_PROMPT')
+          .replace('{summarize_text}', msg);
         if (selectedEntries && selectedEntries.length > 0) {
           prompt = prompt.replace(
             '{file_path}',
@@ -835,55 +825,67 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
     } else if (mode === 'description') {
       if (msg) {
-        return TEXT_DESCRIPTION?.replace('{input_text}', msg)
-          .replace(
-            '{max_chars}',
-            generationSettings.current.maxChars
-              ? 'max ' + generationSettings.current.maxChars + ' characters'
-              : '',
-          )
-          .replace(
-            '{language}',
-            generationSettings.current.language
-              ? generationSettings.current.language
-              : 'native',
-          );
-      } else {
-        if (generationSettings.current.option === 'analyseImages') {
-          return IMAGE_DESCRIPTION_STRUCTURED;
+        if (aiTemplatesContext) {
+          return aiTemplatesContext
+            .getTemplate('TEXT_DESCRIPTION_PROMPT')
+            ?.replace('{input_text}', msg)
+            .replace(
+              '{max_chars}',
+              generationSettings.current.maxChars
+                ? 'max ' + generationSettings.current.maxChars + ' characters'
+                : '',
+            )
+            .replace(
+              '{language}',
+              generationSettings.current.language
+                ? generationSettings.current.language
+                : 'native',
+            );
         }
-        return IMAGE_DESCRIPTION?.replace(
-          '{file_name}',
-          openedEntry ? openedEntry.name : '',
-        ).replace(
-          '{language}',
-          generationSettings.current.language
-            ? generationSettings.current.language
-            : 'English',
-        );
+      } else {
+        if (aiTemplatesContext) {
+          if (generationSettings.current.option === 'analyseImages') {
+            return aiTemplatesContext.getTemplate(
+              'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+            );
+          }
+          return aiTemplatesContext
+            .getTemplate('IMAGE_DESCRIPTION_PROMPT')
+            ?.replace('{file_name}', openedEntry ? openedEntry.name : '')
+            .replace(
+              '{language}',
+              generationSettings.current.language
+                ? generationSettings.current.language
+                : 'English',
+            );
+        }
       }
     } else if (mode === 'tags') {
-      if (msg) {
-        if (GENERATE_TAGS && openedEntry) {
-          return GENERATE_TAGS.replace('{input_text}', msg);
-        }
-      } else {
-        // image
-        if (GENERATE_IMAGE_TAGS && openedEntry) {
-          return GENERATE_IMAGE_TAGS;
+      if (aiTemplatesContext) {
+        if (msg) {
+          if (openedEntry) {
+            return aiTemplatesContext
+              .getTemplate('TEXT_TAGS_PROMPT')
+              ?.replace('{input_text}', msg);
+          }
+        } else {
+          // image
+          if (openedEntry) {
+            return aiTemplatesContext.getTemplate('IMAGE_TAGS_PROMPT');
+          }
         }
       }
     } else if (mode === 'rephrase') {
-      if (DEFAULT_QUESTION_PROMPT) {
+      if (aiTemplatesContext) {
         const historyMap = chatHistoryItems.current.map((item) =>
           item.role !== 'system'
             ? `${item.request ? 'Human: ' + item.request : ''}${item.response ? ' Assistant: ' + item.response : ''}`
             : '',
         );
-        return DEFAULT_QUESTION_PROMPT.replace('{question}', msg).replace(
-          '{chat_history}',
-          historyMap.join(' '),
-        );
+        return aiTemplatesContext
+          .getTemplate('DEFAULT_QUESTION_PROMPT')
+          .replace('{question}', msg)
+          .replace('{chat_history}', historyMap.join(' '));
       }
     }
     return msg;
