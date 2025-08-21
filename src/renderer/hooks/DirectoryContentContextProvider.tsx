@@ -509,8 +509,8 @@ export const DirectoryContentContextProvider = ({
               (e) => e.path === action.oldEntryPath,
             );
             if (index !== -1) {
-              selectedEntries[index] = action.entry;
-              selected = [...selectedEntries];
+              selected = [...selectedEntries]; // shallow copy of the array
+              selected[index] = action.entry;
               updated = true;
             }
           }
