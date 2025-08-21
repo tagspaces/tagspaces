@@ -143,6 +143,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       entry: TS.FileSystemEntry,
     ) => {
       if (entry) {
+        currentEntries.current = [entry];
         if (entry.isFile) {
           const currentLocation = findLocation(entry.locationID);
           const dirPath = extractContainingDirectoryPath(
@@ -330,6 +331,9 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       <RenameEntryDialogAsync
         open={openRenameEntry.current}
         onClose={closeRenameEntryDialog}
+        selected={
+          currentEntries.current ? currentEntries.current[0] : undefined
+        }
       />
       <MoveCopyFilesDialogAsync
         open={openMoveCopyFiles.current}
