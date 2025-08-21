@@ -33,6 +33,7 @@ import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
 import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
+import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -40,6 +41,7 @@ import {
   getDefaultAIProvider,
 } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
@@ -65,8 +67,6 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { ChangeEvent, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Pro } from '-/pro';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   closeSettings: () => void;
@@ -649,20 +649,23 @@ function SettingsAI(props: Props) {
               disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
               label={t('imageDescription')}
               value={
-                aiTemplates.current['IMAGE_DESCRIPTION'] ??
-                aiTemplatesContext.getTemplate('IMAGE_DESCRIPTION')
+                aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] ??
+                aiTemplatesContext.getTemplate('IMAGE_DESCRIPTION_PROMPT')
               }
               onChange={(e) => {
-                aiTemplates.current['IMAGE_DESCRIPTION'] = e.target.value;
+                aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] =
+                  e.target.value;
                 forceUpdate();
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['IMAGE_DESCRIPTION'] && (
+                  endAdornment: aiTemplates.current[
+                    'IMAGE_DESCRIPTION_PROMPT'
+                  ] && (
                     <InputAdornment position="end">
                       <TsButton
                         variant="contained"
-                        onClick={() => saveTemplate('IMAGE_DESCRIPTION')}
+                        onClick={() => saveTemplate('IMAGE_DESCRIPTION_PROMPT')}
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',
@@ -673,7 +676,7 @@ function SettingsAI(props: Props) {
                       <TsButton
                         variant="contained"
                         onClick={() =>
-                          cancelSavingTemplate('IMAGE_DESCRIPTION')
+                          cancelSavingTemplate('IMAGE_DESCRIPTION_PROMPT')
                         }
                         style={{
                           // @ts-ignore
@@ -694,24 +697,26 @@ function SettingsAI(props: Props) {
               disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
               label={t('imageDescriptionStructured')}
               value={
-                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED'] ??
-                aiTemplatesContext.getTemplate('IMAGE_DESCRIPTION_STRUCTURED')
+                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED_PROMPT'] ??
+                aiTemplatesContext.getTemplate(
+                  'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+                )
               }
               onChange={(e) => {
-                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED'] =
+                aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED_PROMPT'] =
                   e.target.value;
                 forceUpdate();
               }}
               slotProps={{
                 input: {
                   endAdornment: aiTemplates.current[
-                    'IMAGE_DESCRIPTION_STRUCTURED'
+                    'IMAGE_DESCRIPTION_STRUCTURED_PROMPT'
                   ] && (
                     <InputAdornment position="end">
                       <TsButton
                         variant="contained"
                         onClick={() =>
-                          saveTemplate('IMAGE_DESCRIPTION_STRUCTURED')
+                          saveTemplate('IMAGE_DESCRIPTION_STRUCTURED_PROMPT')
                         }
                         style={{
                           // @ts-ignore
@@ -723,7 +728,9 @@ function SettingsAI(props: Props) {
                       <TsButton
                         variant="contained"
                         onClick={() =>
-                          cancelSavingTemplate('IMAGE_DESCRIPTION_STRUCTURED')
+                          cancelSavingTemplate(
+                            'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+                          )
                         }
                         style={{
                           // @ts-ignore
@@ -744,20 +751,22 @@ function SettingsAI(props: Props) {
               disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
               label={t('textDescription')}
               value={
-                aiTemplates.current['TEXT_DESCRIPTION'] ??
-                aiTemplatesContext.getTemplate('TEXT_DESCRIPTION')
+                aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] ??
+                aiTemplatesContext.getTemplate('TEXT_DESCRIPTION_PROMPT')
               }
               onChange={(e) => {
-                aiTemplates.current['TEXT_DESCRIPTION'] = e.target.value;
+                aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['TEXT_DESCRIPTION'] && (
+                  endAdornment: aiTemplates.current[
+                    'TEXT_DESCRIPTION_PROMPT'
+                  ] && (
                     <InputAdornment position="end">
                       <TsButton
                         variant="contained"
-                        onClick={() => saveTemplate('TEXT_DESCRIPTION')}
+                        onClick={() => saveTemplate('TEXT_DESCRIPTION_PROMPT')}
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',
@@ -767,7 +776,9 @@ function SettingsAI(props: Props) {
                       </TsButton>
                       <TsButton
                         variant="contained"
-                        onClick={() => cancelSavingTemplate('TEXT_DESCRIPTION')}
+                        onClick={() =>
+                          cancelSavingTemplate('TEXT_DESCRIPTION_PROMPT')
+                        }
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',
@@ -787,20 +798,20 @@ function SettingsAI(props: Props) {
               disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
               label={t('generateImageTags')}
               value={
-                aiTemplates.current['GENERATE_IMAGE_TAGS'] ??
-                aiTemplatesContext.getTemplate('GENERATE_IMAGE_TAGS')
+                aiTemplates.current['IMAGE_TAGS_PROMPT'] ??
+                aiTemplatesContext.getTemplate('IMAGE_TAGS_PROMPT')
               }
               onChange={(e) => {
-                aiTemplates.current['GENERATE_IMAGE_TAGS'] = e.target.value;
+                aiTemplates.current['IMAGE_TAGS_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['GENERATE_IMAGE_TAGS'] && (
+                  endAdornment: aiTemplates.current['IMAGE_TAGS_PROMPT'] && (
                     <InputAdornment position="end">
                       <TsButton
                         variant="contained"
-                        onClick={() => saveTemplate('GENERATE_IMAGE_TAGS')}
+                        onClick={() => saveTemplate('IMAGE_TAGS_PROMPT')}
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',
@@ -811,7 +822,7 @@ function SettingsAI(props: Props) {
                       <TsButton
                         variant="contained"
                         onClick={() =>
-                          cancelSavingTemplate('GENERATE_IMAGE_TAGS')
+                          cancelSavingTemplate('IMAGE_TAGS_PROMPT')
                         }
                         style={{
                           // @ts-ignore
@@ -832,20 +843,20 @@ function SettingsAI(props: Props) {
               disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
               label={t('generateTags')}
               value={
-                aiTemplates.current['GENERATE_TAGS'] ??
-                aiTemplatesContext.getTemplate('GENERATE_TAGS')
+                aiTemplates.current['TEXT_TAGS_PROMPT'] ??
+                aiTemplatesContext.getTemplate('TEXT_TAGS_PROMPT')
               }
               onChange={(e) => {
-                aiTemplates.current['GENERATE_TAGS'] = e.target.value;
+                aiTemplates.current['TEXT_TAGS_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['GENERATE_TAGS'] && (
+                  endAdornment: aiTemplates.current['TEXT_TAGS_PROMPT'] && (
                     <InputAdornment position="end">
                       <TsButton
                         variant="contained"
-                        onClick={() => saveTemplate('GENERATE_TAGS')}
+                        onClick={() => saveTemplate('TEXT_TAGS_PROMPT')}
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',
@@ -855,7 +866,7 @@ function SettingsAI(props: Props) {
                       </TsButton>
                       <TsButton
                         variant="contained"
-                        onClick={() => cancelSavingTemplate('GENERATE_TAGS')}
+                        onClick={() => cancelSavingTemplate('TEXT_TAGS_PROMPT')}
                         style={{
                           // @ts-ignore
                           WebkitAppRegion: 'no-drag',

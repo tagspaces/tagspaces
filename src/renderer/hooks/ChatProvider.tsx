@@ -36,6 +36,7 @@ import { generateOptionType } from '-/components/dialogs/hooks/AiGenerationDialo
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -60,6 +61,7 @@ import {
   getZodTags,
 } from '-/services/zodObjects';
 import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import {
   extractFileExtension,
@@ -83,8 +85,6 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import useFirstRender from '-/utils/useFirstRender';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 /*export type TimelineItem = {
   request: string;
@@ -827,7 +827,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       if (msg) {
         if (aiTemplatesContext) {
           return aiTemplatesContext
-            .getTemplate('TEXT_DESCRIPTION')
+            .getTemplate('TEXT_DESCRIPTION_PROMPT')
             ?.replace('{input_text}', msg)
             .replace(
               '{max_chars}',
@@ -846,11 +846,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         if (aiTemplatesContext) {
           if (generationSettings.current.option === 'analyseImages') {
             return aiTemplatesContext.getTemplate(
-              'IMAGE_DESCRIPTION_STRUCTURED',
+              'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
             );
           }
           return aiTemplatesContext
-            .getTemplate('IMAGE_DESCRIPTION')
+            .getTemplate('IMAGE_DESCRIPTION_PROMPT')
             ?.replace('{file_name}', openedEntry ? openedEntry.name : '')
             .replace(
               '{language}',
@@ -865,13 +865,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         if (msg) {
           if (openedEntry) {
             return aiTemplatesContext
-              .getTemplate('GENERATE_TAGS')
+              .getTemplate('TEXT_TAGS_PROMPT')
               ?.replace('{input_text}', msg);
           }
         } else {
           // image
           if (openedEntry) {
-            return aiTemplatesContext.getTemplate('GENERATE_IMAGE_TAGS');
+            return aiTemplatesContext.getTemplate('IMAGE_TAGS_PROMPT');
           }
         }
       }
