@@ -381,7 +381,7 @@ test.describe('TST50** - Right button on a file', () => {
       'openDirectory',
     );
     await expectElementExist(fileSelector, true);
-    await deleteFileFromMenu();
+    await deleteFileFromMenu(fileSelector);
     await expectElementExist(fileSelector, false);
     await reloadDirectory();
     await expectElementExist(fileSelector, false);
