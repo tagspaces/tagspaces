@@ -184,7 +184,7 @@ function FileMenu(props: Props) {
 
   function showMoveCopyFilesDialog() {
     onClose();
-    openMoveCopyFilesDialog([lastSelectedEntry]);
+    openMoveCopyFilesDialog(selectedEntries);
   }
 
   function showShareFilesDialog() {
@@ -457,20 +457,21 @@ function FileMenu(props: Props) {
       );
     }
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
-    menuItems.push(
-      <MenuItem
-        key="fileMenuRenameFile"
-        data-tid="fileMenuRenameFile"
-        onClick={showRenameFileDialog}
-      >
-        <ListItemIcon>
-          <RenameIcon />
-        </ListItemIcon>
-        <ListItemText primary={t('core:renameFile')} />
-        <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
-      </MenuItem>,
-    );
     if (selectedEntries.length < 2) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuRenameFile"
+          data-tid="fileMenuRenameFile"
+          onClick={showRenameFileDialog}
+        >
+          <ListItemIcon>
+            <RenameIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:renameFile')} />
+          <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
+        </MenuItem>,
+      );
+
       menuItems.push(
         <MenuItem
           key="fileMenuDuplicateFile"
