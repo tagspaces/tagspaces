@@ -461,7 +461,7 @@ export const DirectoryContentContextProvider = ({
   function reflectSelection(actions: TS.EditAction[]) {
     let updated = false;
     if (actions && actions.length > 0) {
-      let selected = [];
+      let selected = [...selectedEntries];
       for (const action of actions) {
         if (
           action.source !== 'fsWatcher' &&
@@ -482,26 +482,13 @@ export const DirectoryContentContextProvider = ({
             ) {
               selected.push(action.entry);
               updated = true;
-              /*if (
-                !selectedEntries.some(
-                  (entry) => entry.path === action.entry.path,
-                )
-              ) {
-                if (selectedEntries.length > 0) {
-                  selected = [...selectedEntries, action.entry];
-                } else {
-                  selected.push(action.entry);
-                }
-                updated = true;
-              }*/
             }
           } else if (action.action === 'delete') {
             let index = selectedEntries.findIndex(
               (e) => e.path === action.entry.path,
             );
             if (index !== -1) {
-              selectedEntries.splice(index, 1);
-              selected = [...selectedEntries];
+              selected.splice(index, 1);
               updated = true;
             }
           } else if (action.action === 'update') {
@@ -509,7 +496,6 @@ export const DirectoryContentContextProvider = ({
               (e) => e.path === action.oldEntryPath,
             );
             if (index !== -1) {
-              selected = [...selectedEntries]; // shallow copy of the array
               selected[index] = action.entry;
               updated = true;
             }
