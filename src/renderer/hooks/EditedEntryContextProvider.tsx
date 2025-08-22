@@ -26,6 +26,8 @@ import React, {
 import { extractTagsAsObjects } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
+import { useSelector } from 'react-redux';
+import { getTagDelimiter } from '-/reducers/settings';
 
 type EditedEntryContextData = {
   actions: TS.EditAction[] | undefined;
@@ -59,6 +61,7 @@ export type EditedEntryContextProviderProps = {
 export const EditedEntryContextProvider = ({
   children,
 }: EditedEntryContextProviderProps) => {
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   const [actions, setActions] = useState<TS.EditAction[] | undefined>(
     undefined,
   );
@@ -134,7 +137,7 @@ export const EditedEntryContextProvider = ({
       skipSelection: boolean = false,
     ) => {
       if (!entry.tags || entry.tags.length === 0) {
-        entry.tags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
+        entry.tags = extractTagsAsObjects(entry.name, tagDelimiter);
       }
       const currentAction: TS.EditAction = {
         action: 'add',

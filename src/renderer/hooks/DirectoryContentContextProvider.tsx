@@ -32,6 +32,7 @@ import {
   actions as SettingsActions,
   getDefaultPerspective,
   getShowUnixHiddenEntries,
+  getTagDelimiter,
 } from '-/reducers/settings';
 import {
   cleanMetaData,
@@ -244,6 +245,7 @@ export const DirectoryContentContextProvider = ({
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const defaultPerspective = useSelector(getDefaultPerspective);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
 
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const { signal, abort, cancelAbort } =
@@ -1144,7 +1146,7 @@ export const DirectoryContentContextProvider = ({
 
       const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
         entry,
-        AppConfig.tagDelimiter,
+        tagDelimiter,
         location?.getDirSeparator(),
       );
       directoryContent.push({
@@ -1287,7 +1289,7 @@ export const DirectoryContentContextProvider = ({
               // description: getDescriptionPreview(meta.description, 200),
             },
           },
-          AppConfig.tagDelimiter,
+          tagDelimiter,
           location?.getDirSeparator(),
         );
       }
@@ -1516,20 +1518,20 @@ export const DirectoryContentContextProvider = ({
               if (meta) {
                 return enhanceEntry(
                   { ...entry, meta: { ...meta, ...metaProps } },
-                  AppConfig.tagDelimiter,
+                  tagDelimiter,
                   location.getDirSeparator(),
                 );
               }
               return enhanceEntry(
                 { ...entry, meta: { ...metaProps } },
-                AppConfig.tagDelimiter,
+                tagDelimiter,
                 location.getDirSeparator(),
               );
             });
         } catch (e) {
           return enhanceEntry(
             { ...entry, meta: { ...metaProps } },
-            AppConfig.tagDelimiter,
+            tagDelimiter,
             location.getDirSeparator(),
           );
         }

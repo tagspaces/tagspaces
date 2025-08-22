@@ -986,5 +986,6 @@
   "imageDescriptionStructured": "Image Description Structured",
   "textDescription": "Text Description",
   "generateImageTags": "Generate Image Tags",
+  "tagDelimiterChange": "Changing Tag Delimiter will hide current tags with the old delimiter",
   "-": "-"
 }

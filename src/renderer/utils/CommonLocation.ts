@@ -499,15 +499,18 @@ export class CommonLocation implements TS.Location {
     return url;
   };
 
-  toFsEntry = (path: string, isFile: boolean): TS.FileSystemEntry => {
+  toFsEntry = (
+    path: string,
+    isFile: boolean,
+    tagDelimiter?: string,
+  ): TS.FileSystemEntry => {
     const name = isFile
       ? extractFileName(path, this.getDirSeparator())
       : extractDirectoryName(path, this.getDirSeparator());
-    const tags = extractTagsAsObjects(
-      name,
-      AppConfig.tagDelimiter,
-      this.getDirSeparator(),
-    );
+    let tags = [];
+    if (tagDelimiter) {
+      tags = extractTagsAsObjects(name, tagDelimiter, this.getDirSeparator());
+    }
     let entryPath = path;
     if (!isFile && !path.endsWith(this.getDirSeparator())) {
       entryPath = path + this.getDirSeparator();

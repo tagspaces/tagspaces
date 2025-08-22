@@ -27,6 +27,8 @@ import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useSelector } from 'react-redux';
+import { getTagDelimiter } from '-/reducers/settings';
 
 interface Props {
   tag: TS.Tag;
@@ -76,9 +78,9 @@ const TagContainerDnd = (props: Props) => {
   } = props;
 
   const { addTags } = useTaggingActionsContext();
-  const { findLocation } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
-  const currentLocation = findLocation();
+  const tagDelimiter: string = useSelector(getTagDelimiter);
 
   const endDrag = (item, monitor) => {
     // const item = monitor.getItem();
@@ -193,7 +195,7 @@ const TagContainerDnd = (props: Props) => {
       if (dragItem.tag.type === 'plain') {
         const extractedTags = extractTags(
           entry.path,
-          AppConfig.tagDelimiter,
+          tagDelimiter,
           currentLocation?.getDirSeparator(),
         );
         if (

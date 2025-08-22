@@ -67,6 +67,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
   getFileNameTagPlace,
   getPrefixTagContainer,
+  getTagDelimiter,
   getWarningOpeningFilesExternally,
 } from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
@@ -323,6 +324,7 @@ export const IOActionsContextProvider = ({
   );
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   //const firstRender = useFirstRender();
   const currentLocation = findLocation();
 
@@ -1518,7 +1520,7 @@ export const IOActionsContextProvider = ({
                 if (file.meta) {
                   const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
                     file,
-                    AppConfig.tagDelimiter,
+                    tagDelimiter,
                     currentLocation?.getDirSeparator(),
                   );
                   return enhancedEntry;
@@ -1718,7 +1720,7 @@ export const IOActionsContextProvider = ({
 
       const extractedTags = extractTags(
         selectedFilePath,
-        AppConfig.tagDelimiter,
+        tagDelimiter,
         currentLocation?.getDirSeparator(),
       );
       extractedTags.push('copy');
@@ -1730,7 +1732,7 @@ export const IOActionsContextProvider = ({
         generateFileName(
           fileName,
           extractedTags,
-          AppConfig.tagDelimiter,
+          tagDelimiter,
           currentLocation?.getDirSeparator(),
           prefixTagContainer,
           filenameTagPlacedAtEnd,

@@ -53,7 +53,7 @@ export default {
   isUpdateAvailable: false,
   enableWS: AppConfig.isElectron,
   warningOpeningFilesExternally: true,
-  tagDelimiter: ' ',
+  tagDelimiter: AppConfig.tagDelimiter,
   maxSearchResult: 1000,
   desktopMode,
   devMode: window.ExtDevMode ? window.ExtDevMode : false,

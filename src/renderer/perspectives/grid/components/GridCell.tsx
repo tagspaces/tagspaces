@@ -41,7 +41,11 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import {
+  getSupportedFileTypes,
+  getTagDelimiter,
+  isReorderTags,
+} from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import { dataTidFormat } from '-/services/test';
 import {
@@ -142,6 +146,7 @@ function GridCell(props: Props) {
   const { findLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   const thumbPath = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
@@ -296,7 +301,7 @@ function GridCell(props: Props) {
   if (fsEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
-      AppConfig.tagDelimiter,
+      tagDelimiter,
       gridCellLocation?.getDirSeparator(),
     );
   }

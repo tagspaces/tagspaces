@@ -240,6 +240,33 @@ function SettingsAdvanced(props: Props) {
         />
       </ListItem>
       <ListItem>
+        <ListItemText primary={t('core:tagDelimiter')} />
+        <TsSelect
+          data-tid="tagDelimiterTID"
+          fullWidth={false}
+          title={t('core:tagDelimiter')}
+          value={settings.tagDelimiter}
+          onChange={(event) =>
+            openConfirmDialog(
+              t('core:confirm'),
+              t('core:tagDelimiterChange'),
+              (result) => {
+                if (result) {
+                  dispatch(SettingsActions.setTagDelimiter(event.target.value));
+                }
+              },
+              'cancelTagDelimiterChangeDialog',
+              'confirmTagDelimiterChangeDialog',
+              'confirmTagDelimiterChangeContent',
+            )
+          }
+        >
+          <MenuItem value=" "> </MenuItem>
+          <MenuItem value=",">,</MenuItem>
+          <MenuItem value="_">_</MenuItem>
+        </TsSelect>
+      </ListItem>
+      <ListItem>
         <ListItemText primary={t('core:prefixTagContainer')} />
         <TsTextField
           style={{ maxWidth: '100px' }}
