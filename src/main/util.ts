@@ -19,14 +19,26 @@ export function resolveHtmlPath(htmlFileName: string) {
 /**
  * @param payload: string
  * @param endpoint: string
+ * @param signal
  */
-export function postRequest(payload, endpoint) {
+export function postRequest(payload, endpoint, signal = undefined) {
   return isWorkerAvailable().then((workerAvailable) => {
     if (!workerAvailable) {
       return Promise.reject(new Error('no Worker Available!'));
     }
+
     return new Promise((resolve, reject) => {
-      const option = {
+      // quick abort check
+      if (signal && signal.aborted) {
+        const e = new Error('Aborted before sending');
+        e.name = 'AbortError';
+        return reject(e);
+      }
+
+      let settled = false; // ensure we resolve/reject only once
+      let respRef = null; // keep response to remove listeners on cleanup
+
+      const options = {
         hostname: '127.0.0.1',
         port: settings.getUsedWsPort(),
         method: 'POST',
@@ -37,35 +49,117 @@ export function postRequest(payload, endpoint) {
           'Content-Length': Buffer.byteLength(payload, 'utf8'),
         },
       };
-      const reqPost = http
-        .request(option, (resp) => {
-          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
-          let data = '';
+      const reqPost = http.request(options, (resp) => {
+        respRef = resp;
+        let data = '';
 
-          // A chunk of data has been received.
-          resp.on('data', (chunk) => {
-            data += chunk;
-          });
+        const onData = (chunk) => {
+          data += chunk;
+        };
 
-          // The whole response has been received. Print out the result.
-          resp.on('end', () => {
-            if (data) {
-              try {
-                resolve(JSON.parse(data));
-              } catch (ex) {
-                reject(ex);
-              }
-            } else {
-              reject(new Error('Error: no data'));
+        // The whole response has been received. Print out the result.
+        const onEnd = () => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          if (data) {
+            try {
+              resolve(JSON.parse(data));
+            } catch (ex) {
+              reject(ex);
             }
-          });
-        })
-        .on('error', (err) => {
-          console.log('Error: ' + err.message);
+          } else {
+            reject(new Error('Error: no data'));
+          }
+        };
+
+        const onRespError = (err) => {
+          if (settled) return;
+          settled = true;
+          cleanup();
           reject(err);
-        });
-      reqPost.write(payload);
-      reqPost.end();
+        };
+
+        resp.on('data', onData);
+        resp.on('end', onEnd);
+        resp.on('error', onRespError);
+      });
+
+      // handle request-level errors
+      const onReqError = (err) => {
+        if (settled) return;
+        // If the signal caused abort, we'll already reject from the abort handler.
+        // But http.request abort may also emit an 'error' (ECONNRESET). If signal was aborted,
+        // map this to AbortError for consistency.
+        if (signal && signal.aborted) {
+          const e = new Error('Request aborted');
+          e.name = 'AbortError';
+          settled = true;
+          cleanup();
+          return reject(e);
+        }
+        settled = true;
+        cleanup();
+        reject(err);
+      };
+
+      reqPost.on('error', onReqError);
+
+      // abort handler tied to the passed-in signal
+      const onSignalAbort = () => {
+        if (settled) return;
+        settled = true;
+
+        // create AbortError
+        const abortErr = new Error('Request aborted by signal');
+        abortErr.name = 'AbortError';
+
+        // abort the underlying request/connection
+        try {
+          // .abort() is the canonical way to cancel node http requests
+          reqPost.abort();
+        } catch (ex) {
+          // ignore
+        }
+
+        cleanup();
+        reject(abortErr);
+      };
+
+      // cleanup removes listeners we added and response listeners (if present)
+      const cleanup = () => {
+        // remove signal listener
+        if (signal && typeof signal.removeEventListener === 'function') {
+          signal.removeEventListener('abort', onSignalAbort);
+        }
+        // remove request listeners
+        reqPost.removeListener('error', onReqError);
+
+        // remove response listeners if response already arrived
+        if (respRef) {
+          respRef.removeAllListeners('data'); // safe: we only attached data/end/error
+          respRef.removeAllListeners('end');
+          respRef.removeAllListeners('error');
+        }
+      };
+
+      // wire up abort listener if provided
+      if (signal && typeof signal.addEventListener === 'function') {
+        signal.addEventListener('abort', onSignalAbort);
+      }
+
+      // send
+      try {
+        reqPost.write(payload);
+        reqPost.end();
+      } catch (err) {
+        // synchronous error writing the payload
+        if (!settled) {
+          settled = true;
+          cleanup();
+          reject(err);
+        }
+      }
     });
   });
 }

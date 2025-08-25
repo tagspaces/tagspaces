@@ -48,6 +48,7 @@ import { ApiResponse } from './types';
 //let watcher: FSWatcher;
 const progress = {};
 let wsc;
+const controllers = new Map(); // requestId -> AbortController
 
 function isSafePath(filePath) {
   if (typeof filePath !== 'string') return false;
@@ -207,12 +208,25 @@ export default function loadMainEvents() {
     });
   });
   ipcMain.handle('postRequest', async (event, payload, endpoint) => {
+    let controller;
+    if (payload.requestId) {
+      controller = new AbortController();
+      controllers.set(payload.requestId, controller);
+    }
     try {
-      const result = await postRequest(payload, endpoint);
+      const result = await postRequest(payload, endpoint, controller?.signal);
       return result;
     } catch (e) {
       console.error(e);
       return false;
+    }
+  });
+  // listen for cancel requests from renderer
+  ipcMain.on('cancelRequest', (event, requestId) => {
+    const controller = controllers.get(requestId);
+    if (controller) {
+      controller.abort();
+      controllers.delete(requestId);
     }
   });
   ipcMain.handle(

@@ -979,6 +979,7 @@ export class CommonLocation implements TS.Location {
     extractText: boolean,
     extractLinks: boolean,
     ignorePatterns: Array<string>,
+    requestId: string,
   ): Promise<any> => {
     /*if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
@@ -993,6 +994,7 @@ export class CommonLocation implements TS.Location {
         extractText,
         extractLinks,
         ignorePatterns,
+        requestId,
       });
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',

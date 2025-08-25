@@ -101,8 +101,13 @@ export const LocationIndexContextProvider = ({
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { locations, findLocation, currentLocationId, getLocationPath } =
-    useCurrentLocationContext();
+  const {
+    locations,
+    findLocation,
+    currentLocationId,
+    currentLocation,
+    getLocationPath,
+  } = useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
@@ -120,13 +125,22 @@ export const LocationIndexContextProvider = ({
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
-  const currentLocation = findLocation();
   const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
+  const prevLocationId = useRef<string>(currentLocationId);
 
   useEffect(() => {
     if (currentLocationId) {
       clearDirectoryIndex(false);
       maxIndexAge.current = getMaxIndexAge(findLocation());
+    }
+    if (prevLocationId.current !== currentLocationId) {
+      if (prevLocationId.current) {
+        window.electronIO.ipcRenderer.sendMessage(
+          'cancelRequest',
+          prevLocationId.current,
+        );
+      }
+      prevLocationId.current = currentLocationId;
     }
   }, [currentLocationId]);
 
@@ -339,6 +353,10 @@ export const LocationIndexContextProvider = ({
   }
 
   function cancelDirectoryIndexing() {
+    window.electronIO.ipcRenderer.sendMessage(
+      'cancelRequest',
+      currentLocation.uuid,
+    );
     walking = false;
     isIndexing.current = undefined;
     forceUpdate();
@@ -373,6 +391,7 @@ export const LocationIndexContextProvider = ({
               extractText,
               !!loc.extractLinks,
               ignorePatterns,
+              loc.uuid,
             )
             .then((result) => {
               if (result && result.success) {
