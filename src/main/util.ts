@@ -117,7 +117,7 @@ export function postRequest(payload, endpoint, signal = undefined) {
         // abort the underlying request/connection
         try {
           // .abort() is the canonical way to cancel node http requests
-          reqPost.abort();
+          reqPost.destroy(abortErr);
         } catch (ex) {
           // ignore
         }
