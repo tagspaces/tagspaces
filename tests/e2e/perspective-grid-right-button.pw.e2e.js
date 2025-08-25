@@ -513,17 +513,10 @@ test.describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5040 - Create file [web,minio,s3,electron]', async () => {
-    // Open empty folder
-    await global.client.dblclick(selectorFolder);
-
+    const newFolder = await createNewDirectory('FolderForFileCreation');
+    await openFolder(newFolder);
     await createTxtFile();
-    // await searchEngine('note');
     await expectElementExist(selectorFile, true, 5000);
-
-    // cleanup
-    // await deleteFirstFile();
-    // const firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(undefined);
   });
 
   test('TST5049 - Add/remove filename tags Placed at Start [web,minio,s3,electron]', async () => {
