@@ -45,11 +45,10 @@ import { TS } from '-/tagspaces.namespace';
 interface Props {
   open: boolean;
   onClose: () => void;
-  selected: TS.FileSystemEntry;
 }
 
 function RenameEntryDialog(props: Props) {
-  const { open, onClose, selected } = props;
+  const { open, onClose } = props;
   const { t } = useTranslation();
   const { renameDirectory, renameFile } = useIOActionsContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -63,21 +62,20 @@ function RenameEntryDialog(props: Props) {
   let defaultName = '';
   let originPath;
   let isFile;
-  const entry = selected ?? lastSelectedEntry;
-  if (entry) {
-    ({ isFile } = entry);
+  if (lastSelectedEntry) {
+    ({ isFile } = lastSelectedEntry);
     if (isFile) {
       defaultName = extractFileName(
-        entry.path,
+        lastSelectedEntry.path,
         currentLocation?.getDirSeparator(),
       );
     } else {
       defaultName = extractDirectoryName(
-        entry.path,
+        lastSelectedEntry.path,
         currentLocation?.getDirSeparator(),
       );
     }
-    originPath = entry.path;
+    originPath = lastSelectedEntry.path;
   } else if (currentDirectoryPath) {
     isFile = false;
     defaultName = extractDirectoryName(
@@ -138,7 +136,7 @@ function RenameEntryDialog(props: Props) {
       if (isFile) {
         const dirSeparator = currentLocation?.getDirSeparator();
         const fileDirectory = extractContainingDirectoryPath(
-          entry.path,
+          lastSelectedEntry.path,
           dirSeparator,
         );
         const newFilePath =

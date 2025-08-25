@@ -331,9 +331,6 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       <RenameEntryDialogAsync
         open={openRenameEntry.current}
         onClose={closeRenameEntryDialog}
-        selected={
-          currentEntries.current ? currentEntries.current[0] : undefined
-        }
       />
       <MoveCopyFilesDialogAsync
         open={openMoveCopyFiles.current}
