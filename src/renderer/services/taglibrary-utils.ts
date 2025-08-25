@@ -41,7 +41,7 @@ export function getAllTags(tagGroups?: Array<TS.TagGroup>) {
   }
   const uniqueTags: TS.Tag[] = [];
   tagGroups.forEach((tagGroup) => {
-    tagGroup.children.forEach((tag) => {
+    tagGroup?.children.forEach((tag) => {
       const found = uniqueTags.find((uTag) => uTag.title === tag.title);
       if (!found) {
         uniqueTags.push(tag);
