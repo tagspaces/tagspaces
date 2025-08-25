@@ -48,6 +48,7 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   desktopMode: boolean;
@@ -64,7 +65,7 @@ interface Props {
   //onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   // eslint-disable-next-line react/no-unused-prop-types
-  selectedEntries; // cache only
+  //selectedEntries; // cache only
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   clearSelection: () => void;
 }
@@ -74,9 +75,10 @@ function GridPagination(props: Props) {
   const {
     getCellContent,
     currentDirectoryPath,
-    selectedEntries,
+    //selectedEntries,
     setSelectedEntries,
   } = props;
+  const { selectedEntries } = useSelectedEntriesContext();
   const { openDirectoryMenu, openRenameEntryDialog } = useMenuContext();
   const {
     showDetails,

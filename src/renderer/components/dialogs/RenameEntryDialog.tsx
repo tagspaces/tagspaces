@@ -40,6 +40,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
@@ -50,15 +51,13 @@ function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const { renameDirectory, renameFile } = useIOActionsContext();
-  const { findLocation } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { selectedEntries } = useSelectedEntriesContext();
-  const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
+  const { lastSelectedEntry } = useSelectedEntriesContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const currentLocation = findLocation();
 
   let defaultName = '';
   let originPath;
@@ -88,7 +87,7 @@ function RenameEntryDialog(props: Props) {
   const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const onInputFocus = (event) => {
     if (name.current) {

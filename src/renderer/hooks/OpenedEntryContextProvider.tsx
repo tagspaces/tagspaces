@@ -695,12 +695,12 @@ export const OpenedEntryContextProvider = ({
       //setOpenedTab(tabSelected, entryForOpening);
       //dispatch(SettingsActions.setShowDetails(tabSelected));
     }
-    if (
+    /*if (
       selectedEntries.length !== 1 ||
       selectedEntries.some((e) => e.path !== fsEntry.path)
     ) {
       setSelectedEntries([fsEntry]);
-    }
+    }*/
     if (loc.fullTextIndex && entryForOpening.extension === 'pdf') {
       //extract text from pdf
       loc

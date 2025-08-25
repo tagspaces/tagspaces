@@ -347,7 +347,6 @@ function ListPerspective(props: Props) {
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}
-            selectedEntries={selectedEntries}
             setSelectedEntries={handleSetSelectedEntries}
             clearSelection={clearSelection}
           />

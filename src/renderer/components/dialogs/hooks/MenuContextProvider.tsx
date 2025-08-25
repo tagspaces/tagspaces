@@ -143,6 +143,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       entry: TS.FileSystemEntry,
     ) => {
       if (entry) {
+        currentEntries.current = [entry];
         if (entry.isFile) {
           const currentLocation = findLocation(entry.locationID);
           const dirPath = extractContainingDirectoryPath(
