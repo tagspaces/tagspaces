@@ -218,6 +218,13 @@ export default function loadMainEvents() {
       return result;
     } catch (err) {
       console.error('postRequest error:', err);
+      if (
+        err &&
+        (err.name === 'AbortError' ||
+          err.message === 'Request aborted by signal')
+      ) {
+        return { error: 'AbortError' };
+      }
       return false;
     } finally {
       // ensure controller cleaned up no matter what

@@ -396,6 +396,9 @@ export const LocationIndexContextProvider = ({
               if (result && result.success) {
                 return loadIndexFromDisk(dirPath, param.locationID);
               } else if (result && result.error) {
+                if (result.error === 'AbortError') {
+                  return undefined;
+                }
                 console.error(
                   'createDirectoryIndexInWorker failed:' + result.error,
                 );
