@@ -105,50 +105,49 @@ export function postRequest(payload, endpoint, signal = undefined) {
 
       reqPost.on('error', onReqError);
 
-      // abort handler tied to the passed-in signal
-      const onSignalAbort = () => {
-        if (settled) return;
-        settled = true;
-
-        // create AbortError
-        const abortErr = new Error('Request aborted by signal');
-        abortErr.name = 'AbortError';
-
-        // abort the underlying request/connection
-        try {
-          // .abort() is the canonical way to cancel node http requests
-          reqPost.destroy(abortErr);
-        } catch (ex) {
-          // ignore
-        }
-
-        cleanup();
-        reject(abortErr);
-      };
-
-      // cleanup removes listeners we added and response listeners (if present)
+      // cleanup removes listeners
       const cleanup = () => {
-        // remove signal listener
         if (signal && typeof signal.removeEventListener === 'function') {
-          signal.removeEventListener('abort', onSignalAbort);
+          try {
+            signal.removeEventListener('abort', onSignalAbort);
+          } catch (ex) {}
         }
-        // remove request listeners
         reqPost.removeListener('error', onReqError);
-
-        // remove response listeners if response already arrived
         if (respRef) {
-          respRef.removeAllListeners('data'); // safe: we only attached data/end/error
+          respRef.removeAllListeners('data');
           respRef.removeAllListeners('end');
           respRef.removeAllListeners('error');
         }
       };
 
-      // wire up abort listener if provided
+      // abort handler
+      const onSignalAbort = () => {
+        if (settled) return;
+        // mark settled first to avoid race with req 'error' emission
+        settled = true;
+        cleanup();
+
+        // destroy/abort the underlying request. We don't pass an Error here
+        // because it may synchronously emit 'error' events that could be
+        // reentrant; we've already set settled and removed listeners.
+        try {
+          reqPost.destroy();
+        } catch (ex) {
+          /* ignore */
+        }
+
+        const abortErr = new Error('Request aborted by signal');
+        abortErr.name = 'AbortError';
+        reject(abortErr);
+      };
+
+      // attach abort listener once
       if (signal && typeof signal.addEventListener === 'function') {
-        signal.addEventListener('abort', onSignalAbort);
+        // use { once: true } so handler runs only once
+        signal.addEventListener('abort', onSignalAbort, { once: true });
       }
 
-      // send
+      // send payload
       try {
         reqPost.write(payload);
         reqPost.end();

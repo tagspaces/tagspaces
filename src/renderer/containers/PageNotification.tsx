@@ -22,7 +22,6 @@ import TsIconButton from '-/components/TsIconButton';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getLastPublishedVersion } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import { openURLExternally } from '-/services/utils-io';
 import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
@@ -37,6 +36,7 @@ import {
   AppDispatch,
   isUpdateAvailable,
 } from '../reducers/app';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -58,6 +58,7 @@ function PageNotification() {
     showNotification,
     hideNotifications,
   } = useNotificationContext();
+  const { findLocation } = useCurrentLocationContext();
   const { isIndexing, cancelDirectoryIndexing } = useLocationIndexContext();
   const updateAvailable = useSelector(isUpdateAvailable);
   const lastPublishedVersion = useSelector(getLastPublishedVersion);
@@ -122,12 +123,12 @@ function PageNotification() {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={isIndexing !== undefined}
         autoHideDuration={undefined}
-        message={i18n.t('indexing') + ': ' + isIndexing}
+        message={t('indexing') + ': ' + findLocation(isIndexing)?.name}
         action={[
           <TsButton
             key="cancelIndexButton"
             color="secondary"
-            onClick={() => cancelDirectoryIndexing()}
+            onClick={() => cancelDirectoryIndexing(isIndexing)}
             data-tid="cancelDirectoryIndexing"
           >
             {t('core:cancelIndexing')}

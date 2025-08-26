@@ -207,18 +207,21 @@ export default function loadMainEvents() {
       icon: icon,
     });
   });
-  ipcMain.handle('postRequest', async (event, payload, endpoint) => {
+  ipcMain.handle('postRequest', async (event, payload, endpoint, requestId) => {
     let controller;
-    if (payload.requestId) {
+    if (requestId) {
       controller = new AbortController();
-      controllers.set(payload.requestId, controller);
+      controllers.set(requestId, controller);
     }
     try {
       const result = await postRequest(payload, endpoint, controller?.signal);
       return result;
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error('postRequest error:', err);
       return false;
+    } finally {
+      // ensure controller cleaned up no matter what
+      if (requestId) controllers.delete(requestId);
     }
   });
   // listen for cancel requests from renderer

@@ -55,7 +55,7 @@ type LocationIndexContextData = {
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
-  cancelDirectoryIndexing: () => void;
+  cancelDirectoryIndexing: (locationId: string) => void;
   createLocationIndex: (
     location: CommonLocation,
     force?: boolean,
@@ -80,7 +80,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   isIndexing: undefined,
   getIndex: undefined,
   getLastIndex: undefined,
-  cancelDirectoryIndexing: () => {},
+  cancelDirectoryIndexing: undefined,
   createLocationIndex: () => Promise.resolve(false),
   createLocationsIndexes: () => Promise.resolve(false),
   clearDirectoryIndex: () => {},
@@ -352,14 +352,13 @@ export const LocationIndexContextProvider = ({
     return walking;
   }
 
-  function cancelDirectoryIndexing() {
-    window.electronIO.ipcRenderer.sendMessage(
-      'cancelRequest',
-      currentLocation.uuid,
-    );
-    walking = false;
-    isIndexing.current = undefined;
-    forceUpdate();
+  function cancelDirectoryIndexing(locationId: string) {
+    if (locationId) {
+      window.electronIO.ipcRenderer.sendMessage('cancelRequest', locationId);
+      walking = false;
+      isIndexing.current = undefined;
+      forceUpdate();
+    }
   }
 
   function createDirectoryIndex(
@@ -530,7 +529,7 @@ export const LocationIndexContextProvider = ({
     return getLocationPath(location).then((locationPath) => {
       const isCurrentLocation =
         currentLocation && currentLocation.uuid === location.uuid;
-      isIndexing.current = location.name;
+      isIndexing.current = location.uuid;
       forceUpdate();
       return createDirectoryIndexWrapper(
         { path: locationPath, locationID: location.uuid },
@@ -561,7 +560,7 @@ export const LocationIndexContextProvider = ({
       try {
         if (!location.disableIndexing) {
           const locationPath = await getLocationPath(location);
-          isIndexing.current = locationPath;
+          isIndexing.current = location.uuid; //locationPath
           forceUpdate();
           await createDirectoryIndexWrapper(
             { path: locationPath, locationID: location.uuid },
@@ -850,17 +849,18 @@ export const LocationIndexContextProvider = ({
     } else {
       directoryPath = param;
     }
+    const cLocation = findLocation(param?.locationID);
     const metaDirectory = getMetaDirectoryPath(directoryPath);
-    const exist = await currentLocation.checkDirExist(metaDirectory);
+    const exist = await cLocation.checkDirExist(metaDirectory);
     try {
       if (!exist) {
-        await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+        await cLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
       }
       const folderIndexPath =
         metaDirectory +
-        currentLocation?.getDirSeparator() +
+        cLocation?.getDirSeparator() +
         AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-      return currentLocation
+      return cLocation
         .saveTextFilePromise(
           { ...param, path: folderIndexPath },
           JSON.stringify(directoryIndex), // relativeIndex),

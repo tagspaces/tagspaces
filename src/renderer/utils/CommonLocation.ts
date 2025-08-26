@@ -994,12 +994,12 @@ export class CommonLocation implements TS.Location {
         extractText,
         extractLinks,
         ignorePatterns,
-        requestId,
       });
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',
         payload,
         '/indexer',
+        requestId,
       );
     }
     return Promise.reject(
