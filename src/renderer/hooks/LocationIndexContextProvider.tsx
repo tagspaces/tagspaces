@@ -119,7 +119,7 @@ export const LocationIndexContextProvider = ({
   //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
-  let walking = true;
+  const walkingRef = useRef(true);
   //const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
@@ -349,13 +349,13 @@ export const LocationIndexContextProvider = ({
   }
 
   function isWalking() {
-    return walking;
+    return walkingRef.current;
   }
 
   function cancelDirectoryIndexing(locationId: string) {
     if (locationId) {
       window.electronIO.ipcRenderer.sendMessage('cancelRequest', locationId);
-      walking = false;
+      walkingRef.current = false;
       isIndexing.current = undefined;
       forceUpdate();
     }
@@ -505,6 +505,7 @@ export const LocationIndexContextProvider = ({
     location: CommonLocation,
     force = false,
   ): Promise<boolean> {
+    walkingRef.current = true;
     if (location) {
       if (location.disableIndexing) {
         if (force) {
@@ -559,6 +560,7 @@ export const LocationIndexContextProvider = ({
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
+    walkingRef.current = true;
     for (let location of locations) {
       try {
         if (!location.disableIndexing) {
@@ -692,7 +694,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
-    walking = true;
+    walkingRef.current = true;
     if (!currentLocation) {
       //showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       searchAllLocations(searchQuery);
@@ -758,7 +760,7 @@ export const LocationIndexContextProvider = ({
     setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
-    walking = true;
+    walkingRef.current = true;
     //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
