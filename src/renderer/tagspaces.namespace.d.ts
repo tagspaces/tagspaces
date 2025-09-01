@@ -321,6 +321,7 @@ export namespace TS {
 
   type AiTemplatesContextData = {
     getTemplate: (key: string) => string;
+    getDefaultTemplate: (key: string) => string;
     setTemplate: (key: string, value: string) => void;
   };
 
