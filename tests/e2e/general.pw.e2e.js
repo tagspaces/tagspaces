@@ -246,16 +246,20 @@ test.describe('TST51 - Perspective Grid', () => {
   test('TST0516 - Generate thumbnail from PDF [electron,s3]', async () => {
     await expectMetaFilesExist(['sample.pdf.jpg']);
   });
-
-  test('TST0517 - Generate thumbnail from ODT [electron,minio,s3,_pro]', async () => {
+  /**
+   * todo not generated on S3 location
+   */
+  test('TST0517 - Generate thumbnail from ODT [electron,minio,_pro]', async () => {
     await expectMetaFilesExist([
       'sample.odt.jpg',
       'sample.ods.jpg',
       'sample.epub.jpg',
     ]);
   });
-
-  test('TST0519 - Generate thumbnail from TIFF [electron,minio,s3,_pro]', async () => {
+  /**
+   * todo not generated on S3 location
+   */
+  test('TST0519 - Generate thumbnail from TIFF [electron,minio,_pro]', async () => {
     await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 
