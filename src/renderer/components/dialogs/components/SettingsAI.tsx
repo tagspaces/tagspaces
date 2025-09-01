@@ -213,7 +213,7 @@ function SettingsAI(props: Props) {
       </TsButton>
       <TsButton
         variant="contained"
-        data-tid={'save' + key + 'TID'}
+        data-tid={'cancel' + key + 'TID'}
         onClick={() => cancelSavingTemplate(key)}
         style={{
           // @ts-ignore
