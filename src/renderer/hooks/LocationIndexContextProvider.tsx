@@ -508,11 +508,13 @@ export const LocationIndexContextProvider = ({
   }
 
   function createLocationIndexInt(location: CommonLocation): Promise<boolean> {
+    if (location) {
+      isIndexing.current = location.uuid;
+      forceUpdate();
+    }
     return getLocationPath(location).then((locationPath) => {
       const isCurrentLocation =
         currentLocation && currentLocation.uuid === location.uuid;
-      isIndexing.current = location.name;
-      forceUpdate();
       return createDirectoryIndexWrapper(
         { path: locationPath, locationID: location.uuid },
         location.fullTextIndex,

@@ -29,7 +29,6 @@ import LoadingLazy from '-/components/LoadingLazy';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type MenuContextData = {
   openMenu: (
