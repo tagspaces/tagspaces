@@ -69,7 +69,6 @@ function TagContainer(props: Props) {
 
   const { addTags } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
-  const { tagGroups } = useEditedTagLibraryContext();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 
@@ -86,14 +85,19 @@ function TagContainer(props: Props) {
     [isTagGeo, title, tagGroup],
   );
 
-  const tagColors = getTagColors(
-    title,
-    tagGroups,
-    tag.textcolor || defaultTextColor,
-    tag.color || defaultBackgroundColor,
-  );
-  textColor = tagColors.textcolor;
-  backgroundColor = tagColors.color;
+  if (tag.color && tag.textcolor) {
+    textColor = tag.textcolor;
+    backgroundColor = tag.color;
+  } else {
+    const tagColors = getTagColors(
+      title,
+      tagGroup ? [tagGroup] : undefined,
+      defaultTextColor,
+      defaultBackgroundColor,
+    );
+    textColor = tagColors.textcolor;
+    backgroundColor = tagColors.color;
+  }
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
