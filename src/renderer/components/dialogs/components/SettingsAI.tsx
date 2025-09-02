@@ -188,37 +188,29 @@ function SettingsAI(props: Props) {
   const externalConfig = typeof window.ExtAI !== 'undefined';
 
   const actionButtons = (key) => (
-    <InputAdornment position="end">
+    <InputAdornment
+      position="end"
+      style={{ flexDirection: 'column', marginTop: -70 }}
+    >
       <TsButton
-        variant="contained"
+        variant="text"
         data-tid={'save' + key + 'TID'}
         onClick={() => saveTemplate(key)}
-        style={{
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
       >
         {t('core:save')}
       </TsButton>
       <TsButton
-        variant="contained"
+        variant="text"
+        tooltip="Resets to the default prompt"
         data-tid={'reset' + key + 'TID'}
         onClick={() => resetTemplate(key)}
-        style={{
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
       >
         {t('core:resetBtn')}
       </TsButton>
       <TsButton
-        variant="contained"
+        variant="text"
         data-tid={'cancel' + key + 'TID'}
         onClick={() => cancelSavingTemplate(key)}
-        style={{
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
       >
         {t('core:cancel')}
       </TsButton>
