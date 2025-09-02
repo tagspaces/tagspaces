@@ -172,12 +172,58 @@ function SettingsAI(props: Props) {
     }
   }
 
+  function resetTemplate(key: string) {
+    const template = aiTemplatesContext.getDefaultTemplate(key);
+    if (template) {
+      aiTemplatesContext.setTemplate(key, template);
+      aiTemplates.current[key] = undefined;
+    }
+  }
+
   function cancelSavingTemplate(key: string) {
     aiTemplates.current[key] = undefined;
     forceUpdate();
   }
 
   const externalConfig = typeof window.ExtAI !== 'undefined';
+
+  const actionButtons = (key) => (
+    <InputAdornment position="end">
+      <TsButton
+        variant="contained"
+        data-tid={'save' + key + 'TID'}
+        onClick={() => saveTemplate(key)}
+        style={{
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
+        }}
+      >
+        {t('core:save')}
+      </TsButton>
+      <TsButton
+        variant="contained"
+        data-tid={'reset' + key + 'TID'}
+        onClick={() => resetTemplate(key)}
+        style={{
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
+        }}
+      >
+        {t('core:resetBtn')}
+      </TsButton>
+      <TsButton
+        variant="contained"
+        data-tid={'cancel' + key + 'TID'}
+        onClick={() => cancelSavingTemplate(key)}
+        style={{
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
+        }}
+      >
+        {t('core:cancel')}
+      </TsButton>
+    </InputAdornment>
+  );
 
   return (
     <div
@@ -519,36 +565,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current[
-                    'DEFAULT_QUESTION_PROMPT'
-                  ] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        data-tid={'saveDefaultQuestionPromptTID'}
-                        onClick={() => saveTemplate('DEFAULT_QUESTION_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        data-tid={'saveDefaultQuestionPromptTID'}
-                        onClick={() =>
-                          cancelSavingTemplate('DEFAULT_QUESTION_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['DEFAULT_QUESTION_PROMPT'] &&
+                    actionButtons('DEFAULT_QUESTION_PROMPT'),
                 },
               }}
             />
@@ -568,34 +587,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current[
-                    'DEFAULT_SYSTEM_PROMPT'
-                  ] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('DEFAULT_SYSTEM_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          cancelSavingTemplate('DEFAULT_SYSTEM_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] &&
+                    actionButtons('DEFAULT_SYSTEM_PROMPT'),
                 },
               }}
             />
@@ -615,30 +609,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['SUMMARIZE_PROMPT'] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('SUMMARIZE_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() => cancelSavingTemplate('SUMMARIZE_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['SUMMARIZE_PROMPT'] &&
+                    actionButtons('SUMMARIZE_PROMPT'),
                 },
               }}
             />
@@ -659,34 +632,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current[
-                    'IMAGE_DESCRIPTION_PROMPT'
-                  ] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('IMAGE_DESCRIPTION_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          cancelSavingTemplate('IMAGE_DESCRIPTION_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] &&
+                    actionButtons('IMAGE_DESCRIPTION_PROMPT'),
                 },
               }}
             />
@@ -709,38 +657,10 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current[
-                    'IMAGE_DESCRIPTION_STRUCTURED_PROMPT'
-                  ] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          saveTemplate('IMAGE_DESCRIPTION_STRUCTURED_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          cancelSavingTemplate(
-                            'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
-                          )
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current[
+                      'IMAGE_DESCRIPTION_STRUCTURED_PROMPT'
+                    ] && actionButtons('IMAGE_DESCRIPTION_STRUCTURED_PROMPT'),
                 },
               }}
             />
@@ -760,34 +680,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current[
-                    'TEXT_DESCRIPTION_PROMPT'
-                  ] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('TEXT_DESCRIPTION_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          cancelSavingTemplate('TEXT_DESCRIPTION_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] &&
+                    actionButtons('TEXT_DESCRIPTION_PROMPT'),
                 },
               }}
             />
@@ -807,32 +702,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['IMAGE_TAGS_PROMPT'] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('IMAGE_TAGS_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() =>
-                          cancelSavingTemplate('IMAGE_TAGS_PROMPT')
-                        }
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['IMAGE_TAGS_PROMPT'] &&
+                    actionButtons('IMAGE_TAGS_PROMPT'),
                 },
               }}
             />
@@ -852,30 +724,9 @@ function SettingsAI(props: Props) {
               }}
               slotProps={{
                 input: {
-                  endAdornment: aiTemplates.current['TEXT_TAGS_PROMPT'] && (
-                    <InputAdornment position="end">
-                      <TsButton
-                        variant="contained"
-                        onClick={() => saveTemplate('TEXT_TAGS_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:save')}
-                      </TsButton>
-                      <TsButton
-                        variant="contained"
-                        onClick={() => cancelSavingTemplate('TEXT_TAGS_PROMPT')}
-                        style={{
-                          // @ts-ignore
-                          WebkitAppRegion: 'no-drag',
-                        }}
-                      >
-                        {t('core:cancel')}
-                      </TsButton>
-                    </InputAdornment>
-                  ),
+                  endAdornment:
+                    aiTemplates.current['TEXT_TAGS_PROMPT'] &&
+                    actionButtons('TEXT_TAGS_PROMPT'),
                 },
               }}
             />
