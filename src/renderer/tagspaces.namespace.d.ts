@@ -325,6 +325,19 @@ export namespace TS {
     setTemplate: (key: string, value: string) => void;
   };
 
+  interface FileTemplate {
+    template: string;
+    fileExt?: string;
+    thumbnail?: string;
+    disabled?: boolean;
+  }
+
+  type FileTemplatesContextData = {
+    getTemplate: (key: string) => FileTemplate | undefined;
+    setTemplate: (key: string, value: FileTemplate) => void;
+    getTemplates: () => Map<string, TS.FileTemplate>;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;
