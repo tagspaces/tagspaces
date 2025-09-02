@@ -34,7 +34,10 @@ import versionMeta from '../version.json';
 
 export const instanceId = getUuid();
 
-export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
+export function getAllTags(
+  entry: TS.FileSystemEntry,
+  tagDelimiter: string,
+): Array<TS.Tag> {
   const tags = [];
   if (entry.meta && entry.meta.tags && entry.meta.tags.length > 0) {
     tags.push(...entry.meta.tags);
@@ -46,7 +49,7 @@ export function getAllTags(entry: TS.FileSystemEntry): Array<TS.Tag> {
     entry.path.indexOf(AppConfig.beginTagContainer) !== -1 &&
     entry.path.indexOf(AppConfig.endTagContainer) !== -1
   ) {
-    fileNameTags = extractTagsAsObjects(entry.name, AppConfig.tagDelimiter);
+    fileNameTags = extractTagsAsObjects(entry.name, tagDelimiter);
   }
   if (fileNameTags) {
     if (tags.length > 0) {

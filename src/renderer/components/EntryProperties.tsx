@@ -101,6 +101,8 @@ import {
   TileLayer,
 } from 'react-leaflet';
 import { Pro } from '../pro';
+import { useSelector } from 'react-redux';
+import { getTagDelimiter } from '-/reducers/settings';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -157,7 +159,6 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  //const desktopMode = useSelector(isDesktopMode);
   const { openedEntry, sharingLink, getOpenedDirProps, fileChanged } =
     useOpenedEntryContext();
   const { openMoveCopyFilesDialog } = useMenuContext();
@@ -182,6 +183,7 @@ function EntryProperties(props: Props) {
         Pro.contextProviders.BgndDialogContext,
       )
     : undefined;
+  const tagDelimiter: string = useSelector(getTagDelimiter);
 
   const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -583,7 +585,7 @@ function EntryProperties(props: Props) {
               label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
               placeholderText={t('core:dropHere')}
-              tags={getAllTags(openedEntry)}
+              tags={getAllTags(openedEntry, tagDelimiter)}
               tagMode="default"
               handleChange={handleChange}
               selectedEntry={openedEntry}
