@@ -21,11 +21,31 @@ import { useTranslation } from 'react-i18next';
 import TsTextField from '-/components/TsTextField';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
+import TsButton from '-/components/TsButton';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  List,
+  Typography,
+  ListItem,
+} from '@mui/material';
+import {
+  CreateFileIcon,
+  ExpandIcon,
+  RemoveIcon,
+} from '-/components/CommonIcons';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import TsIconButton from '-/components/TsIconButton';
+import TsToggleButton from '-/components/TsToggleButton';
+import CheckIcon from '@mui/icons-material/Check';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 interface Props {}
 
 function SettingsTemplates(props: Props) {
   const { t } = useTranslation();
+  const editedTemplate = React.useRef<TS.FileTemplate>(undefined);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
 
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
@@ -35,9 +55,46 @@ function SettingsTemplates(props: Props) {
     : undefined;
   const templates: Map<string, TS.FileTemplate> =
     fileTemplatesContext.getTemplates();
-  const templatesArray = Array.from(templates.entries()).filter(
-    ([key, template]) => !template.disabled,
-  );
+  const templatesArray = Array.from(templates.entries());
+
+  function saveTemplate(key?: string) {
+    if (fileTemplatesContext) {
+      if (key && editedTemplate.current) {
+        fileTemplatesContext.setTemplate(key, editedTemplate.current);
+        editedTemplate.current = undefined;
+        forceUpdate();
+      } else {
+        // new template
+        const id = getUuid();
+        const defaultTemplate = fileTemplatesContext.getDefaultTemplate();
+        const temp = {
+          id,
+          name: 'new template',
+          content: defaultTemplate.content,
+        };
+        editedTemplate.current = temp;
+        fileTemplatesContext.setTemplate(id, temp);
+        forceUpdate();
+      }
+    }
+  }
+  function deleteTemplate(key: string) {
+    if (fileTemplatesContext && key) {
+      fileTemplatesContext.delTemplate(key);
+      forceUpdate();
+    }
+  }
+  function cancelSavingTemplate() {
+    editedTemplate.current = undefined;
+    forceUpdate();
+  }
+
+  function currentTemplate(template) {
+    return editedTemplate.current && editedTemplate.current.id === template.id
+      ? editedTemplate.current
+      : template;
+  }
+
   return (
     <div
       style={{
@@ -47,29 +104,218 @@ function SettingsTemplates(props: Props) {
         padding: 10,
       }}
     >
+      <Accordion defaultExpanded>
+        <AccordionSummary
+          expandIcon={<ExpandIcon />}
+          aria-controls={'defaultContent'}
+          data-tid={'defaultTID'}
+          sx={{
+            '& .MuiAccordionSummary-content': { alignItems: 'center' },
+          }}
+          id="template-header"
+        >
+          <Typography>{t('core:defaultTemplate')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <TsButton
+            style={{
+              fontSize: 13,
+              textTransform: 'unset',
+              fontWeight: 'normal',
+              paddingTop: 0,
+              paddingBottom: 0,
+            }}
+            onClick={() => {
+              saveTemplate();
+            }}
+            startIcon={<CreateFileIcon />}
+          >
+            {t('addTemplate')}
+          </TsButton>
+        </AccordionDetails>
+      </Accordion>
       {templatesArray &&
         templatesArray.map(([key, template]) => (
-          <TsTextField
-            fullWidth
-            multiline
-            rows={5}
-            disabled={!Pro}
-            label={key}
-            value={template.template}
-            onChange={(e) => {
-              fileTemplatesContext.setTemplate(key, {
-                template: e.target.value,
-              });
-              forceUpdate();
-            }}
-            /* slotProps={{
-        input: {
-          endAdornment:
-            aiTemplates.current['TEXT_TAGS_PROMPT'] &&
-            actionButtons('TEXT_TAGS_PROMPT'),
-        },
-      }}*/
-          />
+          <Accordion
+            defaultExpanded={
+              editedTemplate.current &&
+              editedTemplate.current.id === template.id
+            }
+          >
+            <AccordionSummary
+              expandIcon={<ExpandIcon />}
+              aria-controls={template.id + 'content'}
+              data-tid={template.id + 'ollamaTID'}
+              sx={{
+                '& .MuiAccordionSummary-content': { alignItems: 'center' },
+              }}
+            >
+              <Typography>{currentTemplate(template).name}</Typography>
+              <TsIconButton
+                aria-label="removeTemplate"
+                tooltip={t('core:remove')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const result = confirm(
+                    'Do you want to remove "' + template.name + '"?',
+                  );
+                  if (result) {
+                    deleteTemplate(template.id);
+                  }
+                }}
+                data-tid="removeAIProviderTID"
+              >
+                <RemoveIcon />
+              </TsIconButton>
+              {editedTemplate.current &&
+                editedTemplate.current.id === template.id && (
+                  <>
+                    <TsButton
+                      variant="text"
+                      data-tid={'save' + key + 'TID'}
+                      onClick={() => saveTemplate(key)}
+                    >
+                      {t('core:save')}
+                    </TsButton>
+                    <TsButton
+                      variant="text"
+                      data-tid={'cancel' + key + 'TID'}
+                      onClick={() => cancelSavingTemplate()}
+                    >
+                      {t('core:cancel')}
+                    </TsButton>
+                  </>
+                )}
+            </AccordionSummary>
+            <AccordionDetails>
+              <List
+                style={{
+                  overflowX: 'hidden',
+                  overflowY: 'auto',
+                  height: '100%',
+                }}
+              >
+                <ListItem>
+                  <TsTextField
+                    fullWidth
+                    disabled={!Pro}
+                    label={t('name')}
+                    value={currentTemplate(template).name}
+                    onChange={(e) => {
+                      if (fileTemplatesContext) {
+                        editedTemplate.current = {
+                          ...template,
+                          name: e.target.value,
+                        };
+                        forceUpdate();
+                      }
+                    }}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ToggleButtonGroup
+                    value={currentTemplate(template).type}
+                    size="small"
+                    exclusive
+                  >
+                    <TsToggleButton
+                      value={false}
+                      data-tid="templateMdTypeTID"
+                      style={{
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      }}
+                      onClick={() => {
+                        if (fileTemplatesContext) {
+                          editedTemplate.current = {
+                            ...template,
+                            type: 'md',
+                          };
+                          forceUpdate();
+                        }
+                      }}
+                    >
+                      <div style={{ display: 'flex', textTransform: 'unset' }}>
+                        {currentTemplate(template).type === 'md' && (
+                          <CheckIcon />
+                        )}
+                        &nbsp;&nbsp;MD&nbsp;&nbsp;
+                      </div>
+                    </TsToggleButton>
+                    <TsToggleButton
+                      value={false}
+                      data-tid="templateTxtTypeTID"
+                      style={{
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                      }}
+                      onClick={() => {
+                        if (fileTemplatesContext) {
+                          editedTemplate.current = {
+                            ...template,
+                            type: 'txt',
+                          };
+                          forceUpdate();
+                        }
+                      }}
+                    >
+                      <div style={{ display: 'flex', textTransform: 'unset' }}>
+                        {currentTemplate(template).type === 'txt' && (
+                          <CheckIcon />
+                        )}
+                        &nbsp;TXT&nbsp;
+                      </div>
+                    </TsToggleButton>
+                    <TsToggleButton
+                      value={false}
+                      data-tid="templateTxtTypeTID"
+                      style={{
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                      }}
+                      onClick={() => {
+                        if (fileTemplatesContext) {
+                          editedTemplate.current = {
+                            ...template,
+                            type: 'html',
+                          };
+                          forceUpdate();
+                        }
+                      }}
+                    >
+                      <div style={{ display: 'flex', textTransform: 'unset' }}>
+                        {currentTemplate(template).type === 'html' && (
+                          <CheckIcon />
+                        )}
+                        HTML
+                      </div>
+                    </TsToggleButton>
+                  </ToggleButtonGroup>
+                </ListItem>
+                <ListItem>
+                  <TsTextField
+                    fullWidth
+                    multiline
+                    rows={5}
+                    disabled={!Pro}
+                    label={t('core:templateContent')}
+                    value={currentTemplate(template).content}
+                    onChange={(e) => {
+                      if (fileTemplatesContext) {
+                        editedTemplate.current = {
+                          ...template,
+                          content: e.target.value,
+                        };
+                        forceUpdate();
+                      }
+                    }}
+                  />
+                </ListItem>
+              </List>
+            </AccordionDetails>
+          </Accordion>
         ))}
     </div>
   );

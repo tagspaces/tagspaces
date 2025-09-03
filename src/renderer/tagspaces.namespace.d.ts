@@ -326,16 +326,20 @@ export namespace TS {
   };
 
   interface FileTemplate {
-    template: string;
-    fileExt?: string;
-    thumbnail?: string;
-    disabled?: boolean;
+    id: string;
+    content: string; //'Createted with TagSpaces on 2025.06'
+    name?: string; // 'Template Name'
+    type?: 'md' | 'txt' | 'html';
+    fileNamePrefix?: 'note' | 'todo' | 'issue';
+    screenshotUrl?: string; //'dataURL'
   }
 
   type FileTemplatesContextData = {
     getTemplate: (key: string) => FileTemplate | undefined;
     setTemplate: (key: string, value: FileTemplate) => void;
     getTemplates: () => Map<string, TS.FileTemplate>;
+    delTemplate: (key: string) => void;
+    getDefaultTemplate: () => TS.FileTemplate;
   };
 
   interface EditedEntryPath {
