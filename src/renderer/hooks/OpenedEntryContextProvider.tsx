@@ -36,6 +36,7 @@ import {
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import {
   findExtensionPathForId,
+  getDefaultTemplate,
   getDirProperties,
   getNextFile,
   getPrevFile,
@@ -70,6 +71,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { Pro } from '-/pro';
 
 type OpenedEntryContextData = {
   haveOpenedEntry: boolean;
@@ -110,7 +112,8 @@ type OpenedEntryContextData = {
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: TS.FileType,
+    fileType?: TS.FileType,
+    createMeta?: string,
   ) => void;
   createFile: () => void;
   getOpenedDirProps: () => Promise<TS.DirProp>;
@@ -980,10 +983,19 @@ export const OpenedEntryContextProvider = ({
     fileName: string,
     content: string,
     fileType: TS.FileType = 'md',
+    createMeta: string = undefined,
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
-    const creationMeta = `${t('core:createdIn')} ${versionMeta.name} (${creationDate.substring(0, 10)})`;
+    const meta = createMeta || getDefaultTemplate(fileType).content;
+    const creationMeta = meta
+      ? meta
+          .replace(
+            '{versionMeta}',
+            `${t('core:createdIn')} ${versionMeta.name}`,
+          )
+          .replace('{date}', creationDate.substring(0, 10))
+      : '';
     const filePath =
       normalizePath(targetPath) +
       (currentLocation

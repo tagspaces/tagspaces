@@ -1311,3 +1311,21 @@ export function toBase64Image(uint8Array): string {
   }
   return undefined;
 }
+
+export function getDefaultTemplate(
+  fileType: 'md' | 'txt' | 'html' | 'url' = undefined,
+): TS.FileTemplate {
+  if (fileType === 'txt' || fileType === 'url') {
+    return {
+      id: 'default',
+      name: 'Default',
+      content: '',
+    };
+  }
+
+  return {
+    id: 'default',
+    name: 'Default',
+    content: '{versionMeta} ({date})',
+  };
+}

@@ -40,11 +40,17 @@ import TsIconButton from '-/components/TsIconButton';
 import TsToggleButton from '-/components/TsToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { getDefaultTemplate } from '-/services/utils-io';
+import MenuItem from '@mui/material/MenuItem';
+import TsSelect from '-/components/TsSelect';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
 
 function SettingsTemplates(props: Props) {
   const { t } = useTranslation();
+  const { showNotification } = useNotificationContext();
   const editedTemplate = React.useRef<TS.FileTemplate>(undefined);
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
 
@@ -53,9 +59,7 @@ function SettingsTemplates(props: Props) {
         Pro.contextProviders.FileTemplatesContext,
       )
     : undefined;
-  const templates: Map<string, TS.FileTemplate> =
-    fileTemplatesContext.getTemplates();
-  const templatesArray = Array.from(templates.entries());
+  const templatesArray = fileTemplatesContext?.getTemplates();
 
   function saveTemplate(key?: string) {
     if (fileTemplatesContext) {
@@ -66,16 +70,21 @@ function SettingsTemplates(props: Props) {
       } else {
         // new template
         const id = getUuid();
-        const defaultTemplate = fileTemplatesContext.getDefaultTemplate();
         const temp = {
           id,
           name: 'new template',
-          content: defaultTemplate.content,
+          content: getDefaultTemplate().content,
         };
         editedTemplate.current = temp;
         fileTemplatesContext.setTemplate(id, temp);
         forceUpdate();
       }
+    } else {
+      showNotification(
+        'Adding new file template is Pro feature',
+        'default',
+        true,
+      );
     }
   }
   function deleteTemplate(key: string) {
@@ -93,6 +102,54 @@ function SettingsTemplates(props: Props) {
     return editedTemplate.current && editedTemplate.current.id === template.id
       ? editedTemplate.current
       : template;
+  }
+
+  const defaultTemplate =
+    templatesArray?.find((t) => t.type === undefined) || getDefaultTemplate();
+  const defaultTemplates = templatesArray?.filter((t) => t.type === undefined);
+  const mdTemplates = templatesArray?.filter((t) => t.type === 'md');
+  const txtTemplates = templatesArray?.filter((t) => t.type === 'txt');
+  const htmlTemplates = templatesArray?.filter((t) => t.type === 'html');
+
+  const setDefaultTemplate = (type, templates: TS.FileTemplate[]) => {
+    if (!templates || templates.length < 2) {
+      return undefined;
+    }
+    return (
+      <ListItem>
+        <TsSelect
+          data-tid="tagDelimiterTID"
+          label={t('defaultTemplate' + (type ?? ''))}
+          fullWidth={false}
+          title={t('core:tagDelimiter')}
+          value={fileTemplatesContext?.getTemplate(type)?.id}
+          onChange={(event) =>
+            fileTemplatesContext?.setTemplateActive(event.target.value)
+          }
+        >
+          {templates.map((tp) => (
+            <MenuItem value={tp.id}>{tp.name}</MenuItem>
+          ))}
+        </TsSelect>
+      </ListItem>
+    );
+  };
+
+  function toggleType(template: TS.FileTemplate, type: 'html' | 'md' | 'txt') {
+    if (!fileTemplatesContext) return;
+
+    const merged: TS.FileTemplate = { ...template, ...editedTemplate.current };
+
+    if (merged.type === type) {
+      // remove the type property from the merged result
+      const { type, ...withoutType } = merged;
+      editedTemplate.current = withoutType;
+    } else {
+      // set type to 'html' otherwise
+      editedTemplate.current = { ...merged, type };
+    }
+
+    forceUpdate();
   }
 
   return (
@@ -132,10 +189,20 @@ function SettingsTemplates(props: Props) {
           >
             {t('addTemplate')}
           </TsButton>
+          <List
+            style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}
+          >
+            {setDefaultTemplate(undefined, defaultTemplates)}
+            {setDefaultTemplate('md', mdTemplates)}
+            {setDefaultTemplate('txt', txtTemplates)}
+            {setDefaultTemplate('html', htmlTemplates)}
+          </List>
+
+          <Typography>{defaultTemplate?.content}</Typography>
         </AccordionDetails>
       </Accordion>
       {templatesArray &&
-        templatesArray.map(([key, template]) => (
+        templatesArray.map((template) => (
           <Accordion
             defaultExpanded={
               editedTemplate.current &&
@@ -150,7 +217,18 @@ function SettingsTemplates(props: Props) {
                 '& .MuiAccordionSummary-content': { alignItems: 'center' },
               }}
             >
-              <Typography>{currentTemplate(template).name}</Typography>
+              <FiberManualRecordIcon
+                sx={{
+                  color:
+                    fileTemplatesContext.getTemplate(template.type)?.id ===
+                    template.id
+                      ? 'green'
+                      : 'red',
+                  fontSize: 19,
+                  ml: 1,
+                }}
+              />
+              <Typography>&nbsp;{currentTemplate(template).name}</Typography>
               <TsIconButton
                 aria-label="removeTemplate"
                 tooltip={t('core:remove')}
@@ -172,14 +250,14 @@ function SettingsTemplates(props: Props) {
                   <>
                     <TsButton
                       variant="text"
-                      data-tid={'save' + key + 'TID'}
-                      onClick={() => saveTemplate(key)}
+                      data-tid={'save' + template.id + 'TID'}
+                      onClick={() => saveTemplate(template.id)}
                     >
                       {t('core:save')}
                     </TsButton>
                     <TsButton
                       variant="text"
-                      data-tid={'cancel' + key + 'TID'}
+                      data-tid={'cancel' + template.id + 'TID'}
                       onClick={() => cancelSavingTemplate()}
                     >
                       {t('core:cancel')}
@@ -205,6 +283,7 @@ function SettingsTemplates(props: Props) {
                       if (fileTemplatesContext) {
                         editedTemplate.current = {
                           ...template,
+                          ...editedTemplate.current,
                           name: e.target.value,
                         };
                         forceUpdate();
@@ -225,15 +304,7 @@ function SettingsTemplates(props: Props) {
                         borderTopRightRadius: 0,
                         borderBottomRightRadius: 0,
                       }}
-                      onClick={() => {
-                        if (fileTemplatesContext) {
-                          editedTemplate.current = {
-                            ...template,
-                            type: 'md',
-                          };
-                          forceUpdate();
-                        }
-                      }}
+                      onClick={() => toggleType(template, 'md')}
                     >
                       <div style={{ display: 'flex', textTransform: 'unset' }}>
                         {currentTemplate(template).type === 'md' && (
@@ -251,15 +322,7 @@ function SettingsTemplates(props: Props) {
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
                       }}
-                      onClick={() => {
-                        if (fileTemplatesContext) {
-                          editedTemplate.current = {
-                            ...template,
-                            type: 'txt',
-                          };
-                          forceUpdate();
-                        }
-                      }}
+                      onClick={() => toggleType(template, 'txt')}
                     >
                       <div style={{ display: 'flex', textTransform: 'unset' }}>
                         {currentTemplate(template).type === 'txt' && (
@@ -275,15 +338,7 @@ function SettingsTemplates(props: Props) {
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
                       }}
-                      onClick={() => {
-                        if (fileTemplatesContext) {
-                          editedTemplate.current = {
-                            ...template,
-                            type: 'html',
-                          };
-                          forceUpdate();
-                        }
-                      }}
+                      onClick={() => toggleType(template, 'html')}
                     >
                       <div style={{ display: 'flex', textTransform: 'unset' }}>
                         {currentTemplate(template).type === 'html' && (
@@ -306,7 +361,26 @@ function SettingsTemplates(props: Props) {
                       if (fileTemplatesContext) {
                         editedTemplate.current = {
                           ...template,
+                          ...editedTemplate.current,
                           content: e.target.value,
+                        };
+                        forceUpdate();
+                      }
+                    }}
+                  />
+                </ListItem>
+                <ListItem>
+                  <TsTextField
+                    fullWidth
+                    disabled={!Pro}
+                    label={t('fileNamePrefix')}
+                    value={currentTemplate(template).fileNamePrefix}
+                    onChange={(e) => {
+                      if (fileTemplatesContext) {
+                        editedTemplate.current = {
+                          ...template,
+                          ...editedTemplate.current,
+                          fileNamePrefix: e.target.value,
                         };
                         forceUpdate();
                       }

@@ -29,7 +29,6 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { TS } from '-/tagspaces.namespace';
-import versionMeta from '-/version.json';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -39,8 +38,9 @@ import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
-import { useReducer, useRef } from 'react';
+import { useContext, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -60,17 +60,30 @@ function NewFileDialog(props: Props) {
   const haveError = useRef<boolean>(false);
   const urlInputError = useRef<string>(undefined);
   const firstRWLocation = getFirstRWLocation();
+  const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
+    ? useContext<TS.FileTemplatesContextData>(
+        Pro.contextProviders.FileTemplatesContext,
+      )
+    : undefined;
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const fileName = useRef<string>(
-    props.fileName ||
-      (fileType === 'url' ? 'link' : 'note') +
-        AppConfig.beginTagContainer +
-        formatDateTime4Tag(new Date(), true) +
-        AppConfig.endTagContainer,
-  );
+  const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
+  const fileName = useRef<string>(initialFileName());
+
+  function initialFileName() {
+    const name =
+      props.fileName ||
+      fileTemplate?.fileNamePrefix ||
+      (fileType === 'url' ? 'link' : 'note');
+    return (
+      name +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+    );
+  }
 
   const fileContent = useRef<string>('');
 
@@ -113,6 +126,7 @@ function NewFileDialog(props: Props) {
           fileName.current,
           fileContent.current,
           fileType,
+          fileTemplate?.content,
         );
         onClose();
       }

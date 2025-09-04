@@ -330,16 +330,16 @@ export namespace TS {
     content: string; //'Createted with TagSpaces on 2025.06'
     name?: string; // 'Template Name'
     type?: 'md' | 'txt' | 'html';
-    fileNamePrefix?: 'note' | 'todo' | 'issue';
+    fileNamePrefix?: string; //'note' | 'todo' | 'issue';
     screenshotUrl?: string; //'dataURL'
   }
 
   type FileTemplatesContextData = {
-    getTemplate: (key: string) => FileTemplate | undefined;
-    setTemplate: (key: string, value: FileTemplate) => void;
-    getTemplates: () => Map<string, TS.FileTemplate>;
-    delTemplate: (key: string) => void;
-    getDefaultTemplate: () => TS.FileTemplate;
+    getTemplate: (type: string) => FileTemplate | undefined;
+    setTemplate: (id: string, value: FileTemplate) => void;
+    setTemplateActive: (id: string) => void;
+    getTemplates: () => TS.FileTemplate[];
+    delTemplate: (id: string) => void;
   };
 
   interface EditedEntryPath {

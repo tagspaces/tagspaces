@@ -988,5 +988,13 @@
   "generateImageTags": "Generate Image Tags",
   "tagDelimiterChange": "Changing Tag Delimiter will hide current tags with the old delimiter",
   "space": "Space",
+  "templatesTab": "Templates",
+  "defaultTemplate": "Default Template",
+  "defaultTemplatemd": "Default Template for MD file type",
+  "defaultTemplatetxt": "Default Template for TXT file type",
+  "defaultTemplatehtml": "Default Template for HTML file type",
+  "addTemplate": "Add Template",
+  "templateContent": "Template Content",
+  "fileNamePrefix": "File Name Prefix",
   "-": "-"
 }
