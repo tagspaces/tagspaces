@@ -34,7 +34,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
-import { getSupportedFileTypes } from '-/reducers/settings';
+import { getSupportedFileTypes, getTagDelimiter } from '-/reducers/settings';
 import { dataTidFormat } from '-/services/test';
 import { findColorForEntry, getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -87,6 +87,7 @@ function EntryContainerTitle(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   const fileSystemEntryColor = findColorForEntry(
     openedEntry,
     supportedFileTypes,
@@ -287,7 +288,7 @@ function EntryContainerTitle(props: Props) {
           )}
         </TsIconButton>
       </ProTooltip>
-      <TagsPreview tags={getAllTags(openedEntry)} />
+      <TagsPreview tags={getAllTags(openedEntry, tagDelimiter)} />
       {openedEntry.isEncrypted && (
         <Tooltip title={t('core:encryptedTooltip')}>
           <EncryptedIcon

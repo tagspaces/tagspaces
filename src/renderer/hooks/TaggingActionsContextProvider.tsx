@@ -1017,7 +1017,7 @@ export const TaggingActionsContextProvider = ({
     const defaultTagColor = tagBackgroundColor;
     const defaultTagTextColor = tagTextColor;
     locationIndex.map((entry) => {
-      const tags = getAllTags(entry);
+      const tags = getAllTags(entry, tagDelimiter);
       if (tags && tags.length > 0) {
         tags.map((tag) => {
           if (

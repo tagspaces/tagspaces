@@ -23,7 +23,7 @@ import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
-import { getEnableWS } from '-/reducers/settings';
+import { getEnableWS, getTagDelimiter } from '-/reducers/settings';
 import Search from '-/services/search';
 import {
   executePromisesInBatches,
@@ -116,6 +116,7 @@ export const LocationIndexContextProvider = ({
     useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
@@ -530,11 +531,13 @@ export const LocationIndexContextProvider = ({
   }
 
   function createLocationIndexInt(location: CommonLocation): Promise<boolean> {
+    if (location) {
+      isIndexing.current = location.uuid;
+      forceUpdate();
+    }
     return getLocationPath(location).then((locationPath) => {
       const isCurrentLocation =
         currentLocation && currentLocation.uuid === location.uuid;
-      isIndexing.current = location.uuid;
-      forceUpdate();
       return createDirectoryIndexWrapper(
         { path: locationPath, locationID: location.uuid },
         location.fullTextIndex,
@@ -676,7 +679,7 @@ export const LocationIndexContextProvider = ({
     searchQuery: TS.SearchQuery,
     //isCloudLocation: boolean,
   ): Promise<TS.FileSystemEntry[]> {
-    return Search.searchLocationIndex(searchIndex, searchQuery)
+    return Search.searchLocationIndex(searchIndex, searchQuery, tagDelimiter)
       .then((searchResults) => {
         //enhanceSearchEntries(searchResults);
         return searchResults;

@@ -32,7 +32,11 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import {
+  getSupportedFileTypes,
+  getTagDelimiter,
+  isReorderTags,
+} from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import {
   findBackgroundColorForFolder,
@@ -112,6 +116,7 @@ function RowCell(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
   //const rowCellLocation = findLocation(fsEntry.locationID);
 
   // You can use the dispatch function to dispatch actions
@@ -159,7 +164,7 @@ function RowCell(props: Props) {
   if (fsEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
       fsEntry.name,
-      AppConfig.tagDelimiter,
+      tagDelimiter,
       currentLocation?.getDirSeparator(),
     );
   }

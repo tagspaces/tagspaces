@@ -228,6 +228,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
 
 function prepareIndex(
   index: Array<TS.FileSystemEntry>,
+  tagDelimiter,
   showUnixHiddenEntries: boolean,
 ) {
   console.time('PreparingIndex');
@@ -240,7 +241,7 @@ function prepareIndex(
     );
   }
   const enhancedIndex = filteredIndex.map((entry: any) => {
-    const tags = getAllTags(entry);
+    const tags = getAllTags(entry, tagDelimiter);
     let lat = null;
     let lon = null;
     let fromTime = null;
@@ -313,6 +314,7 @@ export default class Search {
   static searchLocationIndex = (
     locationContent: Array<TS.FileSystemEntry>,
     searchQuery: TS.SearchQuery,
+    tagDelimiter: string,
   ): Promise<TS.FileSystemEntry[]> =>
     new Promise((resolve, reject) => {
       console.time('searchtime');
@@ -322,6 +324,7 @@ export default class Search {
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(
         locationContent,
+        tagDelimiter,
         searchQuery.showUnixHiddenEntries,
       );
       let searched = false;
