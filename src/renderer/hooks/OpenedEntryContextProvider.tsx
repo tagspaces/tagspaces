@@ -58,6 +58,7 @@ import {
   extractFileExtension,
   generateSharingLink,
   getMetaContentFileLocation,
+  isMeta,
   joinPaths,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
@@ -209,7 +210,11 @@ export const OpenedEntryContextProvider = ({
     if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.open && action.entry.isFile) {
+          if (
+            action.open &&
+            action.entry.isFile &&
+            !isMeta(action.entry.path)
+          ) {
             //&& action.entry.isNewFile) {
             openFsEntry(action.entry);
           }
