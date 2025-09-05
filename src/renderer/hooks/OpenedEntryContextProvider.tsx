@@ -36,7 +36,6 @@ import {
 import { extractPDFcontent } from '-/services/thumbsgenerator';
 import {
   findExtensionPathForId,
-  getDefaultTemplate,
   getDirProperties,
   getNextFile,
   getPrevFile,
@@ -983,19 +982,9 @@ export const OpenedEntryContextProvider = ({
     fileName: string,
     content: string,
     fileType: TS.FileType = 'md',
-    createMeta: string = undefined,
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
-    const meta = createMeta || getDefaultTemplate(fileType).content;
-    const creationMeta = meta
-      ? meta
-          .replace(
-            '{versionMeta}',
-            `${t('core:createdIn')} ${versionMeta.name}`,
-          )
-          .replace('{date}', creationDate.substring(0, 10))
-      : '';
     const filePath =
       normalizePath(targetPath) +
       (currentLocation
@@ -1012,12 +1001,10 @@ export const OpenedEntryContextProvider = ({
         creationDate +
         '" >' +
         content +
-        '\n<br />\n' +
-        creationMeta +
         '\n';
       '</body>' + newHTMLFileContent.split('<body></body>')[1];
     } else if (fileType === 'md') {
-      fileContent = content + ' \n\n' + creationMeta + '\n';
+      fileContent = content;
     } else if (fileType === 'url') {
       fileContent = '[InternetShortcut]\n' + 'URL=' + content + '\n';
     }

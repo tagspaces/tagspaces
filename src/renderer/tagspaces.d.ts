@@ -87,6 +87,7 @@ declare interface Window {
   ExtTagsFromTextPrompt?: string;
   ExtTagsFromImagePrompt?: string;
   ExtFileTemplates?: Array<any>;
+  ExtDefaultFileTemplate?: any;
 }
 
 declare interface NodeModule {

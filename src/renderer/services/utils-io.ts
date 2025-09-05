@@ -1312,7 +1312,7 @@ export function toBase64Image(uint8Array): string {
   return undefined;
 }
 
-export function getDefaultTemplate(
+/*export function getDefaultTemplate(
   fileType: 'md' | 'txt' | 'html' | 'url' = undefined,
 ): TS.FileTemplate {
   if (fileType === 'txt' || fileType === 'url') {
@@ -1320,12 +1320,14 @@ export function getDefaultTemplate(
       id: 'default',
       name: 'Default',
       content: '',
+      fileNamePrefix: 'note[{dateTag}]',
     };
   }
 
   return {
     id: 'default',
     name: 'Default',
-    content: '{versionMeta} ({date})',
+    content: '{createdInApp} ({date})',
+    fileNamePrefix: 'note[{dateTag}]',
   };
-}
+}*/

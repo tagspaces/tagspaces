@@ -20,6 +20,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import TsTextField from '-/components/TsTextField';
 import { Pro } from '-/pro';
+import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import TsButton from '-/components/TsButton';
 import {
@@ -41,10 +42,8 @@ import TsToggleButton from '-/components/TsToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { getDefaultTemplate } from '-/services/utils-io';
-import MenuItem from '@mui/material/MenuItem';
-import TsSelect from '-/components/TsSelect';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 
 interface Props {}
 
@@ -70,10 +69,12 @@ function SettingsTemplates(props: Props) {
       } else {
         // new template
         const id = getUuid();
+        const def = AppConfig.defaultTemplate;
         const temp = {
           id,
           name: 'new template',
-          content: getDefaultTemplate().content,
+          content: def.content,
+          fileNamePrefix: def.fileNamePrefix,
         };
         editedTemplate.current = temp;
         fileTemplatesContext.setTemplate(id, temp);
@@ -105,35 +106,8 @@ function SettingsTemplates(props: Props) {
   }
 
   const defaultTemplate =
-    templatesArray?.find((t) => t.type === undefined) || getDefaultTemplate();
-  const defaultTemplates = templatesArray?.filter((t) => t.type === undefined);
-  const mdTemplates = templatesArray?.filter((t) => t.type === 'md');
-  const txtTemplates = templatesArray?.filter((t) => t.type === 'txt');
-  const htmlTemplates = templatesArray?.filter((t) => t.type === 'html');
-
-  const setDefaultTemplate = (type, templates: TS.FileTemplate[]) => {
-    if (!templates || templates.length < 2) {
-      return undefined;
-    }
-    return (
-      <ListItem>
-        <TsSelect
-          data-tid="tagDelimiterTID"
-          label={t('defaultTemplate' + (type ?? ''))}
-          fullWidth={false}
-          title={t('core:tagDelimiter')}
-          value={fileTemplatesContext?.getTemplate(type)?.id}
-          onChange={(event) =>
-            fileTemplatesContext?.setTemplateActive(event.target.value)
-          }
-        >
-          {templates.map((tp) => (
-            <MenuItem value={tp.id}>{tp.name}</MenuItem>
-          ))}
-        </TsSelect>
-      </ListItem>
-    );
-  };
+    templatesArray?.find((t) => t.type === undefined) ||
+    AppConfig.defaultTemplate;
 
   function toggleType(template: TS.FileTemplate, type: 'html' | 'md' | 'txt') {
     if (!fileTemplatesContext) return;
@@ -192,10 +166,21 @@ function SettingsTemplates(props: Props) {
           <List
             style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}
           >
-            {setDefaultTemplate(undefined, defaultTemplates)}
-            {setDefaultTemplate('md', mdTemplates)}
-            {setDefaultTemplate('txt', txtTemplates)}
-            {setDefaultTemplate('html', htmlTemplates)}
+            <ListItem>
+              <TemplatesDropDown />
+            </ListItem>
+
+            <ListItem>
+              <TemplatesDropDown fileType="md" />
+            </ListItem>
+
+            <ListItem>
+              <TemplatesDropDown fileType="txt" />
+            </ListItem>
+
+            <ListItem>
+              <TemplatesDropDown fileType="html" />
+            </ListItem>
           </List>
 
           <Typography>{defaultTemplate?.content}</Typography>

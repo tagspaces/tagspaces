@@ -24,8 +24,17 @@ import { TS } from '-/tagspaces.namespace';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import React, { useEffect, useReducer, useState } from 'react';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pro } from '-/pro';
+import versionMeta from '-/version.json';
 
 interface Props {
   fileName: string;
@@ -49,12 +58,36 @@ function CreateFile(props: Props) {
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
+  const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
+    ? useContext<TS.FileTemplatesContextData>(
+        Pro.contextProviders.FileTemplatesContext,
+      )
+    : undefined;
+  const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
 
   const [inputError, setInputError] = useState<boolean>(false);
+  const fileContentRef = useRef<HTMLInputElement | null>(null);
+  const fileNameRef = useRef<HTMLInputElement | null>(null);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const noSuitableLocation = !targetDirectoryPath;
+
+  useEffect(() => {
+    if (fileTemplate) {
+      if (fileContentRef.current) {
+        fileContentRef.current.value = getFileContent();
+        if (fileTemplate.fileNamePrefix) {
+          fileNameRef.current.value = fileTemplate.fileNamePrefix.replace(
+            '{dateTag}',
+            formatDateTime4Tag(new Date(), true),
+          );
+        } else {
+          fileNameRef.current.value = '';
+        }
+      }
+    }
+  }, [fileTemplate]);
 
   useEffect(() => {
     haveError(inputError);
@@ -105,10 +138,29 @@ function CreateFile(props: Props) {
     }
   };
 
+  function getFileContent() {
+    if (fileType !== 'url' && fileTemplate && fileTemplate.content) {
+      const creationDate = new Date().toISOString();
+      const dateTimeArray = creationDate.split('T');
+      return (
+        (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
+        fileTemplate.content
+          .replace(
+            '{createdInApp}',
+            `${t('core:createdIn')} ${versionMeta.name}`,
+          )
+          .replace('{date}', dateTimeArray[0])
+          .replace('{time}', dateTimeArray[1].split('.')[0])
+      );
+    }
+    return '';
+  }
+
   return (
     <Grid container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
         <TsTextField
+          inputRef={fileNameRef}
           error={inputError}
           name="entryName"
           label={t('core:fileName')}
@@ -138,6 +190,8 @@ function CreateFile(props: Props) {
             label={t('core:fileContent')}
             multiline
             rows={5}
+            inputRef={fileContentRef}
+            defaultValue={getFileContent()}
             onChange={handleContentChange}
           />
         </FormControl>

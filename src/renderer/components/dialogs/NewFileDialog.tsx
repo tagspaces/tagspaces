@@ -41,6 +41,7 @@ import {
 import { useContext, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 
 interface Props {
   open: boolean;
@@ -73,12 +74,22 @@ function NewFileDialog(props: Props) {
   const fileName = useRef<string>(initialFileName());
 
   function initialFileName() {
-    const name =
-      props.fileName ||
-      fileTemplate?.fileNamePrefix ||
-      (fileType === 'url' ? 'link' : 'note');
+    if (props.fileName) {
+      return (
+        props.fileName +
+        AppConfig.beginTagContainer +
+        formatDateTime4Tag(new Date(), true) +
+        AppConfig.endTagContainer
+      );
+    }
+    if (fileTemplate && fileTemplate.fileNamePrefix !== undefined) {
+      return fileTemplate.fileNamePrefix.replace(
+        '{dateTag}',
+        formatDateTime4Tag(new Date(), true),
+      );
+    }
     return (
-      name +
+      (fileType === 'url' ? 'link' : 'note') +
       AppConfig.beginTagContainer +
       formatDateTime4Tag(new Date(), true) +
       AppConfig.endTagContainer
@@ -126,7 +137,6 @@ function NewFileDialog(props: Props) {
           fileName.current,
           fileContent.current,
           fileType,
-          fileTemplate?.content,
         );
         onClose();
       }
@@ -175,6 +185,7 @@ function NewFileDialog(props: Props) {
         }}
         data-tid="newFileDialog"
       >
+        <TemplatesDropDown fileType={fileType} />
         {fileType === 'url' ? (
           <CreateLink
             createFile={(type) => createFile(type, targetDirectoryPath)}
