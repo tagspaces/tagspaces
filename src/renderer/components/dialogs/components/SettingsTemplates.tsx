@@ -31,13 +31,10 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import CheckIcon from '@mui/icons-material/Check';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  List,
-  ListItem,
   Typography,
 } from '@mui/material';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -148,24 +145,15 @@ function SettingsTemplates(props: Props) {
             onClick={() => {
               saveTemplate();
             }}
+            style={{ marginBottom: 10 }}
             startIcon={<CreateFileIcon />}
           >
             {t('addTemplate')}
           </TsButton>
-          <List>
-            <ListItem>
-              <TemplatesDropDown />
-            </ListItem>
-            <ListItem>
-              <TemplatesDropDown fileType="md" />
-            </ListItem>
-            <ListItem>
-              <TemplatesDropDown fileType="txt" />
-            </ListItem>
-            <ListItem>
-              <TemplatesDropDown fileType="html" />
-            </ListItem>
-          </List>
+          <TemplatesDropDown />
+          <TemplatesDropDown fileType="md" />
+          <TemplatesDropDown fileType="txt" />
+          <TemplatesDropDown fileType="html" />
           <Typography variant="caption">
             Supported template variables are {'{'}date{'}'}, {'{'}time{'}'} and{' '}
             {'{'}createdInApp{'}'}. The file name template supports only this
@@ -184,23 +172,34 @@ function SettingsTemplates(props: Props) {
             <AccordionSummary
               expandIcon={<ExpandIcon />}
               aria-controls={template.id + 'content'}
-              data-tid={template.id + 'ollamaTID'}
+              data-tid={template.id + 'TemplateTID'}
               sx={{
                 '& .MuiAccordionSummary-content': { alignItems: 'center' },
               }}
             >
-              <FiberManualRecordIcon
-                sx={{
-                  color:
-                    fileTemplatesContext.getTemplate(template.type)?.id ===
-                    template.id
-                      ? 'green'
-                      : 'red',
-                  fontSize: 19,
-                  ml: 1,
-                }}
-              />
-              <Typography>&nbsp;{currentTemplate(template).name}</Typography>
+              <Typography>
+                {currentTemplate(template).name}
+                {template.type ? (
+                  <span
+                    style={{
+                      marginLeft: 5,
+                      padding: 2,
+                      fontSize: 12,
+                      textTransform: 'uppercase',
+                      border: '1px solid gray',
+                      borderRadius: '3px',
+                    }}
+                  >
+                    {template.type}
+                  </span>
+                ) : (
+                  ''
+                )}
+                {fileTemplatesContext.getTemplate(template.type)?.id ===
+                template.id
+                  ? ' - ' + t('defaultTemplate')
+                  : ''}
+              </Typography>
               <TsIconButton
                 aria-label="removeTemplate"
                 tooltip={t('core:remove')}
@@ -238,128 +237,107 @@ function SettingsTemplates(props: Props) {
                 )}
             </AccordionSummary>
             <AccordionDetails>
-              <List
-                style={{
-                  overflowX: 'hidden',
-                  overflowY: 'auto',
-                  height: '100%',
+              <TsTextField
+                fullWidth
+                disabled={!Pro}
+                label={t('name')}
+                value={currentTemplate(template).name}
+                onChange={(e) => {
+                  if (fileTemplatesContext) {
+                    editedTemplate.current = {
+                      ...template,
+                      ...editedTemplate.current,
+                      name: e.target.value,
+                    };
+                    forceUpdate();
+                  }
                 }}
+              />
+              <ToggleButtonGroup
+                value={currentTemplate(template).type}
+                size="small"
+                exclusive
               >
-                <ListItem>
-                  <TsTextField
-                    fullWidth
-                    disabled={!Pro}
-                    label={t('name')}
-                    value={currentTemplate(template).name}
-                    onChange={(e) => {
-                      if (fileTemplatesContext) {
-                        editedTemplate.current = {
-                          ...template,
-                          ...editedTemplate.current,
-                          name: e.target.value,
-                        };
-                        forceUpdate();
-                      }
-                    }}
-                  />
-                </ListItem>
-                <ListItem>
-                  <ToggleButtonGroup
-                    value={currentTemplate(template).type}
-                    size="small"
-                    exclusive
-                  >
-                    <TsToggleButton
-                      value={false}
-                      data-tid="templateMdTypeTID"
-                      style={{
-                        borderTopRightRadius: 0,
-                        borderBottomRightRadius: 0,
-                      }}
-                      onClick={() => toggleType(template, 'md')}
-                    >
-                      <div style={{ display: 'flex', textTransform: 'unset' }}>
-                        {currentTemplate(template).type === 'md' && (
-                          <CheckIcon />
-                        )}
-                        &nbsp;&nbsp;MD&nbsp;&nbsp;
-                      </div>
-                    </TsToggleButton>
-                    <TsToggleButton
-                      value={false}
-                      data-tid="templateTxtTypeTID"
-                      style={{
-                        borderTopRightRadius: 0,
-                        borderBottomRightRadius: 0,
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                      }}
-                      onClick={() => toggleType(template, 'txt')}
-                    >
-                      <div style={{ display: 'flex', textTransform: 'unset' }}>
-                        {currentTemplate(template).type === 'txt' && (
-                          <CheckIcon />
-                        )}
-                        &nbsp;TXT&nbsp;
-                      </div>
-                    </TsToggleButton>
-                    <TsToggleButton
-                      value={false}
-                      data-tid="templateTxtTypeTID"
-                      style={{
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                      }}
-                      onClick={() => toggleType(template, 'html')}
-                    >
-                      <div style={{ display: 'flex', textTransform: 'unset' }}>
-                        {currentTemplate(template).type === 'html' && (
-                          <CheckIcon />
-                        )}
-                        HTML
-                      </div>
-                    </TsToggleButton>
-                  </ToggleButtonGroup>
-                </ListItem>
-                <ListItem>
-                  <TsTextField
-                    fullWidth
-                    multiline
-                    rows={5}
-                    disabled={!Pro}
-                    label={t('core:templateContent')}
-                    value={currentTemplate(template).content}
-                    onChange={(e) => {
-                      if (fileTemplatesContext) {
-                        editedTemplate.current = {
-                          ...template,
-                          ...editedTemplate.current,
-                          content: e.target.value,
-                        };
-                        forceUpdate();
-                      }
-                    }}
-                  />
-                </ListItem>
-                <ListItem>
-                  <TsTextField
-                    fullWidth
-                    disabled={!Pro}
-                    label={t('fileNameTmpl')}
-                    value={currentTemplate(template).fileNameTmpl}
-                    onChange={(e) => {
-                      if (fileTemplatesContext) {
-                        editedTemplate.current = {
-                          ...template,
-                          ...editedTemplate.current,
-                          fileNameTmpl: e.target.value,
-                        };
-                        forceUpdate();
-                      }
-                    }}
-                  />
-                </ListItem>
-              </List>
+                <TsToggleButton
+                  value={false}
+                  data-tid="templateMdTypeTID"
+                  style={{
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }}
+                  onClick={() => toggleType(template, 'md')}
+                >
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
+                    {currentTemplate(template).type === 'md' && <CheckIcon />}
+                    &nbsp;&nbsp;MD&nbsp;&nbsp;
+                  </div>
+                </TsToggleButton>
+                <TsToggleButton
+                  value={false}
+                  data-tid="templateTxtTypeTID"
+                  style={{
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
+                  onClick={() => toggleType(template, 'txt')}
+                >
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
+                    {currentTemplate(template).type === 'txt' && <CheckIcon />}
+                    &nbsp;TXT&nbsp;
+                  </div>
+                </TsToggleButton>
+                <TsToggleButton
+                  value={false}
+                  data-tid="templateTxtTypeTID"
+                  style={{
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
+                  onClick={() => toggleType(template, 'html')}
+                >
+                  <div style={{ display: 'flex', textTransform: 'unset' }}>
+                    {currentTemplate(template).type === 'html' && <CheckIcon />}
+                    HTML
+                  </div>
+                </TsToggleButton>
+              </ToggleButtonGroup>
+              <TsTextField
+                fullWidth
+                multiline
+                rows={5}
+                disabled={!Pro}
+                label={t('core:templateContent')}
+                value={currentTemplate(template).content}
+                onChange={(e) => {
+                  if (fileTemplatesContext) {
+                    editedTemplate.current = {
+                      ...template,
+                      ...editedTemplate.current,
+                      content: e.target.value,
+                    };
+                    forceUpdate();
+                  }
+                }}
+              />
+              <TsTextField
+                fullWidth
+                disabled={!Pro}
+                label={t('fileNameTmpl')}
+                placeholder="e.g.: note[{timestamp}]"
+                value={currentTemplate(template).fileNameTmpl}
+                onChange={(e) => {
+                  if (fileTemplatesContext) {
+                    editedTemplate.current = {
+                      ...template,
+                      ...editedTemplate.current,
+                      fileNameTmpl: e.target.value,
+                    };
+                    forceUpdate();
+                  }
+                }}
+              />
             </AccordionDetails>
           </Accordion>
         ))}
