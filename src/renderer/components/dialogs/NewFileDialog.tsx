@@ -22,12 +22,14 @@ import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
 import CreateLink from '-/components/dialogs/components/CreateLink';
 import TargetPath from '-/components/dialogs/components/TargetPath';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -40,8 +42,6 @@ import {
 } from '@tagspaces/tagspaces-common/misc';
 import { useContext, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pro } from '-/pro';
-import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 
 interface Props {
   open: boolean;
@@ -185,7 +185,6 @@ function NewFileDialog(props: Props) {
         }}
         data-tid="newFileDialog"
       >
-        <TemplatesDropDown fileType={fileType} />
         {fileType === 'url' ? (
           <CreateLink
             createFile={(type) => createFile(type, targetDirectoryPath)}
@@ -216,6 +215,7 @@ function NewFileDialog(props: Props) {
             fileName={fileName.current}
           />
         )}
+        <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
         <TargetPath />
       </DialogContent>
       {!smallScreen && fileType && (

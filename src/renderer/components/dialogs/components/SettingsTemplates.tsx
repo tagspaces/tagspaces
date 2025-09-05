@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2024-present TagSpaces GmbH
+ * Copyright (C) 2025-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,34 +16,34 @@
  *
  */
 
-import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import TsTextField from '-/components/TsTextField';
-import { Pro } from '-/pro';
 import AppConfig from '-/AppConfig';
-import { TS } from '-/tagspaces.namespace';
-import TsButton from '-/components/TsButton';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  List,
-  Typography,
-  ListItem,
-} from '@mui/material';
 import {
   CreateFileIcon,
   ExpandIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
-import CheckIcon from '@mui/icons-material/Check';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
+import CheckIcon from '@mui/icons-material/Check';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {}
 
@@ -137,25 +137,14 @@ function SettingsTemplates(props: Props) {
     >
       <Accordion defaultExpanded>
         <AccordionSummary
-          expandIcon={<ExpandIcon />}
-          aria-controls={'defaultContent'}
-          data-tid={'defaultTID'}
-          sx={{
-            '& .MuiAccordionSummary-content': { alignItems: 'center' },
-          }}
-          id="template-header"
+          aria-controls={'file-template-content'}
+          id="file-template-header"
+          data-tid={'fileTemplatesTID'}
         >
-          <Typography>{t('core:defaultTemplate')}</Typography>
+          <Typography>{t('core:templatesTab')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <TsButton
-            style={{
-              fontSize: 13,
-              textTransform: 'unset',
-              fontWeight: 'normal',
-              paddingTop: 0,
-              paddingBottom: 0,
-            }}
             onClick={() => {
               saveTemplate();
             }}
@@ -183,7 +172,10 @@ function SettingsTemplates(props: Props) {
             </ListItem>
           </List>
 
-          <Typography>{defaultTemplate?.content}</Typography>
+          <Typography variant="caption">
+            Supported template variables are {'{'}date{'}'}, {'{'}time{'}'} and{' '}
+            {'{'}createdInApp{'}'}
+          </Typography>
         </AccordionDetails>
       </Accordion>
       {templatesArray &&

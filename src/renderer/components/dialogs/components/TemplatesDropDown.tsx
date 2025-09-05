@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2024-present TagSpaces GmbH
+ * Copyright (C) 2025-present TagSpaces GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,19 +16,20 @@
  *
  */
 
-import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
+import TsSelect from '-/components/TsSelect';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import MenuItem from '@mui/material/MenuItem';
-import TsSelect from '-/components/TsSelect';
+import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   fileType?: 'md' | 'txt' | 'html' | 'url';
+  label?: string;
 }
 
 function TemplatesDropDown(props: Props) {
-  const { fileType } = props;
+  const { fileType, label } = props;
   const { t } = useTranslation();
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
     ? useContext<TS.FileTemplatesContextData>(
@@ -48,19 +49,26 @@ function TemplatesDropDown(props: Props) {
   if (!templates || templates.length < 2) {
     return null;
   }
+
+  const selectLabel = label ? label : t('defaultTemplate' + (fileType ?? ''));
+
   return (
     <TsSelect
       data-tid="tagDelimiterTID"
-      label={t('defaultTemplate' + (fileType ?? ''))}
-      fullWidth={false}
-      title={t('core:tagDelimiter')}
+      label={selectLabel}
+      fullWidth={true}
       value={fileTemplatesContext?.getTemplate(fileType)?.id}
       onChange={(event) =>
         fileTemplatesContext?.setTemplateActive(event.target.value)
       }
     >
-      {templates.map((tp) => (
-        <MenuItem value={tp.id}>{tp.name}</MenuItem>
+      {templates.map((tp, index) => (
+        <MenuItem value={tp.id}>
+          {
+            tp.name
+            // + (index === 0 ? ' (' + t('core:defaultTemplate') + ')' : '')
+          }
+        </MenuItem>
       ))}
     </TsSelect>
   );
