@@ -19,8 +19,10 @@
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { Pro } from '-/pro';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import versionMeta from '-/version.json';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
@@ -33,8 +35,6 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pro } from '-/pro';
-import versionMeta from '-/version.json';
 
 interface Props {
   fileName: string;
@@ -77,9 +77,9 @@ function CreateFile(props: Props) {
     if (fileTemplate) {
       if (fileContentRef.current) {
         fileContentRef.current.value = getFileContent();
-        if (fileTemplate.fileNamePrefix) {
-          fileNameRef.current.value = fileTemplate.fileNamePrefix.replace(
-            '{dateTag}',
+        if (fileTemplate.fileNameTmpl) {
+          fileNameRef.current.value = fileTemplate.fileNameTmpl.replace(
+            '{timestamp}',
             formatDateTime4Tag(new Date(), true),
           );
         } else {

@@ -82,9 +82,9 @@ function NewFileDialog(props: Props) {
         AppConfig.endTagContainer
       );
     }
-    if (fileTemplate && fileTemplate.fileNamePrefix !== undefined) {
-      return fileTemplate.fileNamePrefix.replace(
-        '{dateTag}',
+    if (fileTemplate && fileTemplate.fileNameTmpl !== undefined) {
+      return fileTemplate.fileNameTmpl.replace(
+        '{timestamp}',
         formatDateTime4Tag(new Date(), true),
       );
     }

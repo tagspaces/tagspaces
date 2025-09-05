@@ -74,7 +74,7 @@ function SettingsTemplates(props: Props) {
           id,
           name: 'new template',
           content: def.content,
-          fileNamePrefix: def.fileNamePrefix,
+          fileNameTmpl: def.fileNameTmpl,
         };
         editedTemplate.current = temp;
         fileTemplatesContext.setTemplate(id, temp);
@@ -152,29 +152,24 @@ function SettingsTemplates(props: Props) {
           >
             {t('addTemplate')}
           </TsButton>
-          <List
-            style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}
-          >
+          <List>
             <ListItem>
               <TemplatesDropDown />
             </ListItem>
-
             <ListItem>
               <TemplatesDropDown fileType="md" />
             </ListItem>
-
             <ListItem>
               <TemplatesDropDown fileType="txt" />
             </ListItem>
-
             <ListItem>
               <TemplatesDropDown fileType="html" />
             </ListItem>
           </List>
-
           <Typography variant="caption">
             Supported template variables are {'{'}date{'}'}, {'{'}time{'}'} and{' '}
-            {'{'}createdInApp{'}'}
+            {'{'}createdInApp{'}'}. The file name template supports only this
+            variable {'{'}timestamp{'}'}.
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -350,14 +345,14 @@ function SettingsTemplates(props: Props) {
                   <TsTextField
                     fullWidth
                     disabled={!Pro}
-                    label={t('fileNamePrefix')}
-                    value={currentTemplate(template).fileNamePrefix}
+                    label={t('fileNameTmpl')}
+                    value={currentTemplate(template).fileNameTmpl}
                     onChange={(e) => {
                       if (fileTemplatesContext) {
                         editedTemplate.current = {
                           ...template,
                           ...editedTemplate.current,
-                          fileNamePrefix: e.target.value,
+                          fileNameTmpl: e.target.value,
                         };
                         forceUpdate();
                       }

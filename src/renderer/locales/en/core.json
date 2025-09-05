@@ -995,6 +995,6 @@
   "defaultTemplatehtml": "Default template for HTML files (.html)",
   "addTemplate": "Create New Template",
   "templateContent": "Template Content",
-  "fileNamePrefix": "File Name Template",
+  "fileNameTmpl": "File Name Template",
   "-": "-"
 }

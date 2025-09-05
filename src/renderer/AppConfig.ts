@@ -197,7 +197,7 @@ AppConfig.defaultTemplate =
         id: 'default',
         name: 'Default',
         content: '{createdInApp} ({date})',
-        fileNamePrefix: 'note[{dateTag}]',
+        fileNameTmpl: 'note[{timestamp}]',
       };
 
 export default AppConfig;
