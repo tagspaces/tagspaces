@@ -141,6 +141,14 @@ function SettingsTemplates(props: Props) {
           <Typography>{t('core:templatesTab')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
+          <Typography
+            variant="caption"
+            style={{ display: 'block', marginTop: -20, marginBottom: 10 }}
+          >
+            Supported template variables are: {'{'}date{'}'}, {'{'}time{'}'} and{' '}
+            {'{'}createdInApp{'}'}. The file name template supports the variable{' '}
+            {'{'}timestamp{'}'}.
+          </Typography>
           <TsButton
             onClick={() => {
               saveTemplate();
@@ -154,11 +162,6 @@ function SettingsTemplates(props: Props) {
           <TemplatesDropDown fileType="md" />
           <TemplatesDropDown fileType="txt" />
           <TemplatesDropDown fileType="html" />
-          <Typography variant="caption">
-            Supported template variables are {'{'}date{'}'}, {'{'}time{'}'} and{' '}
-            {'{'}createdInApp{'}'}. The file name template supports only this
-            variable {'{'}timestamp{'}'}.
-          </Typography>
         </AccordionDetails>
       </Accordion>
       {templatesArray &&
@@ -255,8 +258,9 @@ function SettingsTemplates(props: Props) {
               />
               <ToggleButtonGroup
                 value={currentTemplate(template).type}
-                size="small"
                 exclusive
+                style={{ marginTop: 10, marginBottom: 10 }}
+                title="Template type"
               >
                 <TsToggleButton
                   value={false}
