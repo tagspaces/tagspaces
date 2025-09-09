@@ -35,6 +35,8 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   fileName: string;
@@ -68,24 +70,20 @@ function CreateFile(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const fileContentRef = useRef<HTMLInputElement | null>(null);
   const fileNameRef = useRef<HTMLInputElement | null>(null);
-
+  const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const noSuitableLocation = !targetDirectoryPath;
 
   useEffect(() => {
-    if (fileTemplate) {
-      if (fileContentRef.current) {
-        fileContentRef.current.value = getFileContent();
-        if (fileTemplate.fileNameTmpl) {
-          fileNameRef.current.value = fileTemplate.fileNameTmpl.replace(
-            '{timestamp}',
-            formatDateTime4Tag(new Date(), true),
-          );
-        } else {
-          fileNameRef.current.value = '';
-        }
-      }
+    if (
+      !firstRender &&
+      fileTemplate &&
+      fileNameRef.current &&
+      fileContentRef.current
+    ) {
+      fileNameRef.current.value = getFileName();
+      fileContentRef.current.value = getFileContent();
     }
   }, [fileTemplate]);
 
@@ -138,14 +136,39 @@ function CreateFile(props: Props) {
     }
   };
 
+  function getFileName() {
+    if (fileName) {
+      return (
+        fileName +
+        AppConfig.beginTagContainer +
+        formatDateTime4Tag(new Date(), true) +
+        AppConfig.endTagContainer
+      );
+    }
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.fileNameTmpl !== undefined) {
+      return template.fileNameTmpl.replace(
+        '{timestamp}',
+        formatDateTime4Tag(new Date(), true),
+      );
+    }
+    return (
+      (fileType === 'url' ? 'link' : 'note') +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+    );
+  }
+
   function getFileContent() {
     if (fileType === 'url') return '';
-    if (fileTemplate && fileTemplate.content) {
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.content) {
       const creationDate = new Date().toISOString();
       const dateTimeArray = creationDate.split('T');
       return (
         (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
-        fileTemplate.content
+        template.content
           .replace(
             '{createdInApp}',
             `${t('core:createdIn')} ${versionMeta.name}`,
@@ -179,7 +202,7 @@ function CreateFile(props: Props) {
               createFile(fileType);
             }
           }}
-          defaultValue={fileName}
+          defaultValue={getFileName()}
           disabled={noSuitableLocation}
           autoFocus
           data-tid={tid('newEntryDialogInputTID')}

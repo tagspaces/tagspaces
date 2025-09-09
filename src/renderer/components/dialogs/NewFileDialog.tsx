@@ -52,7 +52,7 @@ interface Props {
 }
 
 function NewFileDialog(props: Props) {
-  const { open, onClose, fileType } = props;
+  const { open, onClose, fileType, fileName } = props;
   const { t } = useTranslation();
   const { createFileAdvanced } = useOpenedEntryContext();
   const { findLocation, openLocation, getFirstRWLocation } =
@@ -72,20 +72,21 @@ function NewFileDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
-  const fileName = useRef<string>(getFileName());
-  const fileContent = useRef<string>(getFileContent());
+  const fileNameRef = useRef<string>(getFileName());
+  const fileContentRef = useRef<string>(getFileContent());
 
   function getFileName() {
-    if (props.fileName) {
+    if (fileName) {
       return (
-        props.fileName +
+        fileName +
         AppConfig.beginTagContainer +
         formatDateTime4Tag(new Date(), true) +
         AppConfig.endTagContainer
       );
     }
-    if (fileTemplate && fileTemplate.fileNameTmpl !== undefined) {
-      return fileTemplate.fileNameTmpl.replace(
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.fileNameTmpl !== undefined) {
+      return template.fileNameTmpl.replace(
         '{timestamp}',
         formatDateTime4Tag(new Date(), true),
       );
@@ -100,12 +101,13 @@ function NewFileDialog(props: Props) {
 
   function getFileContent() {
     if (fileType === 'url') return '';
-    if (fileTemplate && fileTemplate.content) {
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.content) {
       const creationDate = new Date().toISOString();
       const dateTimeArray = creationDate.split('T');
       return (
         (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
-        fileTemplate.content
+        template.content
           .replace(
             '{createdInApp}',
             `${t('core:createdIn')} ${versionMeta.name}`,
@@ -150,7 +152,7 @@ function NewFileDialog(props: Props) {
 
   function createFile(fileType, targetPath) {
     if (targetPath) {
-      if (fileType === 'url' && !fileContent.current) {
+      if (fileType === 'url' && !fileContentRef.current) {
         haveError.current = true;
         urlInputError.current = t('core:emptyLink');
         forceUpdate();
@@ -158,8 +160,8 @@ function NewFileDialog(props: Props) {
         loadLocation();
         createFileAdvanced(
           targetPath,
-          fileName.current,
-          fileContent.current,
+          fileNameRef.current,
+          fileContentRef.current,
           fileType,
         );
         onClose();
@@ -212,9 +214,9 @@ function NewFileDialog(props: Props) {
         {fileType === 'url' ? (
           <CreateLink
             createFile={(type) => createFile(type, targetDirectoryPath)}
-            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileNameChange={(name) => (fileNameRef.current = name)}
             handleFileContentChange={(content) =>
-              (fileContent.current = content)
+              (fileContentRef.current = content)
             }
             haveError={(error) => {
               haveError.current = error;
@@ -222,21 +224,21 @@ function NewFileDialog(props: Props) {
               forceUpdate();
             }}
             urlInputError={urlInputError.current}
-            fileName={fileName.current}
+            fileName={fileNameRef.current}
           />
         ) : (
           <CreateFile
             fileType={fileType}
             createFile={(type) => createFile(type, targetDirectoryPath)}
-            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileNameChange={(name) => (fileNameRef.current = name)}
             handleFileContentChange={(content) =>
-              (fileContent.current = content)
+              (fileContentRef.current = content)
             }
             haveError={(error) => {
               haveError.current = error;
               forceUpdate();
             }}
-            fileName={fileName.current}
+            fileName={fileNameRef.current}
           />
         )}
         <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
