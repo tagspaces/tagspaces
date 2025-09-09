@@ -661,8 +661,11 @@ export const DirectoryContentContextProvider = ({
   }
 
   function enterSearchMode() {
-    isSearchMode.current = true;
-    forceUpdate();
+    if (!isSearchMode.current) {
+      isSearchMode.current = true;
+      searchQuery.current = {};
+      forceUpdate();
+    }
   }
 
   function setSearchResults(searchResults: TS.FileSystemEntry[]) {
