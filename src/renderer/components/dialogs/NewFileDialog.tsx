@@ -117,7 +117,7 @@ function NewFileDialog(props: Props) {
     return (
       `${t('core:createdIn')} ${versionMeta.name}` +
       ' (' +
-      new Date().toISOString()[0] +
+      new Date().toISOString().split('T')[0] +
       ')'
     );
   }
