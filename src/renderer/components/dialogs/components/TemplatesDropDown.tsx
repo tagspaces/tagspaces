@@ -26,10 +26,11 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   fileType?: 'md' | 'txt' | 'html' | 'url';
   label?: string;
+  disabled?: boolean;
 }
 
 function TemplatesDropDown(props: Props) {
-  const { fileType, label } = props;
+  const { fileType, label, disabled = false } = props;
   const { t } = useTranslation();
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
     ? useContext<TS.FileTemplatesContextData>(
@@ -56,6 +57,7 @@ function TemplatesDropDown(props: Props) {
     <TsSelect
       data-tid="tagDelimiterTID"
       label={selectLabel}
+      disabled={disabled}
       fullWidth={true}
       value={fileTemplatesContext?.getTemplate(fileType)?.id}
       onChange={(event) =>

@@ -37,11 +37,11 @@ import {
   AccordionSummary,
   Typography,
 } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import FormHelperText from '@mui/material/FormHelperText';
 
 interface Props {}
 
@@ -162,10 +162,19 @@ function SettingsTemplates(props: Props) {
           >
             {t('addTemplate')}
           </TsButton>
-          <TemplatesDropDown />
-          <TemplatesDropDown fileType="md" />
-          <TemplatesDropDown fileType="txt" />
-          <TemplatesDropDown fileType="html" />
+          <TemplatesDropDown disabled={!!window.ExtFileTemplates} />
+          <TemplatesDropDown
+            disabled={!!window.ExtFileTemplates}
+            fileType="md"
+          />
+          <TemplatesDropDown
+            disabled={!!window.ExtFileTemplates}
+            fileType="txt"
+          />
+          <TemplatesDropDown
+            disabled={!!window.ExtFileTemplates}
+            fileType="html"
+          />
         </AccordionDetails>
       </Accordion>
       {templatesArray &&
