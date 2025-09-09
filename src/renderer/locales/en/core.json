@@ -996,5 +996,7 @@
   "addTemplate": "Create New Template",
   "templateContent": "Template Content",
   "fileNameTmpl": "File Name Template",
+  "templateNameEmptyError": "Template cannot be empty",
+  "fileNameEmptyError": "Filename cannot be empty",
   "-": "-"
 }

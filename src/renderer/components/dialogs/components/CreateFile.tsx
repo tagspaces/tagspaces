@@ -139,7 +139,8 @@ function CreateFile(props: Props) {
   };
 
   function getFileContent() {
-    if (fileType !== 'url' && fileTemplate && fileTemplate.content) {
+    if (fileType === 'url') return '';
+    if (fileTemplate && fileTemplate.content) {
       const creationDate = new Date().toISOString();
       const dateTimeArray = creationDate.split('T');
       return (
@@ -153,7 +154,12 @@ function CreateFile(props: Props) {
           .replace('{time}', dateTimeArray[1].split('.')[0])
       );
     }
-    return '';
+    return (
+      `${t('core:createdIn')} ${versionMeta.name}` +
+      ' (' +
+      new Date().toISOString()[0] +
+      ')'
+    );
   }
 
   return (

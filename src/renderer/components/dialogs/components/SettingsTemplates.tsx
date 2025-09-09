@@ -41,6 +41,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import FormHelperText from '@mui/material/FormHelperText';
 
 interface Props {}
 
@@ -55,7 +56,9 @@ function SettingsTemplates(props: Props) {
         Pro.contextProviders.FileTemplatesContext,
       )
     : undefined;
-  const templatesArray = fileTemplatesContext?.getTemplates();
+  const templatesArray = fileTemplatesContext?.getTemplates() ?? [
+    AppConfig.defaultTemplate,
+  ];
 
   function saveTemplate(key?: string) {
     if (fileTemplatesContext) {
@@ -102,9 +105,9 @@ function SettingsTemplates(props: Props) {
       : template;
   }
 
-  const defaultTemplate =
+  /*  const defaultTemplate =
     templatesArray?.find((t) => t.type === undefined) ||
-    AppConfig.defaultTemplate;
+    AppConfig.defaultTemplate;*/
 
   function toggleType(template: TS.FileTemplate, type: 'html' | 'md' | 'txt') {
     if (!fileTemplatesContext) return;
@@ -150,6 +153,7 @@ function SettingsTemplates(props: Props) {
             {'{'}timestamp{'}'}.
           </Typography>
           <TsButton
+            disabled={!!window.ExtFileTemplates}
             onClick={() => {
               saveTemplate();
             }}
@@ -198,12 +202,13 @@ function SettingsTemplates(props: Props) {
                 ) : (
                   ''
                 )}
-                {fileTemplatesContext.getTemplate(template.type)?.id ===
+                {fileTemplatesContext?.getTemplate(template.type)?.id ===
                 template.id
                   ? ' - ' + t('defaultTemplate')
                   : ''}
               </Typography>
               <TsIconButton
+                disabled={!Pro || !!window.ExtFileTemplates}
                 aria-label="removeTemplate"
                 tooltip={t('core:remove')}
                 onClick={(e) => {
@@ -222,13 +227,16 @@ function SettingsTemplates(props: Props) {
               {editedTemplate.current &&
                 editedTemplate.current.id === template.id && (
                   <>
-                    <TsButton
-                      variant="text"
-                      data-tid={'save' + template.id + 'TID'}
-                      onClick={() => saveTemplate(template.id)}
-                    >
-                      {t('core:save')}
-                    </TsButton>
+                    {editedTemplate.current.name &&
+                      editedTemplate.current.fileNameTmpl && (
+                        <TsButton
+                          variant="text"
+                          data-tid={'save' + template.id + 'TID'}
+                          onClick={() => saveTemplate(template.id)}
+                        >
+                          {t('core:save')}
+                        </TsButton>
+                      )}
                     <TsButton
                       variant="text"
                       data-tid={'cancel' + template.id + 'TID'}
@@ -242,8 +250,9 @@ function SettingsTemplates(props: Props) {
             <AccordionDetails>
               <TsTextField
                 fullWidth
-                disabled={!Pro}
+                disabled={!Pro || !!window.ExtFileTemplates}
                 label={t('name')}
+                error={!currentTemplate(template).name}
                 value={currentTemplate(template).name}
                 onChange={(e) => {
                   if (fileTemplatesContext) {
@@ -256,6 +265,11 @@ function SettingsTemplates(props: Props) {
                   }
                 }}
               />
+              {!currentTemplate(template).name && (
+                <FormHelperText sx={{ marginTop: 0, color: 'red' }}>
+                  {t('core:templateNameEmptyError')}
+                </FormHelperText>
+              )}
               <ToggleButtonGroup
                 value={currentTemplate(template).type}
                 exclusive
@@ -311,7 +325,7 @@ function SettingsTemplates(props: Props) {
                 fullWidth
                 multiline
                 rows={5}
-                disabled={!Pro}
+                disabled={!Pro || !!window.ExtFileTemplates}
                 label={t('core:templateContent')}
                 value={currentTemplate(template).content}
                 onChange={(e) => {
@@ -327,7 +341,8 @@ function SettingsTemplates(props: Props) {
               />
               <TsTextField
                 fullWidth
-                disabled={!Pro}
+                disabled={!Pro || !!window.ExtFileTemplates}
+                error={!currentTemplate(template).fileNameTmpl}
                 label={t('fileNameTmpl')}
                 placeholder="e.g.: note[{timestamp}]"
                 value={currentTemplate(template).fileNameTmpl}
@@ -342,6 +357,11 @@ function SettingsTemplates(props: Props) {
                   }
                 }}
               />
+              {!currentTemplate(template).fileNameTmpl && (
+                <FormHelperText sx={{ marginTop: 0, color: 'red' }}>
+                  {t('core:fileNameEmptyError')}
+                </FormHelperText>
+              )}
             </AccordionDetails>
           </Accordion>
         ))}

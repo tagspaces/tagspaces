@@ -42,6 +42,7 @@ import {
 } from '@tagspaces/tagspaces-common/misc';
 import { useContext, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import versionMeta from '-/version.json';
 
 interface Props {
   open: boolean;
@@ -71,9 +72,10 @@ function NewFileDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
-  const fileName = useRef<string>(initialFileName());
+  const fileName = useRef<string>(getFileName());
+  const fileContent = useRef<string>(getFileContent());
 
-  function initialFileName() {
+  function getFileName() {
     if (props.fileName) {
       return (
         props.fileName +
@@ -96,7 +98,29 @@ function NewFileDialog(props: Props) {
     );
   }
 
-  const fileContent = useRef<string>('');
+  function getFileContent() {
+    if (fileType === 'url') return '';
+    if (fileTemplate && fileTemplate.content) {
+      const creationDate = new Date().toISOString();
+      const dateTimeArray = creationDate.split('T');
+      return (
+        (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
+        fileTemplate.content
+          .replace(
+            '{createdInApp}',
+            `${t('core:createdIn')} ${versionMeta.name}`,
+          )
+          .replace('{date}', dateTimeArray[0])
+          .replace('{time}', dateTimeArray[1].split('.')[0])
+      );
+    }
+    return (
+      `${t('core:createdIn')} ${versionMeta.name}` +
+      ' (' +
+      new Date().toISOString()[0] +
+      ')'
+    );
+  }
 
   function getFileType() {
     if (fileType === 'txt') {
