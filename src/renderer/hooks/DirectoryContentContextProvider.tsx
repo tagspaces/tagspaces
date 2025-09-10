@@ -38,10 +38,10 @@ import {
   cleanMetaData,
   executePromisesInBatches,
   instanceId,
+  mergeByPath,
   mergeFsEntryMeta,
   resolveRelativePath,
   updateFsEntries,
-  mergeByPath,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -661,8 +661,11 @@ export const DirectoryContentContextProvider = ({
   }
 
   function enterSearchMode() {
-    isSearchMode.current = true;
-    forceUpdate();
+    searchQuery.current = {};
+    if (!isSearchMode.current) {
+      isSearchMode.current = true;
+      forceUpdate();
+    }
   }
 
   function setSearchResults(searchResults: TS.FileSystemEntry[]) {

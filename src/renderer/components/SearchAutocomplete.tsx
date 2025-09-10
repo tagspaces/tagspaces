@@ -76,7 +76,7 @@ import { actions as AppActions, AppDispatch } from '../reducers/app';
 
 interface Props {
   style?: any;
-  open: boolean;
+  //open: boolean;
   setAnchorSearch: (el: HTMLButtonElement) => void;
 }
 
@@ -93,6 +93,7 @@ function SearchAutocomplete(props: Props) {
     openCurrentDirectory,
     searchQuery,
     setSearchQuery,
+    isSearchMode,
   } = useDirectoryContentContext();
   const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const { openHistoryItem } = useBrowserHistoryContext();
@@ -112,7 +113,7 @@ function SearchAutocomplete(props: Props) {
 
   const openLinkDispatch = (link, options) => openLink(link, options);
 
-  const { open, setAnchorSearch } = props;
+  const { setAnchorSearch } = props;
   const [openSavedSearches, setOpenSavedSearches] =
     useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
@@ -1193,7 +1194,7 @@ function SearchAutocomplete(props: Props) {
     }
   }
 
-  if (!open) {
+  if (!isSearchMode) {
     return null;
   }
 
