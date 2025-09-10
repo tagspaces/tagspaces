@@ -26,6 +26,7 @@ import {
 } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel } from '-/components/HelperComponents';
+import ArticleIcon from '@mui/icons-material/Article';
 import TsButton from '-/components/TsButton';
 import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
@@ -46,6 +47,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import SettingsTemplates from '-/components/dialogs/components/SettingsTemplates';
 
 interface Props {
   open: boolean;
@@ -162,6 +164,20 @@ function SettingsDialog(props: Props) {
             </span>
           }
         />
+        <Tab
+          style={{
+            textTransform: 'unset',
+            justifyContent: 'flex-start',
+          }}
+          data-tid="templatesDialogTID"
+          iconPosition="start"
+          icon={smallScreen ? '' : <ArticleIcon />}
+          label={
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {t('core:templatesTab')}
+            </span>
+          }
+        />
       </Tabs>
       <div
         data-tid="settingsDialog"
@@ -177,6 +193,7 @@ function SettingsDialog(props: Props) {
         {currentTab === 3 && <SettingsExtensions />}
         {currentTab === 4 && <SettingsAdvanced />}
         {currentTab === 5 && <SettingsAI closeSettings={onClose} />}
+        {currentTab === 6 && <SettingsTemplates />}
       </div>
     </DialogContent>
   );

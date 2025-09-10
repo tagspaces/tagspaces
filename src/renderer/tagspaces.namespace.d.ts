@@ -325,6 +325,23 @@ export namespace TS {
     setTemplate: (key: string, value: string) => void;
   };
 
+  interface FileTemplate {
+    id: string;
+    content: string; // e.g: Created with TagSpaces on 20250605'
+    name?: string; // 'Template Name'
+    type?: 'md' | 'txt' | 'html';
+    fileNameTmpl?: string; // e.g. note, issue, task
+    screenshotUrl?: string; //'dataURL'
+  }
+
+  type FileTemplatesContextData = {
+    getTemplate: (type: string) => FileTemplate | undefined;
+    setTemplate: (id: string, value: FileTemplate) => void;
+    setTemplateActive: (id: string) => void;
+    getTemplates: () => TS.FileTemplate[];
+    delTemplate: (id: string) => void;
+  };
+
   interface EditedEntryPath {
     action: EditedEntryAction;
     path: string;

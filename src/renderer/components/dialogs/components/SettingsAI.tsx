@@ -228,7 +228,6 @@ function SettingsAI(props: Props) {
     >
       <Accordion defaultExpanded>
         <AccordionSummary
-          //expandIcon={<ExpandIcon />}
           aria-controls="ai-general"
           id="ai-general-header"
           data-tid="aiGeneralTID"

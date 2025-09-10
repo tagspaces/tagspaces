@@ -21,14 +21,16 @@ import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
   fileName: string;
+  fileContent: string;
   handleFileNameChange: (fileName: string) => void;
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
@@ -43,6 +45,7 @@ function CreateFile(props: Props) {
     fileType,
     createFile,
     fileName,
+    fileContent,
     handleFileNameChange,
     handleFileContentChange,
     haveError,
@@ -51,10 +54,18 @@ function CreateFile(props: Props) {
   const { targetDirectoryPath } = useTargetPathContext();
 
   const [inputError, setInputError] = useState<boolean>(false);
-
+  const fileContentRef = useRef<HTMLInputElement | null>(null);
+  const fileNameRef = useRef<HTMLInputElement | null>(null);
+  const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
   const noSuitableLocation = !targetDirectoryPath;
+
+  useEffect(() => {
+    if (!firstRender && fileNameRef.current && fileContentRef.current) {
+      fileNameRef.current.value = fileName;
+      fileContentRef.current.value = fileContent;
+    }
+  }, [fileName, fileContent]);
 
   useEffect(() => {
     haveError(inputError);
@@ -109,6 +120,7 @@ function CreateFile(props: Props) {
     <Grid container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
         <TsTextField
+          inputRef={fileNameRef}
           error={inputError}
           name="entryName"
           label={t('core:fileName')}
@@ -138,6 +150,8 @@ function CreateFile(props: Props) {
             label={t('core:fileContent')}
             multiline
             rows={5}
+            inputRef={fileContentRef}
+            defaultValue={fileContent}
             onChange={handleContentChange}
           />
         </FormControl>
