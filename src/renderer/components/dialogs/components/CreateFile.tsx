@@ -16,30 +16,21 @@
  *
  */
 
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
-import { Pro } from '-/pro';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import versionMeta from '-/version.json';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { useTranslation } from 'react-i18next';
-import AppConfig from '-/AppConfig';
 import useFirstRender from '-/utils/useFirstRender';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   fileName: string;
+  fileContent: string;
   handleFileNameChange: (fileName: string) => void;
   handleFileContentChange: (fileContent: string) => void;
   createFile: (fileType: TS.FileType) => void;
@@ -54,38 +45,27 @@ function CreateFile(props: Props) {
     fileType,
     createFile,
     fileName,
+    fileContent,
     handleFileNameChange,
     handleFileContentChange,
     haveError,
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
-  const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
-    ? useContext<TS.FileTemplatesContextData>(
-        Pro.contextProviders.FileTemplatesContext,
-      )
-    : undefined;
-  const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
 
   const [inputError, setInputError] = useState<boolean>(false);
   const fileContentRef = useRef<HTMLInputElement | null>(null);
   const fileNameRef = useRef<HTMLInputElement | null>(null);
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
   const noSuitableLocation = !targetDirectoryPath;
 
   useEffect(() => {
-    if (
-      !firstRender &&
-      fileTemplate &&
-      fileNameRef.current &&
-      fileContentRef.current
-    ) {
-      fileNameRef.current.value = getFileName();
-      fileContentRef.current.value = getFileContent();
+    if (!firstRender) {
+      fileNameRef.current.value = fileName;
+      fileContentRef.current.value = fileContent;
     }
-  }, [fileTemplate]);
+  }, [fileName, fileContent]);
 
   useEffect(() => {
     haveError(inputError);
@@ -136,55 +116,6 @@ function CreateFile(props: Props) {
     }
   };
 
-  function getFileName() {
-    if (fileName) {
-      return (
-        fileName +
-        AppConfig.beginTagContainer +
-        formatDateTime4Tag(new Date(), true) +
-        AppConfig.endTagContainer
-      );
-    }
-    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
-    if (template && template.fileNameTmpl !== undefined) {
-      return template.fileNameTmpl.replace(
-        '{timestamp}',
-        formatDateTime4Tag(new Date(), true),
-      );
-    }
-    return (
-      (fileType === 'url' ? 'link' : 'note') +
-      AppConfig.beginTagContainer +
-      formatDateTime4Tag(new Date(), true) +
-      AppConfig.endTagContainer
-    );
-  }
-
-  function getFileContent() {
-    if (fileType === 'url') return '';
-    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
-    if (template && template.content) {
-      const creationDate = new Date().toISOString();
-      const dateTimeArray = creationDate.split('T');
-      return (
-        (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
-        template.content
-          .replace(
-            '{createdInApp}',
-            `${t('core:createdIn')} ${versionMeta.name}`,
-          )
-          .replace('{date}', dateTimeArray[0])
-          .replace('{time}', dateTimeArray[1].split('.')[0])
-      );
-    }
-    return (
-      `${t('core:createdIn')} ${versionMeta.name}` +
-      ' (' +
-      new Date().toISOString().split('T')[0] +
-      ')'
-    );
-  }
-
   return (
     <Grid container spacing={1}>
       <FormControl fullWidth={true} error={inputError}>
@@ -202,7 +133,7 @@ function CreateFile(props: Props) {
               createFile(fileType);
             }
           }}
-          defaultValue={getFileName()}
+          defaultValue={fileName}
           disabled={noSuitableLocation}
           autoFocus
           data-tid={tid('newEntryDialogInputTID')}
@@ -220,7 +151,7 @@ function CreateFile(props: Props) {
             multiline
             rows={5}
             inputRef={fileContentRef}
-            defaultValue={getFileContent()}
+            defaultValue={fileContent}
             onChange={handleContentChange}
           />
         </FormControl>

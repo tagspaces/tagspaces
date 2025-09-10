@@ -353,7 +353,7 @@ function SettingsTemplates(props: Props) {
                 disabled={!Pro || !!window.ExtFileTemplates}
                 error={!currentTemplate(template).fileNameTmpl}
                 label={t('fileNameTmpl')}
-                placeholder="e.g.: note[{timestamp}]"
+                placeholder="e.g.: note-{uuid}[{timestamp}]"
                 value={currentTemplate(template).fileNameTmpl}
                 onChange={(e) => {
                   if (fileTemplatesContext) {

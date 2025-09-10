@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
@@ -40,9 +41,10 @@ import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
-import { useContext, useReducer, useRef } from 'react';
+import { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -74,6 +76,20 @@ function NewFileDialog(props: Props) {
   const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
   const fileNameRef = useRef<string>(getFileName());
   const fileContentRef = useRef<string>(getFileContent());
+  const firstRender = useFirstRender();
+
+  useEffect(() => {
+    if (
+      !firstRender &&
+      fileTemplate &&
+      fileNameRef.current &&
+      fileContentRef.current
+    ) {
+      fileNameRef.current = getFileName();
+      fileContentRef.current = getFileContent();
+      forceUpdate();
+    }
+  }, [fileTemplate]);
 
   function getFileName() {
     if (fileName) {
@@ -86,10 +102,9 @@ function NewFileDialog(props: Props) {
     }
     const template = fileTemplate ?? window.ExtDefaultFileTemplate;
     if (template && template.fileNameTmpl !== undefined) {
-      return template.fileNameTmpl.replace(
-        '{timestamp}',
-        formatDateTime4Tag(new Date(), true),
-      );
+      return template.fileNameTmpl
+        .replace('{timestamp}', formatDateTime4Tag(new Date(), true))
+        .replace('{uuid}', getUuid());
     }
     return (
       (fileType === 'url' ? 'link' : 'note') +
@@ -239,6 +254,7 @@ function NewFileDialog(props: Props) {
               forceUpdate();
             }}
             fileName={fileNameRef.current}
+            fileContent={fileContentRef.current}
           />
         )}
         <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
