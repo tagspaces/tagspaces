@@ -168,6 +168,7 @@ type IOActionsContextData = {
   saveMetaDataPromise: (
     entry: TS.FileSystemEntry,
     metaData: any,
+    reflect?: boolean,
   ) => Promise<TS.FileSystemEntryMeta>;
   getMetadata: (
     path: string,
@@ -1772,6 +1773,7 @@ export const IOActionsContextProvider = ({
   async function saveMetaDataPromise(
     entry: TS.FileSystemEntry,
     metaData: any,
+    reflect = true,
   ): Promise<TS.FileSystemEntryMeta> {
     const location = findLocation(entry.locationID);
     //const cleanedMetaData = cleanMetaData(metaData);
@@ -1817,7 +1819,7 @@ export const IOActionsContextProvider = ({
       return saveTextFilePromise(
         { path: metaFilePath, locationID: entry.locationID },
         content,
-        true,
+        reflect,
       )
         .then((success) => {
           if (success) {
@@ -1879,7 +1881,7 @@ export const IOActionsContextProvider = ({
           return saveTextFilePromise(
             { path: metaFilePath, locationID: location.uuid },
             JSON.stringify(mataData),
-            true,
+            false,
           )
             .then(() => mataData)
             .catch((e) => {
