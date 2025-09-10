@@ -22,6 +22,8 @@ import {
   ExpandIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
+import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
@@ -142,15 +144,41 @@ function SettingsTemplates(props: Props) {
           data-tid={'fileTemplatesTID'}
         >
           <Typography>{t('core:templatesTab')}</Typography>
+          <ProLabel />
+          <InfoIcon
+            tooltip={
+              !!window.ExtFileTemplates &&
+              'Template functionalities are disabled because templates are externally configured'
+            }
+          ></InfoIcon>
         </AccordionSummary>
         <AccordionDetails>
           <Typography
             variant="caption"
             style={{ display: 'block', marginTop: -20, marginBottom: 10 }}
           >
-            Supported template variables are: {'{'}date{'}'}, {'{'}time{'}'} and{' '}
-            {'{'}createdInApp{'}'}. The file name template supports the variable{' '}
-            {'{'}timestamp{'}'}.
+            Supported template variables in the template content are:{' '}
+            <b>
+              {'{'}date{'}'}
+            </b>
+            ,{' '}
+            <b>
+              {'{'}time{'}'}
+            </b>{' '}
+            and{' '}
+            <b>
+              {'{'}createdInApp{'}'}
+            </b>
+            . The file name template supports{' '}
+            <b>
+              {'{'}timestamp{'}'}
+            </b>{' '}
+            and{' '}
+            <b>
+              {'{'}uuid{'}'}
+            </b>
+            . The last one will generate a unique identifier so the new file
+            will get an unique name.
           </Typography>
           <TsButton
             disabled={!!window.ExtFileTemplates}
@@ -353,7 +381,7 @@ function SettingsTemplates(props: Props) {
                 disabled={!Pro || !!window.ExtFileTemplates}
                 error={!currentTemplate(template).fileNameTmpl}
                 label={t('fileNameTmpl')}
-                placeholder="e.g.: note-{uuid}[{timestamp}]"
+                placeholder="e.g.: note[{timestamp}] or {uuid}"
                 value={currentTemplate(template).fileNameTmpl}
                 onChange={(e) => {
                   if (fileTemplatesContext) {

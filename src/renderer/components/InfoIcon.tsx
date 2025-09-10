@@ -25,6 +25,9 @@ interface Props {
 
 function InfoIcon(props: Props) {
   const { tooltip } = props;
+  if (!tooltip) {
+    return <></>;
+  }
   return (
     <Tooltip title={tooltip}>
       <HelpOutlined fontSize="small" sx={{ opacity: '0.7' }} />

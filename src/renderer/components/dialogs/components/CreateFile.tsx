@@ -16,16 +16,16 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import useFirstRender from '-/utils/useFirstRender';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -61,7 +61,7 @@ function CreateFile(props: Props) {
   const noSuitableLocation = !targetDirectoryPath;
 
   useEffect(() => {
-    if (!firstRender) {
+    if (!firstRender && fileNameRef.current && fileContentRef.current) {
       fileNameRef.current.value = fileName;
       fileContentRef.current.value = fileContent;
     }
