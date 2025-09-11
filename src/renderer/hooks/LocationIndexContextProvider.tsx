@@ -134,7 +134,7 @@ export const LocationIndexContextProvider = ({
       clearDirectoryIndex(false);
       maxIndexAge.current = getMaxIndexAge(findLocation());
     }
-    if (prevLocationId.current !== currentLocationId) {
+    if (AppConfig.isElectron && prevLocationId.current !== currentLocationId) {
       if (prevLocationId.current) {
         window.electronIO.ipcRenderer.sendMessage(
           'cancelRequest',
