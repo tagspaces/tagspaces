@@ -437,9 +437,13 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=predefinedThumbnailsTID] > li');
     await clickOn('[data-tid=confirmCustomThumb]');
-
-    const initColumnThumbStyle = await getAttribute(
+    /*   const initColumnThumbStyle = await getAttribute(
       '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+      'style',
+    );*/
+    const thumbColumnThumbStyle = await waitUntilChanged(
+      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+      undefined, //initColumnThumbStyle,
       'style',
     );
 
@@ -448,11 +452,11 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=confirmCustomThumb]');
     const newColumnThumbStyle = await waitUntilChanged(
       '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-      initColumnThumbStyle,
+      thumbColumnThumbStyle,
       'style',
     );
 
-    expect(initColumnThumbStyle).not.toBe(newColumnThumbStyle);
+    expect(thumbColumnThumbStyle).not.toBe(newColumnThumbStyle);
   });
 
   /**
