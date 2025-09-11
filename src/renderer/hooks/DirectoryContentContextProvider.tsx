@@ -470,10 +470,7 @@ export const DirectoryContentContextProvider = ({
           action.source !== 'upload' &&
           action.source !== 'thumbgen' &&
           action.entry &&
-          action.entry.path &&
-          action.entry.path.indexOf(
-            currentLocation?.getDirSeparator() + AppConfig.metaFolder,
-          ) === -1
+          !isMeta(action.entry.path)
         ) {
           if (action.action === 'add') {
             if (
@@ -482,7 +479,7 @@ export const DirectoryContentContextProvider = ({
               ) &&
               !action.skipSelection
             ) {
-              selected.push(action.entry);
+              selected = [action.entry];
               updated = true;
             }
           } else if (action.action === 'delete') {
