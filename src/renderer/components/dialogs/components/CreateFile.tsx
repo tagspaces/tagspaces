@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
@@ -25,15 +25,16 @@ import useFirstRender from '-/utils/useFirstRender';
 import { ButtonGroup, FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
+import { Pro } from '-/pro';
 
 interface Props {
   fileName: string;
   fileContent: string;
   handleFileNameChange: (fileName: string) => void;
   handleFileContentChange: (fileContent: string) => void;
-  createFile: (fileType: TS.FileType) => void;
+  createFile: (fileType: TS.FileType, template?: TS.FileTemplate) => void;
   haveError: (error: boolean) => void;
   tidPrefix?: string;
   fileType?: TS.FileType;
@@ -143,21 +144,40 @@ function CreateFile(props: Props) {
         )}
       </FormControl>
       {fileType ? (
-        <FormControl fullWidth={true}>
-          <TsTextField
-            autoFocus
-            id="fileContentID"
-            label={t('core:fileContent')}
-            multiline
-            rows={5}
-            inputRef={fileContentRef}
-            defaultValue={fileContent}
-            onChange={handleContentChange}
-          />
-        </FormControl>
+        <>
+          <FormControl fullWidth={true}>
+            <TsTextField
+              autoFocus
+              id="fileContentID"
+              label={t('core:fileContent')}
+              multiline
+              rows={5}
+              inputRef={fileContentRef}
+              defaultValue={fileContent}
+              onChange={handleContentChange}
+            />
+          </FormControl>
+          <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
+        </>
       ) : (
         <ButtonGroup style={{ margin: '0 auto' }}>
-          <TsButton
+          {Pro.FileTemplates &&
+            Pro.FileTemplates.map((template) => (
+              <TsButton
+                tooltip={t('create' + template.type + 'Title')}
+                onClick={() => createFile(template.type, template)}
+                data-tid={tid('create' + template.type + 'Button')}
+                disabled={noSuitableLocation}
+                style={{
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  fontWeight: 'bold',
+                }}
+              >
+                {t('create' + template.type)}
+              </TsButton>
+            ))}
+          {/*<TsButton
             tooltip={t('createMarkdownTitle')}
             onClick={() => createFile('md')}
             data-tid={tid('createMarkdownButton')}
@@ -192,7 +212,7 @@ function CreateFile(props: Props) {
             }}
           >
             {t('createTextFile')}
-          </TsButton>
+          </TsButton>*/}
         </ButtonGroup>
       )}
     </Grid>
