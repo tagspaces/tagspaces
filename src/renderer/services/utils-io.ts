@@ -16,6 +16,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import defaultSettings from '-/reducers/settings-default';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
@@ -29,7 +30,6 @@ import {
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import removeMd from 'remove-markdown';
-import defaultSettings from '-/reducers/settings-default';
 import versionMeta from '../version.json';
 
 export const instanceId = getUuid();

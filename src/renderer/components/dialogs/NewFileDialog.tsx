@@ -17,19 +17,21 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
 import CreateLink from '-/components/dialogs/components/CreateLink';
 import TargetPath from '-/components/dialogs/components/TargetPath';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import versionMeta from '-/version.json';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -39,8 +41,10 @@ import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
-import { useReducer, useRef } from 'react';
+import { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import versionMeta from '-/version.json';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -50,7 +54,7 @@ interface Props {
 }
 
 function NewFileDialog(props: Props) {
-  const { open, onClose, fileType } = props;
+  const { open, onClose, fileType, fileName } = props;
   const { t } = useTranslation();
   const { createFileAdvanced } = useOpenedEntryContext();
   const { findLocation, openLocation, getFirstRWLocation } =
@@ -60,19 +64,80 @@ function NewFileDialog(props: Props) {
   const haveError = useRef<boolean>(false);
   const urlInputError = useRef<string>(undefined);
   const firstRWLocation = getFirstRWLocation();
+  const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
+    ? useContext<TS.FileTemplatesContextData>(
+        Pro.contextProviders.FileTemplatesContext,
+      )
+    : undefined;
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const fileName = useRef<string>(
-    props.fileName ||
-      (fileType === 'url' ? 'link' : 'note') +
+  const fileTemplate = fileTemplatesContext?.getTemplate(fileType);
+  const fileNameRef = useRef<string>(getFileName());
+  const fileContentRef = useRef<string>(getFileContent());
+  const firstRender = useFirstRender();
+
+  useEffect(() => {
+    if (
+      !firstRender &&
+      fileTemplate &&
+      fileNameRef.current &&
+      fileContentRef.current
+    ) {
+      fileNameRef.current = getFileName();
+      fileContentRef.current = getFileContent();
+      forceUpdate();
+    }
+  }, [fileTemplate]);
+
+  function getFileName() {
+    if (fileName) {
+      return (
+        fileName +
         AppConfig.beginTagContainer +
         formatDateTime4Tag(new Date(), true) +
-        AppConfig.endTagContainer,
-  );
+        AppConfig.endTagContainer
+      );
+    }
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.fileNameTmpl !== undefined) {
+      return template.fileNameTmpl
+        .replace('{timestamp}', formatDateTime4Tag(new Date(), true))
+        .replace('{uuid}', getUuid());
+    }
+    return (
+      (fileType === 'url' ? 'link' : 'note') +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+    );
+  }
 
-  const fileContent = useRef<string>('');
+  function getFileContent() {
+    if (fileType === 'url') return '';
+    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    if (template && template.content) {
+      const creationDate = new Date().toISOString();
+      const dateTimeArray = creationDate.split('T');
+      return (
+        (fileType === 'html' ? '\n<br />\n' : ' \n\n') +
+        template.content
+          .replace(
+            '{createdInApp}',
+            `${t('core:createdIn')} ${versionMeta.name}`,
+          )
+          .replace('{date}', dateTimeArray[0])
+          .replace('{time}', dateTimeArray[1].split('.')[0])
+      );
+    }
+    return (
+      `${t('core:createdIn')} ${versionMeta.name}` +
+      ' (' +
+      new Date().toISOString().split('T')[0] +
+      ')'
+    );
+  }
 
   function getFileType() {
     if (fileType === 'txt') {
@@ -102,7 +167,7 @@ function NewFileDialog(props: Props) {
 
   function createFile(fileType, targetPath) {
     if (targetPath) {
-      if (fileType === 'url' && !fileContent.current) {
+      if (fileType === 'url' && !fileContentRef.current) {
         haveError.current = true;
         urlInputError.current = t('core:emptyLink');
         forceUpdate();
@@ -110,8 +175,8 @@ function NewFileDialog(props: Props) {
         loadLocation();
         createFileAdvanced(
           targetPath,
-          fileName.current,
-          fileContent.current,
+          fileNameRef.current,
+          fileContentRef.current,
           fileType,
         );
         onClose();
@@ -164,9 +229,9 @@ function NewFileDialog(props: Props) {
         {fileType === 'url' ? (
           <CreateLink
             createFile={(type) => createFile(type, targetDirectoryPath)}
-            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileNameChange={(name) => (fileNameRef.current = name)}
             handleFileContentChange={(content) =>
-              (fileContent.current = content)
+              (fileContentRef.current = content)
             }
             haveError={(error) => {
               haveError.current = error;
@@ -174,23 +239,25 @@ function NewFileDialog(props: Props) {
               forceUpdate();
             }}
             urlInputError={urlInputError.current}
-            fileName={fileName.current}
+            fileName={fileNameRef.current}
           />
         ) : (
           <CreateFile
             fileType={fileType}
             createFile={(type) => createFile(type, targetDirectoryPath)}
-            handleFileNameChange={(name) => (fileName.current = name)}
+            handleFileNameChange={(name) => (fileNameRef.current = name)}
             handleFileContentChange={(content) =>
-              (fileContent.current = content)
+              (fileContentRef.current = content)
             }
             haveError={(error) => {
               haveError.current = error;
               forceUpdate();
             }}
-            fileName={fileName.current}
+            fileName={fileNameRef.current}
+            fileContent={fileContentRef.current}
           />
         )}
+        <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
         <TargetPath />
       </DialogContent>
       {!smallScreen && fileType && (

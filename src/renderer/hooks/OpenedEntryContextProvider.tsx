@@ -58,6 +58,7 @@ import {
   extractFileExtension,
   generateSharingLink,
   getMetaContentFileLocation,
+  isMeta,
   joinPaths,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
@@ -70,6 +71,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { Pro } from '-/pro';
 
 type OpenedEntryContextData = {
   haveOpenedEntry: boolean;
@@ -110,7 +112,8 @@ type OpenedEntryContextData = {
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: TS.FileType,
+    fileType?: TS.FileType,
+    createMeta?: string,
   ) => void;
   createFile: () => void;
   getOpenedDirProps: () => Promise<TS.DirProp>;
@@ -209,7 +212,11 @@ export const OpenedEntryContextProvider = ({
     if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'add') {
-          if (action.open && action.entry.isFile) {
+          if (
+            action.open &&
+            action.entry.isFile &&
+            !isMeta(action.entry.path)
+          ) {
             //&& action.entry.isNewFile) {
             openFsEntry(action.entry);
           }
@@ -983,7 +990,6 @@ export const OpenedEntryContextProvider = ({
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
-    const creationMeta = `${t('core:createdIn')} ${versionMeta.name} (${creationDate.substring(0, 10)})`;
     const filePath =
       normalizePath(targetPath) +
       (currentLocation
@@ -1000,12 +1006,10 @@ export const OpenedEntryContextProvider = ({
         creationDate +
         '" >' +
         content +
-        '\n<br />\n' +
-        creationMeta +
         '\n';
       '</body>' + newHTMLFileContent.split('<body></body>')[1];
     } else if (fileType === 'md') {
-      fileContent = content + ' \n\n' + creationMeta + '\n';
+      fileContent = content;
     } else if (fileType === 'url') {
       fileContent = '[InternetShortcut]\n' + 'URL=' + content + '\n';
     }

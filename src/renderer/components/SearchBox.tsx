@@ -20,20 +20,22 @@ import React, { useState } from 'react';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
-  open: boolean;
+  //open: boolean;
 }
 
 function SearchBox(props: Props) {
+  const { isSearchMode } = useDirectoryContentContext();
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null,
   );
 
   return (
     <>
-      <SearchAutocomplete open={props.open} setAnchorSearch={setAnchorSearch} />
-      {props.open && (
+      <SearchAutocomplete setAnchorSearch={setAnchorSearch} />
+      {isSearchMode && (
         <Popover
           open={Boolean(anchorSearch)}
           anchorEl={anchorSearch}

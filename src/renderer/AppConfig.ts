@@ -190,4 +190,14 @@ AppConfig.showTSVersion =
     ? window.ExtShowTSVersion
     : true;
 
+AppConfig.defaultTemplate =
+  typeof window !== 'undefined' && window.ExtDefaultFileTemplate !== undefined
+    ? window.ExtDefaultFileTemplate
+    : {
+        id: 'default',
+        name: 'Default',
+        content: '{createdInApp} ({date})',
+        fileNameTmpl: 'note[{timestamp}]',
+      };
+
 export default AppConfig;

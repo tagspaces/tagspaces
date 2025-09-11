@@ -38,10 +38,10 @@ import {
   cleanMetaData,
   executePromisesInBatches,
   instanceId,
+  mergeByPath,
   mergeFsEntryMeta,
   resolveRelativePath,
   updateFsEntries,
-  mergeByPath,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -137,7 +137,7 @@ type DirectoryContentContextData = {
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
   enterSearchMode: () => void;
-  exitSearchMode: () => void;
+  exitSearchMode: (force?: boolean) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   currentPerspective: TS.PerspectiveType;
   getAllPropertiesPromise: (
@@ -653,16 +653,21 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function exitSearchMode() {
+  function exitSearchMode(force = true) {
     isSearchMode.current = false;
     dispatch(AppActions.setSearchFilter(undefined));
-    searchQuery.current = {};
+    if (force) {
+      searchQuery.current = {};
+    }
     forceUpdate();
   }
 
   function enterSearchMode() {
-    isSearchMode.current = true;
-    forceUpdate();
+    searchQuery.current = {};
+    if (!isSearchMode.current) {
+      isSearchMode.current = true;
+      forceUpdate();
+    }
   }
 
   function setSearchResults(searchResults: TS.FileSystemEntry[]) {

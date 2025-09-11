@@ -127,7 +127,7 @@ type PlatformFacadeContextData = {
   saveTextFilePromise: (
     param: PlatformParms,
     content: string,
-    overwrite: boolean,
+    reflectUpdate: boolean,
   ) => Promise<any>;
   saveBinaryFilePromise: (
     param: PlatformParms,
@@ -651,13 +651,13 @@ export const PlatformFacadeContextProvider = ({
   function saveTextFilePromise(
     param: PlatformParms,
     content: string,
-    isUpdated: boolean,
+    reflectUpdate: boolean,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return getLocation(param)
-      .saveTextFilePromise(param, content, isUpdated)
+      .saveTextFilePromise(param, content, true)
       .then((fsEntry) => {
-        if (isUpdated) {
+        if (reflectUpdate) {
           setReflectActions({
             action: 'update',
             entry: fsEntry,

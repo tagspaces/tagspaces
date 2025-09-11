@@ -74,9 +74,9 @@ export const SearchQueryContextProvider = ({
   useEffect(() => {
     if (searchQuery && Object.keys(searchQuery).length > 0) {
       tempSearchQuery.current = { ...searchQuery };
-    } /* else {
+    } else {
       tempSearchQuery.current = {};
-    }*/
+    }
     forceUpdate();
   }, [searchQuery]);
 
@@ -152,11 +152,11 @@ export const SearchQueryContextProvider = ({
         setTempSearchQuery({ ...savedSearch }, true);
       } else {
         setTempSearchQuery({ uuid: undefined });
-        exitSearchMode();
+        exitSearchMode(false);
       }
     } else {
       setTempSearchQuery({ uuid: undefined }, true);
-      exitSearchMode();
+      exitSearchMode(false);
     }
     setSaveSearchDialogOpened(true);
   }
