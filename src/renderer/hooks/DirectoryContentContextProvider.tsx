@@ -137,7 +137,7 @@ type DirectoryContentContextData = {
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
   enterSearchMode: () => void;
-  exitSearchMode: () => void;
+  exitSearchMode: (force?: boolean) => void;
   getDefaultPerspectiveSettings: (perspective: string) => TS.FolderSettings;
   currentPerspective: TS.PerspectiveType;
   getAllPropertiesPromise: (
@@ -653,10 +653,12 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function exitSearchMode() {
+  function exitSearchMode(force = true) {
     isSearchMode.current = false;
     dispatch(AppActions.setSearchFilter(undefined));
-    searchQuery.current = {};
+    if (force) {
+      searchQuery.current = {};
+    }
     forceUpdate();
   }
 

@@ -152,11 +152,11 @@ export const SearchQueryContextProvider = ({
         setTempSearchQuery({ ...savedSearch }, true);
       } else {
         setTempSearchQuery({ uuid: undefined });
-        exitSearchMode();
+        exitSearchMode(false);
       }
     } else {
       setTempSearchQuery({ uuid: undefined }, true);
-      exitSearchMode();
+      exitSearchMode(false);
     }
     setSaveSearchDialogOpened(true);
   }
