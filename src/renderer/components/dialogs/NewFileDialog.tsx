@@ -111,7 +111,7 @@ function NewFileDialog(props: Props) {
     );
   }
 
-  function getFileNameFromTemplate(template) {
+  function getFileNameFromTemplate(template: TS.FileTemplate) {
     return template.fileNameTmpl
       .replace('{timestamp}', formatDateTime4Tag(new Date(), true))
       .replace('{uuid}', getUuid());
@@ -131,7 +131,7 @@ function NewFileDialog(props: Props) {
     );
   }
 
-  function getFileContentFromTemplate(template) {
+  function getFileContentFromTemplate(template: TS.FileTemplate) {
     const creationDate = new Date().toISOString();
     const dateTimeArray = creationDate.split('T');
     return (
