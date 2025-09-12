@@ -339,6 +339,7 @@ export namespace TS {
     setTemplate: (id: string, value: FileTemplate) => void;
     setTemplateActive: (id: string) => void;
     getTemplates: () => TS.FileTemplate[];
+    resetTemplates: () => void;
     delTemplate: (id: string) => void;
   };
 

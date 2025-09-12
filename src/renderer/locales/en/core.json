@@ -994,6 +994,7 @@
   "defaultTemplatetxt": "Default template for text files (.txt)",
   "defaultTemplatehtml": "Default template for HTML files (.html)",
   "addTemplate": "Create New Template",
+  "resetTemplates": "Reset Templates",
   "templateContent": "Template Content",
   "fileNameTmpl": "File Name Template",
   "templateNameEmptyError": "Template name can't be empty",

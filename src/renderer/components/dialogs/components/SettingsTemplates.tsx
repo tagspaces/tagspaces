@@ -190,6 +190,17 @@ function SettingsTemplates(props: Props) {
           >
             {t('addTemplate')}
           </TsButton>
+          <TsButton
+            disabled={!!window.ExtFileTemplates}
+            onClick={() => {
+              fileTemplatesContext.resetTemplates();
+              forceUpdate();
+            }}
+            style={{ marginBottom: 10 }}
+            startIcon={<CreateFileIcon />}
+          >
+            {t('resetTemplates')}
+          </TsButton>
           <TemplatesDropDown disabled={!!window.ExtFileTemplates} />
           <TemplatesDropDown
             disabled={!!window.ExtFileTemplates}
