@@ -236,7 +236,7 @@ function SettingsAI(props: Props) {
             <Typography>{t('core:aiSettings')}</Typography>
             <br />
             <Typography variant="caption">
-              TagSpaces do not have its own AI engine or models, but relays
+              TagSpaces does not have its own AI engine or models, but relies
               entirely on external software like Ollama. If you don't have
               Ollama, you can download it for free from
               <TsButton
