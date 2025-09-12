@@ -26,9 +26,7 @@ import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
-import ObjectStoreForm, {
-  regions,
-} from '-/components/dialogs/components/ObjectStoreForm';
+import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import WebdavForm from '-/components/dialogs/components/WebdavForm';
