@@ -28,6 +28,7 @@ import TsTextField from '-/components/TsTextField';
 import MapTileServerDialog from '-/components/dialogs/MapTileServerDialog';
 import { historyKeys } from '-/hooks/HistoryContextProvider';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
@@ -39,6 +40,7 @@ import {
 } from '-/reducers/settings';
 import { isWorkerAvailable } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { clearAllURLParams } from '-/utils/dom';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
@@ -51,8 +53,6 @@ import Switch from '@mui/material/Switch';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearAllURLParams } from '-/utils/dom';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
 
@@ -189,15 +189,6 @@ function SettingsAdvanced(props: Props) {
         />
       </ListItem>
       <ListItem>
-        <ListItemText primary={t('enableDevMode')} />
-        <Switch
-          data-tid="settingsEnableDevMode"
-          disabled={window.ExtDevMode && window.ExtDevMode === true}
-          onClick={() => setDevMode(!devMode)}
-          checked={devMode}
-        />
-      </ListItem>
-      <ListItem>
         <ListItemText primary={t('enableWS')} />
         {AppConfig.isElectron && (
           <TooltipTS
@@ -239,7 +230,7 @@ function SettingsAdvanced(props: Props) {
           checked={settings.warningOpeningFilesExternally}
         />
       </ListItem>
-      {isDevMode && (
+      {devMode && (
         <ListItem>
           <ListItemText primary={t('core:tagDelimiter')} />
           <TsSelect
@@ -543,6 +534,26 @@ function SettingsAdvanced(props: Props) {
           isDefault={tileServerDialog.isDefault}
         />
       )}
+      <ListItem>
+        <ListItemText
+          primary={
+            <>
+              {t('enableDevMode')}
+              <InfoIcon
+                tooltip={
+                  'Will enable some experimental features and turn on extra debugging'
+                }
+              />
+            </>
+          }
+        />
+        <Switch
+          data-tid="settingsEnableDevMode"
+          disabled={window.ExtDevMode && window.ExtDevMode === true}
+          onClick={() => setDevMode(!devMode)}
+          checked={devMode}
+        />
+      </ListItem>
     </List>
   );
 }
