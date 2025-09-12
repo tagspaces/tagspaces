@@ -617,7 +617,7 @@ Apache License
 
 The following npm package may be included in this product:
 
- - echarts@5.6.0
+ - echarts@6.0.0
 
 This package contains the following license:
 
@@ -846,7 +846,7 @@ See `/licenses/LICENSE-d3` for details of the license.
 With the following notices:
 
 Apache ECharts
-Copyright 2017-2024 The Apache Software Foundation
+Copyright 2017-2025 The Apache Software Foundation
 
 This product includes software developed at
 The Apache Software Foundation (https://www.apache.org/).
@@ -4056,7 +4056,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.177
+ - @tagspacespro/tagspacespro@5.0.184
 
 This package contains the following license:
 
@@ -5505,6 +5505,18 @@ Permission and Conditions. The Licensor grants permission by this license (“Li
 - Disclaimer. TO THE FULL EXTENT ALLOWED BY LAW, THIS SOFTWARE COMES “AS IS,” WITHOUT ANY WARRANTY, EXPRESS OR IMPLIED, AND LICENSOR AND ANY OTHER CONTRIBUTOR SHALL NOT BE LIABLE TO ANYONE FOR ANY DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THIS LICENSE, UNDER ANY KIND OF LEGAL CLAIM.
 
 This Hippocratic License is an Ethical Source license (https://ethicalsource.dev) and is offered for use by licensors and licensees at their own risk, on an “AS IS” basis, and with no warranties express or implied, to the maximum extent permitted by Laws.
+
+-----------
+
+The following npm package may be included in this product:
+
+ - @tagspacespro/extensions@2.0.10
+
+This package contains the following license:
+
+/*
+Copyright (c) 2024-present The TagSpaces GmbH. All rights reserved.
+*/
 
 -----------
 
@@ -8259,7 +8271,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following npm package may be included in this product:
 
- - zrender@5.6.1
+ - zrender@6.0.0
 
 This package contains the following license:
 
@@ -14473,11 +14485,12 @@ SOFTWARE.
 
 -----------
 
-The following npm package may be included in this product:
+The following npm packages may be included in this product:
 
  - @csstools/color-helpers@5.0.2
+ - @csstools/color-helpers@5.1.0
 
-This package contains the following license:
+These packages each contain the following license:
 
 MIT No Attribution (MIT-0)
 
@@ -17873,6 +17886,7 @@ The following npm packages may be included in this product:
 
  - @csstools/css-calc@2.1.4
  - @csstools/css-color-parser@3.0.10
+ - @csstools/css-color-parser@3.1.0
  - @csstools/css-parser-algorithms@3.0.5
  - @csstools/css-tokenizer@3.0.4
 
@@ -18087,7 +18101,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.197
+ - @tagspaces/extensions@1.0.201
 
 This package contains the following license:
 
@@ -18104,15 +18118,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.5.95
- - @tagspaces/tagspaces-common-cordova@4.5.95
- - @tagspaces/tagspaces-common-node@4.5.95
- - @tagspaces/tagspaces-common@4.5.95
- - @tagspaces/tagspaces-indexer@4.5.95
+ - @tagspaces/tagspaces-common-aws3@4.5.99
+ - @tagspaces/tagspaces-common-cordova@4.5.99
+ - @tagspaces/tagspaces-common-node@4.5.99
+ - @tagspaces/tagspaces-common@4.5.99
+ - @tagspaces/tagspaces-indexer@4.5.99
  - @tagspaces/tagspaces-pdf-extraction@4.5.53
  - @tagspaces/tagspaces-thumbgen-image@4.5.60
- - @tagspaces/tagspaces-workers@4.5.95
- - @tagspaces/tagspaces-ws@4.5.95
+ - @tagspaces/tagspaces-workers@4.5.99
+ - @tagspaces/tagspaces-ws@4.5.99
 
 These packages each contain the following license:
 
