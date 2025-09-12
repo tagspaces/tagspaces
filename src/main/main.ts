@@ -840,12 +840,45 @@ app
 
       ipcMain.on('relaunch-app', reloadApp);
 
+      process.removeAllListeners('uncaughtException'); // app crashes on ECONNRESET in default uncaughtException of Electron
+
       process.on('uncaughtException', (error) => {
-        if (error.stack) {
-          console.error('error:', error.stack);
-          throw new Error(error.stack);
+        // Always log the full error for diagnostics
+        console.error(
+          'UNCAUGHT EXCEPTION in main:',
+          error && error.stack ? error.stack : error,
+        );
+
+        // Normalize message/code for checks
+        const msg = error && error.message ? error.message : '';
+        //@ts-ignore
+        const code = error && error.code ? error.code : '';
+
+        // Ignore or quietly handle known/non-fatal errors
+        const isAbort = error && error.name === 'AbortError';
+        const isSocketHangUp =
+          msg.includes('socket hang up') ||
+          code === 'ECONNRESET' ||
+          code === 'ECONNABORTED';
+
+        if (isAbort || isSocketHangUp) {
+          // Expected when cancelling requests — just log and continue.
+          console.warn(
+            'Known non-fatal error (ignored):',
+            msg || code || error,
+          );
+          return;
+        } // For other errors: try graceful recovery (reload) or exit gracefully.
+        try {
+          reloadApp();
+        } catch (reloadErr) {
+          console.error(
+            'reloadApp() failed, exiting process:',
+            reloadErr && reloadErr.stack ? reloadErr.stack : reloadErr,
+          );
+          // Exit with non-zero code to indicate failure (or perform other cleanup)
+          process.exit(1);
         }
-        reloadApp();
       });
     });
   })
