@@ -144,7 +144,7 @@ function StoredSearches(props: Props) {
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
         marginLeft: 5,
-        marginRight: 0,
+        marginRight: 5,
       }}
     >
       <SidePanelTitle title={t('core:quickAccess')} />
