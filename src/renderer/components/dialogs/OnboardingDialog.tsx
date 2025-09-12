@@ -24,6 +24,7 @@ import Organize from '-/assets/images/organize.svg';
 import TsButton from '-/components/TsButton';
 import TsToggleButton from '-/components/TsToggleButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -60,6 +61,7 @@ function OnboardingDialog(props: Props) {
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
+  const { closeAllLocations } = useCurrentLocationContext();
 
   const setPersistTagsInSidecarFile = (isPersistTagsInSidecar) => {
     dispatch(
@@ -383,7 +385,10 @@ function OnboardingDialog(props: Props) {
                   marginBottom: 20,
                   display: 'block',
                 }}
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  closeAllLocations();
+                }}
               >
                 Start using TagSpaces
               </TsButton>
