@@ -808,7 +808,7 @@ export const DirectoryContentContextProvider = ({
     entries: TS.FileSystemEntry[],
   ): TS.OrderVisibilitySettings[] {
     return entries
-      .filter((entry) => !entry.isFile)
+      .filter((entry) => entry && !entry.isFile)
       .slice(0, defaultColumnsToShow)
       .map((dir) => ({
         uuid: dir.uuid,

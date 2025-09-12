@@ -55,7 +55,7 @@ type LocationIndexContextData = {
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
-  cancelDirectoryIndexing: () => void;
+  cancelDirectoryIndexing: (locationId: string) => void;
   createLocationIndex: (
     location: CommonLocation,
     force?: boolean,
@@ -80,7 +80,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   isIndexing: undefined,
   getIndex: undefined,
   getLastIndex: undefined,
-  cancelDirectoryIndexing: () => {},
+  cancelDirectoryIndexing: undefined,
   createLocationIndex: () => Promise.resolve(false),
   createLocationsIndexes: () => Promise.resolve(false),
   clearDirectoryIndex: () => {},
@@ -101,8 +101,13 @@ export const LocationIndexContextProvider = ({
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
 
-  const { locations, findLocation, currentLocationId, getLocationPath } =
-    useCurrentLocationContext();
+  const {
+    locations,
+    findLocation,
+    currentLocationId,
+    currentLocation,
+    getLocationPath,
+  } = useCurrentLocationContext();
   const { ignoreByWatcher, deignoreByWatcher } = useFSWatcherContext();
   const { setSearchResults, appendSearchResults, updateCurrentDirEntries } =
     useDirectoryContentContext();
@@ -115,19 +120,28 @@ export const LocationIndexContextProvider = ({
   //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
-  let walking = true;
+  const walkingRef = useRef(true);
   //const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
-  const currentLocation = findLocation();
   const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
+  const prevLocationId = useRef<string>(currentLocationId);
 
   useEffect(() => {
     if (currentLocationId) {
       clearDirectoryIndex(false);
       maxIndexAge.current = getMaxIndexAge(findLocation());
+    }
+    if (AppConfig.isElectron && prevLocationId.current !== currentLocationId) {
+      if (prevLocationId.current) {
+        window.electronIO.ipcRenderer.sendMessage(
+          'cancelRequest',
+          prevLocationId.current,
+        );
+      }
+      prevLocationId.current = currentLocationId;
     }
   }, [currentLocationId]);
 
@@ -336,13 +350,16 @@ export const LocationIndexContextProvider = ({
   }
 
   function isWalking() {
-    return walking;
+    return walkingRef.current;
   }
 
-  function cancelDirectoryIndexing() {
-    walking = false;
-    isIndexing.current = undefined;
-    forceUpdate();
+  function cancelDirectoryIndexing(locationId: string) {
+    if (locationId) {
+      window.electronIO.ipcRenderer.sendMessage('cancelRequest', locationId);
+      walkingRef.current = false;
+      isIndexing.current = undefined;
+      forceUpdate();
+    }
   }
 
   function createDirectoryIndex(
@@ -374,11 +391,15 @@ export const LocationIndexContextProvider = ({
               extractText,
               !!loc.extractLinks,
               ignorePatterns,
+              loc.uuid,
             )
             .then((result) => {
               if (result && result.success) {
                 return loadIndexFromDisk(dirPath, param.locationID);
               } else if (result && result.error) {
+                if (result.error === 'AbortError') {
+                  return undefined;
+                }
                 console.error(
                   'createDirectoryIndexInWorker failed:' + result.error,
                 );
@@ -485,6 +506,7 @@ export const LocationIndexContextProvider = ({
     location: CommonLocation,
     force = false,
   ): Promise<boolean> {
+    walkingRef.current = true;
     if (location) {
       if (location.disableIndexing) {
         if (force) {
@@ -541,11 +563,12 @@ export const LocationIndexContextProvider = ({
   }
 
   async function createLocationsIndexes(extractText = true): Promise<boolean> {
+    walkingRef.current = true;
     for (let location of locations) {
       try {
         if (!location.disableIndexing) {
           const locationPath = await getLocationPath(location);
-          isIndexing.current = locationPath;
+          isIndexing.current = location.uuid; //locationPath
           forceUpdate();
           await createDirectoryIndexWrapper(
             { path: locationPath, locationID: location.uuid },
@@ -674,7 +697,7 @@ export const LocationIndexContextProvider = ({
   }
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
-    walking = true;
+    walkingRef.current = true;
     if (!currentLocation) {
       //showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       searchAllLocations(searchQuery);
@@ -740,7 +763,7 @@ export const LocationIndexContextProvider = ({
     setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
-    walking = true;
+    walkingRef.current = true;
     //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
@@ -834,17 +857,18 @@ export const LocationIndexContextProvider = ({
     } else {
       directoryPath = param;
     }
+    const cLocation = findLocation(param?.locationID);
     const metaDirectory = getMetaDirectoryPath(directoryPath);
-    const exist = await currentLocation.checkDirExist(metaDirectory);
+    const exist = await cLocation.checkDirExist(metaDirectory);
     try {
       if (!exist) {
-        await currentLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+        await cLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
       }
       const folderIndexPath =
         metaDirectory +
-        currentLocation?.getDirSeparator() +
+        cLocation?.getDirSeparator() +
         AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-      return currentLocation
+      return cLocation
         .saveTextFilePromise(
           { ...param, path: folderIndexPath },
           JSON.stringify(directoryIndex), // relativeIndex),

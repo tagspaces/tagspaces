@@ -382,7 +382,10 @@ export const CurrentLocationContextProvider = ({
       (l) => l.uuid !== locationId,
     );*/
     dispatch(LocationActions.deleteLocation(locationId));
-    forceUpdate();
+    if (currentLocationId.current === locationId) {
+      setCurrentLocation(undefined);
+    }
+    //forceUpdate();
   }
 
   function moveLocationUp(locationUUID) {

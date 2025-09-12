@@ -48,6 +48,7 @@ import { ApiResponse } from './types';
 //let watcher: FSWatcher;
 const progress = {};
 let wsc;
+const controllers = new Map(); // requestId -> AbortController
 
 function isSafePath(filePath) {
   if (typeof filePath !== 'string') return false;
@@ -206,13 +207,36 @@ export default function loadMainEvents() {
       icon: icon,
     });
   });
-  ipcMain.handle('postRequest', async (event, payload, endpoint) => {
+  ipcMain.handle('postRequest', async (event, payload, endpoint, requestId) => {
+    let controller;
+    if (requestId) {
+      controller = new AbortController();
+      controllers.set(requestId, controller);
+    }
     try {
-      const result = await postRequest(payload, endpoint);
+      const result = await postRequest(payload, endpoint, controller?.signal);
       return result;
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error('postRequest error:', err);
+      if (
+        err &&
+        (err.name === 'AbortError' ||
+          err.message === 'Request aborted by signal')
+      ) {
+        return { error: 'AbortError' };
+      }
       return false;
+    } finally {
+      // ensure controller cleaned up no matter what
+      if (requestId) controllers.delete(requestId);
+    }
+  });
+  // listen for cancel requests from renderer
+  ipcMain.on('cancelRequest', (event, requestId) => {
+    const controller = controllers.get(requestId);
+    if (controller) {
+      controller.abort();
+      controllers.delete(requestId);
     }
   });
   ipcMain.handle(
