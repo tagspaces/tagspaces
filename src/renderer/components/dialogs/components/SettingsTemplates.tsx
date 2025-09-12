@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import {
   CreateFileIcon,
   ExpandIcon,
+  ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
@@ -196,8 +197,11 @@ function SettingsTemplates(props: Props) {
               fileTemplatesContext.resetTemplates();
               forceUpdate();
             }}
-            style={{ marginBottom: 10 }}
-            startIcon={<CreateFileIcon />}
+            style={{
+              marginBottom: 10,
+              marginLeft: AppConfig.defaultSpaceBetweenButtons,
+            }}
+            startIcon={<ReloadIcon />}
           >
             {t('resetTemplates')}
           </TsButton>
