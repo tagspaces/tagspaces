@@ -1251,6 +1251,7 @@ export function toTsLocation(location: CommonLocation): TS.S3Location {
     uuid: location.uuid || getUuid(),
     name: location.name,
     type: location.type,
+    ...(location.groupName && { groupName: location.groupName }),
     ...(location.authType && { authType: location.authType }),
     ...(location.username && { username: location.username }),
     ...(location.password && { password: location.password }),

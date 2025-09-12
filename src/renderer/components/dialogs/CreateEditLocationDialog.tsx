@@ -26,7 +26,9 @@ import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
-import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
+import ObjectStoreForm, {
+  regions,
+} from '-/components/dialogs/components/ObjectStoreForm';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import WebdavForm from '-/components/dialogs/components/WebdavForm';
@@ -74,6 +76,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
+import Autocomplete from '@mui/material/Autocomplete';
 
 interface Props {
   open: boolean;
@@ -87,8 +90,13 @@ function CreateEditLocationDialog(props: Props) {
   const { showNotification, openConfirmDialog } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
-  const { addLocation, editLocation, selectedLocation, findLocation } =
-    useCurrentLocationContext();
+  const {
+    addLocation,
+    editLocation,
+    selectedLocation,
+    findLocation,
+    locations,
+  } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
@@ -581,6 +589,7 @@ function CreateEditLocationDialog(props: Props) {
     locationTypeName = t('core:objectStorage');
   }
 
+  const locationGroups = locations.filter((l) => l.groupName !== undefined);
   const okButton = (
     <TsButton
       disabled={disableConfirmButton()}
@@ -799,6 +808,29 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
+              <FormControlLabel
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                control={
+                  <Autocomplete
+                    options={locationGroups.map((l) => l.groupName)}
+                    freeSolo
+                    onChange={() => {}}
+                    onInputChange={() => {}}
+                    renderInput={(params) => (
+                      <TsTextField
+                        {...params}
+                        sx={{ minWidth: 200 }}
+                        label={t('core:locationGroup')}
+                        data-tid="locationGroupTID"
+                        placeholder={t('core:locationGroup')}
+                        margin="normal"
+                      />
+                    )}
+                  />
+                }
+                label={<>{t('core:locationGroup')}</>}
+              />
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
