@@ -189,7 +189,7 @@ function MobileNavigation(props: Props) {
                     maxWidth: 100,
                   }}
                 >
-                  {t('core:createNew')}
+                  {t('core:new')}
                 </Box>
               </TsButton>
               <TsButton
@@ -518,7 +518,7 @@ function MobileNavigation(props: Props) {
           </TsToolbarButton>
           <TsToolbarButton
             data-tid="tagLibrary"
-            title={t('core:tagLibrary')}
+            title={t('core:tags')}
             tooltip={t('core:tagLibrary')}
             keyBinding={keyBindings['showTagLibrary']}
             onClick={() => showPanel('tagLibraryPanel')}
