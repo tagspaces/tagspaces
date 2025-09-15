@@ -132,7 +132,7 @@ function NewFileDialog(props: Props) {
             `${t('core:createdIn')} ${versionMeta.name}`,
           )
           .replace('{date}', dateTimeArray[0])
-          .replace('{author}', window.ExtAuthor ?? author)
+          .replace('{author}', author)
           .replace('{time}', dateTimeArray[1].split('.')[0])
       );
     }

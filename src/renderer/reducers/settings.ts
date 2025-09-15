@@ -323,7 +323,9 @@ export default (state: any = defaultSettings, action: any) => {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
     }
     case types.SET_AUTHOR: {
-      return { ...state, author: action.author };
+      const author =
+        action.author === undefined ? defaultSettings.author : action.author;
+      return { ...state, author: author };
     }
     case types.SET_USEGENERATETHUMBNAILS: {
       return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
@@ -1007,10 +1009,8 @@ export const getAIProviders = (state: any) => {
 };
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
-export const getAuthor = (state: any) => state.settings.author;
-/* (AppConfig.isElectron && window.electronIO.ipcRenderer
-    ? window.electronIO.ipcRenderer.getAuthorSync()
-    : null);*/
+export const getAuthor = (state: any) =>
+  window.ExtAuthor ?? state.settings.author;
 export const getGeoTaggingFormat = (state: any) =>
   state.settings.geoTaggingFormat;
 export const getAddTagsToLibrary = (state: any) =>

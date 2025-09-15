@@ -41,6 +41,17 @@ if (window.ExtUseOnlyTagsFromTagLibrary !== undefined) {
   useOnlyTagsFromTagLibrary = window.ExtUseOnlyTagsFromTagLibrary;
 }
 
+let author = '';
+if (window.ExtAuthor !== undefined) {
+  author = window.ExtAuthor;
+} else if (AppConfig.isElectron) {
+  try {
+    author = window.electronIO.ipcRenderer.getSync('getAuthor');
+  } catch (err) {
+    console.error('Error retrieving author:', err);
+  }
+}
+
 export default {
   //isLoading: false,
   error: null,
@@ -119,9 +130,7 @@ export default {
       ? true
       : window.ExtRevisionsEnabled,
   prefixTagContainer: AppConfig.prefixTagContainer,
-  author: AppConfig.isElectron
-    ? window.electronIO.ipcRenderer.getSync('getAuthorSync')
-    : '',
+  author: author,
   aiProviders: [],
   isAutoSaveEnabled:
     typeof window.ExtAutoSaveEnabled === 'undefined'

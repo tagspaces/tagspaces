@@ -6,7 +6,6 @@ import {
   IpcRendererEvent,
   webUtils,
 } from 'electron';
-import os from 'os';
 
 export type Channels =
   | 'isWorkerAvailable'
@@ -81,7 +80,7 @@ export type Channels =
   | 'pullOllamaModel'
   | 'deleteOllamaModel'
   | 'startup-finished'
-  | 'getAuthorSync'
+  | 'getAuthor'
   | 'cancelRequest';
 
 const electronHandler = {

@@ -17,7 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { DeleteIcon } from '-/components/CommonIcons';
+import {
+  ColorPaletteIcon,
+  DeleteIcon,
+  ReloadIcon,
+} from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import TooltipTS from '-/components/Tooltip';
@@ -44,7 +48,7 @@ import { clearAllURLParams } from '-/utils/dom';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { CircularProgress, ListItemIcon } from '@mui/material';
+import { CircularProgress, InputAdornment, ListItemIcon } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -559,10 +563,30 @@ function SettingsAdvanced(props: Props) {
       <ListItem>
         <ListItemText primary={t('core:author')} />
         <TsTextField
+          disabled={window.ExtAuthor !== undefined}
           style={{ maxWidth: '100px' }}
           data-tid="authorTID"
           value={settings.author}
           onChange={(event) => setAuthor(event.target.value)}
+          sx={{ minWidth: 200 }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <TooltipTS title={t('loadDefaultAuthor')}>
+                    <TsIconButton
+                      data-tid="loadDefaultAuthorTID"
+                      onClick={() =>
+                        dispatch(SettingsActions.setAuthor(undefined))
+                      }
+                    >
+                      <ReloadIcon />
+                    </TsIconButton>
+                  </TooltipTS>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       </ListItem>
     </List>

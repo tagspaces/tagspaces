@@ -599,11 +599,11 @@ export default function loadMainEvents() {
     }
   });
 
-  ipcMain.on('getAuthorSync', (event) => {
+  ipcMain.on('getAuthor', (event) => {
     try {
-      event.returnValue = os.userInfo().username ?? null;
+      event.returnValue = os.userInfo().username ?? '';
     } catch {
-      event.returnValue = process.env.USER ?? process.env.USERNAME ?? null;
+      event.returnValue = process.env.USER ?? process.env.USERNAME ?? '';
     }
   });
 }
