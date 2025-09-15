@@ -17,11 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import {
-  ColorPaletteIcon,
-  DeleteIcon,
-  ReloadIcon,
-} from '-/components/CommonIcons';
+import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import TooltipTS from '-/components/Tooltip';
@@ -544,6 +540,46 @@ function SettingsAdvanced(props: Props) {
         <ListItemText
           primary={
             <>
+              {t('core:author')}
+              <InfoIcon
+                tooltip={
+                  'The value of this text field can be used for example in the templates as {author} variable. If you do not want this, just delete it from here.'
+                }
+              />
+            </>
+          }
+        />
+        <TsTextField
+          disabled={window.ExtAuthor !== undefined}
+          title={window.ExtAuthor ? t('core:settingExternallyConfigured') : ''}
+          data-tid="authorTID"
+          value={window.ExtAuthor ? window.ExtAuthor : settings.author}
+          onChange={(event) => setAuthor(event.target.value)}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <TooltipTS title={t('loadDefaultAuthor')}>
+                    <TsIconButton
+                      data-tid="loadDefaultAuthorTID"
+                      disabled={window.ExtAuthor !== undefined}
+                      onClick={() =>
+                        dispatch(SettingsActions.setAuthor(undefined))
+                      }
+                    >
+                      <ReloadIcon />
+                    </TsIconButton>
+                  </TooltipTS>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText
+          primary={
+            <>
               {t('enableDevMode')}
               <InfoIcon
                 tooltip={
@@ -558,35 +594,6 @@ function SettingsAdvanced(props: Props) {
           disabled={window.ExtDevMode && window.ExtDevMode === true}
           onClick={() => setDevMode(!devMode)}
           checked={devMode}
-        />
-      </ListItem>
-      <ListItem>
-        <ListItemText primary={t('core:author')} />
-        <TsTextField
-          disabled={window.ExtAuthor !== undefined}
-          style={{ maxWidth: '100px' }}
-          data-tid="authorTID"
-          value={settings.author}
-          onChange={(event) => setAuthor(event.target.value)}
-          sx={{ minWidth: 200 }}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <TooltipTS title={t('loadDefaultAuthor')}>
-                    <TsIconButton
-                      data-tid="loadDefaultAuthorTID"
-                      onClick={() =>
-                        dispatch(SettingsActions.setAuthor(undefined))
-                      }
-                    >
-                      <ReloadIcon />
-                    </TsIconButton>
-                  </TooltipTS>
-                </InputAdornment>
-              ),
-            },
-          }}
         />
       </ListItem>
     </List>
