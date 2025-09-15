@@ -68,6 +68,7 @@ import {
   isDesktopMode,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { ClickAwayListener, Divider, Popover } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -153,6 +154,8 @@ function MobileNavigation(props: Props) {
             style={{
               width: '100%',
               justifyContent: 'center',
+              // justifyContent: 'space-between',
+              paddingLeft: 10,
               display: 'flex',
               alignItems: 'center',
             }}
@@ -175,6 +178,7 @@ function MobileNavigation(props: Props) {
                 data-tid="createNewDropdownButtonTID"
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
+                endIcon={<ArrowDropDown />}
                 style={{
                   borderRadius: 'unset',
                   borderTopLeftRadius: AppConfig.defaultCSSRadius,
@@ -190,6 +194,7 @@ function MobileNavigation(props: Props) {
                   }}
                 >
                   {t('core:new')}
+                  {/* {t('core:createNew')} */}
                 </Box>
               </TsButton>
               <TsButton
@@ -203,9 +208,10 @@ function MobileNavigation(props: Props) {
                   borderTopRightRadius: AppConfig.defaultCSSRadius,
                   borderBottomRightRadius: AppConfig.defaultCSSRadius,
                 }}
-                startIcon={<OpenLinkIcon />}
+                // startIcon={<OpenLinkIcon />}
               >
-                <Box
+                <OpenLinkIcon />
+                {/* <Box
                   style={{
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -214,9 +220,18 @@ function MobileNavigation(props: Props) {
                   }}
                 >
                   {t('core:openLink')}
-                </Box>
+                </Box> */}
               </TsButton>
             </ButtonGroup>
+            {/* <TsIconButton
+              tooltip={t('core:openSharingLink')}
+              data-tid="openLinkNavigationTID"
+              onClick={() => {
+                openLinkDialog();
+              }}
+            >
+              <OpenLinkIcon />
+            </TsIconButton> */}
             {currentUser ? (
               <>
                 <TsIconButton
