@@ -133,6 +133,8 @@ function SettingsAdvanced(props: Props) {
   const setPrefixTagContainer = (prefix) =>
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
+  const setAuthor = (user: string) => dispatch(SettingsActions.setAuthor(user));
+
   return (
     <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <ListItem>
@@ -552,6 +554,15 @@ function SettingsAdvanced(props: Props) {
           disabled={window.ExtDevMode && window.ExtDevMode === true}
           onClick={() => setDevMode(!devMode)}
           checked={devMode}
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={t('core:author')} />
+        <TsTextField
+          style={{ maxWidth: '100px' }}
+          data-tid="authorTID"
+          value={settings.author}
+          onChange={(event) => setAuthor(event.target.value)}
         />
       </ListItem>
     </List>

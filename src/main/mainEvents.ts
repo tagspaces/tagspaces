@@ -43,7 +43,7 @@ import {
   postRequest,
   readMacOSTags,
 } from './util';
-import { ApiResponse } from './types';
+import os from 'os';
 
 //let watcher: FSWatcher;
 const progress = {};
@@ -596,6 +596,14 @@ export default function loadMainEvents() {
         code: err.code || 'UNKNOWN',
         stack: err.stack,
       };
+    }
+  });
+
+  ipcMain.on('getAuthorSync', (event) => {
+    try {
+      event.returnValue = os.userInfo().username ?? null;
+    } catch {
+      event.returnValue = process.env.USER ?? process.env.USERNAME ?? null;
     }
   });
 }

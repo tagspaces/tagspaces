@@ -45,6 +45,8 @@ import { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
 import useFirstRender from '-/utils/useFirstRender';
+import { useSelector } from 'react-redux';
+import { getAuthor } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
@@ -63,6 +65,8 @@ function NewFileDialog(props: Props) {
   const { targetDirectoryPath } = useTargetPathContext();
   const haveError = useRef<boolean>(false);
   const urlInputError = useRef<string>(undefined);
+
+  const author = useSelector(getAuthor);
   const firstRWLocation = getFirstRWLocation();
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
     ? useContext<TS.FileTemplatesContextData>(
@@ -128,6 +132,7 @@ function NewFileDialog(props: Props) {
             `${t('core:createdIn')} ${versionMeta.name}`,
           )
           .replace('{date}', dateTimeArray[0])
+          .replace('{author}', window.ExtAuthor ?? author)
           .replace('{time}', dateTimeArray[1].split('.')[0])
       );
     }

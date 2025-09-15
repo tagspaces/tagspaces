@@ -119,6 +119,9 @@ export default {
       ? true
       : window.ExtRevisionsEnabled,
   prefixTagContainer: AppConfig.prefixTagContainer,
+  author: AppConfig.isElectron
+    ? window.electronIO.ipcRenderer.getSync('getAuthorSync')
+    : '',
   aiProviders: [],
   isAutoSaveEnabled:
     typeof window.ExtAutoSaveEnabled === 'undefined'
