@@ -1,4 +1,3 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
 import AppConfig from '-/AppConfig';
 import { FileIcon, FolderIcon } from '-/components/CommonIcons';
 import DirectoryListView from '-/components/DirectoryListView';
@@ -11,6 +10,7 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDirProperties } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -25,9 +25,9 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -274,24 +274,5 @@ function MoveCopyFilesDialog(props: Props) {
     </Dialog>
   );
 }
-/*const areEqual = (prev: Props, next: Props) => {
-  if (prev.open !== next.open) return false;
-  if (prev.targetDir !== next.targetDir) return false;
-  if (prev.targetLocationId !== next.targetLocationId) return false;
-  if (prev.onClose !== next.onClose) return false;
 
-  const a = prev.entries || [];
-  const b = next.entries || [];
-  if (a.length !== b.length) return false;
-
-  for (let i = 0; i < a.length; i++) {
-    if (a[i].path !== b[i].path) return false;
-    if (a[i].isFile !== b[i].isFile) return false;
-    // add any other small stable fields you rely on (name, uuid, etc.)
-  }
-
-  return true;
-};
-
-export default React.memo(MoveCopyFilesDialog, areEqual);*/
 export default MoveCopyFilesDialog;

@@ -80,6 +80,7 @@ export type Channels =
   | 'pullOllamaModel'
   | 'deleteOllamaModel'
   | 'startup-finished'
+  | 'getAuthor'
   | 'cancelRequest';
 
 const electronHandler = {
@@ -101,6 +102,9 @@ const electronHandler = {
     },
     invoke(command: Channels, ...args: unknown[]) {
       return ipcRenderer.invoke(command, ...args);
+    },
+    getSync(command: Channels, ...args: unknown[]) {
+      return ipcRenderer.sendSync(command, ...args);
     },
     removeAllListeners(channel: string) {
       ipcRenderer.removeAllListeners(channel);

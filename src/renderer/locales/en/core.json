@@ -998,5 +998,6 @@
   "fileNameTmpl": "File Name Template",
   "templateNameEmptyError": "Template name can't be empty",
   "fileNameEmptyError": "Filename template can't be empty",
+  "loadDefaultAuthor": "Load username from OS",
   "-": "-"
 }
