@@ -110,11 +110,13 @@ export default function Root({ store, persistor }: RootType) {
                                                                   <Pro.contextProviders.BgndDialogContextProvider>
                                                                     <Pro.contextProviders.AiTemplatesContextProvider>
                                                                       <Pro.contextProviders.FileTemplatesContextProvider>
-                                                                        <ChatContextProvider>
-                                                                          <DialogsRoot>
-                                                                            <MainPage />
-                                                                          </DialogsRoot>
-                                                                        </ChatContextProvider>
+                                                                        <Pro.contextProviders.WorkSpacesContextProvider>
+                                                                          <ChatContextProvider>
+                                                                            <DialogsRoot>
+                                                                              <MainPage />
+                                                                            </DialogsRoot>
+                                                                          </ChatContextProvider>
+                                                                        </Pro.contextProviders.WorkSpacesContextProvider>
                                                                       </Pro.contextProviders.FileTemplatesContextProvider>
                                                                     </Pro.contextProviders.AiTemplatesContextProvider>
                                                                   </Pro.contextProviders.BgndDialogContextProvider>

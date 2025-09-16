@@ -114,11 +114,17 @@ function MobileNavigation(props: Props) {
   const { hideDrawer, width } = props;
   const switchTheme = () => dispatch(SettingsActions.switchTheme());
   const [openedCreateMenu, setOpenCreateMenu] = React.useState(false);
+  const [openedWorkSpaceMenu, setOpenWorkSpaceMenu] = React.useState(false);
+  const anchorWSpaceRef = React.useRef<HTMLButtonElement>(null);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const currentLocation = findLocation();
 
   const handleToggle = () => {
     setOpenCreateMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleToggleWorkSpaces = () => {
+    setOpenWorkSpaceMenu((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event: Event) => {
@@ -129,6 +135,16 @@ function MobileNavigation(props: Props) {
       return;
     }
     setOpenCreateMenu(false);
+  };
+
+  const handleCloseWSpace = (event: Event) => {
+    if (
+      anchorWSpaceRef.current &&
+      anchorWSpaceRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    setOpenWorkSpaceMenu(false);
   };
 
   return (
@@ -195,6 +211,31 @@ function MobileNavigation(props: Props) {
                 >
                   {t('core:new')}
                   {/* {t('core:createNew')} */}
+                </Box>
+              </TsButton>
+              <TsButton
+                ref={anchorWSpaceRef}
+                aria-controls={
+                  openedWorkSpaceMenu ? 'split-button-menu' : undefined
+                }
+                aria-expanded={openedWorkSpaceMenu ? 'true' : undefined}
+                aria-haspopup="menu"
+                data-tid="openedWorkSpaceMenuButtonTID"
+                onClick={handleToggleWorkSpaces}
+                endIcon={<ArrowDropDown />}
+                style={{
+                  borderRadius: 'unset',
+                }}
+              >
+                <Box
+                  style={{
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    maxWidth: 100,
+                  }}
+                >
+                  {t('core:workSpaces')}
                 </Box>
               </TsButton>
               <TsButton
@@ -272,6 +313,49 @@ function MobileNavigation(props: Props) {
           </Box>
         </Box>
 
+        <ClickAwayListener onClickAway={handleCloseWSpace}>
+          <Popper
+            sx={{
+              zIndex: 1,
+            }}
+            open={openedWorkSpaceMenu}
+            anchorEl={anchorWSpaceRef.current}
+            role={undefined}
+            transition
+            disablePortal
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{
+                  transformOrigin:
+                    placement === 'bottom' ? 'center top' : 'center bottom',
+                }}
+              >
+                <Paper>
+                  <TsMenuList id="split-button-menu" autoFocusItem>
+                    <MenuItem
+                      key="navCreateNewTextFile"
+                      data-tid="navCreateNewTextFileTID"
+                      onClick={() => {
+                        openNewFileDialog('txt');
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <NewFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:createTextFile')} />
+                    </MenuItem>
+                  </TsMenuList>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
+        </ClickAwayListener>
         <ClickAwayListener onClickAway={handleClose}>
           <Popper
             sx={{

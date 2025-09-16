@@ -587,7 +587,7 @@ function CreateEditLocationDialog(props: Props) {
     locationTypeName = t('core:objectStorage');
   }
 
-  const locationGroups = locations.filter((l) => l.groupName !== undefined);
+  const workSpaces = locations.filter((l) => l.workSpaceId !== undefined);
   const okButton = (
     <TsButton
       disabled={disableConfirmButton()}
@@ -811,7 +811,7 @@ function CreateEditLocationDialog(props: Props) {
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Autocomplete
-                    options={locationGroups.map((l) => l.groupName)}
+                    options={workSpaces.map((l) => l.workSpaceId)}
                     freeSolo
                     onChange={() => {}}
                     onInputChange={() => {}}
