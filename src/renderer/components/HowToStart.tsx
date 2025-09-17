@@ -41,27 +41,17 @@ function HowToStart() {
   const theme = useTheme();
   const steps = [
     {
-      label: 'Introduction',
-      description: (
-        <>
-          The following guide will demonstrate some of the key areas and
-          features of the application. We highly recommend it for first-time
-          users.
-        </>
-      ),
+      label: t('htsIntroTitle'),
+      description: t('htsIntro'),
     },
     {
-      label: 'Location Manager',
+      label: t('locationManager'),
       description: (
         <>
-          In order to use a given folder in TagSpaces you have to connect it as
-          location with the Location Manager. The Location Manager allows you to
-          create, edit, remove, import, and export your locations. Any
-          pre-existing locations already pointing to folders such as the
-          Documents or Downloads can be removed if they are not needed.
+          {t('htsLocationManager')}
           <br />
           <SlideButton
-            title="Find out more"
+            title={t('htsFindOutMore')}
             link={Links.documentationLinks.locations}
           />
         </>
@@ -72,17 +62,13 @@ function HowToStart() {
       },
     },
     {
-      label: 'Creating a Location',
+      label: t('htsCreatingLocationTitle'),
       description: (
         <>
-          By selecting the highlighted button, you can open a dialog to choose
-          which folder you'd like to use in TagSpaces and create a location
-          linked to it. Depending on the type of location, the folder can be
-          located on your computer or in an S3-compatible cloud storage such as
-          AWS, Cloudflare, Wasabi, or Minio.
+          {t('htsCreatingLocation')}
           <br />
           <SlideButton
-            title="Video about creating locations"
+            title={t('htsFindOutMore')}
             link={Links.links.howToStart + '#locationsLocal'}
           />
         </>
@@ -94,16 +80,13 @@ function HowToStart() {
       },
     },
     {
-      label: 'Tag Library',
+      label: t('tagLibrary'),
       description: (
         <>
-          The Tag Library is the place where you can manage and organize the
-          tags with which you can tag your files and folders. Tag Groups help
-          you categorize different tags and applying a tag is as simple as
-          dragging and dropping it onto a file or folder.
+          {t('htsTagLibrary')}
           <br />
           <SlideButton
-            title="Video introducing the tag library"
+            title={t('htsFindOutMore')}
             link={Links.links.howToStart + '#taglibrary'}
           />
         </>
@@ -117,7 +100,7 @@ function HowToStart() {
       },
     },
     {
-      label: 'Quick access section',
+      label: t('quickAccess'),
       description: (
         <>
           In this section you can find the following functionalities:
@@ -154,12 +137,10 @@ function HowToStart() {
       },
     },
     {
-      label: 'Perspectives Switcher',
+      label: t('perspectiveSwitch'),
       description: (
         <>
-          The perspectives offer a specific view on the files in a given folder.
-          With the highlighted switcher you can change the perspective of the
-          current folder.
+          {t('htsPerspectiveSwitch')}
           <ul>
             <li>
               <b>Grid</b> - displays files in a grid
@@ -198,12 +179,10 @@ function HowToStart() {
       },
     },
     {
-      label: 'Creating files',
+      label: t('htsCreatingFilesTitle'),
       description: (
         <>
-          The highlighted button will open a dialog, where you can create a new
-          file or <b>digital note</b>. The new files can be in the following
-          file formats:
+          {t('htsCreatingFiles')}
           <ul>
             <li>
               <b>Markdown</b> (recommended) - suitable for notes with simple
@@ -234,17 +213,13 @@ function HowToStart() {
       },
     },
     {
-      label: 'App Settings',
+      label: t('settings'),
       description: (
         <>
-          The highlighted button will open the settings of the application.
-          There you can configure the application's color theme, language,
-          default perspective, tagging method, and more. Additionally, keyboard
-          shortcuts and preferences for editing supported file types can be also
-          changed there.
+          {t('htsSettings')}
           <br />
           <SlideButton
-            title="Find out more"
+            title={t('htsFindOutMore')}
             link={Links.documentationLinks.settings}
           />
         </>
@@ -255,13 +230,8 @@ function HowToStart() {
       },
     },
     {
-      label: 'Start using TagSpaces',
-      description: (
-        <>
-          You can start using the app by creating a new location or open an
-          existing one from the location manager.
-        </>
-      ),
+      label: t('startUsingTagSpaces'),
+      description: t('htsStartUsingTS'),
       action: () => {
         selectByTID('createNewDropdownButtonTID')?.classList.add(
           'highlighterOn',
