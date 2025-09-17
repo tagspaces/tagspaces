@@ -165,6 +165,10 @@ function SettingsTemplates(props: Props) {
             ,{' '}
             <b>
               {'{'}time{'}'}
+            </b>
+            ,{' '}
+            <b>
+              {'{'}author{'}'}
             </b>{' '}
             and{' '}
             <b>

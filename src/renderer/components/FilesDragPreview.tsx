@@ -25,6 +25,5 @@ export function FilesDragPreview(props: Props) {
     />
   );
 }
-//const areEqual = (prevProp, nextProp) => nextProp.entriesLength === prevProp.entriesLength;
-//export default React.memo(FilesDragPreview, areEqual);
+
 export default React.memo(FilesDragPreview);

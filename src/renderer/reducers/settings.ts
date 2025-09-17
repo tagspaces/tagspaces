@@ -75,6 +75,7 @@ export const types = {
   REMOVE_AI_PROVIDER: 'SETTINGS/REMOVE_AI_PROVIDER',
   SET_AI_PROVIDERS: 'SETTINGS/SET_AI_PROVIDERS',
   SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
+  SET_AUTHOR: 'SETTINGS/SET_AUTHOR',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
@@ -320,6 +321,11 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_PREFIX_TAG_CONTAINER: {
       return { ...state, prefixTagContainer: action.prefixTagContainer };
+    }
+    case types.SET_AUTHOR: {
+      const author =
+        action.author === undefined ? defaultSettings.author : action.author;
+      return { ...state, author: author };
     }
     case types.SET_USEGENERATETHUMBNAILS: {
       return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
@@ -753,6 +759,10 @@ export const actions = {
     type: types.SET_PREFIX_TAG_CONTAINER,
     prefixTagContainer,
   }),
+  setAuthor: (author: string) => ({
+    type: types.SET_AUTHOR,
+    author,
+  }),
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
     type: types.SET_USEGENERATETHUMBNAILS,
     useGenerateThumbnails,
@@ -999,6 +1009,8 @@ export const getAIProviders = (state: any) => {
 };
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
+export const getAuthor = (state: any) =>
+  window.ExtAuthor ?? state.settings.author;
 export const getGeoTaggingFormat = (state: any) =>
   state.settings.geoTaggingFormat;
 export const getAddTagsToLibrary = (state: any) =>

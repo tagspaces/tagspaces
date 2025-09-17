@@ -312,18 +312,22 @@ function HowToStart() {
   };
 
   // ${theme.palette.primary.main}; // #da15d8;
+  // 0%   { box-shadow: 0 0 0 transparent; }
+  // 20%  { box-shadow: 0 0 7px 6px #da15d8;  }
+  // 70%  { box-shadow: 0 0 7px 6px #da15d8;  }
+  // 100% { box-shadow: 0 0 0 transparent; }
   return (
     <Box style={{ maxWidth: 480, paddingLeft: 10, paddingRight: 10 }}>
       <style>
         {`
         .highlighterOn {
             animation: pulsate 2s infinite;
+            z-index: 1;
         }
         @keyframes pulsate {
-            0%   { box-shadow: 0 0 0 transparent; }
-            20%  { box-shadow: 0 0 7px 6px #da15d8;  }
-            70%  { box-shadow: 0 0 7px 6px #da15d8;  }
-            100% { box-shadow: 0 0 0 transparent; }
+            0%   { box-shadow: 0 0 7px 6px #da15d8; }
+            50%  { box-shadow: 0 0 0 transparent; }
+            100% { box-shadow: 0 0 7px 6px #da15d8; }
         }
         `}
       </style>
