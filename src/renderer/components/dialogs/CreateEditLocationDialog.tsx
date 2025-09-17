@@ -69,7 +69,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import CryptoJS from 'crypto-js';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
@@ -168,6 +168,9 @@ function CreateEditLocationDialog(props: Props) {
   );
   const [isReadOnly, setIsReadOnly] = useState<boolean>(
     selectedLocation ? selectedLocation.isReadOnly : false,
+  );
+  const [workSpaceId, setWorkSpaceId] = useState<string>(
+    selectedLocation ? selectedLocation.workSpaceId || '' : '',
   );
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
     selectedLocation ? selectedLocation.watchForChanges : false,
@@ -411,6 +414,7 @@ function CreateEditLocationDialog(props: Props) {
       if (type === locationType.TYPE_LOCAL) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           name,
           path,
@@ -430,6 +434,7 @@ function CreateEditLocationDialog(props: Props) {
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           authType,
           name,
@@ -452,6 +457,7 @@ function CreateEditLocationDialog(props: Props) {
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           name: storeName,
           path: storePath,
@@ -587,7 +593,13 @@ function CreateEditLocationDialog(props: Props) {
     locationTypeName = t('core:objectStorage');
   }
 
-  const workSpaces = locations.filter((l) => l.workSpaceId !== undefined);
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext.getWorkSpaces();
+
   const okButton = (
     <TsButton
       disabled={disableConfirmButton()}
@@ -810,24 +822,26 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Autocomplete
-                    options={workSpaces.map((l) => l.workSpaceId)}
-                    freeSolo
-                    onChange={() => {}}
-                    onInputChange={() => {}}
-                    renderInput={(params) => (
-                      <TsTextField
-                        {...params}
-                        sx={{ minWidth: 200 }}
-                        label={t('core:locationGroup')}
-                        data-tid="locationGroupTID"
-                        placeholder={t('core:locationGroup')}
-                        margin="normal"
-                      />
-                    )}
-                  />
+                  <TsSelect
+                    data-tid="locationTypeTID"
+                    value={workSpaceId}
+                    label={t('core:workSpaces')}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setWorkSpaceId(event.target.value)
+                    }
+                  >
+                    {workSpaces.map((wSpace) => (
+                      <MenuItem
+                        key={wSpace.uuid}
+                        value={wSpace.uuid}
+                        data-tid={'wSpace' + wSpace.shortName + 'TID'}
+                      >
+                        {wSpace.fullName}
+                      </MenuItem>
+                    ))}
+                  </TsSelect>
                 }
-                label={<>{t('core:locationGroup')}</>}
+                label={<>{t('core:workSpaces')}</>}
               />
               <FormControlLabel
                 labelPlacement="start"

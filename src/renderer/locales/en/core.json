@@ -999,5 +999,8 @@
   "templateNameEmptyError": "Template name can't be empty",
   "fileNameEmptyError": "Filename template can't be empty",
   "loadDefaultAuthor": "Load username from OS",
+  "workSpaces": "WorkSpaces",
+  "allWorkSpaces": "All WorkSpaces",
+  "workSpaceDialogAdd": "Add WorkSpaces",
   "-": "-"
 }

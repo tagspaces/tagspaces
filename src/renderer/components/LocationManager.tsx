@@ -25,7 +25,7 @@ import { Pro } from '-/pro';
 import { getLocations } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { Box, List } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 
@@ -45,6 +45,8 @@ function LocationManager(props: Props) {
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
 
   const locations: TS.Location[] = useSelector(getLocations);
+  const [wSpaceLocations, setWSpaceLocations] =
+    useState<TS.Location[]>(locations);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
     useState<boolean>(false);
@@ -55,6 +57,23 @@ function LocationManager(props: Props) {
 
   const ImportLocationsDialog =
     Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+
+  useEffect(() => {
+    if (currentWorkSpace) {
+      setWSpaceLocations(
+        locations.filter((l) => l.workSpaceId === currentWorkSpace.uuid),
+      );
+    } else {
+      setWSpaceLocations(locations);
+    }
+  }, [currentWorkSpace]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -135,7 +154,7 @@ function LocationManager(props: Props) {
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                {locations.map((location, index) => (
+                {wSpaceLocations.map((location, index) => (
                   <Draggable
                     key={location.uuid}
                     draggableId={location.uuid}

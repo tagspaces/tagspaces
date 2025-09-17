@@ -61,6 +61,7 @@ export class CommonLocation implements TS.Location {
 
   constructor(location: TS.Location) {
     this.uuid = location.uuid;
+    this.workSpaceId = location.workSpaceId;
     this.newuuid = location.newuuid;
     this.name = location.name;
     this.type = location.type; // 0 - local; 1 - S3; 2 - amplify; 3 - webdav

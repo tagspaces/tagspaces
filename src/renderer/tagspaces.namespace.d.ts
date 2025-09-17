@@ -353,6 +353,8 @@ export namespace TS {
     setWorkSpace: (wSpace: WorkSpace) => void;
     delWorkSpace: (id: string) => void;
     getWorkSpaces: () => WorkSpace[];
+    setCurrentWorkSpaceId: (wSpaceId: string) => void;
+    getCurrentWorkSpace: () => TS.WorkSpace;
     openNewWorkspaceDialog: (workSpace?: TS.WorkSpace) => void;
   };
 

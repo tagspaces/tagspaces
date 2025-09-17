@@ -555,7 +555,7 @@ function SettingsAdvanced(props: Props) {
         />
       )}
       <ListItem>
-        <ListItemText primary={t('core:workSpacesTitle')} />
+        <ListItemText primary={t('core:workSpaces')} />
         <TsButton onClick={(event) => editWorkSpacesClick(event)}>
           {t('workSpaceDialogAdd')}
         </TsButton>

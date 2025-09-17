@@ -153,7 +153,6 @@ export const CurrentLocationContextProvider = ({
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
   const broadcast = new BroadcastChannel('ts-sync-channel');
-  // Generate a unique ID for the tab
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
