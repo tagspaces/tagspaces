@@ -170,7 +170,7 @@ function OnboardingDialog(props: Props) {
                 src={NewLook}
                 alt=""
               />
-              <Typography variant="h6">Try our dark theme!</Typography>
+              <Typography variant="h6">{t('obTryThemes')}</Typography>
               <Typography variant="h6">&nbsp;</Typography>
               <ToggleButtonGroup
                 value={currentTheme}
@@ -186,7 +186,7 @@ function OnboardingDialog(props: Props) {
                   }}
                   value="light"
                 >
-                  Light
+                  {t('light')}
                 </TsToggleButton>
                 <TsToggleButton
                   style={{
@@ -195,7 +195,7 @@ function OnboardingDialog(props: Props) {
                   }}
                   value="dark"
                 >
-                  Dark
+                  {t('dark')}
                 </TsToggleButton>
               </ToggleButtonGroup>
             </div>
@@ -206,14 +206,8 @@ function OnboardingDialog(props: Props) {
                 textAlign: 'center',
               }}
             >
-              <Typography variant="h5">
-                Choose the default tagging method for files
-              </Typography>
+              <Typography variant="h5">{t('obChooseTaggingTitle')}</Typography>
               <Typography variant="h5">&nbsp;</Typography>
-              {/* <Typography variant="body1">
-                Core functionality of the application the tagging of files and
-                folders. Here you can choose how tags will be attached to files.
-              </Typography> */}
               <FormControl
                 style={{ marginTop: 20, marginBottom: 20 }}
                 component="fieldset"
@@ -231,10 +225,7 @@ function OnboardingDialog(props: Props) {
                         variant="subtitle1"
                         style={{ textAlign: 'left' }}
                       >
-                        Use the name of file for saving the tags - tagging the
-                        file <strong>image.jpg</strong> with the tag{' '}
-                        <strong>sunset</strong> will rename it to{' '}
-                        <strong>image[sunset].jpg</strong>
+                        {t('obChooseTaggingFilename')}
                       </Typography>
                     }
                   />
@@ -247,12 +238,7 @@ function OnboardingDialog(props: Props) {
                         variant="subtitle1"
                         style={{ textAlign: 'left' }}
                       >
-                        Use sidecar file for saving the tags - tagging the file{' '}
-                        <strong>image.jpg</strong> with a tag{' '}
-                        <strong>sunset</strong> will store this tag in an
-                        separate file called <strong>image.jpg.json</strong>{' '}
-                        located in a sub folder with the name{' '}
-                        <strong>.ts</strong>
+                        {t('obChooseTaggingSidecar')}
                       </Typography>
                     }
                   />
@@ -264,22 +250,16 @@ function OnboardingDialog(props: Props) {
                 alt=""
               />
               <Typography variant="body2">
-                You can change this decision later. But files already tagged
-                with the renaming method will stay renamed.
+                {t('obChooseTaggingClarification')}
               </Typography>
             </div>
           </div>
           <div>
             <div style={{ textAlign: 'center' }}>
               <Typography variant="h5" style={{ marginBottom: 20 }}>
-                Create and collect digital content
+                {t('obWebClipperTitle')}
               </Typography>
-              <Typography variant="body1">
-                With the TagSpaces Web Clipper you can collect web pages,
-                bookmarks or screenshot from the Web. With the built-in text
-                editors you can create digital notes, which can include tables,
-                todo-lists, math formulas or diagrams.
-              </Typography>
+              <Typography variant="body1">{t('obWebClipperMain')}</Typography>
               <img
                 style={{
                   maxHeight: 300,
@@ -292,9 +272,7 @@ function OnboardingDialog(props: Props) {
                 alt=""
               />
               <Typography variant="body1">
-                Check out our web clipper browser extension for Chrome, Edge and
-                Firefox. It is available for free in the official browser
-                stores.
+                {t('obWebClipperClarification')}
               </Typography>
               <TsButton
                 style={{
@@ -308,20 +286,17 @@ function OnboardingDialog(props: Props) {
                   openURLExternally(Links.links.webClipper, true);
                 }}
               >
-                Get the web clipper
+                {t('obWebClipperCTA')}
               </TsButton>
             </div>
           </div>
           <div>
             <div style={{ textAlign: 'center' }}>
               <Typography variant="h5" style={{ marginBottom: 20 }}>
-                Organize and Annotate
+                {t('obExplanationsTitle')}
               </Typography>
               <Typography variant="body1">
-                TagSpaces can connect to folders from your hard drive or S3
-                buckets. It provides a convenient way to browse and manage the
-                content of the connected folders which we call <b>locations</b>.
-                You have the ability to add tags to any file or folder.
+                {t('obExplanationsMain1')}
               </Typography>
               <img
                 style={{
@@ -336,10 +311,7 @@ function OnboardingDialog(props: Props) {
                 alt=""
               />
               <Typography variant="body1">
-                In TagSpaces Pro you can add <b>description</b> and{' '}
-                <b>geo-tags</b> to your files and folders. On top of that we
-                offer various views for your folders which call{' '}
-                <b>perspectives</b>.
+                {t('obExplanationsMain2')}
               </Typography>
               <TsButton
                 style={{
@@ -353,15 +325,13 @@ function OnboardingDialog(props: Props) {
                   openURLExternally(Links.links.productPro, true);
                 }}
               >
-                More about TagSpaces Pro
+                {t('obExplanationsCTA')}
               </TsButton>
             </div>
           </div>
           <div>
             <div style={{ textAlign: 'center' }}>
-              <Typography variant="h5">
-                We hope you will love TagSpaces as much as we do!
-              </Typography>
+              <Typography variant="h5">{t('obFinalTitle')}</Typography>
               <img
                 style={{
                   maxHeight: 300,
@@ -373,10 +343,7 @@ function OnboardingDialog(props: Props) {
                 src={WizardFinished}
                 alt=""
               />
-              <Typography variant="body1">
-                If you want to learn more about how to use the application,
-                please start the introduction from the following screen.
-              </Typography>
+              <Typography variant="body1">{t('obFinalExplanation')}</Typography>
               <TsButton
                 style={{
                   marginTop: 20,
@@ -390,7 +357,7 @@ function OnboardingDialog(props: Props) {
                   closeAllLocations();
                 }}
               >
-                Start using TagSpaces
+                {t('startUsingTagSpaces')}
               </TsButton>
             </div>
           </div>
