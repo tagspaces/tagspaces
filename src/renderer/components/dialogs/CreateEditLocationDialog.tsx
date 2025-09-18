@@ -74,7 +74,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
-import Autocomplete from '@mui/material/Autocomplete';
 
 interface Props {
   open: boolean;
@@ -823,6 +822,7 @@ function CreateEditLocationDialog(props: Props) {
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <TsSelect
+                    disabled={!Pro}
                     data-tid="locationTypeTID"
                     value={workSpaceId}
                     label={t('core:workSpaces')}
@@ -836,7 +836,7 @@ function CreateEditLocationDialog(props: Props) {
                         value={wSpace.uuid}
                         data-tid={'wSpace' + wSpace.shortName + 'TID'}
                       >
-                        {wSpace.fullName}
+                        {wSpace.shortName + '(' + wSpace.fullName + ')'}
                       </MenuItem>
                     ))}
                   </TsSelect>

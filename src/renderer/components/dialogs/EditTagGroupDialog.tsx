@@ -38,11 +38,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TransparentBackground from '../TransparentBackground';
 import ColorPickerDialog from './ColorPickerDialog';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -60,6 +61,9 @@ function EditTagGroupDialog(props: Props) {
   const { removeLocationTagGroup } = useTagGroupsLocationContext();
   const { t } = useTranslation();
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const [workSpaceId, setWorkSpaceId] = useState<string>(
+    selectedTagGroupEntry ? selectedTagGroupEntry.workSpaceId || '' : '',
+  );
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
     useState<boolean>(false);
@@ -74,6 +78,12 @@ function EditTagGroupDialog(props: Props) {
   );
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext.getWorkSpaces();
 
   useEffect(() => {
     setNewLocationId(undefined);
@@ -135,6 +145,7 @@ function EditTagGroupDialog(props: Props) {
         title,
         color,
         textcolor,
+        ...(workSpaceId && { workSpaceId }),
         ...(isLocationChanged() && {
           locationId:
             newLocationId === defaultTagGroupLocation
@@ -289,6 +300,28 @@ function EditTagGroupDialog(props: Props) {
           onClick={() => setApplyChanges(!applyChanges)}
           checked={applyChanges}
         />
+      </ListItem>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItemText primary={t('core:workSpaces')} />
+        <TsSelect
+          disabled={!Pro}
+          data-tid="locationTypeTID"
+          value={workSpaceId}
+          label={t('core:workSpaces')}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setWorkSpaceId(event.target.value)
+          }
+        >
+          {workSpaces.map((wSpace) => (
+            <MenuItem
+              key={wSpace.uuid}
+              value={wSpace.uuid}
+              data-tid={'wSpace' + wSpace.shortName + 'TID'}
+            >
+              {wSpace.shortName + '(' + wSpace.fullName + ')'}
+            </MenuItem>
+          ))}
+        </TsSelect>
       </ListItem>
     </DialogContent>
   );

@@ -37,12 +37,19 @@ import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useContext,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TransparentBackground from '../TransparentBackground';
 import ColorPickerDialog from './ColorPickerDialog';
 import TsDialogTitle from './components/TsDialogTitle';
+import { Pro } from '-/pro';
 
 interface Props {
   open: boolean;
@@ -56,6 +63,7 @@ const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 function CreateTagGroupDialog(props: Props) {
   const { t } = useTranslation();
+  const { open, onClose, createTagGroup } = props;
   const { locations } = useCurrentLocationContext();
   //const locations = useSelector(getLocations);
   const saveTagsInLocation = useSelector(getSaveTagInLocation);
@@ -70,10 +78,16 @@ function CreateTagGroupDialog(props: Props) {
   const color = useRef<string>(props.color);
   const textcolor = useRef<string>(props.textcolor);
   const locationId = useRef<string>(defaultTagGroupLocation);
+  const [workSpaceId, setWorkSpaceId] = useState<string>('');
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const { open, onClose, createTagGroup } = props;
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext.getWorkSpaces();
 
   const handleTagGroupTitleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -120,6 +134,7 @@ function CreateTagGroupDialog(props: Props) {
         color: color.current,
         textcolor: textcolor.current,
         locationId: lId,
+        ...(workSpaceId && { workSpaceId }),
         children: [],
       });
       onClose();
@@ -300,6 +315,28 @@ function CreateTagGroupDialog(props: Props) {
             </span>
             <span style={{ margin: 3 }} />
           </Tag>
+        </ListItem>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItemText primary={t('core:workSpaces')} />
+          <TsSelect
+            disabled={!Pro}
+            data-tid="locationTypeTID"
+            value={workSpaceId}
+            label={t('core:workSpaces')}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setWorkSpaceId(event.target.value)
+            }
+          >
+            {workSpaces.map((wSpace) => (
+              <MenuItem
+                key={wSpace.uuid}
+                value={wSpace.uuid}
+                data-tid={'wSpace' + wSpace.shortName + 'TID'}
+              >
+                {wSpace.shortName + '(' + wSpace.fullName + ')'}
+              </MenuItem>
+            ))}
+          </TsSelect>
         </ListItem>
       </DialogContent>
       {!smallScreen && (

@@ -30,8 +30,9 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { Pro } from '-/pro';
 
 interface Props {
   index: number;
@@ -57,6 +58,12 @@ function TagGroupTitleDnD(props: Props) {
   } = props;
   const { findLocation } = useCurrentLocationContext();
   const tagGroupRef = useRef<HTMLSpanElement>(null);
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
 
   const [, drag] = useDrag({
     type: DragItemTypes.TAG_GROUP,
@@ -170,7 +177,14 @@ function TagGroupTitleDnD(props: Props) {
             noWrap
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
           >
-            {tagGroup.title + getLocationName(tagGroup.locationId)}
+            {tagGroup.title +
+              getLocationName(tagGroup.locationId) +
+              (tagGroup.workSpaceId
+                ? ' (' +
+                  workSpacesContext.getWorkSpace(tagGroup.workSpaceId)
+                    ?.shortName +
+                  ')'
+                : '')}
             {!tagGroup.expanded && (
               <span
                 style={{

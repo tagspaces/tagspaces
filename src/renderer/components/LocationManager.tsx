@@ -73,7 +73,7 @@ function LocationManager(props: Props) {
     } else {
       setWSpaceLocations(locations);
     }
-  }, [currentWorkSpace]);
+  }, [currentWorkSpace, locations]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -92,6 +92,17 @@ function LocationManager(props: Props) {
 
   const { reduceHeightBy, show } = props;
   const currentLocation = findLocation();
+
+  function getWorkSpaceName(l) {
+    if (l.workSpaceId) {
+      const wSpace = workSpacesContext.getWorkSpace(l.workSpaceId);
+      if (wSpace) {
+        return ' (' + wSpace.shortName + ')';
+      }
+    }
+    return '';
+  }
+
   return (
     <Box
       style={{
@@ -171,7 +182,7 @@ function LocationManager(props: Props) {
                           location={{
                             isFile: false,
                             lmdt: 0,
-                            name: location.name,
+                            name: location.name + getWorkSpaceName(location),
                             path: location.path,
                             size: 0,
                             locationID: location.uuid,

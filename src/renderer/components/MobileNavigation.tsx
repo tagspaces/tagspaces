@@ -36,6 +36,7 @@ import {
   SettingsIcon,
   TagLibraryIcon,
   ThemingIcon,
+  WorkspacesIcon,
 } from '-/components/CommonIcons';
 import CustomLogo from '-/components/CustomLogo';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
@@ -357,7 +358,7 @@ function MobileNavigation(props: Props) {
                         }}
                       >
                         <ListItemIcon>
-                          <NewFileIcon />
+                          <WorkspacesIcon />
                         </ListItemIcon>
                         <ListItemText primary={t('allWorkSpaces')} />
                       </MenuItem>
@@ -373,7 +374,7 @@ function MobileNavigation(props: Props) {
                           }}
                         >
                           <ListItemIcon>
-                            <NewFileIcon />
+                            <WorkspacesIcon />
                           </ListItemIcon>
                           <ListItemText
                             primary={wSpace.shortName}

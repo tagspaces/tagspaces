@@ -175,6 +175,7 @@ export namespace TS {
     uuid: Uuid;
     title: string;
     locationId?: Uuid;
+    workSpaceId?: string;
     expanded?: boolean;
     description?: string;
     categoryId?: string;
