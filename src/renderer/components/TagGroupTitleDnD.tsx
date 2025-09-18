@@ -25,6 +25,7 @@ import {
 import DragItemTypes from '-/components/DragItemTypes';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { Box } from '@mui/material';
@@ -32,7 +33,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import React, { useContext, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { Pro } from '-/pro';
 
 interface Props {
   index: number;
@@ -180,10 +180,9 @@ function TagGroupTitleDnD(props: Props) {
             {tagGroup.title +
               getLocationName(tagGroup.locationId) +
               (tagGroup.workSpaceId
-                ? ' (' +
+                ? ' - ' +
                   workSpacesContext.getWorkSpace(tagGroup.workSpaceId)
-                    ?.shortName +
-                  ')'
+                    ?.shortName
                 : '')}
             {!tagGroup.expanded && (
               <span

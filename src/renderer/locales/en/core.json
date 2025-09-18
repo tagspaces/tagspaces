@@ -1032,9 +1032,13 @@
   "ptsWhySection2": "Upgrade to Pro and supercharge TagSpaces with advanced search, unique perspectives for effortless organization, and powerful geo-tagging. Discover how these features can transform your workflow in the slides ahead.",
   "ptsKanbanTitle": "Kanban Perspective in TagSpaces Pro",
   "ptsKanban": "This perspective turns any folder into a fully functional Kanban board. Subfolders become columns, and the files inside them are displayed as cards that can be easily moved between columns using drag and drop. Entire columns can also be rearranged in the same way. Plus, with the built-in Trello import, you can bring exported Trello boards directly into your workspace.",
-  "workSpaces": "WorkSpaces",
-  "allWorkSpaces": "All WorkSpaces",
-  "workSpaceDialogAdd": "Add WorkSpaces",
   "pts": "",
+  "workSpaces": "Workspaces",
+  "workspace": "Workspace",
+  "currentWorkspace": "Current Workspace",
+  "allWorkspaces": "All",
+  "workSpaceDialogAdd": "Add Workspace",
+  "fullName": "Full name",
+  "shortName": "Short name",
   "-": "-"
 }

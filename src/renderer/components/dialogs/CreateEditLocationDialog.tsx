@@ -646,7 +646,8 @@ function CreateEditLocationDialog(props: Props) {
       ></TsDialogTitle>
       <DialogContent
         style={{
-          overflow: 'auto',
+          overflowY: 'auto',
+          overflowX: 'hidden',
           minHeight: 200,
           padding: 8,
         }}
@@ -824,10 +825,9 @@ function CreateEditLocationDialog(props: Props) {
                   control={
                     <TsSelect
                       disabled={!Pro}
-                      sx={{ minWidth: 200 }}
-                      data-tid="locationTypeTID"
+                      style={{ minWidth: 200 }}
+                      data-tid="locationWorkspaceTID"
                       value={workSpaceId}
-                      label={t('core:workSpaces')}
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         setWorkSpaceId(event.target.value)
                       }
@@ -853,12 +853,12 @@ function CreateEditLocationDialog(props: Props) {
                           value={wSpace.uuid}
                           data-tid={'wSpace' + wSpace.shortName + 'TID'}
                         >
-                          {wSpace.shortName + '(' + wSpace.fullName + ')'}
+                          {wSpace.shortName + ' - ' + wSpace.fullName}
                         </MenuItem>
                       ))}
                     </TsSelect>
                   }
-                  label={<>{t('core:workSpaces')}</>}
+                  label={<>{t('core:workspace')}</>}
                 />
               )}
               <FormControlLabel

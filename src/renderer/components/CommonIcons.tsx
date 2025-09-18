@@ -19,7 +19,6 @@
 import ExportIcon from '@mui/icons-material/ExitToApp';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
-import WorkspacesOutlineIcon from '@mui/icons-material/WorkspacesOutline';
 
 export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
@@ -29,9 +28,7 @@ export const MarkdownFileIcon = (props) => (
   <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} />
 );
 
-export const WorkspacesIcon = (props) => (
-  <WorkspacesOutlineIcon sx={{ transform: 'scaleX(-1)' }} {...props} />
-);
+export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutline';
 
 export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 

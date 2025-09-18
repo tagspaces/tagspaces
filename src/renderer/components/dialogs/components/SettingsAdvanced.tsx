@@ -573,8 +573,7 @@ function SettingsAdvanced(props: Props) {
           {workSpaces.map((workSpace, index) => (
             <ListItem key={workSpace.uuid}>
               <ListItemText
-                primary={workSpace.shortName}
-                secondary={workSpace.fullName}
+                primary={workSpace.fullName + ' - ' + workSpace.shortName}
                 style={{ maxWidth: 470 }}
               />
               <TsIconButton

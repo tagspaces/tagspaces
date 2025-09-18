@@ -69,6 +69,7 @@ import {
   isDesktopMode,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { ClickAwayListener, Divider, Popover } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -85,7 +86,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import TsIconButton from './TsIconButton';
 import UserDetailsPopover from './UserDetailsPopover';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   hideDrawer?: () => void;
@@ -228,6 +228,7 @@ function MobileNavigation(props: Props) {
               {workSpaces && workSpaces.length > 0 && (
                 <TsButton
                   ref={anchorWSpaceRef}
+                  tooltip={t('currentWorkspace')}
                   aria-controls={
                     openedWorkSpaceMenu ? 'create-wspace-menu' : undefined
                   }
@@ -249,7 +250,7 @@ function MobileNavigation(props: Props) {
                     }}
                   >
                     {workSpacesContext.getCurrentWorkSpace()?.shortName ||
-                      t('core:workSpaces')}
+                      t('core:allWorkspaces')}
                   </Box>
                 </TsButton>
               )}
@@ -360,7 +361,7 @@ function MobileNavigation(props: Props) {
                         <ListItemIcon>
                           <WorkspacesIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('allWorkSpaces')} />
+                        <ListItemText primary={t('allWorkspaces')} />
                       </MenuItem>
                       {workSpaces.map((wSpace) => (
                         <MenuItem
@@ -377,8 +378,7 @@ function MobileNavigation(props: Props) {
                             <WorkspacesIcon />
                           </ListItemIcon>
                           <ListItemText
-                            primary={wSpace.shortName}
-                            secondary={wSpace.fullName}
+                            primary={wSpace.fullName + ' - ' + wSpace.shortName}
                           />
                         </MenuItem>
                       ))}

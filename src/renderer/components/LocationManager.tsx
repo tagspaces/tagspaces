@@ -97,7 +97,7 @@ function LocationManager(props: Props) {
     if (l.workSpaceId) {
       const wSpace = workSpacesContext.getWorkSpace(l.workSpaceId);
       if (wSpace) {
-        return ' (' + wSpace.shortName + ')';
+        return ' - ' + wSpace.shortName;
       }
     }
     return '';

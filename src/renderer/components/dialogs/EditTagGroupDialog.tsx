@@ -16,8 +16,10 @@
  *
  */
 
+import { RemoveIcon } from '-/components/CommonIcons';
 import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
@@ -34,6 +36,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
@@ -43,10 +46,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TransparentBackground from '../TransparentBackground';
 import ColorPickerDialog from './ColorPickerDialog';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import TsIconButton from '-/components/TsIconButton';
-import { RemoveIcon } from '-/components/CommonIcons';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -305,13 +304,12 @@ function EditTagGroupDialog(props: Props) {
         />
       </ListItem>
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <ListItemText primary={t('core:workSpaces')} />
+        <ListItemText primary={t('core:workspace')} />
         <TsSelect
           disabled={!Pro}
-          sx={{ minWidth: 200 }}
-          data-tid="locationTypeTID"
+          style={{ minWidth: 200 }}
+          data-tid="taggroupWorkspaceTID"
           value={workSpaceId}
-          label={t('core:workSpaces')}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setWorkSpaceId(event.target.value)
           }
@@ -337,7 +335,7 @@ function EditTagGroupDialog(props: Props) {
               value={wSpace.uuid}
               data-tid={'wSpace' + wSpace.shortName + 'TID'}
             >
-              {wSpace.shortName + '(' + wSpace.fullName + ')'}
+              {wSpace.shortName + ' - ' + wSpace.fullName}
             </MenuItem>
           ))}
         </TsSelect>

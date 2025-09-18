@@ -17,24 +17,28 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import Tag from '-/components/Tag';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import { useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, {
@@ -49,10 +53,6 @@ import { useSelector } from 'react-redux';
 import TransparentBackground from '../TransparentBackground';
 import ColorPickerDialog from './ColorPickerDialog';
 import TsDialogTitle from './components/TsDialogTitle';
-import { Pro } from '-/pro';
-import InputAdornment from '@mui/material/InputAdornment';
-import TsIconButton from '-/components/TsIconButton';
-import { RemoveIcon } from '-/components/CommonIcons';
 
 interface Props {
   open: boolean;
@@ -320,13 +320,12 @@ function CreateTagGroupDialog(props: Props) {
           </Tag>
         </ListItem>
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('core:workSpaces')} />
+          <ListItemText primary={t('core:workspace')} />
           <TsSelect
             disabled={!Pro}
-            sx={{ minWidth: 200 }}
-            data-tid="locationTypeTID"
+            style={{ minWidth: 200 }}
+            data-tid="taggroupWorkspaceTID"
             value={workSpaceId}
-            label={t('core:workSpaces')}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setWorkSpaceId(event.target.value)
             }
@@ -352,7 +351,7 @@ function CreateTagGroupDialog(props: Props) {
                 value={wSpace.uuid}
                 data-tid={'wSpace' + wSpace.shortName + 'TID'}
               >
-                {wSpace.shortName + '(' + wSpace.fullName + ')'}
+                {wSpace.shortName + ' - ' + wSpace.fullName}
               </MenuItem>
             ))}
           </TsSelect>
