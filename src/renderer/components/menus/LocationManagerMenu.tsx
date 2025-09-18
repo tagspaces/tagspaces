@@ -65,7 +65,7 @@ function LocationManagerMenu(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
 
   const menuItems = [];
   if (!AppConfig.locationsReadOnly) {

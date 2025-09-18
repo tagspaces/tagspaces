@@ -70,7 +70,7 @@ function TagsSelect(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
 
   const desktopMode = useSelector(isDesktopMode);
   const isUseOnlyTagsFromTagLibrary = useSelector(useOnlyTagsFromTagLibrary);

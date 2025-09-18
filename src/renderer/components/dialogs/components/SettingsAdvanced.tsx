@@ -78,7 +78,7 @@ function SettingsAdvanced(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const workSpaces = workSpacesContext.getWorkSpaces();
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {

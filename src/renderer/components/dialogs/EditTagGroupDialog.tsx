@@ -86,7 +86,7 @@ function EditTagGroupDialog(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const workSpaces = workSpacesContext.getWorkSpaces();
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
 
   useEffect(() => {
     setNewLocationId(undefined);

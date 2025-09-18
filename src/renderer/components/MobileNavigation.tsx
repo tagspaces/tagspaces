@@ -126,7 +126,7 @@ function MobileNavigation(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const workSpaces: TS.WorkSpace[] = workSpacesContext.getWorkSpaces();
+  const workSpaces: TS.WorkSpace[] = workSpacesContext?.getWorkSpaces() ?? [];
   /*const foundWorkSpaces: TS.WorkSpace[] = workSpaces.filter((ws) =>
     locations.some((l) => l.workSpaceId === ws.uuid),
   );*/

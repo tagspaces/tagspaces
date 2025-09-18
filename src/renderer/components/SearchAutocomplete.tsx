@@ -160,7 +160,7 @@ function SearchAutocomplete(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
 
   const firstRender = useFirstRender();
 

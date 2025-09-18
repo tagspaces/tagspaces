@@ -107,7 +107,7 @@ function TagLibrary(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
 
   useEffect(() => {
     if (currentWorkSpace) {
