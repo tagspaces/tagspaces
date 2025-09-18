@@ -34,10 +34,17 @@ import { Box, InputAdornment } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormHelperText from '@mui/material/FormHelperText';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { Pro } from '-/pro';
 
 interface Props {
   dataTid?: string;
@@ -57,15 +64,24 @@ function TagsSelect(props: Props) {
   const { t } = useTranslation();
   const { currentLocation } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+
   const desktopMode = useSelector(isDesktopMode);
   const isUseOnlyTagsFromTagLibrary = useSelector(useOnlyTagsFromTagLibrary);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null,
   );
-
   const [selectedTag, setSelectedTag] = useState(undefined);
   const tagsError = useRef<boolean>(false);
-  const allTags = useRef<Array<TS.Tag>>(getAllTags(tagGroups));
+  const allTags = useRef<Array<TS.Tag>>(
+    getAllTags(tagGroups, currentWorkSpace),
+  );
 
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -80,6 +96,11 @@ function TagsSelect(props: Props) {
     handleNewTags,
     generateButton,
   } = props;
+
+  useEffect(() => {
+    allTags.current = getAllTags(tagGroups, currentWorkSpace);
+    forceUpdate();
+  }, [currentWorkSpace, tagGroups]);
 
   function handleTagChange(
     event: Object,

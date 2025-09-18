@@ -312,6 +312,17 @@ function EditTagGroupDialog(props: Props) {
             setWorkSpaceId(event.target.value)
           }
         >
+          {workSpaceId && (
+            <MenuItem
+              key="wSpaceReset"
+              value={undefined}
+              data-tid={'wSpaceResetTID'}
+            >
+              <TsButton variant="outlined" size="small">
+                X
+              </TsButton>
+            </MenuItem>
+          )}
           {workSpaces.map((wSpace) => (
             <MenuItem
               key={wSpace.uuid}

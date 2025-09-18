@@ -817,32 +817,46 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              <FormControlLabel
-                labelPlacement="start"
-                style={{ justifyContent: 'space-between', marginLeft: 0 }}
-                control={
-                  <TsSelect
-                    disabled={!Pro}
-                    data-tid="locationTypeTID"
-                    value={workSpaceId}
-                    label={t('core:workSpaces')}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      setWorkSpaceId(event.target.value)
-                    }
-                  >
-                    {workSpaces.map((wSpace) => (
-                      <MenuItem
-                        key={wSpace.uuid}
-                        value={wSpace.uuid}
-                        data-tid={'wSpace' + wSpace.shortName + 'TID'}
-                      >
-                        {wSpace.shortName + '(' + wSpace.fullName + ')'}
-                      </MenuItem>
-                    ))}
-                  </TsSelect>
-                }
-                label={<>{t('core:workSpaces')}</>}
-              />
+              {workSpaces && workSpaces.length > 0 && (
+                <FormControlLabel
+                  labelPlacement="start"
+                  style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                  control={
+                    <TsSelect
+                      disabled={!Pro}
+                      data-tid="locationTypeTID"
+                      value={workSpaceId}
+                      label={t('core:workSpaces')}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        setWorkSpaceId(event.target.value)
+                      }
+                    >
+                      {workSpaceId && (
+                        <MenuItem
+                          key="wSpaceReset"
+                          value={undefined}
+                          data-tid={'wSpaceResetTID'}
+                        >
+                          <TsButton variant="outlined" size="small">
+                            X
+                          </TsButton>
+                        </MenuItem>
+                      )}
+
+                      {workSpaces.map((wSpace) => (
+                        <MenuItem
+                          key={wSpace.uuid}
+                          value={wSpace.uuid}
+                          data-tid={'wSpace' + wSpace.shortName + 'TID'}
+                        >
+                          {wSpace.shortName + '(' + wSpace.fullName + ')'}
+                        </MenuItem>
+                      ))}
+                    </TsSelect>
+                  }
+                  label={<>{t('core:workSpaces')}</>}
+                />
+              )}
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
