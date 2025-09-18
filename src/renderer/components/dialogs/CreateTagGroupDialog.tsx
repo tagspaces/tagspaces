@@ -50,6 +50,9 @@ import TransparentBackground from '../TransparentBackground';
 import ColorPickerDialog from './ColorPickerDialog';
 import TsDialogTitle from './components/TsDialogTitle';
 import { Pro } from '-/pro';
+import InputAdornment from '@mui/material/InputAdornment';
+import TsIconButton from '-/components/TsIconButton';
+import { RemoveIcon } from '-/components/CommonIcons';
 
 interface Props {
   open: boolean;
@@ -320,24 +323,29 @@ function CreateTagGroupDialog(props: Props) {
           <ListItemText primary={t('core:workSpaces')} />
           <TsSelect
             disabled={!Pro}
+            sx={{ minWidth: 200 }}
             data-tid="locationTypeTID"
             value={workSpaceId}
             label={t('core:workSpaces')}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setWorkSpaceId(event.target.value)
             }
+            slotProps={{
+              input: {
+                endAdornment: workSpaceId && (
+                  <InputAdornment position="end" sx={{ ml: -12 }}>
+                    <TsIconButton
+                      aria-label={t('core:deleteWSpace')}
+                      onClick={() => setWorkSpaceId(undefined)}
+                      data-tid="wSpaceResetTID"
+                    >
+                      <RemoveIcon />
+                    </TsIconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           >
-            {workSpaceId && (
-              <MenuItem
-                key="wSpaceReset"
-                value={undefined}
-                data-tid={'wSpaceResetTID'}
-              >
-                <TsButton variant="outlined" size="small">
-                  X
-                </TsButton>
-              </MenuItem>
-            )}
             {workSpaces.map((wSpace) => (
               <MenuItem
                 key={wSpace.uuid}
