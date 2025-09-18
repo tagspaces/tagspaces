@@ -46,40 +46,19 @@ export const slidesNames = [
 export function getProTeaserSlides(t) {
   const slidesEN = [];
   slidesEN[slidesNames[0]] = {
-    title: 'Why TagSpaces Pro ?',
+    title: t('ptsWhyTitle'),
     description: (
       <>
-        <p>
-          The TagSpaces project is fully supported by its subscribers. We do not
-          rely on advertising or data sharing for revenue, so purchasing a Pro
-          subscription directly supports the ongoing development of our core
-          product, TagSpaces Lite, as well as our browser extensions, which
-          remain free to use.
-        </p>
-        <p>
-          In addition, a Pro subscription unlocks a wide range of valuable
-          features, including advanced search capabilities, unique perspectives
-          for organizing your files and folders, and geo-tagging. Some of these
-          features will be highlighted in the following slides.
-        </p>
+        <p>{t('ptsWhySection1')}</p>
+        <p>{t('ptsWhySection2')}</p>
       </>
     ),
     pictureURL: ProTeaserImage,
     pictureHeight: 150,
   };
   slidesEN[slidesNames[1]] = {
-    title: 'Kanban Perspectives in TagSpaces Pro',
-    description: (
-      <>
-        This perspective transforms each folder into a Kanban board, where the
-        columns represent the subfolders of the current folder. Files within
-        these subfolders are displayed as tiles that can be easily moved between
-        columns using drag and drop. The columns themselves can also be
-        rearranged in the same way. Additionally, a built-in Trello import
-        feature allows you to import an exported Trello board directly into the
-        current folder.
-      </>
-    ),
+    title: t('ptsKanbanTitle'),
+    description: t('ptsKanban'),
     ctaURL: Links.documentationLinks.kanbanPerspective,
     ctaTitle: t('showMeMore'),
     pictureURL: KanbanImage,
@@ -189,7 +168,7 @@ export function getProTeaserSlides(t) {
         </ul>
         <small>
           <b>Note: </b>TagSpaces does not have a build-in AI functionality, it
-          relays entirely on the external local LLM models.
+          relays entirely on the external LLM models.
         </small>
       </>
     ),
