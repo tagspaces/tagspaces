@@ -53,9 +53,11 @@ import Typography from '@mui/material/Typography';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -68,6 +70,13 @@ function EditSearchQuery(props: Props) {
   const { tempSearchQuery, setTempSearchQuery, clearSearch, executeSearch } =
     useSearchQueryContext();
   const { isIndexing } = useLocationIndexContext();
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
 
   const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -266,7 +275,7 @@ function EditSearchQuery(props: Props) {
             tooltip={t('searchInAllLocationTooltip')}
             value="global"
           >
-            {t('globalSearch')}
+            {currentWorkSpace ? currentWorkSpace.shortName : t('globalSearch')}
           </TsToggleButton>
         </ToggleButtonGroup>
       </FormControl>

@@ -155,6 +155,12 @@ function SearchAutocomplete(props: Props) {
 
   // const mainSearchField = useRef<HTMLInputElement>(null);
   const isOpen = useRef<boolean>(true);
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
 
   const firstRender = useFirstRender();
 
@@ -307,7 +313,7 @@ function SearchAutocomplete(props: Props) {
             textQuery: txtQuery,
           };
           if (searchBoxing === 'global') {
-            searchAllLocations(sQuery);
+            searchAllLocations(sQuery, currentWorkSpace);
           } else {
             searchLocationIndex(sQuery);
           }

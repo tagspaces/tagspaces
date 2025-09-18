@@ -40,9 +40,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidePanelTitle from '../SidePanelTitle';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   exportLocations: () => void;
@@ -56,9 +57,16 @@ function LocationManagerMenu(props: Props) {
 
   const { createLocationsIndexes } = useLocationIndexContext();
   const { closeAllLocations } = useCurrentLocationContext();
-  const { openLinkDialog } = useLinkDialogContext();
+  //const { openLinkDialog } = useLinkDialogContext();
   const [locationManagerMenuAnchorEl, setLocationManagerMenuAnchorEl] =
     useState<null | HTMLElement>(null);
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace = workSpacesContext.getCurrentWorkSpace();
+
   const menuItems = [];
   if (!AppConfig.locationsReadOnly) {
     menuItems.push(
@@ -152,7 +160,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="updateAllLocationIndexes"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        createLocationsIndexes();
+        createLocationsIndexes(true, currentWorkSpace);
       }}
     >
       <ListItemIcon>
