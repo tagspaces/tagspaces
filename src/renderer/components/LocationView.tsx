@@ -35,6 +35,8 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
@@ -55,11 +57,10 @@ import { useDispatch } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
-import { useFileUploadContext } from '-/hooks/useFileUploadContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 interface Props {
   location: SubFolder;
+  workspace?: TS.WorkSpace;
   hideDrawer?: () => void;
 }
 
@@ -86,7 +87,7 @@ function LocationView(props: Props) {
   const theme = useTheme();
 
   const dispatch: AppDispatch = useDispatch();
-  const { location, hideDrawer } = props;
+  const { location, hideDrawer, workspace } = props;
   const subFolderLocation = findLocation(location.locationID);
   const isCloudLocation = subFolderLocation?.type === locationType.TYPE_CLOUD;
 
@@ -242,6 +243,11 @@ function LocationView(props: Props) {
         noWrap
       >
         <Tooltip title={locationNameTitle}>{location.name}</Tooltip>
+        {workspace && (
+          <Tooltip title={t('core:workspace') + ': ' + workspace.fullName}>
+            {' - ' + workspace.shortName}
+          </Tooltip>
+        )}
       </Typography>
     </div>
   );

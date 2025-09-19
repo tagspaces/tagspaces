@@ -93,14 +93,13 @@ function LocationManager(props: Props) {
   const { reduceHeightBy, show } = props;
   const currentLocation = findLocation();
 
-  function getWorkSpaceName(l) {
+  function getWorkSpace(l) {
     if (l.workSpaceId) {
       const wSpace = workSpacesContext.getWorkSpace(l.workSpaceId);
       if (wSpace) {
-        return ' - ' + wSpace.shortName;
+        return wSpace;
       }
     }
-    return '';
   }
 
   return (
@@ -179,10 +178,11 @@ function LocationManager(props: Props) {
                       >
                         <LocationView
                           key={location.uuid}
+                          workspace={getWorkSpace(location)}
                           location={{
                             isFile: false,
                             lmdt: 0,
-                            name: location.name + getWorkSpaceName(location),
+                            name: location.name,
                             path: location.path,
                             size: 0,
                             locationID: location.uuid,

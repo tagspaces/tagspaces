@@ -202,7 +202,9 @@ function CreateTagGroupDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ paddingTop: 10, minWidth: 300 }}>
+      <DialogContent
+        style={{ overflowY: 'visible', overflowX: 'hidden', minWidth: 300 }}
+      >
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}
@@ -218,7 +220,7 @@ function CreateTagGroupDialog(props: Props) {
           )}
         </FormControl>
         {saveTagsInLocation && (
-          <FormControl fullWidth={true} error={inputError}>
+          <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
             <TsSelect
               data-tid="tagGroupLocationTID"
               label={t('core:tagGroupLocation')}
@@ -246,8 +248,45 @@ function CreateTagGroupDialog(props: Props) {
                 </MenuItem>
               ))}
             </TsSelect>
-          </FormControl>
+          </ListItem>
         )}
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0, width: '100%' }}>
+          <TsSelect
+            disabled={!Pro}
+            data-tid="taggroupWorkspaceTID"
+            value={workSpaceId}
+            fullWidth
+            label={t('core:workspace')}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setWorkSpaceId(event.target.value)
+            }
+            slotProps={{
+              input: {
+                endAdornment: workSpaceId && (
+                  <InputAdornment position="end" sx={{ ml: -12 }}>
+                    <TsIconButton
+                      aria-label={t('core:deleteWSpace')}
+                      onClick={() => setWorkSpaceId('')}
+                      data-tid="wSpaceResetTID"
+                    >
+                      <RemoveIcon />
+                    </TsIconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          >
+            {workSpaces.map((wSpace) => (
+              <MenuItem
+                key={wSpace.uuid}
+                value={wSpace.uuid}
+                data-tid={'wSpace' + wSpace.shortName + 'TID'}
+              >
+                {wSpace.shortName + ' - ' + wSpace.fullName}
+              </MenuItem>
+            ))}
+          </TsSelect>
+        </ListItem>
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
@@ -318,43 +357,6 @@ function CreateTagGroupDialog(props: Props) {
             </span>
             <span style={{ margin: 3 }} />
           </Tag>
-        </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <ListItemText primary={t('core:workspace')} />
-          <TsSelect
-            disabled={!Pro}
-            style={{ minWidth: 200 }}
-            data-tid="taggroupWorkspaceTID"
-            value={workSpaceId}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setWorkSpaceId(event.target.value)
-            }
-            slotProps={{
-              input: {
-                endAdornment: workSpaceId && (
-                  <InputAdornment position="end" sx={{ ml: -12 }}>
-                    <TsIconButton
-                      aria-label={t('core:deleteWSpace')}
-                      onClick={() => setWorkSpaceId('')}
-                      data-tid="wSpaceResetTID"
-                    >
-                      <RemoveIcon />
-                    </TsIconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          >
-            {workSpaces.map((wSpace) => (
-              <MenuItem
-                key={wSpace.uuid}
-                value={wSpace.uuid}
-                data-tid={'wSpace' + wSpace.shortName + 'TID'}
-              >
-                {wSpace.shortName + ' - ' + wSpace.fullName}
-              </MenuItem>
-            ))}
-          </TsSelect>
         </ListItem>
       </DialogContent>
       {!smallScreen && (

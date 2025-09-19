@@ -182,7 +182,7 @@ function EditTagGroupDialog(props: Props) {
   );
 
   const renderContent = (
-    <DialogContent style={{ overflow: 'visible' }}>
+    <DialogContent style={{ overflowY: 'visible', overflowX: 'hidden' }}>
       <FormControl
         fullWidth={true}
         error={inputError}
@@ -202,12 +202,10 @@ function EditTagGroupDialog(props: Props) {
         )}
       </FormControl>
       {saveTagInLocation && (
-        <FormControl fullWidth={true} error={inputError}>
-          <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-            {t('core:tagGroupLocation')}
-          </FormHelperText>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
-            fullWidth={false}
+            fullWidth
+            label={t('core:tagGroupLocation')}
             defaultValue={
               selectedTagGroupEntry.locationId || defaultTagGroupLocation
             }
@@ -227,8 +225,45 @@ function EditTagGroupDialog(props: Props) {
               </MenuItem>
             ))}
           </TsSelect>
-        </FormControl>
+        </ListItem>
       )}
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <TsSelect
+          disabled={!Pro}
+          data-tid="taggroupWorkspaceTID"
+          value={workSpaceId}
+          fullWidth
+          label={t('core:workspace')}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setWorkSpaceId(event.target.value)
+          }
+          slotProps={{
+            input: {
+              endAdornment: workSpaceId && (
+                <InputAdornment position="end" sx={{ ml: -12 }}>
+                  <TsIconButton
+                    aria-label={t('core:deleteWSpace')}
+                    onClick={() => setWorkSpaceId('')}
+                    data-tid="wSpaceResetTID"
+                  >
+                    <RemoveIcon />
+                  </TsIconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        >
+          {workSpaces.map((wSpace) => (
+            <MenuItem
+              key={wSpace.uuid}
+              value={wSpace.uuid}
+              data-tid={'wSpace' + wSpace.shortName + 'TID'}
+            >
+              {wSpace.shortName + ' - ' + wSpace.fullName}
+            </MenuItem>
+          ))}
+        </TsSelect>
+      </ListItem>
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('tagBackgroundColor')} />
         <TransparentBackground>
@@ -302,43 +337,6 @@ function EditTagGroupDialog(props: Props) {
           onClick={() => setApplyChanges(!applyChanges)}
           checked={applyChanges}
         />
-      </ListItem>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <ListItemText primary={t('core:workspace')} />
-        <TsSelect
-          disabled={!Pro}
-          style={{ minWidth: 200 }}
-          data-tid="taggroupWorkspaceTID"
-          value={workSpaceId}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setWorkSpaceId(event.target.value)
-          }
-          slotProps={{
-            input: {
-              endAdornment: workSpaceId && (
-                <InputAdornment position="end" sx={{ ml: -12 }}>
-                  <TsIconButton
-                    aria-label={t('core:deleteWSpace')}
-                    onClick={() => setWorkSpaceId('')}
-                    data-tid="wSpaceResetTID"
-                  >
-                    <RemoveIcon />
-                  </TsIconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        >
-          {workSpaces.map((wSpace) => (
-            <MenuItem
-              key={wSpace.uuid}
-              value={wSpace.uuid}
-              data-tid={'wSpace' + wSpace.shortName + 'TID'}
-            >
-              {wSpace.shortName + ' - ' + wSpace.fullName}
-            </MenuItem>
-          ))}
-        </TsSelect>
       </ListItem>
     </DialogContent>
   );

@@ -23,6 +23,7 @@ import {
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
+import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
@@ -33,6 +34,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import React, { useContext, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   index: number;
@@ -58,7 +60,7 @@ function TagGroupTitleDnD(props: Props) {
   } = props;
   const { findLocation } = useCurrentLocationContext();
   const tagGroupRef = useRef<HTMLSpanElement>(null);
-
+  const { t } = useTranslation();
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
         Pro.contextProviders.WorkSpacesContext,
@@ -134,6 +136,28 @@ function TagGroupTitleDnD(props: Props) {
 
   const readOnly = tagGroup.readOnly ? 'read-only ' : '';
 
+  const currentWorkspace = workSpacesContext.getWorkSpace(tagGroup.workSpaceId);
+  const taggroupWorkspace = tagGroup.workSpaceId ? (
+    <TooltipTS title={t('core:workspace') + ': ' + currentWorkspace?.fullName}>
+      <span> - {currentWorkspace?.shortName}</span>
+    </TooltipTS>
+  ) : (
+    ''
+  );
+
+  const taggroupTitle = (
+    <TooltipTS
+      title={
+        'Number of tags in this ' +
+        readOnly +
+        'tag group: ' +
+        tagGroup.children.length
+      }
+    >
+      {tagGroup.title + getLocationName(tagGroup.locationId)}
+    </TooltipTS>
+  );
+
   const tagGroupTitle = (
     <Box
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
@@ -142,12 +166,6 @@ function TagGroupTitleDnD(props: Props) {
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
       }}
-      title={
-        'Number of tags in this ' +
-        readOnly +
-        'tag group: ' +
-        tagGroup.children.length
-      }
     >
       <Grid
         container
@@ -177,13 +195,8 @@ function TagGroupTitleDnD(props: Props) {
             noWrap
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
           >
-            {tagGroup.title +
-              getLocationName(tagGroup.locationId) +
-              (tagGroup.workSpaceId
-                ? ' - ' +
-                  workSpacesContext.getWorkSpace(tagGroup.workSpaceId)
-                    ?.shortName
-                : '')}
+            {taggroupTitle}
+            {taggroupWorkspace}
             {!tagGroup.expanded && (
               <span
                 style={{

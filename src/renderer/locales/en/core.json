@@ -1041,7 +1041,7 @@
   "fullName": "Full name",
   "shortName": "Short name",
   "shortNameRequired": "Short name required",
-  "shortNameMaxLength": "Short name max. 5 chars",
+  "shortNameMaxLength": "Short name should be max. 5 characters",
   "fullNameRequired": "Full name required",
   "-": "-"
 }

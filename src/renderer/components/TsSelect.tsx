@@ -26,12 +26,12 @@ import { useSelector } from 'react-redux';
 type TSSelectProps = TextFieldProps & {};
 
 function TsSelect(props: TSSelectProps) {
-  const { children, label } = props;
+  const { children, label, fullWidth = true } = props;
   const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
 
   return (
-    <div>
+    <div style={{ width: fullWidth ? '100%' : 'auto' }}>
       <FormHelperText style={{ marginLeft: 5, marginTop: 0 }}>
         {label}
       </FormHelperText>
@@ -43,6 +43,7 @@ function TsSelect(props: TSSelectProps) {
           cursor: 'context-menu',
           marginTop: 0,
         }}
+        fullWidth={fullWidth}
         select
         {...props}
         label={undefined}
