@@ -63,7 +63,11 @@ function LocationManager(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
+
+  const currentWorkSpace =
+    workSpacesContext && workSpacesContext.getCurrentWorkSpace
+      ? workSpacesContext?.getCurrentWorkSpace()
+      : undefined;
 
   useEffect(() => {
     if (currentWorkSpace) {

@@ -76,7 +76,10 @@ function EditSearchQuery(props: Props) {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace();
+  const currentWorkSpace =
+    workSpacesContext && workSpacesContext.getCurrentWorkSpace
+      ? workSpacesContext?.getCurrentWorkSpace()
+      : undefined;
 
   const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
