@@ -105,6 +105,7 @@ const DirectoryTreeView = forwardRef(
           attachNewChildren(
             {
               isFile: false,
+              cdt: 0,
               lmdt: 0,
               name: location.name,
               path: currentDirectoryPath,
@@ -140,6 +141,7 @@ const DirectoryTreeView = forwardRef(
         } else {
           loadSubDirectories({
             isFile: false,
+            cdt: 0,
             lmdt: 0,
             name: newLocation.name,
             path: newLocation.path,

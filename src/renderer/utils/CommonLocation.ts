@@ -527,6 +527,7 @@ export class CommonLocation implements TS.Location {
       }),
       tags,
       size: 0,
+      cdt: new Date().getTime(),
       lmdt: new Date().getTime(),
       path: entryPath,
     };
