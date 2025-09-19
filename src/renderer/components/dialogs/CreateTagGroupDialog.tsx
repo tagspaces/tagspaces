@@ -19,12 +19,16 @@
 import AppConfig from '-/AppConfig';
 import { RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
+import { ProLabel } from '-/components/HelperComponents';
 import Tag from '-/components/Tag';
+import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
@@ -50,9 +54,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TransparentBackground from '../TransparentBackground';
-import ColorPickerDialog from './ColorPickerDialog';
-import TsDialogTitle from './components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -250,13 +251,18 @@ function CreateTagGroupDialog(props: Props) {
             </TsSelect>
           </ListItem>
         )}
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0, width: '100%' }}>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
             disabled={!Pro}
             data-tid="taggroupWorkspaceTID"
             value={workSpaceId}
             fullWidth
-            label={t('core:workspace')}
+            label={
+              <>
+                {t('core:workspace')}
+                <ProLabel />
+              </>
+            }
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setWorkSpaceId(event.target.value)
             }

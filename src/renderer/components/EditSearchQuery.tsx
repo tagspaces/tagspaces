@@ -590,7 +590,7 @@ function EditSearchQuery(props: Props) {
         <TooltipTS title={t('enterTimePeriodTooltip')}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box position="relative" display="inline-flex">
-              <div>
+              <div style={{ maxWidth: 180 }}>
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodFrom')}
                 </FormHelperText>
@@ -610,7 +610,7 @@ function EditSearchQuery(props: Props) {
                   }}
                 />
               </div>
-              <div style={{ marginLeft: 5 }}>
+              <div style={{ marginLeft: 5, maxWidth: 180 }}>
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodTo')}
                 </FormHelperText>

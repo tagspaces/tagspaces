@@ -554,8 +554,18 @@ function SettingsAdvanced(props: Props) {
         />
       )}
       <ListItem>
-        <ListItemText primary={t('core:workspaces')} />
-        <TsButton onClick={(event) => editWorkSpacesClick(event)}>
+        <ListItemText
+          primary={
+            <>
+              {t('core:workspaces')}
+              <ProLabel />
+            </>
+          }
+        />
+        <TsButton
+          disabled={!Pro}
+          onClick={(event) => editWorkSpacesClick(event)}
+        >
           {t('addWorkspace')}
         </TsButton>
       </ListItem>
@@ -575,9 +585,10 @@ function SettingsAdvanced(props: Props) {
                 primary={workSpace.fullName + ' - ' + workSpace.shortName}
               />
               <TsIconButton
-                aria-label={t('core:options')}
+                aria-label={'Edit workspace'}
                 aria-haspopup="true"
                 edge="end"
+                disabled={!Pro}
                 data-tid={'workSpaceEdit_' + workSpace.shortName}
                 onClick={(event) => editWorkSpacesClick(event, workSpace)}
               >

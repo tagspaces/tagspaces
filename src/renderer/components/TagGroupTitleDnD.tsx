@@ -136,7 +136,9 @@ function TagGroupTitleDnD(props: Props) {
 
   const readOnly = tagGroup.readOnly ? 'read-only ' : '';
 
-  const currentWorkspace = workSpacesContext.getWorkSpace(tagGroup.workSpaceId);
+  const currentWorkspace = workSpacesContext?.getWorkSpace(
+    tagGroup.workSpaceId,
+  );
   const taggroupWorkspace = tagGroup.workSpaceId ? (
     <TooltipTS title={t('core:workspace') + ': ' + currentWorkspace?.fullName}>
       <span> - {currentWorkspace?.shortName}</span>

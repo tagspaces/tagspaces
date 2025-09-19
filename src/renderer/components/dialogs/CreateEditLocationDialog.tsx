@@ -998,11 +998,7 @@ function CreateEditLocationDialog(props: Props) {
                         : t('core:renameFile')}
                     </TsButton>
                   }
-                  label={
-                    <Typography variant="caption" display="block" gutterBottom>
-                      {t('core:fileTaggingSetting')}
-                    </Typography>
-                  }
+                  label={t('core:fileTaggingSetting')}
                 />
               ) : (
                 <FormControlLabel
@@ -1083,24 +1079,6 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
-              <FormControl fullWidth={true}>
-                <TsTextField
-                  name="autoOpenedFilename"
-                  data-tid="autoOpenedFilenameTID"
-                  placeholder={
-                    t('core:forExample') + ': index.md, index.html or readme.md'
-                  }
-                  onChange={(event) =>
-                    setAutoOpenedFilename(event.target.value)
-                  }
-                  updateValue={(value) => {
-                    setAutoOpenedFilename(value);
-                  }}
-                  retrieveValue={() => autoOpenedFilename}
-                  value={autoOpenedFilename}
-                  label={t('core:autoOpenedFilename')}
-                />
-              </FormControl>
               <>
                 <FormControlLabel
                   disabled={!Pro}
@@ -1174,6 +1152,24 @@ function CreateEditLocationDialog(props: Props) {
                   />
                 )}
               </>
+              <FormControl fullWidth={true} style={{ marginTop: 10 }}>
+                <TsTextField
+                  name="autoOpenedFilename"
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  updateValue={(value) => {
+                    setAutoOpenedFilename(value);
+                  }}
+                  retrieveValue={() => autoOpenedFilename}
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
+                />
+              </FormControl>
               <FormControl fullWidth={true} style={{ marginTop: 10 }}>
                 <TsTextField
                   required
