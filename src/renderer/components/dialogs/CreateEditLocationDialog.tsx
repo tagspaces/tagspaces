@@ -818,49 +818,46 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              {workSpaces && workSpaces.length > 0 && (
-                <FormControlLabel
-                  labelPlacement="start"
-                  style={{ justifyContent: 'space-between', marginLeft: 0 }}
-                  control={
-                    <TsSelect
-                      disabled={!Pro}
-                      style={{ minWidth: 200 }}
-                      data-tid="locationWorkspaceTID"
-                      value={workSpaceId}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setWorkSpaceId(event.target.value)
-                      }
-                      slotProps={{
-                        input: {
-                          endAdornment: workSpaceId && (
-                            <InputAdornment position="end" sx={{ ml: -12 }}>
-                              <TsIconButton
-                                aria-label={t('core:deleteWSpace')}
-                                onClick={() => setWorkSpaceId('')}
-                                data-tid="wSpaceResetTID"
-                              >
-                                <RemoveIcon />
-                              </TsIconButton>
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    >
-                      {workSpaces.map((wSpace) => (
-                        <MenuItem
-                          key={wSpace.uuid}
-                          value={wSpace.uuid}
-                          data-tid={'wSpace' + wSpace.shortName + 'TID'}
+              <TsSelect
+                label={
+                  <>
+                    {t('core:workspace')}
+                    <ProLabel />
+                  </>
+                }
+                disabled={!Pro}
+                style={{ minWidth: 200 }}
+                data-tid="locationWorkspaceTID"
+                value={workSpaceId}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWorkSpaceId(event.target.value)
+                }
+                slotProps={{
+                  input: {
+                    endAdornment: workSpaceId && (
+                      <InputAdornment position="end" sx={{ ml: -12 }}>
+                        <TsIconButton
+                          aria-label={t('core:deleteWSpace')}
+                          onClick={() => setWorkSpaceId('')}
+                          data-tid="wSpaceResetTID"
                         >
-                          {wSpace.shortName + ' - ' + wSpace.fullName}
-                        </MenuItem>
-                      ))}
-                    </TsSelect>
-                  }
-                  label={<>{t('core:workspace')}</>}
-                />
-              )}
+                          <RemoveIcon />
+                        </TsIconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              >
+                {workSpaces?.map((wSpace) => (
+                  <MenuItem
+                    key={wSpace.uuid}
+                    value={wSpace.uuid}
+                    data-tid={'wSpace' + wSpace.shortName + 'TID'}
+                  >
+                    {wSpace.shortName + ' - ' + wSpace.fullName}
+                  </MenuItem>
+                ))}
+              </TsSelect>
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
