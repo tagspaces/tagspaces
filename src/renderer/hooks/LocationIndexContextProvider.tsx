@@ -60,10 +60,16 @@ type LocationIndexContextData = {
     location: CommonLocation,
     force?: boolean,
   ) => Promise<boolean>;
-  createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
+  createLocationsIndexes: (
+    extractText?: boolean,
+    workSpace?: TS.WorkSpace,
+  ) => Promise<boolean>;
   clearDirectoryIndex: (persist?: boolean) => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
+  searchAllLocations: (
+    searchQuery: TS.SearchQuery,
+    workSpace?: TS.WorkSpace,
+  ) => void;
   setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
   //indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
@@ -562,9 +568,15 @@ export const LocationIndexContextProvider = ({
     });
   }
 
-  async function createLocationsIndexes(extractText = true): Promise<boolean> {
+  async function createLocationsIndexes(
+    extractText = true,
+    workSpace: TS.WorkSpace = undefined,
+  ): Promise<boolean> {
     walkingRef.current = true;
-    for (let location of locations) {
+    const searchingLocation = workSpace
+      ? locations.filter((l) => l.workSpaceId === workSpace.uuid)
+      : locations;
+    for (let location of searchingLocation) {
       try {
         if (!location.disableIndexing) {
           const locationPath = await getLocationPath(location);
@@ -758,7 +770,10 @@ export const LocationIndexContextProvider = ({
     }, 50);
   }
 
-  function searchAllLocations(searchQuery: TS.SearchQuery) {
+  function searchAllLocations(
+    searchQuery: TS.SearchQuery,
+    workSpace: TS.WorkSpace = undefined,
+  ) {
     console.time('globalSearch');
     setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
@@ -767,8 +782,10 @@ export const LocationIndexContextProvider = ({
     //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
-
-    const result = locations.reduce(
+    const searchingLocation = workSpace
+      ? locations.filter((l) => l.workSpaceId === workSpace.uuid)
+      : locations;
+    const result = searchingLocation.reduce(
       (accumulatorPromise, location) =>
         accumulatorPromise.then(async () => {
           // cancel search if max search result count reached

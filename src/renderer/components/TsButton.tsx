@@ -37,28 +37,32 @@ export type TSButtonProps = ButtonProps & {
   startIcon?: React.ReactNode;
 };
 
-function TsButton(props: TSButtonProps) {
-  const { children, style, tooltip, loading, startIcon, ...rest } = props;
-  const desktopMode = useSelector(isDesktopMode);
-  const button = (
-    <Button
-      loading={loading}
-      size={desktopMode ? 'small' : 'medium'}
-      {...(startIcon && { startIcon: startIcon })}
-      variant="outlined" // text outlined contained
-      {...rest}
-      style={{
-        borderRadius: AppConfig.defaultCSSRadius,
-        textTransform: 'none', //'capitalize',
-        fontSize: 14,
-        fontWeight: 'normal',
-        ...style,
-      }}
-    >
-      {children}
-    </Button>
-  );
-  return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
-}
+//function TsButton(props: TSButtonProps) {
+const TsButton = React.forwardRef<HTMLButtonElement, TSButtonProps>(
+  function TsButton(props, ref) {
+    const { children, style, tooltip, loading, startIcon, ...rest } = props;
+    const desktopMode = useSelector(isDesktopMode);
+    const button = (
+      <Button
+        ref={ref}
+        loading={loading}
+        size={desktopMode ? 'small' : 'medium'}
+        {...(startIcon && { startIcon: startIcon })}
+        variant="outlined" // text outlined contained
+        {...rest}
+        style={{
+          borderRadius: AppConfig.defaultCSSRadius,
+          textTransform: 'none', //'capitalize',
+          fontSize: 14,
+          fontWeight: 'normal',
+          ...style,
+        }}
+      >
+        {children}
+      </Button>
+    );
+    return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
+  },
+);
 
 export default TsButton;

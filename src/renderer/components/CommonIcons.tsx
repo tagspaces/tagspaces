@@ -28,6 +28,8 @@ export const MarkdownFileIcon = (props) => (
   <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} />
 );
 
+export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutline';
+
 export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';

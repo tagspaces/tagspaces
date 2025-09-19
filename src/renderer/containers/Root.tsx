@@ -15,154 +15,173 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-import React, { useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { Store } from 'redux';
 import AppConfig from '-/AppConfig';
-import { actions as AppActions } from '../reducers/app';
+import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
 import App from '-/containers/App';
+import DialogsRoot from '-/containers/DialogsRoot';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
-import i18nInit from '-/services/i18nInit';
-import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
-import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
-import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
-import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
-import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
-import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
-import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
-import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
-import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
-import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
-import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
-import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
-import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
-import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
-import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
-import { Pro } from '-/pro';
-import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
-import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
-import { UserContextProvider } from '-/hooks/UserContextProvider';
-import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
-import DialogsRoot from '-/containers/DialogsRoot';
 import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
 import { ChatContextProvider } from '-/hooks/ChatProvider';
-import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
+import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
+import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
+import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
+import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
+import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
 import { EntryPropsTabsContextProvider } from '-/hooks/EntryPropsTabsContextProvider';
-import { SearchQueryContextProvider } from '-/hooks/SearchQueryContextProvider';
-import { HistoryContextProvider } from '-/hooks/HistoryContextProvider';
+import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
+import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
+import { HistoryContextProvider } from '-/hooks/HistoryContextProvider';
+import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
+import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
+import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
+import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
+import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
+import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
+import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
+import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
+import { SearchQueryContextProvider } from '-/hooks/SearchQueryContextProvider';
+import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
+import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
+import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
+import { UserContextProvider } from '-/hooks/UserContextProvider';
+import { Pro } from '-/pro';
+import i18nInit from '-/services/i18nInit';
+import React, { useEffect, useMemo, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Provider as ReduxProvider } from 'react-redux';
+import { Store } from 'redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { actions as AppActions } from '../reducers/app';
 
 type RootType = {
   store: Store<{}>;
-  persistor: {};
+  persistor: any;
 };
+
+/**
+ * Compose an array of providers (components that accept children) around children.
+ */
+function composeProviders(
+  providers: React.ComponentType<{ children?: React.ReactNode }>[],
+  children: React.ReactNode,
+) {
+  return providers.reduceRight<React.ReactNode>((acc, Provider) => {
+    return <Provider>{acc}</Provider>;
+  }, children);
+}
+
+/* Few small wrappers where provider needs props */
+const DndWrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
+  <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+);
+
+/* The stack of Pro-only feature providers (WorkSpaces removed from here). */
+const ProFeatureStack: React.FC = () => (
+  <Pro.contextProviders.BookmarksContextProvider>
+    <Pro.contextProviders.KanBanImportDialogContextProvider>
+      <Pro.contextProviders.ThumbDialogContextProvider>
+        <Pro.contextProviders.BgndDialogContextProvider>
+          <Pro.contextProviders.AiTemplatesContextProvider>
+            <Pro.contextProviders.FileTemplatesContextProvider>
+              <Pro.contextProviders.WorkSpacesContextProvider>
+                <ChatContextProvider>
+                  <DialogsRoot>
+                    <MainPage />
+                  </DialogsRoot>
+                </ChatContextProvider>
+              </Pro.contextProviders.WorkSpacesContextProvider>
+            </Pro.contextProviders.FileTemplatesContextProvider>
+          </Pro.contextProviders.AiTemplatesContextProvider>
+        </Pro.contextProviders.BgndDialogContextProvider>
+      </Pro.contextProviders.ThumbDialogContextProvider>
+    </Pro.contextProviders.KanBanImportDialogContextProvider>
+  </Pro.contextProviders.BookmarksContextProvider>
+);
+
+/* Non-pro fallback content */
+const NonProInner: React.FC = () => (
+  <ChatContextProvider>
+    <DialogsRoot>
+      <MainPage />
+    </DialogsRoot>
+  </ChatContextProvider>
+);
+
+/* Providers that are shared and can be composed programmatically */
+const SHARED_PROVIDERS = [
+  NotificationContextProvider,
+  CurrentLocationContextProvider,
+  EditedEntryContextProvider,
+  EditedEntryMetaContextProvider,
+  PerspectiveActionsContextProvider,
+  SelectedEntryContextProvider,
+  DirectoryContentContextProvider,
+  FSWatcherContextProvider,
+  PlatformFacadeContextProvider,
+  LocationIndexContextProvider,
+  IOActionsContextProvider,
+  EntryPropsTabsContextProvider,
+  OpenedEntryContextProvider,
+  TagGroupsLocationContextProvider,
+  EditedTagLibraryContextProvider,
+  TaggingActionsContextProvider,
+  DndWrapper, // wrapper that passes backend prop
+  ExtensionsContextProvider,
+  PanelsContextProvider,
+  UserContextProvider,
+  SavedSearchesContextProvider,
+  SearchQueryContextProvider,
+  BrowserHistoryContextProvider,
+  FileUploadContextProvider,
+  FileUploadDialogContextProvider,
+  HistoryContextProvider,
+] as React.ComponentType<any>[];
 
 export default function Root({ store, persistor }: RootType) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // @ts-ignore
-    const language: string = store.getState().settings.interfaceLanguage;
-    i18nInit(language).then(() => setInitialized(true));
+    // Safe read of language setting; fall back to 'en' if anything is missing
+    try {
+      const language: string =
+        (store.getState() as any).settings?.interfaceLanguage ?? 'en';
+      i18nInit(language)
+        .then(() => setInitialized(true))
+        .catch(() => setInitialized(true));
+    } catch (err) {
+      // if anything goes wrong, still allow app to render
+      setInitialized(true);
+    }
+    // we intentionally run this once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * IMPORTANT: this hook must run on every render — even while `initialized` is false —
+   * otherwise hook order will change between renders and React will throw.
+   *
+   * If `Pro` can change at runtime, include it in deps: [Pro] (but usually it's static).
+   */
+  const appInner = useMemo(() => {
+    const inner = Pro ? <ProFeatureStack /> : <NonProInner />;
+    return composeProviders(SHARED_PROVIDERS, inner);
+  }, []); // keep empty if Pro is static; add [Pro] if Pro can change during runtime
 
   if (!initialized) {
     return <span />;
   }
 
-  let appContent = (
-    <App>
-      <NotificationContextProvider>
-        <CurrentLocationContextProvider>
-          <EditedEntryContextProvider>
-            <EditedEntryMetaContextProvider>
-              <PerspectiveActionsContextProvider>
-                <SelectedEntryContextProvider>
-                  <DirectoryContentContextProvider>
-                    <FSWatcherContextProvider>
-                      <PlatformFacadeContextProvider>
-                        <LocationIndexContextProvider>
-                          <IOActionsContextProvider>
-                            <EntryPropsTabsContextProvider>
-                              <OpenedEntryContextProvider>
-                                <TagGroupsLocationContextProvider>
-                                  <EditedTagLibraryContextProvider>
-                                    <TaggingActionsContextProvider>
-                                      <DndProvider backend={HTML5Backend}>
-                                        <ExtensionsContextProvider>
-                                          <PanelsContextProvider>
-                                            <UserContextProvider>
-                                              <SavedSearchesContextProvider>
-                                                <SearchQueryContextProvider>
-                                                  <BrowserHistoryContextProvider>
-                                                    <FileUploadContextProvider>
-                                                      <FileUploadDialogContextProvider>
-                                                        <HistoryContextProvider>
-                                                          {Pro ? (
-                                                            <Pro.contextProviders.BookmarksContextProvider>
-                                                              <Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                                <Pro.contextProviders.ThumbDialogContextProvider>
-                                                                  <Pro.contextProviders.BgndDialogContextProvider>
-                                                                    <Pro.contextProviders.AiTemplatesContextProvider>
-                                                                      <Pro.contextProviders.FileTemplatesContextProvider>
-                                                                        <ChatContextProvider>
-                                                                          <DialogsRoot>
-                                                                            <MainPage />
-                                                                          </DialogsRoot>
-                                                                        </ChatContextProvider>
-                                                                      </Pro.contextProviders.FileTemplatesContextProvider>
-                                                                    </Pro.contextProviders.AiTemplatesContextProvider>
-                                                                  </Pro.contextProviders.BgndDialogContextProvider>
-                                                                </Pro.contextProviders.ThumbDialogContextProvider>
-                                                              </Pro.contextProviders.KanBanImportDialogContextProvider>
-                                                            </Pro.contextProviders.BookmarksContextProvider>
-                                                          ) : (
-                                                            <ChatContextProvider>
-                                                              <DialogsRoot>
-                                                                <MainPage />
-                                                              </DialogsRoot>
-                                                            </ChatContextProvider>
-                                                          )}
-                                                        </HistoryContextProvider>
-                                                      </FileUploadDialogContextProvider>
-                                                    </FileUploadContextProvider>
-                                                  </BrowserHistoryContextProvider>
-                                                </SearchQueryContextProvider>
-                                              </SavedSearchesContextProvider>
-                                            </UserContextProvider>
-                                          </PanelsContextProvider>
-                                        </ExtensionsContextProvider>
-                                      </DndProvider>
-                                    </TaggingActionsContextProvider>
-                                  </EditedTagLibraryContextProvider>
-                                </TagGroupsLocationContextProvider>
-                              </OpenedEntryContextProvider>
-                            </EntryPropsTabsContextProvider>
-                          </IOActionsContextProvider>
-                        </LocationIndexContextProvider>
-                      </PlatformFacadeContextProvider>
-                    </FSWatcherContextProvider>
-                  </DirectoryContentContextProvider>
-                </SelectedEntryContextProvider>
-              </PerspectiveActionsContextProvider>
-            </EditedEntryMetaContextProvider>
-          </EditedEntryContextProvider>
-        </CurrentLocationContextProvider>
-      </NotificationContextProvider>
-    </App>
-  );
+  let appContent = <App>{appInner}</App>;
 
   if (AppConfig.isWeb) {
     appContent = <TsAuth>{appContent}</TsAuth>;
   }
 
   return (
-    <Provider
+    <ReduxProvider
       // @ts-ignore
       store={store}
     >
@@ -188,6 +207,6 @@ export default function Root({ store, persistor }: RootType) {
       >
         {appContent}
       </PersistGate>
-    </Provider>
+    </ReduxProvider>
   );
 }

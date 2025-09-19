@@ -48,11 +48,12 @@ import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { Box } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { Pro } from '-/pro';
 
 interface Props {
   style?: any;
@@ -72,6 +73,8 @@ function TagLibrary(props: Props) {
   const { findLocation } = useCurrentLocationContext();
   const { tagGroups } = useEditedTagLibraryContext();
   const { openConfirmDialog } = useNotificationContext();
+  const [wSpaceTagGroups, setWSpaceTagGroups] =
+    useState<TS.TagGroup[]>(tagGroups);
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -98,6 +101,27 @@ function TagLibrary(props: Props) {
   const [isEditTagDialogOpened, setIsEditTagDialogOpened] =
     useState<boolean>(false);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+
+  const currentWorkSpace =
+    workSpacesContext && workSpacesContext.getCurrentWorkSpace
+      ? workSpacesContext?.getCurrentWorkSpace()
+      : undefined;
+
+  useEffect(() => {
+    if (currentWorkSpace) {
+      setWSpaceTagGroups(
+        tagGroups.filter((t) => t.workSpaceId === currentWorkSpace.uuid),
+      );
+    } else {
+      setWSpaceTagGroups(tagGroups);
+    }
+  }, [currentWorkSpace, tagGroups]);
   /*const firstRender = useFirstRender();
 
   useEffect(() => {
@@ -268,7 +292,7 @@ function TagLibrary(props: Props) {
 
   const { reduceHeightBy } = props;
 
-  const allTags = getAllTags(tagGroups);
+  const allTags = getAllTags(wSpaceTagGroups);
   return (
     <Box
       style={{
@@ -285,12 +309,13 @@ function TagLibrary(props: Props) {
           'Your tag library contains ' +
           allTags.length +
           ' tags \ndistributed in ' +
-          tagGroups.length +
+          wSpaceTagGroups.length +
           ' tag groups'
         }
         menuButton={
           // Display the menu button if there are editable tag groups or no tag groups exist (to allow creating new ones)
-          (tagGroups.some((tg) => !tg.readOnly) || tagGroups.length === 0) && (
+          (wSpaceTagGroups.some((tg) => !tg.readOnly) ||
+            wSpaceTagGroups.length === 0) && (
             <TsIconButton
               data-tid="tagLibraryMenu"
               onClick={handleTagLibraryMenu}
@@ -384,7 +409,9 @@ function TagLibrary(props: Props) {
             {SmartTags(t).map(renderTagGroup)}
           </div>
         )}
-        <div style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</div>
+        <div style={{ paddingTop: 0 }}>
+          {wSpaceTagGroups.map(renderTagGroup)}
+        </div>
       </div>
     </Box>
   );

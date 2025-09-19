@@ -36,6 +36,7 @@ import {
   SettingsIcon,
   TagLibraryIcon,
   ThemingIcon,
+  WorkspacesIcon,
 } from '-/components/CommonIcons';
 import CustomLogo from '-/components/CustomLogo';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
@@ -68,6 +69,7 @@ import {
   isDesktopMode,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { ClickAwayListener, Divider, Popover } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -79,7 +81,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { alpha, useTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import TsIconButton from './TsIconButton';
@@ -95,7 +97,8 @@ function MobileNavigation(props: Props) {
   const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
-  const { setSelectedLocation, findLocation } = useCurrentLocationContext();
+  const { setSelectedLocation, currentLocation, locations } =
+    useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { openFileUpload } = useFileUploadContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
@@ -114,11 +117,26 @@ function MobileNavigation(props: Props) {
   const { hideDrawer, width } = props;
   const switchTheme = () => dispatch(SettingsActions.switchTheme());
   const [openedCreateMenu, setOpenCreateMenu] = React.useState(false);
-  const anchorRef = React.useRef<HTMLDivElement>(null);
-  const currentLocation = findLocation();
+  const [openedWorkSpaceMenu, setOpenWorkSpaceMenu] = React.useState(false);
+  const anchorWSpaceRef = React.useRef<HTMLButtonElement>(null);
+  const anchorRef = React.useRef<HTMLButtonElement>(null);
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces: TS.WorkSpace[] = workSpacesContext?.getWorkSpaces() ?? [];
+  /*const foundWorkSpaces: TS.WorkSpace[] = workSpaces.filter((ws) =>
+    locations.some((l) => l.workSpaceId === ws.uuid),
+  );*/
 
   const handleToggle = () => {
     setOpenCreateMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleToggleWorkSpaces = () => {
+    setOpenWorkSpaceMenu((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event: Event) => {
@@ -129,6 +147,16 @@ function MobileNavigation(props: Props) {
       return;
     }
     setOpenCreateMenu(false);
+  };
+
+  const handleCloseWSpace = (event: Event) => {
+    if (
+      anchorWSpaceRef.current &&
+      anchorWSpaceRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    setOpenWorkSpaceMenu(false);
   };
 
   return (
@@ -161,7 +189,6 @@ function MobileNavigation(props: Props) {
             }}
           >
             <ButtonGroup
-              ref={anchorRef}
               aria-label="split button"
               style={{
                 textAlign: 'center',
@@ -170,6 +197,7 @@ function MobileNavigation(props: Props) {
               }}
             >
               <TsButton
+                ref={anchorRef}
                 aria-controls={
                   openedCreateMenu ? 'split-button-menu' : undefined
                 }
@@ -197,6 +225,35 @@ function MobileNavigation(props: Props) {
                   {/* {t('core:createNew')} */}
                 </Box>
               </TsButton>
+              {workSpaces && workSpaces.length > 0 && (
+                <TsButton
+                  ref={anchorWSpaceRef}
+                  tooltip={t('currentWorkspace')}
+                  aria-controls={
+                    openedWorkSpaceMenu ? 'create-wspace-menu' : undefined
+                  }
+                  aria-expanded={openedWorkSpaceMenu ? 'true' : undefined}
+                  aria-haspopup="menu"
+                  data-tid="openedWorkSpaceMenuButtonTID"
+                  onClick={handleToggleWorkSpaces}
+                  endIcon={<ArrowDropDown />}
+                  style={{
+                    borderRadius: 'unset',
+                  }}
+                >
+                  <Box
+                    style={{
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      maxWidth: 100,
+                    }}
+                  >
+                    {workSpacesContext.getCurrentWorkSpace()?.shortName ||
+                      t('core:allWorkspaces')}
+                  </Box>
+                </TsButton>
+              )}
               <TsButton
                 tooltip={t('core:openSharingLink')}
                 data-tid="openLinkNavigationTID"
@@ -271,7 +328,67 @@ function MobileNavigation(props: Props) {
             )}
           </Box>
         </Box>
-
+        {workSpaces && workSpaces.length > 0 && (
+          <ClickAwayListener onClickAway={handleCloseWSpace}>
+            <Popper
+              anchorEl={anchorWSpaceRef.current}
+              sx={{
+                zIndex: 1,
+              }}
+              open={openedWorkSpaceMenu}
+              role={undefined}
+              transition
+              disablePortal
+            >
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin:
+                      placement === 'bottom' ? 'center top' : 'center bottom',
+                  }}
+                >
+                  <Paper>
+                    <TsMenuList id="create-file-menu" autoFocusItem>
+                      <MenuItem
+                        key="allWSpace"
+                        data-tid={'wSpaceAllTID'}
+                        onClick={() => {
+                          workSpacesContext.setCurrentWorkSpaceId(undefined);
+                          setOpenWorkSpaceMenu(false);
+                        }}
+                      >
+                        <ListItemIcon>
+                          <WorkspacesIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('allWorkspaces')} />
+                      </MenuItem>
+                      {workSpaces.map((wSpace) => (
+                        <MenuItem
+                          key={wSpace.uuid}
+                          data-tid={'wSpace' + wSpace.shortName + 'TID'}
+                          onClick={() => {
+                            workSpacesContext.setCurrentWorkSpaceId(
+                              wSpace.uuid,
+                            );
+                            setOpenWorkSpaceMenu(false);
+                          }}
+                        >
+                          <ListItemIcon>
+                            <WorkspacesIcon />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={wSpace.fullName + ' - ' + wSpace.shortName}
+                          />
+                        </MenuItem>
+                      ))}
+                    </TsMenuList>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+          </ClickAwayListener>
+        )}
         <ClickAwayListener onClickAway={handleClose}>
           <Popper
             sx={{
@@ -292,7 +409,7 @@ function MobileNavigation(props: Props) {
                 }}
               >
                 <Paper>
-                  <TsMenuList id="split-button-menu" autoFocusItem>
+                  <TsMenuList id="nav-create-menu" autoFocusItem>
                     <MenuItem
                       key="navCreateNewTextFile"
                       data-tid="navCreateNewTextFileTID"

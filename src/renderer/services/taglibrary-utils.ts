@@ -35,9 +35,17 @@ export function setTagLibrary(tagGroups: TS.TagGroup[]) {
   }
 }
 
-export function getAllTags(tagGroups?: Array<TS.TagGroup>) {
+export function getAllTags(
+  tagGroups?: Array<TS.TagGroup>,
+  currentWorkSpace?: TS.WorkSpace,
+) {
   if (tagGroups === undefined) {
     tagGroups = getTagLibrary();
+  }
+  if (currentWorkSpace) {
+    tagGroups = tagGroups.filter(
+      (t) => t.workSpaceId === currentWorkSpace.uuid,
+    );
   }
   const uniqueTags: TS.Tag[] = [];
   tagGroups.forEach((tagGroup) => {

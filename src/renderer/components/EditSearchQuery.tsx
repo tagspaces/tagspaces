@@ -41,7 +41,9 @@ import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { Pro } from '-/pro';
 import { isDesktopMode } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 import { ListItemText, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -50,10 +52,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -68,6 +70,16 @@ function EditSearchQuery(props: Props) {
   const { tempSearchQuery, setTempSearchQuery, clearSearch, executeSearch } =
     useSearchQueryContext();
   const { isIndexing } = useLocationIndexContext();
+
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const currentWorkSpace =
+    workSpacesContext && workSpacesContext.getCurrentWorkSpace
+      ? workSpacesContext?.getCurrentWorkSpace()
+      : undefined;
 
   const handleFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -263,10 +275,16 @@ function EditSearchQuery(props: Props) {
               borderTopLeftRadius: 0,
               borderBottomLeftRadius: 0,
             }}
-            tooltip={t('searchInAllLocationTooltip')}
+            tooltip={
+              currentWorkSpace
+                ? t('currentWorkspace')
+                : t('searchInAllLocationTooltip')
+            }
             value="global"
           >
-            {t('globalSearch')}
+            {currentWorkSpace
+              ? currentWorkSpace.fullName + ' - ' + currentWorkSpace.shortName
+              : t('globalSearch')}
           </TsToggleButton>
         </ToggleButtonGroup>
       </FormControl>
@@ -575,7 +593,7 @@ function EditSearchQuery(props: Props) {
         <TooltipTS title={t('enterTimePeriodTooltip')}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box position="relative" display="inline-flex">
-              <div>
+              <div style={{ maxWidth: 180 }}>
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodFrom')}
                 </FormHelperText>
@@ -595,7 +613,7 @@ function EditSearchQuery(props: Props) {
                   }}
                 />
               </div>
-              <div style={{ marginLeft: 5 }}>
+              <div style={{ marginLeft: 5, maxWidth: 180 }}>
                 <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodTo')}
                 </FormHelperText>

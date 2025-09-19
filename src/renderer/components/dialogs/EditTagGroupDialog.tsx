@@ -16,10 +16,15 @@
  *
  */
 
+import { RemoveIcon } from '-/components/CommonIcons';
+import { ProLabel } from '-/components/HelperComponents';
 import Tag from '-/components/Tag';
+import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -34,15 +39,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TransparentBackground from '../TransparentBackground';
-import ColorPickerDialog from './ColorPickerDialog';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -60,6 +64,9 @@ function EditTagGroupDialog(props: Props) {
   const { removeLocationTagGroup } = useTagGroupsLocationContext();
   const { t } = useTranslation();
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const [workSpaceId, setWorkSpaceId] = useState<string>(
+    selectedTagGroupEntry ? selectedTagGroupEntry.workSpaceId || '' : '',
+  );
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
     useState<boolean>(false);
@@ -74,6 +81,12 @@ function EditTagGroupDialog(props: Props) {
   );
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
 
   useEffect(() => {
     setNewLocationId(undefined);
@@ -135,6 +148,7 @@ function EditTagGroupDialog(props: Props) {
         title,
         color,
         textcolor,
+        ...(workSpaceId && { workSpaceId }),
         ...(isLocationChanged() && {
           locationId:
             newLocationId === defaultTagGroupLocation
@@ -169,7 +183,7 @@ function EditTagGroupDialog(props: Props) {
   );
 
   const renderContent = (
-    <DialogContent style={{ overflow: 'visible' }}>
+    <DialogContent style={{ overflowY: 'visible', overflowX: 'hidden' }}>
       <FormControl
         fullWidth={true}
         error={inputError}
@@ -189,12 +203,10 @@ function EditTagGroupDialog(props: Props) {
         )}
       </FormControl>
       {saveTagInLocation && (
-        <FormControl fullWidth={true} error={inputError}>
-          <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
-            {t('core:tagGroupLocation')}
-          </FormHelperText>
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
-            fullWidth={false}
+            fullWidth
+            label={t('core:tagGroupLocation')}
             defaultValue={
               selectedTagGroupEntry.locationId || defaultTagGroupLocation
             }
@@ -214,8 +226,50 @@ function EditTagGroupDialog(props: Props) {
               </MenuItem>
             ))}
           </TsSelect>
-        </FormControl>
+        </ListItem>
       )}
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <TsSelect
+          disabled={!Pro}
+          data-tid="taggroupWorkspaceTID"
+          value={workSpaceId}
+          fullWidth
+          label={
+            <>
+              {t('core:workspace')}
+              <ProLabel />
+            </>
+          }
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setWorkSpaceId(event.target.value)
+          }
+          slotProps={{
+            input: {
+              endAdornment: workSpaceId && (
+                <InputAdornment position="end" sx={{ ml: -12 }}>
+                  <TsIconButton
+                    aria-label={t('core:deleteWSpace')}
+                    onClick={() => setWorkSpaceId('')}
+                    data-tid="wSpaceResetTID"
+                  >
+                    <RemoveIcon />
+                  </TsIconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        >
+          {workSpaces.map((wSpace) => (
+            <MenuItem
+              key={wSpace.uuid}
+              value={wSpace.uuid}
+              data-tid={'wSpace' + wSpace.shortName + 'TID'}
+            >
+              {wSpace.shortName + ' - ' + wSpace.fullName}
+            </MenuItem>
+          ))}
+        </TsSelect>
+      </ListItem>
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('tagBackgroundColor')} />
         <TransparentBackground>

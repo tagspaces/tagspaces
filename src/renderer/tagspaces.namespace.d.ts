@@ -20,10 +20,16 @@ import { ScopeType } from '-/components/SearchOptions';
 import AWS from 'aws-sdk';
 
 export namespace TS {
+  interface WorkSpace {
+    uuid: string;
+    shortName: string;
+    fullName: string;
+  }
   interface Location {
     uuid: string;
     newuuid?: string;
     name: string;
+    workSpaceId?: string;
     type: string; // 0 - local; 1 - S3; 2 - amplify; 3 - webdav
     authType?: string; // none,password,digest,token
     username?: string;
@@ -169,6 +175,7 @@ export namespace TS {
     uuid: Uuid;
     title: string;
     locationId?: Uuid;
+    workSpaceId?: string;
     expanded?: boolean;
     description?: string;
     categoryId?: string;
@@ -340,6 +347,16 @@ export namespace TS {
     setTemplateActive: (id: string) => void;
     getTemplates: () => TS.FileTemplate[];
     delTemplate: (id: string) => void;
+  };
+
+  type WorkSpacesContextData = {
+    getWorkSpace: (id: string) => WorkSpace | undefined;
+    setWorkSpace: (wSpace: WorkSpace) => void;
+    delWorkSpace: (id: string) => void;
+    getWorkSpaces: () => WorkSpace[];
+    setCurrentWorkSpaceId: (wSpaceId: string) => void;
+    getCurrentWorkSpace: () => TS.WorkSpace;
+    openNewWorkspaceDialog: (workSpace?: TS.WorkSpace) => void;
   };
 
   interface EditedEntryPath {

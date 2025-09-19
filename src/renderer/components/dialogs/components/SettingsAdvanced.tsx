@@ -50,7 +50,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -67,6 +73,12 @@ function SettingsAdvanced(props: Props) {
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const wsAlive = useRef<boolean>(null);
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -99,6 +111,12 @@ function SettingsAdvanced(props: Props) {
     event.preventDefault();
     event.stopPropagation();
     setTileServerDialog({ ...tileServer, isDefault });
+  };
+
+  const editWorkSpacesClick = (event, workSpace?: TS.WorkSpace) => {
+    event.preventDefault();
+    event.stopPropagation();
+    workSpacesContext.openNewWorkspaceDialog(workSpace);
   };
 
   const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
@@ -496,7 +514,6 @@ function SettingsAdvanced(props: Props) {
               <ListItemText
                 primary={tileServer.name}
                 secondary={tileServer.serverURL}
-                style={{ maxWidth: 470 }}
               />
               <TsIconButton
                 aria-label={t('core:options')}
@@ -536,6 +553,52 @@ function SettingsAdvanced(props: Props) {
           isDefault={tileServerDialog.isDefault}
         />
       )}
+      <ListItem>
+        <ListItemText
+          primary={
+            <>
+              {t('core:workspaces')}
+              <ProLabel />
+            </>
+          }
+        />
+        <TsButton
+          disabled={!Pro}
+          onClick={(event) => editWorkSpacesClick(event)}
+        >
+          {t('addWorkspace')}
+        </TsButton>
+      </ListItem>
+      {workSpaces && workSpaces.length > 0 && (
+        <List
+          style={{
+            padding: 5,
+            paddingLeft: 10,
+            backgroundColor: '#d3d3d34a',
+            borderRadius: AppConfig.defaultCSSRadius,
+          }}
+          dense
+        >
+          {workSpaces.map((workSpace, index) => (
+            <ListItem key={workSpace.uuid}>
+              <ListItemText
+                primary={workSpace.fullName + ' - ' + workSpace.shortName}
+              />
+              <TsIconButton
+                aria-label={'Edit workspace'}
+                aria-haspopup="true"
+                edge="end"
+                disabled={!Pro}
+                data-tid={'workSpaceEdit_' + workSpace.shortName}
+                onClick={(event) => editWorkSpacesClick(event, workSpace)}
+              >
+                <EditIcon />
+              </TsIconButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
+
       <ListItem>
         <ListItemText
           primary={

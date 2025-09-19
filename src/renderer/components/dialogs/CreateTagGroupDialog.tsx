@@ -17,32 +17,43 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
+import { ProLabel } from '-/components/HelperComponents';
 import Tag from '-/components/Tag';
+import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import { useTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useContext,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import TransparentBackground from '../TransparentBackground';
-import ColorPickerDialog from './ColorPickerDialog';
-import TsDialogTitle from './components/TsDialogTitle';
 
 interface Props {
   open: boolean;
@@ -56,6 +67,7 @@ const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 function CreateTagGroupDialog(props: Props) {
   const { t } = useTranslation();
+  const { open, onClose, createTagGroup } = props;
   const { locations } = useCurrentLocationContext();
   //const locations = useSelector(getLocations);
   const saveTagsInLocation = useSelector(getSaveTagInLocation);
@@ -70,10 +82,16 @@ function CreateTagGroupDialog(props: Props) {
   const color = useRef<string>(props.color);
   const textcolor = useRef<string>(props.textcolor);
   const locationId = useRef<string>(defaultTagGroupLocation);
+  const [workSpaceId, setWorkSpaceId] = useState<string>('');
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const { open, onClose, createTagGroup } = props;
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
 
   const handleTagGroupTitleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -120,6 +138,7 @@ function CreateTagGroupDialog(props: Props) {
         color: color.current,
         textcolor: textcolor.current,
         locationId: lId,
+        ...(workSpaceId && { workSpaceId }),
         children: [],
       });
       onClose();
@@ -184,7 +203,9 @@ function CreateTagGroupDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ paddingTop: 10, minWidth: 300 }}>
+      <DialogContent
+        style={{ overflowY: 'visible', overflowX: 'hidden', minWidth: 300 }}
+      >
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}
@@ -200,7 +221,7 @@ function CreateTagGroupDialog(props: Props) {
           )}
         </FormControl>
         {saveTagsInLocation && (
-          <FormControl fullWidth={true} error={inputError}>
+          <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
             <TsSelect
               data-tid="tagGroupLocationTID"
               label={t('core:tagGroupLocation')}
@@ -228,8 +249,50 @@ function CreateTagGroupDialog(props: Props) {
                 </MenuItem>
               ))}
             </TsSelect>
-          </FormControl>
+          </ListItem>
         )}
+        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <TsSelect
+            disabled={!Pro}
+            data-tid="taggroupWorkspaceTID"
+            value={workSpaceId}
+            fullWidth
+            label={
+              <>
+                {t('core:workspace')}
+                <ProLabel />
+              </>
+            }
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setWorkSpaceId(event.target.value)
+            }
+            slotProps={{
+              input: {
+                endAdornment: workSpaceId && (
+                  <InputAdornment position="end" sx={{ ml: -12 }}>
+                    <TsIconButton
+                      aria-label={t('core:deleteWSpace')}
+                      onClick={() => setWorkSpaceId('')}
+                      data-tid="wSpaceResetTID"
+                    >
+                      <RemoveIcon />
+                    </TsIconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          >
+            {workSpaces.map((wSpace) => (
+              <MenuItem
+                key={wSpace.uuid}
+                value={wSpace.uuid}
+                data-tid={'wSpace' + wSpace.shortName + 'TID'}
+              >
+                {wSpace.shortName + ' - ' + wSpace.fullName}
+              </MenuItem>
+            ))}
+          </TsSelect>
+        </ListItem>
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>

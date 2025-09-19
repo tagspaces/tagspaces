@@ -69,7 +69,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import CryptoJS from 'crypto-js';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
@@ -87,8 +87,13 @@ function CreateEditLocationDialog(props: Props) {
   const { showNotification, openConfirmDialog } = useNotificationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const { loadLocationDataPromise } = useTagGroupsLocationContext();
-  const { addLocation, editLocation, selectedLocation, findLocation } =
-    useCurrentLocationContext();
+  const {
+    addLocation,
+    editLocation,
+    selectedLocation,
+    findLocation,
+    locations,
+  } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
@@ -162,6 +167,9 @@ function CreateEditLocationDialog(props: Props) {
   );
   const [isReadOnly, setIsReadOnly] = useState<boolean>(
     selectedLocation ? selectedLocation.isReadOnly : false,
+  );
+  const [workSpaceId, setWorkSpaceId] = useState<string>(
+    selectedLocation ? selectedLocation.workSpaceId || '' : '',
   );
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
     selectedLocation ? selectedLocation.watchForChanges : false,
@@ -405,6 +413,7 @@ function CreateEditLocationDialog(props: Props) {
       if (type === locationType.TYPE_LOCAL) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           name,
           path,
@@ -424,6 +433,7 @@ function CreateEditLocationDialog(props: Props) {
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           authType,
           name,
@@ -446,6 +456,7 @@ function CreateEditLocationDialog(props: Props) {
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
           uuid: selectedLocation ? selectedLocation.uuid : newuuid,
+          workSpaceId,
           type,
           name: storeName,
           path: storePath,
@@ -581,6 +592,13 @@ function CreateEditLocationDialog(props: Props) {
     locationTypeName = t('core:objectStorage');
   }
 
+  const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
+    ? useContext<TS.WorkSpacesContextData>(
+        Pro.contextProviders.WorkSpacesContext,
+      )
+    : undefined;
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
+
   const okButton = (
     <TsButton
       disabled={disableConfirmButton()}
@@ -628,7 +646,8 @@ function CreateEditLocationDialog(props: Props) {
       ></TsDialogTitle>
       <DialogContent
         style={{
-          overflow: 'auto',
+          overflowY: 'auto',
+          overflowX: 'hidden',
           minHeight: 200,
           padding: 8,
         }}
@@ -799,6 +818,46 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
+              <TsSelect
+                label={
+                  <>
+                    {t('core:workspace')}
+                    <ProLabel />
+                  </>
+                }
+                disabled={!Pro}
+                style={{ minWidth: 200 }}
+                data-tid="locationWorkspaceTID"
+                value={workSpaceId}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setWorkSpaceId(event.target.value)
+                }
+                slotProps={{
+                  input: {
+                    endAdornment: workSpaceId && (
+                      <InputAdornment position="end" sx={{ ml: -12 }}>
+                        <TsIconButton
+                          aria-label={t('core:deleteWSpace')}
+                          onClick={() => setWorkSpaceId('')}
+                          data-tid="wSpaceResetTID"
+                        >
+                          <RemoveIcon />
+                        </TsIconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              >
+                {workSpaces?.map((wSpace) => (
+                  <MenuItem
+                    key={wSpace.uuid}
+                    value={wSpace.uuid}
+                    data-tid={'wSpace' + wSpace.shortName + 'TID'}
+                  >
+                    {wSpace.shortName + ' - ' + wSpace.fullName}
+                  </MenuItem>
+                ))}
+              </TsSelect>
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
@@ -936,11 +995,7 @@ function CreateEditLocationDialog(props: Props) {
                         : t('core:renameFile')}
                     </TsButton>
                   }
-                  label={
-                    <Typography variant="caption" display="block" gutterBottom>
-                      {t('core:fileTaggingSetting')}
-                    </Typography>
-                  }
+                  label={t('core:fileTaggingSetting')}
                 />
               ) : (
                 <FormControlLabel
@@ -1021,24 +1076,6 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
-              <FormControl fullWidth={true}>
-                <TsTextField
-                  name="autoOpenedFilename"
-                  data-tid="autoOpenedFilenameTID"
-                  placeholder={
-                    t('core:forExample') + ': index.md, index.html or readme.md'
-                  }
-                  onChange={(event) =>
-                    setAutoOpenedFilename(event.target.value)
-                  }
-                  updateValue={(value) => {
-                    setAutoOpenedFilename(value);
-                  }}
-                  retrieveValue={() => autoOpenedFilename}
-                  value={autoOpenedFilename}
-                  label={t('core:autoOpenedFilename')}
-                />
-              </FormControl>
               <>
                 <FormControlLabel
                   disabled={!Pro}
@@ -1112,6 +1149,24 @@ function CreateEditLocationDialog(props: Props) {
                   />
                 )}
               </>
+              <FormControl fullWidth={true} style={{ marginTop: 10 }}>
+                <TsTextField
+                  name="autoOpenedFilename"
+                  data-tid="autoOpenedFilenameTID"
+                  placeholder={
+                    t('core:forExample') + ': index.md, index.html or readme.md'
+                  }
+                  onChange={(event) =>
+                    setAutoOpenedFilename(event.target.value)
+                  }
+                  updateValue={(value) => {
+                    setAutoOpenedFilename(value);
+                  }}
+                  retrieveValue={() => autoOpenedFilename}
+                  value={autoOpenedFilename}
+                  label={t('core:autoOpenedFilename')}
+                />
+              </FormControl>
               <FormControl fullWidth={true} style={{ marginTop: 10 }}>
                 <TsTextField
                   required
