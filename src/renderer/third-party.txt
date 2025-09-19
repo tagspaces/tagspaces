@@ -4056,7 +4056,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.184
+ - @tagspacespro/tagspacespro@5.0.185
 
 This package contains the following license:
 
@@ -18101,7 +18101,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.201
+ - @tagspaces/extensions@1.0.202
 
 This package contains the following license:
 
