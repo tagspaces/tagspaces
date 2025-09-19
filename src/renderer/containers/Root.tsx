@@ -1,43 +1,60 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { Store } from 'redux';
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2017-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 import AppConfig from '-/AppConfig';
-import { actions as AppActions } from '../reducers/app';
+import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
 import App from '-/containers/App';
+import DialogsRoot from '-/containers/DialogsRoot';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
-import i18nInit from '-/services/i18nInit';
-import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
-import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
-import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
-import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
-import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
-import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
-import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
-import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
-import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
-import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
-import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
-import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
-import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
-import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
-import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
-import { Pro } from '-/pro';
-import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
-import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
-import { UserContextProvider } from '-/hooks/UserContextProvider';
-import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
-import DialogsRoot from '-/containers/DialogsRoot';
 import { BrowserHistoryContextProvider } from '-/hooks/BrowserHistoryContextProvider';
 import { ChatContextProvider } from '-/hooks/ChatProvider';
-import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
+import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
+import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
+import { EditedEntryContextProvider } from '-/hooks/EditedEntryContextProvider';
+import { EditedEntryMetaContextProvider } from '-/hooks/EditedEntryMetaContextProvider';
+import { EditedTagLibraryContextProvider } from '-/hooks/EditedTagLibraryContextProvider';
 import { EntryPropsTabsContextProvider } from '-/hooks/EntryPropsTabsContextProvider';
-import { SearchQueryContextProvider } from '-/hooks/SearchQueryContextProvider';
-import { HistoryContextProvider } from '-/hooks/HistoryContextProvider';
+import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
+import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
+import { HistoryContextProvider } from '-/hooks/HistoryContextProvider';
+import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
+import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
+import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
+import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
+import { PanelsContextProvider } from '-/hooks/PanelsContextProvider';
+import { PerspectiveActionsContextProvider } from '-/hooks/PerspectiveActionsContextProvider';
+import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
+import { SavedSearchesContextProvider } from '-/hooks/SavedSearchesContextProvider';
+import { SearchQueryContextProvider } from '-/hooks/SearchQueryContextProvider';
+import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
+import { TagGroupsLocationContextProvider } from '-/hooks/TagGroupsLocationContextProvider';
+import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
+import { UserContextProvider } from '-/hooks/UserContextProvider';
+import { Pro } from '-/pro';
+import i18nInit from '-/services/i18nInit';
+import React, { useEffect, useMemo, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Provider as ReduxProvider } from 'react-redux';
+import { Store } from 'redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { actions as AppActions } from '../reducers/app';
 
 type RootType = {
   store: Store<{}>;

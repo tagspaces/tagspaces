@@ -514,7 +514,6 @@ function SettingsAdvanced(props: Props) {
               <ListItemText
                 primary={tileServer.name}
                 secondary={tileServer.serverURL}
-                style={{ maxWidth: 470 }}
               />
               <TsIconButton
                 aria-label={t('core:options')}
@@ -555,9 +554,9 @@ function SettingsAdvanced(props: Props) {
         />
       )}
       <ListItem>
-        <ListItemText primary={t('core:workSpaces')} />
+        <ListItemText primary={t('core:workspaces')} />
         <TsButton onClick={(event) => editWorkSpacesClick(event)}>
-          {t('workSpaceDialogAdd')}
+          {t('addWorkspace')}
         </TsButton>
       </ListItem>
       {workSpaces && workSpaces.length > 0 && (
@@ -574,7 +573,6 @@ function SettingsAdvanced(props: Props) {
             <ListItem key={workSpace.uuid}>
               <ListItemText
                 primary={workSpace.fullName + ' - ' + workSpace.shortName}
-                style={{ maxWidth: 470 }}
               />
               <TsIconButton
                 aria-label={t('core:options')}

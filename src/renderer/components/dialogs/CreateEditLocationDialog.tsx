@@ -837,7 +837,7 @@ function CreateEditLocationDialog(props: Props) {
                             <InputAdornment position="end" sx={{ ml: -12 }}>
                               <TsIconButton
                                 aria-label={t('core:deleteWSpace')}
-                                onClick={() => setWorkSpaceId(undefined)}
+                                onClick={() => setWorkSpaceId('')}
                                 data-tid="wSpaceResetTID"
                               >
                                 <RemoveIcon />

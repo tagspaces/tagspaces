@@ -1033,11 +1033,11 @@
   "ptsKanbanTitle": "Kanban Perspective in TagSpaces Pro",
   "ptsKanban": "This perspective turns any folder into a fully functional Kanban board. Subfolders become columns, and the files inside them are displayed as cards that can be easily moved between columns using drag and drop. Entire columns can also be rearranged in the same way. Plus, with the built-in Trello import, you can bring exported Trello boards directly into your workspace.",
   "pts": "",
-  "workSpaces": "Workspaces",
+  "workspaces": "Workspaces",
   "workspace": "Workspace",
   "currentWorkspace": "Current Workspace",
   "allWorkspaces": "All",
-  "workSpaceDialogAdd": "Add Workspace",
+  "addWorkspace": "Add Workspace",
   "fullName": "Full name",
   "shortName": "Short name",
   "-": "-"
