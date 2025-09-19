@@ -311,7 +311,7 @@ function HowToStart() {
         }}
         noWrap
       >
-        {t('Get Started with TagSpaces')}
+        {t('core:htsGetStarted')}
       </Typography>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
