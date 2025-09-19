@@ -168,10 +168,11 @@ function EntryContainerTitle(props: Props) {
           title={t('closeButtonDialog')}
           aria-label="close"
           tabIndex={-1}
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
+          style={
+            {
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
           data-tid="fileContainerCloseOpenedFile"
           onClick={startClosingEntry}
         >
@@ -203,15 +204,16 @@ function EntryContainerTitle(props: Props) {
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               setAnchorEl(event.currentTarget);
             }}
-            style={{
-              backgroundColor: fileSystemEntryColor,
-              display: 'flex',
-              alignItems: 'center',
-              textTransform: 'uppercase',
-              paddingLeft: 10,
-              // @ts-ignore
-              WebkitAppRegion: 'no-drag',
-            }}
+            style={
+              {
+                backgroundColor: fileSystemEntryColor,
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'uppercase',
+                paddingLeft: 10,
+                WebkitAppRegion: 'no-drag',
+              } as React.CSSProperties & { WebkitAppRegion?: string }
+            }
           >
             {
               //'.' +
@@ -233,14 +235,15 @@ function EntryContainerTitle(props: Props) {
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             setAnchorEl(event.currentTarget);
           }}
-          style={{
-            backgroundColor: AppConfig.defaultFolderColor,
-            display: 'flex',
-            alignItems: 'center',
-            paddingLeft: 10,
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
+          style={
+            {
+              backgroundColor: AppConfig.defaultFolderColor,
+              display: 'flex',
+              alignItems: 'center',
+              paddingLeft: 10,
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
         >
           <FolderIcon sx={{ fontSize: '20px' }} />
           <MoreMenuIcon sx={{ fontSize: '20px' }} />
@@ -267,10 +270,11 @@ function EntryContainerTitle(props: Props) {
           data-tid="toggleBookmarkTID"
           aria-label="bookmark"
           onClick={bookmarkClick}
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
+          style={
+            {
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
         >
           {bookmarksContext &&
           bookmarksContext.haveBookmark(openedEntry.path) ? (

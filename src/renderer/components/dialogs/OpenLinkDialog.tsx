@@ -94,10 +94,11 @@ function OpenLinkDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmOpenLink"
       variant="contained"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:openLink')}
     </TsButton>

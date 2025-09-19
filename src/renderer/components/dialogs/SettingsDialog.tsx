@@ -26,7 +26,6 @@ import {
 } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel } from '-/components/HelperComponents';
-import ArticleIcon from '@mui/icons-material/Article';
 import TsButton from '-/components/TsButton';
 import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
@@ -34,9 +33,11 @@ import SettingsExtensions from '-/components/dialogs/components/SettingsExtensio
 import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
 import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
+import SettingsTemplates from '-/components/dialogs/components/SettingsTemplates';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { openURLExternally } from '-/services/utils-io';
+import ArticleIcon from '@mui/icons-material/Article';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -47,7 +48,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import SettingsTemplates from '-/components/dialogs/components/SettingsTemplates';
 
 interface Props {
   open: boolean;
@@ -71,10 +71,11 @@ function SettingsDialog(props: Props) {
     <TsButton
       onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
       color="secondary"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:help')}
     </TsButton>

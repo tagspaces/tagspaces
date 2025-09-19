@@ -89,14 +89,15 @@ function SearchPopover(props: Props) {
     : t('core:indexEmpty');
   return (
     <div
-      style={{
-        maxWidth: 400,
-        height: '100%',
-        paddingLeft: 5,
-        paddingRight: 0,
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          maxWidth: 400,
+          height: '100%',
+          paddingLeft: 5,
+          paddingRight: 0,
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       <div style={{ display: 'flex' }}>
         <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>

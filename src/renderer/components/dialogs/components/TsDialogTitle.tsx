@@ -53,14 +53,15 @@ function TsDialogTitle(props: TSDialogTitle) {
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-        position: 'absolute',
-        right: 15,
-        top: 15,
-        zIndex: 1000,
-      }}
+      style={
+        {
+          position: 'absolute',
+          right: 15,
+          top: 15,
+          zIndex: 1000,
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
       data-tid={closeButtonTestId}
       onClick={onClose}
     >
@@ -73,12 +74,13 @@ function TsDialogTitle(props: TSDialogTitle) {
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
-      style={{
-        float: 'left',
-        marginLeft: AppConfig.isMacLike && desktopMode ? 40 : 0,
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          float: 'left',
+          marginLeft: AppConfig.isMacLike && desktopMode ? 40 : 0,
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
       data-tid={closeButtonTestId && closeButtonTestId}
       onClick={onClose}
     >

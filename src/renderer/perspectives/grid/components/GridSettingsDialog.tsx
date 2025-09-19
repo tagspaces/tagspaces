@@ -114,10 +114,11 @@ function GridSettingsDialog(props: Props) {
 
   const helpButton = (
     <TsButton
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
       data-tid="gridPerspectiveHelp"
       onClick={openHelpWebPage}
     >

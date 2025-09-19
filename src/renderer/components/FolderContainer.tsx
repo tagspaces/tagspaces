@@ -267,11 +267,11 @@ function FolderContainer(props: Props) {
       >
         <TsIconButton
           id="mobileMenuButton"
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-            // transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-          }}
+          style={
+            {
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
           onClick={toggleDrawer}
         >
           <MainMenuIcon />
@@ -283,10 +283,11 @@ function FolderContainer(props: Props) {
           id="goBackButton"
           disabled={historyIndex === 0}
           onClick={goBack}
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
+          style={
+            {
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
         >
           <GoBackIcon />
         </TsIconButton>
@@ -296,10 +297,11 @@ function FolderContainer(props: Props) {
             id="goForwardButton"
             disabled={historyIndex === 0}
             onClick={goForward}
-            style={{
-              // @ts-ignore
-              WebkitAppRegion: 'no-drag',
-            }}
+            style={
+              {
+                WebkitAppRegion: 'no-drag',
+              } as React.CSSProperties & { WebkitAppRegion?: string }
+            }
           >
             <GoForwardIcon />
           </TsIconButton>
@@ -323,10 +325,11 @@ function FolderContainer(props: Props) {
                 }
                 data-tid="toggleSearch"
                 onClick={openSearchMode}
-                style={{
-                  // @ts-ignore
-                  WebkitAppRegion: 'no-drag',
-                }}
+                style={
+                  {
+                    WebkitAppRegion: 'no-drag',
+                  } as React.CSSProperties & { WebkitAppRegion?: string }
+                }
               >
                 <SearchIcon />
               </TsIconButton>
@@ -335,13 +338,14 @@ function FolderContainer(props: Props) {
                 data-tid="toggleSearch"
                 onClick={openSearchMode}
                 startIcon={<SearchIcon />}
-                style={{
-                  // @ts-ignore
-                  WebkitAppRegion: 'no-drag',
-                  marginRight: 5,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
+                style={
+                  {
+                    marginRight: 5,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    WebkitAppRegion: 'no-drag',
+                  } as React.CSSProperties & { WebkitAppRegion?: string }
+                }
               >
                 {t('core:searchTitle')}
                 <span style={{ width: 10 }} />
@@ -355,13 +359,14 @@ function FolderContainer(props: Props) {
                 title={t('core:progress')}
                 data-tid="uploadProgress"
                 onClick={() => openFileUploadDialog()}
-                style={{
-                  position: 'relative',
-                  padding: '8px 12px 6px 8px',
-                  margin: '0',
-                  // @ts-ignore
-                  WebkitAppRegion: 'no-drag',
-                }}
+                style={
+                  {
+                    position: 'relative',
+                    padding: '8px 12px 6px 8px',
+                    margin: '0',
+                    WebkitAppRegion: 'no-drag',
+                  } as React.CSSProperties & { WebkitAppRegion?: string }
+                }
               >
                 <CircularProgressWithLabel value={getProgressValue()} />
               </TsIconButton>

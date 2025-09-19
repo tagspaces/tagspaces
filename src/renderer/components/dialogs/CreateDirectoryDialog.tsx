@@ -176,10 +176,11 @@ function CreateDirectoryDialog(props: Props) {
       data-tid="confirmCreateNewDirectory"
       id="confirmCreateNewDirectory"
       variant="contained"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:ok')}
     </TsButton>

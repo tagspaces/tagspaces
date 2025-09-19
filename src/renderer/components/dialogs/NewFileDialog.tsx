@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
@@ -31,7 +30,10 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
+import { getAuthor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
+import versionMeta from '-/version.json';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -41,12 +43,10 @@ import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import versionMeta from '-/version.json';
-import useFirstRender from '-/utils/useFirstRender';
 import { useSelector } from 'react-redux';
-import { getAuthor } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
@@ -197,10 +197,11 @@ function NewFileDialog(props: Props) {
         createFile(fileType, targetDirectoryPath);
       }}
       disabled={haveError.current}
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:ok')}
     </TsButton>

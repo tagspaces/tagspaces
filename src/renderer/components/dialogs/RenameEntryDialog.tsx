@@ -40,7 +40,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import React, { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
@@ -156,10 +155,11 @@ function RenameEntryDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmRenameEntry"
       variant="contained"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:ok')}
     </TsButton>

@@ -1251,14 +1251,15 @@ function SearchAutocomplete(props: Props) {
     <>
       <div
         id="searchAutocompleteComp"
-        style={{
-          width: '100%',
-          whiteSpace: 'nowrap',
-          display: 'flex',
-          alignItems: 'center',
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
+        style={
+          {
+            width: '100%',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            WebkitAppRegion: 'no-drag',
+          } as React.CSSProperties & { WebkitAppRegion?: string }
+        }
       >
         <style>
           {`

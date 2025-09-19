@@ -18,11 +18,16 @@
 
 import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
+import EditSearchQuery from '-/components/EditSearchQuery';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
+import { AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions } from '-/reducers/settings';
 import { defaultTitle } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import Dialog from '@mui/material/Dialog';
@@ -33,14 +38,9 @@ import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
-import EditSearchQuery from '-/components/EditSearchQuery';
-import { usePanelsContext } from '-/hooks/usePanelsContext';
-import { AppDispatch } from '-/reducers/app';
 import { useDispatch } from 'react-redux';
-import { actions as SettingsActions } from '-/reducers/settings';
 
 interface Props {
   open: boolean;
@@ -130,10 +130,11 @@ function SaveSearchDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmSavedSearchTID"
       variant="contained"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:ok')}
     </TsButton>

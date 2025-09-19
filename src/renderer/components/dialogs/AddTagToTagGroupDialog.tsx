@@ -20,6 +20,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
@@ -33,7 +34,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsDialogTitle from './components/TsDialogTitle';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   open: boolean;
@@ -78,10 +78,11 @@ function AddTagToTagGroupDialog(props: Props) {
       onClick={onConfirm}
       data-tid="createTagsConfirmButton"
       variant="contained"
-      style={{
-        // @ts-ignore
-        WebkitAppRegion: 'no-drag',
-      }}
+      style={
+        {
+          WebkitAppRegion: 'no-drag',
+        } as React.CSSProperties & { WebkitAppRegion?: string }
+      }
     >
       {t('core:ok')}
     </TsButton>

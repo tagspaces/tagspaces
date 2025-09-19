@@ -16,11 +16,11 @@
  *
  */
 
-import React, { useState } from 'react';
-import Popover from '@mui/material/Popover';
-import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
+import SearchPopover from '-/components/SearchPopover';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import Popover from '@mui/material/Popover';
+import React, { useState } from 'react';
 
 interface Props {
   //open: boolean;
@@ -58,10 +58,11 @@ function SearchBox(props: Props) {
             vertical: 'top',
             horizontal: 'right',
           }}
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-          }}
+          style={
+            {
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
         >
           <SearchPopover onClose={() => setAnchorSearch(null)} />
         </Popover>

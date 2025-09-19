@@ -71,11 +71,12 @@ function CustomLogo() {
             horizontal: 'right',
           }}
           invisible={!updateAvailable}
-          style={{
-            // @ts-ignore
-            WebkitAppRegion: 'no-drag',
-            marginTop: 7,
-          }}
+          style={
+            {
+              marginTop: 7,
+              WebkitAppRegion: 'no-drag',
+            } as React.CSSProperties & { WebkitAppRegion?: string }
+          }
         >
           {AppConfig.showTSLogo && (
             <TsIconButton
@@ -83,12 +84,13 @@ function CustomLogo() {
               style={{ padding: 0, marginTop: -5, height: 40 }}
             >
               <img
-                style={{
-                  width: 30,
-                  height: 30,
-                  // @ts-ignore
-                  WebkitAppRegion: 'no-drag',
-                }}
+                style={
+                  {
+                    width: 30,
+                    height: 30,
+                    WebkitAppRegion: 'no-drag',
+                  } as React.CSSProperties & { WebkitAppRegion?: string }
+                }
                 src={LogoIcon}
                 alt="TagSpaces Logo"
               />
@@ -100,12 +102,13 @@ function CustomLogo() {
             data-tid="aboutTagSpaces"
           >
             <img
-              style={{
-                maxHeight: 26,
-                maxWidth: 200,
-                // @ts-ignore
-                WebkitAppRegion: 'no-drag',
-              }}
+              style={
+                {
+                  maxHeight: 26,
+                  maxWidth: 200,
+                  WebkitAppRegion: 'no-drag',
+                } as React.CSSProperties & { WebkitAppRegion?: string }
+              }
               src={logo}
               alt="Application Logo"
             />
@@ -126,14 +129,15 @@ function CustomLogo() {
               </sup>
               <sub>
                 <Typography
-                  style={{
-                    display: 'inline',
-                    fontSize: '10px',
-                    marginLeft: -25,
-                    lineHeight: '40px',
-                    // @ts-ignore
-                    WebkitAppRegion: 'no-drag',
-                  }}
+                  style={
+                    {
+                      display: 'inline',
+                      fontSize: '10px',
+                      marginLeft: -25,
+                      lineHeight: '40px',
+                      WebkitAppRegion: 'no-drag',
+                    } as React.CSSProperties & { WebkitAppRegion?: string }
+                  }
                 >
                   {tsType}
                 </Typography>

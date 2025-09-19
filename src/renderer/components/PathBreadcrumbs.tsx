@@ -70,7 +70,6 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
   return {
     overflowX: 'scroll',
     marginTop: '8px',
-    // @ts-ignore
     WebkitAppRegion: 'no-drag',
     '& ol': {
       flexWrap: 'nowrap',
