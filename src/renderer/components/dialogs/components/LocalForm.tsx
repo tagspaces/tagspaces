@@ -71,23 +71,6 @@ function LocalForm(props: Props) {
         <FormControl fullWidth={true}>
           <TsTextField
             required
-            autoFocus
-            name="name"
-            slotProps={{
-              input: { autoCorrect: 'off' },
-            }}
-            onChange={(event) => setName(event.target.value)}
-            value={name}
-            data-tid="locationName"
-            // helperText="Please enter location name"
-            label={t('core:createLocationName') + ' *'}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth={true}>
-          <TsTextField
-            required
             name="path"
             data-tid="locationPath"
             onChange={(event) => setPath(event.target.value)}
@@ -114,6 +97,23 @@ function LocalForm(props: Props) {
               ext. sd-card
             </FormHelperText>
           )}
+        </FormControl>
+      </Grid>
+      <Grid size={12}>
+        <FormControl fullWidth={true}>
+          <TsTextField
+            required
+            autoFocus
+            name="name"
+            slotProps={{
+              input: { autoCorrect: 'off' },
+            }}
+            onChange={(event) => setName(event.target.value)}
+            value={name}
+            data-tid="locationName"
+            // helperText="Please enter location name"
+            label={t('core:createLocationName') + ' *'}
+          />
         </FormControl>
       </Grid>
     </Grid>

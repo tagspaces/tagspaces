@@ -30,6 +30,7 @@ import TsMenuList from '-/components/TsMenuList';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { createNewInstance, openDirectoryMessage } from '-/services/utils-io';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
@@ -42,7 +43,6 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
 
@@ -116,7 +116,7 @@ function LocationContextMenu(props: Props) {
   const showDeleteLocationDialog = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
     openConfirmDialog(
-      t('core:deleteLocationTitleAlert'),
+      t('core:removeLocation'),
       t('core:deleteLocationContentAlert', {
         locationName: selectedLocation ? selectedLocation.name : '',
       }),

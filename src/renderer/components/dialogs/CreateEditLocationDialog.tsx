@@ -692,7 +692,7 @@ function CreateEditLocationDialog(props: Props) {
                     >
                       {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                     </MenuItem>
-                    {Pro && devMode && (
+                    {/* {Pro && devMode && (
                       <MenuItem
                         key="TYPE_WEBDAV"
                         value={locationType.TYPE_WEBDAV}
@@ -700,7 +700,7 @@ function CreateEditLocationDialog(props: Props) {
                       >
                         {t('core:webdavLocation') + ' (experimental)'}
                       </MenuItem>
-                    )}
+                    )} */}
                   </TsSelect>
                 </FormControl>
               )}
