@@ -103,26 +103,23 @@ function HowToStart() {
       label: t('quickAccess'),
       description: (
         <>
-          In this section you can find the following functionalities:
+          {t('htsQuickAccess')}
           <ul>
+            <li>{t('htsQuickAccessSection1')}</li>
             <li>
-              Search queries you have stored for later use&nbsp;
+              {t('htsQuickAccessSection2')}&nbsp;
               <ProSign />
             </li>
             <li>
-              Bookmarks to files and folders&nbsp;
+              {t('htsQuickAccessSection3')}&nbsp;
               <ProSign />
             </li>
             <li>
-              A list of recently opened files&nbsp;
+              {t('htsQuickAccessSection4')}&nbsp;
               <ProSign />
             </li>
             <li>
-              A list of recently edited files&nbsp;
-              <ProSign />
-            </li>
-            <li>
-              A list of recently opened folders&nbsp;
+              {t('htsQuickAccessSection5')}&nbsp;
               <ProSign />
             </li>
           </ul>
@@ -142,32 +139,27 @@ function HowToStart() {
         <>
           {t('htsPerspectiveSwitch')}
           <ul>
+            <li>{t('htsPerspectiveGrid')}</li>
+            <li>{t('htsPerspectiveList')}</li>
             <li>
-              <b>Grid</b> - displays files in a grid
+              {t('htsPerspectiveGallery')}&nbsp;
+              <ProSign />
             </li>
             <li>
-              <b>List</b> - displays files in a list
+              {t('htsPerspectiveMapique')}&nbsp;
+              <ProSign />
             </li>
             <li>
-              <b>Gallery</b>&nbsp;
-              <ProSign /> - suitable for folders containing images and photos
+              {t('htsPerspectiveKanban')}&nbsp;
+              <ProSign />
             </li>
             <li>
-              <b>Mapique</b>&nbsp;
-              <ProSign /> - suitable for geo-tagging
-            </li>
-            <li>
-              <b>Kanban</b>&nbsp;
-              <ProSign /> - turns every folder into a Kanban board
-            </li>
-            <li>
-              <b>FolderViz</b>&nbsp;
-              <ProSign /> - display the file structure of a folder as visual
-              tree
+              {t('htsPerspectiveFolderViz')}&nbsp;
+              <ProSign />
             </li>
           </ul>
           <SlideButton
-            title="Find out more"
+            title={t('htsFindOutMore')}
             link={Links.documentationLinks.perspectives}
           />
         </>
@@ -184,24 +176,20 @@ function HowToStart() {
         <>
           {t('htsCreatingFiles')}
           <ul>
+            <li>{t('htsCreatingFilesMD')}</li>
+            <li>{t('htsCreatingFilesHTML')}</li>
+            <li>{t('htsCreatingFilesText')}</li>
             <li>
-              <b>Markdown</b> (recommended) - suitable for notes with simple
-              formatting
+              {t('htsCreatingFilesAudio')}&nbsp;
+              <ProSign />
             </li>
             <li>
-              <b>HTML</b> - suitable for documents requiring rich text
-              formatting
-            </li>
-            <li>
-              <b>Text</b> - suitable for creating plain text files, with no
-              formatting
-            </li>
-            <li>
-              <b>Audio</b> - <ProSign /> suitable for audio notes
+              {t('htsCreatingFilesTemplate')}&nbsp;
+              <ProSign />
             </li>
           </ul>
           <SlideButton
-            title="Find out more"
+            title={t('htsFindOutMore')}
             link={Links.documentationLinks.creatingFiles}
           />
         </>
