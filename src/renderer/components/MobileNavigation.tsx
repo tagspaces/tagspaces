@@ -361,7 +361,7 @@ function MobileNavigation(props: Props) {
                         <ListItemIcon>
                           <WorkspacesIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('allWorkspaces')} />
+                        <ListItemText primary={t('all')} />
                       </MenuItem>
                       {workSpaces.map((wSpace) => (
                         <MenuItem
