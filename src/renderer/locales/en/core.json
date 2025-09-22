@@ -1075,7 +1075,6 @@
   "ptsRevisionsTitleSection2": "Enable auto-save per file to ensure every change is saved instantly, keeping your progress safe at all times.",
   "ptsCustomBackgroundTitle": "Custom Folder Backgrounds",
   "ptsCustomBackground": "Make important folders stand out with custom background colors. Even when viewing parent directories, your color-coded folders remain visible. For example, highlight your 'Archive' folder in yellow so it’s always easy to spot.",
-  "ptsProWebTitle": "TagSpaces Pro Web",
   "ptsProWeb": "Run TagSpaces directly in your browser with our web-based Pro edition, hosted securely on your infrastructure.",
   "ptsProWebSection1": "On-premises web version of TagSpaces Pro, perfect for self-hosting.",
   "ptsProWebSection2": "Optimized PWA mode for seamless use on mobile devices.",

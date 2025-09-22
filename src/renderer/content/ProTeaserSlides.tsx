@@ -167,7 +167,7 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[9]] = {
-    title: t('core:ptsProWebTitle'),
+    title: 'TagSpaces Pro Web',
     description: t('core:ptsProWeb'),
     items: [
       <>{t('core:ptsProWebSection1')}</>,
