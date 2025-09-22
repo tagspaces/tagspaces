@@ -250,7 +250,7 @@ function MobileNavigation(props: Props) {
                     }}
                   >
                     {workSpacesContext.getCurrentWorkSpace()?.shortName ||
-                      t('core:allWorkspaces')}
+                      t('core:all')}
                   </Box>
                 </TsButton>
               )}
