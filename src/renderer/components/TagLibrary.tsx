@@ -18,6 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import SidePanelTitle from '-/components/SidePanelTitle';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagGroupContainer from '-/components/TagGroupContainer';
@@ -32,8 +33,10 @@ import TagLibraryMenu from '-/components/menus/TagLibraryMenu';
 import TagMenu from '-/components/menus/TagMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -51,9 +54,6 @@ import Collapse from '@mui/material/Collapse';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomDragLayer from '-/components/CustomDragLayer';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { Pro } from '-/pro';
 
 interface Props {
   style?: any;
@@ -115,9 +115,14 @@ function TagLibrary(props: Props) {
 
   useEffect(() => {
     if (currentWorkSpace) {
-      setWSpaceTagGroups(
-        tagGroups.filter((t) => t.workSpaceId === currentWorkSpace.uuid),
+      const workspaceTagGroups = tagGroups.filter(
+        (t) => t.workSpaceId === currentWorkSpace.uuid,
       );
+      if (workspaceTagGroups?.length) {
+        setWSpaceTagGroups(workspaceTagGroups);
+      } else {
+        setWSpaceTagGroups(tagGroups);
+      }
     } else {
       setWSpaceTagGroups(tagGroups);
     }
