@@ -35,29 +35,45 @@ export function setTagLibrary(tagGroups: TS.TagGroup[]) {
   }
 }
 
+/**
+ * @param tagGroups
+ * @param currentWorkSpace
+ * @param fallbackToLibrary explicit option so caller knows the behavior
+ */
 export function getAllTags(
-  tagGroups?: Array<TS.TagGroup>,
+  tagGroups?: TS.TagGroup[],
   currentWorkSpace?: TS.WorkSpace,
-) {
-  if (tagGroups === undefined) {
-    tagGroups = getTagLibrary();
-  }
+  fallbackToLibrary = true,
+): TS.Tag[] {
+  const groups = tagGroups ?? getTagLibrary();
+
+  let groupsToUse = groups;
   if (currentWorkSpace) {
-    tagGroups = tagGroups.filter(
-      (t) => t.workSpaceId === currentWorkSpace.uuid,
-    );
+    groupsToUse = groups.filter((t) => t.workSpaceId === currentWorkSpace.uuid);
+    if (groupsToUse.length === 0 && fallbackToLibrary) {
+      groupsToUse = getTagLibrary();
+    }
   }
+
+  const seen = new Set<string>();
   const uniqueTags: TS.Tag[] = [];
-  tagGroups.forEach((tagGroup) => {
-    tagGroup?.children.forEach((tag) => {
-      const found = uniqueTags.find((uTag) => uTag.title === tag.title);
-      if (!found) {
+
+  for (const group of groupsToUse) {
+    // safely iterate even if children is undefined/null
+    for (const tag of group.children ?? []) {
+      // use title for uniqueness (or switch to an id if available: tag.id || tag.uuid)
+      const key = tag.title ?? '';
+      if (!seen.has(key)) {
+        seen.add(key);
         uniqueTags.push(tag);
       }
-    });
-  });
+    }
+  }
+
+  // return uniqueTags.sort((a, b) => a.title > b.title ? 1 : a.title < b.title ? -1 : 0, );
+  // localeCompare handles locale-specific ordering; "sensitivity: 'base'" makes it case-insensitive
   return uniqueTags.sort((a, b) =>
-    a.title > b.title ? 1 : a.title < b.title ? -1 : 0,
+    a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }),
   );
 }
 
