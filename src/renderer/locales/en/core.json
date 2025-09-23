@@ -277,6 +277,7 @@
   "createMarkdownTitle": "Creates a text file with simple (markdown based) formatting, recommended for digital notes",
   "createRichTextFile": "New HTML File",
   "createLinkFile": "New Link File",
+  "createNewFromTemplate": "New From Template",
   "createDirectory": "New Folder",
   "addFiles": "New From Device",
   "addFilesTitle": "Add or upload files from your computer.",

@@ -15,19 +15,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
+import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { Pro } from '-/pro';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import { ButtonGroup, FormControl } from '@mui/material';
+import { Box, FormControl, Paper, styled } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
-import { Pro } from '-/pro';
 
 interface Props {
   fileName: string;
@@ -117,34 +116,42 @@ function CreateFile(props: Props) {
     }
   };
 
+  const Item = styled(Paper)(({ theme }) => ({
+    ...theme.typography.body2,
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    height: 60,
+    lineHeight: '60px',
+  }));
+
   return (
     <Grid container spacing={1}>
-      <FormControl fullWidth={true} error={inputError}>
-        <TsTextField
-          inputRef={fileNameRef}
-          error={inputError}
-          name="entryName"
-          label={t('core:fileName')}
-          onChange={handleInputChange}
-          onFocus={onInputFocus}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.code === 'Enter') {
-              event.preventDefault();
-              event.stopPropagation();
-              createFile(fileType);
-            }
-          }}
-          defaultValue={fileName}
-          disabled={noSuitableLocation}
-          autoFocus
-          data-tid={tid('newEntryDialogInputTID')}
-        />
-        {inputError && (
-          <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
-        )}
-      </FormControl>
       {fileType ? (
         <>
+          <FormControl fullWidth={true} error={inputError}>
+            <TsTextField
+              inputRef={fileNameRef}
+              error={inputError}
+              name="entryName"
+              label={t('core:fileName')}
+              onChange={handleInputChange}
+              onFocus={onInputFocus}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.code === 'Enter') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  createFile(fileType);
+                }
+              }}
+              defaultValue={fileName}
+              disabled={noSuitableLocation}
+              autoFocus
+              data-tid={tid('newEntryDialogInputTID')}
+            />
+            {inputError && (
+              <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
+            )}
+          </FormControl>
           <FormControl fullWidth={true}>
             <TsTextField
               autoFocus
@@ -160,60 +167,36 @@ function CreateFile(props: Props) {
           <TemplatesDropDown fileType={fileType} label={t('templatesTab')} />
         </>
       ) : (
-        <ButtonGroup style={{ margin: '0 auto' }}>
-          {Pro.FileTemplates &&
-            Pro.FileTemplates.map((template) => (
-              <TsButton
-                tooltip={t('create' + template.type + 'Title')}
-                onClick={() => createFile(template.type, template)}
-                data-tid={tid('create' + template.type + 'Button')}
-                disabled={noSuitableLocation}
-                style={{
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                  fontWeight: 'bold',
-                }}
-              >
-                {t('create' + template.type)}
-              </TsButton>
-            ))}
-          {/*<TsButton
-            tooltip={t('createMarkdownTitle')}
-            onClick={() => createFile('md')}
-            data-tid={tid('createMarkdownButton')}
-            disabled={noSuitableLocation}
-            style={{
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-              fontWeight: 'bold',
-            }}
-          >
-            {t('createMarkdown')}
-          </TsButton>
-          <TsButton
-            tooltip={t('createNoteTitle')}
-            onClick={() => createFile('html')}
-            data-tid={tid('createRichTextFileButton')}
-            disabled={noSuitableLocation}
-            style={{
-              borderRadius: 0,
-            }}
-          >
-            {t('createRichTextFile')}
-          </TsButton>
-          <TsButton
-            tooltip={t('createTextFileTitle')}
-            onClick={() => createFile('txt')}
-            data-tid={tid('createTextFileButton')}
-            disabled={noSuitableLocation}
-            style={{
-              borderTopLeftRadius: 0,
-              borderBottomLeftRadius: 0,
-            }}
-          >
-            {t('createTextFile')}
-          </TsButton>*/}
-        </ButtonGroup>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            {Pro.FileTemplates &&
+              Pro.FileTemplates.map((template, index) => (
+                <Grid key={index} size={6}>
+                  <Box
+                    // tooltip={t('create' + template.type + 'Title')}
+                    // onClick={() => createFile(template.type, template)}
+                    // data-tid={tid('create' + template.type + 'Button')}
+                    // disabled={noSuitableLocation}
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'background.default',
+                      display: 'grid',
+                      gridTemplateColumns: { md: '1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
+                    <Item
+                      elevation={12}
+                      // tooltip={t('create' + template.type + 'Title')}
+                    >
+                      {t('create' + template.type)}
+                    </Item>
+                  </Box>
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
       )}
     </Grid>
   );
