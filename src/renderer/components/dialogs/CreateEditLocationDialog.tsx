@@ -74,6 +74,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 
 interface Props {
   open: boolean;
@@ -819,46 +820,22 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              <TsSelect
+              <WorkSpacesDropdown
+                disabled={!Pro}
+                dataTid="locationWorkspaceTID"
+                workSpaceId={workSpaceId}
+                setWorkSpaceId={setWorkSpaceId}
+                workSpaces={workSpaces}
                 label={
                   <>
                     {t('core:workspace')}
                     <ProLabel />
                   </>
                 }
-                disabled={!Pro}
-                style={{ minWidth: 200 }}
-                data-tid="locationWorkspaceTID"
-                value={workSpaceId}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setWorkSpaceId(event.target.value)
+                onOpenNewWorkspace={() =>
+                  workSpacesContext.openNewWorkspaceDialog()
                 }
-                slotProps={{
-                  input: {
-                    endAdornment: workSpaceId && (
-                      <InputAdornment position="end" sx={{ ml: -12 }}>
-                        <TsIconButton
-                          aria-label={t('core:deleteWSpace')}
-                          onClick={() => setWorkSpaceId('')}
-                          data-tid="wSpaceResetTID"
-                        >
-                          <RemoveIcon />
-                        </TsIconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              >
-                {workSpaces?.map((wSpace) => (
-                  <MenuItem
-                    key={wSpace.uuid}
-                    value={wSpace.uuid}
-                    data-tid={'wSpace' + wSpace.shortName + 'TID'}
-                  >
-                    {wSpace.shortName + ' - ' + wSpace.fullName}
-                  </MenuItem>
-                ))}
-              </TsSelect>
+              />
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}

@@ -17,13 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { RemoveIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { ProLabel } from '-/components/HelperComponents';
 import Tag from '-/components/Tag';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
-import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
@@ -38,7 +36,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
@@ -54,6 +51,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 
 interface Props {
   open: boolean;
@@ -253,46 +251,22 @@ function CreateTagGroupDialog(props: Props) {
           </ListItem>
         )}
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <TsSelect
+          <WorkSpacesDropdown
             disabled={!Pro}
-            data-tid="taggroupWorkspaceTID"
-            value={workSpaceId}
-            fullWidth
+            dataTid="createTgWorkspaceTID"
+            workSpaceId={workSpaceId}
+            setWorkSpaceId={setWorkSpaceId}
+            workSpaces={workSpaces}
             label={
               <>
                 {t('core:workspace')}
                 <ProLabel />
               </>
             }
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setWorkSpaceId(event.target.value)
+            onOpenNewWorkspace={() =>
+              workSpacesContext.openNewWorkspaceDialog()
             }
-            slotProps={{
-              input: {
-                endAdornment: workSpaceId && (
-                  <InputAdornment position="end" sx={{ ml: -12 }}>
-                    <TsIconButton
-                      aria-label={t('core:deleteWSpace')}
-                      onClick={() => setWorkSpaceId('')}
-                      data-tid="wSpaceResetTID"
-                    >
-                      <RemoveIcon />
-                    </TsIconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          >
-            {workSpaces.map((wSpace) => (
-              <MenuItem
-                key={wSpace.uuid}
-                value={wSpace.uuid}
-                data-tid={'wSpace' + wSpace.shortName + 'TID'}
-              >
-                {wSpace.shortName + ' - ' + wSpace.fullName}
-              </MenuItem>
-            ))}
-          </TsSelect>
+          />
         </ListItem>
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
