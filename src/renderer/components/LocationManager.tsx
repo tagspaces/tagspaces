@@ -185,7 +185,6 @@ function LocationManager(props: Props) {
                           workspace={getWorkSpace(location)}
                           location={{
                             isFile: false,
-                            cdt: 0,
                             lmdt: 0,
                             name: location.name,
                             path: location.path,

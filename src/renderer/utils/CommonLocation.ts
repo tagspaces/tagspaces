@@ -335,7 +335,6 @@ export class CommonLocation implements TS.Location {
         param,
         mode,
         ignorePatterns,
-        resultsLimit,
       );
     }
     return Promise.reject(new Error('listDirectoryPromise not implemented!'));
@@ -527,7 +526,6 @@ export class CommonLocation implements TS.Location {
       }),
       tags,
       size: 0,
-      cdt: new Date().getTime(),
       lmdt: new Date().getTime(),
       path: entryPath,
     };

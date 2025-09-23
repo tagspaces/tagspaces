@@ -102,6 +102,7 @@ import {
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
+import { formatTimestampLocal } from '-/utils/formatLocalTime';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -442,21 +443,11 @@ function EntryProperties(props: Props) {
     return <div />;
   }
 
-  const ldtm = openedEntry.lmdt
-    ? new Date(openedEntry.lmdt)
-        .toISOString()
-        .substring(0, 19)
-        .split('T')
-        .join(' ')
-    : ' ';
+  const ldtm = openedEntry.lmdt ? formatTimestampLocal(openedEntry.lmdt) : ' ';
 
   const cdt = openedEntry.cdt
-    ? new Date(openedEntry.cdt)
-        .toISOString()
-        .substring(0, 19)
-        .split('T')
-        .join(' ')
-    : ' ';
+    ? formatTimestampLocal(openedEntry.cdt)
+    : undefined;
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
@@ -713,10 +704,10 @@ function EntryProperties(props: Props) {
           />
         </Grid>
 
-        {AppConfig.isElectron && (
+        {AppConfig.isElectron && cdt && (
           <Grid size={12}>
             <TsTextField
-              value={ldtm}
+              value={cdt}
               label={t('core:creationDate')}
               retrieveValue={() => cdt}
               slotProps={{

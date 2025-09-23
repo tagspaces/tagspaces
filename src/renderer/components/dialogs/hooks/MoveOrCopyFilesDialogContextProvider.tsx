@@ -83,7 +83,7 @@ export const MoveOrCopyFilesDialogContextProvider = ({
           isFile: !isDirsArray[index],
           extension: extractFileExtension(file.path),
           size: file.size,
-          cdt: (file as any).cdt || file.lastModified,
+          cdt: (file as any).cdt,
           lmdt: file.lastModified,
         }));
         forceUpdate();
