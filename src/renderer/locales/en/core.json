@@ -862,6 +862,7 @@
   "generateEncryptionKey": "Generate random encryption key",
   "toggleKeyVisibility": "Toggle key visibility",
   "dragMode": "Enable dragging files outside of the application",
+  "dragModeCaption": "Drag & Drop Files",
   "dragOutsideApp": "Drag outside the app",
   "exitEditMode": "Exit editing",
   "cloudPath": "Path in the cloud",

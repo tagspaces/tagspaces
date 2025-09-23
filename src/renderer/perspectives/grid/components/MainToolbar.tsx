@@ -38,9 +38,11 @@ import TsToolbarButton from '-/components/TsToolbarButton';
 import ZoomComponent from '-/components/ZoomComponent';
 import { useAiGenerationDialogContext } from '-/components/dialogs/hooks/useAiGenerationDialogContext';
 import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hooks/useDeleteMultipleEntriesDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -52,8 +54,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -298,7 +298,7 @@ function MainToolbar(props: Props) {
           onClick={() => {
             setNativeDragModeEnabled(!nativeDragModeEnabled);
           }}
-          title={t('core:dragMode')}
+          title={t('core:dragModeCaption')}
         >
           {nativeDragModeEnabled ? <DragOnIcon /> : <DragOffIcon />}
         </TsToolbarButton>
