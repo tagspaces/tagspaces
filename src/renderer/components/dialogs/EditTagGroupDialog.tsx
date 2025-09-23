@@ -125,46 +125,52 @@ function EditTagGroupDialog(props: Props) {
   }
 
   const onConfirm = async () => {
-    if (disableConfirmButton()) {
-      return;
+    if (disableConfirmButton()) return;
+
+    if (!selectedTagGroupEntry || !selectedTagGroupEntry.children) return;
+
+    if (
+      Pro &&
+      isLocationChanged() &&
+      selectedTagGroupEntry.locationId !== undefined
+    ) {
+      const location: CommonLocation = findLocation(
+        selectedTagGroupEntry.locationId,
+      );
+      if (location) {
+        await removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
+      }
     }
 
-    if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
-      if (
-        Pro &&
-        isLocationChanged() &&
-        selectedTagGroupEntry.locationId !== undefined
-      ) {
-        // remove old location
-        const location: CommonLocation = findLocation(
-          selectedTagGroupEntry.locationId,
-        );
-        if (location) {
-          await removeLocationTagGroup(location, selectedTagGroupEntry.uuid);
-        }
-      }
-      updateTagGroup({
-        ...selectedTagGroupEntry,
-        title,
-        color,
-        textcolor,
-        ...(workSpaceId && { workSpaceId }),
-        ...(isLocationChanged() && {
-          locationId:
-            newLocationId === defaultTagGroupLocation
-              ? undefined
-              : newLocationId,
-        }),
-        modified_date: new Date().getTime(),
-        children: selectedTagGroupEntry.children.map((tag) => ({
-          ...tag,
-          color: applyChanges ? color : tag.color,
-          textcolor: applyChanges ? textcolor : tag.textcolor,
-          style: tag.style,
-        })),
-      });
-      onClose();
+    const payload: any = {
+      ...selectedTagGroupEntry,
+      title,
+      color,
+      textcolor,
+      modified_date: Date.now(),
+      children: selectedTagGroupEntry.children.map((tag) => ({
+        ...tag,
+        color: applyChanges ? color : tag.color,
+        textcolor: applyChanges ? textcolor : tag.textcolor,
+        style: tag.style,
+      })),
+    };
+
+    // location handling (only change if location actually changed)
+    if (isLocationChanged()) {
+      payload.locationId =
+        newLocationId === defaultTagGroupLocation ? undefined : newLocationId;
     }
+
+    // add or remove workSpaceId explicitly
+    if (workSpaceId !== undefined) {
+      payload.workSpaceId = workSpaceId;
+    } else {
+      delete payload.workSpaceId; // removes it entirely so updateTagGroup won't keep the old value
+    }
+
+    updateTagGroup(payload);
+    onClose();
   };
 
   const okButton = (
