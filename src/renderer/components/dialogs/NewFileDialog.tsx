@@ -143,9 +143,7 @@ function NewFileDialog(props: Props) {
       .replace('{date}', dateTimeArray[0])
       .replace('{author}', author)
       .replace('{time}', dateTimeArray[1].split('.')[0]);
-    return fileType === 'html'
-      ? `\n<p>${fileContent}</p>`
-      : `\n\n ${fileContent}`;
+    return fileType === 'html' ? `\n<p>${fileContent}</p>` : `${fileContent}`;
   }
 
   function getFileType() {

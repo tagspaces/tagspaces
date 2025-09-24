@@ -203,7 +203,7 @@ function CreateFile(props: Props) {
                     </Typography>
                     <Typography
                       variant="body2"
-                      title="preview"
+                      title={template.content}
                       style={{ maxHeight: 75, height: 75, overflowY: 'auto' }}
                     >
                       {template.description || template.content}

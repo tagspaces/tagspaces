@@ -197,6 +197,7 @@ function SettingsTemplates(props: Props) {
           </TsButton>
           <TsButton
             disabled={!!window.ExtFileTemplates}
+            variant="text"
             onClick={() => {
               fileTemplatesContext.resetTemplates();
               forceUpdate();
@@ -258,10 +259,12 @@ function SettingsTemplates(props: Props) {
                 ) : (
                   ''
                 )}
-                {fileTemplatesContext?.getTemplate(template.type)?.id ===
-                template.id
-                  ? ' - ' + t('defaultTemplate')
-                  : ''}
+                <small>
+                  {fileTemplatesContext?.getTemplate(template.type)?.id ===
+                  template.id
+                    ? ' - ' + t('defaultTemplate')
+                    : ''}
+                </small>
               </Typography>
               <TsIconButton
                 disabled={!Pro || !!window.ExtFileTemplates}
@@ -286,7 +289,7 @@ function SettingsTemplates(props: Props) {
                     {editedTemplate.current.name &&
                       editedTemplate.current.fileNameTmpl && (
                         <TsButton
-                          variant="text"
+                          size="small"
                           data-tid={'save' + template.id + 'TID'}
                           onClick={() => saveTemplate(template.id)}
                         >
@@ -295,6 +298,7 @@ function SettingsTemplates(props: Props) {
                       )}
                     <TsButton
                       variant="text"
+                      size="small"
                       data-tid={'cancel' + template.id + 'TID'}
                       onClick={() => cancelSavingTemplate()}
                     >
