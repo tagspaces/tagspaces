@@ -241,13 +241,8 @@ export default function loadMainEvents() {
   });
   ipcMain.handle(
     'listDirectoryPromise',
-    async (event, path, mode, ignorePatterns, resultsLimit) => {
-      const result = await listDirectoryPromise(
-        path,
-        mode,
-        ignorePatterns,
-        resultsLimit,
-      );
+    async (event, path, mode, ignorePatterns) => {
+      const result = await listDirectoryPromise(path, mode, ignorePatterns);
       return result;
     },
   );

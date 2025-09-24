@@ -200,6 +200,7 @@ export namespace TS {
     tags?: TS.Tag[];
     isEncrypted?: boolean;
     size: number;
+    cdt?: number;
     lmdt: number;
     path: string;
     url?: string;

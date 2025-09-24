@@ -335,7 +335,6 @@ export class CommonLocation implements TS.Location {
         param,
         mode,
         ignorePatterns,
-        resultsLimit,
       );
     }
     return Promise.reject(new Error('listDirectoryPromise not implemented!'));

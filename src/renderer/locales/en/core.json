@@ -1093,5 +1093,7 @@
   "shortNameRequired": "Short name required",
   "shortNameMaxLength": "Short name should be max. 5 characters",
   "fullNameRequired": "Full name required",
+  "importCompleted": "Import completed",
+  "importCompletedWithErrors": "Import completed with errors",
   "-": "-"
 }

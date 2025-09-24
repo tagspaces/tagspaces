@@ -43,7 +43,6 @@ import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -53,6 +52,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { getTagDelimiter } from '-/reducers/settings';
 import {
   dirNameValidation,
   fileNameValidation,
@@ -100,9 +100,9 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { Pro } from '../pro';
 import { useSelector } from 'react-redux';
-import { getTagDelimiter } from '-/reducers/settings';
+import { Pro } from '../pro';
+import { formatTimestampLocal } from '-/utils/formatLocalTime';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -443,13 +443,11 @@ function EntryProperties(props: Props) {
     return <div />;
   }
 
-  const ldtm = openedEntry.lmdt
-    ? new Date(openedEntry.lmdt)
-        .toISOString()
-        .substring(0, 19)
-        .split('T')
-        .join(' ')
-    : ' ';
+  const ldtm = openedEntry.lmdt ? formatTimestampLocal(openedEntry.lmdt) : ' ';
+
+  const cdt = openedEntry.cdt
+    ? formatTimestampLocal(openedEntry.cdt)
+    : undefined;
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
@@ -705,6 +703,26 @@ function EntryProperties(props: Props) {
             }}
           />
         </Grid>
+
+        {AppConfig.isElectron && cdt && (
+          <Grid size={12}>
+            <TsTextField
+              value={cdt}
+              label={t('core:creationDate')}
+              retrieveValue={() => cdt}
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CalendarIcon />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+        )}
 
         <Grid size={12}>
           <Tooltip
