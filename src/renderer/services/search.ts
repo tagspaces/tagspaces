@@ -487,7 +487,7 @@ function filterByDatePeriod(
 function filterIndex(
   data: TS.SearchIndex[],
   searchQuery: TS.SearchQuery,
-): TS.FileSystemEntry[] {
+): TS.SearchIndex[] {
   console.log('Pro filter ' + JSON.stringify(searchQuery));
   let results: TS.SearchIndex[] = data;
 
