@@ -35,6 +35,7 @@ import {
   RecentThingsIcon,
   SettingsIcon,
   TagLibraryIcon,
+  TemplateFileIcon,
   ThemingIcon,
   WorkspacesIcon,
 } from '-/components/CommonIcons';
@@ -499,6 +500,24 @@ function MobileNavigation(props: Props) {
                           </>
                         }
                       />
+                    </MenuItem>
+                    <MenuItem
+                      key="navCreateFileFromTemplate"
+                      data-tid="navCreateFileFromTemplateTID"
+                      disabled={!Pro}
+                      onClick={() => {
+                        openNewFileDialog();
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <TemplateFileIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={t('core:createNewFromTemplate')} />
+                      {/* <InfoIcon tooltip={t('core:createNoteTitle')} /> */}
                     </MenuItem>
                     <Divider />
                     <MenuItem

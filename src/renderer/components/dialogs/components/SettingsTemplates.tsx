@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import {
   CreateFileIcon,
   ExpandIcon,
+  ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
@@ -194,6 +195,21 @@ function SettingsTemplates(props: Props) {
           >
             {t('addTemplate')}
           </TsButton>
+          <TsButton
+            disabled={!!window.ExtFileTemplates}
+            variant="text"
+            onClick={() => {
+              fileTemplatesContext.resetTemplates();
+              forceUpdate();
+            }}
+            style={{
+              marginBottom: 10,
+              marginLeft: AppConfig.defaultSpaceBetweenButtons,
+            }}
+            startIcon={<ReloadIcon />}
+          >
+            {t('resetTemplates')}
+          </TsButton>
           <TemplatesDropDown disabled={!!window.ExtFileTemplates} />
           <TemplatesDropDown
             disabled={!!window.ExtFileTemplates}
@@ -243,10 +259,12 @@ function SettingsTemplates(props: Props) {
                 ) : (
                   ''
                 )}
-                {fileTemplatesContext?.getTemplate(template.type)?.id ===
-                template.id
-                  ? ' - ' + t('defaultTemplate')
-                  : ''}
+                <small>
+                  {fileTemplatesContext?.getTemplate(template.type)?.id ===
+                  template.id
+                    ? ' - ' + t('defaultTemplate')
+                    : ''}
+                </small>
               </Typography>
               <TsIconButton
                 disabled={!Pro || !!window.ExtFileTemplates}
@@ -271,7 +289,7 @@ function SettingsTemplates(props: Props) {
                     {editedTemplate.current.name &&
                       editedTemplate.current.fileNameTmpl && (
                         <TsButton
-                          variant="text"
+                          size="small"
                           data-tid={'save' + template.id + 'TID'}
                           onClick={() => saveTemplate(template.id)}
                         >
@@ -280,6 +298,7 @@ function SettingsTemplates(props: Props) {
                       )}
                     <TsButton
                       variant="text"
+                      size="small"
                       data-tid={'cancel' + template.id + 'TID'}
                       onClick={() => cancelSavingTemplate()}
                     >
