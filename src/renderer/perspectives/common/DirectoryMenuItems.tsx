@@ -286,7 +286,8 @@ export function getDirectoryMenuItems(
       menuItems.push(
         <MenuItem
           key="createNewFromTemplate"
-          data-tid="createNewFromTempateTID"
+          data-tid="createNewFromTemplateTID"
+          disabled={!Pro}
           onClick={() => {
             onClose();
             createNewFile();
@@ -295,7 +296,14 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <TemplateFileIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:createNewFromTemplate')} />
+          <ListItemText
+            primary={
+              <>
+                {t('core:createNewFromTemplate')}
+                {!Pro && <ProLabel />}
+              </>
+            }
+          />
         </MenuItem>,
       );
     }

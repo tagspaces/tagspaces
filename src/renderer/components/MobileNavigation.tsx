@@ -516,8 +516,14 @@ function MobileNavigation(props: Props) {
                       <ListItemIcon>
                         <TemplateFileIcon />
                       </ListItemIcon>
-                      <ListItemText primary={t('core:createNewFromTemplate')} />
-                      {/* <InfoIcon tooltip={t('core:createNoteTitle')} /> */}
+                      <ListItemText
+                        primary={
+                          <>
+                            {t('core:createNewFromTemplate')}
+                            {!Pro && <ProLabel />}
+                          </>
+                        }
+                      />
                     </MenuItem>
                     <Divider />
                     <MenuItem
