@@ -135,6 +135,9 @@ function SearchAutocomplete(props: Props) {
   const lastModified = useRef<string>(
     searchQuery.lastModified ? searchQuery.lastModified : '',
   );
+  const dateCreated = useRef<string>(
+    searchQuery.dateCreated ? searchQuery.dateCreated : '',
+  );
   const tagTimePeriod = useRef<string>('');
   const tagTimePeriodHelper = useRef<string>(' ');
   const tagTimePeriodFrom = useRef<number | null>(
@@ -279,6 +282,17 @@ function SearchAutocomplete(props: Props) {
             t('core:' + searchQuery.lastModified),
         });
       }
+      if (searchQuery.dateCreated) {
+        dateCreated.current = searchQuery.dateCreated;
+        emptySearch = false;
+        actions.push({
+          action: SearchQueryComposition.DATE_CREATED.fullName,
+          label:
+            SearchQueryComposition.DATE_CREATED.fullName +
+            ' ' +
+            t('core:' + searchQuery.dateCreated),
+        });
+      }
       if (searchQuery.tagTimePeriodFrom) {
         tagTimePeriodFrom.current = searchQuery.tagTimePeriodFrom;
         emptySearch = false;
@@ -389,6 +403,13 @@ function SearchAutocomplete(props: Props) {
       )
     ) {
       lastModified.current = '';
+    }
+    if (
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.DATE_CREATED),
+      )
+    ) {
+      dateCreated.current = '';
     }
     tagTimePeriod.current = '';
     tagTimePeriodHelper.current = ' ';
@@ -530,6 +551,7 @@ function SearchAutocomplete(props: Props) {
       searchType: searchType.current,
       fileTypes: fileTypes.current,
       lastModified: lastModified.current,
+      dateCreated: dateCreated.current,
       fileSize: fileSize.current,
       tagTimePeriodFrom: tagTimePeriodFrom.current,
       tagTimePeriodTo: tagTimePeriodTo.current,
@@ -761,6 +783,24 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: period[1].key,
             action: ExecActions.LAST_MODIFIED_SEARCH,
+            label: t('core:' + period[1].key),
+            filter,
+          });
+        });
+        searchOptions.current = options;
+        optionsChanged = true;
+      }
+    } else if (isAction(action, SearchQueryComposition.DATE_CREATED)) {
+      if (
+        currentOptions.current !== SearchQueryComposition.DATE_CREATED.shortName
+      ) {
+        currentOptions.current = action;
+        const options = [];
+
+        Object.entries(AppConfig.SearchTimePeriods).forEach((period: any) => {
+          options.push({
+            id: period[1].key,
+            action: ExecActions.DATE_CREATED_SEARCH,
             label: t('core:' + period[1].key),
             filter,
           });
@@ -1037,7 +1077,8 @@ function SearchAutocomplete(props: Props) {
           }
           // executeSearch();
         } else if (
-          isAction(option.action, SearchQueryComposition.LAST_MODIFIED)
+          isAction(option.action, SearchQueryComposition.LAST_MODIFIED) ||
+          isAction(option.action, SearchQueryComposition.DATE_CREATED)
         ) {
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1060,6 +1101,22 @@ function SearchAutocomplete(props: Props) {
             changeOptions(option.action);
           }
           // executeSearch();
+        } else if (option.action === ExecActions.DATE_CREATED_SEARCH) {
+          const id = setActionLabel(
+            SearchQueryComposition.DATE_CREATED,
+            option,
+          );
+          if (id) {
+            dateCreated.current = id;
+            setSearchQuery({
+              ...searchQuery,
+              dateCreated: id,
+              executeSearch: false,
+            });
+          }
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
         } else if (isAction(option.action, SearchQueryComposition.SCOPE)) {
           if (hasOptionsChanged) {
             changeOptions(option.action);

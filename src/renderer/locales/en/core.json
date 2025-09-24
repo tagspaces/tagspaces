@@ -1095,5 +1095,6 @@
   "fullNameRequired": "Full name required",
   "importCompleted": "Import completed",
   "importCompletedWithErrors": "Import completed with errors",
+  "dateCreatedSearchTitle": "Date Created",
   "-": "-"
 }

@@ -38,6 +38,10 @@ export const SearchQueryComposition = {
     shortName: 'lm:',
     fullName: 'modified:',
   },
+  DATE_CREATED: {
+    shortName: 'cd:',
+    fullName: 'created:',
+  },
   SCOPE: {
     shortName: 'sc:',
     fullName: 'scope:',
@@ -86,6 +90,7 @@ export const ExecActions = {
   TYPE_SEARCH: 'type_search',
   SIZE_SEARCH: 'size_search',
   LAST_MODIFIED_SEARCH: 'last_modified_search',
+  DATE_CREATED_SEARCH: 'date_created_search',
   SCOPE_SEARCH: 'scope_search',
   ACCURACY_SEARCH: 'accuracy_search',
 };

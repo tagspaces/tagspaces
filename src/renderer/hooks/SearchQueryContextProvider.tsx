@@ -129,6 +129,7 @@ export const SearchQueryContextProvider = ({
       searchType: tempSearchQuery.current.searchType,
       fileTypes: tempSearchQuery.current.fileTypes,
       lastModified: tempSearchQuery.current.lastModified,
+      dateCreated: tempSearchQuery.current.dateCreated,
       fileSize: tempSearchQuery.current.fileSize,
       tagTimePeriodFrom: tempSearchQuery.current.tagTimePeriodFrom,
       tagTimePeriodTo: tempSearchQuery.current.tagTimePeriodTo,
