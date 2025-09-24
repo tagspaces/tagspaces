@@ -172,7 +172,7 @@ function NewFileDialog(props: Props) {
     }
   }
 
-  function createFile(fileType, targetPath, template = undefined) {
+  function createFile(fileType, targetPath, template?: TS.FileTemplate) {
     if (targetPath) {
       if (fileType === 'url' && !fileContentRef.current) {
         haveError.current = true;
