@@ -249,10 +249,7 @@ function FileView(props: Props) {
     }
     return 'about:blank';
   }, [
-    openedEntry?.lmdt,
-    openedEntry?.isEncrypted,
-    openedEntry?.viewingExtensionPath,
-    openedEntry?.editingExtensionPath,
+    openedEntry?.path,
     isEditMode,
     theme.palette,
     searchQuery?.textQuery,

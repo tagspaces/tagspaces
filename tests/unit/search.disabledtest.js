@@ -1,28 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import Search from '../../app/services/search';
-// import { FileTypeGroups } from '../../app/services/search';
 
 const testEntries = require('./tsi.json');
-
-// const mockedSearchIndex = { data: {} };
-// const SearchMock = jest.fn();
-// SearchMock.mockReturnValue(Promise.resolve(mockedSearchIndex));
-// Search.searchLocationIndex = SearchMock;
-
-// jest.mock('../../app/services/search');
-
-// test('calls Search.searchLocationIndex with the params', () => {
-//   const locationContent = [];
-//   const searchQuery = {
-//     tagsAND: ['tag'],
-//     maxSearchResults: 1
-//   };
-
-//   expect(
-//     Search.searchLocationIndex(locationContent, searchQuery)
-//   ).resolves.toStrictEqual(mockedSearchIndex);
-//   expect(SearchMock).toHaveBeenCalledWith(locationContent, searchQuery);
-// });
 
 const tag1 = { title: 'tagTitle1' };
 const tag2 = { title: 'tagTitle2' };
@@ -132,25 +111,6 @@ test('calls Search.searchLocationIndex for textQuery', async () => {
 
   expect(searchResults[0].name).toStrictEqual('IMG_20191001_163655.jpg');
 });
-
-//jest.mock('../../app/pro', () => require('../../extensions/pro'));
-//jest.mock('../../extensions/pro/modules/thumbsgenerator');
-//jest.mock('../../app/services/platform-io');
-
-/*
-test('calls Search.searchLocationIndex for Pro', () => {
-
-  const locationContent = [entry1, entry2];
-
-  const searchQuery = {
-    textQuery: 'description'
-  };
-
-  expect(
-    Search.searchLocationIndex(locationContent, searchQuery)
-  ).resolves.toStrictEqual([entry1]);
-});
-*/
 
 test.skip('calls Search.searchLocationIndex for extension', async () => {
   const searchQuery = {
