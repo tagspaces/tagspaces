@@ -449,20 +449,20 @@ function filterByDatePeriod(
   const msInDay = 1000 * 60 * 60 * 24;
 
   // convenience predicate helpers
-  const after = (ts: number) => (entry) => {
+  const after = (ts: number) => (entry: TS.SearchIndex) => {
     const t = getTimeValue(entry) ?? 0;
     return t > ts;
   };
-  const between = (fromTs: number, toTs: number) => (entry) => {
+  const between = (fromTs: number, toTs: number) => (entry: TS.SearchIndex) => {
     const t = getTimeValue(entry) ?? 0;
     return t > fromTs && t < toTs;
   };
-  const before = (ts: number) => (entry) => {
+  const before = (ts: number) => (entry: TS.SearchIndex) => {
     const t = getTimeValue(entry) ?? 0;
     return t < ts;
   };
 
-  let predicate: ((entry) => boolean) | null = null;
+  let predicate: ((entry: TS.SearchIndex) => boolean) | null = null;
 
   if (periodKey === AppConfig.SearchTimePeriods.today.key) {
     predicate = after(startOfToday);
