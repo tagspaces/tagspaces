@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
@@ -22,10 +23,23 @@ import { Pro } from '-/pro';
 import { fileNameValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import { Box, FormControl, Paper, styled } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  FormControl,
+  Typography,
+} from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -59,6 +73,13 @@ function CreateFile(props: Props) {
   const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const noSuitableLocation = !targetDirectoryPath;
+
+  const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
+    ? useContext<TS.FileTemplatesContextData>(
+        Pro.contextProviders.FileTemplatesContext,
+      )
+    : undefined;
+  const templatesArray = fileTemplatesContext?.getTemplates();
 
   useEffect(() => {
     if (!firstRender && fileNameRef.current && fileContentRef.current) {
@@ -116,14 +137,6 @@ function CreateFile(props: Props) {
     }
   };
 
-  const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: 60,
-    lineHeight: '60px',
-  }));
-
   return (
     <Grid container spacing={1}>
       {fileType ? (
@@ -169,32 +182,50 @@ function CreateFile(props: Props) {
       ) : (
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
-            {Pro.FileTemplates &&
-              Pro.FileTemplates.map((template, index) => (
-                <Grid key={index} size={6}>
-                  <Box
-                    // tooltip={t('create' + template.type + 'Title')}
-                    // onClick={() => createFile(template.type, template)}
-                    // data-tid={tid('create' + template.type + 'Button')}
-                    // disabled={noSuitableLocation}
-                    sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: 'background.default',
-                      display: 'grid',
-                      gridTemplateColumns: { md: '1fr 1fr' },
-                      gap: 2,
-                    }}
-                  >
-                    <Item
-                      elevation={12}
-                      // tooltip={t('create' + template.type + 'Title')}
+            {templatesArray?.map((template: TS.FileTemplate, index) => (
+              <Grid key={index} size={6}>
+                <Card variant="outlined">
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      {template.name}
+                      <span
+                        style={{
+                          marginLeft: 5,
+                          padding: 2,
+                          fontSize: 12,
+                          textTransform: 'uppercase',
+                          border: '1px solid gray',
+                          borderRadius: '3px',
+                        }}
+                      >
+                        {template.type}
+                      </span>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      title="preview"
+                      style={{ maxHeight: 75, height: 75, overflowY: 'auto' }}
                     >
-                      {t('create' + template.type)}
-                    </Item>
-                  </Box>
-                </Grid>
-              ))}
+                      {template.description || template.content}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <TsButton
+                      size="small"
+                      onClick={() => createFile(template.type, template)}
+                      data-tid={
+                        'create' +
+                        (template.type === 'md' ? 'Markdown' : template.type) +
+                        'Button'
+                      }
+                      disabled={noSuitableLocation}
+                    >
+                      {t('useTemplate')}
+                    </TsButton>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       )}

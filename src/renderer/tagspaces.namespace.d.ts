@@ -328,7 +328,8 @@ export namespace TS {
   interface FileTemplate {
     id: string;
     content: string; // e.g: Created with TagSpaces on 20250605'
-    name?: string; // 'Template Name'
+    name?: string;
+    description?: string;
     type?: 'md' | 'txt' | 'html';
     fileNameTmpl?: string; // e.g. note, issue, task
     screenshotUrl?: string; //'dataURL'
