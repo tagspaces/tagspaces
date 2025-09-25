@@ -35,6 +35,7 @@ import {
   RecentThingsIcon,
   SettingsIcon,
   TagLibraryIcon,
+  TemplateFileIcon,
   ThemingIcon,
   WorkspacesIcon,
 } from '-/components/CommonIcons';
@@ -495,6 +496,30 @@ function MobileNavigation(props: Props) {
                         primary={
                           <>
                             {t('core:newAudioRecording')}
+                            {!Pro && <ProLabel />}
+                          </>
+                        }
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      key="navCreateFileFromTemplate"
+                      data-tid="navCreateFileFromTemplateTID"
+                      disabled={!Pro}
+                      onClick={() => {
+                        openNewFileDialog();
+                        setOpenCreateMenu(false);
+                        if (hideDrawer) {
+                          hideDrawer();
+                        }
+                      }}
+                    >
+                      <ListItemIcon>
+                        <TemplateFileIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <>
+                            {t('core:createNewFromTemplate')}
                             {!Pro && <ProLabel />}
                           </>
                         }

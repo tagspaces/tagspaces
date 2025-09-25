@@ -21,6 +21,7 @@ import {
   ReloadIcon,
   RenameIcon,
   TagIcon,
+  TemplateFileIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -280,6 +281,29 @@ export function getDirectoryMenuItems(
             <LinkFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:createLinkFile')} />
+        </MenuItem>,
+      );
+      menuItems.push(
+        <MenuItem
+          key="createNewFromTemplate"
+          data-tid="createNewFromTemplateTID"
+          disabled={!Pro}
+          onClick={() => {
+            onClose();
+            createNewFile();
+          }}
+        >
+          <ListItemIcon>
+            <TemplateFileIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                {t('core:createNewFromTemplate')}
+                {!Pro && <ProLabel />}
+              </>
+            }
+          />
         </MenuItem>,
       );
     }

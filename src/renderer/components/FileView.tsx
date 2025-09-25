@@ -249,6 +249,7 @@ function FileView(props: Props) {
     }
     return 'about:blank';
   }, [
+    openedEntry?.lmdt,
     openedEntry?.path,
     isEditMode,
     theme.palette,

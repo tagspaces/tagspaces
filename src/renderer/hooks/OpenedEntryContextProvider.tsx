@@ -71,7 +71,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Pro } from '-/pro';
 
 type OpenedEntryContextData = {
   haveOpenedEntry: boolean;
@@ -428,69 +427,6 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  /*function setSharedLinks(openedFile?) {
-    if (openedFile) {
-      if (window.location.href.indexOf('?') > 0) {
-        const sharingURL = new URL(window.location.href);
-        const params = new URLSearchParams(sharingURL.search);
-        if (params.has('tslid')) {
-          const locationId = params.get('tslid');
-          //if (params.has('tsdpath')) {
-          // const folderPath2 = params.get('tsdpath');
-          const folderLocation = findLocation(locationId);
-          const folderPath = extractContainingDirectoryPath(openedFile.path);
-          if (
-            folderPath.indexOf(
-              cleanTrailingDirSeparator(folderLocation.path),
-            ) === 0
-          ) {
-            sharingParentFolderLink.current = generateSharingLink(
-              locationId,
-              undefined,
-              cleanRootPath(
-                folderPath,
-                folderLocation.path,
-                folderLocation?.getDirSeparator(),
-              ),
-            );
-          }
-
-          //}
-          if (params.has('tsepath')) {
-            const entryPath = params.get('tsepath');
-            if (openedFile.isFile) {
-              const dirPath = params.has('tsdpath')
-                ? params.get('tsdpath')
-                : undefined;
-              sharingLink.current = generateSharingLink(
-                locationId,
-                entryPath,
-                dirPath,
-              );
-            } else {
-              sharingLink.current = generateSharingLink(
-                locationId,
-                undefined,
-                entryPath,
-              );
-            }
-          } else if (params.has('tsdpath')) {
-            sharingLink.current = generateSharingLink(
-              locationId,
-              undefined,
-              params.get('tsdpath'),
-            );
-          } else {
-            sharingLink.current = generateSharingLink(locationId);
-          }
-        }
-      }
-    } else {
-      sharingLink.current = undefined;
-      sharingParentFolderLink.current = undefined;
-    }
-  }*/
-
   function addToEntryContainer(fsEntry: TS.OpenedEntry) {
     setSharedLinks(fsEntry).then(() => {
       currentEntry.current = { ...fsEntry };
@@ -749,34 +685,6 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  /*function goForward() {
-    window.history.forward();
-    window.addEventListener(
-      'popstate',
-      () => {
-        openLink(window.location.href, { fullWidth: false });
-      },
-      { once: true },
-    );
-  }*/
-
-  /*function goBack() {
-    // console.log(
-    //   '>>> current href: ' + decodeURIComponent(window.location.href)
-    // );
-    window.history.back(); // window.history.go(-1);
-    window.addEventListener(
-      'popstate',
-      () => {
-        openLink(window.location.href, { fullWidth: false });
-        // console.log(
-        //   '>>> last href: ' + decodeURIComponent(window.location.href)
-        // );
-      },
-      { once: true },
-    );
-  }*/
-
   function openLink(url: string, options = { fullWidth: true }) {
     try {
       const decodedURI = decodeURI(url);
@@ -998,16 +906,11 @@ export const OpenedEntryContextProvider = ({
       fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
-      fileContent =
-        newHTMLFileContent.split('<body></body>')[0] +
-        '<body data-createdwith="' +
-        versionMeta.name +
-        '" data-createdon="' +
-        creationDate +
-        '" >' +
-        content +
-        '\n';
-      '</body>' + newHTMLFileContent.split('<body></body>')[1];
+      fileContent = `${newHTMLFileContent.split('<body></body>')[0]} 
+<body data-createdwith="${versionMeta.name}" data-createdon="${creationDate}">
+${content}
+</body> 
+${newHTMLFileContent.split('<body></body>')[1]}`;
     } else if (fileType === 'md') {
       fileContent = content;
     } else if (fileType === 'url') {

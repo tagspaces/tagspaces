@@ -162,6 +162,8 @@ export { default as HTMLFileIcon } from '@mui/icons-material/DescriptionOutlined
 
 export { default as LinkFileIcon } from '@mui/icons-material/FileOpenOutlined';
 
+export { default as TemplateFileIcon } from '@mui/icons-material/TaskOutlined'; // TaskOutlined InsertPageBreakOutlined
+
 export { default as AccountIcon } from '@mui/icons-material/AccountCircle';
 
 export { default as PreviewIcon } from '@mui/icons-material/Preview';
