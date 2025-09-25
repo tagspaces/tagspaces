@@ -139,10 +139,13 @@ function NewFileDialog(props: Props) {
     const creationDate = new Date().toISOString();
     const dateTimeArray = creationDate.split('T');
     const fileContent = template.content
-      .replace('{createdInApp}', `${t('core:createdIn')} ${versionMeta.name}`)
-      .replace('{date}', dateTimeArray[0])
-      .replace('{author}', author)
-      .replace('{time}', dateTimeArray[1].split('.')[0]);
+      .replaceAll(
+        '{createdInApp}',
+        `${t('core:createdIn')} ${versionMeta.name}`,
+      )
+      .replaceAll('{date}', dateTimeArray[0])
+      .replaceAll('{author}', author)
+      .replaceAll('{time}', dateTimeArray[1].split('.')[0]);
     return fileType === 'html' ? `\n<p>${fileContent}</p>` : `${fileContent}`;
   }
 
