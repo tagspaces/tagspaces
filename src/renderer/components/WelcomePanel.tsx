@@ -95,7 +95,7 @@ function WelcomePanel() {
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
-  const showDelete = false;
+  const showMenu = false;
   const maxRecentItems = 5;
 
   function renderRecentItems() {
@@ -111,7 +111,7 @@ function WelcomePanel() {
               items={fileOpenHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
-              showDelete={showDelete}
+              showMenu={showMenu}
             />
           </List>
         ) : (
@@ -129,7 +129,7 @@ function WelcomePanel() {
               items={fileEditHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
-              showDelete={showDelete}
+              showMenu={showMenu}
             />
           </List>
         ) : (
@@ -147,7 +147,7 @@ function WelcomePanel() {
               items={folderOpenHistory}
               update={forceUpdate}
               maxItems={maxRecentItems}
-              showDelete={showDelete}
+              showMenu={showMenu}
             />
           </List>
         ) : (

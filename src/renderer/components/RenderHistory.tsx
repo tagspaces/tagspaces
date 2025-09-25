@@ -34,16 +34,26 @@ import {
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
+
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { createNewInstance } from '-/services/utils-io';
 
 interface Props {
   historyKey: string;
   items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>;
   update: () => void;
   maxItems?: number | undefined;
-  showDelete?: boolean;
+  showMenu?: boolean;
 }
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
@@ -52,7 +62,83 @@ function RenderHistory(props: Props) {
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
-  const { historyKey, items, update, maxItems, showDelete = true } = props;
+  const { historyKey, items, update, maxItems, showMenu = true } = props;
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedItem, setSelectedItem] = useState<
+    TS.HistoryItem | TS.BookmarkItem | null
+  >(null);
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    item: TS.HistoryItem | TS.BookmarkItem,
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedItem(item);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedItem(null);
+  };
+
+  const handleOpen = () => {
+    if (selectedItem) {
+      openHistoryItem(selectedItem as TS.HistoryItem);
+    }
+    handleMenuClose();
+  };
+
+  const handleOpenInNewWindow = async () => {
+    if (!selectedItem) {
+      handleMenuClose();
+      return;
+    }
+    try {
+      const newInstanceLink =
+        window.location.href.split('?')[0] +
+        '?' +
+        selectedItem.url.split('?')[1];
+      createNewInstance(newInstanceLink);
+    } catch (err) {
+      console.error('Open in new window failed', err);
+    } finally {
+      handleMenuClose();
+    }
+  };
+
+  const handleCopyLink = async () => {
+    if (!selectedItem) {
+      handleMenuClose();
+      return;
+    }
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(selectedItem.url);
+      }
+    } catch (err) {
+      console.error('Copy failed', err);
+    } finally {
+      handleMenuClose();
+    }
+  };
+
+  const handleRemove = () => {
+    if (!selectedItem) {
+      handleMenuClose();
+      return;
+    }
+    if (historyKey === Pro?.keys.bookmarksKey) {
+      // del bookmark
+      bookmarksContext?.delBookmark(selectedItem.path);
+    } else {
+      // del history entry
+      delHistory(historyKey, selectedItem.creationTimeStamp);
+    }
+    update();
+    handleMenuClose();
+  };
 
   return (
     <>
@@ -112,27 +198,59 @@ function RenderHistory(props: Props) {
                   {itemName}
                 </span>
               </TsButton>
-              {showDelete && (
+              {showMenu && (
                 <TsIconButton
-                  tooltip={t('delete')}
-                  aria-label={t('core:clearHistory')}
-                  onClick={() => {
-                    if (historyKey === Pro?.keys.bookmarksKey) {
-                      //del bookmarks
-                      bookmarksContext.delBookmark(item.path);
-                    } else {
-                      delHistory(historyKey, item.creationTimeStamp);
-                    }
-                    update();
-                  }}
-                  data-tid="deleteHistoryItemTID"
+                  tooltip={t('options')}
+                  aria-label={t('options')}
+                  onClick={(e) => handleMenuOpen(e, item)}
+                  data-tid={'historyItemMenuTID' + dataTidFormat(itemName)}
+                  size="small"
                 >
-                  <RemoveIcon fontSize="small" />
+                  <MoreVertIcon fontSize="small" />
                 </TsIconButton>
               )}
             </ListItem>
           );
         })}
+
+      <Menu
+        anchorEl={anchorEl}
+        open={menuOpen}
+        onClose={handleMenuClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MenuItem onClick={handleOpen} data-tid="historyMenuOpen">
+          <ListItemIcon>
+            <OpenInFullIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t('Open')} />
+        </MenuItem>
+
+        <MenuItem
+          onClick={handleOpenInNewWindow}
+          data-tid="historyMenuOpenNewWindow"
+        >
+          <ListItemIcon>
+            <OpenInNewIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t('Open in new window')} />
+        </MenuItem>
+
+        <MenuItem onClick={handleCopyLink} data-tid="historyMenuCopyLink">
+          <ListItemIcon>
+            <ContentCopyIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t('Copy link to clipboard')} />
+        </MenuItem>
+
+        <MenuItem onClick={handleRemove} data-tid="historyMenuRemove">
+          <ListItemIcon>
+            <RemoveIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t('Remove')} />
+        </MenuItem>
+      </Menu>
     </>
   );
 }
