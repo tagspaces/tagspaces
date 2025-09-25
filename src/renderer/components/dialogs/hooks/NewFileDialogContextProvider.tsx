@@ -61,6 +61,10 @@ export const NewFileDialogContextProvider = ({
         openDialog();
       });
 
+      window.electronIO.ipcRenderer.on('new-md-file', () => {
+        openDialog('md');
+      });
+
       return () => {
         if (window.electronIO.ipcRenderer) {
           window.electronIO.ipcRenderer.removeAllListeners('new-text-file');

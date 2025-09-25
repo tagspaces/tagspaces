@@ -297,6 +297,16 @@ function newTextFile() {
   }
 }
 
+function newMDFile() {
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  if (focusedWindow) {
+    focusedWindow?.webContents.send('new-md-file');
+  } else {
+    showMainWindow();
+    mainWindow?.webContents.send('new-md-file');
+  }
+}
+
 function getNextFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) {
@@ -379,7 +389,7 @@ function bindTrayMenu(i18n) {
       resumePlayback,
       createNewWindowInstance,
       openSearch: showSearch,
-      toggleNewFileDialog: newTextFile,
+      toggleNewFileDialog: newMDFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp,
@@ -395,7 +405,7 @@ function bindAppMenu(i18n) {
     {
       showTagSpaces: showApp,
       openSearch: showSearch,
-      toggleNewFileDialog: newTextFile,
+      toggleNewFileDialog: newMDFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp,
@@ -721,7 +731,7 @@ app
               resumePlayback,
               createNewWindowInstance,
               openSearch: showSearch,
-              toggleNewFileDialog: newTextFile,
+              toggleNewFileDialog: newMDFile,
               openNextFile: getNextFile,
               openPrevFile: getPreviousFile,
             },

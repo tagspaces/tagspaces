@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
@@ -104,13 +105,11 @@ function CreateFile(props: Props) {
       event.preventDefault();
       const { target } = event;
       target.focus();
-      /*const indexOfBracket = fileName.current.indexOf(
-        AppConfig.beginTagContainer
-      );*/
+      const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
       let endRange = fileName.length;
-      // if (indexOfBracket > 0) {
-      //   endRange = indexOfBracket;
-      // }
+      if (indexOfBracket > 0) {
+        endRange = indexOfBracket;
+      }
       target.setSelectionRange(0, endRange);
     }
   };
@@ -167,7 +166,7 @@ function CreateFile(props: Props) {
           </FormControl>
           <FormControl fullWidth={true}>
             <TsTextField
-              autoFocus
+              // autoFocus
               id="fileContentID"
               label={t('core:fileContent')}
               multiline
@@ -186,8 +185,14 @@ function CreateFile(props: Props) {
               <Grid key={index} size={6}>
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="h6" component="div">
-                      {template.name}
+                    <Box
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'nowrap',
+                        alignItems: 'anchor-center',
+                      }}
+                    >
+                      <Typography variant="h6">{template.name}</Typography>
                       <span
                         style={{
                           marginLeft: 5,
@@ -196,11 +201,12 @@ function CreateFile(props: Props) {
                           textTransform: 'uppercase',
                           border: '1px solid gray',
                           borderRadius: '3px',
+                          height: 13,
                         }}
                       >
                         {template.type}
                       </span>
-                    </Typography>
+                    </Box>
                     <Typography
                       variant="body2"
                       title={template.content}
@@ -212,6 +218,11 @@ function CreateFile(props: Props) {
                   <CardActions>
                     <TsButton
                       size="small"
+                      style={{
+                        marginLeft: 10,
+                        marginBottom: 10,
+                        marginTop: -10,
+                      }}
                       onClick={() => createFile(template.type, template)}
                       data-tid={
                         'create' +

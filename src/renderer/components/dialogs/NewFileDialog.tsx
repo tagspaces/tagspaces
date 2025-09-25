@@ -159,7 +159,7 @@ function NewFileDialog(props: Props) {
     if (fileType === 'url') {
       return t('createLinkFile');
     }
-    return t('newFileNote');
+    return t('createNewFromTemplate');
   }
 
   function loadLocation() {

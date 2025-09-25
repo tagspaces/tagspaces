@@ -67,6 +67,7 @@ export type Channels =
   | 'toggle-license-dialog'
   | 'toggle-open-link-dialog'
   | 'new-text-file'
+  | 'new-md-file'
   | 'toggle-onboarding-dialog'
   | 'toggle-settings-dialog'
   | 'toggle-third-party-libs-dialog'
