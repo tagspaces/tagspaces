@@ -145,6 +145,7 @@
     "test-playwright-web-headless": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider HEADLESS_MODE=true npx playwright test --project=web-s3",
     "test-playwright-web-minio": "npx playwright install --with-deps && cross-env npx playwright test --project=web-minio",
     "test-playwright-web-headless-minio": "npx playwright install --with-deps && cross-env HEADLESS_MODE=true npx playwright test --project=web-minio",
+    "test-playwright-list": "npx playwright test --project=web-s3 --list",
     "test-pw-web-browsers": "npm run test-refresh-data && cross-env DEBUG=pw:api npx playwright test --config ./playwright.config.web.browsers.js -g '/\\bweb\\b/'",
     "test-refresh-data": "rimraf tests/testdata-tmp && shx mkdir -p tests/testdata-tmp/file-structure && shx cp -rL tests/testdata/file-structure tests/testdata-tmp && npx playwright install --with-deps",
     "test-unit": "npx playwright test --config ./playwright.unit.js",

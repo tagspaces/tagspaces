@@ -25,7 +25,8 @@ export async function createMdCard(cardName, column = 'empty_folder') {
   await expectElementExist(cardSelector, true, 5000);
   const card = await global.client.locator(cardSelector);
   const parent = await card.locator('..');
-  return await parent.getAttribute('data-entry-id');
+  const id = await parent.getAttribute('data-entry-id');
+  return {id,name: newValue};
 }
 
 export async function getColumnEntries(column) {

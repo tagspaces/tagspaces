@@ -189,9 +189,9 @@ test.describe('TST49 - Perspective KanBan', () => {
   test('TST4906 - Rename card in column [web,s3,electron,_pro]', async () => {
     const cardName = 'testCard1';
     const newCardName = 'testCard2';
-    await createMdCard(cardName);
+    const {id, name} = await createMdCard(cardName);
 
-    await rightClickOn('[data-tid=fsEntryName_' + cardName + '_md]');
+    await rightClickOn('[data-entry-id="' + id + '"]');
     await clickOn('[data-tid=fileMenuRenameFile]');
     await typeInputValue(
       '[data-tid=renameEntryDialogInput] input',
@@ -201,7 +201,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=confirmRenameEntry]');
 
     await expectElementExist(
-      '[data-tid=fsEntryName_' + newCardName + '_md]',
+      '[data-tid=fsEntryName_' + dataTidFormat(name) + 'md]',
       true,
     );
   });
@@ -356,21 +356,21 @@ test.describe('TST49 - Perspective KanBan', () => {
   test('TST4912 - Move card to top / bottom [web,s3,electron,_pro]', async () => {
     const cardName1 = 'testCard1';
     const cardName2 = 'testCard2';
-    const card1Id = await createMdCard(cardName1);
-    const card2Id = await createMdCard(cardName2);
-    await expectFirstColumnElement(card2Id, 'empty_folder');
+    const card1 = await createMdCard(cardName1);
+    const card2 = await createMdCard(cardName2);
+    await expectFirstColumnElement(card2.id, 'empty_folder');
 
-    await rightClickOn('[data-tid=fsEntryName_' + cardName2 + '_md]');
+    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card2.name) + 'md]');
     await clickOn('[data-tid=reorderBottomTID]');
-    await expectLastColumnElement(card2Id, 'empty_folder');
+    await expectLastColumnElement(card2.id, 'empty_folder');
 
-    await rightClickOn('[data-tid=fsEntryName_' + cardName1 + '_md]');
+    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card1.name) + 'md]');
     await clickOn('[data-tid=reorderBottomTID]');
-    await expectLastColumnElement(card1Id, 'empty_folder');
+    await expectLastColumnElement(card1.id, 'empty_folder');
 
-    await rightClickOn('[data-tid=fsEntryName_' + cardName1 + '_md]');
+    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card1.name) + 'md]');
     await clickOn('[data-tid=reorderTopTID]');
-    await expectFirstColumnElement(card1Id, 'empty_folder');
+    await expectFirstColumnElement(card1.id, 'empty_folder');
   });
 
   test('TST4913 - Show column details [web,s3,electron,_pro]', async () => {
@@ -394,96 +394,102 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4915a - Load thumbnails for board [web,s3,electron,_pro]', async () => {
-    //board thumbnail
-    await setPerspectiveSetting(
-      'kanban',
-      '[data-tid=kanBanPerspectiveToggleShowDetails]',
-    );
-    const initThumbStyle = await getAttribute(
-      '[data-tid=folderThumbTID]',
-      'style',
-    );
+  test('TST4915a - Load thumbnails for board [web,minio,s3,electron,_pro]', async ({isWin}) => {
+    if(!isWin) {
+      //board thumbnail
+      await setPerspectiveSetting(
+        'kanban',
+        '[data-tid=kanBanPerspectiveToggleShowDetails]',
+      );
+      const initThumbStyle = await getAttribute(
+        '[data-tid=folderThumbTID]',
+        'style',
+      );
 
-    await clickOn('[data-tid=showFolderContentTID]');
-    await openContextEntryMenu(
-      getGridFileSelector('sample.c'),
-      'setAsThumbTID',
-    );
-    const newStyle = await waitUntilChanged(
-      '[data-tid=folderThumbTID]',
-      initThumbStyle,
-      'style',
-    );
+      await clickOn('[data-tid=showFolderContentTID]');
+      await openContextEntryMenu(
+        getGridFileSelector('sample.c'),
+        'setAsThumbTID',
+      );
+      const newStyle = await waitUntilChanged(
+        '[data-tid=folderThumbTID]',
+        initThumbStyle,
+        'style',
+      );
 
-    expect(initThumbStyle).not.toBe(newStyle);
+      expect(initThumbStyle).not.toBe(newStyle);
+    }
   });
 
-  test('TST4915b - Load thumbnails for column [web,s3,electron,_pro]', async () => {
-    await setPerspectiveSetting(
-      'kanban',
-      '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
-    );
-    const columnName = 'empty_folder2';
-    await createColumn(columnName);
-    await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
-    await clickOn('[data-tid=showProperties]');
-    await expectElementExist(
-      '[data-tid=OpenedTID' + columnName + ']',
-      true,
-      5000,
-    );
+  test('TST4915b - Load thumbnails for column [web,minio,s3,electron,_pro]', async ({isWin}) => {
+    if(!isWin) {
+      await setPerspectiveSetting(
+        'kanban',
+        '[data-tid=kanBanPerspectiveToggleShowSubFolderDetails]',
+      );
+      const columnName = 'empty_folder2';
+      await createColumn(columnName);
+      await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
+      await clickOn('[data-tid=showProperties]');
+      await expectElementExist(
+        '[data-tid=OpenedTID' + columnName + ']',
+        true,
+        5000,
+      );
 
-    await clickOn('[data-tid=changeThumbnailTID]');
-    await clickOn('[data-tid=predefinedThumbnailsTID] > li');
-    await clickOn('[data-tid=confirmCustomThumb]');
-    /*   const initColumnThumbStyle = await getAttribute(
-      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-      'style',
-    );*/
-    const thumbColumnThumbStyle = await waitUntilChanged(
-      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-      undefined, //initColumnThumbStyle,
-      'style',
-    );
+      await clickOn('[data-tid=changeThumbnailTID]');
+      await clickOn('[data-tid=predefinedThumbnailsTID] > li');
+      await clickOn('[data-tid=confirmCustomThumb]');
+      /*   const initColumnThumbStyle = await getAttribute(
+        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+        'style',
+      );*/
+      const thumbColumnThumbStyle = await waitUntilChanged(
+        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+        undefined, //initColumnThumbStyle,
+        'style',
+      );
 
-    await clickOn('[data-tid=changeThumbnailTID]');
-    await clickOn('[data-tid=predefinedThumbnailsTID] > li:nth-child(2)');
-    await clickOn('[data-tid=confirmCustomThumb]');
-    const newColumnThumbStyle = await waitUntilChanged(
-      '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-      thumbColumnThumbStyle,
-      'style',
-    );
+      await clickOn('[data-tid=changeThumbnailTID]');
+      await clickOn('[data-tid=predefinedThumbnailsTID] > li:nth-child(2)');
+      await clickOn('[data-tid=confirmCustomThumb]');
+      const newColumnThumbStyle = await waitUntilChanged(
+        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
+        thumbColumnThumbStyle,
+        'style',
+      );
 
-    expect(thumbColumnThumbStyle).not.toBe(newColumnThumbStyle);
+      expect(thumbColumnThumbStyle).not.toBe(newColumnThumbStyle);
+    }
   });
 
   /**
-   * todo web minio not work with thumbnails
+   * todo web minio not work with thumbnails on Windows
    */
-  test('TST4915c - Load thumbnails for cards [web,s3,electron,_pro]', async () => {
-    const columnName = 'empty_folder3';
-    await createColumn(columnName);
-    //card thumbnail
-    const cardName = 'testCard';
-    const cardId = await createMdCard(cardName, columnName);
+  test('TST4915c - Load thumbnails for cards [web,minio,s3,electron,_pro]', async ({isWin}) => {
+    if(!isWin) {
+      const columnName = 'empty_folder3';
+      await createColumn(columnName);
+      //card thumbnail
+      const cardName = 'testCard';
+      const { name } = await createMdCard(cardName, columnName);
 
-    await expectElementExist(
-      '[data-tid=OpenedTID' + cardName + '_md]',
-      true,
-      5000,
-    );
+      await expectElementExist(
+        '[data-tid=OpenedTID' + dataTidFormat(name) + 'md]',
+        true,
+        5000,
+      );
 
-    const cardSelector = '[data-tid=fsEntryName_' + cardName + '_md]';
-    const initScreenshot = await getElementScreenshot(cardSelector);
+      const cardSelector = '[data-tid=fsEntryName_' + dataTidFormat(name) + 'md]';
+      const initScreenshot = await getElementScreenshot(cardSelector);
 
-    await clickOn('[data-tid=changeThumbnailTID]');
-    await clickOn('[data-tid=predefinedThumbnailsTID] > li');
-    await clickOn('[data-tid=confirmCustomThumb]');
+      await clickOn('[data-tid=changeThumbnailTID]');
+      await clickOn('[data-tid=predefinedThumbnailsTID] > li');
+      await clickOn('[data-tid=confirmCustomThumb]');
 
-    const changeThumbScreenshot = await getElementScreenshot(cardSelector);
-    expect(initScreenshot).not.toBe(changeThumbScreenshot);
+      const changeThumbScreenshot = await getElementScreenshot(cardSelector);
+      expect(initScreenshot).not.toBe(changeThumbScreenshot);
+    }
   });
 
   test('TST4916 - Move columns with dnd [web,s3,electron,_pro]', async () => {

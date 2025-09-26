@@ -14,16 +14,14 @@ function projectTagGrep(names) {
 
   const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  const negLookaheads = exclude
-    .map((n) => `(?![^\\]]*\\b${escape(n)}\\b)`)
-    .join('');
-  const posLookaheads = include
-    .map((n) => `(?=[^\\]]*\\b${escape(n)}\\b)`)
-    .join('');
+  const negLookaheads = exclude.map((n) => `(?![^\\]]*${escape(n)})`).join('');
+  const posLookaheads = include.map((n) => `(?=[^\\]]*${escape(n)})`).join('');
 
   // If there are no include tokens, this will match any bracketed tag that doesn't contain excluded tokens.
-  return new RegExp(`\\[${negLookaheads}${posLookaheads}[^\\]]*\\]`);
-  //return new RegExp('(?:TST4901|TST4902|TST4903|TST4909)'); // return new RegExp(`TST01.*`);
+  const re = new RegExp(`\\[${negLookaheads}${posLookaheads}[^\\]]*\\]`);
+  console.log('projectTagGrep regex for', names, '=>', re.toString());
+  //return new RegExp('(?:TST4915a)'); // return new RegExp(`TST01.*`);
+  return re;
 }
 
 export default defineConfig({
