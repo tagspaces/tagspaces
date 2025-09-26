@@ -235,7 +235,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.187"
+    "@tagspacespro/tagspacespro": "5.0.188"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
