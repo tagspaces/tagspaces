@@ -566,7 +566,7 @@ function SettingsAdvanced(props: Props) {
           disabled={!Pro}
           onClick={(event) => editWorkSpacesClick(event)}
         >
-          {t('addWorkspace')}
+          {t('createWorkspace')}
         </TsButton>
       </ListItem>
       {workSpaces && workSpaces.length > 0 && (

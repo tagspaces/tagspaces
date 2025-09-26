@@ -201,6 +201,7 @@ function StoredSearches(props: Props) {
               }}
             />
             <TsIconButton
+              size="small"
               data-tid="StoredSearchesMenuTID"
               onClick={handleSearchMenu}
             >
@@ -290,6 +291,7 @@ function StoredSearches(props: Props) {
                 menuHistoryKey.current = historyKeys.fileOpenKey;
                 setBookmarksMenuAnchorEl(event.currentTarget);
               }}
+              size="small"
             >
               <MoreMenuIcon />
             </TsIconButton>
@@ -342,6 +344,7 @@ function StoredSearches(props: Props) {
                 menuHistoryKey.current = historyKeys.fileOpenKey;
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
+              size="small"
             >
               <MoreMenuIcon />
             </TsIconButton>
@@ -390,6 +393,7 @@ function StoredSearches(props: Props) {
                 menuHistoryKey.current = historyKeys.fileEditKey;
                 setHistoryMenuAnchorEl(event.currentTarget);
               }}
+              size="small"
             >
               <MoreMenuIcon />
             </TsIconButton>
@@ -441,6 +445,7 @@ function StoredSearches(props: Props) {
           </Grid>
           <Grid size={2} style={{ textAlign: 'right' }}>
             <TsIconButton
+              size="small"
               data-tid="FolderOpenMenuTID"
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.folderOpenKey;
