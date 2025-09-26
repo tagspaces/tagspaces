@@ -15,14 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useEffect, useRef } from 'react';
-import TsSelect from '-/components/TsSelect';
+import { AddIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
-import MenuItem from '@mui/material/MenuItem';
-import InputAdornment from '@mui/material/InputAdornment';
-import AddIcon from '@mui/icons-material/Add';
-import { RemoveIcon } from '-/components/CommonIcons';
+import TsSelect from '-/components/TsSelect';
 import { TS } from '-/tagspaces.namespace';
+import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface WorkSpacesDropdownProps {
   workSpaceId: string | undefined;
@@ -45,6 +45,7 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
 }) => {
   // Keep track of initial workSpaces to detect additions (keeps original behavior from EditTagGroupDialog)
   const initWorkSpaces = useRef<TS.WorkSpace[]>(workSpaces);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // handle new workSpace add
@@ -75,11 +76,13 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
       slotProps={{
         input: {
           startAdornment: (
-            <InputAdornment position="start" sx={{ ml: -2 }}>
+            <InputAdornment position="start">
               <TsIconButton
-                aria-label="add-wspace"
+                style={{ marginLeft: -10 }}
+                aria-label="add-workspace"
                 onClick={() => onOpenNewWorkspace && onOpenNewWorkspace()}
                 data-tid="wSpaceAddTID"
+                tooltip={t('createWorkspace')}
               >
                 <AddIcon />
               </TsIconButton>
@@ -88,9 +91,11 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
           endAdornment: workSpaceId && (
             <InputAdornment position="end">
               <TsIconButton
-                aria-label="delete-wspace"
+                aria-label="delete-workspace"
                 onClick={() => setWorkSpaceId('')}
                 data-tid="wSpaceResetTID"
+                style={{ marginRight: 15 }}
+                tooltip={t('removeWorkspace')}
               >
                 <RemoveIcon />
               </TsIconButton>

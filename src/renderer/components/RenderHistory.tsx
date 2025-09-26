@@ -18,35 +18,35 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  CopyToClipboardIcon,
   EntryBookmarkIcon,
   HistoryIcon,
+  MoreMenuIcon,
+  OpenFileIcon,
+  OpenNewWindowIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
+import { createNewInstance } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Tooltip } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import {
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
-
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { createNewInstance } from '-/services/utils-io';
+import TsMenuList from './TsMenuList';
 
 interface Props {
   historyKey: string;
@@ -161,8 +161,8 @@ function RenderHistory(props: Props) {
                   textTransform: 'none',
                   fontWeight: 'normal',
                   justifyContent: 'start',
-                  minWidth: 255,
-                  maxWidth: 255,
+                  minWidth: 270,
+                  maxWidth: 270,
                 }}
                 onClick={() => openHistoryItem(item as TS.HistoryItem)}
               >
@@ -207,7 +207,7 @@ function RenderHistory(props: Props) {
                   data-tid={'historyItemMenuTID' + dataTidFormat(itemName)}
                   size="small"
                 >
-                  <MoreVertIcon fontSize="small" />
+                  <MoreMenuIcon />
                 </TsIconButton>
               )}
             </ListItem>
@@ -221,36 +221,35 @@ function RenderHistory(props: Props) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem onClick={handleOpen} data-tid="historyMenuOpen">
-          <ListItemIcon>
-            <OpenInFullIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={t('Open')} />
-        </MenuItem>
-
-        <MenuItem
-          onClick={handleOpenInNewWindow}
-          data-tid="historyMenuOpenNewWindow"
-        >
-          <ListItemIcon>
-            <OpenInNewIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={t('Open in new window')} />
-        </MenuItem>
-
-        <MenuItem onClick={handleCopyLink} data-tid="historyMenuCopyLink">
-          <ListItemIcon>
-            <ContentCopyIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={t('Copy link to clipboard')} />
-        </MenuItem>
-
-        <MenuItem onClick={handleRemove} data-tid="historyMenuRemove">
-          <ListItemIcon>
-            <RemoveIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary={t('Remove')} />
-        </MenuItem>
+        <TsMenuList>
+          <MenuItem onClick={handleOpen} data-tid="historyMenuOpen">
+            <ListItemIcon>
+              <OpenFileIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('openEntry')} />
+          </MenuItem>
+          <MenuItem
+            onClick={handleOpenInNewWindow}
+            data-tid="historyMenuOpenNewWindow"
+          >
+            <ListItemIcon>
+              <OpenNewWindowIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('openInWindow')} />
+          </MenuItem>
+          <MenuItem onClick={handleCopyLink} data-tid="historyMenuCopyLink">
+            <ListItemIcon>
+              <CopyToClipboardIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('copyLinkToClipboard')} />
+          </MenuItem>
+          <MenuItem onClick={handleRemove} data-tid="historyMenuRemove">
+            <ListItemIcon>
+              <RemoveIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('remove')} />
+          </MenuItem>
+        </TsMenuList>
       </Menu>
     </>
   );

@@ -52,7 +52,7 @@ export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as EntryPropertiesIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as RemoveIcon } from '@mui/icons-material/DeleteOutline';
+export { default as RemoveIcon } from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 export { default as HistoryIcon } from '@mui/icons-material/History';
 
@@ -61,6 +61,8 @@ export { default as SettingsIcon } from '@mui/icons-material/Settings';
 export { default as PerspectiveSettingsIcon } from '@mui/icons-material/DisplaySettings';
 
 export { default as CreateFileIcon } from '@mui/icons-material/AddCircleOutlineOutlined';
+
+export { default as AddIcon } from '@mui/icons-material/AddCircleOutlineOutlined';
 
 export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
 
@@ -311,3 +313,5 @@ export { default as ZoomLevelIcon } from '@mui/icons-material/Loupe';
 export { default as PinGroupingOffIcon } from '@mui/icons-material/Grain'; // ScatterPlotOutlined
 
 export { default as PinGroupingOnIcon } from '@mui/icons-material/ScatterPlotTwoTone';
+
+export { default as CopyToClipboardIcon } from '@mui/icons-material/ContentCopy';
