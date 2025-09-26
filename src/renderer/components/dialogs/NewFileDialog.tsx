@@ -260,6 +260,7 @@ function NewFileDialog(props: Props) {
             createFile={(type, template) =>
               createFile(type, targetDirectoryPath, template)
             }
+            onClose={onClose}
             handleFileNameChange={(name) => (fileNameRef.current = name)}
             handleFileContentChange={(content) =>
               (fileContentRef.current = content)

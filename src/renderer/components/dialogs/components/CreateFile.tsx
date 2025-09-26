@@ -18,7 +18,9 @@
 import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
+import { SettingsTab } from '-/components/dialogs/SettingsDialog';
 import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown';
+import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { Pro } from '-/pro';
 import { fileNameValidation } from '-/services/utils-io';
@@ -52,6 +54,7 @@ interface Props {
   haveError: (error: boolean) => void;
   tidPrefix?: string;
   fileType?: TS.FileType;
+  onClose: (event?: Object, reason?: string) => void;
 }
 
 function CreateFile(props: Props) {
@@ -64,10 +67,11 @@ function CreateFile(props: Props) {
     handleFileNameChange,
     handleFileContentChange,
     haveError,
+    onClose,
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
-
+  const { openSettingsDialog } = useSettingsDialogContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const fileContentRef = useRef<HTMLInputElement | null>(null);
   const fileNameRef = useRef<HTMLInputElement | null>(null);
@@ -180,6 +184,17 @@ function CreateFile(props: Props) {
         </>
       ) : (
         <Box sx={{ flexGrow: 1 }}>
+          <TsButton
+            size="small"
+            variant="text"
+            onClick={() => {
+              onClose();
+              openSettingsDialog(SettingsTab.Templates);
+            }}
+            disabled={!Pro}
+          >
+            {t('manageTemplates')}
+          </TsButton>
           <Grid container spacing={2}>
             {templatesArray?.map((template: TS.FileTemplate, index) => (
               <Grid key={index} size={6}>
