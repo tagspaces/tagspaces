@@ -272,10 +272,10 @@ function ChatView() {
           <Grid>
             <TsIconButton
               style={{ marginTop: 20 }}
-              tooltip={t('core:chatMore')}
+              tooltip={t('core:moreActions')}
               onClick={handleMoreClick}
-              data-tid="chatMoreTID"
-              aria-label={t('core:chatMore')}
+              data-tid="moreActionsTID"
+              aria-label={t('core:moreActions')}
               aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
