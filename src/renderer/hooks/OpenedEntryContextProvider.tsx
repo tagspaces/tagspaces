@@ -846,6 +846,8 @@ export const OpenedEntryContextProvider = ({
         return true;
       } else if (
         // External URL case
+        decodedURI.startsWith('onenote:') ||
+        decodedURI.startsWith('mailto:') ||
         decodedURI.startsWith('http://') ||
         decodedURI.startsWith('https://') ||
         decodedURI.startsWith('file://')
