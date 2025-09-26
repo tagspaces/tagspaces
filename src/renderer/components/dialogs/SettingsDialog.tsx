@@ -51,15 +51,16 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
+  tab?: number;
   classes?: any;
   onClose: () => void;
 }
 
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
-  const [currentTab, setCurrentTab] = useState<number>(0);
+  const { open, onClose, tab } = props;
+  const [currentTab, setCurrentTab] = useState<number>(tab || 0);
   // const desktopMode = useSelector(isDesktopMode);
-  const { open, onClose } = props;
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
