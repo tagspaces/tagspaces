@@ -36,6 +36,7 @@ export function haveSearchFilters(searchQuery: TS.SearchQuery) {
       (searchQuery.fileTypes !== undefined &&
         searchQuery.fileTypes !== AppConfig.SearchTypeGroups.any) ||
       searchQuery.lastModified ||
+      searchQuery.dateCreated ||
       searchQuery.tagTimePeriodFrom ||
       searchQuery.tagTimePeriodTo ||
       searchQuery.tagPlaceLat ||
@@ -431,63 +432,75 @@ export default class Search {
     });
 }
 
-function filterIndex(data, searchQuery: TS.SearchQuery) {
-  console.log('Pro filter ' + JSON.stringify(searchQuery));
-  let results = data;
+function filterByDatePeriod(
+  items: TS.SearchIndex[],
+  periodKey: string | undefined,
+  getTimeValue: (item: TS.SearchIndex) => number | undefined,
+): TS.SearchIndex[] {
+  if (!periodKey) return items;
 
   const now = new Date();
-  const today = new Date(
-    now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getUTCDate(),
-  );
+  // start of today in local timezone
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  ).getTime();
   const msInDay = 1000 * 60 * 60 * 24;
-  if (searchQuery.lastModified === AppConfig.SearchTimePeriods.today.key) {
-    results = results.filter((entry) => entry.lmdt > today.getTime());
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.yesterday.key
-  ) {
-    results = results.filter(
-      (entry) =>
-        entry.lmdt > today.getTime() - msInDay && entry.lmdt < today.getTime(),
-    );
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.past7Days.key
-  ) {
-    results = results.filter(
-      (entry) =>
-        entry.lmdt > today.getTime() - msInDay * 7 &&
-        entry.lmdt < today.getTime(),
-    );
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.past30Days.key
-  ) {
-    results = results.filter(
-      (entry) =>
-        entry.lmdt > today.getTime() - msInDay * 30 &&
-        entry.lmdt < today.getTime(),
-    );
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.past6Months.key
-  ) {
-    results = results.filter(
-      (entry) =>
-        entry.lmdt > today.getTime() - msInDay * 30 * 6 &&
-        entry.lmdt < today.getTime(),
-    );
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.pastYear.key
-  ) {
-    results = results.filter(
-      (entry) =>
-        entry.lmdt > today.getTime() - msInDay * 365 &&
-        entry.lmdt < today.getTime(),
-    );
-  } else if (
-    searchQuery.lastModified === AppConfig.SearchTimePeriods.moreThanYear.key
-  ) {
-    results = results.filter(
-      (entry) => entry.lmdt < today.getTime() - msInDay * 365,
-    );
+
+  // convenience predicate helpers
+  const after = (ts: number) => (entry: TS.SearchIndex) => {
+    const t = getTimeValue(entry) ?? 0;
+    return t > ts;
+  };
+  const between = (fromTs: number, toTs: number) => (entry: TS.SearchIndex) => {
+    const t = getTimeValue(entry) ?? 0;
+    return t > fromTs && t < toTs;
+  };
+  const before = (ts: number) => (entry: TS.SearchIndex) => {
+    const t = getTimeValue(entry) ?? 0;
+    return t < ts;
+  };
+
+  let predicate: ((entry: TS.SearchIndex) => boolean) | null = null;
+
+  if (periodKey === AppConfig.SearchTimePeriods.today.key) {
+    predicate = after(startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.yesterday.key) {
+    predicate = between(startOfToday - msInDay, startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.past7Days.key) {
+    predicate = between(startOfToday - msInDay * 7, startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.past30Days.key) {
+    predicate = between(startOfToday - msInDay * 30, startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.past6Months.key) {
+    predicate = between(startOfToday - msInDay * 30 * 6, startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.pastYear.key) {
+    predicate = between(startOfToday - msInDay * 365, startOfToday);
+  } else if (periodKey === AppConfig.SearchTimePeriods.moreThanYear.key) {
+    predicate = before(startOfToday - msInDay * 365);
   }
+
+  if (!predicate) return items;
+  return items.filter(predicate);
+}
+
+function filterIndex(
+  data: TS.SearchIndex[],
+  searchQuery: TS.SearchQuery,
+): TS.SearchIndex[] {
+  console.log('Pro filter ' + JSON.stringify(searchQuery));
+  let results: TS.SearchIndex[] = data;
+
+  results = filterByDatePeriod(
+    results,
+    searchQuery.lastModified,
+    (entry) => entry.lmdt,
+  );
+  results = filterByDatePeriod(
+    results,
+    searchQuery.dateCreated,
+    (entry) => entry.cdt,
+  );
 
   if (searchQuery.fileSize === AppConfig.SearchSizes.empty.key) {
     results = results.filter(

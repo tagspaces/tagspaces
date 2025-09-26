@@ -107,6 +107,7 @@ export namespace TS {
     tagsOR?: Array<Tag>;
     tagsNOT?: Array<Tag>;
     lastModified?: string;
+    dateCreated?: string;
     fileSize?: string;
     searchBoxing?: ScopeType;
     searchType?: 'fuzzy' | 'semistrict' | 'strict';
@@ -206,6 +207,13 @@ export namespace TS {
     url?: string;
     meta?: FileSystemEntryMeta;
     links?: Link[];
+  }
+
+  interface SearchIndex extends FileSystemEntry {
+    fromTime?: number;
+    toTime?: number;
+    lat?: number;
+    lon?: number;
   }
 
   type LinkType = 'url' | 'email' | 'tslink' | 'hashtag' | 'mention';

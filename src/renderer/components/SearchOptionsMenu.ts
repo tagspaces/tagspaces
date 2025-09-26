@@ -88,38 +88,40 @@ export function getSearchOptions(): Array<SearchOptionType> {
       'allows searching for entries having one tag or another (logical OR)',
     group: 'query',
   });
-  if (Pro) {
-    options.push({
-      id: SearchQueryComposition.TYPE.shortName,
-      label: SearchQueryComposition.TYPE.shortName,
-      fullName: SearchQueryComposition.TYPE.fullName,
-      action: SearchQueryComposition.TYPE.shortName,
-      descr: 'filter by file type: document, video, files, folders',
-      group: 'query',
-    });
-  }
+  options.push({
+    id: SearchQueryComposition.TYPE.shortName,
+    label: SearchQueryComposition.TYPE.shortName,
+    fullName: SearchQueryComposition.TYPE.fullName,
+    action: SearchQueryComposition.TYPE.shortName,
+    descr: 'filter by file type: document, video, files, folders',
+    group: 'query',
+  });
 
-  if (Pro) {
-    options.push({
-      id: SearchQueryComposition.SIZE.shortName,
-      label: SearchQueryComposition.SIZE.shortName,
-      fullName: SearchQueryComposition.SIZE.fullName,
-      action: SearchQueryComposition.SIZE.shortName,
-      descr: 'list sizes from advanced search',
-      group: 'query',
-    });
-  }
+  options.push({
+    id: SearchQueryComposition.SIZE.shortName,
+    label: SearchQueryComposition.SIZE.shortName,
+    fullName: SearchQueryComposition.SIZE.fullName,
+    action: SearchQueryComposition.SIZE.shortName,
+    descr: 'list sizes from advanced search',
+    group: 'query',
+  });
 
-  if (Pro) {
-    options.push({
-      id: SearchQueryComposition.LAST_MODIFIED.shortName,
-      label: SearchQueryComposition.LAST_MODIFIED.shortName,
-      fullName: SearchQueryComposition.LAST_MODIFIED.fullName,
-      action: SearchQueryComposition.LAST_MODIFIED.shortName,
-      descr: 'list last modified options from advanced search',
-      group: 'query',
-    });
-  }
+  options.push({
+    id: SearchQueryComposition.LAST_MODIFIED.shortName,
+    label: SearchQueryComposition.LAST_MODIFIED.shortName,
+    fullName: SearchQueryComposition.LAST_MODIFIED.fullName,
+    action: SearchQueryComposition.LAST_MODIFIED.shortName,
+    descr: 'list last modified options from advanced search',
+    group: 'query',
+  });
+  options.push({
+    id: SearchQueryComposition.DATE_CREATED.shortName,
+    label: SearchQueryComposition.DATE_CREATED.shortName,
+    fullName: SearchQueryComposition.DATE_CREATED.fullName,
+    action: SearchQueryComposition.DATE_CREATED.shortName,
+    descr: 'list date created options from advanced search',
+    group: 'query',
+  });
 
   options.push({
     id: SearchQueryComposition.SCOPE.shortName,

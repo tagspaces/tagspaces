@@ -96,6 +96,15 @@ function EditSearchQuery(props: Props) {
     setTempSearchQuery({ lastModified: value });
   };
 
+  const handleDateCreatedChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { target } = event;
+    const { value, name } = target;
+
+    setTempSearchQuery({ dateCreated: value });
+  };
+
   function removeTags(tagsArray, removeTagsArray) {
     // eslint-disable-next-line react/no-access-state-in-setstate
     return tagsArray.filter((tag) =>
@@ -564,6 +573,36 @@ function EditSearchQuery(props: Props) {
           onChange={handleLastModifiedChange}
           label={t('core:lastModifiedSearchTitle')}
           // title={t('filterByLastModifiedDateTooltip')}
+        >
+          <MenuItem value="">{t('core:anyTime')}</MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.today.key}>
+            {t('core:today')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.yesterday.key}>
+            {t('core:yesterday')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past7Days.key}>
+            {t('core:past7Days')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past30Days.key}>
+            {t('core:past30Days')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.past6Months.key}>
+            {t('core:past6Months')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.pastYear.key}>
+            {t('core:pastYear')}
+          </MenuItem>
+          <MenuItem value={AppConfig.SearchTimePeriods.moreThanYear.key}>
+            {t('core:moreThanYear')}
+          </MenuItem>
+        </TsSelect>
+      </FormControl>
+      <FormControl disabled={isIndexing !== undefined}>
+        <TsSelect
+          value={tempSearchQuery.dateCreated}
+          onChange={handleDateCreatedChange}
+          label={t('core:dateCreatedSearchTitle')}
         >
           <MenuItem value="">{t('core:anyTime')}</MenuItem>
           <MenuItem value={AppConfig.SearchTimePeriods.today.key}>
