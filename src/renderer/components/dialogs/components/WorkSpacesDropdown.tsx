@@ -83,6 +83,7 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
                 onClick={() => onOpenNewWorkspace && onOpenNewWorkspace()}
                 data-tid="wSpaceAddTID"
                 tooltip={t('createWorkspace')}
+                disabled={disabled}
               >
                 <AddIcon />
               </TsIconButton>
@@ -96,6 +97,7 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
                 data-tid="wSpaceResetTID"
                 style={{ marginRight: 15 }}
                 tooltip={t('removeWorkspace')}
+                disabled={disabled}
               >
                 <RemoveIcon />
               </TsIconButton>
