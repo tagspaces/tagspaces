@@ -25,9 +25,10 @@ import React, {
 } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
 import AppConfig from '-/AppConfig';
+import { SettingsTab } from '-/components/dialogs/SettingsDialog';
 
 type SettingsDialogContextData = {
-  openSettingsDialog: (tab?: number) => void;
+  openSettingsDialog: (tab?: SettingsTab) => void;
   closeSettingsDialog: () => void;
 };
 
@@ -47,7 +48,7 @@ const SettingsDialog = React.lazy(
 export const SettingsDialogContextProvider = ({
   children,
 }: SettingsDialogContextProviderProps) => {
-  const currentTab = useRef<number>(0);
+  const currentTab = useRef<SettingsTab>(SettingsTab.General);
   const open = useRef<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -68,7 +69,7 @@ export const SettingsDialogContextProvider = ({
     }
   }, []);
 
-  function openDialog(tab: number = 0) {
+  function openDialog(tab: SettingsTab = SettingsTab.General) {
     currentTab.current = tab;
     open.current = true;
     forceUpdate();
@@ -76,7 +77,7 @@ export const SettingsDialogContextProvider = ({
 
   function closeDialog() {
     open.current = false;
-    currentTab.current = 0;
+    currentTab.current = SettingsTab.General;
     forceUpdate();
   }
 

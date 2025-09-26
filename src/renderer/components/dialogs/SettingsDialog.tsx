@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
+import React from 'react';
 import {
   AIIcon,
   AdvancedSettingsIcon,
@@ -49,9 +49,19 @@ import Links from 'assets/links';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+export enum SettingsTab {
+  General = 'general',
+  FileTypes = 'fileTypes',
+  Templates = 'templates',
+  KeyBindings = 'keyBindings',
+  Extensions = 'extensions',
+  Advanced = 'advanced',
+  AI = 'ai',
+}
+
 interface Props {
   open: boolean;
-  tab?: number;
+  tab?: SettingsTab;
   classes?: any;
   onClose: () => void;
 }
@@ -59,13 +69,18 @@ interface Props {
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const { open, onClose, tab } = props;
-  const [currentTab, setCurrentTab] = useState<number>(tab || 0);
+  const [currentTab, setCurrentTab] = useState<SettingsTab>(
+    tab || SettingsTab.General,
+  );
   // const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleTabClick = (event, tab) => {
-    setCurrentTab(tab);
+  const handleTabClick = (
+    event: React.SyntheticEvent,
+    newValue: SettingsTab | string,
+  ) => {
+    setCurrentTab(newValue as SettingsTab);
   };
 
   const helpButton = (
@@ -102,6 +117,7 @@ function SettingsDialog(props: Props) {
         // allowScrollButtonsMobile
       >
         <Tab
+          value={SettingsTab.General}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -112,6 +128,7 @@ function SettingsDialog(props: Props) {
           label={t('core:generalTab')}
         />
         <Tab
+          value={SettingsTab.FileTypes}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -122,6 +139,7 @@ function SettingsDialog(props: Props) {
           label={t('core:fileTypeTab')}
         />
         <Tab
+          value={SettingsTab.Templates}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -136,6 +154,7 @@ function SettingsDialog(props: Props) {
           }
         />
         <Tab
+          value={SettingsTab.KeyBindings}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -146,6 +165,7 @@ function SettingsDialog(props: Props) {
           label={t('core:keyBindingsTab')}
         />
         <Tab
+          value={SettingsTab.Extensions}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -156,6 +176,7 @@ function SettingsDialog(props: Props) {
           label={t('core:extensionsTab')}
         />
         <Tab
+          value={SettingsTab.Advanced}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -166,6 +187,7 @@ function SettingsDialog(props: Props) {
           label={t('core:advancedSettingsTab')}
         />
         <Tab
+          value={SettingsTab.AI}
           style={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
@@ -189,13 +211,15 @@ function SettingsDialog(props: Props) {
           width: smallScreen ? '100%' : 600,
         }}
       >
-        {currentTab === 0 && <SettingsGeneral />}
-        {currentTab === 1 && <SettingsFileTypes />}
-        {currentTab === 2 && <SettingsTemplates />}
-        {currentTab === 3 && <SettingsKeyBindings />}
-        {currentTab === 4 && <SettingsExtensions />}
-        {currentTab === 5 && <SettingsAdvanced />}
-        {currentTab === 6 && <SettingsAI closeSettings={onClose} />}
+        {currentTab === SettingsTab.General && <SettingsGeneral />}
+        {currentTab === SettingsTab.FileTypes && <SettingsFileTypes />}
+        {currentTab === SettingsTab.Templates && <SettingsTemplates />}
+        {currentTab === SettingsTab.KeyBindings && <SettingsKeyBindings />}
+        {currentTab === SettingsTab.Extensions && <SettingsExtensions />}
+        {currentTab === SettingsTab.Advanced && <SettingsAdvanced />}
+        {currentTab === SettingsTab.AI && (
+          <SettingsAI closeSettings={onClose} />
+        )}
       </div>
     </DialogContent>
   );
