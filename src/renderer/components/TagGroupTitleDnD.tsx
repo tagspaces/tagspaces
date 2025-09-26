@@ -147,19 +147,6 @@ function TagGroupTitleDnD(props: Props) {
     ''
   );
 
-  const taggroupTitle = (
-    <TooltipTS
-      title={
-        'Number of tags in this ' +
-        readOnly +
-        'tag group: ' +
-        tagGroup.children.length
-      }
-    >
-      {tagGroup.title + getLocationName(tagGroup.locationId)}
-    </TooltipTS>
-  );
-
   const tagGroupTitle = (
     <Box
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
@@ -191,13 +178,21 @@ function TagGroupTitleDnD(props: Props) {
         </Grid>
         <Grid size={9} style={{ alignSelf: 'center' }}>
           <Typography
-            variant="inherit"
             style={{ paddingLeft: 0 }}
             data-tid="locationTitleElement"
             noWrap
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
           >
-            {taggroupTitle}
+            <TooltipTS
+              title={
+                'Number of tags in this ' +
+                readOnly +
+                'tag group: ' +
+                tagGroup.children.length
+              }
+            >
+              {tagGroup.title + getLocationName(tagGroup.locationId)}
+            </TooltipTS>
             {taggroupWorkspace}
             {!tagGroup.expanded && (
               <span
