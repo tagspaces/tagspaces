@@ -997,6 +997,7 @@
   "useTemplate": "Use this template",
   "templateNameEmptyError": "Template name can't be empty",
   "fileNameEmptyError": "Filename template can't be empty",
+  "manageTemplates": "Manage templates",
   "loadDefaultAuthor": "Load username from operating system",
   "obTryThemes": "Try our themes!",
   "obChooseTaggingTitle": "Choose the default tagging method for files",
