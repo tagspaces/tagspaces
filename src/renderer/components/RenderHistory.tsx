@@ -96,10 +96,11 @@ function RenderHistory(props: Props) {
       return;
     }
     try {
-      const newInstanceLink =
-        window.location.href.split('?')[0] +
-        '?' +
-        selectedItem.url.split('?')[1];
+      let newInstanceLink = window.location.href.split('?')[0];
+      const queryIndex = selectedItem.url.indexOf('?');
+      if (queryIndex !== -1) {
+        newInstanceLink += selectedItem.url.substring(queryIndex);
+      }
       createNewInstance(newInstanceLink);
     } catch (err) {
       console.error('Open in new window failed', err);
