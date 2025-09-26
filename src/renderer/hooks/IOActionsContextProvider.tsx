@@ -40,6 +40,7 @@ import {
   generateFileName,
   getMetaContentFileLocation,
   getFileLocationFromMetaFile,
+  isMeta,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -69,6 +70,7 @@ import {
   getPrefixTagContainer,
   getTagDelimiter,
   getWarningOpeningFilesExternally,
+  isRevisionsEnabled,
 } from '-/reducers/settings';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
@@ -323,6 +325,7 @@ export const IOActionsContextProvider = ({
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
+  const revisionsEnabled = useSelector(isRevisionsEnabled);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   const tagDelimiter: string = useSelector(getTagDelimiter);
@@ -1917,9 +1920,31 @@ export const IOActionsContextProvider = ({
     entry: TS.FileSystemEntry,
     meta: any,
   ): Promise<TS.FileSystemEntryMeta> {
-    return findLocation(entry.locationID)
+    const location = findLocation(entry.locationID);
+    return location
       .loadMetaDataPromise(entry.path)
       .then((fsEntryMeta) => {
+        if (
+          Pro &&
+          revisionsEnabled &&
+          !isMeta(entry.path) &&
+          meta.description !== undefined &&
+          fsEntryMeta.description !== undefined
+        ) {
+          getMetadataID(entry.path, entry.uuid, location).then((id) => {
+            const targetPath =
+              getBackupFileLocation(
+                entry.path,
+                id,
+                location.getDirSeparator(),
+              ) + '.meta';
+            saveTextFilePromise(
+              { path: targetPath, locationID: entry.locationID },
+              JSON.stringify({ description: fsEntryMeta.description }),
+              false,
+            );
+          });
+        }
         return saveMetaDataPromise(entry, {
           ...fsEntryMeta,
           ...meta,

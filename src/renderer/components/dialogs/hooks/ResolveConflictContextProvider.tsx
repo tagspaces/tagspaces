@@ -21,11 +21,11 @@ import {
   extractContainingDirectoryPath,
   getBackupFileLocation,
   cleanTrailingDirSeparator,
+  isMeta,
 } from '@tagspaces/tagspaces-common/paths';
 import LoadingLazy from '-/components/LoadingLazy';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
-import AppConfig from '-/AppConfig';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
@@ -141,15 +141,7 @@ export const ResolveConflictContextProvider = ({
   ): Promise<boolean> {
     const location = findLocation(fileOpen.locationID);
     if (location) {
-      if (
-        Pro &&
-        revisionsEnabled &&
-        fileOpen.path.indexOf(
-          location.getDirSeparator() +
-            AppConfig.metaFolder +
-            location.getDirSeparator(),
-        ) === -1
-      ) {
+      if (Pro && revisionsEnabled && !isMeta(fileOpen.path)) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
         const targetPath = getBackupFileLocation(
           fileOpen.path,
