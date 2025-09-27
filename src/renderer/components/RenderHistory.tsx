@@ -34,7 +34,6 @@ import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
 import { createNewInstance } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Tooltip } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -46,6 +45,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import TooltipTS from './Tooltip';
 import TsMenuList from './TsMenuList';
 
 interface Props {
@@ -166,13 +166,13 @@ function RenderHistory(props: Props) {
                 }}
                 onClick={() => openHistoryItem(item as TS.HistoryItem)}
               >
-                <Tooltip
+                <TooltipTS
                   title={
-                    <span style={{ fontSize: 14 }}>
+                    <span>
                       <b>{t('core:filePath')}:</b> {item.path}
                       <br />
                       <br />
-                      {/* <b>Opened on: </b>{' '} */}
+                      {<b>{t('dateCreatedSearchTitle')}:&nbsp;</b>}
                       {new Date(item.creationTimeStamp)
                         .toISOString()
                         .substring(0, 19)
@@ -186,18 +186,20 @@ function RenderHistory(props: Props) {
                   ) : (
                     <HistoryIcon />
                   )}
-                </Tooltip>
-                &nbsp;
-                <span
-                  style={{
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                    maxWidth: 220,
-                  }}
-                >
-                  {itemName}
-                </span>
+                </TooltipTS>
+                <TooltipTS title={itemName}>
+                  <span
+                    style={{
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 220,
+                      marginLeft: 5,
+                    }}
+                  >
+                    {itemName}
+                  </span>
+                </TooltipTS>
               </TsButton>
               {showMenu && (
                 <TsIconButton
