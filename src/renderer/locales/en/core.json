@@ -229,6 +229,7 @@
   "license": "License Agreement",
   "agreeLicense": "I Agree",
   "shortcutKeys": "Keyboard Shortcuts",
+  "manageShortcutKeys": "Manage Keyboard Shortcuts",
   "settings": "Settings",
   "fileExists": "Target file '{{fileName}}' already exists.",
   "searchTitle": "Search",
