@@ -1312,3 +1312,23 @@ export function toBase64Image(uint8Array): string {
   }
   return undefined;
 }
+
+/**
+ * shallow compare Entries array (and optional mtime)
+ * @param a
+ * @param b
+ */
+export function entriesEquals(
+  a?: TS.FileSystemEntry[],
+  b?: TS.FileSystemEntry[],
+) {
+  if (a === b) return true;
+  if (!Array.isArray(a) || !Array.isArray(b)) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].path !== b[i]?.path) return false;
+    // optional check if you have mtime/mtime-like field
+    if ((a[i] as any).mtime !== (b[i] as any)?.mtime) return false;
+  }
+  return true;
+}
