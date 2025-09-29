@@ -99,11 +99,12 @@ function LocationManager(props: Props) {
 
   function getWorkSpace(l) {
     if (l.workSpaceId) {
-      const wSpace = workSpacesContext.getWorkSpace(l.workSpaceId);
+      const wSpace = workSpacesContext?.getWorkSpace(l.workSpaceId);
       if (wSpace) {
         return wSpace;
       }
     }
+    return undefined;
   }
 
   return (
