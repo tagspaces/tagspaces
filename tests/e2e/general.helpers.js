@@ -905,14 +905,23 @@ export async function createRevision(
 }
 
 export function normalized(content) {
-  // Strip out all uuid properties (e.g. ,"uuid":"e3f0f0909cd84b4..." or "uuid":"..." at start)
-  return content
-    .replace(
-      // match optional leading comma, then "uuid" or "id" with a string value, OR "lmdt" with a number
-      /,?"(?:uuid|id)"\s*:\s*"[^"]*"|,?"(?:lmdt|cdt|size)"\s*:\s*\d+/g,
+  // Remove uuid/id string props and lmdt/cdt/size numeric props (supports decimals & exponents).
+  // The pattern tries to consume an adjacent comma (either before or after the prop) to avoid leaving dangling commas.
+  const withoutProps = content.replace(
+    /(?:,\s*"(?:uuid|id)"\s*:\s*"[^"]*"|"(?:uuid|id)"\s*:\s*"[^"]*"\s*,|,\s*"(?:lmdt|cdt|size)"\s*:\s*-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|"(?:lmdt|cdt|size)"\s*:\s*-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\s*,)/g,
       '',
-    )
+  );
+
+  // Cleanup leftover commas and whitespace to keep JSON-like structure valid
+  const cleaned = withoutProps
+    .replace(/,\s*,/g, ',')     // collapse accidental double-commas
+    .replace(/\{\s*,/g, '{')    // remove comma after opening brace
+    .replace(/,\s*}/g, '}')     // remove comma before closing brace
+    .replace(/\[\s*,/g, '[')    // same for arrays
+    .replace(/,\s*\]/g, ']')
     .trim();
+
+  return cleaned;
 }
 /**
  * Assert that a local file contains the given substring.
