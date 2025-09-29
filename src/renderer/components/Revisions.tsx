@@ -18,8 +18,8 @@
 
 import React, { useEffect, useState } from 'react';
 import {
+  getBackupDir,
   getBackupFileLocation,
-  extractContainingDirectoryPath,
   extractFileNameWithoutExt,
 } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
@@ -50,7 +50,7 @@ const initialRowsPerPage = 10;
 function Revisions() {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
-  const { getMetadataID } = useIOActionsContext();
+  //const { getMetadataID } = useIOActionsContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite, deleteEntriesPromise } =
     usePlatformFacadeContext();
@@ -78,22 +78,11 @@ function Revisions() {
     if (Pro) {
       const location = findLocation(openedFile.locationID);
       if (location) {
-        getMetadataID(openedFile.path, openedFile.uuid, location).then((id) => {
-          //openedFile.uuid = id;
-          const backupFilePath = getBackupFileLocation(
-            openedFile.path,
-            id,
-            location.getDirSeparator(),
+        const backupPath = getBackupDir(openedFile);
+        location.listDirectoryPromise(backupPath, []).then((h) => {
+          setRows(
+            h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
           );
-          const backupPath = extractContainingDirectoryPath(
-            backupFilePath,
-            location.getDirSeparator(),
-          );
-          location.listDirectoryPromise(backupPath, []).then((h) => {
-            setRows(
-              h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
-            );
-          });
         });
       }
     }

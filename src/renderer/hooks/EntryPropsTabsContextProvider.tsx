@@ -26,15 +26,14 @@ import {
 } from '-/components/CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
-import { AppDispatch } from '-/reducers/app';
 import { isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import LinkIcon from '@mui/icons-material/Link';
-import { getBackupFileDir } from '@tagspaces/tagspaces-common/paths';
+import { getBackupDir } from '@tagspaces/tagspaces-common/paths';
 import React, { createContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 export type TabItem = {
   //dataTid: string;
@@ -91,16 +90,12 @@ export const EntryPropsTabsContextProvider = ({
   //const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
 
   function haveRevisions(openedEntry: TS.OpenedEntry): Promise<boolean> {
-    if (isEditable(openedEntry)) {
-      const location: CommonLocation = findLocation(openedEntry.locationID);
-      const backupFilePath = getBackupFileDir(
-        openedEntry.path,
-        openedEntry.uuid,
-        location?.getDirSeparator(),
-      );
-      return location?.checkDirExist(backupFilePath);
-    }
-    return Promise.resolve(false);
+    //if (isEditable(openedEntry)) {
+    const location: CommonLocation = findLocation(openedEntry.locationID);
+    const backupPath = getBackupDir(openedEntry);
+    return location?.checkDirExist(backupPath);
+    //}
+    //return Promise.resolve(false);
   }
 
   function isEditable(openedEntry: TS.OpenedEntry): boolean {

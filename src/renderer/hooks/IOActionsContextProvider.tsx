@@ -27,6 +27,7 @@ import {
   extractFileName,
   getBackupFileDir,
   getBackupFileLocation,
+  getBackupFolderLocation,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
@@ -1931,15 +1932,21 @@ export const IOActionsContextProvider = ({
           meta.description !== undefined &&
           fsEntryMeta.description !== undefined
         ) {
-          getMetadataID(entry.path, entry.uuid, location).then((id) => {
-            const targetPath =
-              getBackupFileLocation(
-                entry.path,
-                id,
-                location.getDirSeparator(),
-              ) + '.meta';
+          const uuid = entry.isFile ? entry.uuid : entry.meta?.id;
+          getMetadataID(entry.path, uuid, location).then((id) => {
+            const targetPath = entry.isFile
+              ? getBackupFileLocation(
+                  entry.path,
+                  id,
+                  location.getDirSeparator(),
+                )
+              : getBackupFolderLocation(
+                  entry.path,
+                  id,
+                  location.getDirSeparator(),
+                );
             saveTextFilePromise(
-              { path: targetPath, locationID: entry.locationID },
+              { path: targetPath + '.meta', locationID: entry.locationID },
               JSON.stringify({ description: fsEntryMeta.description }),
               false,
             );
