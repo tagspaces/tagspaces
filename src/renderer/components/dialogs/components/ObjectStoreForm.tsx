@@ -245,20 +245,6 @@ function ObjectStoreForm(props: Props) {
         </FormControl>
       </Grid>
       <Grid size={12}>
-        <FormControl fullWidth={true}>
-          <TsTextField
-            name="sessionToken"
-            data-tid="sessionTokenTID"
-            slotProps={{
-              input: { autoCorrect: 'off', autoCapitalize: 'none' },
-            }}
-            onChange={(event) => setSessionToken(event.target.value)}
-            value={sessionToken}
-            label={t('core:sessionToken')}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
           <TsTextField
             name="bucketName"
@@ -301,6 +287,20 @@ function ObjectStoreForm(props: Props) {
                 margin="normal"
               />
             )}
+          />
+        </FormControl>
+      </Grid>
+      <Grid size={12}>
+        <FormControl fullWidth={true}>
+          <TsTextField
+            name="sessionToken"
+            data-tid="sessionTokenTID"
+            slotProps={{
+              input: { autoCorrect: 'off', autoCapitalize: 'none' },
+            }}
+            onChange={(event) => setSessionToken(event.target.value)}
+            value={sessionToken}
+            label={t('core:sessionToken')}
           />
         </FormControl>
       </Grid>

@@ -33,6 +33,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { SettingsTab } from './SettingsDialog';
+import { useSettingsDialogContext } from './hooks/useSettingsDialogContext';
 
 export function adjustKeyBinding(keyBinding: string) {
   if (!keyBinding || !keyBinding.length) return '';
@@ -70,6 +72,7 @@ function KeyboardDialog(props: Props) {
   const { t } = useTranslation();
   const keyBindings = useSelector(getKeyBindingObject);
   const theme = useTheme();
+  const { openSettingsDialog } = useSettingsDialogContext();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const okButton = (
     <TsButton
@@ -129,7 +132,25 @@ function KeyboardDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      {!smallScreen && <TsDialogActions>{okButton}</TsDialogActions>}
+      {!smallScreen && (
+        <TsDialogActions
+          style={{
+            justifyContent: 'space-between',
+          }}
+        >
+          <TsButton
+            data-tid="manageKeyboardShortcuts"
+            onClick={() => {
+              onClose();
+              openSettingsDialog(SettingsTab.KeyBindings);
+            }}
+            variant="outlined"
+          >
+            {t('core:manageShortcutKeys')}
+          </TsButton>
+          {okButton}
+        </TsDialogActions>
+      )}
     </Dialog>
   );
 }

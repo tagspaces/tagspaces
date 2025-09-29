@@ -601,23 +601,21 @@ function MobileNavigation(props: Props) {
                       </MenuItem>
                     )}
                     {!AppConfig.isCordova && (
-                      <>
-                        <MenuItem
-                          key="createWindow"
-                          data-tid="createWindowTID"
-                          onClick={() => {
-                            createNewInstance();
-                            setOpenCreateMenu(false);
-                          }}
-                        >
-                          <ListItemIcon>
-                            <OpenNewWindowIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={t('core:newWindow')}
-                          ></ListItemText>
-                        </MenuItem>
-                      </>
+                      <MenuItem
+                        key="createWindow"
+                        data-tid="createWindowTID"
+                        onClick={() => {
+                          createNewInstance();
+                          setOpenCreateMenu(false);
+                        }}
+                      >
+                        <ListItemIcon>
+                          <OpenNewWindowIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={t('core:newWindow')}
+                        ></ListItemText>
+                      </MenuItem>
                     )}
                   </TsMenuList>
                 </Paper>

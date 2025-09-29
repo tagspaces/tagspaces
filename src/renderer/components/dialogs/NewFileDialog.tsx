@@ -17,6 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
+import {
+  extractTags,
+  extractFileName,
+  generateFileName,
+} from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
@@ -29,7 +34,12 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
-import { getAuthor } from '-/reducers/settings';
+import {
+  getAuthor,
+  getFileNameTagPlace,
+  getPrefixTagContainer,
+  getTagDelimiter,
+} from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import versionMeta from '-/version.json';
@@ -66,6 +76,9 @@ function NewFileDialog(props: Props) {
   const urlInputError = useRef<string>(undefined);
 
   const author = useSelector(getAuthor);
+  const tagDelimiter: string = useSelector(getTagDelimiter);
+  const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
+  const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
   const firstRWLocation = getFirstRWLocation();
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
     ? useContext<TS.FileTemplatesContextData>(
@@ -96,11 +109,15 @@ function NewFileDialog(props: Props) {
 
   function getFileName() {
     if (fileName) {
-      return (
-        fileName +
-        AppConfig.beginTagContainer +
-        formatDateTime4Tag(new Date(), true) +
-        AppConfig.endTagContainer
+      const tags: string[] = extractTags(fileName, tagDelimiter);
+      const name = extractFileName(fileName);
+      return generateFileName(
+        name,
+        [...tags, formatDateTime4Tag(new Date(), true)],
+        tagDelimiter,
+        findLocation()?.getDirSeparator(),
+        prefixTagContainer,
+        filenameTagPlacedAtEnd,
       );
     }
     const template = fileTemplate ?? window.ExtDefaultFileTemplate;
