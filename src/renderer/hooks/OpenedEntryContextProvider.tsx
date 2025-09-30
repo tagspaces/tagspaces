@@ -908,10 +908,10 @@ export const OpenedEntryContextProvider = ({
       fileNameAndExt;
     let fileContent = content;
     if (fileType === 'html') {
-      fileContent = `${newHTMLFileContent.split('<body></body>')[0]} 
+      fileContent = `${newHTMLFileContent.split('<body></body>')[0]}
 <body data-createdwith="${versionMeta.name}" data-createdon="${creationDate}">
 ${content}
-</body> 
+</body>
 ${newHTMLFileContent.split('<body></body>')[1]}`;
     } else if (fileType === 'md') {
       fileContent = content;
@@ -968,9 +968,12 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
         );
       }
     } else {
-      fileForOpening.viewingExtensionPath = openedEntry.isFile
+      fileForOpening.viewingExtensionPath = findExtensionPathForId(
+        '@tagspaces/extensions/text-viewer',
+      );
+      /*openedEntry.isFile
         ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
-        : 'about:blank';
+        : 'about:blank';*/
     }
     return fileForOpening;
   }

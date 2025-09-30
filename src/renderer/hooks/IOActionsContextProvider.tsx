@@ -28,6 +28,7 @@ import {
   getBackupFileDir,
   getBackupFileLocation,
   getBackupFolderLocation,
+  getBackupDir,
   getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getMetaFileLocationForDir,
@@ -67,6 +68,7 @@ import {
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import {
+  getAuthor,
   getFileNameTagPlace,
   getPrefixTagContainer,
   getTagDelimiter,
@@ -326,6 +328,7 @@ export const IOActionsContextProvider = ({
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
+  const author = useSelector(getAuthor);
   const revisionsEnabled = useSelector(isRevisionsEnabled);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
@@ -1929,8 +1932,7 @@ export const IOActionsContextProvider = ({
           Pro &&
           revisionsEnabled &&
           !isMeta(entry.path) &&
-          meta.description !== undefined &&
-          fsEntryMeta.description !== undefined
+          meta.description !== undefined
         ) {
           const uuid = entry.isFile ? entry.uuid : entry.meta?.id;
           getMetadataID(entry.path, uuid, location).then((id) => {
@@ -1945,9 +1947,29 @@ export const IOActionsContextProvider = ({
                   id,
                   location.getDirSeparator(),
                 );
+            if (fsEntryMeta && fsEntryMeta.description) {
+              const backupDir = getBackupDir(entry);
+              location.listDirectoryPromise(backupDir, []).then((backup) => {
+                const haveBackup = backup.some((b) => b.path.endsWith('.meta'));
+                if (!haveBackup) {
+                  // init description
+                  saveTextFilePromise(
+                    {
+                      path: targetPath + '-init.meta',
+                      locationID: entry.locationID,
+                    },
+                    JSON.stringify({ description: fsEntryMeta?.description }),
+                    false,
+                  );
+                }
+              });
+            }
             saveTextFilePromise(
               { path: targetPath + '.meta', locationID: entry.locationID },
-              JSON.stringify({ description: fsEntryMeta.description }),
+              JSON.stringify({
+                description: meta.description,
+                ...(author && { author: author }),
+              }),
               false,
             );
           });

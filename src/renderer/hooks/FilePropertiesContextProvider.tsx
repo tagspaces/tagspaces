@@ -41,7 +41,7 @@ type FilePropertiesContextData = {
   isEditDescriptionMode: boolean;
   setEditDescriptionMode: (editMode: boolean) => void;
   setSaveDescriptionConfirmOpened: (open: boolean) => void;
-  setDescription: (description: string) => void;
+  setDescription: (description: string, changed?: boolean) => void;
   saveDescription: () => Promise<boolean>;
   closeOpenedEntries: () => void;
 };
@@ -160,7 +160,7 @@ export const FilePropertiesContextProvider = ({
     });
   }
 
-  function setDescription(d: string) {
+  function setDescription(d: string, changed = true) {
     if (lastOpenedFile.current?.meta?.description !== d) {
       lastOpenedFile.current = {
         ...lastOpenedFile.current,
@@ -169,8 +169,8 @@ export const FilePropertiesContextProvider = ({
           description: d,
         },
       };
-      if (!isDescriptionChanged.current) {
-        isDescriptionChanged.current = true;
+      if (isDescriptionChanged.current !== changed) {
+        isDescriptionChanged.current = changed;
         forceUpdate();
       }
     }

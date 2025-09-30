@@ -19,6 +19,7 @@
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import {
   extractContainingDirectoryPath,
+  getBackupFileDir,
   getBackupFileLocation,
   cleanTrailingDirSeparator,
   isMeta,
@@ -141,6 +142,7 @@ export const ResolveConflictContextProvider = ({
   ): Promise<boolean> {
     const location = findLocation(fileOpen.locationID);
     if (location) {
+      // write revisions
       if (Pro && revisionsEnabled && !isMeta(fileOpen.path)) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
         const targetPath = getBackupFileLocation(
@@ -148,16 +150,33 @@ export const ResolveConflictContextProvider = ({
           id,
           location.getDirSeparator(),
         );
-        try {
-          await copyFilePromiseOverwrite(
-            fileOpen.path,
-            targetPath,
-            fileOpen.locationID,
-            false,
-          ); // todo test what happened if remove await?
-        } catch (error) {
-          console.log('copyFilePromiseOverwrite', error);
-        }
+
+        const backupDir = getBackupFileDir(fileOpen.path, fileOpen.uuid);
+        location.listDirectoryPromise(backupDir, []).then(async (backup) => {
+          const haveBackup = backup.some((b) =>
+            b.path.endsWith(fileOpen.extension),
+          );
+          if (!haveBackup) {
+            try {
+              await copyFilePromiseOverwrite(
+                fileOpen.path,
+                targetPath + '-init.' + fileOpen.extension,
+                fileOpen.locationID,
+                false,
+              );
+            } catch (error) {
+              console.log('copyFilePromiseOverwrite', error);
+            }
+          }
+        });
+        await saveTextFilePromise(
+          {
+            path: targetPath,
+            locationID: fileOpen.locationID,
+          },
+          textContent,
+          false,
+        );
       }
       return saveTextFilePromise(
         {

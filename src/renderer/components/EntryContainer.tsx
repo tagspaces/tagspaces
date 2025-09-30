@@ -633,17 +633,15 @@ function EntryContainer() {
             </Tooltip>
           )}
         </div>
-        {openedEntry.isFile && (
-          <FileView
-            key="FileViewID"
-            fileViewer={fileViewer}
-            fileViewerContainer={fileViewerContainer}
-            height={
-              tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
-            }
-            handleMessage={handleMessage}
-          />
-        )}
+        <FileView
+          key="FileViewID"
+          fileViewer={fileViewer}
+          fileViewerContainer={fileViewerContainer}
+          height={
+            tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
+          }
+          handleMessage={handleMessage}
+        />
       </div>
     </GlobalHotKeys>
   );
