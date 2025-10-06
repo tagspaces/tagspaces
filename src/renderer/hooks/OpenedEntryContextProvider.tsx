@@ -848,6 +848,7 @@ export const OpenedEntryContextProvider = ({
         // External URL case
         decodedURI.startsWith('onenote:') ||
         decodedURI.startsWith('mailto:') ||
+        decodedURI.startsWith('tel:') ||
         decodedURI.startsWith('http://') ||
         decodedURI.startsWith('https://') ||
         decodedURI.startsWith('file://')
