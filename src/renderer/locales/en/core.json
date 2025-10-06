@@ -1022,7 +1022,7 @@
   "htsLocationManager": "To use a folder in TagSpaces, you must connect it as a location with the Location Manager. The Location Manager allows you to create, edit, remove, import, and export your locations. Any default locations pointing to folders such as Documents or Downloads can be removed if not needed.",
   "htsFindOutMore": "Find out more",
   "htsCreatingLocationTitle": "Creating a Location",
-  "htsCreatingLocation": "By selecting the highlighted button, you can open a dialog to choose which folder you'd like to use in TagSpaces and create a location linked to it. Depending on the type of location, the folder can be on your computer or in S3-compatible cloud storage such as AWS S3, Cloudflare R2, Wasabi, or Minio.",
+  "htsCreatingLocation": "By selecting the highlighted button, you can open a dialog to choose which folder you'd like to use in TagSpaces and create a location linked to it. Depending on the type of location, the folder can be on your computer or in S3-compatible cloud storage such as AWS S3, Cloudflare R2 oder Wasabi.",
   "htsTagLibrary": "The Tag Library is where you can manage and organize the tags you use for your files and folders. Tag Groups help you categorize tags, and applying a tag is as simple as dragging and dropping it onto a file or folder.",
   "htsQuickAccess": "This section gives you quick access to some important items:",
   "htsQuickAccessSection1": "Saved searches you can reuse anytime",

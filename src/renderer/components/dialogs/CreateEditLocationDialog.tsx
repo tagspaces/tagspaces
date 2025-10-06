@@ -30,6 +30,7 @@ import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import WebdavForm from '-/components/dialogs/components/WebdavForm';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -74,7 +75,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
-import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 
 interface Props {
   open: boolean;
@@ -691,7 +691,8 @@ function CreateEditLocationDialog(props: Props) {
                       value={locationType.TYPE_CLOUD}
                       data-tid="cloudLocationTID"
                     >
-                      {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
+                      {t('core:objectStorage') +
+                        ' (AWS S3, CloudFlare R2, Wasabi,...)'}
                     </MenuItem>
                     {/* {Pro && devMode && (
                       <MenuItem
