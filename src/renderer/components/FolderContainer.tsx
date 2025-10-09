@@ -273,6 +273,7 @@ function FolderContainer(props: Props) {
             } as React.CSSProperties & { WebkitAppRegion?: string }
           }
           onClick={toggleDrawer}
+          tooltip={t('core:toggleSidebar')}
         >
           <MainMenuIcon />
         </TsIconButton>
