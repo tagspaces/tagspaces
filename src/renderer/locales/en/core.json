@@ -203,6 +203,7 @@
   "reportIssues": "Report a problem",
   "forums": "Forums",
   "followOnX": "Follow us on X",
+  "followOnMastodon": "Follow us on Mastodon",
   "searchPlaceholder": "Search current location",
   "tagSearchOR": "At least one tag",
   "tagSearchORTitle": "Entry should contain at least one of the tags (OR search)",

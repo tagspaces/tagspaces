@@ -53,7 +53,8 @@ const Links = {
     webClipperFirefox:
       'https://addons.mozilla.org/en-US/firefox/addon/tagspaces/',
     webClipper: 'https://www.tagspaces.org/products/webclipper/' + urlParams,
-    twitter: 'https://twitter.com/tagspaces',
+    twitter: 'https://x.com/tagspaces',
+    mastodon: 'https://fosstodon.org/@tagspaces',
     emailContact: 'mailto:contactus@tagspaces.org?subject=App',
     cancelSubscription:
       'mailto:contactus@tagspaces.org?subject=Cancel%20subscription&body=Please%20enter%20here%20you%20order%20ID%20or%20the%20email%20with%20which%20the%20purchase%20was%20made.', // 'https://fastspring.com/consumer-support-form/?ulCase.Primary_Category__c=Cancel%20/%20Refund&Case.Category__c=Cancel%20Subscription'

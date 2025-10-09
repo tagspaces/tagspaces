@@ -25,6 +25,7 @@ import {
   HelpIcon,
   IssueIcon,
   KeyShortcutsIcon,
+  MastodonIcon,
   NewFeatureIcon,
   OnboardingIcon,
   ProTeaserIcon,
@@ -38,13 +39,12 @@ import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboar
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
-import { Box } from '@mui/material';
+import { Box, ListItemText } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +76,7 @@ function HelpFeedbackPanel(props: Props) {
     >
       <SidePanelTitle title={t('core:helpFeedback')} />
       <List
-        dense={false}
+        dense
         component="nav"
         aria-label="main help area"
         sx={{
@@ -93,9 +93,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <AboutIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:aboutTagSpaces')}
-            </Typography>
+            <ListItemText>{t('core:aboutTagSpaces')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -107,9 +105,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <HelpIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:documentation')}
-            </Typography>
+            <ListItemText>{t('core:documentation')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -117,9 +113,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <KeyShortcutsIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:shortcutKeys')}
-            </Typography>
+            <ListItemText>{t('core:shortcutKeys')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -129,9 +123,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <ChangeLogIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:whatsNew')}
-            </Typography>
+            <ListItemText>{t('core:whatsNew')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -139,9 +131,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <OnboardingIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:onboardingWizard')}
-            </Typography>
+            <ListItemText>{t('core:onboardingWizard')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -151,9 +141,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <WebClipperIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:webClipper')}
-            </Typography>
+            <ListItemText>{t('core:webClipper')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <Divider />
@@ -164,9 +152,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <NewFeatureIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:suggestNewFeatures')}
-            </Typography>
+            <ListItemText>{t('core:suggestNewFeatures')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -176,9 +162,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <ForumIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:forums')}
-            </Typography>
+            <ListItemText>{t('core:forums')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -188,9 +172,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <IssueIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:reportIssues')}
-            </Typography>
+            <ListItemText>{t('core:reportIssues')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -200,9 +182,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <TranslationIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:helpWithTranslation')}
-            </Typography>
+            <ListItemText>{t('core:helpWithTranslation')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <Divider />
@@ -213,9 +193,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <EmailIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:emailContact')}
-            </Typography>
+            <ListItemText>{t('core:emailContact')}</ListItemText>
           </ListItemButton>
         </ListItem>
         {Pro && (
@@ -228,12 +206,20 @@ function HelpFeedbackPanel(props: Props) {
               <ListItemIcon>
                 <CancelSubscriptionIcon />
               </ListItemIcon>
-              <Typography sx={{ color: theme.palette.text.primary }}>
-                {t('core:cancelSubscription')}
-              </Typography>
+              <ListItemText>{t('core:cancelSubscription')}</ListItemText>
             </ListItemButton>
           </ListItem>
         )}
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.mastodon, true)}
+          >
+            <ListItemIcon>
+              <MastodonIcon color="action" />
+            </ListItemIcon>
+            <ListItemText primary={t('core:followOnMastodon')} />
+          </ListItemButton>
+        </ListItem>
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => openURLExternally(Links.links.twitter, true)}
@@ -241,9 +227,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <XIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('core:followOnX')}
-            </Typography>
+            <ListItemText>{t('core:followOnX')}</ListItemText>
           </ListItemButton>
         </ListItem>
         <Divider />
@@ -252,9 +236,7 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemIcon>
               <ProTeaserIcon />
             </ListItemIcon>
-            <Typography sx={{ color: theme.palette.text.primary }}>
-              {t('achieveMore') + ' TagSpaces Pro'}
-            </Typography>
+            <ListItemText>{t('achieveMore') + ' TagSpaces Pro'}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
