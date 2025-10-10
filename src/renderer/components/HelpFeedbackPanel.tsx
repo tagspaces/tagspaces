@@ -38,6 +38,7 @@ import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboard
 import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { Pro } from '-/pro';
+import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { Box, ListItemText } from '@mui/material';
 import Divider from '@mui/material/Divider';
@@ -48,6 +49,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
@@ -58,6 +60,7 @@ interface Props {
 function HelpFeedbackPanel(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const desktopMode = useSelector(isDesktopMode);
   const { openAboutDialog } = useAboutDialogContext();
   const { openOnboardingDialog } = useOnboardingDialogContext();
   const { openKeyboardDialog } = useKeyboardDialogContext();
@@ -76,7 +79,7 @@ function HelpFeedbackPanel(props: Props) {
     >
       <SidePanelTitle title={t('core:helpFeedback')} />
       <List
-        dense
+        dense={desktopMode}
         component="nav"
         aria-label="main help area"
         sx={{
