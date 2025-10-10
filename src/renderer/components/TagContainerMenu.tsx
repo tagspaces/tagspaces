@@ -16,7 +16,7 @@
  *
  */
 
-import { MoreMenuIcon, RemoveIcon } from '-/components/CommonIcons';
+import { MoreMenuIcon, RemoveTagIcon } from '-/components/CommonIcons';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -37,7 +37,7 @@ function TagContainerMenu(props: Props) {
   }
   return tagMode === 'remove' ? (
     deleteIcon || (
-      <RemoveIcon
+      <RemoveTagIcon
         data-tid={'tagRemoveButton_' + tag.title?.replace(/ /g, '_')}
         style={{
           color: tag.textcolor,
