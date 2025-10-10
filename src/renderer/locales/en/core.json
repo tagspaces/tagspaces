@@ -297,6 +297,7 @@
   "fileTags": "Tags",
   "fileSize": "Size",
   "fileLDTM": "Date Modified",
+  "creationDate": "Date Created",
   "random": "Random",
   "fileDirectory": "Folder",
   "fileFirstTag": "First Tag",
