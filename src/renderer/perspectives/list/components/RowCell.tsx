@@ -23,6 +23,7 @@ import {
   SelectedIcon,
   UnSelectedIcon,
 } from '-/components/CommonIcons';
+import FileExtBadge from '-/components/FileExtBadge';
 import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsPreview from '-/components/TagsPreview';
@@ -231,58 +232,6 @@ function RowCell(props: Props) {
     });
   }, [entryTags, currentLocation?.isReadOnly, reorderTags, entryPath]);
 
-  function generateExtension() {
-    return selectionMode ? (
-      <TsIconButton
-        style={{
-          width: 40,
-          height: 35,
-          alignSelf: 'center',
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (selected) {
-            selectEntry(fsEntry, false);
-          } else {
-            selectEntry(fsEntry);
-          }
-        }}
-      >
-        {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-      </TsIconButton>
-    ) : (
-      <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
-        <Typography
-          style={{
-            paddingTop: 1,
-            paddingBottom: 9,
-            paddingLeft: 3,
-            paddingRight: 3,
-            fontSize: 13,
-            minWidth: 40,
-            color: 'white',
-            borderRadius: 3,
-            textAlign: 'center',
-            display: 'inline',
-            backgroundColor: fileSystemEntryColor,
-            textShadow: '1px 1px #8f8f8f',
-            textOverflow: 'unset',
-            height: 15,
-            alignSelf: 'center',
-          }}
-          noWrap={true}
-          variant="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            selectEntry(fsEntry);
-          }}
-        >
-          {fsEntry.isFile ? fsEntry.extension : <FolderOutlineIcon />}
-        </Typography>
-      </Tooltip>
-    );
-  }
-
   const entryHeight = calculateEntryHeight(entrySize);
   const isSmall = entrySize === 'tiny'; // || entrySize === 'small';
 
@@ -348,7 +297,39 @@ function RowCell(props: Props) {
             alignSelf: 'center',
           }}
         >
-          {generateExtension()}
+          <Tooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
+            <FileExtBadge
+              style={{
+                backgroundColor: fileSystemEntryColor,
+              }}
+              noWrap={true}
+              variant="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (selectionMode) {
+                  if (selected) {
+                    selectEntry(fsEntry, false);
+                  } else {
+                    selectEntry(fsEntry);
+                  }
+                } else {
+                  selectEntry(fsEntry);
+                }
+              }}
+            >
+              {selectionMode ? (
+                selected ? (
+                  <SelectedIcon />
+                ) : (
+                  <UnSelectedIcon />
+                )
+              ) : fsEntry.isFile ? (
+                fsEntry.extension
+              ) : (
+                <FolderOutlineIcon />
+              )}
+            </FileExtBadge>
+          </Tooltip>
         </Grid>
         {isSmall ? (
           <Grid
@@ -382,7 +363,7 @@ function RowCell(props: Props) {
           <Grid sx={{ alignSelf: 'center', width: '100%', marginLeft: 5 }}>
             <Typography
               variant="body1"
-              title={fsEntry.name}
+              title={fsEntry.path}
               sx={{ wordBreak: 'break-all' }}
             >
               {entryTitle}
