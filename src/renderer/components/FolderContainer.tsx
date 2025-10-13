@@ -314,45 +314,54 @@ function FolderContainer(props: Props) {
           <>
             <div
               style={{
+                margin: '0 10px 0 10px',
                 flex: '1 1 1%',
                 display: 'flex',
                 flexDirection: 'column',
               }}
-            />
-            {smallScreen ? (
-              <TsIconButton
-                tooltip={
-                  t('core:openSearch') + ' (' + openSearchKeyBinding + ')'
-                }
-                data-tid="toggleSearch"
-                onClick={openSearchMode}
-                style={
-                  {
-                    WebkitAppRegion: 'no-drag',
-                  } as React.CSSProperties & { WebkitAppRegion?: string }
-                }
-              >
-                <SearchIcon />
-              </TsIconButton>
-            ) : (
-              <TsButton
-                data-tid="toggleSearch"
-                onClick={openSearchMode}
-                startIcon={<SearchIcon />}
-                style={
-                  {
-                    marginRight: 5,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    WebkitAppRegion: 'no-drag',
-                  } as React.CSSProperties & { WebkitAppRegion?: string }
-                }
-              >
-                {t('core:searchTitle')}
-                <span style={{ width: 10 }} />
-                {openSearchKeyBinding}
-              </TsButton>
-            )}
+            >
+              {smallScreen ? (
+                <TsIconButton
+                  tooltip={
+                    t('core:openSearch') + ' (' + openSearchKeyBinding + ')'
+                  }
+                  data-tid="toggleSearch"
+                  onClick={openSearchMode}
+                  style={
+                    {
+                      maxWidth: 100,
+                      WebkitAppRegion: 'no-drag',
+                    } as React.CSSProperties & { WebkitAppRegion?: string }
+                  }
+                >
+                  <SearchIcon />
+                </TsIconButton>
+              ) : (
+                <TsButton
+                  data-tid="toggleSearch"
+                  onClick={openSearchMode}
+                  color="secondary"
+                  startIcon={<SearchIcon />}
+                  style={
+                    {
+                      marginTop: -2,
+                      marginRight: 5,
+                      minWidth: 100,
+                      width: 'stretch',
+                      maxWidth: 300,
+                      margin: '0 auto',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      WebkitAppRegion: 'no-drag',
+                    } as React.CSSProperties & { WebkitAppRegion?: string }
+                  }
+                >
+                  {t('core:searchTitle')}
+                  <span style={{ width: 10 }} />
+                  {openSearchKeyBinding}
+                </TsButton>
+              )}
+            </div>
 
             {progress?.length > 0 && (
               <TsIconButton

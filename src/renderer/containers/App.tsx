@@ -28,9 +28,9 @@ import {
   createTheme,
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useEffect } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 
 declare module '@mui/material/styles' {
   interface Theme extends Record<string, any> {
@@ -47,7 +47,7 @@ const legacyTheme = createTheme({
       dark: AppConfig.lightThemeMainColor,
     },
     secondary: {
-      main: AppConfig.lightThemeMainColor,
+      main: '#777',
     },
     divider: '#ddd',
   },
@@ -62,7 +62,7 @@ const newlightTheme = createTheme({
       dark: '#3bc8ff',
     },
     secondary: {
-      main: '#3bc8ff',
+      main: '#777',
     },
     divider: '#ddd',
   },
@@ -79,7 +79,7 @@ const darklegacyTheme = createTheme({
       dark: AppConfig.darkThemeMainColor,
     },
     secondary: {
-      main: AppConfig.darkThemeMainColor,
+      main: '#bbb',
     },
     divider: '#555',
   },
@@ -94,7 +94,7 @@ const darkblueTheme = createTheme({
       dark: '#3bc8ff',
     },
     secondary: {
-      main: '#3bc8ff',
+      main: '#bbb',
     },
     background: {
       default: '#001E3C',
@@ -112,7 +112,7 @@ const draculaTheme = createTheme({
       dark: '#BD93F9',
     },
     secondary: {
-      main: '#BD93F9',
+      main: '#bbb',
     },
     divider: '#555',
     background: {
