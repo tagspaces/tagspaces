@@ -347,6 +347,7 @@ function FolderContainer(props: Props) {
                       marginTop: -2,
                       marginRight: 5,
                       minWidth: 100,
+                      maxHeight: 32,
                       width: 'stretch',
                       maxWidth: 300,
                       margin: '0 auto',
