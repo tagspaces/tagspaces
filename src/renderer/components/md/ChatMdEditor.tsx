@@ -15,18 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useEffect, useRef } from 'react';
-import { Milkdown, useEditor } from '@milkdown/react';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { createCrepeEditor } from '-/components/md/utils';
-import { EditorStatus } from '@milkdown/core';
-import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
-import { Crepe } from '@milkdown/crepe';
-import { replaceAll } from '@milkdown/utils';
-import { useChatContext } from '-/hooks/useChatContext';
-import { ChatItem } from '-/components/chat/ChatTypes';
-import { format } from 'date-fns';
 import AppConfig from '-/AppConfig';
+import { ChatItem } from '-/components/chat/ChatTypes';
+import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
+import { createCrepeEditor } from '-/components/md/utils';
+import { useChatContext } from '-/hooks/useChatContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { EditorStatus } from '@milkdown/core';
+import { Crepe } from '@milkdown/crepe';
+import { Milkdown, useEditor } from '@milkdown/react';
+import { format } from 'date-fns';
+import React, { useEffect, useRef } from 'react';
 
 interface ChatMdEditorProps {
   //defaultContent: string;
@@ -62,6 +61,16 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
           if (status === EditorStatus.Created) {
             console.log(status);
             crepeInstanceRef.current = crepe;
+
+            // const content = document.querySelector('.chatMD');
+            // if (!content) return;
+            // setTimeout(() => {
+            //   content.scrollTo({
+            //     top: content.scrollHeight,
+            //     behavior: 'smooth',
+            //   });
+            //   console.log('Scrolled to: ' + content.scrollHeight);
+            // }, 100);
           }
         });
         return crepe;
@@ -83,51 +92,46 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
       };
     }, []);
 
+    // useEffect(() => {
+    //   // Find the inner editable content area
+    //   const content = document.querySelector('.ProseMirror');
+    //   if (!content) return;
+    //   content.scrollTo({
+    //     top: content.scrollHeight,
+    //     behavior: 'smooth',
+    //   });
+    // }, [chatHistoryItems]);
+
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
 
-    function formatChatItems(chatItems: ChatItem[]): string {
-      if (chatItems) {
-        const formattedItems = chatItems.map((item) => {
-          const date = item.timestamp
-            ? '**User on ' +
-              format(item.timestamp, 'yyyy-MM-dd HH:mm:ss') +
-              '**'
-            : '**User**';
-          const request = item.request ? item.request : '';
-          const model = item.modelName ? item.modelName : 'AI model';
-          const response = item.response
-            ? '**' + model + '**:\\\n' + item.response
-            : '';
-          const images = item.imagePaths
-            ? item.imagePaths.map((i) => {
-                return (
-                  '![chat image](' +
-                  //(AppConfig.isWeb ? '' : 'file://') +
-                  // getHistoryFilePath(i) +
-                  AppConfig.metaFolder +
-                  '/' +
-                  AppConfig.aiFolder +
-                  '/' +
-                  i +
-                  ')'
-                );
-              })
-            : '';
-          return (
-            '' +
-            date +
-            ': \\\n' +
-            request +
-            '\n' +
-            images +
-            '\n' +
-            response +
-            '\n *** \n'
-          );
-        });
-        return formattedItems.join(' ');
-      }
-      return '';
+    function formatChatItems(chatItems: ChatItem[] = []): string {
+      if (!chatItems.length) return '';
+
+      return (
+        [...chatItems] // clone to avoid mutating original
+          // .reverse() // reverse order
+          .map((item) => {
+            const dateStr = item.timestamp
+              ? `**User on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
+              : '**User**';
+
+            const requestStr = item.request ?? '';
+            const modelName = item.modelName ?? 'AI model';
+            const responseStr = item.response
+              ? `**${modelName}**:\\\n${item.response}`
+              : '';
+
+            const imagesStr = (item.imagePaths ?? [])
+              .map(
+                (img) =>
+                  `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,
+              )
+              .join('\n');
+
+            return `${dateStr}: \\\n${requestStr}\n${imagesStr}\n${responseStr}\n***\n`;
+          })
+          .join('\n')
+      );
     }
 
     return <Milkdown />;
