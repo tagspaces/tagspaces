@@ -1,0 +1,41 @@
+<section>
+  <h1>TagSpaces – Organize, Tag & Browse Your Files Offline</h1>
+
+  <p>
+    <strong>TagSpaces</strong> helps you organize, tag, and browse your files, photos,
+    and documents across multiple platforms — completely offline and without cloud dependencies.
+  </p>
+
+  <p>It’s perfect for:</p>
+  <ul>
+    <li><strong>Browsing, tagging, viewing, and editing</strong> local files directly in the app — no external software required</li>
+    <li><strong>Taking notes</strong> or saving web snippets (like Evernote®, but 100% offline)</li>
+    <li><strong>Building a personal knowledge base</strong> or personal wiki using local files</li>
+  </ul>
+
+  <h2>Key Features</h2>
+  <ul>
+    <li><strong>File &amp; Folder Management</strong> — Browse, preview, and organize files with a clean, intuitive interface.</li>
+    <li><strong>Smart Tagging</strong> — Add tags to files and folders. Tags can be embedded in filenames or stored in lightweight sidecar files.</li>
+    <li><strong>Powerful Search</strong> — Fast fuzzy search and tag-based filtering across all connected locations.</li>
+    <li><strong>Offline &amp; Private</strong> — Runs entirely on your device. No login, no tracking, no mandatory cloud services.</li>
+    <li><strong>Built-in Viewers &amp; Media Player</strong> — Preview images, PDFs, text, Markdown and play audio/video directly in the app.</li>
+    <li><strong>Note Taking</strong> — Create and edit notes in plain text, Markdown, or HTML formats.</li>
+    <li><strong>To-Do Management</strong> — Use the built-in editor to create simple to-do lists in HTML or Markdown files.</li>
+    <li><strong>Cross-Platform</strong> — Available for Windows, macOS, Linux, and Android with a consistent experience.</li>
+    <li><strong>Web Clipper Extension</strong> — Capture web pages, screenshots, and bookmarks as files with the TagSpaces Web Clipper for
+      <a href="https://addons.mozilla.org/en-US/firefox/addon/tagspaces/" target="_blank" rel="noopener noreferrer">Firefox</a> and
+      <a href="https://chrome.google.com/webstore/detail/tagspaces-web-clipper/ldalmgifdlgpiiadeccbcjojljeanhjk" target="_blank" rel="noopener noreferrer">Chrome</a>.
+    </li>
+  </ul>
+
+  <h2>Your Data. Your Rules.</h2>
+  <p>
+    TagSpaces is designed with privacy in mind — it doesn’t require an account, it doesn’t track your activity,
+    and your files remain under your control. 
+  </p>
+
+  <p>
+    <strong>Try TagSpaces today</strong> — organize smarter, stay private, and keep your files flexible and future-proof.
+  </p>
+</section>
