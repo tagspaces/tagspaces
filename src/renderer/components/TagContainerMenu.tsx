@@ -39,9 +39,9 @@ function TagContainerMenu(props: Props) {
     deleteIcon || (
       <RemoveTagIcon
         data-tid={'tagRemoveButton_' + tag.title?.replace(/ /g, '_')}
-        style={{
+        sx={{
           color: tag.textcolor,
-          fontSize: 20,
+          fontSize: '20px',
         }}
         onClick={(event) =>
           handleRemoveTag ? handleRemoveTag(event, [tag]) : false
@@ -51,10 +51,10 @@ function TagContainerMenu(props: Props) {
   ) : (
     <MoreMenuIcon
       data-tid={'tagMoreButton_' + tag.title?.replace(/ /g, '_')}
-      style={{
+      sx={{
         color: tag.textcolor,
-        marginLeft: -5,
-        marginRight: -5,
+        marginLeft: '-5px',
+        marginRight: '-5px',
         height: 20,
       }}
     />

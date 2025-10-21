@@ -98,7 +98,7 @@ function TsTextField(props: TSTextFieldProps) {
   }
 
   return (
-    <div>
+    <>
       {label && (
         <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
           {label}
@@ -151,7 +151,7 @@ function TsTextField(props: TSTextFieldProps) {
             : undefined
         }
       >
-        <TsMenuList style={{ minWidth: 150 }}>
+        <TsMenuList sx={{ minWidth: 150 }}>
           <MenuItem onClick={handleCopy}>
             <ListItemText primary={t('core:copy')} />
             <MenuKeyBinding keyBinding="command+c" />
@@ -164,7 +164,7 @@ function TsTextField(props: TSTextFieldProps) {
           )}
         </TsMenuList>
       </Menu>
-    </div>
+    </>
   );
 }
 

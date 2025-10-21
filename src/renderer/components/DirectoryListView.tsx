@@ -1,29 +1,30 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import {
+  FolderOutlineIcon as FolderIcon,
+  NewFolderIcon,
+  ParentFolderIcon,
+} from '-/components/CommonIcons';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
-import MenuItem from '@mui/material/MenuItem';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { Box } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
-import { TS } from '-/tagspaces.namespace';
-import {
-  ParentFolderIcon,
-  NewFolderIcon,
-  FolderOutlineIcon as FolderIcon,
-} from '-/components/CommonIcons';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import Typography from '@mui/material/Typography';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -77,17 +78,16 @@ const DirectoryListView: React.FC<Props> = ({
       <FormControl
         fullWidth
         variant="standard"
-        style={{
+        sx={{
           flexFlow: 'nowrap',
           alignItems: 'center',
         }}
       >
-        <Typography style={{ display: 'inline' }} variant="subtitle2">
+        <Typography sx={{ display: 'inline' }} variant="subtitle2">
           {t('targetLocation')}:&nbsp;
         </Typography>
         <TsSelect
           fullWidth={true}
-          // style={{ display: 'inline' }}
           onChange={handleLocationChange}
           value={chosenLocationId.current}
         >
@@ -95,7 +95,7 @@ const DirectoryListView: React.FC<Props> = ({
             .filter((loc) => loc.type === locationType.TYPE_LOCAL)
             .map((location: CommonLocation) => (
               <MenuItem key={location.uuid} value={location.uuid}>
-                <span style={{ width: '100%' }}>{location.name}</span>
+                <Box sx={{ width: '100%' }}>{location.name}</Box>
               </MenuItem>
             ))}
         </TsSelect>
@@ -158,7 +158,7 @@ const DirectoryListView: React.FC<Props> = ({
   }
 
   return (
-    <div style={{ marginTop: 10 }}>
+    <Box sx={{ marginTop: '10px' }}>
       {getDirLocations()}
       <TsButton
         startIcon={<ParentFolderIcon />}
@@ -180,7 +180,7 @@ const DirectoryListView: React.FC<Props> = ({
       </TsButton>
       <TsButton
         startIcon={<NewFolderIcon />}
-        style={{ marginLeft: 5, marginTop: 10, marginBottom: 10 }}
+        sx={{ marginLeft: '5px', marginTop: '10px', marginBottom: '10px' }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
           openCreateDirectoryDialog(
@@ -207,7 +207,7 @@ const DirectoryListView: React.FC<Props> = ({
       >
         {getFolderContent()}
       </List>
-    </div>
+    </Box>
   );
 };
 
