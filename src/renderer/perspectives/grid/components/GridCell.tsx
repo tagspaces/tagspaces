@@ -113,7 +113,6 @@ interface Props {
   selected: boolean;
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
-  style?: any;
   selectionMode: boolean;
   handleTagMenu: (
     event: Object,
@@ -348,7 +347,7 @@ function GridCell(props: Props) {
     return (
       <Tooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
         <FileExtBadge
-          style={{
+          sx={{
             backgroundColor: fileSystemEntryColor,
           }}
           noWrap={true}
@@ -387,7 +386,7 @@ function GridCell(props: Props) {
       data-entry-id={fsEntry.uuid}
       data-tid={'fsEntryName_' + dataTidFormat(fsEntry.name)}
       raised={selected}
-      style={{
+      sx={{
         height: maxHeight,
         minHeight: maxHeight,
         maxHeight: maxHeight,
@@ -417,13 +416,13 @@ function GridCell(props: Props) {
       }}
     >
       <Box
-        style={{
+        sx={{
           height: maxHeight - 70,
           position: 'relative',
           backgroundColor: findBackgroundColorForFolder(fsEntry),
         }}
       >
-        <Box style={{ position: 'absolute' }}>
+        <Box sx={{ position: 'absolute' }}>
           {showTags && entryTags ? (
             renderTags()
           ) : (
@@ -439,14 +438,14 @@ function GridCell(props: Props) {
             alt="thumbnail image"
             height="auto"
             src={thumbPath.current.replace(/#/g, '%23')}
-            style={{
+            sx={{
               height: maxHeight - 70,
               objectFit: thumbnailMode,
             }}
           />
         ) : (
           <Box
-            style={{
+            sx={{
               width: '50%',
               height: 'auto',
               margin: '0 auto',
@@ -463,8 +462,8 @@ function GridCell(props: Props) {
       <CardContent sx={{ padding: '1px 5px 0px 5px', flexGrow: 1 }}>
         <Typography
           title={fsEntry.name}
-          style={{
-            paddingRight: 4,
+          sx={{
+            paddingRight: '4px',
             overflowX: 'clip',
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
@@ -479,9 +478,9 @@ function GridCell(props: Props) {
             variant="caption"
             display="block"
             gutterBottom
-            style={{
+            sx={{
               lineHeight: '12px',
-              paddingRight: 4,
+              paddingRight: '4px',
               overflowX: 'clip',
               textWrap: 'nowrap',
               whiteSpace: 'nowrap',
@@ -493,8 +492,8 @@ function GridCell(props: Props) {
         )}
       </CardContent>
       <CardHeader
-        style={{ padding: 2 }}
         sx={{
+          padding: '2px',
           '.MuiCardHeader-avatar': {
             margin: 0,
             alignSelf: 'flex-start',
@@ -508,7 +507,7 @@ function GridCell(props: Props) {
           <TsIconButton
             aria-label="entry context menu"
             size="small"
-            style={{ marginRight: 5 }}
+            sx={{ marginRight: '5px' }}
             onClick={(event) => handleGridContextMenu(event, fsEntry)}
           >
             <MoreMenuIcon />
