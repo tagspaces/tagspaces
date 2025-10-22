@@ -26,6 +26,7 @@ import {
   MoreMenuIcon,
 } from '-/components/CommonIcons';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
+import FileExtBadge from '-/components/FileExtBadge';
 import { ProTooltip } from '-/components/HelperComponents';
 import TagsPreview from '-/components/TagsPreview';
 import Tooltip from '-/components/Tooltip';
@@ -39,7 +40,7 @@ import { dataTidFormat } from '-/services/test';
 import { findColorForEntry, getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import Box from '@mui/material/Box';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
   extractDirectoryName,
   extractFileExtension,
@@ -49,16 +50,6 @@ import {
 import React, { useContext, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-
-const FileBadge = styled('span')(({ theme }) => ({
-  color: 'white',
-  backgroundColor: AppConfig.defaultFileColor,
-  padding: 3,
-  textShadow: '1px 1px #8f8f8f',
-  fontSize: 13,
-  marginLeft: 3,
-  borderRadius: 3,
-}));
 
 interface Props {
   reloadDocument: () => void;
@@ -195,7 +186,7 @@ function EntryContainerTitle(props: Props) {
           ) : (
             ''
           )}
-          <FileBadge
+          <FileExtBadge
             title={t('core:toggleEntryProperties')}
             data-tid="propsActionsMenuTID"
             aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
@@ -207,9 +198,6 @@ function EntryContainerTitle(props: Props) {
             style={
               {
                 backgroundColor: fileSystemEntryColor,
-                display: 'flex',
-                alignItems: 'center',
-                textTransform: 'uppercase',
                 paddingLeft: 10,
                 WebkitAppRegion: 'no-drag',
               } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -223,10 +211,10 @@ function EntryContainerTitle(props: Props) {
               )
             }
             <MoreMenuIcon sx={{ fontSize: '20px' }} />
-          </FileBadge>
+          </FileExtBadge>
         </>
       ) : (
-        <FileBadge
+        <FileExtBadge
           title={t('core:toggleEntryProperties')}
           data-tid="propsActionsMenuTID"
           aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
@@ -238,8 +226,6 @@ function EntryContainerTitle(props: Props) {
           style={
             {
               backgroundColor: AppConfig.defaultFolderColor,
-              display: 'flex',
-              alignItems: 'center',
               paddingLeft: 10,
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -247,7 +233,7 @@ function EntryContainerTitle(props: Props) {
         >
           <FolderIcon sx={{ fontSize: '20px' }} />
           <MoreMenuIcon sx={{ fontSize: '20px' }} />
-        </FileBadge>
+        </FileExtBadge>
       )}
       <Tooltip title={openedEntry.isFile && fileName}>
         <Box

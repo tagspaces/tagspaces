@@ -24,6 +24,7 @@ import {
   IssueIcon,
   KeyShortcutsIcon,
   LocalLocationIcon,
+  MastodonIcon,
   NewFeatureIcon,
   OpenLinkIcon,
   TranslationIcon,
@@ -162,7 +163,7 @@ function WelcomePanel() {
   function renderQuickLinks() {
     return (
       <List
-        dense={true}
+        dense
         aria-label="useful links in the welcome page"
         style={{
           height: 'calc(100% - 70px)',
@@ -309,6 +310,19 @@ function WelcomePanel() {
             </ListItemIcon>
             <ListItemText
               primary={t('core:emailContact')}
+              className={classes.listItem}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => openURLExternally(Links.links.mastodon, true)}
+          >
+            <ListItemIcon>
+              <MastodonIcon color="action" />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('core:followOnMastodon')}
               className={classes.listItem}
             />
           </ListItemButton>

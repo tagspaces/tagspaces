@@ -176,14 +176,14 @@ function SettingsTemplates(props: Props) {
             </b>
             . The file name template supports{' '}
             <b>
-              {'{'}timestamp{'}'}
+              {'{'}timestamp{'}'}, {'{'}author{'}'}
             </b>{' '}
             and{' '}
             <b>
               {'{'}uuid{'}'}
-            </b>
-            . The last one will generate a unique identifier so the new file
-            will get an unique name.
+            </b>{' '}
+            variable. The last one will generate a unique identifier so the new
+            file will get an unique name.
           </Typography>
           <TsButton
             disabled={!!window.ExtFileTemplates}

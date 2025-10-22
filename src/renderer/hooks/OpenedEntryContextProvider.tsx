@@ -621,7 +621,12 @@ export const OpenedEntryContextProvider = ({
 
     const locationName = loc ? loc.name : 'TagSpaces'; // TODO get it later from app config
 
-    document.title = fsEntry.name + ' | ' + locationName;
+    const entryNameForTitle =
+      fsEntry.name.length > 40
+        ? fsEntry.name.substring(0, 40) + '...'
+        : fsEntry.name;
+
+    document.title = entryNameForTitle + ' | ' + locationName;
 
     // update history window.location.href - used for shared link generation
     updateHistory(
@@ -848,6 +853,7 @@ export const OpenedEntryContextProvider = ({
         // External URL case
         decodedURI.startsWith('onenote:') ||
         decodedURI.startsWith('mailto:') ||
+        decodedURI.startsWith('tel:') ||
         decodedURI.startsWith('http://') ||
         decodedURI.startsWith('https://') ||
         decodedURI.startsWith('file://')

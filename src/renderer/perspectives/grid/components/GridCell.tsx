@@ -18,19 +18,13 @@
 
 import AppConfig from '-/AppConfig';
 import {
-  extractTagsAsObjects,
-  extractTitle,
-  getThumbFileLocationForFile,
-  cleanTrailingDirSeparator,
-  cleanFrontDirSeparator,
-} from '@tagspaces/tagspaces-common/paths';
-import {
   FolderOutlineIcon,
   MoreMenuIcon,
   SelectedIcon,
   UnSelectedIcon,
 } from '-/components/CommonIcons';
 import EntryIcon from '-/components/EntryIcon';
+import FileExtBadge from '-/components/FileExtBadge';
 import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsPreview from '-/components/TagsPreview';
@@ -67,6 +61,13 @@ import {
   formatDateTime,
   formatFileSize,
 } from '@tagspaces/tagspaces-common/misc';
+import {
+  cleanFrontDirSeparator,
+  cleanTrailingDirSeparator,
+  extractTagsAsObjects,
+  extractTitle,
+  getThumbFileLocationForFile,
+} from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -344,52 +345,39 @@ function GridCell(props: Props) {
   };
 
   function generateExtension() {
-    return selectionMode ? (
-      <TsIconButton
-        style={{
-          minWidth: 35,
-        }}
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (selected) {
-            selectEntry(fsEntry, false);
-          } else {
-            selectEntry(fsEntry);
-          }
-        }}
-      >
-        {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-      </TsIconButton>
-    ) : (
-      <Tooltip title={i18n.t('clickToSelect') + ' ' + fsEntry.path}>
-        <Typography
+    return (
+      <Tooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
+        <FileExtBadge
           style={{
-            paddingTop: 1,
-            paddingBottom: 9,
-            paddingLeft: 3,
-            paddingRight: 3,
-            fontSize: 13,
-            minWidth: 35,
-            color: 'white',
-            borderRadius: 5,
-            textAlign: 'center',
-            display: 'inline',
             backgroundColor: fileSystemEntryColor,
-            textShadow: '1px 1px #8f8f8f',
-            textOverflow: 'unset',
-            height: 15,
-            maxWidth: fsEntry.isFile ? 50 : 100,
           }}
           noWrap={true}
           variant="button"
           onClick={(e) => {
             e.stopPropagation();
-            selectEntry(fsEntry);
+            if (selectionMode) {
+              if (selected) {
+                selectEntry(fsEntry, false);
+              } else {
+                selectEntry(fsEntry);
+              }
+            } else {
+              selectEntry(fsEntry);
+            }
           }}
         >
-          {fsEntry.isFile ? fsEntry.extension : <FolderOutlineIcon />}
-        </Typography>
+          {selectionMode ? (
+            selected ? (
+              <SelectedIcon />
+            ) : (
+              <UnSelectedIcon />
+            )
+          ) : fsEntry.isFile ? (
+            fsEntry.extension
+          ) : (
+            <FolderOutlineIcon />
+          )}
+        </FileExtBadge>
       </Tooltip>
     );
   }

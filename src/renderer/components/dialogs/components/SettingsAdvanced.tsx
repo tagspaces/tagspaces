@@ -252,7 +252,14 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       {devMode && (
         <ListItem>
-          <ListItemText primary={t('core:tagDelimiter')} />
+          <ListItemText
+            primary={
+              <>
+                {t('core:tagDelimiter')}
+                <InfoIcon tooltip={t('core:tagDelimiterInfo')} />
+              </>
+            }
+          />
           <TsSelect
             data-tid="tagDelimiterTID"
             fullWidth={false}
@@ -282,7 +289,14 @@ function SettingsAdvanced(props: Props) {
         </ListItem>
       )}
       <ListItem>
-        <ListItemText primary={t('core:prefixTagContainer')} />
+        <ListItemText
+          primary={
+            <>
+              {t('core:prefixTagContainer')}
+              <InfoIcon tooltip={t('core:prefixTagContainerInfo')} />
+            </>
+          }
+        />
         <TsTextField
           style={{ maxWidth: '100px' }}
           data-tid="prefixTagContainerTID"

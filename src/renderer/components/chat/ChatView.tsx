@@ -70,56 +70,8 @@ function ChatView() {
   const editorRef = useRef<CrepeRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>(undefined);
-  //const txtInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  /*const getAddedText = (oldText, newText) => {
-    if (newText.startsWith(oldText)) {
-      return newText.slice(oldText.length);
-    }
-    return ''; // Return an empty string if newText does not start with oldText
-  };*/
-
-  /*const chatMessageHandler = useMemo(() => {
-    return (msg, replace): void => {
-      //console.log(`Chat ${msg}`);
-      const items = addTimeLineResponse(msg, replace);
-      if (editorRef.current) {
-        const newMarkdown = formatChatItems(items);
-        /!*const oldMarkdown = editorRef.current.getMarkdown();
-        editorRef.current.insert(getAddedText(oldMarkdown, newMarkdown));*!/ // insert and preserve selection
-        editorRef.current.update(newMarkdown);
-      }
-    };
-  }, []);*/
-
-  /*useEffect(() => {
-    if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('ChatMessage', (message, replace) => {
-        //console.log('ChatMessage:' + message);
-        if (!replace) {
-          // ignore download progress
-          if (isLoading.current) {
-            isLoading.current = false;
-            forceUpdate();
-          }
-          if (message instanceof Uint8Array) {
-            chatMessageHandler(
-              new TextDecoder('utf-8').decode(message),
-              replace,
-            );
-          } else if (typeof message === 'string') {
-            chatMessageHandler(message, replace);
-          }
-        }
-      });
-
-      return () => {
-        window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
-        unloadCurrentModel();
-      };
-    }
-  }, [chatMessageHandler]);*/
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     chatMsg.current = event.target.value;
@@ -403,26 +355,6 @@ function ChatView() {
                           >
                             <SendIcon />
                           </TsIconButton>
-                          {/* <TsSelect
-                            id="select-mode"
-                            value={currentMode.current || ''}
-                            onChange={handleChangeMode}
-                            sx={{ width: currentMode.current ? 170 : 25 }}
-                          >
-                            <MenuItem value="">None</MenuItem>
-                            <MenuItem
-                              value="helpful"
-                              title="If you don't know the answer, just say you don't know. DO NOT try to make up an answer"
-                            >
-                              Helpful assistant
-                            </MenuItem>
-                            <MenuItem
-                              value="summary"
-                              title="Generate a concise summary"
-                            >
-                              Generate Summary
-                            </MenuItem>
-                          </TsSelect> */}
                         </InputAdornment>
                       ),
                     },

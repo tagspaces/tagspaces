@@ -16,8 +16,10 @@
  *
  */
 
+import InfoIcon from '-/components/InfoIcon';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
+import { isDevMode } from '-/reducers/settings';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -26,31 +28,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
-/**
- * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
- us-east-2	US East (Ohio)	Not required	Not available
-us-east-1	US East (N. Virginia)	Not required	Not available
-us-west-1	US West (N. California)	Not required	Not available
-us-west-2	US West (Oregon)	Not required	us-west-2-lax-1a us-west-2-lax-1b
-af-south-1	Africa (Cape Town)	Required	Not available
-ap-east-1	Asia Pacific (Hong Kong)	Required	Not available
-ap-south-1	Asia Pacific (Mumbai)	Not required	Not available
-ap-northeast-3	Asia Pacific (Osaka-Local)	Not required	Not available
-ap-northeast-2	Asia Pacific (Seoul)	Not required	Not available
-ap-southeast-1	Asia Pacific (Singapore)	Not required	Not available
-ap-southeast-2	Asia Pacific (Sydney)	Not required	Not available
-ap-northeast-1	Asia Pacific (Tokyo)	Not required	Not available
-ca-central-1	Canada (Central)	Not required	Not available
-eu-central-1	Europe (Frankfurt)	Not required	Not available
-eu-west-1	Europe (Ireland)	Not required	Not available
-eu-west-2	Europe (London)	Not required	Not available
-eu-south-1	Europe (Milan)	Required	Not available
-eu-west-3	Europe (Paris)	Not required	Not available
-eu-north-1	Europe (Stockholm)	Not required	Not available
-me-south-1	Middle East (Bahrain)	Required	Not available
-sa-east-1	South America (São Paulo)	Not required	Not available
- */
 export const regions = [
   'us-east-2',
   'us-east-1',
@@ -130,6 +109,7 @@ function ObjectStoreForm(props: Props) {
     setRegion,
   } = props;
   const { t } = useTranslation();
+  const devMode: boolean = useSelector(isDevMode);
 
   function handleRegionChange(inputValue: any, value: string, reason: string) {
     if (reason === 'input') {
@@ -178,7 +158,16 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationPath"
             onChange={(event) => setStorePath(event.target.value)}
             value={storePath}
-            label={t('core:createLocationPath')}
+            label={
+              <>
+                {t('core:createLocationPath')}
+                <InfoIcon
+                  tooltip={t(
+                    'Optional parameter which can be used to specify a path to folder in the bucket, which will be the root of the location',
+                  )}
+                />
+              </>
+            }
           />
           {cloudErrorTextPath && (
             <FormHelperText
@@ -290,20 +279,22 @@ function ObjectStoreForm(props: Props) {
           />
         </FormControl>
       </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth={true}>
-          <TsTextField
-            name="sessionToken"
-            data-tid="sessionTokenTID"
-            slotProps={{
-              input: { autoCorrect: 'off', autoCapitalize: 'none' },
-            }}
-            onChange={(event) => setSessionToken(event.target.value)}
-            value={sessionToken}
-            label={t('core:sessionToken')}
-          />
-        </FormControl>
-      </Grid>
+      {devMode && (
+        <Grid size={12}>
+          <FormControl fullWidth={true}>
+            <TsTextField
+              name="sessionToken"
+              data-tid="sessionTokenTID"
+              slotProps={{
+                input: { autoCorrect: 'off', autoCapitalize: 'none' },
+              }}
+              onChange={(event) => setSessionToken(event.target.value)}
+              value={sessionToken}
+              label={t('core:sessionToken')}
+            />
+          </FormControl>
+        </Grid>
+      )}
     </Grid>
   );
 }

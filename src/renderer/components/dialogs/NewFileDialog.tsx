@@ -17,11 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import {
-  extractTags,
-  extractFileName,
-  generateFileName,
-} from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import CreateFile from '-/components/dialogs/components/CreateFile';
@@ -52,6 +47,11 @@ import {
   formatDateTime4Tag,
   locationType,
 } from '@tagspaces/tagspaces-common/misc';
+import {
+  extractFileName,
+  extractTags,
+  generateFileName,
+} from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -135,6 +135,7 @@ function NewFileDialog(props: Props) {
   function getFileNameFromTemplate(template: TS.FileTemplate) {
     return template.fileNameTmpl
       .replace('{timestamp}', formatDateTime4Tag(new Date(), true))
+      .replace('{author}', author)
       .replace('{uuid}', getUuid());
   }
 

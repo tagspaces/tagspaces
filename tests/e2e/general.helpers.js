@@ -3,16 +3,16 @@ import { expect } from '@playwright/test';
 import pathLib from 'path';
 import AppConfig from '../../src/renderer/AppConfig';
 import { dataTidFormat } from '../../src/renderer/services/test';
+import { getS3File } from '../s3rver/S3DataRefresh';
 import { createFileS3, createLocalFile, delay } from './hook';
 import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
-import { getS3File } from '../s3rver/S3DataRefresh';
 
+import fse from 'fs-extra';
 import {
   createPwLocation,
   createPwMinioLocation,
   createS3Location,
 } from './location.helpers';
-import fse from 'fs-extra';
 
 // export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
@@ -596,7 +596,7 @@ export async function selectRowFiles(arrIndex = []) {
         const id = await divEl.getAttribute('data-entry-id');
         arrElements.push(id);
         const spanEl = await divEl.$(
-          'div:nth-child(3) div ' + (i > 1 ? 'button' : 'span'),
+          'div:nth-child(3) div span',
         );
         await spanEl.click();
       }

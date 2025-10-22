@@ -30,6 +30,7 @@ import ObjectStoreForm from '-/components/dialogs/components/ObjectStoreForm';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import WebdavForm from '-/components/dialogs/components/WebdavForm';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -74,7 +75,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import TsToggleButton from '../TsToggleButton';
 import LocalForm from './components/LocalForm';
-import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 
 interface Props {
   open: boolean;
@@ -691,7 +691,8 @@ function CreateEditLocationDialog(props: Props) {
                       value={locationType.TYPE_CLOUD}
                       data-tid="cloudLocationTID"
                     >
-                      {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
+                      {t('core:objectStorage') +
+                        ' (AWS S3, CloudFlare R2, Wasabi,...)'}
                     </MenuItem>
                     {/* {Pro && devMode && (
                       <MenuItem
@@ -706,6 +707,22 @@ function CreateEditLocationDialog(props: Props) {
                 </FormControl>
               )}
               {content}
+              <WorkSpacesDropdown
+                disabled={!Pro}
+                dataTid="locationWorkspaceTID"
+                workSpaceId={workSpaceId}
+                setWorkSpaceId={setWorkSpaceId}
+                workSpaces={workSpaces}
+                label={
+                  <>
+                    {t('core:workspace')}
+                    <ProLabel />
+                  </>
+                }
+                onOpenNewWorkspace={() =>
+                  workSpacesContext.openNewWorkspaceDialog()
+                }
+              />
               <FormControlLabel
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between', marginLeft: 0 }}
@@ -782,6 +799,67 @@ function CreateEditLocationDialog(props: Props) {
                 />
               )}
               <FormControlLabel
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="reloadOnFocusTID"
+                    name="reloadOnFocus"
+                    checked={reloadOnFocus}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setReloadOnFocus(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {t('core:reloadOnFocus')}
+                    <InfoIcon
+                      tooltip={t(
+                        'Reloads the current folder, when the app regains focus in order to show changes which may have happened in the background.',
+                      )}
+                    />
+                    <ProLabel />
+                  </>
+                }
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            data-tid="switchAdvancedModeTID"
+            expandIcon={<ExpandIcon />}
+            aria-controls="panelAdvanced-content"
+            id="panelAdvanced-header"
+          >
+            <Typography>{t('core:switchAdvanced')}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeReadOnlyMode"
+                    name="isReadOnly"
+                    checked={isReadOnly}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setIsReadOnly(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {t('core:readonlyModeSwitch')}
+                    <ProLabel />
+                  </>
+                }
+              />
+              <FormControlLabel
                 disabled={
                   !Pro ||
                   type === locationType.TYPE_CLOUD ||
@@ -803,57 +881,6 @@ function CreateEditLocationDialog(props: Props) {
                   <>
                     {t('core:watchForChangesInLocation')}
                     {!Pro && <ProLabel />}
-                  </>
-                }
-              />
-            </FormGroup>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            data-tid="switchAdvancedModeTID"
-            expandIcon={<ExpandIcon />}
-            aria-controls="panelAdvanced-content"
-            id="panelAdvanced-header"
-          >
-            <Typography>{t('core:switchAdvanced')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormGroup>
-              <WorkSpacesDropdown
-                disabled={!Pro}
-                dataTid="locationWorkspaceTID"
-                workSpaceId={workSpaceId}
-                setWorkSpaceId={setWorkSpaceId}
-                workSpaces={workSpaces}
-                label={
-                  <>
-                    {t('core:workspace')}
-                    <ProLabel />
-                  </>
-                }
-                onOpenNewWorkspace={() =>
-                  workSpacesContext.openNewWorkspaceDialog()
-                }
-              />
-              <FormControlLabel
-                labelPlacement="start"
-                style={{ justifyContent: 'space-between', marginLeft: 0 }}
-                control={
-                  <Switch
-                    disabled={!Pro}
-                    data-tid="changeReadOnlyMode"
-                    name="isReadOnly"
-                    checked={isReadOnly}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      setIsReadOnly(event.target.checked)
-                    }
-                  />
-                }
-                label={
-                  <>
-                    {t('core:readonlyModeSwitch')}
-                    <ProLabel />
                   </>
                 }
               />
@@ -889,32 +916,6 @@ function CreateEditLocationDialog(props: Props) {
                 label={
                   <>
                     {t('core:disableIndexing')}
-                    <ProLabel />
-                  </>
-                }
-              />
-              <FormControlLabel
-                labelPlacement="start"
-                style={{ justifyContent: 'space-between', marginLeft: 0 }}
-                control={
-                  <Switch
-                    disabled={!Pro}
-                    data-tid="reloadOnFocusTID"
-                    name="reloadOnFocus"
-                    checked={reloadOnFocus}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      setReloadOnFocus(event.target.checked)
-                    }
-                  />
-                }
-                label={
-                  <>
-                    {t('core:reloadOnFocus')}
-                    <InfoIcon
-                      tooltip={t(
-                        'Reloads the current folder, when the app regains focus in order to show changes which may have happened in the background.',
-                      )}
-                    />
                     <ProLabel />
                   </>
                 }
@@ -1183,7 +1184,7 @@ function CreateEditLocationDialog(props: Props) {
             </FormGroup>
           </AccordionDetails>
         </Accordion>
-        {type === locationType.TYPE_CLOUD && (
+        {devMode && type === locationType.TYPE_CLOUD && (
           <Accordion>
             <AccordionSummary
               data-tid="switchEncryptionTID"
