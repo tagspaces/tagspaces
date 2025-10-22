@@ -27,9 +27,11 @@ import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -38,7 +40,9 @@ import {
   getKeyBindingObject,
   isDesktopMode,
 } from '-/reducers/settings';
+import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
 import { TS } from '-/tagspaces.namespace';
+import { base64ToBlob } from '-/utils/dom';
 import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
@@ -54,10 +58,6 @@ import React, {
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
-import { base64ToBlob } from '-/utils/dom';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 function EntryContainer() {
   const { t } = useTranslation();
@@ -633,15 +633,17 @@ function EntryContainer() {
             </Tooltip>
           )}
         </div>
-        <FileView
-          key="FileViewID"
-          fileViewer={fileViewer}
-          fileViewerContainer={fileViewerContainer}
-          height={
-            tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
-          }
-          handleMessage={handleMessage}
-        />
+        {openedEntry.isFile && (
+          <FileView
+            key="FileViewID"
+            fileViewer={fileViewer}
+            fileViewerContainer={fileViewerContainer}
+            height={
+              tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
+            }
+            handleMessage={handleMessage}
+          />
+        )}
       </div>
     </GlobalHotKeys>
   );
