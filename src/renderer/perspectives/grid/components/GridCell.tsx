@@ -400,7 +400,7 @@ function GridCell(props: Props) {
     <Card
       data-entry-id={fsEntry.uuid}
       data-tid={`fsEntryName_${dataTidFormat(fsEntry.name)}`}
-      data-selected={selectionMode && selected}
+      data-selected={selected}
       raised={selected}
       sx={{
         height: maxHeight,
@@ -440,6 +440,7 @@ function GridCell(props: Props) {
             loading="lazy"
             onError={handleThumbError}
             alt={t('core:thumbnailImage')}
+            data-tid="imageThumbnailTID"
             height="auto"
             src={thumbSrc.replace(/#/g, '%23')}
             sx={{

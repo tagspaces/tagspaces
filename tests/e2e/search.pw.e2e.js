@@ -1,4 +1,6 @@
-import { test, expect } from './fixtures';
+import { dataTidFormat } from '../../src/renderer/services/test';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { expect, test } from './fixtures';
 import {
   clickOn,
   expectElementExist,
@@ -10,8 +12,8 @@ import {
   setSettings,
 } from './general.helpers';
 import {
-  createLocalFile,
   createFileS3,
+  createLocalFile,
   startTestingApp,
   stopApp,
 } from './hook';
@@ -23,19 +25,17 @@ import {
   createS3Location,
   defaultLocationName,
 } from './location.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import {
+  addRemoveTagsInSearchResults,
+  addSearchCommand,
+  createSavedSearch,
   emptyFolderName,
   searchEngine,
   testFilename,
-  addRemoveTagsInSearchResults,
-  createSavedSearch,
-  addSearchCommand,
 } from './search.helpers';
-import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { dataTidFormat } from '../../src/renderer/services/test';
-import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 test.beforeAll(
   async ({ isWeb, isS3, webServerPort, testDataDir }, testInfo) => {
@@ -150,16 +150,16 @@ test.describe('TST06 - Test Search in file structure:', () => {
   }) => {
     if (!isWin || !isWeb) {
       //todo on web windows only test not work
-      await global.client.waitForSelector('img[alt="thumbnail image"]', {
+      await global.client.waitForSelector('img[data-tid="imageThumbnailTID"]', {
         visible: true,
       });
       const searchQuery = 'sample_exif.jpg'; //'jpg';
       await addSearchCommand(searchQuery, true);
       await expectElementExist('[data-tid=allFilesCount1]', true, 5000);
-      await global.client.waitForSelector('img[alt="thumbnail image"]', {
+      await global.client.waitForSelector('img[data-tid="imageThumbnailTID"]', {
         visible: true,
       });
-      const imageLocator = global.client.locator('img[alt="thumbnail image"]');
+      const imageLocator = global.client.locator('img[data-tid="imageThumbnailTID"]');
       const imageCount = await imageLocator.count();
       expect(imageCount).toBeGreaterThan(0);
       const images = await imageLocator; //.elements();

@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import TsMenuList from '-/components/TsMenuList';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { isDesktopMode } from '-/reducers/settings';
+import { Box } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -36,7 +37,8 @@ type TSTextFieldProps = TextFieldProps & {
 };
 
 function TsTextField(props: TSTextFieldProps) {
-  const { updateValue, retrieveValue, children, label, ...restProps } = props;
+  const { updateValue, retrieveValue, children, sx, label, ...restProps } =
+    props;
   const theme = useTheme();
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
@@ -98,7 +100,7 @@ function TsTextField(props: TSTextFieldProps) {
   }
 
   return (
-    <>
+    <Box>
       {label && (
         <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
           {label}
@@ -135,6 +137,7 @@ function TsTextField(props: TSTextFieldProps) {
             border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
             borderRadius: AppConfig.defaultCSSRadius,
           },
+          ...sx,
         }}
         {...restProps}
         label={undefined}
@@ -164,7 +167,7 @@ function TsTextField(props: TSTextFieldProps) {
           )}
         </TsMenuList>
       </Menu>
-    </>
+    </Box>
   );
 }
 

@@ -1,13 +1,11 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
 import {
-  defaultLocationName,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-} from './location.helpers';
+  AddRemovePropertiesTags,
+  getPropertiesFileName,
+} from './file.properties.helpers';
+import { expect, test } from './fixtures';
 import {
   clickOn,
   expectAllFileSelected,
@@ -18,17 +16,17 @@ import {
   openFile,
   selectAllFiles,
   selectRowFiles,
-  setSettings,
-  takeScreenshot,
+  setSettings
 } from './general.helpers';
-import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { startTestingApp, stopApp } from './hook';
 import {
-  AddRemovePropertiesTags,
-  getPropertiesFileName,
-} from './file.properties.helpers';
-import { createLocalFile, startTestingApp, stopApp } from './hook';
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+} from './location.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { openContextEntryMenu } from './test-utils';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -244,8 +242,8 @@ test.describe('TST50 - Perspective Grid', () => {
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
   test('TST5048 - prev/next button [web,minio,s3,electron]', async () => {
-    const fileName = 'sample.svg';
-    const nextFileName = 'sample.tga';
+    const fileName = 'sample.avif';
+    const nextFileName = 'sample.bmp';
     await clickOn(getGridFileSelector(fileName));
     //await expectElementExist('[data-tid=fileContainerNextFile]', true, 5000);
     await clickOn('[data-tid=fileContainerNextFile]');
@@ -253,6 +251,7 @@ test.describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=fileContainerPrevFile]');
     await expectElementSelected(fileName, true);
   });
+  
   /* test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(
       '[data-tid=gridPerspectiveToggleShowDirectories]'
