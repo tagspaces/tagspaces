@@ -400,6 +400,7 @@ function GridCell(props: Props) {
     <Card
       data-entry-id={fsEntry.uuid}
       data-tid={`fsEntryName_${dataTidFormat(fsEntry.name)}`}
+      data-selected={selectionMode && selected}
       raised={selected}
       sx={{
         height: maxHeight,

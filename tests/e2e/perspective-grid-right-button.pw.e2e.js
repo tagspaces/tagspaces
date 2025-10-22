@@ -2,42 +2,41 @@
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
 
-import { test, expect } from './fixtures';
 import { generateFileName } from '@tagspaces/tagspaces-common/paths';
-import {
-  defaultLocationName,
-  renameFileFromMenu,
-  deleteFileFromMenu,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-} from './location.helpers';
 import AppConfig from '../../src/renderer/AppConfig';
-import { searchEngine } from './search.helpers';
-import { openContextEntryMenu, toContainTID } from './test-utils';
+import { expect, test } from './fixtures';
 import {
   clickOn,
   createNewDirectory,
   createTxtFile,
   expectElementExist,
+  expectMetaFilesExist,
+  frameLocator,
   getGridFileSelector,
+  openFile,
+  openFolder,
   reloadDirectory,
   removeTagFromTagMenu,
   selectorFile,
   selectorFolder,
   selectRowFiles,
-  setInputKeys,
   setGridOptions,
-  showFilesWithTag,
-  frameLocator,
-  takeScreenshot,
-  expectMetaFilesExist,
+  setInputKeys,
   setSettings,
-  openFolder,
-  openFile,
+  showFilesWithTag
 } from './general.helpers';
-import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+  deleteFileFromMenu,
+  renameFileFromMenu,
+} from './location.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { searchEngine } from './search.helpers';
+import { openContextEntryMenu, toContainTID } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
@@ -482,21 +481,6 @@ test.describe('TST50** - Right button on a file', () => {
   });
 
   test('TST5039 - Changing the Perspective View [web,minio,s3,electron]', async () => {
-    // await isDisplayed('[data-tid=perspectiveGridFileTable]', true);
-    // await global.client.screenshot({ path: 'screenshotTST5039.png' });
-
-    // const grid = await global.client.waitForSelector(
-    //   '[data-tid=perspectiveGridFileTable]'
-    // );
-    // let gridStyle = await grid.getAttribute('style');
-    // expect(gridStyle).toContain(
-    //   'margin-top: 53px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));'
-    // );
-    // await clickOn('[data-tid=openListPerspective]');
-    // // check perspective view
-    // gridStyle = await grid.getAttribute('style');
-    // expect(gridStyle).toContain('grid-template-columns: none;');
-
     await expectElementExist(
       // '[data-tid=' + gridDefaultSettings.testID + ']',
       '[data-tid=gridPerspectiveContainer]',
