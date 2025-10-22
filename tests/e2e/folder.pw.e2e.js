@@ -1,40 +1,39 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { expect, test } from './fixtures';
 import {
-  defaultLocationName,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-  deleteFileFromMenu,
-} from './location.helpers';
-import {
-  reloadDirectory,
+  clickOn,
   createNewDirectory,
   deleteDirectory,
-  clickOn,
   expectElementExist,
-  takeScreenshot,
+  getAttribute,
+  getElementScreenshot,
+  getGridFileSelector,
+  openFolder,
+  reloadDirectory,
   selectorFile,
   setInputKeys,
-  getGridFileSelector,
-  getElementScreenshot,
-  openFolder,
-  waitUntilChanged,
-  getAttribute,
+  waitUntilChanged
 } from './general.helpers';
-import { openContextEntryMenu, renameFolder } from './test-utils';
 import {
-  createLocalFile,
   createFileS3,
+  createLocalFile,
   startTestingApp,
   stopApp,
 } from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { emptyFolderName } from './search.helpers';
-import { AddRemovePropertiesTags } from './file.properties.helpers';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+  deleteFileFromMenu,
+} from './location.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { emptyFolderName } from './search.helpers';
+import { openContextEntryMenu, renameFolder } from './test-utils';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -293,7 +292,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(getGridFileSelector(fileName), true, 5000);
     const folderThumbStyle = await getAttribute(
       '[data-tid=folderThumbTID]',
-      'style',
+      'class',
     );
     const initScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
@@ -303,7 +302,7 @@ test.describe('TST01 - Folder management', () => {
     const newStyle = await waitUntilChanged(
       '[data-tid=folderThumbTID]',
       folderThumbStyle,
-      'style',
+      'class',
     );
     //console.log('style changed:' + newStyle); style changed:border-radius: 10px; height: 100px; width: 140px; background-image: url("http://127.0.0.1:9000/supported-filestypes/empty_folder/.ts/tst.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=minioadmin%2F20250317%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250317T112107Z&X-Amz-Expires=900&X-Amz-Signature=c0ccb39b79e20291b3c889c728e27b989119b5a542ba8b304e0e2486f20b4d47&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"); background-size: cover; background-repeat: no-repeat; background-position: center center; position: absolute; top: 0px; right: 0px;
 
@@ -325,7 +324,7 @@ test.describe('TST01 - Folder management', () => {
       state: 'hidden',
     });
 
-    await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
+    await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'class');
 
     const thumbRemovedScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
