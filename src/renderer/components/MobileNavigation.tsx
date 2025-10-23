@@ -162,7 +162,7 @@ function MobileNavigation(props: Props) {
 
   return (
     <Box
-      style={{
+      sx={{
         background: alpha(theme.palette.background.default, 0.85),
         backdropFilter: 'blur(5px)',
         height: '100%',
@@ -172,7 +172,7 @@ function MobileNavigation(props: Props) {
       }}
     >
       <Box
-        style={{
+        sx={{
           overflow: 'hidden',
           height: showProTeaser ? 'calc(100% - 190px)' : 'calc(100% - 55px)',
         }}
@@ -180,21 +180,21 @@ function MobileNavigation(props: Props) {
         <Box>
           <CustomLogo />
           <Box
-            style={{
+            sx={{
               width: '100%',
               justifyContent: 'center',
               // justifyContent: 'space-between',
-              paddingLeft: 10,
+              paddingLeft: '10px',
               display: 'flex',
               alignItems: 'center',
             }}
           >
             <ButtonGroup
               aria-label="split button"
-              style={{
+              sx={{
                 textAlign: 'center',
-                marginLeft: 5,
-                marginRight: 5,
+                marginLeft: '5px',
+                marginRight: '5px',
               }}
             >
               <TsButton
@@ -208,14 +208,14 @@ function MobileNavigation(props: Props) {
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
                 endIcon={<ArrowDropDown />}
-                style={{
+                sx={{
                   borderRadius: 'unset',
                   borderTopLeftRadius: AppConfig.defaultCSSRadius,
                   borderBottomLeftRadius: AppConfig.defaultCSSRadius,
                 }}
               >
                 <Box
-                  style={{
+                  sx={{
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -238,12 +238,12 @@ function MobileNavigation(props: Props) {
                   data-tid="openedWorkSpaceMenuButtonTID"
                   onClick={handleToggleWorkSpaces}
                   endIcon={<ArrowDropDown />}
-                  style={{
+                  sx={{
                     borderRadius: 'unset',
                   }}
                 >
                   <Box
-                    style={{
+                    sx={{
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -261,35 +261,15 @@ function MobileNavigation(props: Props) {
                 onClick={() => {
                   openLinkDialog();
                 }}
-                style={{
+                sx={{
                   borderRadius: 'unset',
                   borderTopRightRadius: AppConfig.defaultCSSRadius,
                   borderBottomRightRadius: AppConfig.defaultCSSRadius,
                 }}
-                // startIcon={<OpenLinkIcon />}
               >
                 <OpenLinkIcon />
-                {/* <Box
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    maxWidth: 100,
-                  }}
-                >
-                  {t('core:openLink')}
-                </Box> */}
               </TsButton>
             </ButtonGroup>
-            {/* <TsIconButton
-              tooltip={t('core:openSharingLink')}
-              data-tid="openLinkNavigationTID"
-              onClick={() => {
-                openLinkDialog();
-              }}
-            >
-              <OpenLinkIcon />
-            </TsIconButton> */}
             {currentUser ? (
               <>
                 <TsIconButton
@@ -638,10 +618,10 @@ function MobileNavigation(props: Props) {
         )}
       </Box>
       <Box
-        style={{
+        sx={{
           display: 'flex',
           flexDirection: 'column',
-          marginTop: desktopMode ? -10 : -25,
+          marginTop: desktopMode ? '-10px' : '-25px',
           backgroundColor: theme.palette.background.default,
         }}
       >
