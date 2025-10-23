@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import {
   CreateFileIcon,
   ExpandIcon,
+  OllamaIcon,
   ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
@@ -31,7 +32,6 @@ import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
-import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import { useChatContext } from '-/hooks/useChatContext';
 import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
@@ -190,7 +190,7 @@ function SettingsAI(props: Props) {
   const actionButtons = (key) => (
     <InputAdornment
       position="end"
-      style={{ flexDirection: 'column', marginTop: -70 }}
+      sx={{ flexDirection: 'column', marginTop: '-70px' }}
     >
       <TsButton
         variant="text"
@@ -218,12 +218,12 @@ function SettingsAI(props: Props) {
   );
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         overflowX: 'hidden',
         overflowY: 'auto',
         height: '100%',
-        padding: 10,
+        padding: '10px',
       }}
     >
       <Accordion defaultExpanded>
@@ -232,7 +232,7 @@ function SettingsAI(props: Props) {
           id="ai-general-header"
           data-tid="aiGeneralTID"
         >
-          <Box style={{ display: 'block' }}>
+          <Box sx={{ display: 'block' }}>
             <Typography>{t('core:aiSettings')}</Typography>
             <br />
             <Typography variant="caption">
@@ -240,8 +240,8 @@ function SettingsAI(props: Props) {
               entirely on external software like Ollama. If you don't have
               Ollama, you can download it for free from
               <TsButton
-                style={{
-                  fontSize: 13,
+                sx={{
+                  fontSize: '13px',
                   textTransform: 'unset',
                   fontWeight: 'normal',
                   paddingTop: 0,
@@ -270,7 +270,6 @@ function SettingsAI(props: Props) {
               }}
             >
               <TsButton
-                //tooltip={t('core:createNew')}
                 disabled={externalConfig}
                 aria-controls={
                   openedNewAIMenu ? 'split-button-menu' : undefined
@@ -280,10 +279,10 @@ function SettingsAI(props: Props) {
                 data-tid="createNewAIButtonTID"
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
-                style={{ marginBottom: AppConfig.defaultSpaceBetweenButtons }}
+                sx={{ marginBottom: AppConfig.defaultSpaceBetweenButtons }}
               >
                 <Box
-                  style={{
+                  sx={{
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -322,7 +321,7 @@ function SettingsAI(props: Props) {
                           }}
                         >
                           <ListItemIcon>
-                            <OllamaIcon height={30} />
+                            <OllamaIcon />
                           </ListItemIcon>
                           <ListItemText primary="Ollama" />
                         </MenuItem>
@@ -344,8 +343,10 @@ function SettingsAI(props: Props) {
                 .filter((p) => p.enable)
                 .map((provider) => (
                   <MenuItem key={provider.id} value={provider.id}>
-                    <OllamaIcon width={10} style={{ marginRight: 5 }} />
-                    {provider.name}
+                    <OllamaIcon />
+                    <Box sx={{ display: 'inline-block', marginLeft: '5px' }}>
+                      {provider.name}
+                    </Box>
                   </MenuItem>
                 ))}
             </TsSelect>
@@ -372,10 +373,8 @@ function SettingsAI(props: Props) {
               '& .MuiAccordionSummary-content': { alignItems: 'center' },
             }}
           >
-            <Typography>
-              <OllamaIcon width={15} style={{ marginRight: 5 }} />
-              {provider.name}
-            </Typography>
+            <OllamaIcon />
+            <Typography sx={{ marginLeft: '5px' }}>{provider.name}</Typography>
             <TooltipTS
               title={
                 t('core:serviceStatus') +
@@ -454,7 +453,7 @@ function SettingsAI(props: Props) {
                   slotProps={{
                     input: {
                       endAdornment: (
-                        <InputAdornment position="end" style={{ height: 32 }}>
+                        <InputAdornment position="end" sx={{ height: 32 }}>
                           <TsIconButton
                             tooltip={t('core:refreshServiceStatus')}
                             onClick={() => {
@@ -499,7 +498,7 @@ function SettingsAI(props: Props) {
               />
               <FormControlLabel
                 labelPlacement="start"
-                style={{ justifyContent: 'space-between', marginLeft: 0 }}
+                sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
                     data-tid="locationIsDefault"
@@ -724,7 +723,7 @@ function SettingsAI(props: Props) {
           </AccordionDetails>
         </Accordion>
       )}
-    </div>
+    </Box>
   );
 }
 
