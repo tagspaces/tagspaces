@@ -290,19 +290,19 @@ function GridPagination(props: Props) {
       </Box>
       <TooltipTS title={t('core:changeThumbnail')} placement="bottom">
         <Box
+          style={{ backgroundImage: thumbImage.current }}
           sx={{
             ':hover': { border: '1px dashed gray !important' },
             borderRadius: AppConfig.defaultCSSRadius,
             border: '1px solid transparent',
             height: 100,
             width: 100,
-            backgroundImage: thumbImage.current,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
             position: 'absolute',
-            top: 3,
-            right: 6,
+            top: 0,
+            right: 7,
             cursor: 'pointer',
           }}
           data-tid="folderThumbTID"
@@ -391,17 +391,19 @@ function GridPagination(props: Props) {
           openDirectoryMenu(event, currentDirectoryPath)
         }
         onClick={onClick}
+        style={{
+          backgroundImage: backgroundImage.current,
+        }}
         sx={{
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
-          backgroundImage: backgroundImage.current,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
         }}
       >
         <Grid container spacing={0}>
-          <Grid size={12} sx={{ height: 60 }} />
+          <Grid size={12} sx={{ height: 70 }} />
           {showDetails && renderFolderDetails()}
           {renderFolderDescription()}
         </Grid>
