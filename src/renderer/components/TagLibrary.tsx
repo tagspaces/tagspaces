@@ -49,18 +49,22 @@ import SmartTags from '-/reducers/smart-tags';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Box } from '@mui/material';
-import Collapse from '@mui/material/Collapse';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Box, Collapse } from '@mui/material';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
-  style?: any;
   reduceHeightBy: number;
 }
 
-function TagLibrary(props: Props) {
+function TagLibrary({ reduceHeightBy }: Props) {
   const { t } = useTranslation();
   const {
     createTagGroup,
@@ -79,9 +83,8 @@ function TagLibrary(props: Props) {
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
 
-  const toggleTagGroupDispatch = (uuid) =>
-    dispatch(SettingsActions.toggleTagGroup(uuid));
   const [tagGroupMenuAnchorEl, setTagGroupMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
@@ -93,14 +96,11 @@ function TagLibrary(props: Props) {
     useState<TS.TagGroup>(null);
   const [selectedTag, setSelectedTag] = useState<TS.Tag>(null);
   const [isCreateTagGroupDialogOpened, setIsCreateTagGroupDialogOpened] =
-    useState<boolean>(false);
+    useState(false);
   const [isEditTagGroupDialogOpened, setIsEditTagGroupDialogOpened] =
-    useState<boolean>(false);
-  const [isCreateTagDialogOpened, setIsCreateTagDialogOpened] =
-    useState<boolean>(false);
-  const [isEditTagDialogOpened, setIsEditTagDialogOpened] =
-    useState<boolean>(false);
-  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+    useState(false);
+  const [isCreateTagDialogOpened, setIsCreateTagDialogOpened] = useState(false);
+  const [isEditTagDialogOpened, setIsEditTagDialogOpened] = useState(false);
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -108,119 +108,73 @@ function TagLibrary(props: Props) {
       )
     : undefined;
 
-  const currentWorkSpace =
-    workSpacesContext && workSpacesContext.getCurrentWorkSpace
-      ? workSpacesContext?.getCurrentWorkSpace()
-      : undefined;
+  const currentWorkSpace = workSpacesContext?.getCurrentWorkSpace?.();
 
   useEffect(() => {
     if (currentWorkSpace) {
       const workspaceTagGroups = tagGroups.filter(
         (t) => t.workSpaceId === currentWorkSpace.uuid,
       );
-      if (workspaceTagGroups?.length) {
-        setWSpaceTagGroups(workspaceTagGroups);
-      } else {
-        setWSpaceTagGroups(tagGroups);
-      }
+      setWSpaceTagGroups(
+        workspaceTagGroups.length ? workspaceTagGroups : tagGroups,
+      );
     } else {
       setWSpaceTagGroups(tagGroups);
     }
   }, [currentWorkSpace, tagGroups]);
-  /*const firstRender = useFirstRender();
 
-  useEffect(() => {
-    if (Pro && saveTagInLocation && firstRender) {
-      refreshTagsFromLocation();
-    }
-  }, [saveTagInLocation]);
+  const toggleTagGroupDispatch = useCallback(
+    (uuid: string) => dispatch(SettingsActions.toggleTagGroup(uuid)),
+    [dispatch],
+  );
 
-  function refreshTagsFromLocation() {
-    if (locations && locations.length > 0) {
-      for (const location of locations) {
-        getTagGroups(location).then((locationTagGroups) => {
-          if (locationTagGroups && locationTagGroups.length > 0) {
-            const oldGroups = getTagLibrary();
-            if (checkTagGroupModified(locationTagGroups, oldGroups)) {
-              importTagGroups(locationTagGroups, false, location);
-              // } else {
-              //   // refresh if localStorage is changed - from new instance
-              //   reflectTagLibraryChanged(oldGroups);
-            }
-          }
-        });
-      }
-    }
-  }
-
-  function checkTagGroupModified(
-    newGroups: Array<TS.TagGroup>,
-    oldGroups: Array<TS.TagGroup>,
-  ) {
-    return !newGroups.every((newGroup) =>
-      oldGroups.some(
-        (oldGroup) =>
-          newGroup.uuid === oldGroup.uuid &&
-          newGroup.modified_date <= oldGroup.modified_date,
-      ),
-    );
-  }*/
-
-  const handleTagGroupMenu = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tagGroup,
-  ) => {
-    setTagGroupMenuAnchorEl(event.currentTarget);
-    setSelectedTagGroupEntry(tagGroup);
-  };
-
-  const handleTagMenuCallback = useCallback(
-    (
-      event: React.ChangeEvent<HTMLInputElement>,
-      tag,
-      tagGroup: TS.TagGroup,
-      haveSelectedEntries: boolean,
-    ) => {
-      handleTagMenu(event, tag, tagGroup, haveSelectedEntries);
+  const handleTagGroupMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>, tagGroup: TS.TagGroup) => {
+      setTagGroupMenuAnchorEl(event.currentTarget);
+      setSelectedTagGroupEntry(tagGroup);
     },
     [],
   );
 
-  const handleTagMenu = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tag,
-    tagGroup: TS.TagGroup,
-    haveSelectedEntries: boolean,
-  ) => {
-    // if (!tagGroup.readOnly) { Smart Tags are readonly but needs to have TagMenu
-    const isSmartTag = tag.functionality && tag.functionality.length > 0;
-    if (!isSmartTag || haveSelectedEntries) {
-      setTagMenuAnchorEl(event.currentTarget);
-      setSelectedTagGroupEntry(tagGroup);
-      setSelectedTag(tag);
-    }
-  };
+  const handleTagMenu = useCallback(
+    (
+      event: React.MouseEvent<HTMLElement>,
+      tag: TS.Tag,
+      tagGroup: TS.TagGroup,
+      haveSelectedEntries: boolean,
+    ) => {
+      const isSmartTag = tag.functionality && tag.functionality.length > 0;
+      if (!isSmartTag || haveSelectedEntries) {
+        setTagMenuAnchorEl(event.currentTarget);
+        setSelectedTagGroupEntry(tagGroup);
+        setSelectedTag(tag);
+      }
+    },
+    [],
+  );
 
-  const handleTagLibraryMenu = (event: any) => {
-    setTagLibraryMenuAnchorEl(event.currentTarget);
-  };
+  const handleTagLibraryMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setTagLibraryMenuAnchorEl(event.currentTarget);
+    },
+    [],
+  );
 
-  const showCreateTagGroupDialog = () => {
+  const showCreateTagGroupDialog = useCallback(() => {
     setIsCreateTagGroupDialogOpened(true);
-    // this.setState({ isCreateTagGroupDialogOpened: true });
-  };
+  }, []);
 
-  const showCreateTagsDialog = () => {
+  const showCreateTagsDialog = useCallback(() => {
     setIsCreateTagDialogOpened(true);
     setTagGroupMenuAnchorEl(null);
-  };
+  }, []);
 
-  const showEditTagGroupDialog = () => {
+  const showEditTagGroupDialog = useCallback(() => {
     setIsEditTagGroupDialogOpened(true);
     setTagGroupMenuAnchorEl(null);
-  };
+  }, []);
 
-  const showDeleteTagGroupDialog = () => {
+  const showDeleteTagGroupDialog = useCallback(() => {
     openConfirmDialog(
       t('core:deleteTagGroup'),
       t('core:deleteTagGroupContentConfirm', {
@@ -235,74 +189,71 @@ function TagLibrary(props: Props) {
       'confirmDeleteTagGroupDialog',
     );
     setTagGroupMenuAnchorEl(null);
-  };
+  }, [openConfirmDialog, removeTagGroup, selectedTagGroupEntry, t]);
 
-  const renderTagGroup = (tagGroup, index) => {
-    if (!saveTagInLocation && tagGroup.locationId) {
-      return null;
-    }
-    // eslint-disable-next-line no-param-reassign
-    tagGroup.expanded = !(
-      tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
-    );
+  const renderTagGroup = useCallback(
+    (tagGroup, index: number) => {
+      if (!saveTagInLocation && tagGroup.locationId) return null;
+      const expanded = !(
+        tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
+      );
+      return (
+        <Box key={tagGroup.uuid}>
+          <TagGroupTitleDnD
+            index={index}
+            tagGroup={tagGroup}
+            moveTagGroup={moveTagGroup}
+            handleTagGroupMenu={handleTagGroupMenu}
+            toggleTagGroup={toggleTagGroupDispatch}
+            tagGroupCollapsed={tagGroupCollapsed}
+            isReadOnly={tagGroup.readOnly}
+          />
+          <CustomDragLayer />
+          <Collapse in={expanded} unmountOnExit>
+            <TagGroupContainer taggroup={tagGroup}>
+              {tagGroup.children &&
+                tagGroup.children.map((tag: TS.Tag, idx: number) => {
+                  const isSmartTag =
+                    tag.functionality && tag.functionality.length > 0;
+                  return (
+                    <TagContainerDnd
+                      key={tagGroup.uuid + tag.title}
+                      index={idx}
+                      tag={tag}
+                      tagGroup={tagGroup}
+                      tagMode={isSmartTag ? 'display' : 'default'}
+                      handleTagMenu={handleTagMenu}
+                      moveTag={moveTag}
+                      changeTagOrder={changeTagOrder}
+                      selectedEntries={selectedEntries}
+                    />
+                  );
+                })}
+            </TagGroupContainer>
+          </Collapse>
+        </Box>
+      );
+    },
+    [
+      saveTagInLocation,
+      tagGroupCollapsed,
+      moveTagGroup,
+      handleTagGroupMenu,
+      toggleTagGroupDispatch,
+      handleTagMenu,
+      moveTag,
+      changeTagOrder,
+      selectedEntries,
+    ],
+  );
 
-    return (
-      <div key={tagGroup.uuid}>
-        <TagGroupTitleDnD
-          index={index}
-          tagGroup={tagGroup}
-          moveTagGroup={(tagGroupUuid, position) => {
-            moveTagGroup(tagGroupUuid, position);
-          }}
-          handleTagGroupMenu={handleTagGroupMenu}
-          toggleTagGroup={toggleTagGroupDispatch}
-          tagGroupCollapsed={tagGroupCollapsed}
-          isReadOnly={tagGroup.readOnly}
-        />
-        <CustomDragLayer />
-        <Collapse in={tagGroup.expanded} unmountOnExit>
-          <TagGroupContainer taggroup={tagGroup}>
-            {tagGroup.children &&
-              tagGroup.children.map((tag: TS.Tag, idx) => {
-                const isSmartTag =
-                  tag.functionality && tag.functionality.length > 0;
-                return (
-                  <TagContainerDnd
-                    key={tagGroup.uuid + tag.title}
-                    // tagContainerRef={tagContainerRef}
-                    index={idx}
-                    tag={tag}
-                    tagGroup={tagGroup}
-                    tagMode={isSmartTag ? 'display' : 'default'}
-                    handleTagMenu={handleTagMenuCallback}
-                    moveTag={(
-                      tagTitle: string,
-                      fromTagGroupId: TS.Uuid,
-                      toTagGroupId: TS.Uuid,
-                    ) => moveTag(tagTitle, fromTagGroupId, toTagGroupId)}
-                    changeTagOrder={(
-                      tagGroupUuid: TS.Uuid,
-                      fromIndex: number,
-                      toIndex: number,
-                    ) => changeTagOrder(tagGroupUuid, fromIndex, toIndex)}
-                    selectedEntries={selectedEntries}
-                  />
-                );
-              })}
-          </TagGroupContainer>
-        </Collapse>
-      </div>
-    );
-  };
+  const allTags = useMemo(() => getAllTags(wSpaceTagGroups), [wSpaceTagGroups]);
 
-  const { reduceHeightBy } = props;
-
-  const allTags = getAllTags(wSpaceTagGroups);
   return (
     <Box
-      style={{
+      sx={{
         height: '100%',
-        paddingLeft: 5,
+        paddingLeft: '5px',
         paddingRight: 0,
         display: 'flex',
         flexDirection: 'column',
@@ -310,15 +261,8 @@ function TagLibrary(props: Props) {
     >
       <SidePanelTitle
         title={t('core:tagLibrary')}
-        tooltip={
-          'Your tag library contains ' +
-          allTags.length +
-          ' tags \ndistributed in ' +
-          wSpaceTagGroups.length +
-          ' tag groups'
-        }
+        tooltip={`Your tag library contains ${allTags.length} tags \ndistributed in ${wSpaceTagGroups.length} tag groups`}
         menuButton={
-          // Display the menu button if there are editable tag groups or no tag groups exist (to allow creating new ones)
           (wSpaceTagGroups.some((tg) => !tg.readOnly) ||
             wSpaceTagGroups.length === 0) && (
             <TsIconButton
@@ -380,7 +324,6 @@ function TagLibrary(props: Props) {
       />
       {Boolean(tagMenuAnchorEl) && (
         <TagMenu
-          // key={'tag_' + selectedTag.path}
           anchorEl={tagMenuAnchorEl}
           open={Boolean(tagMenuAnchorEl)}
           onClose={() => setTagMenuAnchorEl(null)}
@@ -397,12 +340,12 @@ function TagLibrary(props: Props) {
           selectedTag={selectedTag}
         />
       )}
-      <div
-        style={{
+      <Box
+        sx={{
           paddingTop: 0,
           marginTop: 0,
-          borderRadius: 5,
-          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          borderRadius: '5px',
+          height: `calc(100% - ${reduceHeightBy}px)`,
           width: 310,
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -410,16 +353,14 @@ function TagLibrary(props: Props) {
         data-tid="tagLibraryTagGroupList"
       >
         {AppConfig.showSmartTags && (
-          <div style={{ paddingTop: 0, paddingBottom: 0 }}>
+          <Box sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {SmartTags(t).map(renderTagGroup)}
-          </div>
+          </Box>
         )}
-        <div style={{ paddingTop: 0 }}>
-          {wSpaceTagGroups.map(renderTagGroup)}
-        </div>
-      </div>
+        <Box sx={{ paddingTop: 0 }}>{wSpaceTagGroups.map(renderTagGroup)}</Box>
+      </Box>
     </Box>
   );
 }
 
-export default TagLibrary;
+export default React.memo(TagLibrary);
