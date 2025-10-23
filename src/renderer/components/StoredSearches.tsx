@@ -138,18 +138,18 @@ function StoredSearches(props: Props) {
   return (
     <Box
       data-tid="quickAccessArea"
-      style={{
+      sx={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
-        marginLeft: 5,
-        marginRight: 5,
+        marginLeft: '5px',
+        marginRight: '5px',
       }}
     >
       <SidePanelTitle title={t('core:quickAccess')} />
-      <div
-        style={{
+      <Box
+        sx={{
           paddingTop: 0,
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
@@ -159,14 +159,14 @@ function StoredSearches(props: Props) {
         }}
       >
         <Grid container direction="row">
-          <Grid size={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} sx={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.storedSearchesVisible
                   ? 'storedSearchesVisibleTID'
                   : 'storedSearchesHiddenTID'
               }
-              style={{ minWidth: 'auto', padding: 7 }}
+              sx={{ minWidth: 'auto', padding: '7px' }}
               onClick={() =>
                 props.setStoredSearchesVisible(!props.storedSearchesVisible)
               }
@@ -179,7 +179,7 @@ function StoredSearches(props: Props) {
             </TsIconButton>
             <Typography
               variant="inherit"
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
               noWrap
               onClick={() =>
                 props.setStoredSearchesVisible(!props.storedSearchesVisible)
@@ -188,7 +188,7 @@ function StoredSearches(props: Props) {
               {t('core:savedSearchesTitle')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ textAlign: 'right' }}>
+          <Grid size={2} sx={{ textAlign: 'right' }}>
             <SearchMenu
               anchorEl={searchMenuAnchorEl}
               open={Boolean(searchMenuAnchorEl)}
@@ -211,7 +211,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.storedSearchesVisible && noSearchesFound && (
-            <Grid size={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} sx={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noSavedSearches')}</Typography>
             </Grid>
           )}
@@ -228,7 +228,7 @@ function StoredSearches(props: Props) {
                       search.title.trim().replaceAll(/\s+/g, '-')
                     }
                     variant="text"
-                    style={{
+                    sx={{
                       textTransform: 'none',
                       fontWeight: 'normal',
                       justifyContent: 'start',
@@ -237,8 +237,8 @@ function StoredSearches(props: Props) {
                   >
                     <SearchIcon />
                     &nbsp;
-                    <span
-                      style={{
+                    <Box
+                      sx={{
                         whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
@@ -246,7 +246,7 @@ function StoredSearches(props: Props) {
                       }}
                     >
                       {search.title}
-                    </span>
+                    </Box>
                   </TsButton>
                 </Grid>
                 <Grid size={2}>
@@ -263,10 +263,10 @@ function StoredSearches(props: Props) {
             ))}
         </Grid>
         <Grid container direction="row">
-          <Grid size={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} sx={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="BookmarksTID"
-              style={{ minWidth: 'auto', padding: 7 }}
+              sx={{ minWidth: 'auto', padding: '7px' }}
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
             >
               {props.showBookmarks ? (
@@ -277,14 +277,14 @@ function StoredSearches(props: Props) {
             </TsIconButton>
             <Typography
               variant="inherit"
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
               noWrap
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
             >
               {t('core:showBookmarks')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ textAlign: 'right' }}>
+          <Grid size={2} sx={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="BookmarksMenuTID"
               onClick={(event: any) => {
@@ -299,7 +299,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.showBookmarks && !bookmarksAvailable && (
-            <Grid size={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} sx={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -312,14 +312,14 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid size={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} sx={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.fileOpenHistory
                   ? 'fileCloseHistoryTID'
                   : 'fileOpenHistoryTID'
               }
-              style={{ minWidth: 'auto', padding: 7 }}
+              sx={{ minWidth: 'auto', padding: '7px' }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
             >
               {props.fileOpenHistory ? (
@@ -330,14 +330,14 @@ function StoredSearches(props: Props) {
             </TsIconButton>
             <Typography
               variant="inherit"
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
               noWrap
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
             >
               {t('core:fileOpenHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ textAlign: 'right' }}>
+          <Grid size={2} sx={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="fileOpenMenuTID"
               onClick={(event: any) => {
@@ -352,7 +352,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.fileOpenHistory && !openedFilesAvailable && (
-            <Grid size={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} sx={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -365,10 +365,10 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid size={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} sx={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid="fileEditHistoryTID"
-              style={{ minWidth: 'auto', padding: 7 }}
+              sx={{ minWidth: 'auto', padding: '7px' }}
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
             >
               {props.fileEditHistory ? (
@@ -379,14 +379,14 @@ function StoredSearches(props: Props) {
             </TsIconButton>
             <Typography
               variant="inherit"
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
               noWrap
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
             >
               {t('core:fileEditHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ textAlign: 'right' }}>
+          <Grid size={2} sx={{ textAlign: 'right' }}>
             <TsIconButton
               data-tid="FileEditedMenuTID"
               onClick={(event: any) => {
@@ -401,7 +401,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.fileEditHistory && !editedFilesAvailable && (
-            <Grid size={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} sx={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -414,14 +414,14 @@ function StoredSearches(props: Props) {
           />
         )}
         <Grid container direction="row">
-          <Grid size={10} style={{ alignSelf: 'center' }}>
+          <Grid size={10} sx={{ alignSelf: 'center' }}>
             <TsIconButton
               data-tid={
                 props.folderOpenHistory
                   ? 'folderCloseHistoryTID'
                   : 'folderOpenHistoryTID'
               }
-              style={{ minWidth: 'auto', padding: 7 }}
+              sx={{ minWidth: 'auto', padding: '7px' }}
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)
               }
@@ -434,7 +434,7 @@ function StoredSearches(props: Props) {
             </TsIconButton>
             <Typography
               variant="inherit"
-              style={{ display: 'inline' }}
+              sx={{ display: 'inline' }}
               noWrap
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)
@@ -443,7 +443,7 @@ function StoredSearches(props: Props) {
               {t('core:folderOpenHistory')}
             </Typography>
           </Grid>
-          <Grid size={2} style={{ textAlign: 'right' }}>
+          <Grid size={2} sx={{ textAlign: 'right' }}>
             <TsIconButton
               size="small"
               data-tid="FolderOpenMenuTID"
@@ -480,7 +480,7 @@ function StoredSearches(props: Props) {
         />
         <Grid container direction="row">
           {props.folderOpenHistory && !openedFoldersAvailable && (
-            <Grid size={12} style={{ textAlign: 'center' }}>
+            <Grid size={12} sx={{ textAlign: 'center' }}>
               <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
@@ -492,7 +492,7 @@ function StoredSearches(props: Props) {
             update={forceUpdate}
           />
         )}
-      </div>
+      </Box>
       <input
         style={{ display: 'none' }}
         ref={fileInputRef}
