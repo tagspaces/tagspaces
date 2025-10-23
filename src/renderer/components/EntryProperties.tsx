@@ -61,6 +61,7 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
+import { formatTimestampLocal } from '-/utils/formatLocalTime';
 import { parseGeoLocation } from '-/utils/geo';
 import useFirstRender from '-/utils/useFirstRender';
 import {
@@ -102,7 +103,6 @@ import {
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
-import { formatTimestampLocal } from '-/utils/formatLocalTime';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -517,9 +517,9 @@ function EntryProperties(props: Props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     {!location.isReadOnly && !isEditMode && (
-                      <div style={{ textAlign: 'right' }}>
+                      <Box sx={{ textAlign: 'right' }}>
                         {editName !== undefined ? (
-                          <div>
+                          <>
                             <TsButton
                               data-tid="cancelRenameEntryTID"
                               onClick={deactivateEditNameField}
@@ -535,7 +535,7 @@ function EntryProperties(props: Props) {
                             >
                               {t('core:confirmSaveButton')}
                             </TsButton>
-                          </div>
+                          </>
                         ) : (
                           <TsButton
                             data-tid="startRenameEntryTID"
@@ -545,7 +545,7 @@ function EntryProperties(props: Props) {
                             {t('core:rename')}
                           </TsButton>
                         )}
-                      </div>
+                      </Box>
                     )}
                   </InputAdornment>
                 ),
@@ -602,7 +602,6 @@ function EntryProperties(props: Props) {
                 margin: 2,
                 marginTop: 8,
                 borderRadius: AppConfig.defaultCSSRadius,
-                // border: '1px solid rgba(0, 0, 0, 0.38)',
               }}
               doubleClickZoom={true}
               keyboard={false}
@@ -628,7 +627,7 @@ function EntryProperties(props: Props) {
                 >
                   <Popup>
                     <Typography
-                      style={{ margin: 0, color: theme.palette.text.primary }}
+                      sx={{ margin: 0, color: theme.palette.text.primary }}
                     >
                       {t('core:lat') + ' : ' + geoLocation.lat}
                       <br />
@@ -656,7 +655,7 @@ function EntryProperties(props: Props) {
                         OpenStreetMap
                       </TsButton>
                       <TsButton
-                        style={{
+                        sx={{
                           marginLeft: AppConfig.defaultSpaceBetweenButtons,
                         }}
                         onClick={() => {
@@ -788,11 +787,11 @@ function EntryProperties(props: Props) {
                     <InputAdornment position="start">
                       {isCloudLocation ? (
                         <CloudLocationIcon
-                          style={{ color: theme.palette.text.secondary }}
+                          sx={{ color: theme.palette.text.secondary }}
                         />
                       ) : (
                         <LocalLocationIcon
-                          style={{ color: theme.palette.text.secondary }}
+                          sx={{ color: theme.palette.text.secondary }}
                         />
                       )}
                     </InputAdornment>
@@ -906,7 +905,7 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
         {!openedEntry.isFile && (
-          <Grid size={12} style={{ marginTop: 5 }}>
+          <Grid size={12} sx={{ marginTop: '5px' }}>
             <TsTextField
               name="path"
               label={<>{t('core:backgroundColor')}</>}
@@ -919,7 +918,7 @@ function EntryProperties(props: Props) {
                         <TsButton
                           tooltip={t('editBackgroundColor')}
                           fullWidth
-                          style={{
+                          sx={{
                             width: 160,
                             height: 25,
                             background: openedEntry.meta?.color,
@@ -959,7 +958,7 @@ function EntryProperties(props: Props) {
                             horizontal: 'center',
                           }}
                         >
-                          <Box style={{ padding: 10 }}>
+                          <Box sx={{ padding: '10px' }}>
                             {defaultBackgrounds.map((background, cnt) => (
                               <>
                                 <TsIconButton
@@ -970,10 +969,10 @@ function EntryProperties(props: Props) {
                                     handleChangeColor(background);
                                     handlePopoverClose();
                                   }}
-                                  style={{
+                                  sx={{
                                     backgroundColor: background,
                                     backgroundImage: background,
-                                    margin: 5,
+                                    margin: '5px',
                                   }}
                                 >
                                   <SetColorIcon />
@@ -1025,7 +1024,7 @@ function EntryProperties(props: Props) {
             <ThumbnailTextField
               margin="dense"
               variant="outlined"
-              style={{ marginTop: 0 }}
+              sx={{ marginTop: 0 }}
               fullWidth
               slotProps={{
                 input: {
@@ -1035,7 +1034,7 @@ function EntryProperties(props: Props) {
                       <Stack
                         direction="column"
                         spacing={0}
-                        style={{ alignItems: 'center' }}
+                        sx={{ alignItems: 'center' }}
                       >
                         {!location.isReadOnly &&
                           !isEditMode &&
@@ -1051,10 +1050,10 @@ function EntryProperties(props: Props) {
                               </TsButton>
                             </ProTooltip>
                           )}
-                        <div
+                        <Box
                           role="button"
                           tabIndex={0}
-                          style={{
+                          sx={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
                             backgroundImage: thumbImage.current,
@@ -1062,7 +1061,7 @@ function EntryProperties(props: Props) {
                             borderRadius: AppConfig.defaultCSSRadius,
                             minHeight: 150,
                             minWidth: 150,
-                            marginBottom: 5,
+                            marginBottom: '5px',
                           }}
                           onClick={openThumbFilesDialog}
                         />
@@ -1079,7 +1078,7 @@ function EntryProperties(props: Props) {
               <ThumbnailTextField
                 margin="dense"
                 fullWidth
-                style={{
+                sx={{
                   marginTop: 0,
                 }}
                 variant="outlined"
@@ -1091,7 +1090,7 @@ function EntryProperties(props: Props) {
                         <Stack
                           direction="column"
                           spacing={0}
-                          style={{ alignItems: 'center' }}
+                          sx={{ alignItems: 'center' }}
                         >
                           {!location.isReadOnly &&
                             !isEditMode &&
@@ -1107,11 +1106,11 @@ function EntryProperties(props: Props) {
                                 </TsButton>
                               </ProTooltip>
                             )}
-                          <div
+                          <Box
                             data-tid="propsBgnImageTID"
                             role="button"
                             tabIndex={0}
-                            style={{
+                            sx={{
                               backgroundSize: 'cover',
                               backgroundRepeat: 'no-repeat',
                               backgroundImage: backgroundImage.current,
@@ -1119,7 +1118,7 @@ function EntryProperties(props: Props) {
                               borderRadius: AppConfig.defaultCSSRadius,
                               minHeight: 150,
                               minWidth: 150,
-                              marginBottom: 5,
+                              marginBottom: '5px',
                             }}
                             onClick={openBgndImgDialog}
                           />
