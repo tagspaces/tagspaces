@@ -271,7 +271,7 @@ function MainPage() {
       return (
         <>
           <FolderContainer
-            style={{ display: 'none' }}
+            //style={{ display: 'none' }}
             toggleDrawer={toggleDrawer}
             drawerOpened={drawerOpened}
           />

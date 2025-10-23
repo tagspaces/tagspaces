@@ -16,8 +16,8 @@
  *
  */
 
-import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
 import { TS } from '-/tagspaces.namespace';
+import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
 
 export const initialState = [];
 
@@ -98,41 +98,6 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
     }
   }
 };
-
-/*export const actions = {
-  addSearch: (search: TS.SearchQuery) => ({
-    type: types.ADD_SEARCH,
-    search,
-  }),
-  addSearches:
-    (arrSearches: Array<TS.SearchQuery>, override = true) =>
-    (dispatch: (actions: Object) => void, getState: () => any) => {
-      arrSearches.forEach((newSearch: TS.SearchQuery) => {
-        const { searches } = getState();
-        const searchExist: boolean = searches.some(
-          (location) => location.uuid === newSearch.uuid,
-        );
-        if (!searchExist) {
-          dispatch(actions.addSearch(newSearch));
-        } else if (override) {
-          dispatch(actions.editSearch(newSearch));
-        }
-      });
-    },
-  moveSearchUp: (uuid: string) => ({ type: types.MOVE_UP_SEARCH, uuid }),
-  moveSearchDown: (uuid: string) => ({
-    type: types.MOVE_DOWN_SEARCH,
-    uuid,
-  }),
-  editSearch: (search: TS.SearchQuery) => ({
-    type: types.EDIT_SEARCH,
-    search,
-  }),
-  removeSearch: (uuid: string) => ({
-    type: types.REMOVE_SEARCH,
-    uuid,
-  }),
-};*/
 
 // Selectors
 export const getSearches = (state: any): Array<TS.SearchQuery> =>

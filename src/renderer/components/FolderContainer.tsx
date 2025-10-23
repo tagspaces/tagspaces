@@ -17,11 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { BetaLabel } from '-/components/HelperComponents';
+import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import TsMenuList from '-/components/TsMenuList';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
@@ -59,19 +62,15 @@ import {
   MainMenuIcon,
   SearchIcon,
 } from './CommonIcons';
-import { BetaLabel } from './HelperComponents';
-import PathBreadcrumbs from './PathBreadcrumbs';
-import TsMenuList from './TsMenuList';
 
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
-  style?: any;
 }
 
 function FolderContainer(props: Props) {
   const devMode: boolean = useSelector(isDevMode);
-  const { toggleDrawer, drawerOpened, style } = props;
+  const { toggleDrawer, drawerOpened } = props;
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
@@ -123,7 +122,7 @@ function FolderContainer(props: Props) {
           <Typography
             variant="caption"
             component="div"
-            style={{ color: theme.palette.text.primary, fontSize: 8 }}
+            sx={{ color: theme.palette.text.primary, fontSize: '8px' }}
           >
             {`${prop.value}%`}
           </Typography>
@@ -185,7 +184,7 @@ function FolderContainer(props: Props) {
             (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
           }
         >
-          <div style={{ display: 'flex' }}>{perspective.icon}</div>
+          <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
         </Tooltip>
       </ToggleButton>,
     );
@@ -235,22 +234,21 @@ function FolderContainer(props: Props) {
   });
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         width: '100%',
         height: 'calc(100% - 50px)',
         backgroundColor: theme.palette.background.default,
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        ...style,
       }}
       data-tid="folderContainerTID"
     >
-      <div
-        style={{
-          paddingLeft: 5,
-          paddingRight: 5,
+      <Box
+        sx={{
+          paddingLeft: '5px',
+          paddingRight: '5px',
           display: 'flex',
           alignItems: 'center',
           minHeight: 50,
@@ -261,13 +259,13 @@ function FolderContainer(props: Props) {
             isDesktopMode &&
             !AppConfig.isWeb &&
             !drawerOpened
-              ? 60
+              ? '60px'
               : 0,
         }}
       >
         <TsIconButton
           id="mobileMenuButton"
-          style={
+          sx={
             {
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -284,7 +282,7 @@ function FolderContainer(props: Props) {
           id="goBackButton"
           disabled={historyIndex === 0}
           onClick={goBack}
-          style={
+          sx={
             {
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -298,7 +296,7 @@ function FolderContainer(props: Props) {
             id="goForwardButton"
             disabled={historyIndex === 0}
             onClick={goForward}
-            style={
+            sx={
               {
                 WebkitAppRegion: 'no-drag',
               } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -312,8 +310,8 @@ function FolderContainer(props: Props) {
           <SearchBox />
         ) : (
           <>
-            <div
-              style={{
+            <Box
+              sx={{
                 margin: '0 10px 0 10px',
                 flex: '1 1 1%',
                 display: 'flex',
@@ -327,7 +325,7 @@ function FolderContainer(props: Props) {
                   }
                   data-tid="toggleSearch"
                   onClick={openSearchMode}
-                  style={
+                  sx={
                     {
                       maxWidth: 100,
                       WebkitAppRegion: 'no-drag',
@@ -342,10 +340,10 @@ function FolderContainer(props: Props) {
                   onClick={openSearchMode}
                   color="secondary"
                   startIcon={<SearchIcon />}
-                  style={
+                  sx={
                     {
-                      marginTop: -2,
-                      marginRight: 5,
+                      marginTop: '-2px',
+                      marginRight: '5px',
                       minWidth: 100,
                       maxHeight: 32,
                       width: 'stretch',
@@ -358,11 +356,11 @@ function FolderContainer(props: Props) {
                   }
                 >
                   {t('core:searchTitle')}
-                  <span style={{ width: 10 }} />
+                  <Box sx={{ width: 10 }} />
                   {openSearchKeyBinding}
                 </TsButton>
               )}
-            </div>
+            </Box>
 
             {progress?.length > 0 && (
               <TsIconButton
@@ -370,11 +368,11 @@ function FolderContainer(props: Props) {
                 title={t('core:progress')}
                 data-tid="uploadProgress"
                 onClick={() => openFileUploadDialog()}
-                style={
+                sx={
                   {
                     position: 'relative',
                     padding: '8px 12px 6px 8px',
-                    margin: '0',
+                    margin: 0,
                     WebkitAppRegion: 'no-drag',
                   } as React.CSSProperties & { WebkitAppRegion?: string }
                 }
@@ -388,12 +386,12 @@ function FolderContainer(props: Props) {
             />
           </>
         )}
-      </div>
-      <div style={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
+      </Box>
+      <Box sx={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
         {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
         <a href="#" id="downloadFile" />
         <RenderPerspective />
-      </div>
+      </Box>
       {isDesktopMode ? (
         <ToggleButtonGroup
           value={currentPerspective}
@@ -402,7 +400,7 @@ function FolderContainer(props: Props) {
           disabled={showWelcomePanel}
           aria-label="change perspective"
           exclusive
-          style={{
+          sx={{
             bottom: -35,
             right: 15,
             zIndex: 1000,
@@ -425,7 +423,7 @@ function FolderContainer(props: Props) {
                 aria-label="chat-label"
                 data-tid="chatTID"
                 style={{
-                  marginLeft: 5,
+                  marginLeft: '5px',
                   borderColor: theme.palette.divider,
                   ...(!readOnlyLocation && {
                     color: theme.palette.primary.main,
@@ -448,7 +446,7 @@ function FolderContainer(props: Props) {
             size="medium"
             color="secondary"
             aria-label="add"
-            style={{
+            sx={{
               bottom: -30,
               right: 20,
               position: 'absolute',
@@ -476,7 +474,7 @@ function FolderContainer(props: Props) {
           </Menu>
         </>
       )}
-    </div>
+    </Box>
   );
 }
 
