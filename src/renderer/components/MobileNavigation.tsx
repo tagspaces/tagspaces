@@ -82,7 +82,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { alpha, useTheme } from '@mui/material/styles';
-import React, { useContext, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import TsIconButton from './TsIconButton';
@@ -112,15 +118,18 @@ function MobileNavigation(props: Props) {
   const { openDownloadUrl } = useDownloadUrlDialogContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const { currentUser } = useUserContext();
-  const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
+  const [showTeaserBanner, setShowTeaserBanner] = useState(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
   const showProTeaser = !Pro && showTeaserBanner;
   const { hideDrawer, width } = props;
-  const switchTheme = () => dispatch(SettingsActions.switchTheme());
-  const [openedCreateMenu, setOpenCreateMenu] = React.useState(false);
-  const [openedWorkSpaceMenu, setOpenWorkSpaceMenu] = React.useState(false);
-  const anchorWSpaceRef = React.useRef<HTMLButtonElement>(null);
-  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const switchTheme = useCallback(
+    () => dispatch(SettingsActions.switchTheme()),
+    [dispatch],
+  );
+  const [openedCreateMenu, setOpenCreateMenu] = useState(false);
+  const [openedWorkSpaceMenu, setOpenWorkSpaceMenu] = useState(false);
+  const anchorWSpaceRef = useRef<HTMLButtonElement>(null);
+  const anchorRef = useRef<HTMLButtonElement>(null);
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -128,37 +137,66 @@ function MobileNavigation(props: Props) {
       )
     : undefined;
   const workSpaces: TS.WorkSpace[] = workSpacesContext?.getWorkSpaces() ?? [];
-  /*const foundWorkSpaces: TS.WorkSpace[] = workSpaces.filter((ws) =>
-    locations.some((l) => l.workSpaceId === ws.uuid),
-  );*/
 
-  const handleToggle = () => {
-    setOpenCreateMenu((prevOpen) => !prevOpen);
-  };
-
-  const handleToggleWorkSpaces = () => {
-    setOpenWorkSpaceMenu((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event: Event) => {
+  const handleToggle = useCallback(
+    () => setOpenCreateMenu((prev) => !prev),
+    [],
+  );
+  const handleToggleWorkSpaces = useCallback(
+    () => setOpenWorkSpaceMenu((prev) => !prev),
+    [],
+  );
+  const handleClose = useCallback((event: Event) => {
     if (
       anchorRef.current &&
       anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    )
       return;
-    }
     setOpenCreateMenu(false);
-  };
-
-  const handleCloseWSpace = (event: Event) => {
+  }, []);
+  const handleCloseWSpace = useCallback((event: Event) => {
     if (
       anchorWSpaceRef.current &&
       anchorWSpaceRef.current.contains(event.target as HTMLElement)
-    ) {
+    )
       return;
-    }
     setOpenWorkSpaceMenu(false);
-  };
+  }, []);
+
+  // Memoize workspace menu items for performance
+  const workspaceMenuItems = useMemo(
+    () => [
+      <MenuItem
+        key="allWSpace"
+        data-tid={'wSpaceAllTID'}
+        onClick={() => {
+          workSpacesContext?.setCurrentWorkSpaceId(undefined);
+          setOpenWorkSpaceMenu(false);
+        }}
+      >
+        <ListItemIcon>
+          <WorkspacesIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('all')} />
+      </MenuItem>,
+      ...workSpaces.map((wSpace) => (
+        <MenuItem
+          key={wSpace.uuid}
+          data-tid={'wSpace' + wSpace.shortName + 'TID'}
+          onClick={() => {
+            workSpacesContext?.setCurrentWorkSpaceId(wSpace.uuid);
+            setOpenWorkSpaceMenu(false);
+          }}
+        >
+          <ListItemIcon>
+            <WorkspacesIcon />
+          </ListItemIcon>
+          <ListItemText primary={`${wSpace.fullName} - ${wSpace.shortName}`} />
+        </MenuItem>
+      )),
+    ],
+    [workSpaces, t, workSpacesContext],
+  );
 
   return (
     <Box
@@ -183,7 +221,6 @@ function MobileNavigation(props: Props) {
             sx={{
               width: '100%',
               justifyContent: 'center',
-              // justifyContent: 'space-between',
               paddingLeft: '10px',
               display: 'flex',
               alignItems: 'center',
@@ -223,7 +260,6 @@ function MobileNavigation(props: Props) {
                   }}
                 >
                   {t('core:new')}
-                  {/* {t('core:createNew')} */}
                 </Box>
               </TsButton>
               {workSpaces && workSpaces.length > 0 && (
@@ -238,9 +274,7 @@ function MobileNavigation(props: Props) {
                   data-tid="openedWorkSpaceMenuButtonTID"
                   onClick={handleToggleWorkSpaces}
                   endIcon={<ArrowDropDown />}
-                  sx={{
-                    borderRadius: 'unset',
-                  }}
+                  sx={{ borderRadius: 'unset' }}
                 >
                   <Box
                     sx={{
@@ -250,7 +284,7 @@ function MobileNavigation(props: Props) {
                       maxWidth: 100,
                     }}
                   >
-                    {workSpacesContext.getCurrentWorkSpace()?.shortName ||
+                    {workSpacesContext?.getCurrentWorkSpace()?.shortName ||
                       t('core:all')}
                   </Box>
                 </TsButton>
@@ -258,9 +292,7 @@ function MobileNavigation(props: Props) {
               <TsButton
                 tooltip={t('core:openSharingLink')}
                 data-tid="openLinkNavigationTID"
-                onClick={() => {
-                  openLinkDialog();
-                }}
+                onClick={openLinkDialog}
                 sx={{
                   borderRadius: 'unset',
                   borderTopRightRadius: AppConfig.defaultCSSRadius,
@@ -313,9 +345,7 @@ function MobileNavigation(props: Props) {
           <ClickAwayListener onClickAway={handleCloseWSpace}>
             <Popper
               anchorEl={anchorWSpaceRef.current}
-              sx={{
-                zIndex: 1,
-              }}
+              sx={{ zIndex: 1 }}
               open={openedWorkSpaceMenu}
               role={undefined}
               transition
@@ -331,38 +361,7 @@ function MobileNavigation(props: Props) {
                 >
                   <Paper>
                     <TsMenuList id="create-file-menu" autoFocusItem>
-                      <MenuItem
-                        key="allWSpace"
-                        data-tid={'wSpaceAllTID'}
-                        onClick={() => {
-                          workSpacesContext.setCurrentWorkSpaceId(undefined);
-                          setOpenWorkSpaceMenu(false);
-                        }}
-                      >
-                        <ListItemIcon>
-                          <WorkspacesIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={t('all')} />
-                      </MenuItem>
-                      {workSpaces.map((wSpace) => (
-                        <MenuItem
-                          key={wSpace.uuid}
-                          data-tid={'wSpace' + wSpace.shortName + 'TID'}
-                          onClick={() => {
-                            workSpacesContext.setCurrentWorkSpaceId(
-                              wSpace.uuid,
-                            );
-                            setOpenWorkSpaceMenu(false);
-                          }}
-                        >
-                          <ListItemIcon>
-                            <WorkspacesIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={wSpace.fullName + ' - ' + wSpace.shortName}
-                          />
-                        </MenuItem>
-                      ))}
+                      {workspaceMenuItems}
                     </TsMenuList>
                   </Paper>
                 </Grow>
@@ -372,9 +371,7 @@ function MobileNavigation(props: Props) {
         )}
         <ClickAwayListener onClickAway={handleClose}>
           <Popper
-            sx={{
-              zIndex: 1,
-            }}
+            sx={{ zIndex: 1 }}
             open={openedCreateMenu}
             anchorEl={anchorRef.current}
             role={undefined}
@@ -397,9 +394,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewFileDialog('txt');
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -413,9 +408,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewFileDialog('md');
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -430,9 +423,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewFileDialog('html');
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -447,9 +438,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewFileDialog('url');
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -464,9 +453,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewAudioDialog();
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -488,9 +475,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openNewFileDialog();
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -512,9 +497,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openFileUpload(currentDirectoryPath);
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -530,9 +513,7 @@ function MobileNavigation(props: Props) {
                           onClick={() => {
                             openDownloadUrl();
                             setOpenCreateMenu(false);
-                            if (hideDrawer) {
-                              hideDrawer();
-                            }
+                            hideDrawer?.();
                           }}
                         >
                           <ListItemIcon>
@@ -550,9 +531,7 @@ function MobileNavigation(props: Props) {
                       onClick={() => {
                         openCreateDirectoryDialog();
                         setOpenCreateMenu(false);
-                        if (hideDrawer) {
-                          hideDrawer();
-                        }
+                        hideDrawer?.();
                       }}
                     >
                       <ListItemIcon>
@@ -569,9 +548,7 @@ function MobileNavigation(props: Props) {
                           setSelectedLocation(undefined);
                           openCreateEditLocationDialog();
                           setOpenCreateMenu(false);
-                          if (hideDrawer) {
-                            hideDrawer();
-                          }
+                          hideDrawer?.();
                         }}
                       >
                         <ListItemIcon>
@@ -592,9 +569,7 @@ function MobileNavigation(props: Props) {
                         <ListItemIcon>
                           <OpenNewWindowIcon />
                         </ListItemIcon>
-                        <ListItemText
-                          primary={t('core:newWindow')}
-                        ></ListItemText>
+                        <ListItemText primary={t('core:newWindow')} />
                       </MenuItem>
                     )}
                   </TsMenuList>
@@ -698,9 +673,7 @@ function MobileNavigation(props: Props) {
             tooltip={t('core:settings')}
             id="verticalNavButton"
             data-tid="settings"
-            onClick={() => {
-              openSettingsDialog();
-            }}
+            onClick={() => openSettingsDialog()}
             sx={{
               marginLeft: '10px',
               backgroundColor: theme.palette.background.default,
@@ -714,4 +687,5 @@ function MobileNavigation(props: Props) {
     </Box>
   );
 }
+
 export default MobileNavigation;
