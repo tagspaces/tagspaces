@@ -140,6 +140,7 @@
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test-clone-data": "rimraf tests/testdata && git clone https://github.com/tagspaces/testdata tests/testdata",
     "test-playwright": "npx playwright install --with-deps && cross-env npx playwright test --project=electron-light",
+    "test-playwright-one": "npx playwright install --with-deps && cross-env npx playwright test --project=electron  -g '/TST0632/'",
     "test-playwright-pro": "npx playwright install --with-deps && cross-env npx playwright test --project=electron",
     "test-playwright-s3": "npx playwright install --with-deps && cross-env NODE_OPTIONS=--openssl-legacy-provider npx playwright test --project=electron-s3",
     "test-playwright-minio": "npx playwright install --with-deps && cross-env npx playwright test --project=electron-minio",
