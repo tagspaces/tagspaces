@@ -31,10 +31,16 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { styled, useTheme } from '@mui/material/styles';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import clsx from 'clsx';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
-import { connect, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Split } from 'ts-react-splitter';
 import EntryContainer from '../components/EntryContainer';
 import FolderContainer from '../components/FolderContainer';
@@ -47,17 +53,14 @@ import {
 } from '../reducers/settings';
 
 const drawerWidth = 320;
-const body = document.getElementsByTagName('body')[0];
 const bufferedLeftSplitResize = buffer({
   timeout: 300,
   id: 'buffered-leftsplit-resize',
 });
 
-const PREFIX = 'MainPage';
-
 const classes = {
-  content: `${PREFIX}-content`,
-  contentShift: `${PREFIX}-contentShift`,
+  content: `MainPage-content`,
+  contentShift: `MainPage-contentShift`,
 };
 
 const Root = styled('div')(({ theme }) => ({
@@ -83,12 +86,8 @@ const Root = styled('div')(({ theme }) => ({
   },
 }));
 
-interface Props {
-  toggleShowUnixHiddenEntries: () => void;
-  setMainVerticalSplitSize: (splitSize: string) => void;
-}
-
-function MainPage(props: Props) {
+function MainPage() {
+  const dispatch = useDispatch();
   const { openLink, openedEntry, isEntryInFullWidth, setEntryInFullWidth } =
     useOpenedEntryContext();
 
@@ -104,16 +103,26 @@ function MainPage(props: Props) {
   const { showPanel } = usePanelsContext();
   const { isLoggedIn } = useUserContext();
   const percent = useRef<number | undefined>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
   const isDesktopMode: boolean = useSelector(getDesktopMode);
   const keyBindings = useSelector(getKeyBindingObject);
   const mainSplitSize = useSelector(getMainVerticalSplitSize);
 
+  // Redux actions as callbacks
+  const toggleShowUnixHiddenEntries = useCallback(
+    () => dispatch(SettingsActions.toggleShowUnixHiddenEntries()),
+    [dispatch],
+  );
+  const setMainVerticalSplitSize = useCallback(
+    (splitSize: string) =>
+      dispatch(SettingsActions.setMainVerticalSplitSize(splitSize)),
+    [dispatch],
+  );
+
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
-      // console.log(e.data);
       try {
         const data = JSON.parse(e.data);
         if (data.command === 'openLinkExternally') {
@@ -132,16 +141,18 @@ function MainPage(props: Props) {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (isEntryInFullWidth) {
-      setDrawerOpened(false); // !props.isEntryInFullWidth);
+      setDrawerOpened(false);
     }
   }, [isEntryInFullWidth]);
 
   useEffect(() => {
     updateDimensions();
+    // eslint-disable-next-line
   }, [openedEntry]);
 
   useEventListener('resize', () => {
@@ -150,18 +161,15 @@ function MainPage(props: Props) {
     }
   });
 
-  const updateDimensions = () => {
+  const updateDimensions = useCallback(() => {
     const w =
       window.innerWidth ||
       document.documentElement.clientWidth ||
-      body.clientWidth;
+      document.body.clientWidth;
     const h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
-      body.clientHeight;
-
-    // console.log('Width: ' + width + ' Height: ' + height);
-    //setDimensions({ width: w, height: h });
+      document.body.clientHeight;
 
     if (openedEntry && !isEntryInFullWidth) {
       const isFillWidth = h > w;
@@ -169,81 +177,95 @@ function MainPage(props: Props) {
         setEntryInFullWidth(isFillWidth);
       }
     }
-  };
+  }, [openedEntry, isEntryInFullWidth, setEntryInFullWidth]);
 
-  const toggleDrawer = () => {
+  const toggleDrawer = useCallback(() => {
     setDrawerOpened((prevOpen) => !prevOpen);
-  };
+  }, []);
 
-  const keyBindingHandlers = {
-    openParentDirectory: loadParentDirectoryContent,
-    toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showLocationManager: () => {
-      showPanel('locationManagerPanel');
-      setDrawerOpened(true);
-    },
-    showTagLibrary: () => {
-      showPanel('tagLibraryPanel');
-      setDrawerOpened(true);
-    },
-    openSearch: () => {
-      if (!isEntryInFullWidth) {
-        enterSearchMode();
-      }
-    },
-    closeSearch: () => {
-      exitSearchMode();
-      openCurrentDirectory();
-    },
-    showHelp: () => {
-      showPanel('helpFeedbackPanel');
-      setDrawerOpened(true);
-    },
-  };
-
-  const keyMap = {
-    openParentDirectory: keyBindings.openParentDirectory,
-    toggleShowHiddenEntries: keyBindings.toggleShowHiddenEntries,
-    showLocationManager: keyBindings.showLocationManager,
-    showTagLibrary: keyBindings.showTagLibrary,
-    openSearch: keyBindings.openSearch,
-    closeSearch: keyBindings.Escape,
-    showHelp: keyBindings.showHelp,
-  };
-
-  const setPercent = (p: number | undefined) => {
-    percent.current = p;
-    if (p !== undefined) {
-      bufferedLeftSplitResize(() => {
-        if (mainSplitSize !== p + '%') {
-          props.setMainVerticalSplitSize(p + '%');
+  const keyBindingHandlers = useMemo(
+    () => ({
+      openParentDirectory: loadParentDirectoryContent,
+      toggleShowHiddenEntries: toggleShowUnixHiddenEntries,
+      showLocationManager: () => {
+        showPanel('locationManagerPanel');
+        setDrawerOpened(true);
+      },
+      showTagLibrary: () => {
+        showPanel('tagLibraryPanel');
+        setDrawerOpened(true);
+      },
+      openSearch: () => {
+        if (!isEntryInFullWidth) {
+          enterSearchMode();
         }
-      });
-    }
-    forceUpdate();
-  };
+      },
+      closeSearch: () => {
+        exitSearchMode();
+        openCurrentDirectory();
+      },
+      showHelp: () => {
+        showPanel('helpFeedbackPanel');
+        setDrawerOpened(true);
+      },
+    }),
+    [
+      loadParentDirectoryContent,
+      toggleShowUnixHiddenEntries,
+      showPanel,
+      setDrawerOpened,
+      isEntryInFullWidth,
+      enterSearchMode,
+      exitSearchMode,
+      openCurrentDirectory,
+    ],
+  );
+
+  const keyMap = useMemo(
+    () => ({
+      openParentDirectory: keyBindings.openParentDirectory,
+      toggleShowHiddenEntries: keyBindings.toggleShowHiddenEntries,
+      showLocationManager: keyBindings.showLocationManager,
+      showTagLibrary: keyBindings.showTagLibrary,
+      openSearch: keyBindings.openSearch,
+      closeSearch: keyBindings.Escape,
+      showHelp: keyBindings.showHelp,
+    }),
+    [keyBindings],
+  );
+
+  const setPercent = useCallback(
+    (p: number | undefined) => {
+      percent.current = p;
+      if (p !== undefined) {
+        bufferedLeftSplitResize(() => {
+          if (mainSplitSize !== p + '%') {
+            setMainVerticalSplitSize(p + '%');
+          }
+        });
+      }
+      forceUpdate();
+    },
+    [mainSplitSize, setMainVerticalSplitSize],
+  );
 
   function renderContainers() {
     let initialPrimarySize = mainSplitSize;
     let minPrimarySize = '250px';
     let minSecondarySize = '250px';
-    let renderSplitter;
+    let renderSplitter: (() => React.ReactNode) | undefined;
 
     if (!openedEntry) {
       percent.current = undefined;
       initialPrimarySize = '100%';
       minSecondarySize = '0%';
-      renderSplitter = function () {
-        return null;
-      };
+      renderSplitter = () => null;
     }
     if (isEntryInFullWidth) {
       percent.current = undefined;
       initialPrimarySize = '0%';
       minPrimarySize = '0%';
-      renderSplitter = function () {
-        return null;
-      };
+      renderSplitter = () => null;
     }
     if (smallScreen && openedEntry) {
       return (
@@ -365,14 +387,4 @@ function MainPage(props: Props) {
   );
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
-      setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
-    },
-    dispatch,
-  );
-}
-
-export default connect(undefined, mapDispatchToProps)(React.memo(MainPage));
+export default React.memo(MainPage);
