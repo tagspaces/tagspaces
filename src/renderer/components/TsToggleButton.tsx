@@ -34,20 +34,20 @@ export type TSToggleButtonProps = ToggleButtonProps & {
 };
 
 function TsToggleButton(props: TSToggleButtonProps) {
-  const { children, style, tooltip, selected, ...rest } = props;
+  const { children, sx, tooltip, selected, ...rest } = props;
   const desktopMode = useSelector(isDesktopMode);
   let button = (
     <ToggleButton
       size={desktopMode ? 'small' : 'medium'}
       variant="outlined" // text outlined contained
       {...rest}
-      style={{
+      sx={{
         borderRadius: AppConfig.defaultCSSRadius,
         textTransform: 'none', //'capitalize',
         fontSize: 14,
         // fontWeight: selected ? 'bold' : 'normal',
         fontWeight: 'normal',
-        ...style,
+        ...sx,
       }}
     >
       {children}
