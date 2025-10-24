@@ -103,7 +103,7 @@ export default {
   tagTextColor: 'white',
   tagBackgroundColor: '#61DD61',
   currentTheme: 'light',
-  currentLightTheme: 'legacy',
+  currentRegularTheme: 'legacy',
   currentDarkTheme: 'darklegacy',
   geoTaggingFormat: 'pluscodes',
   defaultPerspective: PerspectiveIDs.GRID,

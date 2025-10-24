@@ -242,10 +242,12 @@ function LocationView(props: Props) {
         data-tid="locationTitleElement"
         noWrap
       >
-        <Tooltip title={locationNameTitle}>{location.name}</Tooltip>
+        <Tooltip title={locationNameTitle}>
+          <>{location.name}</>
+        </Tooltip>
         {workspace && (
           <Tooltip title={t('core:workspace') + ': ' + workspace.fullName}>
-            {' - ' + workspace.shortName}
+            <>{' - ' + workspace.shortName}</>
           </Tooltip>
         )}
       </Typography>
