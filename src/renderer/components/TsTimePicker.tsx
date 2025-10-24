@@ -18,18 +18,19 @@
 
 import AppConfig from '-/AppConfig';
 import { isDesktopMode } from '-/reducers/settings';
+import { Box } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import { alpha, useTheme } from '@mui/material/styles';
 import { TimePicker } from '@mui/x-date-pickers';
 import { useSelector } from 'react-redux';
 
 function TsTimePicker(props) {
-  const { children, label } = props;
+  const { label, ...restProps } = props;
   const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
 
   return (
-    <div>
+    <Box>
       {label && (
         <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
           {label}
@@ -37,7 +38,10 @@ function TsTimePicker(props) {
       )}
       <TimePicker
         sx={{
+          border: '0px transparent !important',
+          borderRadius: AppConfig.defaultCSSRadius,
           backgroundColor: alpha(theme.palette.divider, 0.2),
+          transition: '0.3s',
           '&:hover': {
             backgroundColor: alpha(theme.palette.divider, 0.5),
           },
@@ -45,27 +49,23 @@ function TsTimePicker(props) {
             backgroundColor: 'transparent !important',
             borderRadius: AppConfig.defaultCSSRadius,
           },
-          borderRadius: AppConfig.defaultCSSRadius,
-          transition: '0.3s',
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            border: '2px solid transparent !important',
+          '& .MuiPickersOutlinedInput-root': {
+            border: '0px solid transparent !important',
             borderRadius: AppConfig.defaultCSSRadius,
           },
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: '2px solid transparent',
+          '&:hover .MuiPickersOutlinedInput-root': {
+            border: '0px transparent !important',
             borderRadius: AppConfig.defaultCSSRadius,
           },
-          '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-            border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
+          '& .Mui-focused .MuiPickersOutlinedInput-root': {
+            border: `0px solid ${alpha(theme.palette.divider, 0.5)} !important`,
             borderRadius: AppConfig.defaultCSSRadius,
           },
         }}
-        {...props}
+        {...restProps}
         label={undefined}
-      >
-        {children}
-      </TimePicker>
-    </div>
+      />
+    </Box>
   );
 }
 
