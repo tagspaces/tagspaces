@@ -66,9 +66,10 @@ import {
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
+  hidden?: boolean;
 }
 
-function FolderContainer({ toggleDrawer, drawerOpened }: Props) {
+function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   const devMode: boolean = useSelector(isDevMode);
   const { t } = useTranslation();
   const theme = useTheme();
@@ -245,9 +246,9 @@ function FolderContainer({ toggleDrawer, drawerOpened }: Props) {
     <Box
       sx={{
         width: '100%',
+        display: hidden ? 'none' : 'flex',
         height: 'calc(100% - 50px)',
         backgroundColor: theme.palette.background.default,
-        display: 'flex',
         flexDirection: 'column',
         position: 'relative',
       }}
