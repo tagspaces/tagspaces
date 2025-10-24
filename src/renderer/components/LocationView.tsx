@@ -50,7 +50,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import React, { useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -66,6 +66,9 @@ interface Props {
 
 function LocationView(props: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+
+  const dispatch: AppDispatch = useDispatch();
 
   const { uploadFilesAPI, uploadMeta } = useIOActionsContext();
   const { setMetaUpload } = useFileUploadContext();
@@ -83,25 +86,25 @@ function LocationView(props: Props) {
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const { currentLocationPath, openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
-  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
-  const theme = useTheme();
 
-  const dispatch: AppDispatch = useDispatch();
+  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
+
   const { location, hideDrawer, workspace } = props;
   const subFolderLocation = findLocation(location.locationID);
   const isCloudLocation = subFolderLocation?.type === locationType.TYPE_CLOUD;
 
-  const handleLocationIconClick = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (directoryTreeRef.current) {
-      directoryTreeRef.current.changeLocation(location);
-    }
-  };
+  const handleLocationIconClick = useCallback(
+    (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (directoryTreeRef.current) {
+        directoryTreeRef.current.changeLocation(location);
+      }
+    },
+    [location],
+  );
 
-  const handleLocationClick = () => {
+  const handleLocationClick = useCallback(() => {
     if (currentLocation && location.locationID === currentLocation.uuid) {
       // the same location click
       openDirectory(currentLocationPath).then(() => {
@@ -114,119 +117,149 @@ function LocationView(props: Props) {
         hideDrawer();
       }
     }
-  };
+  }, [
+    currentLocation,
+    location,
+    openDirectory,
+    currentLocationPath,
+    setActions,
+    openLocation,
+    subFolderLocation,
+    hideDrawer,
+  ]);
 
-  const handleLocationContextMenuClick = (
-    event: any,
-    chosenLocation: CommonLocation,
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setSelectedLocation(chosenLocation);
-    setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
-  };
+  const handleLocationContextMenuClick = useCallback(
+    (event: any, chosenLocation: CommonLocation) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setSelectedLocation(chosenLocation);
+      setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
+    },
+    [setSelectedLocation, setLocationDirectoryContextMenuAnchorEl],
+  );
 
-  const onUploadProgress = (progress, response) => {
-    dispatch(AppActions.onUploadProgress(progress, response));
-  };
+  const onUploadProgress = useCallback(
+    (progress, response) => {
+      dispatch(AppActions.onUploadProgress(progress, response));
+    },
+    [dispatch],
+  );
 
   /**
    * https://github.com/react-component/table/blob/master/examples/react-dnd.js
    * @param item
    * @param monitor
    */
-  const handleFileMoveDrop = (item, monitor) => {
-    if (item) {
-      const { entry } = item;
-      let arrFiles: TS.FileSystemEntry[] = [];
-      if (
-        selectedEntries &&
-        selectedEntries.length > 0 &&
-        selectedEntries.some((e) => e.path === entry.path)
-      ) {
-        arrFiles = selectedEntries; //.map((i) => i.path);
-      } else if (entry) {
-        arrFiles.push(entry);
-      }
+  const handleFileMoveDrop = useCallback(
+    (item, monitor) => {
+      if (item) {
+        const { entry } = item;
+        let arrFiles: TS.FileSystemEntry[] = [];
+        if (
+          selectedEntries &&
+          selectedEntries.length > 0 &&
+          selectedEntries.some((e) => e.path === entry.path)
+        ) {
+          arrFiles = selectedEntries;
+        } else if (entry) {
+          arrFiles.push(entry);
+        }
 
-      if (currentLocation?.isReadOnly) {
-        showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
-        return;
-      }
-      const itemLocation = item.targetLocation;
-      const targetLocation = findLocation(itemLocation?.locationID);
-      let targetPath = itemLocation ? itemLocation.path || '' : undefined;
-      if (targetPath === undefined) {
-        targetPath = item.targetPath;
-      }
-
-      if (targetPath !== undefined && targetLocation !== undefined) {
-        // TODO handle monitor -> isOver and change folder icon
-        console.log('Dropped files in: ' + targetPath);
-        if (targetLocation.type !== currentLocation.type) {
-          //locationType.TYPE_CLOUD) {
-          dispatch(AppActions.resetProgress());
-          openFileUploadDialog(targetPath, undefined);
-          return uploadFilesAPI(
-            arrFiles,
-            targetPath,
-            onUploadProgress,
-            false,
-            false,
-            targetLocation.uuid,
-            currentLocation.uuid,
-          )
-            .then((fsEntries: Array<TS.FileSystemEntry>) => {
-              setMetaUpload(() =>
-                uploadMeta(
-                  arrFiles.map((f) => f.path),
-                  targetPath,
-                  onUploadProgress,
-                  false,
-                  targetLocation.uuid,
-                  currentLocation.uuid,
-                ),
-              );
-              const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
-                action: 'thumbGenerate',
-                entry: entry,
-              }));
-              setReflectMetaActions(...actions);
-              return true;
-            })
-            .catch((error) => {
-              console.log('uploadFiles', error);
-              setMetaUpload(undefined);
-            });
-        } else if (targetLocation.type === locationType.TYPE_LOCAL) {
-          const entries =
-            selectedEntries.length > 0 ? selectedEntries : [entry];
-          openMoveCopyFilesDialog(entries, targetPath, targetLocation.uuid);
-          //openMoveOrCopyFilesDialog(entries, targetPath, targetLocation.uuid);
-          //moveFiles(arrPath, targetPath, targetLocation.uuid);
-        } else {
-          showNotification(t('Moving file not possible'), 'error', true);
+        if (currentLocation?.isReadOnly) {
+          showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
           return;
         }
-        setSelectedEntries([]);
+        const itemLocation = item.targetLocation;
+        const targetLocation = findLocation(itemLocation?.locationID);
+        let targetPath = itemLocation ? itemLocation.path || '' : undefined;
+        if (targetPath === undefined) {
+          targetPath = item.targetPath;
+        }
+
+        if (targetPath !== undefined && targetLocation !== undefined) {
+          // TODO handle monitor -> isOver and change folder icon
+          console.log('Dropped files in: ' + targetPath);
+          if (targetLocation.type !== currentLocation.type) {
+            dispatch(AppActions.resetProgress());
+            openFileUploadDialog(targetPath, undefined);
+            return uploadFilesAPI(
+              arrFiles,
+              targetPath,
+              onUploadProgress,
+              false,
+              false,
+              targetLocation.uuid,
+              currentLocation.uuid,
+            )
+              .then((fsEntries: Array<TS.FileSystemEntry>) => {
+                setMetaUpload(() =>
+                  uploadMeta(
+                    arrFiles.map((f) => f.path),
+                    targetPath,
+                    onUploadProgress,
+                    false,
+                    targetLocation.uuid,
+                    currentLocation.uuid,
+                  ),
+                );
+                const actions: TS.EditMetaAction[] = fsEntries.map((entry) => ({
+                  action: 'thumbGenerate',
+                  entry: entry,
+                }));
+                setReflectMetaActions(...actions);
+                return true;
+              })
+              .catch((error) => {
+                console.log('uploadFiles', error);
+                setMetaUpload(undefined);
+              });
+          } else if (targetLocation.type === locationType.TYPE_LOCAL) {
+            const entries =
+              selectedEntries.length > 0 ? selectedEntries : [entry];
+            openMoveCopyFilesDialog(entries, targetPath, targetLocation.uuid);
+          } else {
+            showNotification(t('Moving file not possible'), 'error', true);
+            return;
+          }
+          setSelectedEntries([]);
+        }
+      }
+    },
+    [
+      selectedEntries,
+      currentLocation,
+      showNotification,
+      t,
+      findLocation,
+      openFileUploadDialog,
+      uploadFilesAPI,
+      onUploadProgress,
+      setMetaUpload,
+      uploadMeta,
+      setReflectMetaActions,
+      openMoveCopyFilesDialog,
+      setSelectedEntries,
+      dispatch,
+    ],
+  );
+
+  // Compute location name for tooltip/title
+  const locationNameTitle = useMemo(() => {
+    if (isCloudLocation && subFolderLocation?.bucketName) {
+      if (subFolderLocation.endpointURL) {
+        return (
+          subFolderLocation.endpointURL + ' - ' + subFolderLocation.bucketName
+        );
+      } else if (subFolderLocation.region) {
+        return subFolderLocation.region + ' - ' + subFolderLocation.bucketName;
       }
     }
-  };
-
-  let locationNameTitle = location?.path;
-  if (isCloudLocation && subFolderLocation?.bucketName) {
-    if (subFolderLocation.endpointURL) {
-      locationNameTitle =
-        subFolderLocation.endpointURL + ' - ' + subFolderLocation.bucketName;
-    } else if (subFolderLocation.region) {
-      locationNameTitle =
-        subFolderLocation.region + ' - ' + subFolderLocation.bucketName;
-    }
-  }
+    return location?.path;
+  }, [isCloudLocation, subFolderLocation, location]);
 
   const LocationTitle = (
-    <div
-      style={{
+    <Box
+      sx={{
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -235,9 +268,9 @@ function LocationView(props: Props) {
     >
       <Typography
         variant="inherit"
-        style={{
-          paddingLeft: 5,
-          paddingRight: 5,
+        sx={{
+          paddingLeft: '5px',
+          paddingRight: '5px',
         }}
         data-tid="locationTitleElement"
         noWrap
@@ -251,15 +284,17 @@ function LocationView(props: Props) {
           </Tooltip>
         )}
       </Typography>
-    </div>
+    </Box>
   );
+
   const { FILE } = NativeTypes;
   const isLocationSelected =
     currentLocation && currentLocation.uuid === location.locationID;
+
   return (
     <Box
-      style={{
-        paddingLeft: 5,
+      sx={{
+        paddingLeft: '5px',
         paddingRight: 0,
         height: '100%',
       }}
@@ -272,11 +307,9 @@ function LocationView(props: Props) {
         <CustomDragLayer />
         <ListItem
           disablePadding
-          style={{
+          sx={{
             borderRadius: AppConfig.defaultCSSRadius,
-            backgroundColor: isLocationSelected
-              ? theme.palette.primary.light
-              : 'inherit',
+            backgroundColor: isLocationSelected ? 'primary.light' : 'inherit',
           }}
         >
           <ListItemButton
@@ -285,14 +318,14 @@ function LocationView(props: Props) {
             onContextMenu={(event) =>
               handleLocationContextMenuClick(event, subFolderLocation)
             }
-            style={{
+            sx={{
               padding: 0,
-              paddingRight: 15,
+              paddingRight: '15px',
               borderRadius: AppConfig.defaultCSSRadius,
             }}
           >
             <ListItemIcon
-              style={{
+              sx={{
                 minWidth: 'auto',
                 cursor: 'pointer',
               }}
@@ -301,16 +334,16 @@ function LocationView(props: Props) {
               <Tooltip title={t('clickToExpand')}>
                 {isCloudLocation ? (
                   <CloudLocationIcon
-                    style={{
+                    sx={{
                       cursor: 'pointer',
-                      margin: theme.spacing(1),
+                      margin: 1,
                     }}
                   />
                 ) : (
                   <LocalLocationIcon
-                    style={{
+                    sx={{
                       cursor: 'pointer',
-                      margin: theme.spacing(1),
+                      margin: 1,
                     }}
                   />
                 )}
