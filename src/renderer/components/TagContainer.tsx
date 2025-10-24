@@ -78,8 +78,29 @@ function TagContainer({
   const defaultBgColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 
-  /** Compute tag color once */
-  const { color: bgColor, textcolor: txtColor } = useMemo(
+  // Compute tag color once
+  // const { color: bgColor, textcolor: txtColor } = useMemo(
+  //   () =>
+  //     color && textcolor
+  //       ? { color, textcolor }
+  //       : getTagColors(
+  //           originalTitle,
+  //           tagGroup ? [tagGroup] : undefined,
+  //           defaultTextColor,
+  //           defaultBgColor,
+  //         ),
+  //   [
+  //     color,
+  //     textcolor,
+  //     originalTitle,
+  //     tagGroup,
+  //     defaultTextColor,
+  //     defaultBgColor,
+  //   ],
+  // );
+
+  // Create the getColor function once
+  const getColors = useCallback(
     () =>
       color && textcolor
         ? { color, textcolor }
@@ -98,6 +119,25 @@ function TagContainer({
       defaultBgColor,
     ],
   );
+
+  const { color: bgColor, textcolor: txtColor } = getColors();
+
+  // let txtColor;
+  // let bgColor;
+
+  // if (tag.color && tag.textcolor) {
+  //   txtColor = tag.textcolor;
+  //   bgColor = tag.color;
+  // } else {
+  //   const tagColors = getTagColors(
+  //     originalTitle,
+  //     tagGroup ? [tagGroup] : undefined,
+  //     defaultTextColor,
+  //     defaultBgColor,
+  //   );
+  //   txtColor = tagColors.textcolor;
+  //   bgColor = tagColors.color;
+  // }
 
   /** Detect tag type */
   const isTagGeo = useMemo(
