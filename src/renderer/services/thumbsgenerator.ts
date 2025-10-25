@@ -18,12 +18,15 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  baseName,
   encodeFileName,
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import DOMPurify from 'dompurify';
+import JSZip from 'jszip';
 import * as pdfjsModule from 'pdfjs-dist/legacy/build/pdf.min.mjs';
-import { Pro } from '../pro';
+import TgaLoader from 'tga-js';
+import UTIF from 'utif';
 
 const pdfjs = (
   'default' in pdfjsModule ? pdfjsModule['default'] : pdfjsModule
@@ -121,18 +124,18 @@ export function generateThumbnailPromise(
       : encodeFileName(fileURL, dirSeparator);
 
   if (supportedImgs.indexOf(ext) >= 0) {
-    if (Pro && ext === 'tga') {
-      return Pro.ThumbsGenerator.generateTGAThumbnail(fileURLEscaped, maxSize);
-    } else if (Pro && ext.startsWith('tif')) {
-      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (Pro && ext === 'dng') {
-      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (Pro && ext === 'nef') {
-      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (Pro && ext === 'cr2') {
-      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (Pro && ext === 'psd') {
-      return Pro.ThumbsGenerator.generatePSDThumbnail(fileURLEscaped, maxSize);
+    if (ext === 'tga') {
+      return generateTGAThumbnail(fileURLEscaped, maxSize);
+    } else if (ext.startsWith('tif')) {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (ext === 'dng') {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (ext === 'nef') {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (ext === 'cr2') {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (ext === 'psd') {
+      return generatePSDThumbnail(fileURLEscaped, maxSize);
     } else if (fileSize && fileSize < maxFileSize) {
       return generateImageThumbnail(
         fileURL,
@@ -148,19 +151,15 @@ export function generateThumbnailPromise(
     return generateHtmlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
   } else if (ext === 'url') {
     return generateUrlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
-  } else if (Pro && ext === 'mp3') {
+  } else if (ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
-      // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
+      // return generateMp3Thumbnail(fileURL, maxSize);
     }
-  } else if (Pro && supportedText.indexOf(ext) >= 0) {
-    return Pro.ThumbsGenerator.generateTextThumbnail(
-      fileURLEscaped,
-      maxSize,
-      loadTextFilePromise,
-    );
-  } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
+  } else if (supportedText.indexOf(ext) >= 0) {
+    return generateTextThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
+  } else if (supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
-      return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(
+      return generateZipContainerImageThumbnail(
         fileURLEscaped,
         maxSize,
         supportedImgs,
@@ -171,10 +170,7 @@ export function generateThumbnailPromise(
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (getThumbPath) {
       return getThumbPath(fileURL).then((url) => {
-        if (Pro) {
-          return Pro.ThumbsGenerator.generateVideoThumbnail(url, maxSize);
-        }
-        return generateVideoThumbnail(url);
+        return generateVideoThumbnail(url, maxSize);
       });
     }
   }
@@ -533,7 +529,7 @@ export function getResizedImageThumbnail(
   });
 }
 
-function generateVideoThumbnail(fileURL): Promise<string> {
+function generateVideoThumbnail_alt(fileURL): Promise<string> {
   return new Promise((resolve) => {
     try {
       let canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -671,5 +667,376 @@ export function generateHtmlThumbnail(
         console.log('Error generating tmb for: ' + fileURL + ' - ' + err);
         resolve('');
       });
+  });
+}
+
+export function generateZipContainerImageThumbnail(
+  fileURL: string,
+  maxSize: number,
+  supportedImgs: Array<string>,
+  getFileContentPromise,
+  dirSeparator: string,
+): Promise<string> {
+  const parts = ['cover', 'thumbnail', 'preview'];
+  // console.log(JSON.stringify(JSZip));
+  let decodedFileURL = fileURL;
+  try {
+    decodedFileURL = decodeURIComponent(fileURL);
+  } catch (ex) {}
+  return getFileContentPromise(decodedFileURL)
+    .then((content) =>
+      JSZip.loadAsync(content)
+        .then((zipFile) => {
+          // console.log(JSON.stringify(zipFile));
+          let max = 0;
+          let maxImgFile = null;
+          let ext;
+
+          for (const fileName in zipFile.files) {
+            if (zipFile.files[fileName].dir === true) {
+              continue;
+            }
+
+            ext = extractFileExtension(fileName, dirSeparator).toLowerCase();
+            if (supportedImgs.indexOf(ext) >= 0) {
+              let partName = baseName(fileName, dirSeparator);
+              partName = partName.split('.').reverse()[1].toLowerCase();
+
+              const containFile = zipFile.files[fileName];
+
+              // console.log("partName " + partName);
+              let tmbFound = false;
+              parts.forEach((part) => {
+                if (partName.includes(part)) {
+                  maxImgFile = fileName;
+                  tmbFound = true;
+                }
+              });
+              if (tmbFound) {
+                break;
+              }
+
+              // @ts-ignore
+              if (containFile._data.uncompressedSize > max) {
+                // @ts-ignore
+                max = containFile._data.uncompressedSize;
+                maxImgFile = fileName;
+              }
+            }
+          }
+
+          if (maxImgFile) {
+            return zipFile
+              .file(maxImgFile)
+              .async('base64' /* 'uint8array' */)
+              .then((thumb) => {
+                // console.log(dataURL);
+                const imgExt = extractFileExtension(
+                  maxImgFile,
+                  dirSeparator,
+                ).toLowerCase();
+                return resizeImg(
+                  'data:image/' +
+                    (imgExt === 'svg' ? 'svg+xml' : imgExt) +
+                    ';base64,' +
+                    thumb,
+                  maxSize,
+                )
+                  .then((img) => img)
+                  .catch((err) => {
+                    console.log(
+                      'Error resizeImg tmb for: ' + fileURL + ' - ' + err,
+                    );
+                  });
+                // const buf = zipFile.files[maxImgFile].asArrayBuffer();
+                // const dataURL = arrayBufferToDataURL(buf, null);
+                // generateImageThumbnail(dataURL).then(resolve).catch(errorHandler);
+              })
+              .catch((err) => {
+                console.log(
+                  'Error while generating thumbnail for: ' +
+                    fileURL +
+                    ' - ' +
+                    JSON.stringify(err),
+                );
+              });
+          } else {
+            console.log('maxImgFile not found');
+          }
+          return '';
+        })
+        .catch((err) => {
+          console.log('Failed to load jszip', err);
+          return '';
+        }),
+    )
+    .catch((err) => {
+      console.log(
+        'Error while generating thumbnail for: ' +
+          fileURL +
+          ' - ' +
+          JSON.stringify(err),
+      );
+      return '';
+    });
+}
+
+export function generatePSDThumbnail(fileURL, maxSize): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      console.log(`Thumbnail generation for PSD not supported : ${fileURL}`);
+      // const PSD = require('../libs/psd/dist/psd');
+      // PSD.fromURL(fileURL).then((psd) => {
+      //   const pngDataURL = psd.image.toPng();
+      //   resizeImg(pngDataURL, maxSize)
+      //   .then(img => {
+      //     resolve(img);
+      //     return true;
+      //   })
+      //   .catch(err => {
+      //     console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
+      //     resolve('');
+      //   });
+      //   return true;
+      // }).catch((err) => {
+      //   console.log(`Error loading: ${fileURL} for PSD tmb generation: ${err}`)
+      //   resolve('');
+      // });
+      resolve('');
+      return true;
+    } catch (e) {
+      console.log(`Error creating PSD thumb for : ${fileURL} with: ${e}`);
+      resolve('');
+    }
+  });
+}
+
+export function generateUTIFThumbnail(
+  fileURL: string,
+  maxSize: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'arraybuffer';
+      xhr.open('GET', fileURL);
+      xhr.onload = () => {
+        const ifds = UTIF.decode(xhr.response);
+        if (ifds[0] && ifds[0].width && ifds[0].width > 0) {
+          const dataUrl = UTIF.bufferToURI(xhr.response, ifds[0]);
+          resizeImg(dataUrl, maxSize)
+            .then((img) => {
+              resolve(img);
+              return true;
+            })
+            .catch((err) => {
+              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
+              resolve('');
+            });
+        } else {
+          resolve('');
+        }
+        return true;
+      };
+      xhr.onerror = (err) => {
+        console.log(`Error loading for tmb gen: ${fileURL} ${err} `);
+        resolve('');
+      };
+      xhr.send();
+    } catch (e) {
+      console.log(`Error creating UTIF thumb for : ${fileURL} with: ${e}`);
+      resolve('');
+    }
+  });
+}
+
+export function generateTGAThumbnail(
+  fileURL: string,
+  maxSize: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      const tgaLoader = new TgaLoader();
+      tgaLoader.open(fileURL, () => {
+        const canvas = tgaLoader.getCanvas();
+        // const ctx = canvas.getContext('2d');
+        // ctx.fillStyle = thumbnailBackgroundColor;
+        const dataUrl = canvas.toDataURL(AppConfig.thumbType);
+        resizeImg(dataUrl, maxSize)
+          .then((img) => {
+            resolve(img);
+            return true;
+          })
+          .catch((err) => {
+            console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
+            resolve('');
+          });
+        return true;
+      });
+    } catch (e) {
+      console.log(`Error creating TGA thumb for : ${fileURL} with: ${e}`);
+      resolve('');
+    }
+  });
+}
+
+export function generateTextThumbnail(
+  fileURL: string,
+  maxSize: number,
+  loadTextFilePromise,
+): Promise<string> {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    loadTextFilePromise(fileURL, true)
+      .then((content) => {
+        if (!content || content.length < 1) {
+          resolve('');
+          return true;
+        }
+        const lines = content.split('\n');
+        const previewLineCount = lines.length > 10 ? 10 : lines.length;
+        const ctx = canvas.getContext('2d');
+        canvas.width = maxSize;
+        canvas.height = maxSize;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        ctx.font = '22px sans-serif';
+        for (let i = 0; i < previewLineCount; i += 1) {
+          const line = lines[i];
+          if (line && line.length > 0) {
+            ctx.fillText(line, 2, 22 * (i + 1) + 10);
+          }
+        }
+        const dataURL = canvas.toDataURL(AppConfig.thumbType);
+        // console.log('DATAURL: ' + AppConfig.thumbType + dataURL);
+        resolve(dataURL);
+        return true;
+      })
+      .catch((error) => {
+        console.log('Error getting the content: ' + fileURL + ' - ' + error);
+        resolve('');
+      });
+  });
+}
+
+export function generateMp3Thumbnail(
+  fileURL: string,
+  maxSize: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    // import('id3-reader').then(() => {
+    // const errorHandler = err => {
+    //   console.log(
+    //     'Error while generating thumbnail for: ' +
+    //     fileURL +
+    //     ' - ' +
+    //     JSON.stringify(err)
+    //   );
+    //   resolve('');
+    // };
+    // PlatformIO.getFileContentPromise(fileURL)
+    //   .then(content => {
+    //     const fileBlob = new Blob([content]);
+    //     ID3.loadTags(
+    //       fileURL,
+    //       () => {
+    //         const image = ID3.getAllTags(fileURL).picture;
+    //         let dataUrl = '';
+    //         if (image) {
+    //           let base64String = '';
+    //           for (let i = 0; i < image.data.length; i++) {
+    //             base64String += String.fromCharCode(image.data[i]);
+    //           }
+    //           const img = new Image();
+    //           img.src =
+    //             'data:' + image.format + ';base64,' + window.btoa(base64String);
+    //           const canvas = document.createElement('canvas');
+    //           const ctx = canvas.getContext('2d');
+    //           if (img.width >= img.height) {
+    //             canvas.width = maxSize;
+    //             canvas.height = (maxSize * img.height) / img.width;
+    //           } else {
+    //             canvas.height = maxSize;
+    //             canvas.width = (maxSize * img.width) / img.height;
+    //           }
+    //           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    //           dataUrl = canvas.toDataURL(AppConfig.thumbType);
+    //         }
+    //         resolve(dataUrl);
+    //       },
+    //       {
+    //         tags: ['picture'],
+    //         onError: errorHandler,
+    //         dataReader: new FileAPIReader(fileBlob)
+    //       }
+    //     );
+    //     return true;
+    //   }, errorHandler)
+    //   .catch(errorHandler);
+    // }).catch((err) => {
+    //  console.log('Failed to load id3-minimized', err);
+    // });
+  });
+}
+
+export function generateVideoThumbnail(
+  fileURL: string,
+  maxSize: number,
+): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      // console.log('generateVideoThumbnail for: ' + fileURL);
+      let videoElem: HTMLVideoElement = document.createElement('video');
+      videoElem.crossOrigin = 'anonymous'; // Attempt to bypass CORS restrictions
+      videoElem.muted = true;
+      const sourceElem = document.createElement('source');
+      sourceElem.src = fileURL.startsWith('http')
+        ? fileURL
+        : fileURL.replace(/#/g, '%23');
+      videoElem.appendChild(sourceElem);
+      videoElem.addEventListener(
+        'error',
+        (err) => {
+          console.log(`Error generating video thumb for: ${fileURL} - ${err}`);
+          resolve('');
+        },
+        false,
+      );
+      videoElem.addEventListener(
+        'canplay',
+        () => {
+          if (videoElem && videoElem.duration >= 2) {
+            videoElem.currentTime = 2;
+          }
+        },
+        false,
+      );
+      videoElem.addEventListener(
+        'seeked',
+        () => {
+          let canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (videoElem.videoWidth >= videoElem.videoHeight) {
+            canvas.width = maxSize;
+            canvas.height =
+              (maxSize * videoElem.videoHeight) / videoElem.videoWidth;
+          } else {
+            canvas.height = maxSize;
+            canvas.width =
+              (maxSize * videoElem.videoWidth) / videoElem.videoHeight;
+          }
+          ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL(AppConfig.thumbType));
+          videoElem.pause();
+          canvas = videoElem = null;
+          return true;
+        },
+        false,
+      );
+    } catch (e) {
+      console.log(`Error creating VIDEO thumb for : ${fileURL} with: ${e}`);
+      resolve('');
+    }
   });
 }
