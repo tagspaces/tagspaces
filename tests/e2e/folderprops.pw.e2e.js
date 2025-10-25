@@ -417,7 +417,7 @@ test.describe('TST02 - Folder properties', () => {
     const targetSelector = '[data-tid=backgroundTID]>div'; //'[data-tid=perspectiveGridFileTable]';
     const screenshotSelector = '[data-tid=perspectiveGridFileTable]';
     const initScreenshot = await getElementScreenshot(screenshotSelector);
-    const initStyle = await getAttribute(targetSelector, 'class');
+    const initStyle = await getAttribute(targetSelector, 'style');
 
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('ul[data-tid=predefinedBackgroundsTID] > li');
@@ -429,16 +429,16 @@ test.describe('TST02 - Folder properties', () => {
     );
     await clickOn('[data-tid=colorPickerConfirm]');
     // Wait for background-image style change
-    await waitUntilChanged(targetSelector, initStyle, 'class', 8000);
+    await waitUntilChanged(targetSelector, initStyle, 'style', 8000);
 
     const withBgnScreenshot = await getElementScreenshot(screenshotSelector);
     expect(initScreenshot).not.toBe(withBgnScreenshot);
-    const bgStyle = await getAttribute(targetSelector, 'class');
+    const bgStyle = await getAttribute(targetSelector, 'style');
 
     // Remove background
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('[data-tid=clearBackground]');
-    await waitUntilChanged(targetSelector, bgStyle, 'class', 8000);
+    await waitUntilChanged(targetSelector, bgStyle, 'style', 8000);
 
     const bgnRemovedScreenshot = await getElementScreenshot(screenshotSelector);
     expect(initScreenshot).toBe(bgnRemovedScreenshot);
