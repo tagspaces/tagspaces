@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
-import { test, expect } from './fixtures';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import { dataTidFormat } from '../../src/renderer/services/test';
+import { expect, test } from './fixtures';
 import {
   checkSettings,
   clickOn,
@@ -12,12 +13,11 @@ import {
   setInputValue,
 } from './general.helpers';
 import {
-  createLocalFile,
   createFileS3,
+  createLocalFile,
   startTestingApp,
   stopApp,
 } from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   createPwLocation,
   createPwMinioLocation,
@@ -34,7 +34,7 @@ import {
   testGroup,
   testTagName,
 } from './tag.helpers';
-import { dataTidFormat } from '../../src/renderer/services/test';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 const tslContent =
   '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
@@ -290,7 +290,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]',
+      '[data-tid=generalSettingsDialog]',
     );
     await createTagGroup(testGroup, defaultLocationName);
     await clickOn('[data-tid=locationManager]');
@@ -323,7 +323,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]',
+      '[data-tid=generalSettingsDialog]',
     );
 
     await clickOn('[data-tid=tagLibrary]');
@@ -410,7 +410,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]',
+      '[data-tid=generalSettingsDialog]',
     );
 
     await clickOn('[data-tid=tagLibrary]');
@@ -437,7 +437,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]',
+      '[data-tid=generalSettingsDialog]',
     );
 
     await clickOn('[data-tid=tagLibrary]');

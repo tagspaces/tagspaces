@@ -16,15 +16,7 @@
  *
  */
 
-import {
-  Ref,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
 import AppConfig from '-/AppConfig';
-import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import { FolderOutlineIcon } from '-/components/CommonIcons';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DragItemTypes from '-/components/DragItemTypes';
@@ -35,9 +27,18 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { resolveRelativePath } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import Table from 'rc-table';
+import {
+  Ref,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 
@@ -186,17 +187,18 @@ const DirectoryTreeView = forwardRef(
 
     const renderNameColumnAction = (field: string) => {
       const children = (
-        <span style={{ fontSize: 15 }} title={field}>
+        <Box sx={{ fontSize: '15px', display: 'inline-block' }} title={field}>
           <FolderOutlineIcon
-            style={{
+            sx={{
               marginTop: 0,
-              marginLeft: 3,
-              marginRight: 6,
-              marginBottom: -8,
+              marginLeft: '3px',
+              marginRight: '6px',
+              marginBottom: '-8px',
+              display: 'inline-block',
             }}
           />
           {field.length > 25 ? field.substr(0, 25) + '...' : field}
-        </span>
+        </Box>
       );
       return { children, props: {} };
     };

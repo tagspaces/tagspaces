@@ -17,11 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { BetaLabel } from '-/components/HelperComponents';
+import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import TsMenuList from '-/components/TsMenuList';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
@@ -49,7 +52,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
@@ -59,19 +62,15 @@ import {
   MainMenuIcon,
   SearchIcon,
 } from './CommonIcons';
-import { BetaLabel } from './HelperComponents';
-import PathBreadcrumbs from './PathBreadcrumbs';
-import TsMenuList from './TsMenuList';
 
 interface Props {
   toggleDrawer?: () => void;
   drawerOpened: boolean;
-  style?: any;
+  hidden?: boolean;
 }
 
-function FolderContainer(props: Props) {
+function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   const devMode: boolean = useSelector(isDevMode);
-  const { toggleDrawer, drawerOpened, style } = props;
   const { t } = useTranslation();
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
@@ -95,19 +94,22 @@ function FolderContainer(props: Props) {
 
   const [perspectiveMenuAnchorEl, setPerspectiveMenuAnchorEl] =
     useState<null | HTMLElement>(null);
-  const open = Boolean(perspectiveMenuAnchorEl);
-  const perspectiveMenuOpenClick = (event: React.MouseEvent<HTMLElement>) => {
-    setPerspectiveMenuAnchorEl(event.currentTarget);
-  };
-  const handlePerspectiveMenuClose = () => {
-    setPerspectiveMenuAnchorEl(null);
-  };
+
+  const openPerspectiveMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) =>
+      setPerspectiveMenuAnchorEl(event.currentTarget),
+    [],
+  );
+  const handlePerspectiveMenuClose = useCallback(
+    () => setPerspectiveMenuAnchorEl(null),
+    [],
+  );
 
   const showWelcomePanel =
     !currentDirectoryPath && currentDirectoryEntries.length < 1;
 
-  function CircularProgressWithLabel(prop) {
-    return (
+  const CircularProgressWithLabel = useCallback(
+    (prop: { value: number }) => (
       <Box position="relative" display="inline-flex">
         <CircularProgress size={24} variant="determinate" {...prop} />
         <Box
@@ -123,155 +125,155 @@ function FolderContainer(props: Props) {
           <Typography
             variant="caption"
             component="div"
-            style={{ color: theme.palette.text.primary, fontSize: 8 }}
+            sx={{ color: theme.palette.text.primary, fontSize: '8px' }}
           >
             {`${prop.value}%`}
           </Typography>
         </Box>
       </Box>
-    );
-  }
+    ),
+    [theme.palette.text.primary],
+  );
 
-  const getProgressValue = () => {
+  const getProgressValue = useCallback(() => {
     const objProgress = progress.find(
       (fileProgress) =>
         fileProgress.progress < 100 && fileProgress.progress > -1,
     );
-    if (objProgress !== undefined) {
-      return objProgress.progress;
-    }
-    return 100;
-  };
+    return objProgress ? objProgress.progress : 100;
+  }, [progress]);
 
-  const switchPerspective = (perspectiveId: string) => {
-    if (
-      Pro ||
-      perspectiveId === PerspectiveIDs.GRID ||
-      perspectiveId === PerspectiveIDs.LIST
-    ) {
-      setManualDirectoryPerspective(perspectiveId);
-    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      openProTeaserDialog(PerspectiveIDs.GALLERY);
-    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      openProTeaserDialog(PerspectiveIDs.MAPIQUE);
-    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      openProTeaserDialog(PerspectiveIDs.KANBAN);
-    } else if (perspectiveId === PerspectiveIDs.FOLDERVIZ) {
-      openProTeaserDialog(PerspectiveIDs.FOLDERVIZ);
-    }
-  };
+  const switchPerspective = useCallback(
+    (perspectiveId: string) => {
+      if (
+        Pro ||
+        perspectiveId === PerspectiveIDs.GRID ||
+        perspectiveId === PerspectiveIDs.LIST
+      ) {
+        setManualDirectoryPerspective(perspectiveId);
+      } else if (
+        [
+          PerspectiveIDs.GALLERY,
+          PerspectiveIDs.MAPIQUE,
+          PerspectiveIDs.KANBAN,
+          PerspectiveIDs.FOLDERVIZ,
+        ].includes(perspectiveId)
+      ) {
+        openProTeaserDialog(perspectiveId);
+      }
+    },
+    [setManualDirectoryPerspective, openProTeaserDialog],
+  );
 
-  const perspectiveToggleButtons = [];
-  AvailablePerspectives.forEach((perspective) => {
-    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
-      return;
-    }
-    perspectiveToggleButtons.push(
-      <ToggleButton
-        value={perspective.id}
-        aria-label={perspective.id}
-        key={perspective.id}
-        data-tid={perspective.key}
-        onClick={() => switchPerspective(perspective.id)}
-        style={{
-          opacity: 0.9,
-          backgroundColor: theme.palette.background.default,
-          borderColor: theme.palette.divider,
-        }}
-      >
-        <Tooltip
-          title={
-            perspective.title +
-            (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
-          }
+  const perspectiveToggleButtons = useMemo(
+    () =>
+      AvailablePerspectives.filter(
+        (perspective) => devMode || perspective.id !== PerspectiveIDs.CALENDAR,
+      ).map((perspective) => (
+        <ToggleButton
+          value={perspective.id}
+          aria-label={perspective.id}
+          key={perspective.id}
+          data-tid={perspective.key}
+          onClick={() => switchPerspective(perspective.id)}
+          style={{
+            opacity: 0.9,
+            backgroundColor: theme.palette.background.default,
+            borderColor: theme.palette.divider,
+          }}
         >
-          <div style={{ display: 'flex' }}>{perspective.icon}</div>
-        </Tooltip>
-      </ToggleButton>,
-    );
-  });
+          <Tooltip
+            title={
+              perspective.title +
+              (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
+            }
+          >
+            <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
+          </Tooltip>
+        </ToggleButton>
+      )),
+    [
+      devMode,
+      switchPerspective,
+      theme.palette.background.default,
+      theme.palette.divider,
+      t,
+    ],
+  );
 
-  const openSearchMode = () => {
-    // setSearchQuery({ textQuery: '' });
+  const openSearchMode = useCallback(() => {
     enterSearchMode();
-  };
+  }, [enterSearchMode]);
 
-  const openSearchKeyBinding = `${adjustKeyBinding(keyBindings.openSearch)}`;
+  const openSearchKeyBinding = useMemo(
+    () => `${adjustKeyBinding(keyBindings.openSearch)}`,
+    [keyBindings.openSearch],
+  );
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const readOnlyLocation = findLocation()?.isReadOnly;
 
-  const perspectiveMenuItem = [];
-  AvailablePerspectives.forEach((perspective) => {
-    let badge = <></>;
-    // if (!Pro && perspective.pro) {
-    //   badge = <ProLabel />;
-    // }
-    if (perspective.beta) {
-      badge = <BetaLabel />;
-    }
-    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
-      return;
-    }
-    perspectiveMenuItem.push(
-      <MenuItem
-        key={perspective.key}
-        data-tid={perspective.key}
-        onClick={() => {
-          handlePerspectiveMenuClose();
-          switchPerspective(perspective.id);
-        }}
-      >
-        <ListItemIcon>{perspective.icon}</ListItemIcon>
-        <ListItemText
-          primary={
-            <>
-              {perspective.title}
-              {badge}
-            </>
-          }
-        />
-      </MenuItem>,
-    );
-  });
+  const perspectiveMenuItems = useMemo(
+    () =>
+      AvailablePerspectives.filter(
+        (perspective) => devMode || perspective.id !== PerspectiveIDs.CALENDAR,
+      ).map((perspective) => {
+        let badge = perspective.beta ? <BetaLabel /> : null;
+        return (
+          <MenuItem
+            key={perspective.key}
+            data-tid={perspective.key}
+            onClick={() => {
+              handlePerspectiveMenuClose();
+              switchPerspective(perspective.id);
+            }}
+          >
+            <ListItemIcon>{perspective.icon}</ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  {perspective.title}
+                  {badge}
+                </>
+              }
+            />
+          </MenuItem>
+        );
+      }),
+    [devMode, handlePerspectiveMenuClose, switchPerspective],
+  );
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         width: '100%',
+        display: hidden ? 'none' : 'flex',
         height: 'calc(100% - 50px)',
         backgroundColor: theme.palette.background.default,
-        display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        ...style,
       }}
       data-tid="folderContainerTID"
     >
-      <div
-        style={{
-          paddingLeft: 5,
-          paddingRight: 5,
+      <Box
+        sx={{
+          paddingLeft: '5px',
+          paddingRight: '5px',
           display: 'flex',
           alignItems: 'center',
           minHeight: 50,
-          // @ts-ignore
           WebkitAppRegion: 'drag',
           marginLeft:
             AppConfig.isMacLike &&
             isDesktopMode &&
             !AppConfig.isWeb &&
             !drawerOpened
-              ? 60
+              ? '60px'
               : 0,
         }}
       >
         <TsIconButton
           id="mobileMenuButton"
-          style={
-            {
-              WebkitAppRegion: 'no-drag',
-            } as React.CSSProperties & { WebkitAppRegion?: string }
-          }
+          sx={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
           onClick={toggleDrawer}
           tooltip={t('core:toggleSidebar')}
         >
@@ -284,11 +286,7 @@ function FolderContainer(props: Props) {
           id="goBackButton"
           disabled={historyIndex === 0}
           onClick={goBack}
-          style={
-            {
-              WebkitAppRegion: 'no-drag',
-            } as React.CSSProperties & { WebkitAppRegion?: string }
-          }
+          sx={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
         >
           <GoBackIcon />
         </TsIconButton>
@@ -298,22 +296,17 @@ function FolderContainer(props: Props) {
             id="goForwardButton"
             disabled={historyIndex === 0}
             onClick={goForward}
-            style={
-              {
-                WebkitAppRegion: 'no-drag',
-              } as React.CSSProperties & { WebkitAppRegion?: string }
-            }
+            sx={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
           >
             <GoForwardIcon />
           </TsIconButton>
         )}
         {isSearchMode ? (
-          /* todo rethink if open props is needed */
           <SearchBox />
         ) : (
           <>
-            <div
-              style={{
+            <Box
+              sx={{
                 margin: '0 10px 0 10px',
                 flex: '1 1 1%',
                 display: 'flex',
@@ -327,11 +320,11 @@ function FolderContainer(props: Props) {
                   }
                   data-tid="toggleSearch"
                   onClick={openSearchMode}
-                  style={
+                  sx={
                     {
                       maxWidth: 100,
                       WebkitAppRegion: 'no-drag',
-                    } as React.CSSProperties & { WebkitAppRegion?: string }
+                    } as React.CSSProperties
                   }
                 >
                   <SearchIcon />
@@ -342,10 +335,10 @@ function FolderContainer(props: Props) {
                   onClick={openSearchMode}
                   color="secondary"
                   startIcon={<SearchIcon />}
-                  style={
+                  sx={
                     {
-                      marginTop: -2,
-                      marginRight: 5,
+                      marginTop: '-2px',
+                      marginRight: '5px',
                       minWidth: 100,
                       maxHeight: 32,
                       width: 'stretch',
@@ -354,29 +347,28 @@ function FolderContainer(props: Props) {
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       WebkitAppRegion: 'no-drag',
-                    } as React.CSSProperties & { WebkitAppRegion?: string }
+                    } as React.CSSProperties
                   }
                 >
                   {t('core:searchTitle')}
-                  <span style={{ width: 10 }} />
+                  <Box sx={{ width: 10 }} />
                   {openSearchKeyBinding}
                 </TsButton>
               )}
-            </div>
-
+            </Box>
             {progress?.length > 0 && (
               <TsIconButton
                 id="progressButton"
                 title={t('core:progress')}
                 data-tid="uploadProgress"
                 onClick={() => openFileUploadDialog()}
-                style={
+                sx={
                   {
                     position: 'relative',
                     padding: '8px 12px 6px 8px',
-                    margin: '0',
+                    margin: 0,
                     WebkitAppRegion: 'no-drag',
-                  } as React.CSSProperties & { WebkitAppRegion?: string }
+                  } as React.CSSProperties
                 }
               >
                 <CircularProgressWithLabel value={getProgressValue()} />
@@ -388,12 +380,12 @@ function FolderContainer(props: Props) {
             />
           </>
         )}
-      </div>
-      <div style={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
+      </Box>
+      <Box sx={{ minHeight: '100%', width: '100%', overflowY: 'auto' }}>
         {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
         <a href="#" id="downloadFile" />
         <RenderPerspective />
-      </div>
+      </Box>
       {isDesktopMode ? (
         <ToggleButtonGroup
           value={currentPerspective}
@@ -402,11 +394,10 @@ function FolderContainer(props: Props) {
           disabled={showWelcomePanel}
           aria-label="change perspective"
           exclusive
-          style={{
+          sx={{
             bottom: -35,
             right: 15,
             zIndex: 1000,
-            // opacity: 0.9,
             position: 'absolute',
           }}
         >
@@ -421,15 +412,14 @@ function FolderContainer(props: Props) {
             >
               <ToggleButton
                 value=""
-                // disabled={readOnlyLocation}
                 aria-label="chat-label"
                 data-tid="chatTID"
                 style={{
-                  marginLeft: 5,
+                  marginLeft: '5px',
                   borderColor: theme.palette.divider,
-                  ...(!readOnlyLocation && {
-                    color: theme.palette.primary.main,
-                  }),
+                  ...(readOnlyLocation
+                    ? {}
+                    : { color: theme.palette.primary.main }),
                   backgroundColor: theme.palette.background.default,
                 }}
                 onClick={() => {
@@ -448,12 +438,12 @@ function FolderContainer(props: Props) {
             size="medium"
             color="secondary"
             aria-label="add"
-            style={{
+            sx={{
               bottom: -30,
               right: 20,
               position: 'absolute',
             }}
-            onClick={perspectiveMenuOpenClick}
+            onClick={openPerspectiveMenu}
           >
             <BlurOnIcon />
           </Fab>
@@ -461,7 +451,7 @@ function FolderContainer(props: Props) {
             id="demo-positioned-menu"
             aria-labelledby="demo-positioned-button"
             anchorEl={perspectiveMenuAnchorEl}
-            open={open}
+            open={Boolean(perspectiveMenuAnchorEl)}
             onClose={handlePerspectiveMenuClose}
             anchorOrigin={{
               vertical: 'top',
@@ -472,12 +462,12 @@ function FolderContainer(props: Props) {
               horizontal: 'center',
             }}
           >
-            <TsMenuList>{perspectiveMenuItem}</TsMenuList>
+            <TsMenuList>{perspectiveMenuItems}</TsMenuList>
           </Menu>
         </>
       )}
-    </div>
+    </Box>
   );
 }
 
-export default FolderContainer;
+export default React.memo(FolderContainer);

@@ -136,7 +136,7 @@ function AiGenTagsButton(props: Props) {
         disabled={disabled}
         // tooltip={t('core:openGenSettings')}
         aria-label={t('core:openGenSettings')}
-        data-tid="fileContainerPrevFile"
+        data-tid="openGenSettingsAITags"
         onClick={() => {
           openAiGenerationDialog('tags');
         }}

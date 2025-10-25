@@ -1,43 +1,37 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
-import {
-  defaultLocationName,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-} from './location.helpers';
-import {
-  clickOn,
-  expectElementExist,
-  getGridFileSelector,
-  setInputValue,
-  createNewDirectory,
-  dnd,
-  getAttribute,
-  getElementScreenshot,
-  checkSettings,
-  openFolder,
-  waitUntilChanged,
-  openFolderProp,
-  createLocation,
-  addDescription,
-} from './general.helpers';
-import { openContextEntryMenu } from './test-utils';
-import {
-  createLocalFile,
-  createFileS3,
-  startTestingApp,
-  stopApp,
-  testDataRefresh,
-} from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
   getPropertiesTags,
 } from './file.properties.helpers';
+import { expect, test } from './fixtures';
+import {
+  addDescription,
+  checkSettings,
+  clickOn,
+  createLocation,
+  createNewDirectory,
+  dnd,
+  expectElementExist,
+  getAttribute,
+  getElementScreenshot,
+  getGridFileSelector,
+  openFolder,
+  openFolderProp,
+  setInputValue,
+  waitUntilChanged,
+} from './general.helpers';
+import {
+  createFileS3,
+  createLocalFile,
+  startTestingApp,
+  stopApp,
+  testDataRefresh,
+} from './hook';
+import { openContextEntryMenu } from './test-utils';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 /*test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -342,23 +336,24 @@ test.describe('TST02 - Folder properties', () => {
     const initScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
-    const initStyle = await getAttribute(targetSelector, 'style');
+    const initStyle = await getAttribute(targetSelector, 'class');
+    console.log('Init Style:', initStyle);
     await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
 
     await waitUntilChanged(
       targetSelector,
       initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
-      'style',
+      'class',
       15000,
     );
 
     const withBgnColorScreenshot = await getElementScreenshot(
       '[data-tid=perspectiveGridFileTable]',
     );
-    const bgStyle = await getAttribute(targetSelector, 'style');
+    const bgStyle = await getAttribute(targetSelector, 'class');
     expect(initScreenshot).not.toBe(withBgnColorScreenshot);
-
+    console.log('BG Style:', bgStyle);
     // remove background
     await clickOn('[data-tid=backgroundClearTID]');
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
@@ -366,7 +361,7 @@ test.describe('TST02 - Folder properties', () => {
     await waitUntilChanged(
       targetSelector,
       bgStyle, //'height: 100%; background: transparent;',
-      'style',
+      'class',
       15000,
     );
 

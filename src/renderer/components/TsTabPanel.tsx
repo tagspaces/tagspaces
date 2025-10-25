@@ -16,6 +16,7 @@
  *
  */
 
+import { Box } from '@mui/material';
 import React from 'react';
 
 interface TabPanelProps {
@@ -28,23 +29,23 @@ function TsTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      style={{
+      sx={{
         height: '100%',
         overflowY: 'auto',
         overflowX: 'hidden',
-        paddingTop: 5,
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingTop: '5px',
+        paddingLeft: '10px',
+        paddingRight: '10px',
       }}
     >
       {children}
-    </div>
+    </Box>
   );
 }
 

@@ -40,7 +40,7 @@ export type TSButtonProps = ButtonProps & {
 //function TsButton(props: TSButtonProps) {
 const TsButton = React.forwardRef<HTMLButtonElement, TSButtonProps>(
   function TsButton(props, ref) {
-    const { children, style, tooltip, loading, startIcon, ...rest } = props;
+    const { children, sx, tooltip, loading, startIcon, ...rest } = props;
     const desktopMode = useSelector(isDesktopMode);
     const button = (
       <Button
@@ -50,12 +50,12 @@ const TsButton = React.forwardRef<HTMLButtonElement, TSButtonProps>(
         {...(startIcon && { startIcon: startIcon })}
         variant="outlined" // text outlined contained
         {...rest}
-        style={{
+        sx={{
           borderRadius: AppConfig.defaultCSSRadius,
           textTransform: 'none', //'capitalize',
-          fontSize: 14,
+          fontSize: '14px',
           fontWeight: 'normal',
-          ...style,
+          ...sx,
         }}
       >
         {children}
