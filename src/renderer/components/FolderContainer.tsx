@@ -47,7 +47,6 @@ import BlurOnIcon from '@mui/icons-material/BlurOn';
 import { Fab, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -62,6 +61,7 @@ import {
   MainMenuIcon,
   SearchIcon,
 } from './CommonIcons';
+import TsToggleButton from './TsToggleButton';
 
 interface Props {
   toggleDrawer?: () => void;
@@ -170,7 +170,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
       AvailablePerspectives.filter(
         (perspective) => devMode || perspective.id !== PerspectiveIDs.CALENDAR,
       ).map((perspective) => (
-        <ToggleButton
+        <TsToggleButton
           value={perspective.id}
           aria-label={perspective.id}
           key={perspective.id}
@@ -179,7 +179,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           style={{
             opacity: 0.9,
             backgroundColor: theme.palette.background.default,
-            borderColor: theme.palette.divider,
+            border: '1px solid ' + theme.palette.divider,
           }}
         >
           <Tooltip
@@ -190,7 +190,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           >
             <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
           </Tooltip>
-        </ToggleButton>
+        </TsToggleButton>
       )),
     [
       devMode,
@@ -410,17 +410,17 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                   : t('core:aiChatForFolder')
               }
             >
-              <ToggleButton
+              <TsToggleButton
                 value=""
                 aria-label="chat-label"
                 data-tid="chatTID"
                 style={{
                   marginLeft: '5px',
-                  borderColor: theme.palette.divider,
                   ...(readOnlyLocation
                     ? {}
                     : { color: theme.palette.primary.main }),
                   backgroundColor: theme.palette.background.default,
+                  border: '1px solid ' + theme.palette.divider,
                 }}
                 onClick={() => {
                   if (readOnlyLocation) return;
@@ -428,7 +428,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                 }}
               >
                 <ChatIcon />
-              </ToggleButton>
+              </TsToggleButton>
             </Tooltip>
           )}
         </ToggleButtonGroup>

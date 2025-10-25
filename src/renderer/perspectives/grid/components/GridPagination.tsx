@@ -435,10 +435,10 @@ function GridPagination(props: Props) {
                   zIndex: 1100,
                   position: 'absolute',
                   backgroundColor: theme.palette.background.default,
+                  border: '1px solid ' + theme.palette.divider,
                   opacity: 0.97,
-                  border: '1px solid lightgray',
-                  borderRadius: '5px',
-                  padding: '3px',
+                  padding: '2px',
+                  borderRadius: AppConfig.defaultCSSRadius,
                 }}
                 count={paginationCount}
                 page={page}
