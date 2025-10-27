@@ -55,7 +55,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
-  ChatIcon,
+  AIIcon,
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,
@@ -387,13 +387,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
         <RenderPerspective />
       </Box>
       {isDesktopMode ? (
-        <ToggleButtonGroup
-          value={currentPerspective}
-          size="small"
-          data-tid="floatingPerspectiveSwitcher"
-          disabled={showWelcomePanel}
-          aria-label="change perspective"
-          exclusive
+        <Box
           sx={{
             bottom: -35,
             right: 15,
@@ -401,37 +395,53 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             position: 'absolute',
           }}
         >
-          {perspectiveToggleButtons}
+          <ToggleButtonGroup
+            value={currentPerspective}
+            size="small"
+            data-tid="floatingPerspectiveSwitcher"
+            disabled={showWelcomePanel}
+            aria-label="change perspective"
+            exclusive
+          >
+            {perspectiveToggleButtons}
+          </ToggleButtonGroup>
           {aiDefaultProvider && (
-            <Tooltip
-              title={
-                readOnlyLocation
-                  ? t('core:aiChatForFolderDisabled')
-                  : t('core:aiChatForFolder')
-              }
+            <ToggleButtonGroup
+              size="small"
+              disabled={showWelcomePanel}
+              aria-label="open folder ai chat"
+              exclusive
             >
-              <TsToggleButton
-                value=""
-                aria-label="chat-label"
-                data-tid="chatTID"
-                style={{
-                  marginLeft: '5px',
-                  ...(readOnlyLocation
-                    ? {}
-                    : { color: theme.palette.primary.main }),
-                  backgroundColor: theme.palette.background.default,
-                  border: '1px solid ' + theme.palette.divider,
-                }}
-                onClick={() => {
-                  if (readOnlyLocation) return;
-                  openEntry(currentDirectoryPath, TabNames.aiTab);
-                }}
+              <Tooltip
+                title={
+                  readOnlyLocation
+                    ? t('core:aiChatForFolderDisabled')
+                    : t('core:aiChatForFolder')
+                }
               >
-                <ChatIcon />
-              </TsToggleButton>
-            </Tooltip>
+                <TsToggleButton
+                  value=""
+                  aria-label="chat-label"
+                  data-tid="chatTID"
+                  style={{
+                    marginLeft: '5px',
+                    ...(readOnlyLocation
+                      ? {}
+                      : { color: theme.palette.primary.main }),
+                    backgroundColor: theme.palette.background.default,
+                    border: '1px solid ' + theme.palette.divider,
+                  }}
+                  onClick={() => {
+                    if (readOnlyLocation) return;
+                    openEntry(currentDirectoryPath, TabNames.aiTab);
+                  }}
+                >
+                  <AIIcon />
+                </TsToggleButton>
+              </Tooltip>
+            </ToggleButtonGroup>
           )}
-        </ToggleButtonGroup>
+        </Box>
       ) : (
         <>
           <Fab
