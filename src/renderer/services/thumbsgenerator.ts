@@ -37,6 +37,7 @@ import('pdfjs-dist/build/pdf.worker.mjs');
 //pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 let maxSize = AppConfig.maxThumbSize;
+const pdfMaxSize = 1000;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
 
 export const supportedMisc = ['url', 'html'];
@@ -65,11 +66,11 @@ export const supportedContainers = [
   'odg',
   'ods',
   'odt',
-  'pdf',
+  // 'pdf',
 ];
 export const supportedText = [
   'txt',
-  // 'md',
+  // 'md', 'mdown', 'markdown'
   'coffee',
   'c',
   'cpp',
@@ -79,10 +80,10 @@ export const supportedText = [
   'xml',
   'java',
   'js',
+  'ts',
+  'tsc',
   'json',
   'less',
-  // 'markdown',
-  // 'mdown',
   'php',
   'pl',
   'py',
@@ -90,7 +91,6 @@ export const supportedText = [
   'ini',
   'sh',
   'sql',
-  // 'mhtml'
 ];
 export const supportedVideos = [
   'ogv',
@@ -101,7 +101,6 @@ export const supportedVideos = [
   'lrv',
   '3gp',
   'mov',
-  // '3g2'
 ];
 const maxFileSize = 30 * 1024 * 1024; // 30 MB
 
@@ -123,29 +122,26 @@ export function generateThumbnailPromise(
       ? fileURL
       : encodeFileName(fileURL, dirSeparator);
 
-  if (supportedImgs.indexOf(ext) >= 0) {
-    if (ext === 'tga') {
+  // Fast path for images
+  if (supportedImgs.includes(ext)) {
+    if (['dng', 'nef', 'cr2'].includes(ext)) {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (ext === 'tga') {
       return generateTGAThumbnail(fileURLEscaped, maxSize);
-    } else if (ext.startsWith('tif')) {
-      return generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (ext === 'dng') {
-      return generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (ext === 'nef') {
-      return generateUTIFThumbnail(fileURLEscaped, maxSize);
-    } else if (ext === 'cr2') {
-      return generateUTIFThumbnail(fileURLEscaped, maxSize);
     } else if (ext === 'psd') {
       return generatePSDThumbnail(fileURLEscaped, maxSize);
+    } else if (ext.startsWith('tif')) {
+      return generateUTIFThumbnail(fileURLEscaped, maxSize);
     } else if (fileSize && fileSize < maxFileSize) {
       return generateImageThumbnail(
         fileURL,
         getFileContentPromise,
         dirSeparator,
-      ); //fileURLEscaped);
+      );
     }
   } else if (ext === 'pdf') {
     return getFileContentPromise({ path: fileURLEscaped }, 'arraybuffer').then(
-      (buffer) => generatePDFThumbnail(buffer, maxSize),
+      (buffer) => generatePDFThumbnail(buffer, pdfMaxSize),
     );
   } else if (ext === 'html') {
     return generateHtmlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
@@ -155,9 +151,9 @@ export function generateThumbnailPromise(
     if (fileSize && fileSize < maxFileSize) {
       // return generateMp3Thumbnail(fileURL, maxSize);
     }
-  } else if (supportedText.indexOf(ext) >= 0) {
+  } else if (supportedText.includes(ext)) {
     return generateTextThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
-  } else if (supportedContainers.indexOf(ext) >= 0) {
+  } else if (supportedContainers.includes(ext)) {
     if (fileSize && fileSize < maxFileSize) {
       return generateZipContainerImageThumbnail(
         fileURLEscaped,
@@ -167,11 +163,11 @@ export function generateThumbnailPromise(
         dirSeparator,
       );
     }
-  } else if (supportedVideos.indexOf(ext) >= 0) {
+  } else if (supportedVideos.includes(ext)) {
     if (getThumbPath) {
-      return getThumbPath(fileURL).then((url) => {
-        return generateVideoThumbnail(url, maxSize);
-      });
+      return getThumbPath(fileURL).then((url) =>
+        generateVideoThumbnail(url, maxSize),
+      );
     }
   }
   return generateDefaultThumbnail();
@@ -184,12 +180,11 @@ export async function extractPDFcontent(
   if (arrayBuffer) {
     try {
       const pdfDocument = await pdfjs.getDocument(arrayBuffer).promise;
-
       for (let i = 1; i <= pdfDocument.numPages; i++) {
         const page = await pdfDocument.getPage(i);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items.map((item) => item.str).join(' ');
-        extractedText += pageText + '\n';
+        extractedText +=
+          textContent.items.map((item) => item.str).join(' ') + '\n';
       }
       extractedText += '\r\n';
     } catch (error) {
@@ -212,14 +207,12 @@ export function generatePDFThumbnail(
 
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      // ensurePDFJS().then(pdfjsLib => {
       const loadingTask = pdfjs.getDocument(arrayBuffer);
       loadingTask.promise
         .then((pdf) => {
           pdf
             .getPage(1)
             .then((page) => {
-              // 1 is the page number we want to retrieve
               let scale = 1.0;
               const unscaledViewport = page.getViewport({ scale });
               if (unscaledViewport.width >= unscaledViewport.height) {
@@ -240,24 +233,17 @@ export function generatePDFThumbnail(
               const renderTask = page.render(renderContext);
               renderTask.promise
                 .then(() => {
-                  // set to draw behind current content
                   ctx.globalCompositeOperation = 'destination-over';
-                  // set background color
                   ctx.fillStyle = '#ffffff';
-                  // draw background / rect on entire canvas
                   ctx.fillRect(0, 0, canvas.width, canvas.height);
                   resolve(canvas.toDataURL(AppConfig.thumbType));
                   canvas = null;
-                  return true;
                 })
                 .catch(errorHandler);
-              return true;
             })
             .catch(errorHandler);
-          return true;
         }, errorHandler)
         .catch(errorHandler);
-      return true;
     } catch (e) {
       console.log('Error creating PDF thumb', e);
       resolve('');
@@ -305,30 +291,28 @@ function getPropetiesThumbnail(propertiesFile) {
  * @param maxSize
  */
 export function resizeImg(image: string, maxSize): Promise<any> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const img = new Image();
+    const img = new window.Image();
 
     img.onload = () => {
+      const ratio = img.width / img.height;
       if (img.width >= img.height) {
         canvas.width = maxSize;
-        canvas.height = (maxSize * img.height) / img.width;
+        canvas.height = Math.round(maxSize / ratio);
       } else {
         canvas.height = maxSize;
-        canvas.width = (maxSize * img.width) / img.height;
+        canvas.width = Math.round(maxSize * ratio);
       }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       resolve(canvas.toDataURL(AppConfig.thumbType));
     };
+    img.onerror = () => resolve('');
     img.src = image;
-    /*img.onload = () => {
-      // called when the image has finished loading
-    };
-    if (img.complete) {
-      // called if the image is already loaded
-      img.onload();
-    }*/
+    // If already loaded, trigger onload manually
+    // @ts-ignore
+    if (img.complete) img.onload();
   });
 }
 
@@ -337,35 +321,21 @@ export function generateUrlThumbnail(
   maxSize: number,
   loadTextFilePromise,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    loadTextFilePromise(fileURL)
-      .then((content) => {
-        if (!content || content.length < 1) {
-          resolve('');
-        }
-
-        const thumb = getPropetiesThumbnail(content);
-        if (thumb !== undefined) {
-          resizeImg(thumb, maxSize)
-            .then((img) => {
-              resolve(img);
-              return true;
-            })
-            .catch((err) => {
-              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
-              resolve('');
-            });
-        } else {
-          // TODO handle no imgData state (load URL in IFRAME and generate screenshot)
-          resolve('');
-        }
-        return true;
-      })
-      .catch((err) => {
-        console.log('Error generating url tmb for: ' + fileURL + ' - ' + err);
-        resolve('');
-      });
-  });
+  return loadTextFilePromise(fileURL)
+    .then((content) => {
+      if (!content || content.length < 1) return '';
+      const thumb = getPropetiesThumbnail(content);
+      if (thumb !== undefined) {
+        return resizeImg(thumb, maxSize);
+      } else {
+        // TODO handle no imgData state (load URL in IFRAME and generate screenshot)
+        return '';
+      }
+    })
+    .catch((err) => {
+      console.log('Error generating url tmb for: ' + fileURL + ' - ' + err);
+      return '';
+    });
 }
 
 export function generateImageThumbnail(
@@ -375,7 +345,7 @@ export function generateImageThumbnail(
   maxTmbSize?: number,
 ): Promise<string> {
   try {
-    if (fileURL.startsWith('http://') || fileURL.startsWith('https://')) {
+    if (/^https?:\/\//.test(fileURL)) {
       return getResizedImageThumbnail(fileURL, maxTmbSize);
     }
     return getFileContentPromise(fileURL, 'arraybuffer')
@@ -395,7 +365,7 @@ export function generateImageThumbnail(
       })
       .catch((e) => {
         console.log(`Error get: ${fileURL}`, e);
-        return Promise.resolve('');
+        return '';
       });
   } catch (e) {
     console.log(`Error creating image thumb for : ${fileURL}`, e);
@@ -406,12 +376,9 @@ export function generateImageThumbnail(
 function cordovaCreateObjectURL(blob): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
-
     reader.onload = function (event) {
-      const dataUrl = event.target?.result as string;
-      resolve(dataUrl);
+      resolve(event.target?.result as string); // dataURL
     };
-
     reader.readAsDataURL(blob);
   });
 }
@@ -454,7 +421,7 @@ export function getResizedImageThumbnail(
       maxSize = maxTmbSize;
     }
 
-    let img: HTMLImageElement = new Image();
+    let img: HTMLImageElement = new window.Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       // EXIF extraction not need because the image are rotated
@@ -489,35 +456,26 @@ export function getResizedImageThumbnail(
       //     default:
       //     // ctx.rotate(0);
       //   }
-      let maxSizeWidth = maxSize;
-      if (img.width < maxSize) {
-        maxSizeWidth = img.width;
-      }
-      let maxSizeHeight = maxSize;
-      if (img.height < maxSize) {
-        maxSizeHeight = img.height;
-      }
+      let maxSizeWidth = Math.min(img.width, maxSize);
+      let maxSizeHeight = Math.min(img.height, maxSize);
       if (img.width >= img.height) {
         canvas.width = maxSizeWidth;
-        canvas.height = (maxSizeWidth * img.height) / img.width;
+        canvas.height = Math.round((maxSizeWidth * img.height) / img.width);
       } else {
         canvas.height = maxSizeHeight;
-        canvas.width = (maxSizeHeight * img.width) / img.height;
+        canvas.width = Math.round((maxSizeHeight * img.width) / img.height);
       }
 
       const { width, height } = canvas;
-      const x = canvas.width / 2;
-      const y = canvas.height / 2;
+      const x = width / 2;
+      const y = height / 2;
 
       ctx.translate(x, y);
-      // ctx.rotate(angleInRadians);
       ctx.fillStyle = thumbnailBackgroundColor;
       ctx.fillRect(-width / 2, -height / 2, width, height);
       ctx.drawImage(img, -width / 2, -height / 2, width, height);
-      // ctx.rotate(-angleInRadians);
       ctx.translate(-x, -y);
-      const dataurl = canvas.toDataURL(AppConfig.thumbType);
-      resolve(dataurl);
+      resolve(canvas.toDataURL(AppConfig.thumbType));
       img = null;
       canvas = null;
     };

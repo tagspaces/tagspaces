@@ -16,23 +16,18 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import {
-  cleanTrailingDirSeparator,
-  extractContainingDirectoryPath,
-  extractFileName,
-  normalizePath,
-  getMetaDirectoryPath,
-  extractFileExtension,
-} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { usePaginationContext } from '-/hooks/usePaginationContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import {
   getEnableWS,
   getShowUnixHiddenEntries,
   getUseGenerateThumbnails,
 } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/AppConfig';
 import {
   generateThumbnailPromise,
   supportedContainers,
@@ -41,19 +36,24 @@ import {
   supportedText,
   supportedVideos,
 } from '-/services/thumbsgenerator';
-import { usePaginationContext } from '-/hooks/usePaginationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { base64ToBlob } from '-/utils/dom';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import {
   createThumbnailsInWorker,
   isWorkerAvailable,
 } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { base64ToBlob } from '-/utils/dom';
 import useFirstRender from '-/utils/useFirstRender';
+import {
+  cleanTrailingDirSeparator,
+  extractContainingDirectoryPath,
+  extractFileExtension,
+  extractFileName,
+  getMetaDirectoryPath,
+  normalizePath,
+} from '@tagspaces/tagspaces-common/paths';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
@@ -285,7 +285,7 @@ export const ThumbGenerationContextProvider = ({
         isWorkerAvailable &&
         enableWS &&
         location.fullTextIndex &&
-        entry.path.toLowerCase().endsWith('pdf') &&
+        extension.toLowerCase() === 'pdf' &&
         !location.haveObjectStoreSupport() &&
         !location.haveWebDavSupport()
       ) {
@@ -302,6 +302,7 @@ export const ThumbGenerationContextProvider = ({
       } else if (
         supportedImgs.includes(extension) ||
         supportedContainers.includes(extension) ||
+        extension.toLowerCase() === 'pdf' ||
         supportedText.includes(extension) ||
         supportedMisc.includes(extension) ||
         supportedVideos.includes(extension)
