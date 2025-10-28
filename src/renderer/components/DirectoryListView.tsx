@@ -1,29 +1,36 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import AppConfig from '-/AppConfig';
+import {
+  FolderOutlineIcon as FolderIcon,
+  NewFolderIcon,
+  ParentFolderIcon,
+} from '-/components/CommonIcons';
+import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
-import MenuItem from '@mui/material/MenuItem';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { Box } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
-import { TS } from '-/tagspaces.namespace';
-import {
-  ParentFolderIcon,
-  NewFolderIcon,
-  FolderOutlineIcon as FolderIcon,
-} from '-/components/CommonIcons';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import Typography from '@mui/material/Typography';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useCreateDirectoryDialogContext } from '-/components/dialogs/hooks/useCreateDirectoryDialogContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelector } from 'react-redux';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -42,14 +49,44 @@ const DirectoryListView: React.FC<Props> = ({
   const { currentDirectoryEntries } = useDirectoryContentContext();
   const { openCreateDirectoryDialog } = useCreateDirectoryDialogContext();
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
+
   const chosenLocationId = useRef<string>(
-    targetLocationID ? targetLocationID : currentLocation?.uuid,
+    targetLocationID || currentLocation?.uuid,
   );
   const chosenDirectory = useRef<string>(targetPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
   >(currentDirectoryEntries.filter((entry) => !entry.isFile));
 
+  // List directory content and filter out unwanted entries
+  const listDirectory = useCallback(
+    (directoryPath: string) => {
+      chosenDirectory.current = directoryPath;
+      const location = findLocation(chosenLocationId.current);
+      if (!location) return;
+      location
+        .listDirectoryPromise(directoryPath, [], [])
+        .then((results) => {
+          if (results !== undefined) {
+            setDirectoryContent(
+              results.filter(
+                (entry) =>
+                  !entry.isFile &&
+                  entry.name !== AppConfig.metaFolder &&
+                  !entry.name.endsWith('/' + AppConfig.metaFolder) &&
+                  !(!showUnixHiddenEntries && entry.name.startsWith('.')),
+              ),
+            );
+          }
+        })
+        .catch((error) => {
+          console.error('listDirectoryPromise', error);
+        });
+    },
+    [findLocation, showUnixHiddenEntries],
+  );
+
+  // On mount, if targetLocationID is different, list its directory
   useEffect(() => {
     if (targetLocationID && targetLocationID !== currentLocation?.uuid) {
       const chosenLocation = findLocation(chosenLocationId.current);
@@ -57,18 +94,24 @@ const DirectoryListView: React.FC<Props> = ({
         listDirectory(targetPath);
       }
     }
+    // eslint-disable-next-line
   }, []);
 
-  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    chosenLocationId.current = event.target.value;
-    const chosenLocation = findLocation(chosenLocationId.current);
-    if (chosenLocation) {
-      listDirectory(chosenLocation.path);
-      setTargetDir(chosenLocation.path);
-    }
-  };
+  // Handle location change from dropdown
+  const handleLocationChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      chosenLocationId.current = event.target.value;
+      const chosenLocation = findLocation(chosenLocationId.current);
+      if (chosenLocation) {
+        listDirectory(chosenLocation.path);
+        setTargetDir(chosenLocation.path);
+      }
+    },
+    [findLocation, listDirectory, setTargetDir],
+  );
 
-  function getDirLocations() {
+  // Render location selector if local locations are available
+  const dirLocations = useMemo(() => {
     const chosenLocation = findLocation(chosenLocationId.current);
     if (!chosenLocation || chosenLocation.type !== locationType.TYPE_LOCAL) {
       return null;
@@ -77,17 +120,16 @@ const DirectoryListView: React.FC<Props> = ({
       <FormControl
         fullWidth
         variant="standard"
-        style={{
+        sx={{
           flexFlow: 'nowrap',
           alignItems: 'center',
         }}
       >
-        <Typography style={{ display: 'inline' }} variant="subtitle2">
+        <Typography sx={{ display: 'inline' }} variant="subtitle2">
           {t('targetLocation')}:&nbsp;
         </Typography>
         <TsSelect
-          fullWidth={true}
-          // style={{ display: 'inline' }}
+          fullWidth
           onChange={handleLocationChange}
           value={chosenLocationId.current}
         >
@@ -95,120 +137,92 @@ const DirectoryListView: React.FC<Props> = ({
             .filter((loc) => loc.type === locationType.TYPE_LOCAL)
             .map((location: CommonLocation) => (
               <MenuItem key={location.uuid} value={location.uuid}>
-                <span style={{ width: '100%' }}>{location.name}</span>
+                <Box sx={{ width: '100%' }}>{location.name}</Box>
               </MenuItem>
             ))}
         </TsSelect>
       </FormControl>
     );
-  }
+  }, [findLocation, handleLocationChange, locations, t]);
 
-  function listDirectory(directoryPath) {
-    chosenDirectory.current = directoryPath;
-    findLocation(chosenLocationId.current)
-      .listDirectoryPromise(
-        directoryPath,
-        [], // mode,
-        [],
-      )
-      .then((results) => {
-        if (results !== undefined) {
-          setDirectoryContent(
-            results.filter((entry) => {
-              return (
-                !entry.isFile &&
-                entry.name !== AppConfig.metaFolder &&
-                !entry.name.endsWith('/' + AppConfig.metaFolder) &&
-                !(!showUnixHiddenEntries && entry.name.startsWith('.'))
-              );
-            }),
-            // .sort((a, b) => b.name - a.name)
-          );
-          // props.setTargetDir(directoryPath);
-        }
-        return true;
-      })
-      .catch((error) => {
-        console.log('listDirectoryPromise', error);
-      });
-  }
-
-  function getFolderContent() {
+  // Render folder content
+  const folderContent = useMemo(() => {
     if (directoryContent && directoryContent.length > 0) {
       return directoryContent.map((entry) => (
         <ListItem
           key={entry.path}
           data-tid={'MoveTarget' + entry.name}
           title={'Navigate to: ' + entry.path}
-          onClick={() => {
-            setTargetDir(entry.path);
-          }}
-          onDoubleClick={() => {
-            listDirectory(entry.path);
-          }}
+          onClick={() => setTargetDir(entry.path)}
+          onDoubleClick={() => listDirectory(entry.path)}
         >
-          <ListItemIcon style={{ minWidth: 35 }}>
+          <ListItemIcon sx={{ minWidth: 35 }}>
             <FolderIcon />
           </ListItemIcon>
           <ListItemText primary={entry.name} />
         </ListItem>
       ));
     }
-    return <div style={{ padding: 10 }}>{t('core:noSubFoldersFound')}</div>;
-  }
+    return <Box sx={{ padding: '10px' }}>{t('core:noSubFoldersFound')}</Box>;
+  }, [directoryContent, listDirectory, setTargetDir, t]);
+
+  // Handler for navigating to parent directory
+  const handleNavigateParent = useCallback(() => {
+    if (chosenDirectory.current) {
+      let currentPath = chosenDirectory.current;
+      if (currentPath.endsWith(currentLocation?.getDirSeparator())) {
+        currentPath = currentPath.slice(0, -1);
+      }
+      const parentDir = extractContainingDirectoryPath(currentPath);
+      listDirectory(parentDir);
+      setTargetDir(parentDir);
+    }
+  }, [currentLocation, listDirectory, setTargetDir]);
+
+  // Handler for creating a new subdirectory
+  const handleCreateSubdirectory = useCallback(() => {
+    openCreateDirectoryDialog(
+      chosenDirectory.current,
+      (newDirPath) => {
+        listDirectory(chosenDirectory.current);
+        setTargetDir(newDirPath);
+      },
+      true,
+    );
+  }, [listDirectory, openCreateDirectoryDialog, setTargetDir]);
 
   return (
-    <div style={{ marginTop: 10 }}>
-      {getDirLocations()}
+    <Box sx={{ marginTop: '10px' }}>
+      {dirLocations}
       <TsButton
         startIcon={<ParentFolderIcon />}
-        style={{ marginTop: 10, marginBottom: 10 }}
+        sx={{ marginTop: '10px', marginBottom: '10px' }}
         data-tid="navigateToParentTID"
-        onClick={() => {
-          if (chosenDirectory.current) {
-            let currentPath = chosenDirectory.current;
-            if (currentPath.endsWith(currentLocation?.getDirSeparator())) {
-              currentPath = currentPath.slice(0, -1);
-            }
-            const parentDir = extractContainingDirectoryPath(currentPath);
-            listDirectory(parentDir);
-            setTargetDir(parentDir);
-          }
-        }}
+        onClick={handleNavigateParent}
       >
         {t('core:navigateToParentDirectory')}
       </TsButton>
       <TsButton
         startIcon={<NewFolderIcon />}
-        style={{ marginLeft: 5, marginTop: 10, marginBottom: 10 }}
+        sx={{ marginLeft: '5px', marginTop: '10px', marginBottom: '10px' }}
         data-tid="newSubdirectoryTID"
-        onClick={() => {
-          openCreateDirectoryDialog(
-            chosenDirectory.current,
-            (newDirPath) => {
-              listDirectory(chosenDirectory.current);
-              setTargetDir(newDirPath);
-            },
-            true,
-          );
-          //reflect: false,
-        }}
+        onClick={handleCreateSubdirectory}
       >
         {t('core:newSubdirectory')}
       </TsButton>
       <List
         dense
-        style={{
+        sx={{
           borderRadius: AppConfig.defaultCSSRadius,
           border: '1px solid gray',
           maxHeight: 300,
           overflowY: 'auto',
         }}
       >
-        {getFolderContent()}
+        {folderContent}
       </List>
-    </div>
+    </Box>
   );
 };
 
-export default DirectoryListView;
+export default React.memo(DirectoryListView);

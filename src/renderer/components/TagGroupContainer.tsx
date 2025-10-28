@@ -16,11 +16,12 @@
  *
  */
 
-import React, { ReactNode, useRef } from 'react';
+import { dataTidFormat } from '-/services/test';
+import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
+import { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
-import { TS } from '-/tagspaces.namespace';
-import { dataTidFormat } from '-/services/test';
 
 interface Props {
   children: ReactNode;
@@ -58,17 +59,16 @@ function TagGroupContainer(props: Props) {
     border = '2px solid #f7cf00';
     backgroundColor = '#d9d9d9b5';
   } else if (canDrop) {
-    // border = '2px solid gray';
     backgroundColor = '#d9d9d9b5';
   }
 
   return (
-    <div
+    <Box
       ref={ref}
-      style={{
+      sx={{
         margin: 0,
         padding: 0,
-        borderRadius: 5,
+        borderRadius: '5px',
         minHeight: 20,
         border,
         backgroundColor,
@@ -76,7 +76,7 @@ function TagGroupContainer(props: Props) {
       data-tid={'tagGroupContainer_' + dataTidFormat(props.taggroup.title)}
     >
       {props.children}
-    </div>
+    </Box>
   );
 }
 

@@ -4022,7 +4022,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.190
+ - @tagspacespro/tagspacespro@5.0.193
 
 This package contains the following license:
 
@@ -10302,8 +10302,8 @@ terms above.
 
 The following npm packages may be included in this product:
 
- - dompurify@3.2.5
  - dompurify@3.2.7
+ - dompurify@3.3.0
 
 These packages each contain the following license:
 
@@ -11052,6 +11052,7 @@ specific language governing permissions and limitations under the License.
 
 The following npm packages may be included in this product:
 
+ - @mui/x-virtualizer@0.2.5
  - @napi-rs/canvas-darwin-arm64@0.1.71
  - @react-dnd/invariant@4.0.2
  - @react-dnd/shallowequal@4.0.2
@@ -11334,7 +11335,7 @@ The following npm packages may be included in this product:
  - @babel/plugin-syntax-numeric-separator@7.10.4
  - @babel/plugin-syntax-optional-chaining@7.8.3
  - @babel/plugin-syntax-private-property-in-object@7.14.5
- - @babel/runtime@7.27.6
+ - @babel/runtime@7.28.4
  - @babel/template@7.27.2
  - @babel/traverse@7.27.4
  - @babel/types@7.27.6
@@ -12392,10 +12393,9 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @mui/x-data-grid@8.9.1
- - @mui/x-date-pickers@8.6.0
- - @mui/x-internals@8.6.0
- - @mui/x-internals@8.8.0
+ - @mui/x-data-grid@8.15.0
+ - @mui/x-date-pickers@8.15.0
+ - @mui/x-internals@8.14.0
 
 These packages each contain the following license:
 
@@ -13251,7 +13251,7 @@ The following npm packages may be included in this product:
  - jest-util@29.7.0
  - jest-worker@29.7.0
  - pretty-format@29.7.0
- - use-sync-external-store@1.5.0
+ - use-sync-external-store@1.6.0
 
 These packages each contain the following license:
 
@@ -14451,15 +14451,15 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @mui/core-downloads-tracker@7.1.2
- - @mui/icons-material@7.1.2
- - @mui/lab@7.0.0-beta.14
- - @mui/material@7.1.2
- - @mui/private-theming@7.1.1
- - @mui/styled-engine@7.1.1
- - @mui/system@7.1.1
- - @mui/types@7.4.4
- - @mui/utils@7.2.0
+ - @mui/core-downloads-tracker@7.3.4
+ - @mui/icons-material@7.3.4
+ - @mui/lab@7.0.1-beta.18
+ - @mui/material@7.3.4
+ - @mui/private-theming@7.3.3
+ - @mui/styled-engine@7.3.3
+ - @mui/system@7.3.3
+ - @mui/types@7.4.7
+ - @mui/utils@7.3.3
 
 These packages each contain the following license:
 

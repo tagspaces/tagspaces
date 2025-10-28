@@ -21,6 +21,8 @@ import TsTextField from '-/components/TsTextField';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { Pro } from '-/pro';
 import {
   getTagColor,
   getTagTextColor,
@@ -43,8 +45,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
-import { Pro } from '-/pro';
 
 interface Props {
   dataTid?: string;
@@ -237,11 +237,9 @@ function TagsSelect(props: Props) {
               {...params}
               label={label}
               placeholder={placeholderText}
-              margin="normal"
               autoFocus={autoFocus}
               error={tagsError.current}
-              style={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
-              fullWidth
+              sx={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
               slotProps={{
                 input: {
                   ...params.InputProps,

@@ -424,9 +424,8 @@ export async function expectAllFileSelected(isSelected = true) {
   for (let i = 0; i < filesList.length; i++) {
     let file = await filesList[i].$('div');
     file = await file.$('div');
-    const style = await file.getAttribute('style');
-    const selected =
-      style.indexOf('rgb(29') !== -1 && style.indexOf('transparent') === -1;
+    const selectedAttr = await file.getAttribute('data-selected'); 
+    const selected = selectedAttr === 'true';
     expect(selected).toBe(isSelected);
   }
 }
@@ -445,10 +444,8 @@ export async function expectElementSelected(
   const startTime = Date.now();
 
   while (Date.now() - startTime < timeout) {
-    const finalStyle = await item.evaluate((el) => el.getAttribute('style'));
-    const selected =
-      finalStyle.includes('rgb(29') && !finalStyle.includes('transparent');
-
+    const selectionAttribute = await item.evaluate(el => el.getAttribute('data-selected'));
+    const selected = selectionAttribute === 'true';
     if (selected === isSelected) {
       expect(selected).toBe(isSelected); // Pass the test if the condition is met
       return;

@@ -23,7 +23,7 @@ import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 import { isUpdateAvailable } from '-/reducers/app';
-import { Badge, Typography } from '@mui/material';
+import { Badge, Box, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -50,9 +50,9 @@ function CustomLogo() {
   }, []);
 
   return (
-    <div
+    <Box
       onClick={() => openAboutDialog()}
-      style={{
+      sx={{
         width: '100%',
         textAlign: 'center',
         // @ts-ignore
@@ -71,18 +71,15 @@ function CustomLogo() {
             horizontal: 'right',
           }}
           invisible={!updateAvailable}
-          style={
+          sx={
             {
-              marginTop: 7,
+              marginTop: '7px',
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
           }
         >
           {AppConfig.showTSLogo && (
-            <TsIconButton
-              //tooltip={tsAboutTitle}
-              style={{ padding: 0, marginTop: -5, height: 40 }}
-            >
+            <TsIconButton sx={{ padding: 0, marginTop: '-5px', height: 40 }}>
               <img
                 style={
                   {
@@ -98,7 +95,7 @@ function CustomLogo() {
           )}
           <TsIconButton
             // tooltip={tsAboutTitle}
-            style={{ height: 40, padding: 0, marginTop: -5 }}
+            sx={{ height: 40, padding: 0, marginTop: '-5px' }}
             data-tid="aboutTagSpaces"
           >
             <img
@@ -117,10 +114,10 @@ function CustomLogo() {
             <>
               <sup>
                 <Typography
-                  style={{
+                  sx={{
                     display: 'inline',
                     fontSize: '10px',
-                    marginLeft: 3,
+                    marginLeft: '3px',
                     lineHeight: '16px',
                   }}
                 >
@@ -129,11 +126,11 @@ function CustomLogo() {
               </sup>
               <sub>
                 <Typography
-                  style={
+                  sx={
                     {
                       display: 'inline',
                       fontSize: '10px',
-                      marginLeft: -25,
+                      marginLeft: '-25px',
                       lineHeight: '40px',
                       WebkitAppRegion: 'no-drag',
                     } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -146,7 +143,7 @@ function CustomLogo() {
           )}
         </Badge>
       </Tooltip>
-    </div>
+    </Box>
   );
 }
 

@@ -8,6 +8,8 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
+
+import pm2 from '@elife/pm2';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -17,12 +19,9 @@ import {
   ipcMain,
   shell,
 } from 'electron';
-import path from 'path';
-// import { autoUpdater } from 'electron-updater';
-//import log from 'electron-log';
-import pm2 from '@elife/pm2';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
+import path from 'path';
 import propertiesReader from 'properties-reader';
 import i18nInit from '../renderer/services/i18nInit';
 import buildDockMenu from './electron-dock-menu';
@@ -35,48 +34,29 @@ import settings from './settings';
 import { Extensions } from './types';
 import { resolveHtmlPath } from './util';
 
-// class AppUpdater {
-//   constructor() {
-//     log.transports.file.level = 'info';
-//     autoUpdater.logger = log;
-//     autoUpdater.checkForUpdatesAndNotify();
-//   }
-// }
-
+// --- App State ---
 let isMacLike = process.platform === 'darwin';
-
 let mainWindow: BrowserWindow | null = null;
-/*let usedWsPort = undefined;
-
-function getUsedWsPort() {
-  return usedWsPort;
-}*/
-
 let globalShortcutsEnabled = false;
+let startupFilePath: string | undefined;
+let portableMode: boolean | undefined;
 
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
-
+// --- Debug/Dev Mode ---
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
-
 const testMode = process.env.NODE_ENV === 'test';
 
 if (isDebug || testMode) {
   require('electron-debug')({ showDevTools: false });
   if (isMacLike) {
-    // temp fix https://github.com/electron/electron/issues/43415#issuecomment-2359194469
     app.disableHardwareAcceleration();
   }
 } else {
+  // Silence console logs in production
   console.log = () => {};
 }
 
-let startupFilePath;
-let portableMode;
-
+// --- Parse Startup Arguments ---
 process.argv.forEach((arg, count) => {
   console.log('Opening file: ' + arg);
   if (
@@ -90,41 +70,31 @@ process.argv.forEach((arg, count) => {
     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
   } else if (testMode || isDebug) {
-    // ignoring the spectron testing
     arg = '';
   } else if (
     arg.endsWith('main.prod.js') ||
     arg.indexOf('node_modules/electron/dist/') > -1 ||
     arg.endsWith('electronmon/src/hook.js') ||
-    //arg === './app/main.dev.babel.js' ||
     arg === '.' ||
     arg === '--require' ||
     count === 0
   ) {
-    // ignoring the first argument
+    // ignore
   } else if (arg.length > 2) {
-    // console.warn('Opening file: ' + arg);
-    //if (arg !== './app/main.dev.js' && arg !== './app/' && arg !== '') {
     startupFilePath = arg;
-    //}
   }
-
   if (portableMode) {
     startupFilePath = undefined;
   }
 });
 
-// if (isDebug) {
-//   app.commandLine.appendSwitch('--allow-file-access-from-files');
-// }
-
+// --- Browser Window Options ---
 const browserWindowOptions: BrowserWindowConstructorOptions = {
   show: false,
   center: true,
   autoHideMenuBar: true,
   titleBarStyle: isMacLike ? 'hidden' : 'default',
   webPreferences: {
-    // webSecurity: !isDebug,
     spellcheck: true,
     preload:
       app.isPackaged || !isDebug
@@ -138,11 +108,11 @@ const defaultAppSize = {
   defaultHeight: 800,
 };
 
+// --- DevTools Extension Installer ---
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
-
   return installer
     .default(
       extensions.map((name) => installer[name]),
@@ -151,20 +121,15 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function getSpellcheckLanguage(i18n) {
+// --- Utility Functions ---
+function getSpellcheckLanguage(i18n: string) {
   const supportedLanguages =
     mainWindow?.webContents.session.availableSpellCheckerLanguages;
-  if (!supportedLanguages) {
-    return 'en';
-  }
-  if (supportedLanguages.includes(i18n)) {
-    return i18n;
-  }
+  if (!supportedLanguages) return 'en';
+  if (supportedLanguages.includes(i18n)) return i18n;
   if (i18n.length > 2) {
     const shortI18n = i18n.substring(0, 2);
-    if (supportedLanguages.includes(shortI18n)) {
-      return shortI18n;
-    }
+    if (supportedLanguages.includes(shortI18n)) return shortI18n;
   }
   return 'en';
 }
@@ -173,190 +138,150 @@ function showApp() {
   const windows = BrowserWindow.getAllWindows();
   windows.forEach((win, i) => {
     if (win && i < 1) {
-      if (win.isMinimized()) {
-        win.restore();
-      } else {
-        win.show();
-      }
+      if (win.isMinimized()) win.restore();
+      else win.show();
     }
   });
-  // if (mainWindow) {
-  //   if (mainWindow.isMinimized()) {
-  //     mainWindow.restore();
-  //   }
-  //   mainWindow?.show();
-  // }
 }
 
 function showMainWindow() {
   if (mainWindow) {
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore();
-    }
-    mainWindow?.show();
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
   }
 }
 
+// --- Panel/Command Functions ---
 function openLocationManagerPanel() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('panels', 'open-location-manager-panel');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'panels',
+    'open-location-manager-panel',
+  );
 }
-
 function openTagLibraryPanel() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('panels', 'open-tag-library-panel');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'panels',
+    'open-tag-library-panel',
+  );
 }
-
 function openHelpFeedbackPanel() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('panels', 'open-help-feedback-panel');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'panels',
+    'open-help-feedback-panel',
+  );
 }
-
 function goBack() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('history', 'go-back');
+  BrowserWindow.getFocusedWindow()?.webContents.send('history', 'go-back');
 }
-
 function goForward() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('history', 'go-forward');
+  BrowserWindow.getFocusedWindow()?.webContents.send('history', 'go-forward');
 }
-
 function setZoomResetApp() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'set-zoom-reset-app');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'cmd',
+    'set-zoom-reset-app',
+  );
 }
-
 function setZoomInApp() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'set-zoom-in-app');
+  BrowserWindow.getFocusedWindow()?.webContents.send('cmd', 'set-zoom-in-app');
 }
-
 function setZoomOutApp() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'set-zoom-out-app');
+  BrowserWindow.getFocusedWindow()?.webContents.send('cmd', 'set-zoom-out-app');
 }
-
 function exitFullscreen() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('cmd', 'exit-fullscreen');
+  BrowserWindow.getFocusedWindow()?.webContents.send('cmd', 'exit-fullscreen');
 }
-
 function toggleSettingsDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-settings-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send('toggle-settings-dialog');
 }
-
 function toggleKeysDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-keys-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send('toggle-keys-dialog');
 }
-
 function toggleOnboardingDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-onboarding-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'toggle-onboarding-dialog',
+  );
 }
-
-function openURLExternally(data) {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('open-url-externally', data);
+function openURLExternally(data: any) {
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'open-url-externally',
+    data,
+  );
 }
-
 function toggleLicenseDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-license-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send('toggle-license-dialog');
 }
-
 function toggleThirdPartyLibsDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-third-party-libs-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'toggle-third-party-libs-dialog',
+  );
 }
-
 function toggleAboutDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-about-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send('toggle-about-dialog');
 }
-
 function showSearch() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('cmd', 'open-search');
-  } else {
+  if (focusedWindow) focusedWindow.webContents.send('cmd', 'open-search');
+  else {
     showMainWindow();
     mainWindow?.webContents.send('cmd', 'open-search');
   }
 }
-
 function newTextFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('new-text-file');
-  } else {
+  if (focusedWindow) focusedWindow.webContents.send('new-text-file');
+  else {
     showMainWindow();
     mainWindow?.webContents.send('new-text-file');
   }
 }
-
 function newMDFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('new-md-file');
-  } else {
+  if (focusedWindow) focusedWindow.webContents.send('new-md-file');
+  else {
     showMainWindow();
     mainWindow?.webContents.send('new-md-file');
   }
 }
-
 function getNextFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('perspective', 'next-file');
-  } else {
+  if (focusedWindow) focusedWindow.webContents.send('perspective', 'next-file');
+  else {
     showMainWindow();
     mainWindow?.webContents.send('perspective', 'next-file');
   }
 }
-
 function getPreviousFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
-  if (focusedWindow) {
-    focusedWindow?.webContents.send('perspective', 'previous-file');
-  } else {
+  if (focusedWindow)
+    focusedWindow.webContents.send('perspective', 'previous-file');
+  else {
     showMainWindow();
     mainWindow?.webContents.send('perspective', 'previous-file');
   }
 }
-
 function showCreateDirectoryDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('show-create-directory-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send(
+    'show-create-directory-dialog',
+  );
 }
-
 function toggleOpenLinkDialog() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.webContents.send('toggle-open-link-dialog');
+  BrowserWindow.getFocusedWindow()?.webContents.send('toggle-open-link-dialog');
 }
-
 function resumePlayback() {
-  const windows = BrowserWindow.getAllWindows();
-  windows.forEach((win, i) => {
-    win?.webContents.send('play-pause');
-  });
+  BrowserWindow.getAllWindows().forEach((win) =>
+    win.webContents.send('play-pause'),
+  );
 }
-
 function reloadApp() {
-  const focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow?.loadURL(resolveHtmlPath('index.html'));
+  BrowserWindow.getFocusedWindow()?.loadURL(resolveHtmlPath('index.html'));
 }
-
-function createNewWindowInstance(url?) {
+function createNewWindowInstance(url?: string) {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow(appI18N);
     return;
   }
-
   const mainWindowState = windowStateKeeper(defaultAppSize);
-
   const newWindowInstance = new BrowserWindow({
     ...browserWindowOptions,
     width: mainWindowState.width,
@@ -372,17 +297,13 @@ function createNewWindowInstance(url?) {
     // @ts-ignore
     mainWindow.descriptionChanged = false;
   }
-
   newWindowInstance.setMenuBarVisibility(false);
-
-  if (url) {
-    newWindowInstance.loadURL(url);
-  } else {
-    newWindowInstance.loadURL(resolveHtmlPath('index.html'));
-  }
+  if (url) newWindowInstance.loadURL(url);
+  else newWindowInstance.loadURL(resolveHtmlPath('index.html'));
 }
 
-function bindTrayMenu(i18n) {
+// --- Menu Binding ---
+function bindTrayMenu(i18n: any) {
   buildTrayMenu(
     {
       showTagSpaces: showApp,
@@ -399,8 +320,7 @@ function bindTrayMenu(i18n) {
     globalShortcutsEnabled,
   );
 }
-
-function bindAppMenu(i18n) {
+function bindAppMenu(i18n: any) {
   buildDesktopMenu(
     {
       showTagSpaces: showApp,
@@ -433,20 +353,10 @@ function bindAppMenu(i18n) {
   );
 }
 
-/*const RESOURCES_PATH = app.isPackaged
-  ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../../assets');
-
-const getAssetPath = (...paths: string[]): string => {
-  return path.join(RESOURCES_PATH, ...paths);
-};*/
-
+// --- WebSocket Server ---
 async function findPort() {
-  if (isDebug || testMode) {
-    return 2000;
-  }
+  if (isDebug || testMode) return 2000;
   const defaultWSPort = settings.getInitWsPort();
-  //console.log('defaultWSPort:' + defaultWSPort);
   try {
     const [port] = await findFreePorts(1, { startPort: defaultWSPort });
     return port;
@@ -459,12 +369,10 @@ async function findPort() {
 
 function startWS() {
   try {
-    let filepath;
-    let script;
-    let envPath;
+    let filepath, script, envPath;
     if (app.isPackaged) {
-      filepath = process.resourcesPath; // path.join(__dirname, '../../..');
-      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js'; //app.asar/
+      filepath = process.resourcesPath;
+      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
       envPath = path.join(filepath, 'app.asar/.env');
     } else {
       filepath = path.join(
@@ -474,20 +382,17 @@ function startWS() {
       script = 'index.js';
       envPath = path.join(__dirname, '../.env');
     }
-    const properties = propertiesReader(envPath); //getAssetPath('.env')
-    //console.debug(JSON.stringify(properties.get('KEY')));
-
+    const properties = propertiesReader(envPath);
     const results = new Promise((resolve, reject) => {
       findPort().then((freePort) => {
         try {
           pm2.start(
             {
               name: 'Tagspaces WS',
-              script, // Script to be run
-              cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+              script,
+              cwd: filepath,
               args: ['-p', freePort, '-k', properties.get('KEY')],
               restartAt: [],
-              // log: path.join(process.cwd(), 'thumbGen.log')
             },
             (err, pid) => {
               if (err && pid) {
@@ -498,9 +403,7 @@ function startWS() {
                 reject(err);
               } else {
                 settings.setUsedWsPort(freePort);
-                mainWindow?.webContents.send('start_ws', {
-                  port: freePort,
-                });
+                mainWindow?.webContents.send('start_ws', { port: freePort });
                 console.debug('start_ws:' + freePort);
                 resolve(
                   `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
@@ -522,10 +425,10 @@ function startWS() {
   }
 }
 
-const createWindow = async (i18n) => {
+// --- Main Window Creation ---
+const createWindow = async (i18n: any) => {
   let startupParameter = '';
   if (startupFilePath) {
-    //console.log(JSON.stringify(process.env));
     console.log('Startup file path: ' + startupFilePath);
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
       startupParameter =
@@ -535,9 +438,7 @@ const createWindow = async (i18n) => {
     }
   }
 
-  if (isDebug) {
-    await installExtensions();
-  }
+  if (isDebug) await installExtensions();
 
   const mainWindowState = windowStateKeeper(defaultAppSize);
 
@@ -561,28 +462,9 @@ const createWindow = async (i18n) => {
     resolveHtmlPath('index.html') + startupParameter,
     testWinOnUnix ? { userAgent: winUserAgent } : {},
   );
-  /*.then(() => {
-      mainWindow.webContents.send('start_ws', {
-        port: getUsedWsPort(),
-      });
-    });*/
-
-  /*mainWindow.webContents.on('did-finish-load', () => {
-    const cssPath = app.isPackaged ? path.join(
-      process.resourcesPath,
-      'node_modules/@milkdown/theme-nord/lib/style.css',
-    ) :  path.join(
-      __dirname,
-      '../../node_modules/@milkdown/theme-nord/lib/style.css',
-    )
-    mainWindow?.webContents.insertCSS(fs.readFileSync(cssPath, 'utf8'));
-  });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-
+    if (!mainWindow) throw new Error('"mainWindow" is not defined');
     if (input.type === 'keyDown' && input.key === 'F12') {
       mainWindow.webContents.isDevToolsOpened()
         ? mainWindow.webContents.closeDevTools()
@@ -591,26 +473,13 @@ const createWindow = async (i18n) => {
   });
 
   mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-
-    //console.log('prosess:' + stringifyMaxDepth(process, 3));
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
+    if (!mainWindow) throw new Error('"mainWindow" is not defined');
+    if (process.env.START_MINIMIZED) mainWindow.minimize();
+    else mainWindow.show();
   });
 
   mainWindow.on('show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-
-    // if (isMacLike) {
-    //   mainWindow.webContents.setZoomFactor(0.9);
-    // }
+    if (!mainWindow) throw new Error('"mainWindow" is not defined');
   });
 
   mainWindow.on('close', (e) => {
@@ -625,11 +494,7 @@ const createWindow = async (i18n) => {
         message: i18n.t('unsavedChangesMessage'),
         detail: i18n.t('unsavedChangesDetails'),
       });
-
-      if (choice === 0) {
-        // Cancel
-        e.preventDefault(); // Prevent closing
-      }
+      if (choice === 0) e.preventDefault();
       // No action needed for "Close Application", window will close
     }
   });
@@ -641,15 +506,12 @@ const createWindow = async (i18n) => {
   mainWindow.webContents.on(
     'render-process-gone',
     (_, { reason, exitCode }) => {
-      /*console.error(
-        `[web ui] render-process-gone: ${reason}, code: ${exitCode}`
-      );*/
-      // 'crashed'
       pm2.stopAll();
       globalShortcut.unregisterAll();
       app.quit();
     },
   );
+
   try {
     bindAppMenu(i18n);
     bindTrayMenu(i18n);
@@ -662,17 +524,10 @@ const createWindow = async (i18n) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  // new AppUpdater();
 };
 
-app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
-
-/**
- * Add event listeners...
- */
+// --- Electron App Events ---
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 app.on('window-all-closed', () => {
   // Respect the macOS convention of having the application in memory even
@@ -685,7 +540,6 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', (event, hasVisibleWindows) => {
-  // console.log('Activate ' + hasVisibleWindows);
   const windows = BrowserWindow.getAllWindows();
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -705,16 +559,16 @@ app.on('quit', () => {
 app.on('web-contents-created', (event, contents) => {
   contents.on('will-navigate', (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
-
     if (parsedUrl.origin !== 'file://') {
       event.preventDefault();
     }
   });
 });
 
+// --- Startup ---
 startWS();
 
-let appI18N;
+let appI18N: any;
 
 protocol.register();
 
@@ -757,24 +611,16 @@ app
         }
       });
 
-      ipcMain.on('show-main-window', () => {
-        showApp();
-      });
-
-      ipcMain.on('create-new-window', (e, url) => {
-        createNewWindowInstance(url);
-      });
+      // --- IPC Main Handlers ---
+      ipcMain.on('show-main-window', showApp);
+      ipcMain.on('create-new-window', (e, url) => createNewWindowInstance(url));
       ipcMain.on('file-changed', (e, isChanged) => {
-        if (mainWindow) {
-          // @ts-ignore
-          mainWindow.fileChanged = isChanged;
-        }
+        // @ts-ignore
+        if (mainWindow) mainWindow.fileChanged = isChanged;
       });
       ipcMain.on('description-changed', (e, isChanged) => {
-        if (mainWindow) {
-          // @ts-ignore
-          mainWindow.descriptionChanged = isChanged;
-        }
+        // @ts-ignore
+        if (mainWindow) mainWindow.descriptionChanged = isChanged;
       });
 
       loadMainEvents();
@@ -790,40 +636,29 @@ app
               extensions,
               supportedFileTypes,
             };
-            console.log('set_extensions' + JSON.stringify(setExtensions));
             mainWindow?.webContents.send('set_extensions', setExtensions);
-            // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
           })
           .catch((err) => console.error('load-extensions', err));
       });
 
-      ipcMain.on('focus-window', () => {
-        mainWindow?.focus();
-      });
-
+      ipcMain.on('focus-window', () => mainWindow?.focus());
       ipcMain.on('get-user-home-path', (event) => {
         event.returnValue = app.getPath('home');
       });
-
       ipcMain.on('worker-response', (event, arg) => {
         mainWindow?.webContents.send(arg.id, arg);
       });
-
       ipcMain.on('app-data-path-request', (event) => {
-        event.returnValue = app.getPath('appData'); // eslint-disable-line
+        event.returnValue = app.getPath('appData');
       });
-
       ipcMain.on('app-version-request', (event) => {
-        event.returnValue = app.getVersion(); // eslint-disable-line
+        event.returnValue = app.getVersion();
       });
-
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
       });
-
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
-        const focusedWindow = BrowserWindow.getFocusedWindow();
-        focusedWindow?.webContents.setZoomFactor(zoomLevel);
+        BrowserWindow.getFocusedWindow()?.webContents.setZoomFactor(zoomLevel);
       });
 
       ipcMain.on('global-shortcuts-enabled', (e, globalShortcuts) => {
@@ -850,21 +685,15 @@ app
 
       ipcMain.on('relaunch-app', reloadApp);
 
-      process.removeAllListeners('uncaughtException'); // app crashes on ECONNRESET in default uncaughtException of Electron
-
+      process.removeAllListeners('uncaughtException');
       process.on('uncaughtException', (error) => {
-        // Always log the full error for diagnostics
         console.error(
           'UNCAUGHT EXCEPTION in main:',
           error && error.stack ? error.stack : error,
         );
-
-        // Normalize message/code for checks
         const msg = error && error.message ? error.message : '';
         //@ts-ignore
         const code = error && error.code ? error.code : '';
-
-        // Ignore or quietly handle known/non-fatal errors
         const isAbort = error && error.name === 'AbortError';
         const isSocketHangUp =
           msg.includes('socket hang up') ||
@@ -872,13 +701,12 @@ app
           code === 'ECONNABORTED';
 
         if (isAbort || isSocketHangUp) {
-          // Expected when cancelling requests — just log and continue.
           console.warn(
             'Known non-fatal error (ignored):',
             msg || code || error,
           );
           return;
-        } // For other errors: try graceful recovery (reload) or exit gracefully.
+        }
         try {
           reloadApp();
         } catch (reloadErr) {
@@ -886,7 +714,6 @@ app
             'reloadApp() failed, exiting process:',
             reloadErr && reloadErr.stack ? reloadErr.stack : reloadErr,
           );
-          // Exit with non-zero code to indicate failure (or perform other cleanup)
           process.exit(1);
         }
       });

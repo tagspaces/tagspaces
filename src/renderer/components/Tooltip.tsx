@@ -45,8 +45,8 @@ function TooltipTS(props: Props) {
     title,
     placement = 'top',
     keyBinding,
-    children,
     placeCloser = false,
+    ...restProps
   } = props;
   let tooltipText = title;
   if (keyBinding) {
@@ -54,7 +54,6 @@ function TooltipTS(props: Props) {
   }
   return (
     <Tooltip
-      children={children}
       arrow
       title={tooltipText}
       disableInteractive
@@ -71,6 +70,7 @@ function TooltipTS(props: Props) {
           ],
         },
       }}
+      {...restProps}
     />
   );
 }

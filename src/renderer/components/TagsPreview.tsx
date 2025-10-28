@@ -20,10 +20,11 @@ import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { useSelector } from 'react-redux';
 
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { getTagColors } from '-/services/taglibrary-utils';
+import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 
 interface Props {
   tags: Array<TS.Tag>;
@@ -36,7 +37,7 @@ function TagsPreview(props: Props) {
   const defaultTextColor = useSelector(getTagTextColor);
 
   const { tags } = props;
-  // const allTags = useRef<Array<TS.Tag>>(getAllTags(getTagLibrary()));
+
   if (!tags || tags.length < 1) {
     return <></>;
   }
@@ -79,19 +80,19 @@ function TagsPreview(props: Props) {
   }
   return (
     <Tooltip title={tagNames}>
-      <span
-        style={{
+      <Box
+        sx={{
           display: 'inline-block',
           minWidth: 15,
           width: 18,
           height: 15,
-          marginLeft: 4,
-          marginRight: 4,
-          borderRadius: 7,
+          marginLeft: '4px',
+          marginRight: '4px',
+          borderRadius: '7px',
           borderRight: moreThanOne ? 'white 1px solid' : 'initial',
           boxShadow: moreThanOne ? '4px 0px 0px 0px ' + secondTagColor : 'none',
           backgroundColor: firstTagColor,
-          fontSize: 11,
+          fontSize: '11px',
           lineHeight: '16px',
           color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
           textAlign: 'center',
@@ -100,7 +101,7 @@ function TagsPreview(props: Props) {
         }}
       >
         {moreThanOne ? tags.length : '1'}
-      </span>
+      </Box>
     </Tooltip>
   );
 }

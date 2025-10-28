@@ -16,7 +16,7 @@
  *
  */
 
-import { CloseIcon, MoreMenuIcon } from '-/components/CommonIcons';
+import { CloseIcon, MoreMenuIcon, OllamaIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -25,7 +25,6 @@ import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
 import ChatMenu from '-/components/chat/ChatMenu';
 import { AIProvider, ChatMode } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
-import { OllamaIcon } from '-/components/dialogs/components/Ollama';
 import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
@@ -206,12 +205,7 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
-        <Grid
-          container
-          spacing={0}
-          direction="row"
-          style={{ flexFlow: 'nowrap' }}
-        >
+        <Grid container spacing={0} direction="row" sx={{ flexFlow: 'nowrap' }}>
           <Grid size={11.5}>
             <SelectChatModel
               id="chatModelId"
@@ -223,7 +217,7 @@ function ChatView() {
           </Grid>
           <Grid>
             <TsIconButton
-              style={{ marginTop: 20 }}
+              sx={{ marginTop: '20px' }}
               tooltip={t('core:moreActions')}
               onClick={handleMoreClick}
               data-tid="moreActionsTID"
@@ -268,7 +262,7 @@ function ChatView() {
           <Grid>
             {images.length > 0 &&
               images.map((image, index) => (
-                <Box position="relative" style={{ float: 'right' }}>
+                <Box position="relative" sx={{ float: 'right' }}>
                   <img
                     src={
                       'data:image/' +
@@ -319,7 +313,7 @@ function ChatView() {
                   slotProps={{
                     input: {
                       startAdornment: (
-                        <InputAdornment position="start" style={{ height: 32 }}>
+                        <InputAdornment position="start" sx={{ height: 32 }}>
                           <Tooltip
                             title={
                               aiDefaultProvider?.name +
@@ -327,12 +321,12 @@ function ChatView() {
                               aiDefaultProvider?.engine
                             }
                           >
-                            <OllamaIcon height={25} />
+                            <OllamaIcon />
                           </Tooltip>
                         </InputAdornment>
                       ),
                       endAdornment: (
-                        <InputAdornment position="end" style={{ height: 32 }}>
+                        <InputAdornment position="end" sx={{ height: 32 }}>
                           {isTyping && (
                             <CircularProgress size={24} color="inherit" />
                           )}

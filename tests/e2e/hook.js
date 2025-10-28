@@ -1,12 +1,15 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
-import pathLib from 'path';
 import fse from 'fs-extra';
 import os from 'os';
+import pathLib from 'path';
 import {
   createDir,
   refreshS3testData,
   uploadFile,
 } from '../s3rver/S3DataRefresh';
+
+const windowWidth = 1400;
+const windowHeight = 800;
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -192,7 +195,7 @@ export async function startTestingApp(
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-extensions',
-    '--window-size=1920,1080',
+    '--window-size=' + windowWidth + ',' + windowHeight,
   ];
   if (process.env.HEADLESS_MODE === 'true') {
     chromeDriverArgs.push('--headless');
@@ -206,7 +209,7 @@ export async function startTestingApp(
     }); //browser
 
     global.context = await global.app.newContext({
-      viewport: { width: 1920, height: 1080 },
+      viewport: { width: windowWidth, height: windowHeight },
     });
 
     global.client = await global.context.newPage(); //page
@@ -283,7 +286,7 @@ export async function startTestingApp(
     global.client = await global.app.firstWindow();
     // global.session = await global.client.context().newCDPSession(global.client);
     // Setting the viewport size helps keep test environments consistent.
-    await global.client.setViewportSize({ width: 1920, height: 1080 }); //{width: 1200,height: 800} ({ width: 800, height: 600 });
+    await global.client.setViewportSize({ width: windowWidth, height: windowHeight }); //{width: 1200,height: 800} ({ width: 800, height: 600 });
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
 
     if (process.env.SHOW_CONSOLE) {

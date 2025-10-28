@@ -16,26 +16,18 @@
  *
  */
 
-import React from 'react';
-import { useSelector } from 'react-redux';
-import MenuList, { MenuListProps } from '@mui/material/MenuList';
 import { isDesktopMode } from '-/reducers/settings';
-import AppConfig from '-/AppConfig';
+import MenuList, { MenuListProps } from '@mui/material/MenuList';
+import { useSelector } from 'react-redux';
 
 export type TSButtonProps = MenuListProps & {};
 
 function TsMenuList(props: TSButtonProps) {
-  const { children, style } = props;
+  const { children } = props;
   const desktopMode = useSelector(isDesktopMode);
 
   return (
-    <MenuList
-      dense={desktopMode ? true : false}
-      {...props}
-      style={{
-        ...style,
-      }}
-    >
+    <MenuList dense={desktopMode ? true : false} {...props}>
       {children}
     </MenuList>
   );

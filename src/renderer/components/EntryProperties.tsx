@@ -61,6 +61,7 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
+import { formatTimestampLocal } from '-/utils/formatLocalTime';
 import { parseGeoLocation } from '-/utils/geo';
 import useFirstRender from '-/utils/useFirstRender';
 import {
@@ -85,8 +86,10 @@ import {
 import L from 'leaflet';
 import React, {
   ChangeEvent,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -102,7 +105,6 @@ import {
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
-import { formatTimestampLocal } from '-/utils/formatLocalTime';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   [`& .${inputBaseClasses.root}`]: {
@@ -110,12 +112,8 @@ const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
   },
 }));
 
-/*const ThumbnailChooserDialog =
-  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;*/
 const CustomBackgroundDialog =
   Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
-/*const BgndImgChooserDialog =
-  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;*/
 
 interface Props {
   tileServer: TS.MapTileServer;
@@ -156,7 +154,7 @@ const defaultBackgrounds = [
   'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )',
 ];
 
-function EntryProperties(props: Props) {
+function EntryProperties({ tileServer }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntry, sharingLink, getOpenedDirProps, fileChanged } =
@@ -185,67 +183,69 @@ function EntryProperties(props: Props) {
     : undefined;
   const tagDelimiter: string = useSelector(getTagDelimiter);
 
-  const dirProps = useRef<TS.DirProp>(undefined);
+  const dirProps = useRef<TS.DirProp>();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
-  const location = findLocation(openedEntry.locationID);
+  const location = findLocation(openedEntry?.locationID);
 
-  const entryName = openedEntry
-    ? openedEntry.isFile
+  const entryName = useMemo(() => {
+    if (!openedEntry) return '';
+    return openedEntry.isFile
       ? extractFileName(openedEntry.path, location?.getDirSeparator())
-      : extractDirectoryName(openedEntry.path, location?.getDirSeparator())
-    : '';
+      : extractDirectoryName(openedEntry.path, location?.getDirSeparator());
+  }, [openedEntry, location]);
 
-  const [editName, setEditName] = useState<string>(undefined);
-  const [showSharingLinkDialog, setShowSharingLinkDialog] =
-    useState<boolean>(false);
-  const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const [editName, setEditName] = useState<string>();
+  const [showSharingLinkDialog, setShowSharingLinkDialog] = useState(false);
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const backgroundImage = useRef<string>('none');
   const thumbImage = useRef<string>('none');
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const firstRender = useFirstRender();
 
-  const [popoverAnchorEl, setPopoverAnchorEl] =
-    React.useState<HTMLElement | null>(null);
-
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
+    null,
+  );
   const popoverOpen = Boolean(popoverAnchorEl);
   const popoverId = popoverOpen ? 'popoverBackground' : undefined;
 
-  const handlePopeverClick = (event: React.MouseEvent<HTMLElement>) => {
-    setPopoverAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setPopoverAnchorEl(null);
-  };
+  const handlePopoverClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setPopoverAnchorEl(event.currentTarget);
+    },
+    [],
+  );
+  const handlePopoverClose = useCallback(() => setPopoverAnchorEl(null), []);
 
   useEffect(() => {
     reloadBackground();
     reloadThumbnails();
-  }, [openedEntry]); //location]);
+    // eslint-disable-next-line
+  }, [openedEntry]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0 && openedEntry) {
       for (const action of metaActions) {
         if (action.action === 'bgdImgChange') {
-          reloadBackground(); //todo rethink this duplicate from openedEntry changes
+          reloadBackground();
         } else if (action.action === 'thumbChange') {
           reloadThumbnails();
         }
       }
     }
+    // eslint-disable-next-line
   }, [metaActions, openedEntry]);
 
   function reloadBackground() {
-    if (location) {
+    if (location && openedEntry) {
       location
         .getFolderBgndPath(openedEntry.path, openedEntry.meta?.lastUpdated)
         .then((bgPath) => {
-          const bgImage = bgPath ? 'url("' + bgPath + '")' : 'none';
+          const bgImage = bgPath ? `url("${bgPath}")` : 'none';
           if (bgImage !== backgroundImage.current) {
             backgroundImage.current = bgImage;
             forceUpdate();
@@ -255,7 +255,7 @@ function EntryProperties(props: Props) {
   }
 
   function reloadThumbnails() {
-    if (location) {
+    if (location && openedEntry) {
       location
         .getThumbPath(
           openedEntry.meta?.thumbPath,
@@ -263,7 +263,7 @@ function EntryProperties(props: Props) {
         )
         .then((thumbPath) => {
           const thbImage = thumbPath
-            ? 'url("' + thumbPath.replace(/#/g, '%23') + '")'
+            ? `url("${thumbPath.replace(/#/g, '%23')}")`
             : 'none';
           if (thbImage !== thumbImage.current) {
             thumbImage.current = thbImage;
@@ -277,10 +277,10 @@ function EntryProperties(props: Props) {
     if (editName === entryName && fileNameRef.current) {
       fileNameRef.current.focus();
     }
-  }, [editName]);
+  }, [editName, entryName]);
 
-  const renameEntry = () => {
-    if (editName !== undefined) {
+  const renameEntry = useCallback(() => {
+    if (editName !== undefined && openedEntry) {
       const dirSeparator = location?.getDirSeparator();
       const path = extractContainingDirectoryPath(
         openedEntry.path,
@@ -292,7 +292,7 @@ function EntryProperties(props: Props) {
       if (openedEntry.isFile) {
         renameFile(openedEntry.path, nextPath, openedEntry.locationID).catch(
           () => {
-            fileNameRef.current.value = entryName;
+            if (fileNameRef.current) fileNameRef.current.value = entryName;
           },
         );
       } else {
@@ -301,43 +301,43 @@ function EntryProperties(props: Props) {
           editName,
           openedEntry.locationID,
         ).catch(() => {
-          fileNameRef.current.value = entryName;
+          if (fileNameRef.current) fileNameRef.current.value = entryName;
         });
       }
-
       setEditName(undefined);
     }
-  };
+  }, [editName, openedEntry, location, entryName, renameFile, renameDirectory]);
 
-  const activateEditNameField = () => {
-    if (location.isReadOnly) {
+  const activateEditNameField = useCallback(() => {
+    if (location?.isReadOnly) {
       setEditName(undefined);
       return;
     }
     setEditName(entryName);
-  };
+  }, [location, entryName]);
 
-  const deactivateEditNameField = () => {
+  const deactivateEditNameField = useCallback(() => {
     setEditName(undefined);
     fileNameError.current = false;
-    if (fileNameRef) {
+    if (fileNameRef.current) {
       fileNameRef.current.value = entryName;
     }
-  };
+  }, [entryName]);
 
-  const toggleMoveCopyFilesDialog = () => {
-    openMoveCopyFilesDialog([
-      {
-        ...openedEntry,
-        isFile: openedEntry.isFile,
-        name: entryName,
-        tags: [],
-      },
-    ]);
-    //setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
-  };
+  const toggleMoveCopyFilesDialog = useCallback(() => {
+    if (openedEntry) {
+      openMoveCopyFilesDialog([
+        {
+          ...openedEntry,
+          isFile: openedEntry.isFile,
+          name: entryName,
+          tags: [],
+        },
+      ]);
+    }
+  }, [openMoveCopyFilesDialog, openedEntry, entryName]);
 
-  const openThumbFilesDialog = () => {
+  const openThumbFilesDialog = useCallback(() => {
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
@@ -345,143 +345,168 @@ function EntryProperties(props: Props) {
     if (!isEditMode && editName === undefined && thumbDialogContext) {
       thumbDialogContext.openThumbsDialog(openedEntry);
     }
-  };
+  }, [
+    Pro,
+    showNotification,
+    t,
+    isEditMode,
+    editName,
+    thumbDialogContext,
+    openedEntry,
+  ]);
 
-  const openBgndImgDialog = () => {
+  const openBgndImgDialog = useCallback(() => {
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (!isEditMode && editName === undefined) {
+    if (!isEditMode && editName === undefined && bgndDialogContext) {
       bgndDialogContext.openBgndDialog(openedEntry);
     }
-  };
+  }, [
+    Pro,
+    showNotification,
+    t,
+    isEditMode,
+    editName,
+    bgndDialogContext,
+    openedEntry,
+  ]);
 
-  const fileSize = () => {
-    if (openedEntry.isFile) {
+  const fileSize = useCallback(() => {
+    if (openedEntry?.isFile) {
       return formatBytes(openedEntry.size);
     } else if (dirProps.current) {
       return formatBytes(dirProps.current.totalSize);
     }
     return t(location?.haveObjectStoreSupport() ? 'core:notAvailable' : '?');
-  };
+  }, [openedEntry, t, location]);
 
-  const toggleBackgroundColorPicker = () => {
-    if (location.isReadOnly) {
-      return;
-    }
+  const toggleBackgroundColorPicker = useCallback(() => {
+    if (location?.isReadOnly) return;
     if (!Pro) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
-    setDisplayColorPicker(!displayColorPicker);
-  };
+    setDisplayColorPicker((prev) => !prev);
+  }, [location, Pro, showNotification, t]);
 
-  const handleChangeColor = (color) => {
-    if (color === 'transparent0') {
-      // eslint-disable-next-line no-param-reassign
-      color = 'transparent';
-    }
-    //openedEntry.color = color;
-    setBackgroundColorChange(openedEntry, color).then((success) => {
-      if (success) {
-        openedEntry.meta = { ...openedEntry.meta, color };
+  const handleChangeColor = useCallback(
+    (color) => {
+      if (color === 'transparent0') color = 'transparent';
+      setBackgroundColorChange(openedEntry, color).then((success) => {
+        if (success && openedEntry) {
+          openedEntry.meta = { ...openedEntry.meta, color };
+        }
+      });
+    },
+    [openedEntry, setBackgroundColorChange],
+  );
+
+  const handleFileNameChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const { value, name } = event.target;
+      if (name === 'name') {
+        const initValid = disableConfirmButton.current;
+        let noValid;
+        if (openedEntry.isFile) {
+          noValid = fileNameValidation(value);
+        } else {
+          noValid = dirNameValidation(value);
+        }
+        disableConfirmButton.current = noValid;
+        if (noValid || initValid !== noValid) {
+          fileNameError.current = noValid;
+        }
+        setEditName(value);
       }
-    });
-  };
+    },
+    [openedEntry],
+  );
 
-  const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { target } = event;
-    const { value, name } = target;
-
-    if (name === 'name') {
-      const initValid = disableConfirmButton.current;
-      let noValid;
-      if (openedEntry.isFile) {
-        noValid = fileNameValidation(value);
-      } else {
-        noValid = dirNameValidation(value);
+  const handleChange = useCallback(
+    (name: string, value: Array<TS.Tag>, action: string) => {
+      if (openedEntry && fileChanged) {
+        showNotification(
+          `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+          'default',
+          true,
+        );
+        return;
       }
-      disableConfirmButton.current = noValid;
-      if (noValid || initValid !== noValid) {
-        fileNameError.current = noValid;
-      }
-      setEditName(value);
-    }
-  };
-
-  const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    if (openedEntry && fileChanged) {
-      showNotification(
-        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
-        'default',
-        true,
-      );
-      return;
-    }
-    if (action === 'remove-value') {
-      if (!value) {
-        // no tags left in the select element
+      if (action === 'remove-value') {
+        if (!value) {
+          return removeTagsFromEntry(openedEntry);
+        } else {
+          return removeTagsFromEntry(openedEntry, value);
+        }
+      } else if (action === 'clear') {
         return removeTagsFromEntry(openedEntry);
-      } else {
-        return removeTagsFromEntry(openedEntry, value);
       }
-    } else if (action === 'clear') {
-      return removeTagsFromEntry(openedEntry);
-    }
-    // create-option or select-option
-    const tags =
-      openedEntry.tags === undefined
-        ? value
-        : value.filter(
-            (tag) => !openedEntry.tags.some((obj) => obj.title === tag.title),
-          );
-    return addTagsToFsEntry(openedEntry, tags);
-  };
+      // create-option or select-option
+      const tags =
+        openedEntry.tags === undefined
+          ? value
+          : value.filter(
+              (tag) => !openedEntry.tags.some((obj) => obj.title === tag.title),
+            );
+      return addTagsToFsEntry(openedEntry, tags);
+    },
+    [
+      openedEntry,
+      fileChanged,
+      showNotification,
+      removeTagsFromEntry,
+      addTagsToFsEntry,
+    ],
+  );
 
   if (!openedEntry || !openedEntry.path || openedEntry.path === '') {
     return <div />;
   }
 
   const ldtm = openedEntry.lmdt ? formatTimestampLocal(openedEntry.lmdt) : ' ';
-
   const cdt = openedEntry.cdt
     ? formatTimestampLocal(openedEntry.cdt)
     : undefined;
 
-  const changePerspective = (event: any) => {
-    const perspective = event.target.value;
-    openedEntry.meta = {
-      ...(openedEntry.meta && openedEntry.meta),
-      perspective,
-    };
-    saveDirectoryPerspective(openedEntry, perspective, openedEntry.locationID);
-  };
+  const changePerspective = useCallback(
+    (event: any) => {
+      const perspective = event.target.value;
+      openedEntry.meta = {
+        ...(openedEntry.meta && openedEntry.meta),
+        perspective,
+      };
+      saveDirectoryPerspective(
+        openedEntry,
+        perspective,
+        openedEntry.locationID,
+      );
+    },
+    [openedEntry, saveDirectoryPerspective],
+  );
 
-  let perspectiveDefault;
-  if (openedEntry.meta && openedEntry.meta.perspective) {
-    perspectiveDefault = openedEntry.meta.perspective; // props.perspective;
-  } else {
-    perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
-  }
+  let perspectiveDefault = openedEntry.meta?.perspective || 'unspecified';
 
   // https://github.com/Leaflet/Leaflet/blob/main/src/layer/marker/Icon.Default.js#L22
-  const iconFileMarker = new L.Icon({
-    iconUrl: MarkerIcon,
-    iconRetinaUrl: Marker2xIcon,
-    shadowUrl: MarkerShadowIcon,
-    tooltipAnchor: [16, -28],
-    iconSize: [25, 41], // size of the icon
-    shadowSize: [41, 41], // size of the shadow
-    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
-    shadowAnchor: [5, 41], // the same for the shadow
-    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
-  });
+  const iconFileMarker = useMemo(
+    () =>
+      new L.Icon({
+        iconUrl: MarkerIcon,
+        iconRetinaUrl: Marker2xIcon,
+        shadowUrl: MarkerShadowIcon,
+        tooltipAnchor: [16, -28],
+        iconSize: [25, 41],
+        shadowSize: [41, 41],
+        iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+        shadowAnchor: [5, 41],
+        popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+      }),
+    [],
+  );
 
   function getGeoLocation(tags: Array<TS.Tag>) {
-    if (!Pro) {
-      return;
-    }
+    if (!Pro) return;
     if (tags) {
       for (let i = 0; i < tags.length; i += 1) {
         const location = parseGeoLocation(tags[i].title);
@@ -497,10 +522,10 @@ function EntryProperties(props: Props) {
   );
 
   const isCloudLocation = openedEntry.url && openedEntry.url.length > 5;
-
   const showLinkForDownloading =
     isCloudLocation && openedEntry.isFile && !openedEntry.isEncrypted;
 
+  // --- RENDER ---
   return (
     <div>
       <Grid container>
@@ -517,9 +542,9 @@ function EntryProperties(props: Props) {
                 endAdornment: (
                   <InputAdornment position="end">
                     {!location.isReadOnly && !isEditMode && (
-                      <div style={{ textAlign: 'right' }}>
+                      <Box sx={{ textAlign: 'right' }}>
                         {editName !== undefined ? (
-                          <div>
+                          <>
                             <TsButton
                               data-tid="cancelRenameEntryTID"
                               onClick={deactivateEditNameField}
@@ -535,7 +560,7 @@ function EntryProperties(props: Props) {
                             >
                               {t('core:confirmSaveButton')}
                             </TsButton>
-                          </div>
+                          </>
                         ) : (
                           <TsButton
                             data-tid="startRenameEntryTID"
@@ -545,7 +570,7 @@ function EntryProperties(props: Props) {
                             {t('core:rename')}
                           </TsButton>
                         )}
-                      </div>
+                      </Box>
                     )}
                   </InputAdornment>
                 ),
@@ -602,7 +627,6 @@ function EntryProperties(props: Props) {
                 margin: 2,
                 marginTop: 8,
                 borderRadius: AppConfig.defaultCSSRadius,
-                // border: '1px solid rgba(0, 0, 0, 0.38)',
               }}
               doubleClickZoom={true}
               keyboard={false}
@@ -613,10 +637,10 @@ function EntryProperties(props: Props) {
               zoomControl={true}
               attributionControl={false}
             >
-              {props.tileServer ? (
+              {tileServer ? (
                 <TileLayer
-                  attribution={props.tileServer.serverInfo}
-                  url={props.tileServer.serverURL}
+                  attribution={tileServer.serverInfo}
+                  url={tileServer.serverURL}
                 />
               ) : (
                 <NoTileServer />
@@ -628,7 +652,7 @@ function EntryProperties(props: Props) {
                 >
                   <Popup>
                     <Typography
-                      style={{ margin: 0, color: theme.palette.text.primary }}
+                      sx={{ margin: 0, color: theme.palette.text.primary }}
                     >
                       {t('core:lat') + ' : ' + geoLocation.lat}
                       <br />
@@ -656,7 +680,7 @@ function EntryProperties(props: Props) {
                         OpenStreetMap
                       </TsButton>
                       <TsButton
-                        style={{
+                        sx={{
                           marginLeft: AppConfig.defaultSpaceBetweenButtons,
                         }}
                         onClick={() => {
@@ -788,11 +812,11 @@ function EntryProperties(props: Props) {
                     <InputAdornment position="start">
                       {isCloudLocation ? (
                         <CloudLocationIcon
-                          style={{ color: theme.palette.text.secondary }}
+                          sx={{ color: theme.palette.text.secondary }}
                         />
                       ) : (
                         <LocalLocationIcon
-                          style={{ color: theme.palette.text.secondary }}
+                          sx={{ color: theme.palette.text.secondary }}
                         />
                       )}
                     </InputAdornment>
@@ -906,7 +930,7 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
         {!openedEntry.isFile && (
-          <Grid size={12} style={{ marginTop: 5 }}>
+          <Grid size={12} sx={{ marginTop: '5px' }}>
             <TsTextField
               name="path"
               label={<>{t('core:backgroundColor')}</>}
@@ -919,7 +943,7 @@ function EntryProperties(props: Props) {
                         <TsButton
                           tooltip={t('editBackgroundColor')}
                           fullWidth
-                          style={{
+                          sx={{
                             width: 160,
                             height: 25,
                             background: openedEntry.meta?.color,
@@ -939,7 +963,7 @@ function EntryProperties(props: Props) {
                           <TsIconButton
                             data-tid="changeBackgroundColorTID"
                             aria-describedby={popoverId}
-                            onClick={handlePopeverClick}
+                            onClick={handlePopoverClick}
                             disabled={!Pro}
                           >
                             <ColorPaletteIcon />
@@ -959,7 +983,7 @@ function EntryProperties(props: Props) {
                             horizontal: 'center',
                           }}
                         >
-                          <Box style={{ padding: 10 }}>
+                          <Box sx={{ padding: '10px' }}>
                             {defaultBackgrounds.map((background, cnt) => (
                               <>
                                 <TsIconButton
@@ -970,10 +994,10 @@ function EntryProperties(props: Props) {
                                     handleChangeColor(background);
                                     handlePopoverClose();
                                   }}
-                                  style={{
+                                  sx={{
                                     backgroundColor: background,
                                     backgroundImage: background,
-                                    margin: 5,
+                                    margin: '5px',
                                   }}
                                 >
                                   <SetColorIcon />
@@ -1025,7 +1049,7 @@ function EntryProperties(props: Props) {
             <ThumbnailTextField
               margin="dense"
               variant="outlined"
-              style={{ marginTop: 0 }}
+              sx={{ marginTop: 0 }}
               fullWidth
               slotProps={{
                 input: {
@@ -1035,7 +1059,7 @@ function EntryProperties(props: Props) {
                       <Stack
                         direction="column"
                         spacing={0}
-                        style={{ alignItems: 'center' }}
+                        sx={{ alignItems: 'center' }}
                       >
                         {!location.isReadOnly &&
                           !isEditMode &&
@@ -1051,10 +1075,10 @@ function EntryProperties(props: Props) {
                               </TsButton>
                             </ProTooltip>
                           )}
-                        <div
+                        <Box
                           role="button"
                           tabIndex={0}
-                          style={{
+                          sx={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
                             backgroundImage: thumbImage.current,
@@ -1062,7 +1086,7 @@ function EntryProperties(props: Props) {
                             borderRadius: AppConfig.defaultCSSRadius,
                             minHeight: 150,
                             minWidth: 150,
-                            marginBottom: 5,
+                            marginBottom: '5px',
                           }}
                           onClick={openThumbFilesDialog}
                         />
@@ -1079,7 +1103,7 @@ function EntryProperties(props: Props) {
               <ThumbnailTextField
                 margin="dense"
                 fullWidth
-                style={{
+                sx={{
                   marginTop: 0,
                 }}
                 variant="outlined"
@@ -1091,7 +1115,7 @@ function EntryProperties(props: Props) {
                         <Stack
                           direction="column"
                           spacing={0}
-                          style={{ alignItems: 'center' }}
+                          sx={{ alignItems: 'center' }}
                         >
                           {!location.isReadOnly &&
                             !isEditMode &&
@@ -1107,11 +1131,11 @@ function EntryProperties(props: Props) {
                                 </TsButton>
                               </ProTooltip>
                             )}
-                          <div
+                          <Box
                             data-tid="propsBgnImageTID"
                             role="button"
                             tabIndex={0}
-                            style={{
+                            sx={{
                               backgroundSize: 'cover',
                               backgroundRepeat: 'no-repeat',
                               backgroundImage: backgroundImage.current,
@@ -1119,7 +1143,7 @@ function EntryProperties(props: Props) {
                               borderRadius: AppConfig.defaultCSSRadius,
                               minHeight: 150,
                               minWidth: 150,
-                              marginBottom: 5,
+                              marginBottom: '5px',
                             }}
                             onClick={openBgndImgDialog}
                           />
@@ -1196,4 +1220,4 @@ function EntryProperties(props: Props) {
   );
 }
 
-export default EntryProperties;
+export default React.memo(EntryProperties);

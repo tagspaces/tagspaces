@@ -1,40 +1,39 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
-import { test, expect } from './fixtures';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { expect, test } from './fixtures';
 import {
-  defaultLocationName,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-  deleteFileFromMenu,
-} from './location.helpers';
-import {
-  reloadDirectory,
+  clickOn,
   createNewDirectory,
   deleteDirectory,
-  clickOn,
   expectElementExist,
-  takeScreenshot,
+  getAttribute,
+  getElementScreenshot,
+  getGridFileSelector,
+  openFolder,
+  reloadDirectory,
   selectorFile,
   setInputKeys,
-  getGridFileSelector,
-  getElementScreenshot,
-  openFolder,
-  waitUntilChanged,
-  getAttribute,
+  waitUntilChanged
 } from './general.helpers';
-import { openContextEntryMenu, renameFolder } from './test-utils';
 import {
-  createLocalFile,
   createFileS3,
+  createLocalFile,
   startTestingApp,
   stopApp,
 } from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { emptyFolderName } from './search.helpers';
-import { AddRemovePropertiesTags } from './file.properties.helpers';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+  deleteFileFromMenu,
+} from './location.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { emptyFolderName } from './search.helpers';
+import { openContextEntryMenu, renameFolder } from './test-utils';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {

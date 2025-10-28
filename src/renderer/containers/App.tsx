@@ -28,27 +28,24 @@ import {
   createTheme,
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useEffect } from 'react';
-import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
+import { useEffect, useMemo } from 'react';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 declare module '@mui/material/styles' {
-  interface Theme extends Record<string, any> {
-    // Any additional properties or overrides
-  }
+  interface Theme extends Record<string, any> {}
 }
 
+// Theme definitions
 const legacyTheme = createTheme({
   palette: {
-    mode: 'light', // Switching the dark mode on is a single property value change.
+    mode: 'light',
     primary: {
       light: AppConfig.lightThemeLightColor,
       main: AppConfig.lightThemeMainColor,
       dark: AppConfig.lightThemeMainColor,
     },
-    secondary: {
-      main: '#777',
-    },
+    secondary: { main: '#777' },
     divider: '#ddd',
   },
 });
@@ -61,15 +58,11 @@ const newlightTheme = createTheme({
       main: '#3bc8ff',
       dark: '#3bc8ff',
     },
-    secondary: {
-      main: '#777',
-    },
+    secondary: { main: '#777' },
     divider: '#ddd',
   },
-  // shape: { borderRadius: 10 },
 });
 
-// https://mui.com/material-ui/customization/dark-mode/
 const darklegacyTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -78,9 +71,7 @@ const darklegacyTheme = createTheme({
       main: AppConfig.darkThemeMainColor,
       dark: AppConfig.darkThemeMainColor,
     },
-    secondary: {
-      main: '#bbb',
-    },
+    secondary: { main: '#bbb' },
     divider: '#555',
   },
 });
@@ -93,12 +84,8 @@ const darkblueTheme = createTheme({
       main: '#3bc8ff',
       dark: '#3bc8ff',
     },
-    secondary: {
-      main: '#bbb',
-    },
-    background: {
-      default: '#001E3C',
-    },
+    secondary: { main: '#bbb' },
+    background: { default: '#001E3C' },
     divider: '#555',
   },
 });
@@ -111,87 +98,74 @@ const draculaTheme = createTheme({
       main: '#BD93F9',
       dark: '#BD93F9',
     },
-    secondary: {
-      main: '#bbb',
-    },
+    secondary: { main: '#bbb' },
     divider: '#555',
-    background: {
-      default: '#282A36',
-    },
-    text: {
-      primary: '#f8f8f2',
-    },
+    background: { default: '#282A36' },
+    text: { primary: '#f8f8f2' },
   },
 });
 
 interface Props {
-  children: any;
+  children: React.ReactNode;
 }
-function App(props: Props) {
-  const { i18n } = useTranslation();
-  let theme = legacyTheme;
-  let regularTheme = legacyTheme;
-  let darkTheme = darklegacyTheme;
 
+function App({ children }: Props) {
+  const { i18n } = useTranslation();
   const currentTheme = useSelector(getCurrentTheme);
   const defaultDarkTheme = useSelector(getDefaultDarkTheme);
   const defaultRegularTheme = useSelector(getDefaultRegularTheme);
+  const systemDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const systemDarkMode = useMediaQuery('(prefers-color-scheme: dark)'); // window.matchMedia().matches;
-  switch (defaultRegularTheme) {
-    case 'legacy': {
-      regularTheme = legacyTheme;
-      break;
+  // Memoize theme selection for performance and clarity
+  const theme = useMemo(() => {
+    let regularTheme = legacyTheme;
+    let darkTheme = darklegacyTheme;
+
+    switch (defaultRegularTheme) {
+      case 'newlight':
+        regularTheme = newlightTheme;
+        break;
+      case 'legacy':
+      default:
+        regularTheme = legacyTheme;
     }
-    case 'newlight': {
-      regularTheme = newlightTheme;
-      break;
+    switch (defaultDarkTheme) {
+      case 'darkblue':
+        darkTheme = darkblueTheme;
+        break;
+      case 'dracula':
+        darkTheme = draculaTheme;
+        break;
+      case 'darklegacy':
+      default:
+        darkTheme = darklegacyTheme;
     }
-  }
-  switch (defaultDarkTheme) {
-    case 'darklegacy': {
-      darkTheme = darklegacyTheme;
-      break;
+    switch (currentTheme) {
+      case 'light':
+        return regularTheme;
+      case 'dark':
+        return darkTheme;
+      case 'system':
+        return systemDarkMode ? darkTheme : regularTheme;
+      default:
+        return regularTheme;
     }
-    case 'darkblue': {
-      darkTheme = darkblueTheme;
-      break;
-    }
-    case 'dracula': {
-      darkTheme = draculaTheme;
-      break;
-    }
-  }
-  switch (currentTheme) {
-    case 'light': {
-      theme = regularTheme;
-      break;
-    }
-    case 'dark': {
-      theme = darkTheme;
-      break;
-    }
-    case 'system': {
-      theme = systemDarkMode ? darkTheme : regularTheme;
-      break;
-    }
-  }
+  }, [currentTheme, defaultDarkTheme, defaultRegularTheme, systemDarkMode]);
 
   useEffect(() => {
-    const darkMode = currentTheme === 'dark';
-    // For Algolia DocSearch
+    const darkMode = theme.palette.mode === 'dark';
+    // For 3th party css like TailwindCSS
     document.documentElement.setAttribute(
       'data-theme',
       darkMode ? 'dark' : 'light',
     );
-    // For TailwindCSS
     document.documentElement.classList.toggle('dark', darkMode);
-  }, [currentTheme]);
+  }, [theme.palette.mode]);
 
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+        <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   );
