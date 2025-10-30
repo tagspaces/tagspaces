@@ -7,6 +7,13 @@
     "**/node_modules/@img/**/*"
   ],
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
+  "fileAssociations": [
+    {
+      "ext": ["md", "mdown", "html", "txt"],
+      "name": "TagSpaces Editor",
+      "role": "Editor"
+    }
+  ],
   "copyright": "Copyright © 2025 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
