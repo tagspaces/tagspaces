@@ -40,6 +40,7 @@ let mainWindow: BrowserWindow | null = null;
 let globalShortcutsEnabled = false;
 let startupFilePath: string | undefined;
 let portableMode: boolean | undefined;
+const SUPPORTED_EXTS = new Set(['.md', '.mmd', '.txt', '.html', '.glb']);
 
 // --- Debug/Dev Mode ---
 const isDebug =
@@ -528,6 +529,35 @@ const createWindow = async (i18n: any) => {
 
 // --- Electron App Events ---
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
+// Mac only solution for opening files
+app.on('open-file', (event, filePath) => {
+  event.preventDefault(); // important — prevents default macOS behavior
+  startupFilePath = filePath;
+  if (app.isReady()) {
+    const startupParameter = '?cmdopen=' + encodeURIComponent(startupFilePath);
+    const url = resolveHtmlPath('index.html') + startupParameter;
+    createNewWindowInstance(url);
+  } else {
+  }
+});
+
+if (!isDebug) {
+  const gotLock = app.requestSingleInstanceLock();
+  if (!gotLock) {
+    app.quit();
+  } else {
+    // Windows and Linux solution for opening files
+    app.on('second-instance', (event, argv) => {
+      const fileArg = argv.find((arg) =>
+        SUPPORTED_EXTS.has(path.extname(arg).toLowerCase()),
+      );
+      const startupParameter = '?cmdopen=' + encodeURIComponent(fileArg);
+      const url = resolveHtmlPath('index.html') + startupParameter;
+      createNewWindowInstance(url);
+    });
+  }
+}
 
 app.on('window-all-closed', () => {
   // Respect the macOS convention of having the application in memory even
