@@ -16,25 +16,25 @@
  *
  */
 
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { Pro } from '-/pro';
+import { isRevisionsEnabled } from '-/reducers/settings';
+import { TS } from '-/tagspaces.namespace';
 import {
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   getBackupFileDir,
   getBackupFileLocation,
-  cleanTrailingDirSeparator,
   isMeta,
 } from '@tagspaces/tagspaces-common/paths';
-import LoadingLazy from '-/components/LoadingLazy';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { isRevisionsEnabled } from '-/reducers/settings';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type ResolveConflictContextData = {
   openResolveConflictDialog: (oEntry: TS.OpenedEntry, fContent: string) => void;
@@ -145,12 +145,6 @@ export const ResolveConflictContextProvider = ({
       // write revisions
       if (Pro && revisionsEnabled && !isMeta(fileOpen.path)) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
-        const targetPath = getBackupFileLocation(
-          fileOpen.path,
-          id,
-          location.getDirSeparator(),
-        );
-
         const backupDir = getBackupFileDir(fileOpen.path, fileOpen.uuid);
         location.listDirectoryPromise(backupDir, []).then(async (backup) => {
           const haveBackup = backup.some((b) =>
@@ -158,9 +152,14 @@ export const ResolveConflictContextProvider = ({
           );
           if (!haveBackup) {
             try {
+              const targetPath = getBackupFileLocation(
+                fileOpen.path,
+                id,
+                location.getDirSeparator(),
+              );
               await copyFilePromiseOverwrite(
                 fileOpen.path,
-                targetPath + '-init.' + fileOpen.extension,
+                targetPath,
                 fileOpen.locationID,
                 false,
               );
@@ -169,6 +168,13 @@ export const ResolveConflictContextProvider = ({
             }
           }
         });
+        // wait 5ms in order ot get older timestamp
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        const targetPath = getBackupFileLocation(
+          fileOpen.path,
+          id,
+          location.getDirSeparator(),
+        );
         await saveTextFilePromise(
           {
             path: targetPath,

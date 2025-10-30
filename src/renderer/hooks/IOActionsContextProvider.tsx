@@ -16,37 +16,30 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import {
-  extractContainingDirectoryPath,
-  extractDirectoryName,
-  extractFileName,
-  getBackupFileDir,
-  getBackupFileLocation,
-  getBackupFolderLocation,
-  getBackupDir,
-  getMetaDirectoryPath,
-  getMetaFileLocationForFile,
-  getMetaFileLocationForDir,
-  getThumbFileLocationForFile,
-  getBgndFileLocationForDirectory,
-  getThumbFileLocationForDirectory,
-  joinPaths,
-  normalizePath,
-  extractTags,
-  cleanTrailingDirSeparator,
-  generateFileName,
-  getMetaContentFileLocation,
-  getFileLocationFromMetaFile,
-  isMeta,
-} from '@tagspaces/tagspaces-common/paths';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  getAuthor,
+  getFileNameTagPlace,
+  getPrefixTagContainer,
+  getTagDelimiter,
+  getWarningOpeningFilesExternally,
+  isRevisionsEnabled,
+} from '-/reducers/settings';
+import {
+  generateImageThumbnail,
+  generateThumbnailPromise,
+} from '-/services/thumbsgenerator';
 import {
   cleanMetaData,
   downloadFile,
@@ -56,33 +49,40 @@ import {
   openFileMessage,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/AppConfig';
-import {
-  generateImageThumbnail,
-  generateThumbnailPromise,
-} from '-/services/thumbsgenerator';
+import { CommonLocation } from '-/utils/CommonLocation';
 import { base64ToBlob } from '-/utils/dom';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import {
+  cleanTrailingDirSeparator,
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  extractFileName,
+  extractTags,
+  generateFileName,
+  getBackupDir,
+  getBackupFileDir,
+  getBackupFileLocation,
+  getBackupFolderLocation,
+  getBgndFileLocationForDirectory,
+  getFileLocationFromMetaFile,
+  getMetaContentFileLocation,
+  getMetaDirectoryPath,
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile,
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile,
+  isMeta,
+  joinPaths,
+  normalizePath,
+} from '@tagspaces/tagspaces-common/paths';
 import {
   enhanceEntry,
+  getUuid,
   loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import {
-  getAuthor,
-  getFileNameTagPlace,
-  getPrefixTagContainer,
-  getTagDelimiter,
-  getWarningOpeningFilesExternally,
-  isRevisionsEnabled,
-} from '-/reducers/settings';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { Pro } from '-/pro';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
+import React, { createContext, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
 type IOActionsContextData = {
   createDirectory: (
@@ -1936,26 +1936,26 @@ export const IOActionsContextProvider = ({
         ) {
           const uuid = entry.isFile ? entry.uuid : entry.meta?.id;
           getMetadataID(entry.path, uuid, location).then((id) => {
-            const targetPath = entry.isFile
-              ? getBackupFileLocation(
-                  entry.path,
-                  id,
-                  location.getDirSeparator(),
-                )
-              : getBackupFolderLocation(
-                  entry.path,
-                  id,
-                  location.getDirSeparator(),
-                );
             if (fsEntryMeta && fsEntryMeta.description) {
               const backupDir = getBackupDir(entry);
               location.listDirectoryPromise(backupDir, []).then((backup) => {
                 const haveBackup = backup.some((b) => b.path.endsWith('.meta'));
                 if (!haveBackup) {
                   // init description
+                  const targetPath = entry.isFile
+                    ? getBackupFileLocation(
+                        entry.path,
+                        id,
+                        location.getDirSeparator(),
+                      )
+                    : getBackupFolderLocation(
+                        entry.path,
+                        id,
+                        location.getDirSeparator(),
+                      );
                   saveTextFilePromise(
                     {
-                      path: targetPath + '-init.meta',
+                      path: targetPath + '.meta',
                       locationID: entry.locationID,
                     },
                     JSON.stringify({ description: fsEntryMeta?.description }),
@@ -1964,14 +1964,28 @@ export const IOActionsContextProvider = ({
                 }
               });
             }
-            saveTextFilePromise(
-              { path: targetPath + '.meta', locationID: entry.locationID },
-              JSON.stringify({
-                description: meta.description,
-                ...(author && { author: author }),
-              }),
-              false,
-            );
+            // wait 5ms in order ot get older timestamp
+            setTimeout(() => {
+              const targetPath = entry.isFile
+                ? getBackupFileLocation(
+                    entry.path,
+                    id,
+                    location.getDirSeparator(),
+                  )
+                : getBackupFolderLocation(
+                    entry.path,
+                    id,
+                    location.getDirSeparator(),
+                  );
+              saveTextFilePromise(
+                { path: targetPath + '.meta', locationID: entry.locationID },
+                JSON.stringify({
+                  description: meta.description,
+                  ...(author && { author: author }),
+                }),
+                false,
+              );
+            }, 5);
           });
         }
         return saveMetaDataPromise(entry, {
