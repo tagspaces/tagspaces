@@ -131,9 +131,23 @@ const fuseOptions = {
       getFn: (entry) => entry.textContent,
       weight: 0.2,
     },
+    // {
+    //   name: 'tags',
+    //   getFn: (entry) => entry.tags?.title,
+    //   weight: 0.2,
+    // },
     {
-      name: 'tags',
-      getFn: (entry) => entry.tags?.title,
+      name: 'tagsDescription',
+      getFn: (entry) => {
+        if (!entry.tags) return;
+        let descriptions = '';
+        for (const tag of entry.tags) {
+          if (tag.description) {
+            descriptions += ' ' + String(tag.description);
+          }
+        }
+        return descriptions;
+      },
       weight: 0.2,
     },
     {
