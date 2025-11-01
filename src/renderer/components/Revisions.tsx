@@ -18,15 +18,15 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  getBackupFileLocation,
-  extractContainingDirectoryPath,
+  getBackupDir,
   extractFileNameWithoutExt,
+  isMeta,
 } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
 import TsIconButton from '-/components/TsIconButton';
-import AppConfig from '-/AppConfig';
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -44,13 +44,19 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import MenuItem from '@mui/material/MenuItem';
+import TsSelect from '-/components/TsSelect';
 
 const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
-  const { getMetadataID } = useIOActionsContext();
+  const { saveMetaDataPromise } = useIOActionsContext();
+  const { setDescription } = useFilePropertiesContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite, deleteEntriesPromise } =
     usePlatformFacadeContext();
@@ -61,14 +67,15 @@ function Revisions() {
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
     TS.FileSystemEntry | undefined
   >(undefined);
+  const [revisionsType, setRevisionsType] = useState<'meta' | 'file'>('file');
   // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
     // if no history item path - not loadHistoryItems for items in metaFolder
-    if (openedEntry && openedEntry.path.indexOf(AppConfig.metaFolder) === -1) {
+    if (openedEntry && !isMeta(openedEntry.path)) {
       loadHistoryItems(openedEntry);
     }
-  }, [openedEntry]);
+  }, [openedEntry, revisionsType]);
 
   function getLmdt(fileName) {
     return parseInt(extractFileNameWithoutExt(fileName));
@@ -78,22 +85,17 @@ function Revisions() {
     if (Pro) {
       const location = findLocation(openedFile.locationID);
       if (location) {
-        getMetadataID(openedFile.path, openedFile.uuid, location).then((id) => {
-          //openedFile.uuid = id;
-          const backupFilePath = getBackupFileLocation(
-            openedFile.path,
-            id,
-            location.getDirSeparator(),
+        const backupPath = getBackupDir(openedFile);
+        location.listDirectoryPromise(backupPath, []).then((h) => {
+          const history =
+            revisionsType === 'meta'
+              ? h.filter((b) => b.path.endsWith('.meta'))
+              : h.filter((b) => b.path.endsWith(openedFile.extension));
+          setRows(
+            history.sort((a, b) =>
+              getLmdt(a.name) < getLmdt(b.name) ? 1 : -1,
+            ),
           );
-          const backupPath = extractContainingDirectoryPath(
-            backupFilePath,
-            location.getDirSeparator(),
-          );
-          location.listDirectoryPromise(backupPath, []).then((h) => {
-            setRows(
-              h.sort((a, b) => (getLmdt(a.name) < getLmdt(b.name) ? 1 : -1)),
-            );
-          });
         });
       }
     }
@@ -128,16 +130,48 @@ function Revisions() {
 
   function restoreRevision(revisionPath) {
     const location = findLocation(openedEntry.locationID);
-    const targetPath = getBackupFileLocation(
-      openedEntry.path,
-      openedEntry.uuid,
-      location.getDirSeparator(),
-    );
-    return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>
-      copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() =>
+    if (revisionPath.endsWith('.meta')) {
+      // restore description
+      location
+        .loadJSONFile(revisionPath)
+        .then((metaRevision) => {
+          if (metaRevision) {
+            location
+              .loadMetaDataPromise(openedEntry.path)
+              .then((fsEntryMeta) => {
+                const newMeta = {
+                  ...fsEntryMeta,
+                  description: metaRevision.description,
+                  lastUpdated: new Date().getTime(),
+                };
+                saveMetaDataPromise(openedEntry, newMeta).then(() => {
+                  setDescription(metaRevision.description, false);
+                  const action: TS.EditMetaAction = {
+                    action: 'descriptionChange',
+                    entry: {
+                      ...openedEntry,
+                      meta: newMeta,
+                    },
+                  };
+                  setReflectMetaActions(action);
+                });
+              });
+          }
+        })
+        .catch((e) => {
+          console.log('cannot load json:' + revisionPath, e);
+        });
+    } else {
+      /*const targetPath = getBackupFileLocation(
+        openedEntry.path,
+        openedEntry.uuid,
+        location.getDirSeparator(),
+      );
+      return copyFilePromiseOverwrite(openedEntry.path, targetPath).then(() =>*/
+      return copyFilePromiseOverwrite(revisionPath, openedEntry.path).then(() =>
         reloadOpenedFile(),
-      ),
-    );
+      );
+    }
   }
   function titleFormat(lmdt) {
     return lmdt ? format(lmdt, 'dd.MM.yyyy HH:mm:ss') : '';
@@ -190,19 +224,37 @@ function Revisions() {
           <TableHead>
             <TableRow>
               <TableCell>
-                {t('revisions')}
-                <TsIconButton
-                  tooltip={t('core:deleteAllRevisions')}
-                  aria-label="delete all revisions"
-                  onClick={() =>
-                    window.confirm(
-                      'The all revisions will be deleted. Do you want to continue?',
-                    ) && deleteRevisions()
-                  }
-                  data-tid="deleteRevisionsTID"
-                >
-                  <DeleteIcon />
-                </TsIconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ mr: 1 }}>{t('revisions')}</Box>
+                  <TsIconButton
+                    tooltip={t('core:deleteAllRevisions')}
+                    aria-label="delete all revisions"
+                    onClick={() =>
+                      window.confirm(
+                        'The all revisions will be deleted. Do you want to continue?',
+                      ) && deleteRevisions()
+                    }
+                    data-tid="deleteRevisionsTID"
+                  >
+                    <DeleteIcon />
+                  </TsIconButton>
+                  <TsSelect
+                    data-tid="revisionsTypeTID"
+                    fullWidth={false}
+                    value={revisionsType}
+                    onChange={(event: any) => {
+                      return setRevisionsType(event.target.value);
+                    }}
+                    sx={{ minWidth: 120 }}
+                  >
+                    <MenuItem key="file" value="file">
+                      {t('file')}
+                    </MenuItem>
+                    <MenuItem key="meta" value="meta">
+                      {t('meta')}
+                    </MenuItem>
+                  </TsSelect>
+                </Box>
               </TableCell>
               <TableCell align="right">{t('created')}</TableCell>
               <TableCell align="right">{t('actions')}</TableCell>

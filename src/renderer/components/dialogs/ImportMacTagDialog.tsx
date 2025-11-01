@@ -16,24 +16,23 @@
  *
  */
 
-import React, { ChangeEvent, useReducer, useRef } from 'react';
 import DraggablePaper from '-/components/DraggablePaper';
+import TsButton from '-/components/TsButton';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { useProgressDialogContext } from '-/components/dialogs/hooks/useProgressDialogContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { Pro } from '-/pro';
+import { readMacOSTags } from '-/services/utils-io';
 import { Switch } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useTranslation } from 'react-i18next';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import TsButton from '-/components/TsButton';
-import { Pro } from '-/pro';
-import { readMacOSTags } from '-/services/utils-io';
-import { useProgressDialogContext } from '-/components/dialogs/hooks/useProgressDialogContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import React, { useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -125,7 +124,7 @@ Do you want to continue?`)
         data-tid="ImportMacTagDialogTitle"
         id="draggable-dialog-title"
       >
-        {t('core:ImportMacTags')}
+        {t('core:importMacTags')}
         <DialogCloseButton testId="closeImportMacTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>

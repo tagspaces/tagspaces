@@ -1,14 +1,12 @@
 // import { expect, test } from '@playwright/test';
-import { test, expect } from './fixtures';
+import { dataTidFormat } from '../../src/renderer/services/test';
 import {
-  createPwMinioLocation,
-  createPwLocation,
-  defaultLocationName,
-  createS3Location,
-} from './location.helpers';
+  AddRemovePropertiesTags,
+  getPropertiesFileName,
+} from './file.properties.helpers';
+import { expect, test } from './fixtures';
 import {
   addDescription,
-  checkSettings,
   clickOn,
   createRevision,
   dnd,
@@ -24,28 +22,25 @@ import {
   openFile,
   openFolder,
   selectorFile,
-  selectorFolder,
   setInputKeys,
   setInputValue,
-  setSettings,
-  takeScreenshot,
-  waitForNotification,
-  writeTextInIframeInput,
+  setSettings
 } from './general.helpers';
 import {
-  AddRemovePropertiesTags,
-  getPropertiesFileName,
-} from './file.properties.helpers';
-import { openContextEntryMenu } from './test-utils';
-import {
-  createLocalFile,
   createFileS3,
+  createLocalFile,
   startTestingApp,
   stopApp,
   testDataRefresh,
 } from './hook';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+} from './location.helpers';
+import { openContextEntryMenu } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { dataTidFormat } from '../../src/renderer/services/test';
 
 test.afterEach(async ({ isS3, testDataDir }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
